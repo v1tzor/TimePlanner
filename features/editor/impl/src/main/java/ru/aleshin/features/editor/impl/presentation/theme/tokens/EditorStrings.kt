@@ -1,0 +1,202 @@
+/*
+ * Copyright 2023 Stanislav Aleshin
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * imitations under the License.
+ */
+package ru.aleshin.features.editor.impl.presentation.theme.tokens
+
+import androidx.compose.runtime.staticCompositionLocalOf
+import ru.aleshin.core.ui.theme.tokens.TimePlannerLanguage
+
+/**
+ * @author Stanislav Aleshin on 18.02.2023.
+ */
+internal data class EditorStrings(
+    val topAppBarEditorTitle: String,
+    val topAppBarCalendarIconDesc: String,
+    val topAppBarMenuIconDesc: String,
+    val nextDateIconDesc: String,
+    val previousDateIconDesc: String,
+    val dateDialogPickerHeadline: String,
+    val dateDialogPickerTitle: String,
+    val timeTaskExpandedIconDesc: String,
+    val timeTaskCheckIconDesc: String,
+    val timeTaskMoreIconDesc: String,
+    val timeTaskAddIconDesc: String,
+    val timeTaskRemoveIconDesc: String,
+    val timeTaskIncreaseTimeTitle: String,
+    val timeTaskReduceTimeTitle: String,
+    val startTimeTaskTitlePlaceHolder: String,
+    val addTimeTaskIconsDesc: String,
+    val addTimeTaskTitle: String,
+    val topAppBarBackIconDesc: String,
+    val topAppBarMoreIconDesc: String,
+    val topAppBarTemplatesTitle: String,
+    val mainCategoryChooserTitle: String,
+    val subCategoryChooserTitle: String,
+    val mainCategoryChooserExpandedIconDesc: String,
+    val categoryNotSelectedTitle: String,
+    val subCategoryDialogAddTitle: String,
+    val subCategoryDialogMainCategoryFormat: String,
+    val timeFieldStartLabel: String,
+    val timeFieldEndLabel: String,
+    val parameterChooserSwitchIconDesc: String,
+    val timePickerHeader: String,
+    val timePickerSeparator: String,
+    val notifyParameterTitle: String,
+    val notifyParameterDesc: String,
+    val statisticsParameterTitle: String,
+    val statisticsParameterDesc: String,
+    val saveTaskButtonTitle: String,
+    val cancelButtonTitle: String,
+    val templateIconDesc: String,
+    val topAppBarDeleteTitle: String,
+    val categoryValidateError: String,
+    val otherError: String,
+    val startOverlayError: String,
+    val endOverlayError: String,
+    val fullOverlayError: String,
+    val correctOverlayTitle: String,
+    val durationPickerTitle: String,
+    val templatesSheetTitle: String,
+    val controlTitle: String,
+    val applyTitle: String,
+    val timeRangeFormat: String,
+    val durationFormat: String,
+    val notificationEnabledTitle: String,
+    val notificationDisabledTitle: String,
+    val emptyTemplatesTitle: String,
+)
+
+internal val russianHomeString = EditorStrings(
+    topAppBarEditorTitle = "Редактор",
+    topAppBarCalendarIconDesc = "Выбрать дату",
+    topAppBarMenuIconDesc = "Открыть меню",
+    nextDateIconDesc = "Следующая дата",
+    previousDateIconDesc = "Предыдущая дата",
+    dateDialogPickerTitle = "Дневной план",
+    dateDialogPickerHeadline = "Выберите дату",
+    timeTaskExpandedIconDesc = "Дополнительно",
+    timeTaskCheckIconDesc = "Выполнено",
+    timeTaskMoreIconDesc = "Редактировать",
+    timeTaskAddIconDesc = "Добавить время",
+    timeTaskRemoveIconDesc = "Убавить время",
+    timeTaskIncreaseTimeTitle = "Увеличить",
+    timeTaskReduceTimeTitle = "Убавить",
+    startTimeTaskTitlePlaceHolder = "00:00",
+    addTimeTaskIconsDesc = "Добавить задачу",
+    addTimeTaskTitle = "Добавить",
+    topAppBarBackIconDesc = "Назад",
+    topAppBarMoreIconDesc = "Доплнительно",
+    topAppBarTemplatesTitle = "Шаблоны",
+    mainCategoryChooserTitle = "Категория",
+    subCategoryChooserTitle = "Подкатегория",
+    mainCategoryChooserExpandedIconDesc = "Выбрать категорию",
+    categoryNotSelectedTitle = "Отсутвует",
+    subCategoryDialogAddTitle = "Добавить",
+    subCategoryDialogMainCategoryFormat = "Категория: %s",
+    timeFieldStartLabel = "Старт",
+    timeFieldEndLabel = "Конец",
+    parameterChooserSwitchIconDesc = "Установить параметр",
+    timePickerHeader = "Выберите время",
+    timePickerSeparator = ":",
+    notifyParameterTitle = "Уведомления",
+    notifyParameterDesc = "Отправить уведомление при выполнении задачи",
+    statisticsParameterTitle = "Статистика",
+    statisticsParameterDesc = "Учитывать данные в статистике",
+    saveTaskButtonTitle = "Сохранить",
+    cancelButtonTitle = "Отменить",
+    templateIconDesc = "Добавить в шаблоны",
+    topAppBarDeleteTitle = "Удалить",
+    categoryValidateError = "* Выберите категорию",
+    otherError = "Ошибка! Обратитесь к разработчику.",
+    startOverlayError = "Конфликт! Наложение старта задачи.",
+    endOverlayError = "Конфликт! Наложение конца задачи.",
+    fullOverlayError = "Конфликт! Наложение задач.",
+    correctOverlayTitle = "Исправить",
+    durationPickerTitle = "Длительность",
+    templatesSheetTitle = "Шаблоны",
+    controlTitle = "Управлять",
+    applyTitle = "Применить",
+    timeRangeFormat = "Время: С %S до %s",
+    durationFormat = "Длительность: %s",
+    notificationEnabledTitle = "Уведомления: включены",
+    notificationDisabledTitle = "Уведомления: выключены",
+    emptyTemplatesTitle = "Список пуст",
+)
+
+internal val englishHomeString = EditorStrings(
+    topAppBarEditorTitle = "Editor",
+    topAppBarCalendarIconDesc = "Select a date",
+    topAppBarMenuIconDesc = "Open menu",
+    nextDateIconDesc = "Next date",
+    previousDateIconDesc = "Previous date",
+    dateDialogPickerTitle = "Daily plan",
+    dateDialogPickerHeadline = "Select a date",
+    timeTaskExpandedIconDesc = "More",
+    timeTaskCheckIconDesc = "Completed",
+    timeTaskMoreIconDesc = "Edit",
+    timeTaskAddIconDesc = "Add time",
+    timeTaskRemoveIconDesc = "Reduce the time",
+    timeTaskIncreaseTimeTitle = "Increase",
+    timeTaskReduceTimeTitle = "Reduce",
+    startTimeTaskTitlePlaceHolder = "00:00",
+    addTimeTaskIconsDesc = "Add task",
+    addTimeTaskTitle = "Add",
+    topAppBarBackIconDesc = "Back",
+    topAppBarMoreIconDesc = "More",
+    topAppBarTemplatesTitle = "Templates",
+    mainCategoryChooserTitle = "Category",
+    mainCategoryChooserExpandedIconDesc = "Select category",
+    subCategoryChooserTitle = "Subcategory",
+    categoryNotSelectedTitle = "Отсутвует",
+    subCategoryDialogAddTitle = "Add",
+    subCategoryDialogMainCategoryFormat = "Category: %s",
+    timeFieldStartLabel = "Start",
+    timeFieldEndLabel = "End",
+    parameterChooserSwitchIconDesc = "Set parameter",
+    timePickerHeader = "Enter time",
+    timePickerSeparator = ":",
+    notifyParameterTitle = "Notifications",
+    notifyParameterDesc = "Send a notification when completing a task",
+    statisticsParameterTitle = "Statistics",
+    statisticsParameterDesc = "Take into account data in statistics",
+    saveTaskButtonTitle = "Save",
+    cancelButtonTitle = "Cancel",
+    templateIconDesc = "Add to Templates",
+    topAppBarDeleteTitle = "Delete",
+    categoryValidateError = "* Select a category",
+    otherError = "Error! Contact the developer.",
+    startOverlayError = "Conflict! Task start overlay.",
+    endOverlayError = "Conflict! Task end overlay.",
+    fullOverlayError = "Conflict! Overlapping tasks.",
+    correctOverlayTitle = "Fix",
+    durationPickerTitle = "Duration",
+    templatesSheetTitle = "Templates",
+    controlTitle = "Manage",
+    applyTitle = "Apply",
+    timeRangeFormat = "Time: from %S to %s",
+    durationFormat = "Duration: %s",
+    notificationEnabledTitle = "Notification: enabled",
+    notificationDisabledTitle = "Notification: disabled",
+    emptyTemplatesTitle = "List is empty",
+)
+
+internal val LocalEditorStrings = staticCompositionLocalOf<EditorStrings> {
+    error("Home Strings is not provided")
+}
+
+internal fun fetchEditorStrings(language: TimePlannerLanguage) = when (language) {
+    TimePlannerLanguage.EN -> englishHomeString
+    TimePlannerLanguage.RU -> russianHomeString
+}

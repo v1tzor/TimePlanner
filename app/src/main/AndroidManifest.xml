@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
+
+    <application
+        android:name=".application.TimePlannerApp"
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_planner_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_planner_launcher_round"
+        android:supportsRtl="false"
+        android:theme="@style/Theme.TimePlanner"
+        tools:targetApi="31">
+
+        <activity
+            android:name=".presentation.ui.main.MainActivity"
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:theme="@style/Theme.TimePlanner">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <receiver
+            android:name=".presentation.receiver.TimeTaskAlarmReceiver"
+            android:enabled="true"
+            android:exported="true">
+
+            <intent-filter>
+                <action android:name="ru.aleshin.ALARM_NOTIFICATION_ACTION"/>
+            </intent-filter>
+        </receiver>
+
+    </application>
+
+</manifest>
