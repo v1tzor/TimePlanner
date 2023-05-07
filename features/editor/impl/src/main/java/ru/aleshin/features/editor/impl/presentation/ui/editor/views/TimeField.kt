@@ -15,25 +15,19 @@
  */
 package ru.aleshin.features.editor.impl.presentation.ui.editor.views
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ru.aleshin.core.ui.theme.TimePlannerRes
-import ru.aleshin.core.ui.theme.TimePlannerTheme
-import ru.aleshin.core.ui.theme.material.ThemeColorsUiType
 import ru.aleshin.core.ui.views.TimePickerDialog
-import ru.aleshin.features.editor.impl.presentation.theme.EditorTheme
 import ru.aleshin.features.editor.impl.presentation.theme.EditorThemeRes
 import java.text.SimpleDateFormat
 import java.util.*
@@ -134,6 +128,7 @@ internal fun EndTimeField(
     onChangeTime = onChangeTime,
 )
 
+/* ----------------------- Release Preview -----------------------
 @Composable
 @Preview(showBackground = true)
 private fun StartTimeField_Preview() {
@@ -202,3 +197,4 @@ private fun TimePickerDialog_Light_Preview() {
         }
     }
 }
+*/

@@ -30,14 +30,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ru.aleshin.core.ui.theme.TimePlannerRes
-import ru.aleshin.core.ui.theme.TimePlannerTheme
-import ru.aleshin.core.ui.theme.material.ThemeColorsUiType
 import ru.aleshin.core.utils.extensions.mapToDate
 import ru.aleshin.core.utils.extensions.startThisDay
-import ru.aleshin.features.home.impl.presentation.theme.HomeTheme
 import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
 import java.util.*
 
@@ -160,6 +156,7 @@ fun HomeDatePicker(
     }
 }
 
+/* ----------------------- Release Preview -----------------------
 @Composable
 @Preview(showBackground = true)
 internal fun DateChooser_Preview() {
@@ -174,4 +171,4 @@ internal fun DateChooser_Preview() {
             )
         }
     }
-}
+}*/

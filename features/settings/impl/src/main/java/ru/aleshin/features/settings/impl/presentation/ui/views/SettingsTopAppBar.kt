@@ -20,14 +20,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
-import ru.aleshin.core.ui.theme.TimePlannerTheme
-import ru.aleshin.core.ui.theme.material.ThemeColorsUiType
-import ru.aleshin.core.ui.theme.tokens.LanguageUiType
 import ru.aleshin.core.ui.views.*
-import ru.aleshin.features.settings.impl.presentation.theme.SettingsTheme
 import ru.aleshin.features.settings.impl.presentation.theme.SettingsThemeRes
 
 /**
@@ -75,6 +69,7 @@ internal enum class SettingsMoreActions : TopAppBarAction {
     },
 }
 
+/* ----------------------- Release Preview -----------------------
 @Preview
 @Composable
 internal fun SettingsTopAppBar_Light_Preview() {
@@ -120,3 +115,4 @@ internal fun SettingsTopAppBar_Dark_Preview() {
         }
     }
 }
+*/

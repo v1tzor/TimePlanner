@@ -21,15 +21,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
-import ru.aleshin.core.ui.theme.TimePlannerTheme
 import ru.aleshin.core.utils.functional.Constants
 import ru.aleshin.timeplanner.presentation.theme.MainThemeRes
 
@@ -61,10 +57,11 @@ fun SplashContent(
     }
 }
 
+/* ----------------------- Release Preview -----------------------
 @Composable
 @Preview(showBackground = true, showSystemUi = true)
 fun SplashContent_Preview() {
     TimePlannerTheme {
         SplashContent(onSplashExit = {})
     }
-}
+}*/

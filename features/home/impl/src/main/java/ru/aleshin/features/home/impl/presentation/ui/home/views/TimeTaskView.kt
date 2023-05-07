@@ -31,16 +31,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ru.aleshin.core.ui.theme.TimePlannerRes
-import ru.aleshin.core.ui.theme.TimePlannerTheme
-import ru.aleshin.core.ui.theme.material.ThemeColorsUiType
-import ru.aleshin.core.ui.theme.tokens.LanguageUiType
 import ru.aleshin.core.ui.views.CategoryIconMonogram
 import ru.aleshin.core.ui.views.CategoryTextMonogram
 import ru.aleshin.core.ui.views.ExpandedIcon
-import ru.aleshin.features.home.impl.presentation.theme.HomeTheme
 import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
 
 /**
@@ -339,6 +334,7 @@ private fun TimeTaskDurationTitle(
     style = MaterialTheme.typography.bodyLarge,
 )
 
+/* ----------------------- Release Preview -----------------------
 @Preview
 @Composable
 private fun PlannedTimeTaskView_Preview() {
@@ -404,3 +400,4 @@ private fun CompletedTimeTaskView_Preview() {
         }
     }
 }
+*/

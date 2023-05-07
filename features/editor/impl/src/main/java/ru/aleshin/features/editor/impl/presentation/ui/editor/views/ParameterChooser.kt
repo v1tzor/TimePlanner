@@ -15,23 +15,16 @@
  */
 package ru.aleshin.features.editor.impl.presentation.ui.editor.views
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ru.aleshin.core.ui.theme.TimePlannerRes
-import ru.aleshin.core.ui.theme.TimePlannerTheme
-import ru.aleshin.core.ui.theme.material.ThemeColorsUiType
-import ru.aleshin.features.editor.impl.presentation.theme.EditorTheme
 import ru.aleshin.features.editor.impl.presentation.theme.EditorThemeRes
 
 /**
@@ -83,6 +76,7 @@ internal fun ParameterChooser(
     }
 }
 
+/* ----------------------- Release Preview -----------------------
 @Composable
 @Preview(showBackground = true)
 internal fun ParameterChooser_Preview() {
@@ -120,3 +114,4 @@ internal fun ParameterChooser_Dark_Preview() {
         }
     }
 }
+*/

@@ -16,23 +16,15 @@
 package ru.aleshin.features.home.impl.presentation.ui.categories.views
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
-import ru.aleshin.core.ui.theme.TimePlannerTheme
-import ru.aleshin.core.ui.theme.material.ThemeColorsUiType
-import ru.aleshin.core.ui.theme.tokens.LanguageUiType
 import ru.aleshin.core.ui.views.TopAppBarButton
 import ru.aleshin.core.ui.views.TopAppBarEmptyButton
 import ru.aleshin.core.ui.views.TopAppBarTitle
-import ru.aleshin.features.home.impl.presentation.theme.HomeTheme
 import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
 
 /**
@@ -68,6 +60,7 @@ internal fun CategoriesTopAppBar(
     )
 }
 
+/* ----------------------- Release Preview -----------------------
 @Preview
 @Composable
 internal fun CategoriesTopAppBar_Light_Preview() {
@@ -107,3 +100,4 @@ internal fun CategoriesTopAppBar_Dark_Preview() {
         }
     }
 }
+*/

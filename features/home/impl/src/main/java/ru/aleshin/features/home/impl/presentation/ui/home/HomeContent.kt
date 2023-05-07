@@ -17,7 +17,6 @@ package ru.aleshin.features.home.impl.presentation.ui.home
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.* // ktlint-disable no-wildcard-imports
 import androidx.compose.foundation.lazy.*
 import androidx.compose.material.icons.Icons
@@ -27,12 +26,8 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import ru.aleshin.core.ui.theme.TimePlannerTheme
-import ru.aleshin.core.ui.theme.material.ThemeColorsUiType
 import ru.aleshin.core.ui.theme.material.surfaceOne
-import ru.aleshin.core.ui.theme.tokens.LanguageUiType
 import ru.aleshin.core.utils.extensions.endThisDay
 import ru.aleshin.core.utils.extensions.isNotZeroDifference
 import ru.aleshin.core.utils.extensions.shiftDay
@@ -40,7 +35,6 @@ import ru.aleshin.core.utils.functional.Constants
 import ru.aleshin.core.utils.functional.TimeRange
 import ru.aleshin.features.home.api.domains.entities.schedules.status.TimeTaskStatus
 import ru.aleshin.features.home.impl.presentation.models.TimeTaskUi
-import ru.aleshin.features.home.impl.presentation.theme.HomeTheme
 import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
 import ru.aleshin.features.home.impl.presentation.ui.home.contract.HomeViewState
 import ru.aleshin.features.home.impl.presentation.ui.home.views.*
@@ -106,7 +100,9 @@ internal fun HomeContent(
                                 onTimeTaskEdit = onTimeTaskEdit,
                                 onTimeTaskIncrease = onTimeTaskIncrease,
                                 onTimeTaskReduce = onTimeTaskReduce,
-                                isCompactView = isCompactView && nextItem != null && timeTask.endTime.isNotZeroDifference(nextItem.startTime),
+                                isCompactView = isCompactView && nextItem != null && timeTask.endTime.isNotZeroDifference(
+                                    nextItem.startTime,
+                                ),
                             )
                             if (nextItem != null && timeTask.endTime.isNotZeroDifference(nextItem.startTime) && !isCompactView) {
                                 val timeRange = TimeRange(timeTask.endTime, nextItem.startTime)
@@ -160,7 +156,8 @@ internal fun HomeContent(
                             tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                         Text(
-                            modifier = Modifier.padding(start = 4.dp).align(Alignment.CenterVertically),
+                            modifier = Modifier.padding(start = 4.dp)
+                                .align(Alignment.CenterVertically),
                             text = HomeThemeRes.strings.createScheduleTitle,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             style = MaterialTheme.typography.bodyMedium,
@@ -229,6 +226,7 @@ internal fun LazyItemScope.TimeTaskViewItem(
                 isCompactView = isCompactView,
             )
         }
+
         TimeTaskStatus.RUNNING -> {
             RunningTimeTaskItem(
                 modifier = modifier,
@@ -239,6 +237,7 @@ internal fun LazyItemScope.TimeTaskViewItem(
                 isCompactView = isCompactView,
             )
         }
+
         TimeTaskStatus.COMPLETED -> {
             CompletedTimeTaskItem(
                 modifier = modifier,
@@ -250,6 +249,7 @@ internal fun LazyItemScope.TimeTaskViewItem(
     }
 }
 
+/* ----------------------- Release Preview -----------------------
 @Preview(showSystemUi = true, showBackground = true)
 @Composable
 private fun HomeContent_Preview() {
@@ -274,3 +274,4 @@ private fun HomeContent_Preview() {
         }
     }
 }
+*/

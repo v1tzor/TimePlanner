@@ -34,17 +34,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import ru.aleshin.core.ui.theme.TimePlannerTheme
-import ru.aleshin.core.ui.theme.material.ThemeColorsUiType
 import ru.aleshin.core.ui.views.DurationPickerDialog
 import ru.aleshin.core.ui.views.toMinutesAndHoursTitle
 import ru.aleshin.core.utils.extensions.isCurrentDay
 import ru.aleshin.core.utils.extensions.shiftMillis
-import ru.aleshin.core.utils.functional.TimeRange
-import ru.aleshin.features.editor.api.domain.EditModel
-import ru.aleshin.features.editor.impl.presentation.theme.EditorTheme
 import ru.aleshin.features.editor.impl.presentation.theme.EditorThemeRes
 import ru.aleshin.features.editor.impl.presentation.ui.editor.contract.EditorViewState
 import ru.aleshin.features.editor.impl.presentation.ui.editor.screenmodel.CategoryValidateError
@@ -270,6 +264,7 @@ internal fun TemplateSelector(
     }
 }
 
+/* ----------------------- Release Preview -----------------------
 @Composable
 @Preview(showBackground = true)
 internal fun EditContent_Light_Preview() {
@@ -323,3 +318,4 @@ internal fun EditContent_Dark_Preview() {
         }
     }
 }
+*/

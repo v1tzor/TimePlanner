@@ -33,16 +33,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ru.aleshin.core.ui.theme.TimePlannerRes
-import ru.aleshin.core.ui.theme.TimePlannerTheme
-import ru.aleshin.core.ui.theme.material.ThemeColorsUiType
-import ru.aleshin.core.ui.theme.tokens.LanguageUiType
 import ru.aleshin.core.ui.views.CategoryIconMonogram
 import ru.aleshin.core.ui.views.CategoryTextMonogram
 import ru.aleshin.core.ui.views.DialogButtons
-import ru.aleshin.features.editor.impl.presentation.theme.EditorTheme
 import ru.aleshin.features.editor.impl.presentation.theme.EditorThemeRes
 import ru.aleshin.features.home.api.domains.common.MainIcon
 import ru.aleshin.features.home.api.domains.entities.categories.MainCategory
@@ -90,7 +85,8 @@ internal fun MainCategoryChooser(
             } else {
                 CategoryIconMonogram(
                     icon = currentCategory?.icon?.toIconPainter() ?: MainIcon.EMPTY.toIconPainter(),
-                    iconDescription = currentCategory?.icon?.toDescription() ?: MainIcon.EMPTY.toDescription(),
+                    iconDescription = currentCategory?.icon?.toDescription()
+                        ?: MainIcon.EMPTY.toDescription(),
                     iconColor = MaterialTheme.colorScheme.primary,
                     backgroundColor = MaterialTheme.colorScheme.primaryContainer,
                 )
@@ -222,6 +218,7 @@ internal fun MainCategoryDialogItem(
     }
 }
 
+/* ----------------------- Release Preview -----------------------
 @Composable
 @Preview(showBackground = true)
 private fun MainCategoryChooser_Preview() {
@@ -278,3 +275,4 @@ private fun MainCategoryDialogChooser_Preview() {
         }
     }
 }
+*/

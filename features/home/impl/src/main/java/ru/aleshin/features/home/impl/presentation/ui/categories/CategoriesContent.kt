@@ -25,14 +25,9 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import ru.aleshin.core.ui.theme.TimePlannerTheme
-import ru.aleshin.core.ui.theme.material.ThemeColorsUiType
-import ru.aleshin.core.ui.theme.tokens.LanguageUiType
 import ru.aleshin.features.home.api.domains.entities.categories.MainCategory
 import ru.aleshin.features.home.api.domains.entities.categories.SubCategory
-import ru.aleshin.features.home.impl.presentation.theme.HomeTheme
 import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
 import ru.aleshin.features.home.impl.presentation.ui.categories.contract.CategoriesViewState
 import ru.aleshin.features.home.impl.presentation.ui.categories.views.MainCategoriesHorizontalList
@@ -133,6 +128,7 @@ internal fun SubCategoriesHeader(modifier: Modifier = Modifier) {
     }
 }
 
+/* ----------------------- Release Preview -----------------------
 @Composable
 @Preview(showBackground = true, showSystemUi = true)
 private fun CategoriesContent_Preview() {
@@ -154,3 +150,4 @@ private fun CategoriesContent_Preview() {
         }
     }
 }
+*/

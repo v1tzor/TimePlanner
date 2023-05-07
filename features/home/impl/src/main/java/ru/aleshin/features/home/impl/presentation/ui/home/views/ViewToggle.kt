@@ -23,11 +23,8 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ru.aleshin.core.ui.theme.TimePlannerRes
-import ru.aleshin.core.ui.theme.TimePlannerTheme
-import ru.aleshin.core.ui.theme.material.ThemeColorsUiType
 
 /**
  * @author Stanislav Aleshin on 08.04.2023.
@@ -81,6 +78,7 @@ internal enum class ViewToggleStatus {
     EXPANDED, COMPACT
 }
 
+/* ----------------------- Release Preview -----------------------
 @Composable
 @Preview(showBackground = true)
 private fun ViewToggle_Preview() {
@@ -94,3 +92,4 @@ private fun ViewToggle_Preview() {
         }
     }
 }
+*/
