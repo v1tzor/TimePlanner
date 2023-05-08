@@ -78,6 +78,5 @@ internal interface TemplatesWorkProcessor : WorkProcessor<TemplatesWorkCommand, 
 
 internal sealed class TemplatesWorkCommand : WorkCommand {
     data class LoadTemplates(val sortedType: TemplatesSortedType) : TemplatesWorkCommand()
-    data class DeleteTemplate(val id: Int, val sortedType: TemplatesSortedType) :
-        TemplatesWorkCommand()
+    data class DeleteTemplate(val id: Int, val sortedType: TemplatesSortedType) : TemplatesWorkCommand()
 }

@@ -15,7 +15,6 @@
  */
 package ru.aleshin.features.home.impl.presentation.ui.nav
 
-import android.util.Log
 import androidx.compose.material3.DrawerValue
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
@@ -56,7 +55,6 @@ internal class NavScreen @Inject constructor() : Screen {
         ) { navigator ->
             val screenIndex = fetchFeatureScreenIndex(navigator.lastItem)
             drawerManager?.selectedItem?.tryEmit(screenIndex)
-            Log.d("test", "items -> ${navigator.items}")
             CurrentScreen()
         }
     }
