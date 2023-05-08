@@ -28,10 +28,10 @@ import ru.aleshin.core.ui.theme.TimePlannerRes
 @Composable
 fun <Item : BottomBarItem> BottomNavigationBar(
     modifier: Modifier,
-    items: Array<Item>,
     selectedItem: Item,
-    onItemSelected: (Item) -> Unit,
+    items: Array<Item>,
     showLabel: Boolean,
+    onItemSelected: (Item) -> Unit,
 ) {
     NavigationBar(
         modifier = modifier,
@@ -50,14 +50,12 @@ fun <Item : BottomBarItem> BottomNavigationBar(
                         description = item.label,
                     )
                 },
-                label = if (showLabel) {
-                    {
-                        BottomBarLabel(
-                            selected = selectedItem == item,
-                            title = item.label,
-                        )
-                    }
-                } else {
+                label = if (showLabel) { {
+                    BottomBarLabel(
+                        selected = selectedItem == item,
+                        title = item.label,
+                    )
+                } } else {
                     null
                 },
                 colors = NavigationBarItemDefaults.colors(
@@ -75,15 +73,13 @@ fun BottomBarIcon(
     disabledIcon: Painter,
     description: String,
 ) {
-    val icon = if (selected) enabledIcon else disabledIcon
-    val tint = when (selected) {
-        true -> MaterialTheme.colorScheme.onSecondaryContainer
-        false -> MaterialTheme.colorScheme.onSurfaceVariant
-    }
     Icon(
-        painter = icon,
+        painter = if (selected) enabledIcon else disabledIcon,
         contentDescription = description,
-        tint = tint,
+        tint = when (selected) {
+            true -> MaterialTheme.colorScheme.onSecondaryContainer
+            false -> MaterialTheme.colorScheme.onSurfaceVariant
+        },
     )
 }
 
@@ -92,13 +88,12 @@ fun BottomBarLabel(
     selected: Boolean,
     title: String,
 ) {
-    val color = when (selected) {
-        true -> MaterialTheme.colorScheme.onSurface
-        false -> MaterialTheme.colorScheme.onSurfaceVariant
-    }
     Text(
         text = title,
-        color = color,
+        color = when (selected) {
+            true -> MaterialTheme.colorScheme.onSurface
+            false -> MaterialTheme.colorScheme.onSurfaceVariant
+        },
         style = MaterialTheme.typography.labelMedium,
     )
 }

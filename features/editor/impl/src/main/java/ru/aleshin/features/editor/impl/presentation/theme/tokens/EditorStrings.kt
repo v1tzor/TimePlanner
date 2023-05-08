@@ -46,7 +46,7 @@ internal data class EditorStrings(
     val subCategoryChooserTitle: String,
     val mainCategoryChooserExpandedIconDesc: String,
     val categoryNotSelectedTitle: String,
-    val subCategoryDialogAddTitle: String,
+    val subCategoryDialogManageTitle: String,
     val subCategoryDialogMainCategoryFormat: String,
     val timeFieldStartLabel: String,
     val timeFieldEndLabel: String,
@@ -76,6 +76,11 @@ internal data class EditorStrings(
     val notificationEnabledTitle: String,
     val notificationDisabledTitle: String,
     val emptyTemplatesTitle: String,
+    val saveTemplateWarningTitle: String,
+    val saveTemplateWarningConfirm: String,
+    val saveTemplateWarningUnsave: String,
+    val categoriesManageWarningTitle: String,
+    val confirmNavigateTitle: String,
 )
 
 internal val russianHomeString = EditorStrings(
@@ -103,7 +108,7 @@ internal val russianHomeString = EditorStrings(
     subCategoryChooserTitle = "Подкатегория",
     mainCategoryChooserExpandedIconDesc = "Выбрать категорию",
     categoryNotSelectedTitle = "Отсутвует",
-    subCategoryDialogAddTitle = "Добавить",
+    subCategoryDialogManageTitle = "Управлять",
     subCategoryDialogMainCategoryFormat = "Категория: %s",
     timeFieldStartLabel = "Старт",
     timeFieldEndLabel = "Конец",
@@ -133,6 +138,12 @@ internal val russianHomeString = EditorStrings(
     notificationEnabledTitle = "Уведомления: включены",
     notificationDisabledTitle = "Уведомления: выключены",
     emptyTemplatesTitle = "Список пуст",
+    saveTemplateWarningTitle = "Вы хотите применить изменения к текущему шаблону?",
+    saveTemplateWarningConfirm = "Да",
+    saveTemplateWarningUnsave = "Нет",
+    categoriesManageWarningTitle = "Вы уверены что хотите перейти на экран управления категориями? " +
+        "Текущие параметры останутся несохранёнными.",
+    confirmNavigateTitle = "Перейти",
 )
 
 internal val englishHomeString = EditorStrings(
@@ -159,8 +170,8 @@ internal val englishHomeString = EditorStrings(
     mainCategoryChooserTitle = "Category",
     mainCategoryChooserExpandedIconDesc = "Select category",
     subCategoryChooserTitle = "Subcategory",
-    categoryNotSelectedTitle = "Отсутвует",
-    subCategoryDialogAddTitle = "Add",
+    categoryNotSelectedTitle = "Absent",
+    subCategoryDialogManageTitle = "Manage",
     subCategoryDialogMainCategoryFormat = "Category: %s",
     timeFieldStartLabel = "Start",
     timeFieldEndLabel = "End",
@@ -190,6 +201,12 @@ internal val englishHomeString = EditorStrings(
     notificationEnabledTitle = "Notification: enabled",
     notificationDisabledTitle = "Notification: disabled",
     emptyTemplatesTitle = "List is empty",
+    saveTemplateWarningTitle = "Do you want to apply the changes to the current template?",
+    saveTemplateWarningConfirm = "Yes",
+    saveTemplateWarningUnsave = "No",
+    categoriesManageWarningTitle = "Are you sure you want to go to the category management screen? " +
+        "The current parameters will remain unsaved",
+    confirmNavigateTitle = "Go",
 )
 
 internal val LocalEditorStrings = staticCompositionLocalOf<EditorStrings> {

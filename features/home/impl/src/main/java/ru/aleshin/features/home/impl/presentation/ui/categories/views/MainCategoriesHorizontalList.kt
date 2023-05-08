@@ -29,7 +29,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -159,20 +158,21 @@ internal fun MainCategoryItem(
                 }
             }
         }
-    }
-    Box(Modifier.fillMaxSize().wrapContentSize(Alignment.BottomEnd)) {
-        MainCategoriesOptionMenu(
-            isExpanded = isExpanded,
-            onUpdateClick = {
-                isCreatorDialogOpen = true
-                isExpanded = false
-            },
-            onDeleteClick = {
-                isExpanded = false
-                isWarningDeleteDialogOpen = true
-            },
-            onDismiss = { isExpanded = false },
-        )
+        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.TopEnd) {
+            MainCategoriesOptionMenu(
+                modifier = Modifier.width(250.dp),
+                isExpanded = isExpanded,
+                onUpdateClick = {
+                    isCreatorDialogOpen = true
+                    isExpanded = false
+                },
+                onDeleteClick = {
+                    isExpanded = false
+                    isWarningDeleteDialogOpen = true
+                },
+                onDismiss = { isExpanded = false },
+            )
+        }
     }
     if (isCreatorDialogOpen) {
         MainCategoryCreatorDialog(
@@ -228,48 +228,46 @@ internal fun MainCategoriesOptionMenu(
     onDeleteClick: () -> Unit,
     onDismiss: () -> Unit,
 ) {
-    if (isExpanded) {
-        DropdownMenu(
-            expanded = isExpanded,
-            onDismissRequest = onDismiss,
-            modifier = modifier,
-            offset = DpOffset(0.dp, 2.dp),
-        ) {
-            DropdownMenuItem(
-                onClick = onUpdateClick,
-                text = {
-                    Text(
-                        text = HomeThemeRes.strings.updateCategoryTitle,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        style = MaterialTheme.typography.titleMedium,
-                    )
-                },
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Default.Edit,
-                        contentDescription = HomeThemeRes.strings.updateCategoryTitle,
-                        tint = MaterialTheme.colorScheme.onSurface,
-                    )
-                },
-            )
-            DropdownMenuItem(
-                onClick = onDeleteClick,
-                text = {
-                    Text(
-                        text = HomeThemeRes.strings.deleteCategoryTitle,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        style = MaterialTheme.typography.titleMedium,
-                    )
-                },
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Default.Delete,
-                        contentDescription = HomeThemeRes.strings.deleteCategoryTitle,
-                        tint = MaterialTheme.colorScheme.onSurface,
-                    )
-                },
-            )
-        }
+    DropdownMenu(
+        expanded = isExpanded,
+        onDismissRequest = onDismiss,
+        modifier = modifier,
+        offset = DpOffset(0.dp, 4.dp),
+    ) {
+        DropdownMenuItem(
+            onClick = onUpdateClick,
+            text = {
+                Text(
+                    text = HomeThemeRes.strings.updateCategoryTitle,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    style = MaterialTheme.typography.titleMedium,
+                )
+            },
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Default.Edit,
+                    contentDescription = HomeThemeRes.strings.updateCategoryTitle,
+                    tint = MaterialTheme.colorScheme.onSurface,
+                )
+            },
+        )
+        DropdownMenuItem(
+            onClick = onDeleteClick,
+            text = {
+                Text(
+                    text = HomeThemeRes.strings.deleteCategoryTitle,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    style = MaterialTheme.typography.titleMedium,
+                )
+            },
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = HomeThemeRes.strings.deleteCategoryTitle,
+                    tint = MaterialTheme.colorScheme.onSurface,
+                )
+            },
+        )
     }
 }
 

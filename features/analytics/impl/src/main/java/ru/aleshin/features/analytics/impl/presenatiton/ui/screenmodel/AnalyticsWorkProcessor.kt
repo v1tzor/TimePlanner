@@ -44,7 +44,7 @@ internal interface AnalyticsWorkProcessor : FlowWorkProcessor<AnalyticsWorkComma
 
         private fun loadAnalyticsWork(period: TimePeriod) = flow {
             emit(ActionResult(AnalyticsAction.RefreshAnalytics))
-            delay(Constants.Delay.STANDARD)
+            delay(Constants.Delay.LOAD_ANIMATION)
             val result = when (val analytics = analyticsInteractor.fetchAnalytics(period)) {
                 is Either.Right -> ActionResult(AnalyticsAction.LoadScheduleAnalytics(analytics.data))
                 is Either.Left -> EffectResult(AnalyticsEffect.ShowFailure(analytics.data))

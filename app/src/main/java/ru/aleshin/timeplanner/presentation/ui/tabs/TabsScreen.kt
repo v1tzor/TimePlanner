@@ -11,8 +11,8 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License.
-*/
+ * imitations under the License.
+ */
 package ru.aleshin.timeplanner.presentation.ui.tabs
 
 import androidx.compose.foundation.layout.Box
@@ -54,6 +54,7 @@ class TabsScreen : Screen {
             HomeNavigationDrawer(
                 drawerState = drawerState,
                 drawerManager = drawerManager,
+                isAlwaysSelected = state.bottomBarItem != TabsBottomBarItems.HOME,
                 onItemSelected = { item ->
                     val event = when (item) {
                         HomeDrawerItems.MAIN -> TabsEvent.SelectedMainScreen

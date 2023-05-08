@@ -11,8 +11,8 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License.
-*/
+ * imitations under the License.
+ */
 package ru.aleshin.timeplanner.presentation.ui.tabs.views
 
 import androidx.compose.foundation.layout.width
@@ -22,8 +22,11 @@ import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.launch
 import ru.aleshin.core.ui.theme.TimePlannerRes
 import ru.aleshin.core.ui.views.DrawerItems
 import ru.aleshin.core.ui.views.DrawerSectionHeader
@@ -38,10 +41,13 @@ import ru.aleshin.core.utils.managers.LocalDrawerManager
 fun HomeNavigationDrawer(
     drawerState: DrawerState,
     drawerManager: DrawerManager,
+    isAlwaysSelected: Boolean,
     onItemSelected: (HomeDrawerItems) -> Unit,
     content: @Composable () -> Unit,
 ) {
-    val selectedItem = drawerManager.selectedItem.collectAsState(0)
+    val selectedItem by drawerManager.selectedItem.collectAsState(0)
+    val scope = rememberCoroutineScope()
+
     ModalNavigationDrawer(
         drawerState = drawerState,
         gesturesEnabled = drawerState.isOpen,
@@ -50,10 +56,13 @@ fun HomeNavigationDrawer(
                 DrawerSectionHeader(header = TimePlannerRes.strings.drawerMainSection)
                 DrawerItems(
                     modifier = Modifier.width(300.dp),
-                    drawerState = drawerState,
+                    selectedItemIndex = selectedItem,
                     items = HomeDrawerItems.values(),
-                    selectedItemIndex = selectedItem.value,
-                    onItemSelected = onItemSelected,
+                    isAlwaysSelected = isAlwaysSelected,
+                    onItemSelected = { item ->
+                        onItemSelected(item)
+                        scope.launch { drawerState.close() }
+                    },
                 )
             }
         },

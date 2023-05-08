@@ -11,8 +11,8 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License.
-*/
+ * imitations under the License.
+ */
 package ru.aleshin.core.utils.managers
 
 import ru.aleshin.core.utils.functional.TimeRange
@@ -43,7 +43,7 @@ interface TimeOverlayManager {
                         startError = true
                     }
                 }
-                if (newRange.from > current.from && (rightBorder == null || newRange.from > rightBorder)) {
+                if (newRange.from >= current.from && (rightBorder == null || newRange.from > rightBorder)) {
                     if (newRange.from < current.to) {
                         rightBorder = newRange.from
                         endError = true

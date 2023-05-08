@@ -17,8 +17,6 @@ package ru.aleshin.features.home.impl.presentation.ui.categories
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -65,6 +63,7 @@ internal class CategoriesScreen : Screen {
                     state = state,
                     modifier = Modifier.padding(paddingValues),
                     onAddMainCategory = { dispatchEvent(CategoriesEvent.AddMainCategory(it)) },
+                    onAddSubCategory = { isShowSubCategoryDialog = true },
                     onChangeMainCategory = { dispatchEvent(CategoriesEvent.ChangeMainCategory(it)) },
                     onMainCategoryUpdate = { dispatchEvent(CategoriesEvent.UpdateMainCategory(it)) },
                     onSubCategoryUpdate = { dispatchEvent(CategoriesEvent.UpdateSubCategory(it)) },
@@ -74,14 +73,6 @@ internal class CategoriesScreen : Screen {
             },
             topBar = {
                 CategoriesTopAppBar(onMenuIconClick = { scope.launch { drawerManager?.openDrawer() } })
-            },
-            floatingActionButton = {
-                FloatingActionButton(onClick = { isShowSubCategoryDialog = true }) {
-                    Icon(
-                        imageVector = Icons.Default.Add,
-                        contentDescription = HomeThemeRes.strings.addSubCategoryTitle,
-                    )
-                }
             },
             snackbarHost = {
                 SnackbarHost(hostState = snackbarState)

@@ -49,7 +49,7 @@ internal interface EditorWorkProcessor :
         override suspend fun work(command: EditorWorkCommand) = when (command) {
             is EditorWorkCommand.GoBack -> navigateToBack()
             is EditorWorkCommand.GoTemplates -> navigateToTemplates()
-            is EditorWorkCommand.GoSubCategories -> navigateToCategories()
+            is EditorWorkCommand.ManageCategories -> navigateToCategories()
             is EditorWorkCommand.LoadSendEditModel -> loadSendModel()
             is EditorWorkCommand.ChangeIsTemplate -> changeIsTemplate(command.editModel)
             is EditorWorkCommand.ChangeTimeRange -> changeTimeRange(command.timeRange)
@@ -114,7 +114,7 @@ internal interface EditorWorkProcessor :
 
 internal sealed class EditorWorkCommand : WorkCommand {
     object GoBack : EditorWorkCommand()
-    object GoSubCategories : EditorWorkCommand()
+    object ManageCategories : EditorWorkCommand()
     object GoTemplates : EditorWorkCommand()
     object LoadSendEditModel : EditorWorkCommand()
     data class ChangeIsTemplate(val editModel: EditModel) : EditorWorkCommand()

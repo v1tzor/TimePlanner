@@ -22,7 +22,7 @@ import ru.aleshin.features.settings.api.data.models.ThemeSettingsEntity
 /**
  * @author Stanislav Aleshin on 17.02.2023.
  */
-@Database(entities = [ThemeSettingsEntity::class], version = 1)
+@Database(entities = [ThemeSettingsEntity::class], version = 1, exportSchema = false)
 abstract class SettingsDataBase : RoomDatabase() {
 
     abstract fun fetchThemeSettingsDao(): ThemeSettingsDao

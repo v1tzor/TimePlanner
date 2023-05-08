@@ -68,12 +68,12 @@ internal fun EditorTopAppBar(
 internal enum class EditorTopAppBarActions : TopAppBarAction {
     TEMPLATES {
         override val title: String @Composable get() = EditorThemeRes.strings.topAppBarTemplatesTitle
-        override val icon: Int? @Composable get() = null
+        override val icon: Int @Composable get() = EditorThemeRes.icons.templates
         override val isAlwaysShow: Boolean = false
     },
     DELETE {
         override val title: String @Composable get() = EditorThemeRes.strings.topAppBarDeleteTitle
-        override val icon: Int? @Composable get() = null
+        override val icon: Int @Composable get() = EditorThemeRes.icons.delete
         override val isAlwaysShow: Boolean = false
     },
 }

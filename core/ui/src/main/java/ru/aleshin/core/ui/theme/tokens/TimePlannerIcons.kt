@@ -11,8 +11,8 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License.
-*/
+ * imitations under the License.
+ */
 package ru.aleshin.core.ui.theme.tokens
 
 import androidx.compose.runtime.staticCompositionLocalOf
@@ -49,6 +49,7 @@ data class TimePlannerIcons(
     val enabledAnalyticsIcon: Int,
     val disabledAnalyticsIcon: Int,
     val categoryHygiene: Int,
+    val time: Int,
 )
 
 internal val baseTimePlannerIcons = TimePlannerIcons(
@@ -79,6 +80,7 @@ internal val baseTimePlannerIcons = TimePlannerIcons(
     enabledAnalyticsIcon = R.drawable.ic_analytics,
     disabledAnalyticsIcon = R.drawable.ic_analytics_outline,
     categoryHygiene = R.drawable.ic_face_retouching,
+    time = R.drawable.ic_time,
 )
 
 val LocalTimePlannerIcons = staticCompositionLocalOf<TimePlannerIcons> {

@@ -11,8 +11,8 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License.
-*/
+ * imitations under the License.
+ */
 package ru.aleshin.core.ui.theme.material
 
 import androidx.compose.ui.graphics.Color
@@ -49,7 +49,7 @@ val md_theme_light_error = Color(0xFFBA1A1A)
 val md_theme_light_onError = Color(0xFFFFFFFF)
 val md_theme_light_errorContainer = Color(0xFFFFDAD5)
 val md_theme_light_onErrorContainer = Color(0xFF410002)
-val md_theme_light_outline = Color(0xFF7F747C)
+val md_theme_light_outline = Color(0xFF847376)
 val md_theme_light_background = Color(0xFFFFFBFF)
 val md_theme_light_onBackground = Color(0xFF201A1B)
 val md_theme_light_surface = Color(0xFFFCFCFC)
@@ -95,9 +95,9 @@ val md_theme_dark_tertiaryFixed = Color(0xFFB8EAFF)
 val md_theme_dark_onTertiaryFixed = Color(0xFF001F28)
 val md_theme_dark_tertiaryFixedDim = Color(0xFF5DD4FC)
 val md_theme_dark_onTertiaryFixedVariant = Color(0xFF004D61)
-val md_theme_dark_error = Color(0xFFFFB4AB)
-val md_theme_dark_onError = Color(0xFF690004)
-val md_theme_dark_errorContainer = Color(0xFF930009)
+val md_theme_dark_error = Color(0xFFE07165)
+val md_theme_dark_onError = Color(0xFF520306)
+val md_theme_dark_errorContainer = Color(0xFF8A050C)
 val md_theme_dark_onErrorContainer = Color(0xFFFFDAD5)
 val md_theme_dark_outline = Color(0xFF998D96)
 val md_theme_dark_background = Color(0xFF201A1B)

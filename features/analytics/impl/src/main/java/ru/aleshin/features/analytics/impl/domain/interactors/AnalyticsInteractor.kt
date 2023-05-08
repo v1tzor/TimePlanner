@@ -47,10 +47,10 @@ internal interface AnalyticsInteractor {
     suspend fun fetchAnalytics(period: TimePeriod): DomainResult<AnalyticsFailure, ScheduleAnalytics>
 
     class Base @Inject constructor(
-        private val eitherWrapper: AnalyticsEitherWrapper,
         private val scheduleRepository: ScheduleRepository,
         private val categoriesRepository: CategoriesRepository,
         private val dateManager: DateManager,
+        private val eitherWrapper: AnalyticsEitherWrapper,
     ) : AnalyticsInteractor {
 
         override suspend fun fetchAnalytics(period: TimePeriod) = eitherWrapper.wrap {
@@ -69,12 +69,12 @@ internal interface AnalyticsInteractor {
             }
 
             val periodCount = when (period) {
-                TimePeriod.WEEK -> 1
+                TimePeriod.WEEK -> Constants.Date.DAY
                 TimePeriod.MONTH -> Constants.Date.DAYS_IN_WEEK
                 TimePeriod.YEAR -> Constants.Date.DAYS_IN_MONTH
             }
             val periodValue = when (period) {
-                TimePeriod.WEEK -> 7
+                TimePeriod.WEEK -> Constants.Date.DAYS_IN_WEEK
                 TimePeriod.MONTH -> countWeeksByDays(shiftAmount)
                 TimePeriod.YEAR -> countMonthByDays(shiftAmount)
             }
@@ -117,13 +117,12 @@ internal interface AnalyticsInteractor {
             timeTasks: List<TimeTask>,
         ) = mutableListOf<CategoryAnalytic>().let { analytics ->
             categories.onEach { categories ->
-                val subCategories = categories.subCategories
+                val subCategories = categories.subCategories.toMutableList().apply {
+                    add(SubCategory.absentSubCategory(categories.mainCategory))
+                }
                 val categoriesAnalytic = CategoryAnalytic(
                     mainCategory = categories.mainCategory,
-                    subCategoriesInfo = when (subCategories.isEmpty()) {
-                        true -> listOf(SubCategoryAnalytic(SubCategory.absentSubCategory(categories.mainCategory)))
-                        false -> subCategories.map { SubCategoryAnalytic(subCategory = it) }
-                    },
+                    subCategoriesInfo = subCategories.map { SubCategoryAnalytic(subCategory = it) },
                 )
                 analytics.add(categoriesAnalytic)
             }

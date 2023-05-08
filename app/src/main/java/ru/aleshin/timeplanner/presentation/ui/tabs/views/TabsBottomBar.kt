@@ -34,8 +34,8 @@ fun TabsBottomNavigationBar(
 ) {
     BottomNavigationBar(
         modifier = modifier.height(80.dp),
-        items = TabsBottomBarItems.values(),
         selectedItem = selectedItem,
+        items = TabsBottomBarItems.values(),
         showLabel = true,
         onItemSelected = onItemSelected,
     )

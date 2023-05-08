@@ -22,7 +22,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Create
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -51,7 +51,7 @@ internal fun SubCategoryChooser(
     allSubCategories: List<SubCategory>,
     currentSubCategory: SubCategory?,
     onSubCategoryChoose: (SubCategory?) -> Unit,
-    onAddSubCategory: () -> Unit,
+    onManageCategories: () -> Unit,
 ) {
     val openDialog = rememberSaveable { mutableStateOf(false) }
     Surface(
@@ -101,8 +101,8 @@ internal fun SubCategoryChooser(
             mainCategory = mainCategory,
             allSubCategories = allSubCategories,
             onCloseDialog = { openDialog.value = false },
-            onAddSubCategory = {
-                onAddSubCategory()
+            onManageCategories = {
+                onManageCategories()
                 openDialog.value = false
             },
             onChooseSubCategory = {
@@ -122,7 +122,7 @@ internal fun SubCategoryDialogChooser(
     allSubCategories: List<SubCategory>,
     onCloseDialog: () -> Unit,
     onChooseSubCategory: (SubCategory?) -> Unit,
-    onAddSubCategory: () -> Unit,
+    onManageCategories: () -> Unit,
 ) {
     val initItem = initCategory?.let { allSubCategories.find { it.id == initCategory.id } }
     val initPosition = initItem?.let { allSubCategories.indexOf(it) } ?: 0
@@ -152,7 +152,8 @@ internal fun SubCategoryDialogChooser(
                     )
                     Text(
                         text = EditorThemeRes.strings.subCategoryDialogMainCategoryFormat.format(
-                            mainCategory?.name ?: mainCategory?.englishName ?: EditorThemeRes.strings.categoryNotSelectedTitle,
+                            mainCategory?.name ?: mainCategory?.englishName
+                                ?: EditorThemeRes.strings.categoryNotSelectedTitle,
                         ),
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         style = MaterialTheme.typography.bodyMedium,
@@ -176,9 +177,9 @@ internal fun SubCategoryDialogChooser(
                         )
                     }
                     item {
-                        AddSubCategoryDialogItem(
+                        ManageCategoriesDialogItem(
                             modifier = Modifier.fillMaxWidth(),
-                            onAddSubCategory = onAddSubCategory,
+                            onManage = onManageCategories,
                         )
                     }
                 }
@@ -239,27 +240,27 @@ internal fun SubCategoryDialogItem(
 }
 
 @Composable
-internal fun AddSubCategoryDialogItem(
+internal fun ManageCategoriesDialogItem(
     modifier: Modifier = Modifier,
-    onAddSubCategory: () -> Unit,
+    onManage: () -> Unit,
 ) {
     Column {
         Row(
             modifier = modifier
                 .padding(vertical = 8.dp, horizontal = 24.dp).height(48.dp)
                 .clip(MaterialTheme.shapes.medium)
-                .clickable(onClick = onAddSubCategory),
+                .clickable(onClick = onManage),
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Icon(
                 modifier = Modifier.size(24.dp),
-                imageVector = Icons.Default.Add,
-                contentDescription = EditorThemeRes.strings.subCategoryDialogAddTitle,
+                imageVector = Icons.Default.Create,
+                contentDescription = EditorThemeRes.strings.subCategoryDialogManageTitle,
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             Text(
-                text = EditorThemeRes.strings.subCategoryDialogAddTitle,
+                text = EditorThemeRes.strings.subCategoryDialogManageTitle,
                 color = MaterialTheme.colorScheme.onSurface,
                 style = MaterialTheme.typography.bodyLarge,
             )

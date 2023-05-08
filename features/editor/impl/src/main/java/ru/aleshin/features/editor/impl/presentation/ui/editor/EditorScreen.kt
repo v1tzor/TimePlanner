@@ -64,9 +64,9 @@ internal class EditorScreen @Inject constructor() : Screen {
                         modifier = Modifier.padding(paddingValues),
                         onCategoryChoose = { dispatchEvent(EditorEvent.ChangeCategory(it)) },
                         onSubCategoryChoose = { dispatchEvent(EditorEvent.ChangeSubCategory(it)) },
-                        onAddSubCategory = { dispatchEvent(EditorEvent.PressControlSubCategoryButton) },
+                        onManageCategories = { dispatchEvent(EditorEvent.PressManageCategoriesButton) },
                         onChangeTemplate = { dispatchEvent(EditorEvent.ChangeIsTemplate) },
-                        onSaveClick = { dispatchEvent(EditorEvent.PressSaveButton) },
+                        onSaveClick = { dispatchEvent(EditorEvent.PressSaveButton(it)) },
                         onCancelClick = { dispatchEvent(EditorEvent.PressBackButton) },
                         onTimeRangeChange = { start, end ->
                             dispatchEvent(EditorEvent.ChangeTime(TimeRange(start, end)))

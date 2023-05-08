@@ -25,7 +25,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.launch
 import ru.aleshin.core.utils.managers.DrawerItem
 
 /**
@@ -34,21 +33,17 @@ import ru.aleshin.core.utils.managers.DrawerItem
 @Composable
 fun <Item : DrawerItem> DrawerItems(
     modifier: Modifier = Modifier,
-    drawerState: DrawerState,
-    items: Array<Item>,
     selectedItemIndex: Int,
+    items: Array<Item>,
+    isAlwaysSelected: Boolean = false,
     onItemSelected: (Item) -> Unit,
 ) {
-    val scope = rememberCoroutineScope()
     items.forEachIndexed { index, item ->
         DrawerItem(
             modifier = modifier.height(54.dp).padding(end = 12.dp),
             selected = index == selectedItemIndex,
             onClick = {
-                scope.launch { drawerState.close() }
-                if (selectedItemIndex != index) {
-                    onItemSelected.invoke(item)
-                }
+                if (isAlwaysSelected || selectedItemIndex != index) onItemSelected.invoke(item)
             },
             icon = {
                 Icon(painter = painterResource(item.icon), contentDescription = null)

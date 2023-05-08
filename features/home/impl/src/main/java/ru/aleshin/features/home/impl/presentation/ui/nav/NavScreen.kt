@@ -15,6 +15,7 @@
  */
 package ru.aleshin.features.home.impl.presentation.ui.nav
 
+import android.util.Log
 import androidx.compose.material3.DrawerValue
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
@@ -28,6 +29,7 @@ import ru.aleshin.features.home.impl.di.holder.HomeComponentHolder
 import ru.aleshin.features.home.impl.presentation.theme.HomeTheme
 import ru.aleshin.features.home.impl.presentation.ui.categories.CategoriesScreen
 import ru.aleshin.features.home.impl.presentation.ui.home.HomeScreen
+import ru.aleshin.features.home.impl.presentation.ui.templates.TemplatesScreen
 import javax.inject.Inject
 
 /**
@@ -54,7 +56,7 @@ internal class NavScreen @Inject constructor() : Screen {
         ) { navigator ->
             val screenIndex = fetchFeatureScreenIndex(navigator.lastItem)
             drawerManager?.selectedItem?.tryEmit(screenIndex)
-
+            Log.d("test", "items -> ${navigator.items}")
             CurrentScreen()
         }
     }
@@ -62,6 +64,7 @@ internal class NavScreen @Inject constructor() : Screen {
 
 internal fun fetchFeatureScreenIndex(screen: Screen) = when (screen) {
     is HomeScreen -> 0
+    is TemplatesScreen -> 1
     is CategoriesScreen -> 2
     else -> 0
 }

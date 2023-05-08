@@ -38,6 +38,7 @@ import ru.aleshin.features.home.api.data.models.timetasks.TimeTaskEntity
         MainCategoryEntity::class,
         SubCategoryEntity::class,
     ],
+    exportSchema = false,
 )
 abstract class SchedulesDataBase : RoomDatabase() {
 

@@ -11,8 +11,8 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License.
-*/
+ * imitations under the License.
+ */
 package ru.aleshin.core.ui.theme.material
 
 import android.os.Build
@@ -130,4 +130,9 @@ fun ColorScheme.surfaceOne() = surfaceColorAtElevation(TimePlannerRes.elevations
 fun ColorScheme.surfaceTwo() = surfaceColorAtElevation(TimePlannerRes.elevations.levelTwo)
 
 @Composable
+fun ColorScheme.surfaceThree() = surfaceColorAtElevation(TimePlannerRes.elevations.levelThree)
+
+@Composable
 fun ColorScheme.surfaceFour() = surfaceColorAtElevation(TimePlannerRes.elevations.levelFour)
+@Composable
+fun ColorScheme.surfaceFive() = surfaceColorAtElevation(TimePlannerRes.elevations.levelFive)

@@ -11,8 +11,8 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License.
-*/
+ * imitations under the License.
+ */
 package ru.aleshin.core.ui.views
 
 import androidx.compose.foundation.layout.*
@@ -26,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
@@ -134,8 +135,17 @@ fun <T : TopAppBarAction> TopAppBarMoreActions(
                             modifier = Modifier.defaultMinSize(minWidth = 200.dp),
                             text = item.title,
                             color = MaterialTheme.colorScheme.onSurface,
-                            style = MaterialTheme.typography.bodyLarge,
+                            style = MaterialTheme.typography.titleMedium,
                         )
+                    },
+                    leadingIcon = if (item.icon != null) { {
+                        Icon(
+                            painter = painterResource(checkNotNull(item.icon)),
+                            contentDescription = item.title,
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    } } else {
+                        null
                     },
                     onClick = {
                         expanded.value = false

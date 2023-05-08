@@ -36,8 +36,7 @@ import javax.inject.Inject
 /**
  * @author Stanislav Aleshin on 08.03.2023.
  */
-internal interface TimeTaskWorkProcessor :
-    WorkProcessor<TimeTaskWorkCommand, EditorAction, EditorEffect> {
+internal interface TimeTaskWorkProcessor : WorkProcessor<TimeTaskWorkCommand, EditorAction, EditorEffect> {
 
     class Base @Inject constructor(
         private val timeTaskInteractor: TimeTaskInteractor,
@@ -50,7 +49,7 @@ internal interface TimeTaskWorkProcessor :
 
         override suspend fun work(command: TimeTaskWorkCommand) = when (command) {
             is TimeTaskWorkCommand.DeleteModel -> deleteModel(command.editModel)
-            is TimeTaskWorkCommand.AddOrSaveModel -> saveOrAddModel(command.editModel)
+            is TimeTaskWorkCommand.AddOrSaveModel -> saveOrAddModel(command.editModel, command.isTemplateUpdate)
             is TimeTaskWorkCommand.LoadTemplateTimeTasks -> loadTemplates()
         }
 
@@ -69,10 +68,13 @@ internal interface TimeTaskWorkProcessor :
             }
         }
 
-        private suspend fun saveOrAddModel(editModel: EditModel): WorkResult<EditorAction, EditorEffect> {
+        private suspend fun saveOrAddModel(
+            editModel: EditModel,
+            isTemplateUpdate: Boolean,
+        ): WorkResult<EditorAction, EditorEffect> {
             val timeTask = mapperToTimeTask.map(editModel)
             val templateId = editModel.templateId
-            if (templateId != null) {
+            if (templateId != null && isTemplateUpdate) {
                 templatesInteractor.updateTemplate(editModel.convertToTemplate(templateId))
             }
             val saveResult = if (timeTask.key != 0L) {
@@ -113,7 +115,7 @@ internal interface TimeTaskWorkProcessor :
         }
 
         private suspend fun loadTemplates(): WorkResult<EditorAction, EditorEffect> {
-            delay(Constants.Delay.STANDARD)
+            delay(Constants.Delay.LOAD_ANIMATION)
 
             return when (val templates = templatesInteractor.fetchTemplates()) {
                 is Either.Right -> ActionResult(EditorAction.UpdateTemplates(templates.data))
@@ -124,7 +126,7 @@ internal interface TimeTaskWorkProcessor :
 }
 
 internal sealed class TimeTaskWorkCommand : WorkCommand {
-    data class AddOrSaveModel(val editModel: EditModel) : TimeTaskWorkCommand()
+    data class AddOrSaveModel(val editModel: EditModel, val isTemplateUpdate: Boolean) : TimeTaskWorkCommand()
     data class DeleteModel(val editModel: EditModel) : TimeTaskWorkCommand()
     object LoadTemplateTimeTasks : TimeTaskWorkCommand()
 }

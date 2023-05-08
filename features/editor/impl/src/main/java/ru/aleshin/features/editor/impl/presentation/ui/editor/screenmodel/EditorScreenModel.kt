@@ -81,7 +81,8 @@ internal class EditorScreenModel @Inject constructor(
             val timeValidate = timeRangeValidator.validate(timeRanges)
             val categoryValidate = categoryValidator.validate(mainCategory)
             if (timeValidate.isValid && categoryValidate.isValid) {
-                timeTaskWorkProcessor.work(TimeTaskWorkCommand.AddOrSaveModel(this)).handleWork()
+                val command = TimeTaskWorkCommand.AddOrSaveModel(this, event.isTemplateUpdate)
+                timeTaskWorkProcessor.work(command).handleWork()
             } else {
                 val action = EditorAction.SetValidError(timeValidate.validError, categoryValidate.validError)
                 sendAction(action)
@@ -93,8 +94,8 @@ internal class EditorScreenModel @Inject constructor(
         is EditorEvent.PressBackButton -> {
             editorWorkProcessor.work(EditorWorkCommand.GoBack).handleWork()
         }
-        is EditorEvent.PressControlSubCategoryButton -> {
-            editorWorkProcessor.work(EditorWorkCommand.GoSubCategories).handleWork()
+        is EditorEvent.PressManageCategoriesButton -> {
+            editorWorkProcessor.work(EditorWorkCommand.ManageCategories).handleWork()
         }
         is EditorEvent.LoadTemplates -> {
             timeTaskWorkProcessor.work(TimeTaskWorkCommand.LoadTemplateTimeTasks).handleWork()

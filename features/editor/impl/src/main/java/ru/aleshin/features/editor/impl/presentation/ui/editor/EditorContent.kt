@@ -17,7 +17,6 @@ package ru.aleshin.features.editor.impl.presentation.ui.editor
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -29,15 +28,12 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import ru.aleshin.core.ui.views.DurationPickerDialog
-import ru.aleshin.core.ui.views.toMinutesAndHoursTitle
-import ru.aleshin.core.utils.extensions.isCurrentDay
 import ru.aleshin.core.utils.extensions.shiftMillis
 import ru.aleshin.features.editor.impl.presentation.theme.EditorThemeRes
 import ru.aleshin.features.editor.impl.presentation.ui.editor.contract.EditorViewState
@@ -47,6 +43,7 @@ import ru.aleshin.features.editor.impl.presentation.ui.editor.views.*
 import ru.aleshin.features.editor.impl.presentation.ui.editor.views.EndTimeField
 import ru.aleshin.features.editor.impl.presentation.ui.editor.views.StartTimeField
 import ru.aleshin.features.editor.impl.presentation.ui.editor.views.SubCategoryChooser
+import ru.aleshin.features.home.api.domains.entities.categories.Categories
 import ru.aleshin.features.home.api.domains.entities.categories.MainCategory
 import ru.aleshin.features.home.api.domains.entities.categories.SubCategory
 import java.util.*
@@ -60,178 +57,223 @@ internal fun EditorContent(
     modifier: Modifier = Modifier,
     onCategoryChoose: (MainCategory) -> Unit,
     onSubCategoryChoose: (SubCategory?) -> Unit,
-    onAddSubCategory: () -> Unit,
+    onManageCategories: () -> Unit,
     onTimeRangeChange: (start: Date, end: Date) -> Unit,
     onChangeParameters: (notification: Boolean, statistics: Boolean) -> Unit,
     onChangeTemplate: (Boolean) -> Unit,
-    onSaveClick: () -> Unit,
+    onSaveClick: (isTemplateUpdate: Boolean) -> Unit,
     onCancelClick: () -> Unit,
 ) {
     val scrollState = rememberScrollState()
+    var isManageWarningDialog by rememberSaveable { mutableStateOf(false) }
     Column(modifier = modifier.fillMaxSize().animateContentSize()) {
         if (state.editModel != null) {
             Column(
-                modifier = Modifier.weight(1f).verticalScroll(scrollState),
+                modifier = Modifier.weight(1f).verticalScroll(scrollState).padding(top = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
-                Divider(
-                    Modifier.padding(vertical = 4.dp, horizontal = 16.dp).fillMaxWidth(),
-                    color = MaterialTheme.colorScheme.surfaceVariant,
+                CategoriesSection(
+                    isMainCategoryValid = state.categoryValid is CategoryValidateError.EmptyCategoryError,
+                    mainCategory = state.editModel.mainCategory,
+                    subCategory = state.editModel.subCategory,
+                    allCategories = state.categories,
+                    onCategoryChoose = onCategoryChoose,
+                    onSubCategoryChoose = onSubCategoryChoose,
+                    onSubCategoriesManage = { isManageWarningDialog = true },
                 )
-                Column(
-                    modifier = Modifier.padding(horizontal = 16.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
-                ) {
-                    Column(
-                        modifier = Modifier.animateContentSize(),
-                        verticalArrangement = Arrangement.spacedBy(4.dp),
-                    ) {
-                        val isError = state.categoryValid is CategoryValidateError.EmptyCategoryError
-                        MainCategoryChooser(
-                            modifier = Modifier.fillMaxWidth(),
-                            isError = isError,
-                            currentCategory = state.editModel.mainCategory,
-                            allMainCategories = state.categories.map { it.mainCategory },
-                            onCategoryChoose = onCategoryChoose,
-                        )
-                        if (isError) {
-                            Text(
-                                text = EditorThemeRes.strings.categoryValidateError,
-                                style = MaterialTheme.typography.labelSmall,
-                                color = MaterialTheme.colorScheme.error,
-                            )
-                        }
-                    }
-                    val mainCategory = state.editModel.mainCategory
-                    val categories = state.categories.find { it.mainCategory == mainCategory }
-                    SubCategoryChooser(
-                        modifier = Modifier.fillMaxWidth(),
-                        mainCategory = state.editModel.mainCategory,
-                        allSubCategories = categories?.subCategories ?: emptyList(),
-                        currentSubCategory = state.editModel.subCategory,
-                        onSubCategoryChoose = onSubCategoryChoose,
-                        onAddSubCategory = onAddSubCategory,
-                    )
-                }
                 Divider(Modifier.padding(horizontal = 32.dp))
-                Row(
-                    modifier = Modifier.padding(horizontal = 16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    StartTimeField(
-                        modifier = Modifier.weight(1f),
-                        currentTime = state.editModel.timeRanges.from,
-                        isError = state.timeRangeValid is TimeRangeError.DurationError,
-                        onChangeTime = { onTimeRangeChange(it, state.editModel.timeRanges.to) },
-                    )
-                    EndTimeField(
-                        modifier = Modifier.weight(1f),
-                        currentTime = state.editModel.timeRanges.to,
-                        isError = state.timeRangeValid is TimeRangeError.DurationError,
-                        onChangeTime = { onTimeRangeChange(state.editModel.timeRanges.from, it) },
-                    )
-                    DurationTitle(
-                        duration = state.editModel.duration,
-                        isError = state.timeRangeValid is TimeRangeError.DurationError,
-                        onChangeDuration = { duration ->
-                            val start = state.editModel.timeRanges.from
-                            val end = Calendar.getInstance().apply { time = start }.time.shiftMillis(
-                                duration.toInt(),
-                            )
-                            if (end.isCurrentDay(state.editModel.date)) {
-                                onTimeRangeChange(start, end)
-                            }
-                        },
-                    )
-                }
+                DateTimeSection(
+                    isTimeValid = state.timeRangeValid is TimeRangeError.DurationError,
+                    startTime = state.editModel.timeRanges.from,
+                    endTime = state.editModel.timeRanges.to,
+                    duration = state.editModel.duration,
+                    onTimeRangeChange = onTimeRangeChange,
+                )
                 Divider(Modifier.padding(horizontal = 32.dp))
-                Column(
-                    modifier = Modifier.padding(horizontal = 16.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
-                ) {
-                    ParameterChooser(
-                        modifier = Modifier,
-                        enabled = state.editModel.isEnableNotification,
-                        title = EditorThemeRes.strings.notifyParameterTitle,
-                        description = EditorThemeRes.strings.notifyParameterDesc,
-                        onChangeEnabled = {
-                            onChangeParameters(it, state.editModel.isConsiderInStatistics)
-                        },
-                    )
-                    ParameterChooser(
-                        modifier = Modifier,
-                        enabled = state.editModel.isConsiderInStatistics,
-                        title = EditorThemeRes.strings.statisticsParameterTitle,
-                        description = EditorThemeRes.strings.statisticsParameterDesc,
-                        onChangeEnabled = {
-                            onChangeParameters(state.editModel.isEnableNotification, it)
-                        },
-                    )
-                }
+                ParametersSection(
+                    isEnableNotification = state.editModel.isEnableNotification,
+                    isConsiderInStatistics = state.editModel.isConsiderInStatistics,
+                    onChangeParameters = onChangeParameters,
+                )
             }
-            Box(modifier = Modifier, contentAlignment = Alignment.BottomStart) {
-                Row(
-                    modifier = Modifier.fillMaxWidth().padding(16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp),
-                ) {
-                    FilledTonalButton(
-                        onClick = onCancelClick,
-                        colors = ButtonDefaults.filledTonalButtonColors(
-                            containerColor = MaterialTheme.colorScheme.surfaceVariant,
-                        ),
-                        content = { Text(text = EditorThemeRes.strings.cancelButtonTitle) },
-                    )
-                    Button(onClick = onSaveClick) {
-                        Text(text = EditorThemeRes.strings.saveTaskButtonTitle)
-                    }
-                    Spacer(modifier = Modifier.weight(1f))
-                    if (state.editModel.key != 0L) {
-                        TemplateSelector(
-                            isSelect = state.editModel.templateId != null,
-                            onSelectChanges = onChangeTemplate,
-                        )
-                    }
-                }
-            }
+            ActionButtonsSection(
+                enableTemplateSelector = state.editModel.key != 0L,
+                isTemplateSelect = state.editModel.templateId != null,
+                onChangeTemplate = onChangeTemplate,
+                onCancelClick = onCancelClick,
+                onSaveClick = onSaveClick,
+            )
         }
+    }
+    if (isManageWarningDialog) {
+        CategoriesManageWarningDialog(
+            onDismiss = { isManageWarningDialog = false },
+            onAction = { isManageWarningDialog = false; onManageCategories() },
+        )
     }
 }
 
 @Composable
-internal fun DurationTitle(
+internal fun CategoriesSection(
     modifier: Modifier = Modifier,
-    duration: Long,
-    isError: Boolean = false,
-    onChangeDuration: (Long) -> Unit,
+    isMainCategoryValid: Boolean,
+    mainCategory: MainCategory?,
+    subCategory: SubCategory?,
+    allCategories: List<Categories>,
+    onCategoryChoose: (MainCategory) -> Unit,
+    onSubCategoryChoose: (SubCategory?) -> Unit,
+    onSubCategoriesManage: () -> Unit,
 ) {
-    var isOpenDurationDialog by remember { mutableStateOf(false) }
-    val correctDuration = if (duration < 0L) 0L else duration
-    val titleColor = when (isError) {
-        true -> MaterialTheme.colorScheme.error
-        false -> MaterialTheme.colorScheme.onSurface
-    }
-    Box(
-        modifier = modifier.clip(MaterialTheme.shapes.small).clickable {
-            isOpenDurationDialog = true
-        },
+    Column(
+        modifier = modifier.padding(horizontal = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        Text(
-            modifier = Modifier.padding(4.dp),
-            text = correctDuration.toMinutesAndHoursTitle(),
-            style = MaterialTheme.typography.bodyLarge,
-            maxLines = 1,
-            color = titleColor,
+        Column(
+            modifier = Modifier.animateContentSize(),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+        ) {
+            MainCategoryChooser(
+                modifier = Modifier.fillMaxWidth(),
+                isError = isMainCategoryValid,
+                currentCategory = mainCategory,
+                allMainCategories = allCategories.map { it.mainCategory },
+                onCategoryChoose = onCategoryChoose,
+            )
+            if (isMainCategoryValid) {
+                Text(
+                    text = EditorThemeRes.strings.categoryValidateError,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.error,
+                )
+            }
+        }
+        val findCategories = allCategories.find { it.mainCategory == mainCategory }
+        SubCategoryChooser(
+            modifier = Modifier.fillMaxWidth(),
+            mainCategory = mainCategory,
+            allSubCategories = findCategories?.subCategories ?: emptyList(),
+            currentSubCategory = subCategory,
+            onSubCategoryChoose = onSubCategoryChoose,
+            onManageCategories = onSubCategoriesManage,
         )
     }
-    if (isOpenDurationDialog) {
-        DurationPickerDialog(
-            headerTitle = EditorThemeRes.strings.durationPickerTitle,
+}
+
+@Composable
+internal fun DateTimeSection(
+    modifier: Modifier = Modifier,
+    isTimeValid: Boolean,
+    startTime: Date,
+    endTime: Date,
+    duration: Long,
+    onTimeRangeChange: (Date, Date) -> Unit,
+) {
+    Row(
+        modifier = modifier.padding(horizontal = 16.dp),
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        StartTimeField(
+            modifier = Modifier.weight(1f),
+            currentTime = startTime,
+            isError = isTimeValid,
+            onChangeTime = { newStartTime -> onTimeRangeChange(newStartTime, endTime) },
+        )
+        EndTimeField(
+            modifier = Modifier.weight(1f),
+            currentTime = endTime,
+            isError = isTimeValid,
+            onChangeTime = { newEndTime -> onTimeRangeChange(startTime, newEndTime) },
+        )
+        DurationTitle(
             duration = duration,
-            onDismissRequest = { isOpenDurationDialog = false },
-            onSelectedTime = {
-                onChangeDuration(it)
-                isOpenDurationDialog = false
+            startTime = startTime,
+            isError = isTimeValid,
+            onChangeDuration = { duration ->
+                onTimeRangeChange(startTime, startTime.shiftMillis(duration.toInt()))
+            },
+        )
+    }
+}
+
+@Composable
+internal fun ParametersSection(
+    modifier: Modifier = Modifier,
+    isEnableNotification: Boolean,
+    isConsiderInStatistics: Boolean,
+    onChangeParameters: (notification: Boolean, statistics: Boolean) -> Unit,
+) {
+    Column(
+        modifier = modifier.padding(horizontal = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        ParameterChooser(
+            modifier = Modifier,
+            enabled = isEnableNotification,
+            title = EditorThemeRes.strings.notifyParameterTitle,
+            description = EditorThemeRes.strings.notifyParameterDesc,
+            onChangeEnabled = { notification ->
+                onChangeParameters(notification, isConsiderInStatistics)
+            },
+        )
+        ParameterChooser(
+            modifier = Modifier,
+            enabled = isConsiderInStatistics,
+            title = EditorThemeRes.strings.statisticsParameterTitle,
+            description = EditorThemeRes.strings.statisticsParameterDesc,
+            onChangeEnabled = { statistics ->
+                onChangeParameters(isEnableNotification, statistics)
+            },
+        )
+    }
+}
+
+@Composable
+internal fun ActionButtonsSection(
+    modifier: Modifier = Modifier,
+    enableTemplateSelector: Boolean,
+    isTemplateSelect: Boolean,
+    onChangeTemplate: (Boolean) -> Unit,
+    onCancelClick: () -> Unit,
+    onSaveClick: (isTemplateUpdate: Boolean) -> Unit,
+) {
+    var isWarningDialogOpen by rememberSaveable { mutableStateOf(false) }
+    Box(modifier = modifier, contentAlignment = Alignment.BottomStart) {
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+        ) {
+            FilledTonalButton(
+                onClick = onCancelClick,
+                colors = ButtonDefaults.filledTonalButtonColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                ),
+                content = { Text(text = EditorThemeRes.strings.cancelButtonTitle) },
+            )
+            Button(
+                onClick = {
+                    when (enableTemplateSelector && isTemplateSelect) {
+                        true -> isWarningDialogOpen = true
+                        false -> onSaveClick(false)
+                    }
+                },
+                content = { Text(text = EditorThemeRes.strings.saveTaskButtonTitle) },
+            )
+            Spacer(modifier = Modifier.weight(1f))
+            if (enableTemplateSelector) {
+                TemplateSelector(
+                    isSelect = isTemplateSelect,
+                    onSelectChanges = onChangeTemplate,
+                )
+            }
+        }
+    }
+    if (isWarningDialogOpen) {
+        TemplateSaveWarningDialog(
+            onDismiss = { isWarningDialogOpen = false },
+            onAction = { isSave ->
+                onSaveClick(isSave)
+                isWarningDialogOpen = false
             },
         )
     }

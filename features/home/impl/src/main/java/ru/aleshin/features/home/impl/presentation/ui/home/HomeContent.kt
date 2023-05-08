@@ -58,27 +58,18 @@ internal fun HomeContent(
     onTimeTaskAdd: (TimeRange) -> Unit,
     onTimeTaskIncrease: (TimeTaskUi) -> Unit,
     onTimeTaskReduce: (TimeTaskUi) -> Unit,
-    onChangeViewStatus: (ViewToggleStatus) -> Unit,
+    onChangeToggleStatus: (ViewToggleStatus) -> Unit,
 ) {
     val listState = rememberLazyListState()
     Column(modifier = modifier.fillMaxSize()) {
         HorizontalProgressBar(isLoading = state.isLoadingContent)
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 16.dp, end = 8.dp, top = 8.dp, bottom = 8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(24.dp),
-        ) {
-            HomeDataChooser(
-                modifier = Modifier.width(202.dp),
-                isEnabled = !state.isLoadingContent,
-                currentDate = state.currentDate,
-                onChangeDate = onChangeDate,
-            )
-            Spacer(modifier = Modifier.weight(1f))
-            ViewToggle(status = state.timeTaskViewStatus, onStatusChange = onChangeViewStatus)
-        }
+        HomeFiltersHeader(
+            isEnabled = !state.isLoadingContent,
+            currentDate = state.currentDate,
+            toggleState = state.timeTaskViewStatus,
+            onChangeDate = onChangeDate,
+            onChangeToggleStatus = onChangeToggleStatus,
+        )
         Box(modifier = Modifier.fillMaxSize()) {
             if (state.dateStatus != null) {
                 LazyColumn(
@@ -156,8 +147,7 @@ internal fun HomeContent(
                             tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                         Text(
-                            modifier = Modifier.padding(start = 4.dp)
-                                .align(Alignment.CenterVertically),
+                            modifier = Modifier.padding(start = 4.dp).align(Alignment.CenterVertically),
                             text = HomeThemeRes.strings.createScheduleTitle,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             style = MaterialTheme.typography.bodyMedium,
@@ -166,6 +156,33 @@ internal fun HomeContent(
                 }
             }
         }
+    }
+}
+
+@Composable
+internal fun HomeFiltersHeader(
+    modifier: Modifier = Modifier,
+    isEnabled: Boolean,
+    currentDate: Date?,
+    toggleState: ViewToggleStatus,
+    onChangeDate: (Date) -> Unit,
+    onChangeToggleStatus: (ViewToggleStatus) -> Unit,
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(start = 16.dp, end = 8.dp, top = 8.dp, bottom = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(24.dp),
+    ) {
+        HomeDataChooser(
+            modifier = Modifier.width(202.dp),
+            isEnabled = isEnabled,
+            currentDate = currentDate,
+            onChangeDate = onChangeDate,
+        )
+        Spacer(modifier = Modifier.weight(1f))
+        ViewToggle(status = toggleState, onStatusChange = onChangeToggleStatus)
     }
 }
 

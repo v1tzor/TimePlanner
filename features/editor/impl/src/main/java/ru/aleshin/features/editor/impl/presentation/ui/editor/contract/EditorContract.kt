@@ -46,12 +46,12 @@ internal sealed class EditorEvent : BaseEvent {
     data class ChangeTime(val timeRange: TimeRange) : EditorEvent()
     data class ChangeParameters(val notification: Boolean, val statistics: Boolean) : EditorEvent()
     data class ApplyTemplate(val template: Template) : EditorEvent()
-    object PressControlSubCategoryButton : EditorEvent()
+    object PressManageCategoriesButton : EditorEvent()
     object PressControlTemplateButton : EditorEvent()
     object LoadTemplates : EditorEvent()
     object ChangeIsTemplate : EditorEvent()
     object PressDeleteButton : EditorEvent()
-    object PressSaveButton : EditorEvent()
+    data class PressSaveButton(val isTemplateUpdate: Boolean) : EditorEvent()
     object PressBackButton : EditorEvent()
 }
 

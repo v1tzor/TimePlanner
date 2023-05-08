@@ -11,8 +11,8 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License.
-*/
+ * imitations under the License.
+ */
 package ru.aleshin.features.home.api.domains.entities.categories
 
 import android.os.Parcelable
@@ -32,7 +32,7 @@ data class SubCategory(
     companion object {
         fun absentSubCategory(mainCategory: MainCategory) = SubCategory(
             id = -1,
-            name = "Absent",
+            name = "Отсутствует",
             mainCategory = mainCategory,
         )
     }

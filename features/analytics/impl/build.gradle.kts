@@ -92,7 +92,7 @@ dependencies {
     implementation(Dependencies.Compose.layout)
 
     implementation(Dependencies.Charts.library)
-    implementation("com.himanshoe:charty:1.0.1")
+    implementation(Dependencies.Charts.libraryHimanshoe)
 
     implementation(Dependencies.Dagger.core)
     kapt(Dependencies.Dagger.kapt)

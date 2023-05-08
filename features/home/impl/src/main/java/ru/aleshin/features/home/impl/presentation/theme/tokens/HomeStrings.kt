@@ -70,11 +70,21 @@ internal data class HomeStrings(
     val addSubCategoryTitle: String,
     val subCategoryFieldLabel: String,
     val dialogCreateTitle: String,
-    val emptySubCategoriesTitle: String,
+    val emptyListTitle: String,
     val updateCategoryTitle: String,
     val deleteCategoryTitle: String,
     val subCategoryTitle: String,
     val warningDeleteCategoryText: String,
+    val sortedTypeTitle: String,
+    val sortedTypeDate: String,
+    val sortedTypeCategories: String,
+    val sortedTypeDuration: String,
+    val timeRangeFormat: String,
+    val durationFormat: String,
+    val notificationEnabledTitle: String,
+    val notificationDisabledTitle: String,
+    val statisticsActiveTitle: String,
+    val statisticsDisabledTitle: String,
 )
 
 internal val russianHomeString = HomeStrings(
@@ -126,12 +136,22 @@ internal val russianHomeString = HomeStrings(
     addSubCategoryTitle = "Добавить подкатегорию",
     subCategoryFieldLabel = "Название",
     dialogCreateTitle = "Создать",
-    emptySubCategoriesTitle = "Список пуст",
+    emptyListTitle = "Список пуст",
     updateCategoryTitle = "Редактировать",
     deleteCategoryTitle = "Удалить",
     subCategoryTitle = "Подкатегории",
     warningDeleteCategoryText = "Вы уверены что хотите удалить основную категорию? " +
         "Данное действие приведёт к уничтожению всех ранее запланированных задач.",
+    sortedTypeTitle = "Сортировать",
+    sortedTypeDate = "По дате",
+    sortedTypeCategories = "По категориям",
+    sortedTypeDuration = "По длительности",
+    timeRangeFormat = "Время: С %S до %s",
+    durationFormat = "Длительность: %s",
+    notificationEnabledTitle = "Уведомления: включены",
+    notificationDisabledTitle = "Уведомления: выключены",
+    statisticsActiveTitle = "Статистика: активна",
+    statisticsDisabledTitle = "Статистика: выключена",
 )
 
 internal val englishHomeString = HomeStrings(
@@ -183,12 +203,22 @@ internal val englishHomeString = HomeStrings(
     addSubCategoryTitle = "Add subcategory",
     subCategoryFieldLabel = "Name",
     dialogCreateTitle = "Create",
-    emptySubCategoriesTitle = "List is empty",
+    emptyListTitle = "List is empty",
     updateCategoryTitle = "Edit",
     deleteCategoryTitle = "Remove",
     subCategoryTitle = "Subcategories",
     warningDeleteCategoryText = "Are you sure you want to delete the main category? " +
         "This action will destroy all previously scheduled tasks.",
+    sortedTypeTitle = "Sorted",
+    sortedTypeDate = "By date",
+    sortedTypeCategories = "By category",
+    sortedTypeDuration = "By duration",
+    timeRangeFormat = "Time: from %S to %s",
+    durationFormat = "Duration: %s",
+    notificationEnabledTitle = "Notification: enabled",
+    notificationDisabledTitle = "Notification: disabled",
+    statisticsActiveTitle = "Statistics: active",
+    statisticsDisabledTitle = "Statistics: disabled",
 )
 
 internal val LocalHomeStrings = staticCompositionLocalOf<HomeStrings> {

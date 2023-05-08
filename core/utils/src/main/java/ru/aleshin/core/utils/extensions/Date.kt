@@ -11,8 +11,8 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License.
-*/
+ * imitations under the License.
+ */
 package ru.aleshin.core.utils.extensions
 
 import ru.aleshin.core.utils.functional.Constants
@@ -54,6 +54,15 @@ fun Date.isCurrentDay(date: Date): Boolean {
         Calendar.getInstance().apply { time = this@isCurrentDay }.get(Calendar.DAY_OF_YEAR)
 
     return currentDate == compareDate
+}
+
+fun Date.compareByHoursAndMinutes(compareDate: Date): Boolean {
+    val firstCalendar = Calendar.getInstance().apply { time = this@compareByHoursAndMinutes }
+    val secondCalendar = Calendar.getInstance().apply { time = compareDate }
+    val hoursEquals = firstCalendar.get(Calendar.HOUR_OF_DAY) == secondCalendar.get(Calendar.HOUR_OF_DAY)
+    val minutesEquals = firstCalendar.get(Calendar.MINUTE) == secondCalendar.get(Calendar.MINUTE)
+
+    return hoursEquals && minutesEquals
 }
 
 fun Date.startThisDay(): Date {

@@ -11,8 +11,8 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License.
-*/
+ * imitations under the License.
+ */
 package ru.aleshin.features.home.impl.di.modules
 
 import cafe.adriel.voyager.core.model.ScreenModel
@@ -38,6 +38,10 @@ import ru.aleshin.features.home.impl.presentation.ui.home.screenModel.HomeStateC
 import ru.aleshin.features.home.impl.presentation.ui.home.screenModel.NavigationWorkProcessor
 import ru.aleshin.features.home.impl.presentation.ui.home.screenModel.ScheduleWorkProcessor
 import ru.aleshin.features.home.impl.presentation.ui.nav.NavScreen
+import ru.aleshin.features.home.impl.presentation.ui.templates.screenmodel.TemplatesEffectCommunicator
+import ru.aleshin.features.home.impl.presentation.ui.templates.screenmodel.TemplatesScreenModel
+import ru.aleshin.features.home.impl.presentation.ui.templates.screenmodel.TemplatesStateCommunicator
+import ru.aleshin.features.home.impl.presentation.ui.templates.screenmodel.TemplatesWorkProcessor
 
 /**
  * @author Stanislav Aleshin on 18.02.2023.
@@ -89,6 +93,22 @@ internal interface PresentationModule {
 
     @Binds
     fun bindTimeTaskToEditModelMapper(mapper: TimeTaskToEditModelMapper.Base): TimeTaskToEditModelMapper
+
+    // Templates
+
+    @Binds
+    fun bindTemplatesScreenModel(screenModel: TemplatesScreenModel): ScreenModel
+
+    @Binds
+    @FeatureScope
+    fun bindTemplatesStateCommunicator(communicator: TemplatesStateCommunicator.Base): TemplatesStateCommunicator
+
+    @Binds
+    @FeatureScope
+    fun bindTemplatesEffectCommunicator(communicator: TemplatesEffectCommunicator.Base): TemplatesEffectCommunicator
+
+    @Binds
+    fun bindTemplatesWorkProcessor(processor: TemplatesWorkProcessor.Base): TemplatesWorkProcessor
 
     // Categories
 

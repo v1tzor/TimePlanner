@@ -21,6 +21,7 @@ import ru.aleshin.features.editor.api.navigations.EditorFeatureStarter
 import ru.aleshin.features.home.impl.di.annontation.LocalRouter
 import ru.aleshin.features.home.impl.presentation.ui.categories.CategoriesScreen
 import ru.aleshin.features.home.impl.presentation.ui.home.HomeScreen
+import ru.aleshin.features.home.impl.presentation.ui.templates.TemplatesScreen
 import javax.inject.Inject
 import javax.inject.Provider
 
@@ -52,7 +53,8 @@ internal interface NavigationManager {
         }
 
         override fun navigateToTemplatesScreen() {
-            // TODO: Navigate to Template Screen
+            val screen = TemplatesScreen()
+            localRouter.navigateTo(screen)
         }
 
         override fun navigateToCategoriesScreen() {

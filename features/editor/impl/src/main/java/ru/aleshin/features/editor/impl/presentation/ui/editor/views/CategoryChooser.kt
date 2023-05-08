@@ -61,7 +61,11 @@ internal fun MainCategoryChooser(
         modifier = modifier.height(68.dp),
         enabled = currentCategory != null,
         shape = MaterialTheme.shapes.medium,
-        tonalElevation = TimePlannerRes.elevations.levelOne,
+        color = when (isError) {
+            true -> MaterialTheme.colorScheme.errorContainer
+            false -> MaterialTheme.colorScheme.surface
+        },
+        tonalElevation = if (!isError) TimePlannerRes.elevations.levelOne else 0.dp,
         border = when (isError) {
             true -> BorderStroke(1.5.dp, MaterialTheme.colorScheme.error)
             false -> null
@@ -72,7 +76,7 @@ internal fun MainCategoryChooser(
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            val color = when (currentCategory != null) {
+            val categoryNameColor = when (currentCategory != null) {
                 true -> MaterialTheme.colorScheme.onSurface
                 false -> MaterialTheme.colorScheme.onSurfaceVariant
             }
@@ -85,10 +89,15 @@ internal fun MainCategoryChooser(
             } else {
                 CategoryIconMonogram(
                     icon = currentCategory?.icon?.toIconPainter() ?: MainIcon.EMPTY.toIconPainter(),
-                    iconDescription = currentCategory?.icon?.toDescription()
-                        ?: MainIcon.EMPTY.toDescription(),
-                    iconColor = MaterialTheme.colorScheme.primary,
-                    backgroundColor = MaterialTheme.colorScheme.primaryContainer,
+                    iconDescription = currentCategory?.icon?.toDescription() ?: MainIcon.EMPTY.toDescription(),
+                    iconColor = when (isError) {
+                        true -> MaterialTheme.colorScheme.errorContainer
+                        false -> MaterialTheme.colorScheme.primary
+                    },
+                    backgroundColor = when (isError) {
+                        true -> MaterialTheme.colorScheme.error
+                        false -> MaterialTheme.colorScheme.primaryContainer
+                    },
                 )
             }
             Column(modifier = Modifier.weight(1f).animateContentSize()) {
@@ -99,14 +108,14 @@ internal fun MainCategoryChooser(
                 )
                 Text(
                     text = currentCategory?.name ?: EditorThemeRes.strings.categoryNotSelectedTitle,
-                    color = color,
+                    color = categoryNameColor,
                     style = MaterialTheme.typography.titleMedium,
                 )
             }
             Icon(
                 painter = painterResource(EditorThemeRes.icons.showDialog),
                 contentDescription = EditorThemeRes.strings.mainCategoryChooserExpandedIconDesc,
-                tint = color,
+                tint = categoryNameColor,
             )
         }
     }

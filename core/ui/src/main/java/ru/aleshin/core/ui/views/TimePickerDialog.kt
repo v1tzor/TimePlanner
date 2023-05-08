@@ -11,8 +11,8 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License.
-*/
+ * imitations under the License.
+ */
 package ru.aleshin.core.ui.views
 
 import androidx.compose.foundation.interaction.*
@@ -31,6 +31,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -40,6 +41,7 @@ import ru.aleshin.core.utils.extensions.minutesToMillis
 import ru.aleshin.core.utils.extensions.toHorses
 import ru.aleshin.core.utils.extensions.toMinutesInHours
 import ru.aleshin.core.utils.extensions.toStringOrEmpty
+import ru.aleshin.core.utils.functional.Constants
 import java.util.*
 
 /**
@@ -90,6 +92,12 @@ fun TimePickerDialog(
                 )
                 TimePickerActions(
                     enabledConfirm = minutes in 0..59 && hours in 0..23,
+                    onDismissClick = onDismissRequest,
+                    onCurrentTimeChoose = {
+                        val currentTime = Calendar.getInstance()
+                        hours = currentTime.get(Calendar.HOUR_OF_DAY)
+                        minutes = currentTime.get(Calendar.MINUTE) + 1
+                    },
                     onConfirmClick = {
                         val time = calendar.apply {
                             set(Calendar.HOUR_OF_DAY, checkNotNull(hours))
@@ -99,7 +107,6 @@ fun TimePickerDialog(
                         }.time
                         onSelectedTime.invoke(time)
                     },
-                    onDismissClick = onDismissRequest,
                 )
             }
         }
@@ -111,10 +118,15 @@ fun TimePickerDialog(
 fun DurationPickerDialog(
     modifier: Modifier = Modifier,
     headerTitle: String,
+    startTime: Date,
     duration: Long,
     onDismissRequest: () -> Unit,
     onSelectedTime: (Long) -> Unit,
 ) {
+    val startTimeCalendar = Calendar.getInstance().apply { time = startTime }
+    val maxHours = Constants.Date.HOURS_IN_DAY.toInt() - startTimeCalendar.get(Calendar.HOUR_OF_DAY) - 1
+    val maxMinutes = Constants.Date.MINUTES_IN_HOUR.toInt() - startTimeCalendar.get(Calendar.MINUTE) - 1
+
     var hours by rememberSaveable { mutableStateOf<Int?>(duration.toHorses().toInt()) }
     var minutes by rememberSaveable { mutableStateOf<Int?>(duration.toMinutesInHours().toInt()) }
 
@@ -173,13 +185,18 @@ fun DurationPickerDialog(
                     }
                 }
                 TimePickerActions(
-                    enabledConfirm = minutes in 0..59 && hours in 0..23,
+                    enabledConfirm = hours != null && minutes != null &&
+                        (hours!! * 60 + minutes!!) <= (maxHours * 60 + maxMinutes),
+                    onDismissClick = onDismissRequest,
+                    onCurrentTimeChoose = {
+                        hours = maxHours
+                        minutes = maxMinutes
+                    },
                     onConfirmClick = {
                         val hoursInMillis = checkNotNull(hours).hoursToMillis()
                         val time = hoursInMillis + checkNotNull(minutes).minutesToMillis()
                         onSelectedTime.invoke(time)
                     },
-                    onDismissClick = onDismissRequest,
                 )
             }
         }
@@ -191,9 +208,7 @@ internal fun TimePickerHeader(
     modifier: Modifier = Modifier,
     title: String,
 ) = Box(
-    modifier = modifier
-        .padding(start = 24.dp, end = 24.dp, top = 24.dp)
-        .fillMaxWidth(),
+    modifier = modifier.padding(start = 24.dp, end = 24.dp, top = 24.dp).fillMaxWidth(),
 ) {
     Text(
         text = title,
@@ -224,9 +239,13 @@ internal fun TimePickerHourMinuteSelector(
             if (value.length == 2 && value.toIntOrNull() in 0..23) requester.requestFocus()
         },
         shape = MaterialTheme.shapes.small,
-        supportingText = if (isEnableSupportText) { {
-            Text(TimePlannerRes.strings.hoursTitle)
-        } } else { null },
+        supportingText = if (isEnableSupportText) {
+            {
+                Text(TimePlannerRes.strings.hoursTitle)
+            }
+        } else {
+            null
+        },
         singleLine = true,
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
         colors = OutlinedTextFieldDefaults.colors(
@@ -244,16 +263,18 @@ internal fun TimePickerHourMinuteSelector(
         color = MaterialTheme.colorScheme.onSurface,
     )
     OutlinedTextField(
-        modifier = Modifier
-            .weight(1f)
-            .focusRequester(requester),
+        modifier = Modifier.weight(1f).focusRequester(requester),
         value = minutes,
         textStyle = MaterialTheme.typography.displayMedium.copy(textAlign = TextAlign.Center),
         onValueChange = onHoursChanges,
         shape = MaterialTheme.shapes.small,
-        supportingText = if (isEnableSupportText) { {
-            Text(TimePlannerRes.strings.minutesTitle)
-        } } else { null },
+        supportingText = if (isEnableSupportText) {
+            {
+                Text(TimePlannerRes.strings.minutesTitle)
+            }
+        } else {
+            null
+        },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
         singleLine = true,
         colors = OutlinedTextFieldDefaults.colors(
@@ -270,12 +291,21 @@ internal fun TimePickerActions(
     modifier: Modifier = Modifier,
     enabledConfirm: Boolean = true,
     onDismissClick: () -> Unit,
+    onCurrentTimeChoose: () -> Unit,
     onConfirmClick: () -> Unit,
 ) = Row(
-    modifier = modifier.padding(bottom = 20.dp, start = 12.dp, end = 24.dp),
+    modifier = modifier.padding(bottom = 20.dp, start = 16.dp, end = 24.dp),
     horizontalArrangement = Arrangement.spacedBy(8.dp),
     verticalAlignment = Alignment.CenterVertically,
 ) {
+    IconButton(onClick = onCurrentTimeChoose) {
+        Icon(
+            painter = painterResource(TimePlannerRes.icons.time),
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onSurface,
+        )
+    }
+    Spacer(modifier = Modifier.weight(1f))
     TextButton(onClick = onDismissClick) {
         Text(text = TimePlannerRes.strings.alertDialogDismissTitle)
     }

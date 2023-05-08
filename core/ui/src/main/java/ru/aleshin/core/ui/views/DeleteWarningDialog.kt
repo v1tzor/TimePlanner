@@ -57,9 +57,7 @@ fun WarningDeleteDialog(
             Column {
                 WarningDeleteDialogHeader(modifier = Modifier.fillMaxWidth())
                 Text(
-                    modifier = Modifier
-                        .padding(start = 24.dp, end = 24.dp, top = 16.dp)
-                        .fillMaxWidth(),
+                    modifier = Modifier.padding(start = 24.dp, end = 24.dp, top = 16.dp).fillMaxWidth(),
                     text = text,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.bodyMedium,

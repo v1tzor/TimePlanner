@@ -37,12 +37,13 @@ object Constants {
     }
 
     object Delay {
-        const val STANDARD = 300L
+        const val LOAD_ANIMATION = 400L
         const val SPLASH = 600L
         const val CHECK_STATUS = 5000L
     }
 
     object Date {
+        const val DAY = 1
         const val DAYS_IN_WEEK = 7
         const val DAYS_IN_MONTH = 31
         const val DAYS_IN_YEAR = 365

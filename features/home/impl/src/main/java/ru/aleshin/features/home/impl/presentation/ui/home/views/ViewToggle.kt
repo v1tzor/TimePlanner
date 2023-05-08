@@ -32,6 +32,7 @@ import ru.aleshin.core.ui.theme.TimePlannerRes
 @Composable
 internal fun ViewToggle(
     modifier: Modifier = Modifier,
+    isHideTitle: Boolean = false,
     status: ViewToggleStatus,
     onStatusChange: (ViewToggleStatus) -> Unit,
 ) {
@@ -48,7 +49,7 @@ internal fun ViewToggle(
         modifier = modifier.height(40.dp),
     ) {
         BoxWithConstraints {
-            if (maxWidth >= 129.dp) {
+            if (maxWidth >= 129.dp && !isHideTitle) {
                 Row {
                     Text(
                         text = title,

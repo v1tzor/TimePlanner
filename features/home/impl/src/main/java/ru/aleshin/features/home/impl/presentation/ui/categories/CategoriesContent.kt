@@ -42,6 +42,7 @@ internal fun CategoriesContent(
     state: CategoriesViewState,
     modifier: Modifier = Modifier,
     onAddMainCategory: (name: String) -> Unit,
+    onAddSubCategory: () -> Unit,
     onChangeMainCategory: (MainCategory) -> Unit,
     onSubCategoryUpdate: (SubCategory) -> Unit,
     onMainCategoryUpdate: (MainCategory) -> Unit,
@@ -56,7 +57,7 @@ internal fun CategoriesContent(
         val subCategories = categories?.subCategories ?: emptyList()
 
         MainCategoriesHeader(
-            modifier = Modifier.padding(top = 8.dp).fillMaxWidth(),
+            modifier = Modifier.padding(top = 8.dp, bottom = 4.dp).fillMaxWidth(),
             onAddMainCategory = { isMainCategoryCreatorOpen = true },
         )
         MainCategoriesHorizontalList(
@@ -67,7 +68,10 @@ internal fun CategoriesContent(
             onUpdateCategory = onMainCategoryUpdate,
             onDeleteCategory = onMainCategoryDelete,
         )
-        SubCategoriesHeader(modifier = Modifier.padding(vertical = 4.dp).fillMaxWidth())
+        SubCategoriesHeader(
+            modifier = Modifier.padding(vertical = 8.dp).fillMaxWidth(),
+            onAddSubCategory = onAddSubCategory,
+        )
         SubCategoriesList(
             modifier = Modifier.height(200.dp),
             mainCategory = state.selectedMainCategory,
@@ -93,38 +97,51 @@ internal fun MainCategoriesHeader(
     onAddMainCategory: () -> Unit,
 ) {
     Row(
-        modifier = modifier.padding(horizontal = 16.dp),
+        modifier = modifier.padding(start = 16.dp, end = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
+            modifier = Modifier.padding(end = 8.dp),
             text = HomeThemeRes.strings.mainCategoryTitle,
             color = MaterialTheme.colorScheme.onBackground,
             style = MaterialTheme.typography.titleMedium,
         )
-        Spacer(Modifier.weight(1f))
+        Divider(modifier.weight(1f))
         IconButton(modifier = Modifier.size(36.dp), onClick = onAddMainCategory) {
             Icon(
+                modifier = Modifier.size(24.dp),
                 imageVector = Icons.Default.Add,
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.onBackground,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
     }
 }
 
 @Composable
-internal fun SubCategoriesHeader(modifier: Modifier = Modifier) {
+internal fun SubCategoriesHeader(
+    modifier: Modifier = Modifier,
+    onAddSubCategory: () -> Unit,
+) {
     Row(
-        modifier = modifier.padding(horizontal = 16.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = modifier.padding(start = 16.dp, end = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
+            modifier = Modifier.padding(end = 8.dp),
             text = HomeThemeRes.strings.subCategoryTitle,
             color = MaterialTheme.colorScheme.onBackground,
             style = MaterialTheme.typography.titleMedium,
         )
         Divider(modifier.weight(1f))
+        IconButton(modifier = Modifier.size(36.dp), onClick = onAddSubCategory) {
+            Icon(
+                modifier = Modifier.size(24.dp),
+                imageVector = Icons.Default.Add,
+                contentDescription = HomeThemeRes.strings.addSubCategoryTitle,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
     }
 }
 

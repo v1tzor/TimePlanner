@@ -66,12 +66,12 @@ internal fun SubCategoriesList(
             Box(modifier) {
                 EmptyDateView(
                     modifier = Modifier.align(Alignment.Center),
-                    emptyTitle = HomeThemeRes.strings.emptySubCategoriesTitle,
+                    emptyTitle = HomeThemeRes.strings.emptyListTitle,
                 )
             }
         } else {
             LazyColumn(
-                modifier = modifier.padding(top = 16.dp),
+                modifier = modifier.padding(top = 8.dp),
                 state = listState,
                 contentPadding = PaddingValues(horizontal = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(10.dp),

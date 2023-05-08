@@ -1,3 +1,18 @@
+/*
+ * Copyright 2023 Stanislav Aleshin
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * imitations under the License.
+ */
 /**
  * @author Stanislav Aleshin on 14.02.2023.
  */
@@ -23,6 +38,7 @@ object Dependencies {
 
     object Charts {
         val library = "ma.hu:compose-charts:${Versions.charts}"
+        val libraryHimanshoe = "com.himanshoe:charty:${Versions.chartsHm}"
     }
 
     object Compose {
@@ -70,5 +86,11 @@ object Dependencies {
         const val coroutinesTest = "org.jetbrains.kotlinx:kotlinx-coroutines-test:${Versions.coroutinesTest}"
         const val turbine = "app.cash.turbine:turbine:${Versions.turbine}"
         const val espresso = "androidx.test.espresso:espresso-core:${Versions.espresso}"
+    }
+
+    object FireBase {
+        const val bom = "com.google.firebase:firebase-bom:${Versions.firebaseBom}"
+        const val crashlytics = "com.google.firebase:firebase-crashlytics-ktx"
+        const val analytics = "com.google.firebase:firebase-analytics-ktx"
     }
 }

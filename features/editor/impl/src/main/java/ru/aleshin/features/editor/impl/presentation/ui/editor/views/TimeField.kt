@@ -15,19 +15,24 @@
  */
 package ru.aleshin.features.editor.impl.presentation.ui.editor.views
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import ru.aleshin.core.ui.theme.TimePlannerRes
+import ru.aleshin.core.ui.views.DurationPickerDialog
 import ru.aleshin.core.ui.views.TimePickerDialog
+import ru.aleshin.core.ui.views.toMinutesAndHoursTitle
 import ru.aleshin.features.editor.impl.presentation.theme.EditorThemeRes
 import java.text.SimpleDateFormat
 import java.util.*
@@ -127,6 +132,47 @@ internal fun EndTimeField(
     leadingIcon = EditorThemeRes.icons.endTime,
     onChangeTime = onChangeTime,
 )
+
+@Composable
+internal fun DurationTitle(
+    modifier: Modifier = Modifier,
+    duration: Long,
+    startTime: Date,
+    isError: Boolean = false,
+    onChangeDuration: (Long) -> Unit,
+) {
+    var isOpenDurationDialog by remember { mutableStateOf(false) }
+    val correctDuration = if (duration < 0L) 0L else duration
+    val titleColor = when (isError) {
+        true -> MaterialTheme.colorScheme.error
+        false -> MaterialTheme.colorScheme.onSurface
+    }
+    Box(
+        modifier = modifier.clip(MaterialTheme.shapes.small).clickable {
+            isOpenDurationDialog = true
+        },
+    ) {
+        Text(
+            modifier = Modifier.padding(4.dp),
+            text = correctDuration.toMinutesAndHoursTitle(),
+            style = MaterialTheme.typography.bodyLarge,
+            maxLines = 1,
+            color = titleColor,
+        )
+    }
+    if (isOpenDurationDialog) {
+        DurationPickerDialog(
+            headerTitle = EditorThemeRes.strings.durationPickerTitle,
+            duration = duration,
+            startTime = startTime,
+            onDismissRequest = { isOpenDurationDialog = false },
+            onSelectedTime = {
+                onChangeDuration(it)
+                isOpenDurationDialog = false
+            },
+        )
+    }
+}
 
 /* ----------------------- Release Preview -----------------------
 @Composable

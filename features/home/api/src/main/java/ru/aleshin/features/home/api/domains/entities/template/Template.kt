@@ -11,12 +11,13 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License.
-*/
+ * imitations under the License.
+ */
 package ru.aleshin.features.home.api.domains.entities.template
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
+import ru.aleshin.core.utils.extensions.compareByHoursAndMinutes
 import ru.aleshin.core.utils.functional.Mapper
 import ru.aleshin.features.home.api.domains.entities.categories.MainCategory
 import ru.aleshin.features.home.api.domains.entities.categories.SubCategory
@@ -40,10 +41,12 @@ data class Template(
     fun <T> map(mapper: Mapper<Template, T>) = mapper.map(this)
 }
 
-fun Template.equalsTimeTask(
+fun Template.equalsIsTemplate(
     timeTask: TimeTask,
-) = startTime == timeTask.timeRanges.from && endTime == timeTask.timeRanges.to &&
-    category == timeTask.category && subCategory == timeTask.subCategory &&
+) = startTime.compareByHoursAndMinutes(timeTask.timeRanges.from) &&
+    endTime.compareByHoursAndMinutes(timeTask.timeRanges.to) &&
+    category == timeTask.category &&
+    subCategory == timeTask.subCategory &&
     isImportant == timeTask.isImportant &&
     isEnableNotification == timeTask.isEnableNotification &&
     isConsiderInStatistics == timeTask.isConsiderInStatistics

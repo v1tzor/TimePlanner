@@ -11,8 +11,8 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License.
-*/
+ * imitations under the License.
+ */
 package ru.aleshin.core.ui.views
 
 import androidx.compose.foundation.layout.Arrangement
@@ -52,6 +52,44 @@ fun DialogButtons(
         TextButton(onClick = onConfirmClick) {
             Text(
                 text = confirmTitle,
+                color = MaterialTheme.colorScheme.primary,
+                style = MaterialTheme.typography.labelLarge,
+            )
+        }
+    }
+}
+
+@Composable
+fun DialogButtons(
+    modifier: Modifier = Modifier,
+    confirmFirstTitle: String,
+    confirmSecondTitle: String,
+    onCancelClick: () -> Unit,
+    onConfirmFirstClick: () -> Unit,
+    onConfirmSecondClick: () -> Unit,
+) {
+    Row(
+        modifier = modifier.padding(top = 16.dp, bottom = 16.dp, end = 16.dp, start = 16.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        TextButton(onClick = onCancelClick) {
+            Text(
+                text = TimePlannerRes.strings.alertDialogDismissTitle,
+                color = MaterialTheme.colorScheme.secondary,
+                style = MaterialTheme.typography.labelLarge,
+            )
+        }
+        Spacer(modifier = Modifier.weight(1f))
+        TextButton(onClick = onConfirmFirstClick) {
+            Text(
+                text = confirmFirstTitle,
+                color = MaterialTheme.colorScheme.primary,
+                style = MaterialTheme.typography.labelLarge,
+            )
+        }
+        TextButton(onClick = onConfirmSecondClick) {
+            Text(
+                text = confirmSecondTitle,
                 color = MaterialTheme.colorScheme.primary,
                 style = MaterialTheme.typography.labelLarge,
             )

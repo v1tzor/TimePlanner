@@ -18,7 +18,7 @@ package ru.aleshin.features.home.impl.domain.interactors
 import ru.aleshin.core.utils.functional.DomainResult
 import ru.aleshin.features.home.api.domains.entities.schedules.TimeTask
 import ru.aleshin.features.home.api.domains.entities.template.Template
-import ru.aleshin.features.home.api.domains.entities.template.equalsTimeTask
+import ru.aleshin.features.home.api.domains.entities.template.equalsIsTemplate
 import ru.aleshin.features.home.api.domains.repository.TemplatesRepository
 import ru.aleshin.features.home.impl.domain.common.HomeEitherWrapper
 import ru.aleshin.features.home.impl.domain.entities.HomeFailures
@@ -29,27 +29,32 @@ import javax.inject.Inject
  */
 internal interface TemplatesInteractor {
 
+    suspend fun fetchTemplates(): DomainResult<HomeFailures, List<Template>>
     suspend fun checkIsTemplate(timeTask: TimeTask): DomainResult<HomeFailures, Int?>
-    suspend fun addTemplateTimeTask(template: Template): DomainResult<HomeFailures, Int>
-    suspend fun deleteTemplateTimeTask(id: Int): DomainResult<HomeFailures, Unit>
+    suspend fun addTemplate(template: Template): DomainResult<HomeFailures, Int>
+    suspend fun deleteTemplate(id: Int): DomainResult<HomeFailures, Unit>
 
     class Base @Inject constructor(
         private val templatesRepository: TemplatesRepository,
         private val eitherWrapper: HomeEitherWrapper,
     ) : TemplatesInteractor {
 
+        override suspend fun fetchTemplates() = eitherWrapper.wrap {
+            templatesRepository.fetchAllTemplates()
+        }
+
         override suspend fun checkIsTemplate(timeTask: TimeTask) = eitherWrapper.wrap {
             val allTemplates = templatesRepository.fetchAllTemplates()
-            val foundTimeTask = allTemplates.find { it.equalsTimeTask(timeTask) }
+            val foundTimeTask = allTemplates.find { it.equalsIsTemplate(timeTask) }
 
             return@wrap foundTimeTask?.templateId
         }
 
-        override suspend fun addTemplateTimeTask(template: Template) = eitherWrapper.wrap {
+        override suspend fun addTemplate(template: Template) = eitherWrapper.wrap {
             templatesRepository.addTemplate(template)
         }
 
-        override suspend fun deleteTemplateTimeTask(id: Int) = eitherWrapper.wrap {
+        override suspend fun deleteTemplate(id: Int) = eitherWrapper.wrap {
             templatesRepository.deleteTemplateById(id)
         }
     }

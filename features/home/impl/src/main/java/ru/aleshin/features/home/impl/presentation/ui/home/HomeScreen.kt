@@ -66,7 +66,7 @@ internal class HomeScreen : Screen {
                     onCreateSchedule = { dispatchEvent(HomeEvent.CreateSchedule) },
                     onTimeTaskIncrease = { dispatchEvent(HomeEvent.TimeTaskShiftUp(it)) },
                     onTimeTaskReduce = { dispatchEvent(HomeEvent.TimeTaskShiftDown(it)) },
-                    onChangeViewStatus = { dispatchEvent(HomeEvent.PressViewToggleButton(it)) },
+                    onChangeToggleStatus = { dispatchEvent(HomeEvent.PressViewToggleButton(it)) },
                 )
             },
             topBar = {

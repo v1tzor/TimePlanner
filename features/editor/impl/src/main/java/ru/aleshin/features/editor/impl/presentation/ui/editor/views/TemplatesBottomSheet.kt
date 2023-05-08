@@ -27,6 +27,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -43,7 +44,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -54,7 +55,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import ru.aleshin.core.ui.theme.TimePlannerRes
-import ru.aleshin.core.ui.theme.material.surfaceFour
+import ru.aleshin.core.ui.theme.material.surfaceThree
 import ru.aleshin.core.ui.views.CategoryIconMonogram
 import ru.aleshin.core.ui.views.CategoryTextMonogram
 import ru.aleshin.core.ui.views.ExpandedIcon
@@ -84,7 +85,7 @@ internal fun TemplatesBottomSheet(
 ) {
     val sheetState = rememberModalBottomSheetState()
     val systemUiController = rememberSystemUiController()
-    val containerColor = MaterialTheme.colorScheme.surfaceFour()
+    val containerColor = MaterialTheme.colorScheme.surfaceThree()
     val backgroundColor = MaterialTheme.colorScheme.background
 
     if (isShow) {
@@ -135,10 +136,11 @@ internal fun TemplatesBottomSheet(
             }
         }
     }
-    LaunchedEffect(key1 = isShow) {
-        systemUiController.setNavigationBarColor(
-            color = if (isShow) containerColor else backgroundColor,
-        )
+    DisposableEffect(key1 = isShow) {
+        systemUiController.setNavigationBarColor(color = if (isShow) containerColor else backgroundColor)
+        onDispose {
+            systemUiController.setNavigationBarColor(color = backgroundColor)
+        }
     }
 }
 
@@ -159,11 +161,11 @@ internal fun TemplatesBottomSheetHeader(
             color = MaterialTheme.colorScheme.onSurface,
             style = MaterialTheme.typography.titleLarge,
         )
-        Badge(modifier = Modifier.align(Alignment.CenterVertically)) {
+        Badge(modifier = Modifier.align(Alignment.CenterVertically).width(22.dp)) {
             Text(templateCount?.toString() ?: "-")
         }
         Spacer(modifier = Modifier.weight(1f))
-        TextButton(modifier = Modifier.height(32.dp), onClick = onControlClick) {
+        TextButton(modifier = Modifier.height(34.dp), onClick = onControlClick) {
             Text(text = EditorThemeRes.strings.controlTitle)
         }
     }
@@ -181,7 +183,7 @@ internal fun TemplateBottomSheetItem(
         modifier = modifier.fillMaxWidth(),
         shape = MaterialTheme.shapes.large,
         color = MaterialTheme.colorScheme.surface,
-        tonalElevation = TimePlannerRes.elevations.levelOne,
+//        tonalElevation = TimePlannerRes.elevations.levelFour,
     ) {
         Column(modifier = Modifier.animateContentSize()) {
             Row(
@@ -194,17 +196,18 @@ internal fun TemplateBottomSheetItem(
                     CategoryIconMonogram(
                         icon = categoryIcon.toIconPainter(),
                         iconDescription = categoryIcon.toDescription(),
-                        iconColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                        iconColor = MaterialTheme.colorScheme.primary,
                         backgroundColor = MaterialTheme.colorScheme.primaryContainer,
                     )
                 } else {
                     CategoryTextMonogram(
                         text = model.category.name.first().toString(),
-                        textColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                        textColor = MaterialTheme.colorScheme.primary,
                         backgroundColor = MaterialTheme.colorScheme.primaryContainer,
                     )
                 }
                 TemplateBottomSheetItemInfo(
+                    modifier = Modifier.weight(1f),
                     isFullInfo = isExpanded,
                     mainCategory = model.category,
                     subCategory = model.subCategory,
@@ -264,6 +267,7 @@ internal fun TemplateBottomSheetItemInfo(
             .appendLine(EditorThemeRes.strings.timeRangeFormat.format(startTimeFormat, endTimeFormat))
             .appendLine(EditorThemeRes.strings.durationFormat.format(duration))
             .appendLine(notificationTitle)
+
         false -> StringBuilder()
             .appendLine(EditorThemeRes.strings.timeRangeFormat.format(startTimeFormat, endTimeFormat))
             .appendLine(EditorThemeRes.strings.durationFormat.format(duration))
