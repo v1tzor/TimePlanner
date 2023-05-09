@@ -80,7 +80,7 @@ internal interface NavigationWorkProcessor : WorkProcessor<NavigationWorkCommand
         ): WorkResult<HomeAction, HomeEffect> {
             val editModel = EditModel(
                 date = date,
-                mainCategory = MainCategory.empty(),
+                mainCategory = MainCategory.absent(),
                 timeRanges = timeRange,
             )
             return navigationManager.navigateToEditorFeature(editModel).let {

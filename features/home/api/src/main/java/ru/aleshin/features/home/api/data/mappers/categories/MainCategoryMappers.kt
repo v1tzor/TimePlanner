@@ -11,8 +11,8 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License.
-*/
+ * imitations under the License.
+ */
 package ru.aleshin.features.home.api.data.mappers.categories
 
 import ru.aleshin.features.home.api.data.models.categories.MainCategoryEntity
@@ -26,6 +26,7 @@ fun MainCategoryEntity.mapToDomain() = MainCategory(
     name = categoryName,
     englishName = categoryNameEng,
     icon = mainIcon,
+    isNotDeleted = isNotDeleted,
 )
 
 fun MainCategory.mapToData() = MainCategoryEntity(
@@ -33,4 +34,5 @@ fun MainCategory.mapToData() = MainCategoryEntity(
     categoryName = name,
     categoryNameEng = englishName,
     mainIcon = icon,
+    isNotDeleted = isNotDeleted,
 )

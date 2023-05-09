@@ -34,7 +34,7 @@ data class EditModel(
     val date: Date,
     val timeRanges: TimeRange,
     val duration: Long = duration(timeRanges.from, timeRanges.to),
-    val mainCategory: MainCategory = MainCategory.empty(),
+    val mainCategory: MainCategory = MainCategory.absent(),
     val subCategory: SubCategory? = null,
     val isImportant: Boolean = false,
     val isEnableNotification: Boolean = true,

@@ -28,8 +28,14 @@ data class MainCategory(
     val name: String,
     val englishName: String? = null,
     val icon: MainIcon? = null,
+    val isNotDeleted: Boolean = false,
 ) : Parcelable {
     companion object {
-        fun empty() = MainCategory(name = "Отсутсвует", englishName = "Empty", icon = MainIcon.EMPTY)
+        fun absent() = MainCategory(
+            name = "Отсутсвует",
+            englishName = "Empty",
+            icon = MainIcon.EMPTY,
+            isNotDeleted = true,
+        )
     }
 }

@@ -53,6 +53,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
@@ -162,6 +163,7 @@ internal fun MainCategoryItem(
             MainCategoriesOptionMenu(
                 modifier = Modifier.width(250.dp),
                 isExpanded = isExpanded,
+                isDeleteEnabled = !category.isNotDeleted,
                 onUpdateClick = {
                     isCreatorDialogOpen = true
                     isExpanded = false
@@ -175,9 +177,8 @@ internal fun MainCategoryItem(
         }
     }
     if (isCreatorDialogOpen) {
-        MainCategoryCreatorDialog(
-            isEditMode = true,
-            initCategoryName = category.name,
+        MainCategoryEditorDialog(
+            editCategory = category,
             onDismiss = { isCreatorDialogOpen = false },
             onConfirm = { name ->
                 onUpdate(name)
@@ -224,6 +225,7 @@ internal fun MainCategoryItemLeading(
 internal fun MainCategoriesOptionMenu(
     modifier: Modifier = Modifier,
     isExpanded: Boolean,
+    isDeleteEnabled: Boolean,
     onUpdateClick: () -> Unit,
     onDeleteClick: () -> Unit,
     onDismiss: () -> Unit,
@@ -251,12 +253,18 @@ internal fun MainCategoriesOptionMenu(
                 )
             },
         )
+        val deleteContentColor = when (isDeleteEnabled) {
+            true -> MaterialTheme.colorScheme.onSurface
+            false -> MaterialTheme.colorScheme.onSurfaceVariant
+        }
         DropdownMenuItem(
+            modifier = Modifier.alpha(if (isDeleteEnabled) 1f else 0.5f),
+            enabled = isDeleteEnabled,
             onClick = onDeleteClick,
             text = {
                 Text(
                     text = HomeThemeRes.strings.deleteCategoryTitle,
-                    color = MaterialTheme.colorScheme.onSurface,
+                    color = deleteContentColor,
                     style = MaterialTheme.typography.titleMedium,
                 )
             },
@@ -264,7 +272,7 @@ internal fun MainCategoriesOptionMenu(
                 Icon(
                     imageVector = Icons.Default.Delete,
                     contentDescription = HomeThemeRes.strings.deleteCategoryTitle,
-                    tint = MaterialTheme.colorScheme.onSurface,
+                    tint = deleteContentColor,
                 )
             },
         )

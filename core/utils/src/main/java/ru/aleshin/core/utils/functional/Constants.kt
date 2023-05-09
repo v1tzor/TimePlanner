@@ -20,6 +20,10 @@ package ru.aleshin.core.utils.functional
  */
 object Constants {
 
+    object Text {
+        const val MAX_LENGTH = 50
+    }
+
     object Notification {
         const val CHANNEL_ID = "timeTaskAlarmChannel"
     }

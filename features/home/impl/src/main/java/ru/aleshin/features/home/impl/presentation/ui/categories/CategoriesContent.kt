@@ -31,7 +31,7 @@ import ru.aleshin.features.home.api.domains.entities.categories.SubCategory
 import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
 import ru.aleshin.features.home.impl.presentation.ui.categories.contract.CategoriesViewState
 import ru.aleshin.features.home.impl.presentation.ui.categories.views.MainCategoriesHorizontalList
-import ru.aleshin.features.home.impl.presentation.ui.categories.views.MainCategoryCreatorDialog
+import ru.aleshin.features.home.impl.presentation.ui.categories.views.MainCategoryEditorDialog
 import ru.aleshin.features.home.impl.presentation.ui.categories.views.SubCategoriesList
 
 /**
@@ -81,7 +81,7 @@ internal fun CategoriesContent(
         )
     }
     if (isMainCategoryCreatorOpen) {
-        MainCategoryCreatorDialog(
+        MainCategoryEditorDialog(
             onDismiss = { isMainCategoryCreatorOpen = false },
             onConfirm = { name ->
                 onAddMainCategory(name)

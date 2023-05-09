@@ -37,7 +37,7 @@ import ru.aleshin.features.home.impl.presentation.ui.categories.contract.Categor
 import ru.aleshin.features.home.impl.presentation.ui.categories.contract.CategoriesViewState
 import ru.aleshin.features.home.impl.presentation.ui.categories.screenmodel.rememberCategoriesScreenModel
 import ru.aleshin.features.home.impl.presentation.ui.categories.views.CategoriesTopAppBar
-import ru.aleshin.features.home.impl.presentation.ui.categories.views.SubCategoryCreatorDialog
+import ru.aleshin.features.home.impl.presentation.ui.categories.views.SubCategoryEditorDialog
 
 /**
  * @author Stanislav Aleshin on 05.04.2023.
@@ -81,7 +81,7 @@ internal class CategoriesScreen : Screen {
 
         if (isShowSubCategoryDialog) {
             val mainCategory = state.selectedMainCategory ?: return@ScreenContent
-            SubCategoryCreatorDialog(
+            SubCategoryEditorDialog(
                 mainCategory = mainCategory,
                 onDismiss = { isShowSubCategoryDialog = false },
                 onConfirm = { name ->

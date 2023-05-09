@@ -11,8 +11,8 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License.
-*/
+ * imitations under the License.
+ */
 package ru.aleshin.features.home.api.data.models.categories
 
 import androidx.room.ColumnInfo
@@ -29,4 +29,5 @@ data class MainCategoryEntity(
     @ColumnInfo("main_category_name") val categoryName: String,
     @ColumnInfo("main_category_name_eng") val categoryNameEng: String?,
     @ColumnInfo("main_icon") val mainIcon: MainIcon?,
+    @ColumnInfo("is_not_deleted") val isNotDeleted: Boolean = true,
 )

@@ -133,10 +133,9 @@ internal fun SubCategoryViewItem(
         }
     }
     if (isEditable) {
-        SubCategoryCreatorDialog(
+        SubCategoryEditorDialog(
             mainCategory = mainCategory,
-            initName = subCategory.name,
-            isEditMode = true,
+            editSubCategory = subCategory,
             onDismiss = { isEditable = false },
             onConfirm = { name ->
                 onChange(subCategory.copy(name = name))

@@ -44,7 +44,7 @@ internal class CategoriesScreenModel @Inject constructor(
 ) {
 
     init {
-        dispatchEvent(CategoriesEvent.Init(MainCategory.empty()))
+        dispatchEvent(CategoriesEvent.Init(MainCategory.absent()))
     }
 
     override suspend fun WorkScope<CategoriesViewState, CategoriesAction, CategoriesEffect>.handleEvent(

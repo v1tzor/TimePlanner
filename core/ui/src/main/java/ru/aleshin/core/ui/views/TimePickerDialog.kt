@@ -239,11 +239,9 @@ internal fun TimePickerHourMinuteSelector(
             if (value.length == 2 && value.toIntOrNull() in 0..23) requester.requestFocus()
         },
         shape = MaterialTheme.shapes.small,
-        supportingText = if (isEnableSupportText) {
-            {
-                Text(TimePlannerRes.strings.hoursTitle)
-            }
-        } else {
+        supportingText = if (isEnableSupportText) { {
+            Text(TimePlannerRes.strings.hoursTitle)
+        } } else {
             null
         },
         singleLine = true,
@@ -268,11 +266,9 @@ internal fun TimePickerHourMinuteSelector(
         textStyle = MaterialTheme.typography.displayMedium.copy(textAlign = TextAlign.Center),
         onValueChange = onHoursChanges,
         shape = MaterialTheme.shapes.small,
-        supportingText = if (isEnableSupportText) {
-            {
-                Text(TimePlannerRes.strings.minutesTitle)
-            }
-        } else {
+        supportingText = if (isEnableSupportText) { {
+            Text(TimePlannerRes.strings.minutesTitle)
+        } } else {
             null
         },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),

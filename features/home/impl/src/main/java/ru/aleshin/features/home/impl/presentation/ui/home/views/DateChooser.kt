@@ -83,6 +83,7 @@ internal fun DateChooser(
                         .graphicsLayer(alpha = alpha),
                     text = dateTitle,
                     textAlign = TextAlign.Center,
+                    maxLines = 1,
                     color = MaterialTheme.colorScheme.onSurface,
                     style = MaterialTheme.typography.titleMedium,
                 )
