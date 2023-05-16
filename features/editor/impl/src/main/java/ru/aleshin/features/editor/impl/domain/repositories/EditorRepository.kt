@@ -15,7 +15,7 @@
  */
 package ru.aleshin.features.editor.impl.domain.repositories
 
-import ru.aleshin.features.editor.api.domain.EditModel
+import ru.aleshin.features.editor.impl.domain.entites.EditModel
 
 /**
  * @author Stanislav Aleshin on 07.03.2023.

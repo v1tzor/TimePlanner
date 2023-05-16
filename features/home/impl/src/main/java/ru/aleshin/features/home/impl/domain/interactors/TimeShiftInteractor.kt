@@ -19,8 +19,8 @@ import ru.aleshin.core.utils.extensions.isCurrentDay
 import ru.aleshin.core.utils.extensions.shiftMinutes
 import ru.aleshin.core.utils.functional.TimeShiftException
 import ru.aleshin.core.utils.functional.UnitDomainResult
-import ru.aleshin.features.editor.api.domain.TimeTaskRepository
 import ru.aleshin.features.home.api.domains.entities.schedules.TimeTask
+import ru.aleshin.features.home.api.domains.repository.TimeTaskRepository
 import ru.aleshin.features.home.impl.domain.common.HomeEitherWrapper
 import ru.aleshin.features.home.impl.domain.entities.HomeFailures
 import ru.aleshin.features.home.impl.domain.entities.TimeTaskImportanceException

@@ -15,7 +15,7 @@
  */
 package ru.aleshin.features.editor.impl.data.datasources
 
-import ru.aleshin.features.editor.api.domain.EditModel
+import ru.aleshin.features.editor.impl.domain.entites.EditModel
 import javax.inject.Inject
 
 /**

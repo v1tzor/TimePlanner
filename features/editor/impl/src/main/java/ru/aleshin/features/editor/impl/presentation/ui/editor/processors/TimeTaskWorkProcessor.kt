@@ -21,12 +21,13 @@ import ru.aleshin.core.utils.functional.Either
 import ru.aleshin.core.utils.managers.DateManager
 import ru.aleshin.core.utils.platform.screenmodel.work.*
 import ru.aleshin.features.editor.api.presentation.TimeTaskAlarmManager
+import ru.aleshin.features.editor.impl.domain.common.convertToTemplate
+import ru.aleshin.features.editor.impl.domain.common.convertToTimeTask
 import ru.aleshin.features.editor.impl.domain.entites.EditorFailures
 import ru.aleshin.features.editor.impl.domain.interactors.TemplatesInteractor
 import ru.aleshin.features.editor.impl.domain.interactors.TimeTaskInteractor
 import ru.aleshin.features.editor.impl.navigation.NavigationManager
-import ru.aleshin.features.editor.impl.presentation.mappers.convertToTemplate
-import ru.aleshin.features.editor.impl.presentation.mappers.convertToTimeTask
+import ru.aleshin.features.editor.impl.presentation.mappers.mapToDomain
 import ru.aleshin.features.editor.impl.presentation.models.EditModelUi
 import ru.aleshin.features.editor.impl.presentation.ui.editor.contract.EditorAction
 import ru.aleshin.features.editor.impl.presentation.ui.editor.contract.EditorEffect
@@ -48,17 +49,21 @@ internal interface TimeTaskWorkProcessor : WorkProcessor<TimeTaskWorkCommand, Ed
 
         override suspend fun work(command: TimeTaskWorkCommand) = when (command) {
             is TimeTaskWorkCommand.DeleteModel -> deleteModel(command.editModel)
-            is TimeTaskWorkCommand.AddOrSaveModel -> saveOrAddModel(command.editModel, command.isTemplateUpdate)
             is TimeTaskWorkCommand.LoadTemplateTimeTasks -> loadTemplates()
+            is TimeTaskWorkCommand.AddOrSaveModel -> saveOrAddModel(
+                command.editModel,
+                command.isTemplateUpdate,
+            )
         }
 
         private suspend fun deleteModel(editModel: EditModelUi): WorkResult<EditorAction, EditorEffect> {
-            if (editModel.key != 0L) {
-                val deleteResult = timeTaskInteractor.deleteTimeTask(editModel.key)
+            val domainModel = editModel.mapToDomain()
+            if (domainModel.key != 0L) {
+                val deleteResult = timeTaskInteractor.deleteTimeTask(domainModel.key)
                 if (deleteResult is Either.Left) {
                     return EffectResult(EditorEffect.ShowError(deleteResult.data))
                 } else {
-                    timeTaskAlarmManager.deleteNotifyAlarm(editModel.convertToTimeTask())
+                    timeTaskAlarmManager.deleteNotifyAlarm(domainModel.convertToTimeTask())
                 }
             }
             return navigationManager.navigateToPreviousFeature().let {
@@ -70,10 +75,11 @@ internal interface TimeTaskWorkProcessor : WorkProcessor<TimeTaskWorkCommand, Ed
             editModel: EditModelUi,
             isTemplateUpdate: Boolean,
         ): WorkResult<EditorAction, EditorEffect> {
-            val timeTask = editModel.convertToTimeTask()
+            val domainModel = editModel.mapToDomain()
+            val timeTask = domainModel.convertToTimeTask()
             val templateId = editModel.templateId
             if (templateId != null && isTemplateUpdate) {
-                templatesInteractor.updateTemplate(editModel.convertToTemplate(templateId))
+                templatesInteractor.updateTemplate(domainModel.convertToTemplate(templateId))
             }
             val saveResult = if (timeTask.key != 0L) {
                 timeTaskInteractor.updateTimeTask(timeTask)
@@ -83,11 +89,12 @@ internal interface TimeTaskWorkProcessor : WorkProcessor<TimeTaskWorkCommand, Ed
 
             return when (saveResult) {
                 is Either.Right -> {
-                    updateOrAddNotify(timeTask)
+                    notifyUpdateOrAdd(timeTask)
                     navigationManager.navigateToHomeScreen().let {
                         ActionResult(EditorAction.Navigate)
                     }
                 }
+
                 is Either.Left -> with(saveResult.data) {
                     val effect = if (this is EditorFailures.TimeOverlayError) {
                         EditorEffect.ShowOverlayError(editModel.timeRanges, this)
@@ -99,7 +106,7 @@ internal interface TimeTaskWorkProcessor : WorkProcessor<TimeTaskWorkCommand, Ed
             }
         }
 
-        private fun updateOrAddNotify(timeTask: TimeTask) {
+        private fun notifyUpdateOrAdd(timeTask: TimeTask) {
             if (timeTask.isEnableNotification) {
                 val currentTime = dateManager.fetchCurrentDate()
                 if (timeTask.timeRanges.from > currentTime) {

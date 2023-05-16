@@ -15,39 +15,35 @@
  */
 package ru.aleshin.features.editor.impl.presentation.mappers
 
-import ru.aleshin.core.utils.extensions.changeDay
+import ru.aleshin.core.utils.extensions.duration
 import ru.aleshin.core.utils.functional.TimeRange
+import ru.aleshin.features.editor.impl.domain.entites.EditModel
 import ru.aleshin.features.editor.impl.presentation.models.EditModelUi
 import ru.aleshin.features.editor.impl.presentation.models.EditParameters
-import ru.aleshin.features.home.api.domains.entities.template.Template
-import java.util.Date
 
 /**
- * @author Stanislav Aleshin on 06.05.2023.
+ * @author Stanislav Aleshin on 16.05.2023.
  */
-internal fun Template.convertToEditModel(date: Date) = EditModelUi(
+internal fun EditModel.mapToUi() = EditModelUi(
+    key = key,
     date = date,
-    timeRanges = TimeRange(
-        from = startTime.changeDay(date),
-        to = endTime.changeDay(date),
-    ),
-    mainCategory = category,
+    timeRanges = TimeRange(startTime, endTime),
+    duration = duration(startTime, endTime),
+    mainCategory = mainCategory,
     subCategory = subCategory,
+    parameters = EditParameters(isImportant, isEnableNotification, isConsiderInStatistics),
     templateId = templateId,
-    parameters = EditParameters(
-        isImportant = isImportant,
-        isEnableNotification = isEnableNotification,
-        isConsiderInStatistics = isConsiderInStatistics,
-    ),
 )
 
-internal fun EditModelUi.convertToTemplate(id: Int = 0) = Template(
-    templateId = id,
+internal fun EditModelUi.mapToDomain() = EditModel(
+    key = key,
+    date = date,
     startTime = timeRanges.from,
     endTime = timeRanges.to,
-    category = mainCategory,
+    mainCategory = mainCategory,
     subCategory = subCategory,
     isImportant = parameters.isImportant,
     isEnableNotification = parameters.isEnableNotification,
     isConsiderInStatistics = parameters.isConsiderInStatistics,
+    templateId = templateId,
 )

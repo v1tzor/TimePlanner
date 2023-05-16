@@ -13,21 +13,17 @@
  * See the License for the specific language governing permissions and
  * imitations under the License.
  */
-package ru.aleshin.features.editor.impl.presentation.mappers
+package ru.aleshin.features.home.api.domains.repository
 
-import ru.aleshin.features.editor.impl.presentation.models.EditModelUi
 import ru.aleshin.features.home.api.domains.entities.schedules.TimeTask
+import java.util.*
 
 /**
- * @author Stanislav Aleshin on 16.05.2023.
+ * @author Stanislav Aleshin on 10.03.2023.
  */
-internal fun EditModelUi.convertToTimeTask() = TimeTask(
-    key = key,
-    date = date,
-    timeRanges = timeRanges,
-    category = mainCategory,
-    subCategory = subCategory,
-    isImportant = parameters.isImportant,
-    isEnableNotification = parameters.isEnableNotification,
-    isConsiderInStatistics = parameters.isConsiderInStatistics,
-)
+interface TimeTaskRepository {
+    suspend fun addTimeTasks(timeTasks: List<TimeTask>)
+    suspend fun fetchAllTimeTaskByDate(date: Date): List<TimeTask>
+    suspend fun updateTimeTask(timeTask: TimeTask)
+    suspend fun deleteTimeTask(key: Long)
+}

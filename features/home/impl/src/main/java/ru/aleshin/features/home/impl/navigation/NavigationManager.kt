@@ -16,8 +16,8 @@
 package ru.aleshin.features.home.impl.navigation
 
 import ru.aleshin.core.utils.navigation.Router
-import ru.aleshin.features.editor.api.domain.EditModel
 import ru.aleshin.features.editor.api.navigations.EditorFeatureStarter
+import ru.aleshin.features.home.api.domains.entities.schedules.TimeTask
 import ru.aleshin.features.home.impl.di.annontation.LocalRouter
 import ru.aleshin.features.home.impl.presentation.ui.categories.CategoriesScreen
 import ru.aleshin.features.home.impl.presentation.ui.home.HomeScreen
@@ -30,7 +30,7 @@ import javax.inject.Provider
  */
 internal interface NavigationManager {
 
-    fun navigateToEditorFeature(editModel: EditModel)
+    fun navigateToEditorFeature(timeTask: TimeTask, templateId: Int?)
     fun navigateToHomeScreen()
     fun navigateToTemplatesScreen()
     fun navigateToCategoriesScreen()
@@ -42,8 +42,8 @@ internal interface NavigationManager {
         @LocalRouter private val localRouter: Router,
     ) : NavigationManager {
 
-        override fun navigateToEditorFeature(editModel: EditModel) {
-            val screen = editorFeatureStarter.get().provideMainScreen(editModel)
+        override fun navigateToEditorFeature(timeTask: TimeTask, templateId: Int?) {
+            val screen = editorFeatureStarter.get().provideMainScreen(timeTask, templateId)
             globalRouter.navigateTo(screen)
         }
 

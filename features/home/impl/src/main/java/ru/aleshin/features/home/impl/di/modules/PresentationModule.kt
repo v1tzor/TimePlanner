@@ -25,7 +25,6 @@ import ru.aleshin.features.home.impl.navigation.HomeFeatureStarterImpl
 import ru.aleshin.features.home.impl.navigation.NavigationManager
 import ru.aleshin.features.home.impl.presentation.mapppers.ScheduleDomainToUiMapper
 import ru.aleshin.features.home.impl.presentation.mapppers.TimeTaskDomainToUiMapper
-import ru.aleshin.features.home.impl.presentation.mapppers.TimeTaskToEditModelMapper
 import ru.aleshin.features.home.impl.presentation.mapppers.TimeTaskUiToDomainMapper
 import ru.aleshin.features.home.impl.presentation.ui.categories.screenmodel.CategoriesEffectCommunicator
 import ru.aleshin.features.home.impl.presentation.ui.categories.screenmodel.CategoriesScreenModel
@@ -90,9 +89,6 @@ internal interface PresentationModule {
 
     @Binds
     fun bindTimeTaskUiToDomainMapper(mapper: TimeTaskUiToDomainMapper.Base): TimeTaskUiToDomainMapper
-
-    @Binds
-    fun bindTimeTaskToEditModelMapper(mapper: TimeTaskToEditModelMapper.Base): TimeTaskToEditModelMapper
 
     // Templates
 

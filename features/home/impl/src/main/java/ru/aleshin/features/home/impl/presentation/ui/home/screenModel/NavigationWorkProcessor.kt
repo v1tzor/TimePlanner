@@ -15,15 +15,16 @@
  */
 package ru.aleshin.features.home.impl.presentation.ui.home.screenModel
 
+import ru.aleshin.core.utils.functional.TimeRange
 import ru.aleshin.core.utils.functional.rightOrElse
 import ru.aleshin.core.utils.platform.screenmodel.work.ActionResult
 import ru.aleshin.core.utils.platform.screenmodel.work.WorkCommand
 import ru.aleshin.core.utils.platform.screenmodel.work.WorkProcessor
 import ru.aleshin.core.utils.platform.screenmodel.work.WorkResult
-import ru.aleshin.features.editor.api.domain.EditModel
+import ru.aleshin.features.home.api.domains.entities.categories.MainCategory
+import ru.aleshin.features.home.api.domains.entities.schedules.TimeTask
 import ru.aleshin.features.home.impl.domain.interactors.TemplatesInteractor
 import ru.aleshin.features.home.impl.navigation.NavigationManager
-import ru.aleshin.features.home.impl.presentation.mapppers.TimeTaskToEditModelMapper
 import ru.aleshin.features.home.impl.presentation.mapppers.TimeTaskUiToDomainMapper
 import ru.aleshin.features.home.impl.presentation.models.TimeTaskUi
 import ru.aleshin.features.home.impl.presentation.ui.home.contract.HomeAction
@@ -48,7 +49,6 @@ internal interface NavigationWorkProcessor : WorkProcessor<NavigationWorkCommand
         private val navigationManager: NavigationManager,
         private val templatesInteractor: TemplatesInteractor,
         private val mapperToDomain: TimeTaskUiToDomainMapper,
-        private val mapperToEditModel: TimeTaskToEditModelMapper,
     ) : NavigationWorkProcessor {
 
         override suspend fun navigateToEditorWithTimeTask(timeTask: TimeTaskUi) = work(
@@ -71,10 +71,11 @@ internal interface NavigationWorkProcessor : WorkProcessor<NavigationWorkCommand
 
         private suspend fun navigateWithTimeTask(timeTask: TimeTaskUi): WorkResult<HomeAction, HomeEffect> {
             val templateId = templatesInteractor.checkIsTemplate(timeTask.map(mapperToDomain))
-            val editModel = mapperToEditModel.map(timeTask, templateId.rightOrElse(null))
-            return navigationManager.navigateToEditorFeature(editModel).let {
-                ActionResult(HomeAction.Navigate)
-            }
+
+            return navigationManager.navigateToEditorFeature(
+                timeTask = timeTask.map(mapperToDomain),
+                templateId = templateId.rightOrElse(null),
+            ).let { ActionResult(HomeAction.Navigate) }
         }
 
         private fun navigateWithEmptyTimeTask(
@@ -82,8 +83,12 @@ internal interface NavigationWorkProcessor : WorkProcessor<NavigationWorkCommand
             startTime: Date,
             endTime: Date,
         ): WorkResult<HomeAction, HomeEffect> {
-            val editModel = EditModel(date = date, startTime = startTime, endTime = endTime)
-            return navigationManager.navigateToEditorFeature(editModel).let {
+            val timeTask = TimeTask(
+                date = date,
+                category = MainCategory.absent(),
+                timeRanges = TimeRange(startTime, endTime),
+            )
+            return navigationManager.navigateToEditorFeature(timeTask, null).let {
                 ActionResult(HomeAction.Navigate)
             }
         }

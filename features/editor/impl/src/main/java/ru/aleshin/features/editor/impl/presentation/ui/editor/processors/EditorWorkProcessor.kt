@@ -20,12 +20,13 @@ import ru.aleshin.core.utils.functional.Either
 import ru.aleshin.core.utils.functional.TimeRange
 import ru.aleshin.core.utils.functional.rightOrElse
 import ru.aleshin.core.utils.platform.screenmodel.work.*
+import ru.aleshin.features.editor.impl.domain.common.convertToEditModel
+import ru.aleshin.features.editor.impl.domain.common.convertToTemplate
 import ru.aleshin.features.editor.impl.domain.interactors.CategoriesInteractor
 import ru.aleshin.features.editor.impl.domain.interactors.EditorInteractor
 import ru.aleshin.features.editor.impl.domain.interactors.TemplatesInteractor
 import ru.aleshin.features.editor.impl.navigation.NavigationManager
-import ru.aleshin.features.editor.impl.presentation.mappers.convertToEditModel
-import ru.aleshin.features.editor.impl.presentation.mappers.convertToTemplate
+import ru.aleshin.features.editor.impl.presentation.mappers.mapToDomain
 import ru.aleshin.features.editor.impl.presentation.mappers.mapToUi
 import ru.aleshin.features.editor.impl.presentation.models.EditModelUi
 import ru.aleshin.features.editor.impl.presentation.ui.editor.contract.EditorAction
@@ -84,7 +85,8 @@ internal interface EditorWorkProcessor : WorkProcessor<EditorWorkCommand, Editor
         private suspend fun changeIsTemplate(editModel: EditModelUi): WorkResult<EditorAction, EditorEffect> {
             val currentTemplateId = editModel.templateId
             val newId = if (currentTemplateId == null) {
-                templatesInteractor.addTemplate(editModel.convertToTemplate()).rightOrElse(null)
+                val template = editModel.mapToDomain().convertToTemplate()
+                templatesInteractor.addTemplate(template).rightOrElse(null)
             } else {
                 templatesInteractor.deleteTemplateById(currentTemplateId).let { result ->
                     when (result) {
@@ -101,9 +103,12 @@ internal interface EditorWorkProcessor : WorkProcessor<EditorWorkCommand, Editor
             return ActionResult(EditorAction.UpdateTimeRange(timeRange, duration))
         }
 
-        private fun applyTemplate(template: Template, model: EditModelUi): WorkResult<EditorAction, EditorEffect> {
-            val editModel = template.convertToEditModel(model.date).copy(key = model.key)
-            return ActionResult(EditorAction.UpdateEditModel(editModel))
+        private fun applyTemplate(
+            template: Template,
+            model: EditModelUi,
+        ): WorkResult<EditorAction, EditorEffect> {
+            val domainEditModel = template.convertToEditModel(model.date).copy(key = model.key)
+            return ActionResult(EditorAction.UpdateEditModel(domainEditModel.mapToUi()))
         }
     }
 }

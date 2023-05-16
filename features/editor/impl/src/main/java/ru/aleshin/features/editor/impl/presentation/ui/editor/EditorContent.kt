@@ -134,7 +134,7 @@ internal fun CategoriesSection(
                 currentCategory = mainCategory,
                 allMainCategories = allCategories.map { it.mainCategory },
                 onCategoryChange = { newMainCategory ->
-                    onCategoriesChange(newMainCategory, subCategory)
+                    onCategoriesChange(newMainCategory, null)
                 },
             )
             if (isMainCategoryValid) {

@@ -15,8 +15,8 @@
  */
 package ru.aleshin.features.editor.impl.data.repositories
 
-import ru.aleshin.features.editor.api.domain.EditModel
 import ru.aleshin.features.editor.impl.data.datasources.EditorLocalDataSource
+import ru.aleshin.features.editor.impl.domain.entites.EditModel
 import ru.aleshin.features.editor.impl.domain.repositories.EditorRepository
 import javax.inject.Inject
 

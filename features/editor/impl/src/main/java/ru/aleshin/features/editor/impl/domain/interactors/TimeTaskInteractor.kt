@@ -20,10 +20,10 @@ import ru.aleshin.core.utils.functional.Either
 import ru.aleshin.core.utils.functional.TimeRange
 import ru.aleshin.core.utils.managers.TimeOverlayException
 import ru.aleshin.core.utils.managers.TimeOverlayManager
-import ru.aleshin.features.editor.api.domain.TimeTaskRepository
 import ru.aleshin.features.editor.impl.domain.common.EditorEitherWrapper
 import ru.aleshin.features.editor.impl.domain.entites.EditorFailures
 import ru.aleshin.features.home.api.domains.entities.schedules.TimeTask
+import ru.aleshin.features.home.api.domains.repository.TimeTaskRepository
 import javax.inject.Inject
 
 /**
