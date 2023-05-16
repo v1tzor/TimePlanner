@@ -7,8 +7,6 @@ Support:
 - Theme: Dark, Light
 - Languages: RU, EN
 
-...
-
 ## Screenshots
 <table>
   <tr>
@@ -53,14 +51,19 @@ Support:
   </tr>
  </table>
  
- ## MVI
+## Project structure
 <p>
-<img src="https://i.imgur.com/52HH2rO.png"></img>
+<img src="https://i.imgur.com/OzVrH0D.png" width="100%"></img>
 </p>
 
 ## Standart Feature structure
 <p>
 <img src="https://i.imgur.com/zXWMQI4.png" width="100%"></img>
+</p>
+ 
+ ## MVI
+<p>
+<img src="https://i.imgur.com/52HH2rO.png"></img>
 </p>
 
 ### License
