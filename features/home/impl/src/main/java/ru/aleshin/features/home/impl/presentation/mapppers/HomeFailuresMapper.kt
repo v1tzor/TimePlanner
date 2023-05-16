@@ -23,5 +23,6 @@ import ru.aleshin.features.home.impl.presentation.theme.tokens.HomeStrings
  */
 internal fun HomeFailures.mapToMessage(homeStrings: HomeStrings) = when (this) {
     is HomeFailures.ShiftError -> homeStrings.shiftError
+    is HomeFailures.ImportanceError -> homeStrings.importanceError
     is HomeFailures.OtherError -> homeStrings.otherError
 }

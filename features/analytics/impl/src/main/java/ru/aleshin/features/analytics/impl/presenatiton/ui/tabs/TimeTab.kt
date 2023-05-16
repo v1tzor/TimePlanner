@@ -51,6 +51,7 @@ import ru.aleshin.features.analytics.impl.presenatiton.ui.contract.AnalyticsView
 import ru.aleshin.features.analytics.impl.presenatiton.ui.views.AnalyticsTimeLegend
 import ru.aleshin.features.analytics.impl.presenatiton.ui.views.SubAnalyticsTimeLegend
 import ru.aleshin.features.analytics.impl.presenatiton.ui.views.TimeSelectorAndRefresh
+import ru.aleshin.features.home.api.presentation.mappers.fetchNameByLanguage
 
 /**
  * @author Stanislav Aleshin on 20.04.2023.
@@ -111,7 +112,7 @@ internal fun CategoriesAnalyticsChart(
         topList.forEachIndexed { index, analytic ->
             val data = PieChartEntry(
                 value = analytic.duration.toFloat() + 1f,
-                label = AnnotatedString(analytic.mainCategory.name),
+                label = AnnotatedString(analytic.mainCategory.fetchNameByLanguage()),
                 color = fetchPieColorByTop(index),
             )
             add(data)

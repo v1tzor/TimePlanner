@@ -24,5 +24,6 @@ import ru.aleshin.core.utils.functional.DomainFailures
 @Parcelize
 internal sealed class HomeFailures : DomainFailures {
     object ShiftError : HomeFailures()
+    object ImportanceError : HomeFailures()
     data class OtherError(val throwable: Throwable) : HomeFailures()
 }

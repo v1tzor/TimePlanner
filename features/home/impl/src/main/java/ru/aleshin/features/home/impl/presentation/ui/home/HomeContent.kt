@@ -32,7 +32,6 @@ import ru.aleshin.core.utils.extensions.endThisDay
 import ru.aleshin.core.utils.extensions.isNotZeroDifference
 import ru.aleshin.core.utils.extensions.shiftDay
 import ru.aleshin.core.utils.functional.Constants
-import ru.aleshin.core.utils.functional.TimeRange
 import ru.aleshin.features.home.api.domains.entities.schedules.status.TimeTaskStatus
 import ru.aleshin.features.home.impl.presentation.models.TimeTaskUi
 import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
@@ -55,7 +54,7 @@ internal fun HomeContent(
     onChangeDate: (Date) -> Unit,
     onCreateSchedule: () -> Unit,
     onTimeTaskEdit: (TimeTaskUi) -> Unit,
-    onTimeTaskAdd: (TimeRange) -> Unit,
+    onTimeTaskAdd: (startTime: Date, endTime: Date) -> Unit,
     onTimeTaskIncrease: (TimeTaskUi) -> Unit,
     onTimeTaskReduce: (TimeTaskUi) -> Unit,
     onChangeToggleStatus: (ViewToggleStatus) -> Unit,
@@ -91,19 +90,18 @@ internal fun HomeContent(
                                 onTimeTaskEdit = onTimeTaskEdit,
                                 onTimeTaskIncrease = onTimeTaskIncrease,
                                 onTimeTaskReduce = onTimeTaskReduce,
-                                isCompactView = isCompactView && nextItem != null && timeTask.endTime.isNotZeroDifference(
-                                    nextItem.startTime,
-                                ),
+                                isCompactView = isCompactView &&
+                                    nextItem != null &&
+                                    timeTask.endTime.isNotZeroDifference(nextItem.startTime),
                             )
                             if (nextItem != null && timeTask.endTime.isNotZeroDifference(nextItem.startTime) && !isCompactView) {
-                                val timeRange = TimeRange(timeTask.endTime, nextItem.startTime)
                                 val trackColor = when (timeTask.executionStatus) {
                                     TimeTaskStatus.PLANNED -> MaterialTheme.colorScheme.surfaceOne()
                                     TimeTaskStatus.RUNNING -> MaterialTheme.colorScheme.primaryContainer
                                     TimeTaskStatus.COMPLETED -> MaterialTheme.colorScheme.tertiaryContainer
                                 }
                                 AddTimeTaskViewItem(
-                                    onAddTimeTask = { onTimeTaskAdd.invoke(timeRange) },
+                                    onAddTimeTask = { onTimeTaskAdd.invoke(timeTask.endTime, nextItem.startTime) },
                                     startTime = timeTask.endTime,
                                     endTime = nextItem.startTime,
                                     indicatorColor = trackColor,
@@ -116,9 +114,8 @@ internal fun HomeContent(
                                 false -> state.timeTasks.last().endTime
                             }
                             val endTime = startTime.endThisDay()
-                            val timeRange = TimeRange(startTime, endTime)
                             AddTimeTaskViewItem(
-                                onAddTimeTask = { onTimeTaskAdd.invoke(timeRange) },
+                                onAddTimeTask = { onTimeTaskAdd.invoke(startTime, endTime) },
                                 startTime = startTime,
                                 endTime = endTime,
                             )

@@ -79,9 +79,10 @@ internal class HomeScreenModel @Inject constructor(
                 navigationWorkProcessor.work(command).handleWork()
             }
             is HomeEvent.PressAddTimeTaskButton -> {
-                val command = NavigationWorkCommand.NavigateToEditorWithEmptyTimeTask(
+                val command = NavigationWorkCommand.NavigateToEditor(
                     currentDate = checkNotNull(state().currentDate),
-                    timeRange = event.timeRange,
+                    startTime = event.startTime,
+                    endTime = event.endTime,
                 )
                 navigationWorkProcessor.work(command).handleWork()
             }

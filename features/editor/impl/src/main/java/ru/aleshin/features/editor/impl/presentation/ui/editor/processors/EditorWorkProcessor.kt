@@ -20,13 +20,14 @@ import ru.aleshin.core.utils.functional.Either
 import ru.aleshin.core.utils.functional.TimeRange
 import ru.aleshin.core.utils.functional.rightOrElse
 import ru.aleshin.core.utils.platform.screenmodel.work.*
-import ru.aleshin.features.editor.api.domain.EditModel
-import ru.aleshin.features.editor.api.domain.convertToTemplate
 import ru.aleshin.features.editor.impl.domain.interactors.CategoriesInteractor
 import ru.aleshin.features.editor.impl.domain.interactors.EditorInteractor
 import ru.aleshin.features.editor.impl.domain.interactors.TemplatesInteractor
 import ru.aleshin.features.editor.impl.navigation.NavigationManager
-import ru.aleshin.features.editor.impl.presentation.mappers.TemplateToEditModelMapper
+import ru.aleshin.features.editor.impl.presentation.mappers.convertToEditModel
+import ru.aleshin.features.editor.impl.presentation.mappers.convertToTemplate
+import ru.aleshin.features.editor.impl.presentation.mappers.mapToUi
+import ru.aleshin.features.editor.impl.presentation.models.EditModelUi
 import ru.aleshin.features.editor.impl.presentation.ui.editor.contract.EditorAction
 import ru.aleshin.features.editor.impl.presentation.ui.editor.contract.EditorEffect
 import ru.aleshin.features.home.api.domains.entities.template.Template
@@ -35,15 +36,13 @@ import javax.inject.Inject
 /**
  * @author Stanislav Aleshin on 26.03.2023.
  */
-internal interface EditorWorkProcessor :
-    WorkProcessor<EditorWorkCommand, EditorAction, EditorEffect> {
+internal interface EditorWorkProcessor : WorkProcessor<EditorWorkCommand, EditorAction, EditorEffect> {
 
     class Base @Inject constructor(
         private val editorInteractor: EditorInteractor,
         private val categoriesInteractor: CategoriesInteractor,
         private val templatesInteractor: TemplatesInteractor,
         private val navigationManager: NavigationManager,
-        private val templateMapper: TemplateToEditModelMapper,
     ) : EditorWorkProcessor {
 
         override suspend fun work(command: EditorWorkCommand) = when (command) {
@@ -75,14 +74,14 @@ internal interface EditorWorkProcessor :
         }
 
         private suspend fun loadSendModel(): WorkResult<EditorAction, EditorEffect> {
-            val editModel = editorInteractor.fetchEditModel()
+            val editModel = editorInteractor.fetchEditModel().mapToUi()
             return when (val result = categoriesInteractor.fetchCategories()) {
                 is Either.Right -> ActionResult(EditorAction.SetUp(editModel, result.data))
                 is Either.Left -> return EffectResult(EditorEffect.ShowError(result.data))
             }
         }
 
-        private suspend fun changeIsTemplate(editModel: EditModel): WorkResult<EditorAction, EditorEffect> {
+        private suspend fun changeIsTemplate(editModel: EditModelUi): WorkResult<EditorAction, EditorEffect> {
             val currentTemplateId = editModel.templateId
             val newId = if (currentTemplateId == null) {
                 templatesInteractor.addTemplate(editModel.convertToTemplate()).rightOrElse(null)
@@ -102,11 +101,8 @@ internal interface EditorWorkProcessor :
             return ActionResult(EditorAction.UpdateTimeRange(timeRange, duration))
         }
 
-        private fun applyTemplate(
-            template: Template,
-            model: EditModel,
-        ): WorkResult<EditorAction, EditorEffect> {
-            val editModel = templateMapper.map(template, model.date).copy(key = model.key)
+        private fun applyTemplate(template: Template, model: EditModelUi): WorkResult<EditorAction, EditorEffect> {
+            val editModel = template.convertToEditModel(model.date).copy(key = model.key)
             return ActionResult(EditorAction.UpdateEditModel(editModel))
         }
     }
@@ -117,7 +113,7 @@ internal sealed class EditorWorkCommand : WorkCommand {
     object ManageCategories : EditorWorkCommand()
     object GoTemplates : EditorWorkCommand()
     object LoadSendEditModel : EditorWorkCommand()
-    data class ChangeIsTemplate(val editModel: EditModel) : EditorWorkCommand()
+    data class ChangeIsTemplate(val editModel: EditModelUi) : EditorWorkCommand()
     data class ChangeTimeRange(val timeRange: TimeRange) : EditorWorkCommand()
-    data class ApplyTemplate(val template: Template, val model: EditModel) : EditorWorkCommand()
+    data class ApplyTemplate(val template: Template, val model: EditModelUi) : EditorWorkCommand()
 }

@@ -62,7 +62,7 @@ internal class HomeScreen : Screen {
                     modifier = Modifier.padding(paddingValues),
                     onChangeDate = { date -> dispatchEvent(HomeEvent.LoadSchedule(date)) },
                     onTimeTaskEdit = { dispatchEvent(HomeEvent.PressEditTimeTaskButton(it)) },
-                    onTimeTaskAdd = { dispatchEvent(HomeEvent.PressAddTimeTaskButton(it)) },
+                    onTimeTaskAdd = { start, end -> dispatchEvent(HomeEvent.PressAddTimeTaskButton(start, end)) },
                     onCreateSchedule = { dispatchEvent(HomeEvent.CreateSchedule) },
                     onTimeTaskIncrease = { dispatchEvent(HomeEvent.TimeTaskShiftUp(it)) },
                     onTimeTaskReduce = { dispatchEvent(HomeEvent.TimeTaskShiftDown(it)) },
@@ -93,6 +93,7 @@ internal class HomeScreen : Screen {
             when (effect) {
                 is HomeEffect.ShowError -> snackbarState.showSnackbar(
                     message = effect.failures.mapToMessage(strings),
+                    withDismissAction = true,
                 )
             }
         }

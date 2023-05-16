@@ -15,9 +15,7 @@
  */
 package ru.aleshin.features.home.impl.presentation.mapppers
 
-import ru.aleshin.core.utils.extensions.duration
 import ru.aleshin.core.utils.functional.ParameterizedMapper
-import ru.aleshin.core.utils.functional.TimeRange
 import ru.aleshin.features.editor.api.domain.EditModel
 import ru.aleshin.features.home.impl.presentation.models.TimeTaskUi
 import javax.inject.Inject
@@ -30,8 +28,8 @@ internal interface TimeTaskToEditModelMapper : ParameterizedMapper<TimeTaskUi, E
         override fun map(input: TimeTaskUi, parameter: Int?) = EditModel(
             key = input.key,
             date = input.date,
-            timeRanges = TimeRange(input.startTime, input.endTime),
-            duration = duration(input.startTime, input.endTime),
+            startTime = input.startTime,
+            endTime = input.endTime,
             mainCategory = input.mainCategory,
             subCategory = input.subCategory,
             isImportant = input.isImportant,

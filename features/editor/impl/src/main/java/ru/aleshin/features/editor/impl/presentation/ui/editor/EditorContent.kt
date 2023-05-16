@@ -35,6 +35,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import ru.aleshin.core.utils.extensions.shiftMillis
+import ru.aleshin.core.utils.functional.TimeRange
+import ru.aleshin.features.editor.impl.presentation.models.EditParameters
 import ru.aleshin.features.editor.impl.presentation.theme.EditorThemeRes
 import ru.aleshin.features.editor.impl.presentation.ui.editor.contract.EditorViewState
 import ru.aleshin.features.editor.impl.presentation.ui.editor.screenmodel.CategoryValidateError
@@ -46,7 +48,6 @@ import ru.aleshin.features.editor.impl.presentation.ui.editor.views.SubCategoryC
 import ru.aleshin.features.home.api.domains.entities.categories.Categories
 import ru.aleshin.features.home.api.domains.entities.categories.MainCategory
 import ru.aleshin.features.home.api.domains.entities.categories.SubCategory
-import java.util.*
 
 /**
  * @author Stanislav Aleshin on 25.02.2023.
@@ -55,11 +56,10 @@ import java.util.*
 internal fun EditorContent(
     state: EditorViewState,
     modifier: Modifier = Modifier,
-    onCategoryChoose: (MainCategory) -> Unit,
-    onSubCategoryChoose: (SubCategory?) -> Unit,
+    onCategoriesChange: (MainCategory, SubCategory?) -> Unit,
     onManageCategories: () -> Unit,
-    onTimeRangeChange: (start: Date, end: Date) -> Unit,
-    onChangeParameters: (notification: Boolean, statistics: Boolean) -> Unit,
+    onTimeRangeChange: (TimeRange) -> Unit,
+    onChangeParameters: (EditParameters) -> Unit,
     onChangeTemplate: (Boolean) -> Unit,
     onSaveClick: (isTemplateUpdate: Boolean) -> Unit,
     onCancelClick: () -> Unit,
@@ -77,22 +77,19 @@ internal fun EditorContent(
                     mainCategory = state.editModel.mainCategory,
                     subCategory = state.editModel.subCategory,
                     allCategories = state.categories,
-                    onCategoryChoose = onCategoryChoose,
-                    onSubCategoryChoose = onSubCategoryChoose,
+                    onCategoriesChange = onCategoriesChange,
                     onSubCategoriesManage = { isManageWarningDialog = true },
                 )
                 Divider(Modifier.padding(horizontal = 32.dp))
                 DateTimeSection(
                     isTimeValid = state.timeRangeValid is TimeRangeError.DurationError,
-                    startTime = state.editModel.timeRanges.from,
-                    endTime = state.editModel.timeRanges.to,
+                    timeRanges = state.editModel.timeRanges,
                     duration = state.editModel.duration,
                     onTimeRangeChange = onTimeRangeChange,
                 )
                 Divider(Modifier.padding(horizontal = 32.dp))
                 ParametersSection(
-                    isEnableNotification = state.editModel.isEnableNotification,
-                    isConsiderInStatistics = state.editModel.isConsiderInStatistics,
+                    parameters = state.editModel.parameters,
                     onChangeParameters = onChangeParameters,
                 )
             }
@@ -120,8 +117,7 @@ internal fun CategoriesSection(
     mainCategory: MainCategory?,
     subCategory: SubCategory?,
     allCategories: List<Categories>,
-    onCategoryChoose: (MainCategory) -> Unit,
-    onSubCategoryChoose: (SubCategory?) -> Unit,
+    onCategoriesChange: (MainCategory, SubCategory?) -> Unit,
     onSubCategoriesManage: () -> Unit,
 ) {
     Column(
@@ -137,7 +133,9 @@ internal fun CategoriesSection(
                 isError = isMainCategoryValid,
                 currentCategory = mainCategory,
                 allMainCategories = allCategories.map { it.mainCategory },
-                onCategoryChoose = onCategoryChoose,
+                onCategoryChange = { newMainCategory ->
+                    onCategoriesChange(newMainCategory, subCategory)
+                },
             )
             if (isMainCategoryValid) {
                 Text(
@@ -153,7 +151,9 @@ internal fun CategoriesSection(
             mainCategory = mainCategory,
             allSubCategories = findCategories?.subCategories ?: emptyList(),
             currentSubCategory = subCategory,
-            onSubCategoryChoose = onSubCategoryChoose,
+            onSubCategoryChange = { newSubCategory ->
+                if (mainCategory != null) onCategoriesChange(mainCategory, newSubCategory)
+            },
             onManageCategories = onSubCategoriesManage,
         )
     }
@@ -163,10 +163,9 @@ internal fun CategoriesSection(
 internal fun DateTimeSection(
     modifier: Modifier = Modifier,
     isTimeValid: Boolean,
-    startTime: Date,
-    endTime: Date,
+    timeRanges: TimeRange,
     duration: Long,
-    onTimeRangeChange: (Date, Date) -> Unit,
+    onTimeRangeChange: (TimeRange) -> Unit,
 ) {
     Row(
         modifier = modifier.padding(horizontal = 16.dp),
@@ -175,22 +174,22 @@ internal fun DateTimeSection(
     ) {
         StartTimeField(
             modifier = Modifier.weight(1f),
-            currentTime = startTime,
+            currentTime = timeRanges.from,
             isError = isTimeValid,
-            onChangeTime = { newStartTime -> onTimeRangeChange(newStartTime, endTime) },
+            onChangeTime = { newStartTime -> onTimeRangeChange(timeRanges.copy(from = newStartTime)) },
         )
         EndTimeField(
             modifier = Modifier.weight(1f),
-            currentTime = endTime,
+            currentTime = timeRanges.to,
             isError = isTimeValid,
-            onChangeTime = { newEndTime -> onTimeRangeChange(startTime, newEndTime) },
+            onChangeTime = { newEndTime -> onTimeRangeChange(timeRanges.copy(to = newEndTime)) },
         )
         DurationTitle(
             duration = duration,
-            startTime = startTime,
+            startTime = timeRanges.from,
             isError = isTimeValid,
             onChangeDuration = { duration ->
-                onTimeRangeChange(startTime, startTime.shiftMillis(duration.toInt()))
+                onTimeRangeChange(timeRanges.copy(to = timeRanges.from.shiftMillis(duration.toInt())))
             },
         )
     }
@@ -199,9 +198,8 @@ internal fun DateTimeSection(
 @Composable
 internal fun ParametersSection(
     modifier: Modifier = Modifier,
-    isEnableNotification: Boolean,
-    isConsiderInStatistics: Boolean,
-    onChangeParameters: (notification: Boolean, statistics: Boolean) -> Unit,
+    parameters: EditParameters,
+    onChangeParameters: (EditParameters) -> Unit,
 ) {
     Column(
         modifier = modifier.padding(horizontal = 16.dp),
@@ -209,20 +207,29 @@ internal fun ParametersSection(
     ) {
         ParameterChooser(
             modifier = Modifier,
-            enabled = isEnableNotification,
-            title = EditorThemeRes.strings.notifyParameterTitle,
-            description = EditorThemeRes.strings.notifyParameterDesc,
-            onChangeEnabled = { notification ->
-                onChangeParameters(notification, isConsiderInStatistics)
+            enabled = parameters.isConsiderInStatistics,
+            title = EditorThemeRes.strings.statisticsParameterTitle,
+            description = EditorThemeRes.strings.statisticsParameterDesc,
+            onChangeEnabled = { isConsider ->
+                onChangeParameters(parameters.copy(isConsiderInStatistics = isConsider))
             },
         )
         ParameterChooser(
             modifier = Modifier,
-            enabled = isConsiderInStatistics,
-            title = EditorThemeRes.strings.statisticsParameterTitle,
-            description = EditorThemeRes.strings.statisticsParameterDesc,
-            onChangeEnabled = { statistics ->
-                onChangeParameters(isEnableNotification, statistics)
+            enabled = parameters.isEnableNotification,
+            title = EditorThemeRes.strings.notifyParameterTitle,
+            description = EditorThemeRes.strings.notifyParameterDesc,
+            onChangeEnabled = { notification ->
+                onChangeParameters(parameters.copy(isEnableNotification = notification))
+            },
+        )
+        ParameterChooser(
+            modifier = Modifier,
+            enabled = parameters.isImportant,
+            title = EditorThemeRes.strings.importantParameterTitle,
+            description = EditorThemeRes.strings.importantParameterDesc,
+            onChangeEnabled = { isImportant ->
+                onChangeParameters(parameters.copy(isImportant = isImportant))
             },
         )
     }

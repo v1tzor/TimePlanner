@@ -11,8 +11,8 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License.
-*/
+ * imitations under the License.
+ */
 package ru.aleshin.core.utils.wrappers
 
 import kotlinx.coroutines.flow.*
@@ -31,9 +31,7 @@ interface EitherWrapper<F : DomainFailures> {
         private val errorHandler: ErrorHandler<F>,
     ) : EitherWrapper<F> {
 
-        override suspend fun <O> wrap(
-            block: suspend () -> O,
-        ) = try {
+        override suspend fun <O> wrap(block: suspend () -> O) = try {
             Either.Right(data = block.invoke())
         } catch (error: Throwable) {
             Either.Left(data = errorHandler.handle(error))

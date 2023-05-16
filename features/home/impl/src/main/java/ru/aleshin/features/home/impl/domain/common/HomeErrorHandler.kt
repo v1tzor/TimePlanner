@@ -18,6 +18,7 @@ package ru.aleshin.features.home.impl.domain.common
 import ru.aleshin.core.utils.functional.TimeShiftException
 import ru.aleshin.core.utils.handlers.ErrorHandler
 import ru.aleshin.features.home.impl.domain.entities.HomeFailures
+import ru.aleshin.features.home.impl.domain.entities.TimeTaskImportanceException
 import javax.inject.Inject
 
 /**
@@ -28,6 +29,7 @@ internal interface HomeErrorHandler : ErrorHandler<HomeFailures> {
     class Base @Inject constructor() : HomeErrorHandler {
         override fun handle(throwable: Throwable) = when (throwable) {
             is TimeShiftException -> HomeFailures.ShiftError
+            is TimeTaskImportanceException -> HomeFailures.ImportanceError
             else -> HomeFailures.OtherError(throwable)
         }
     }

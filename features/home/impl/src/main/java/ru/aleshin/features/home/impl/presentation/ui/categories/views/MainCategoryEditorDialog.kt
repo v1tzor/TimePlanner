@@ -45,6 +45,7 @@ import ru.aleshin.core.ui.views.CategoryTextMonogram
 import ru.aleshin.core.ui.views.DialogButtons
 import ru.aleshin.core.utils.functional.Constants
 import ru.aleshin.features.home.api.domains.entities.categories.MainCategory
+import ru.aleshin.features.home.api.presentation.mappers.fetchNameByLanguage
 import ru.aleshin.features.home.api.presentation.mappers.toIconPainter
 import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
 
@@ -60,9 +61,10 @@ internal fun MainCategoryEditorDialog(
     onConfirm: (name: String) -> Unit,
 ) {
     var isError by rememberSaveable { mutableStateOf(false) }
-    val textRange = TextRange(editCategory?.name?.length ?: 0)
+    val categoryName = editCategory?.fetchNameByLanguage()
+    val textRange = TextRange(categoryName?.length ?: 0)
     var mainCategoryNameValue by remember {
-        mutableStateOf(TextFieldValue(text = editCategory?.name ?: "", selection = textRange))
+        mutableStateOf(TextFieldValue(text = categoryName ?: "", selection = textRange))
     }
     AlertDialog(onDismissRequest = onDismiss) {
         Surface(
@@ -81,7 +83,7 @@ internal fun MainCategoryEditorDialog(
                     if (editCategory?.icon != null) {
                         CategoryIconMonogram(
                             icon = checkNotNull(editCategory.icon).toIconPainter(),
-                            iconDescription = editCategory.name,
+                            iconDescription = editCategory.fetchNameByLanguage(),
                             iconColor = MaterialTheme.colorScheme.primary,
                             backgroundColor = MaterialTheme.colorScheme.primaryContainer,
                         )

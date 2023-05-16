@@ -122,3 +122,4 @@ val md_theme_dark_surfaceBright = Color(0xFF3E3738)
 val md_theme_dark_surfaceDim = Color(0xFF171213)
 
 val seed = Color(0xFF8C4190)
+val badge = Color(0xFFDB1C11)

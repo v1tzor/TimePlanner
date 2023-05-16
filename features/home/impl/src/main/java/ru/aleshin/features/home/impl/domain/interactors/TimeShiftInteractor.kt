@@ -23,6 +23,7 @@ import ru.aleshin.features.editor.api.domain.TimeTaskRepository
 import ru.aleshin.features.home.api.domains.entities.schedules.TimeTask
 import ru.aleshin.features.home.impl.domain.common.HomeEitherWrapper
 import ru.aleshin.features.home.impl.domain.entities.HomeFailures
+import ru.aleshin.features.home.impl.domain.entities.TimeTaskImportanceException
 import javax.inject.Inject
 
 /**
@@ -60,6 +61,7 @@ internal interface TimeShiftInteractor {
             } else {
                 when (nextTime.to.time - shiftTime.time > 0) {
                     true -> {
+                        if (nextTimeTask.isImportant) throw TimeTaskImportanceException()
                         timeTaskRepository.updateTimeTask(
                             timeTask = task.copy(timeRanges = task.timeRanges.copy(to = shiftTime)),
                         )

@@ -23,8 +23,6 @@ import ru.aleshin.core.utils.di.FeatureScope
 import ru.aleshin.features.editor.api.navigations.EditorFeatureStarter
 import ru.aleshin.features.editor.impl.navigation.EditorFeatureStarterImpl
 import ru.aleshin.features.editor.impl.navigation.NavigationManager
-import ru.aleshin.features.editor.impl.presentation.mappers.EditModelToTimeTaskMapper
-import ru.aleshin.features.editor.impl.presentation.mappers.TemplateToEditModelMapper
 import ru.aleshin.features.editor.impl.presentation.ui.editor.EditorScreen
 import ru.aleshin.features.editor.impl.presentation.ui.editor.processors.EditorWorkProcessor
 import ru.aleshin.features.editor.impl.presentation.ui.editor.processors.TimeTaskWorkProcessor
@@ -74,10 +72,4 @@ internal interface PresentationModule {
 
     @Binds
     fun bindCategoryValidator(validator: CategoryValidator.Base): CategoryValidator
-
-    @Binds
-    fun bindTimeTaskUiToDomainMapper(mapper: EditModelToTimeTaskMapper.Base): EditModelToTimeTaskMapper
-
-    @Binds
-    fun bindTemplateToEditModelMapper(mapper: TemplateToEditModelMapper.Base): TemplateToEditModelMapper
 }

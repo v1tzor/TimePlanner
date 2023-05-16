@@ -1,4 +1,3 @@
-package ru.aleshin.features.home.impl.presentation.ui.home.views
 /*
  * Copyright 2023 Stanislav Aleshin
  *
@@ -14,6 +13,8 @@ package ru.aleshin.features.home.impl.presentation.ui.home.views
  * See the License for the specific language governing permissions and
  * imitations under the License.
  */
+package ru.aleshin.features.home.impl.presentation.ui.home.views
+
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
@@ -50,6 +51,7 @@ internal fun PlannedTimeTask(
     taskDurationTitle: String,
     categoryIcon: Painter?,
     categoryIconDescription: String?,
+    isImportant: Boolean,
 ) {
     Surface(
         onClick = onViewClicked,
@@ -68,12 +70,14 @@ internal fun PlannedTimeTask(
                     icon = categoryIcon,
                     iconDescription = categoryIconDescription,
                     iconColor = MaterialTheme.colorScheme.primary,
+                    badgeEnabled = isImportant,
                     backgroundColor = MaterialTheme.colorScheme.primaryContainer,
                 )
             } else {
                 CategoryTextMonogram(
                     text = taskTitle.first().toString(),
                     textColor = MaterialTheme.colorScheme.primary,
+                    badgeEnabled = isImportant,
                     backgroundColor = MaterialTheme.colorScheme.primaryContainer,
                 )
             }
@@ -107,6 +111,7 @@ internal fun RunningTimeTask(
     taskSubTitle: String?,
     categoryIcon: Painter?,
     categoryIconDescription: String?,
+    isImportant: Boolean,
 ) {
     var expanded by rememberSaveable { mutableStateOf(false) }
     Surface(
@@ -129,6 +134,7 @@ internal fun RunningTimeTask(
                             icon = categoryIcon,
                             iconDescription = categoryIconDescription,
                             iconColor = MaterialTheme.colorScheme.onPrimary,
+                            badgeEnabled = isImportant,
                             backgroundColor = MaterialTheme.colorScheme.primary,
                         )
                     } else {
@@ -136,6 +142,7 @@ internal fun RunningTimeTask(
                             text = taskTitle.first().toString(),
                             textColor = MaterialTheme.colorScheme.onPrimary,
                             backgroundColor = MaterialTheme.colorScheme.primary,
+                            badgeEnabled = isImportant,
                         )
                     }
                 }

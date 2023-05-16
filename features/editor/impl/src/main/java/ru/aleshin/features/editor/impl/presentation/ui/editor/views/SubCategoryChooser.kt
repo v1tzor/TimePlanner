@@ -40,6 +40,7 @@ import ru.aleshin.core.ui.views.DialogButtons
 import ru.aleshin.features.editor.impl.presentation.theme.EditorThemeRes
 import ru.aleshin.features.home.api.domains.entities.categories.MainCategory
 import ru.aleshin.features.home.api.domains.entities.categories.SubCategory
+import ru.aleshin.features.home.api.presentation.mappers.fetchNameByLanguage
 
 /**
  * @author Stanislav Aleshin on 26.02.2023.
@@ -50,7 +51,7 @@ internal fun SubCategoryChooser(
     mainCategory: MainCategory?,
     allSubCategories: List<SubCategory>,
     currentSubCategory: SubCategory?,
-    onSubCategoryChoose: (SubCategory?) -> Unit,
+    onSubCategoryChange: (SubCategory?) -> Unit,
     onManageCategories: () -> Unit,
 ) {
     val openDialog = rememberSaveable { mutableStateOf(false) }
@@ -106,7 +107,7 @@ internal fun SubCategoryChooser(
                 openDialog.value = false
             },
             onChooseSubCategory = {
-                onSubCategoryChoose(it)
+                onSubCategoryChange(it)
                 openDialog.value = false
             },
         )
@@ -152,8 +153,7 @@ internal fun SubCategoryDialogChooser(
                     )
                     Text(
                         text = EditorThemeRes.strings.subCategoryDialogMainCategoryFormat.format(
-                            mainCategory?.name ?: mainCategory?.englishName
-                                ?: EditorThemeRes.strings.categoryNotSelectedTitle,
+                            mainCategory?.fetchNameByLanguage() ?: EditorThemeRes.strings.categoryNotSelectedTitle,
                         ),
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         style = MaterialTheme.typography.bodyMedium,

@@ -17,6 +17,8 @@ package ru.aleshin.core.ui.views
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
@@ -32,6 +34,7 @@ import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.toUpperCase
 import androidx.compose.ui.unit.dp
+import ru.aleshin.core.ui.theme.material.badge
 
 @Composable
 fun CategoryIconMonogram(
@@ -39,13 +42,14 @@ fun CategoryIconMonogram(
     icon: Painter,
     iconDescription: String?,
     iconColor: Color,
+    badgeEnabled: Boolean = false,
     backgroundColor: Color,
+) = Box(
+    modifier = modifier.size(40.dp),
+    contentAlignment = Alignment.Center,
 ) {
     Box(
-        modifier = modifier
-            .clip(RoundedCornerShape(40.dp))
-            .size(40.dp)
-            .background(backgroundColor),
+        modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(40.dp)).background(backgroundColor),
         contentAlignment = Alignment.Center,
     ) {
         Icon(
@@ -53,6 +57,16 @@ fun CategoryIconMonogram(
             painter = icon,
             contentDescription = iconDescription,
             tint = iconColor,
+        )
+    }
+    if (badgeEnabled) {
+        Box(
+            modifier = Modifier
+                .padding(vertical = 4.dp, horizontal = 2.dp)
+                .align(Alignment.TopEnd)
+                .size(7.dp)
+                .clip(RoundedCornerShape(100.dp))
+                .background(badge),
         )
     }
 }
@@ -63,9 +77,13 @@ fun CategoryTextMonogram(
     text: String,
     textColor: Color,
     backgroundColor: Color,
+    badgeEnabled: Boolean = false,
+) = Box(
+    modifier = modifier.size(40.dp),
+    contentAlignment = Alignment.Center,
 ) {
     Box(
-        modifier = modifier.clip(RoundedCornerShape(40.dp)).size(40.dp).background(backgroundColor),
+        modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(40.dp)).background(backgroundColor),
         contentAlignment = Alignment.Center,
     ) {
         Text(
@@ -74,6 +92,16 @@ fun CategoryTextMonogram(
             color = textColor,
             textAlign = TextAlign.Center,
             style = MaterialTheme.typography.titleMedium,
+        )
+    }
+    if (badgeEnabled) {
+        Box(
+            modifier = Modifier
+                .padding(vertical = 4.dp, horizontal = 2.dp)
+                .align(Alignment.TopEnd)
+                .size(7.dp)
+                .clip(RoundedCornerShape(100.dp))
+                .background(badge),
         )
     }
 }

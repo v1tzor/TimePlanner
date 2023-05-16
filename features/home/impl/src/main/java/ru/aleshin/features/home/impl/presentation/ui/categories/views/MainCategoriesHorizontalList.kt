@@ -58,8 +58,10 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import ru.aleshin.core.ui.theme.TimePlannerRes
+import ru.aleshin.core.ui.theme.tokens.TimePlannerLanguage
 import ru.aleshin.core.ui.views.WarningDeleteDialog
 import ru.aleshin.features.home.api.domains.entities.categories.MainCategory
+import ru.aleshin.features.home.api.presentation.mappers.fetchNameByLanguage
 import ru.aleshin.features.home.api.presentation.mappers.toIconPainter
 import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
 
@@ -76,6 +78,7 @@ internal fun MainCategoriesHorizontalList(
     onDeleteCategory: (MainCategory) -> Unit,
 ) {
     val gridState = rememberLazyGridState()
+    val language = TimePlannerRes.language
     LazyHorizontalGrid(
         rows = GridCells.Fixed(3),
         modifier = modifier.height(216.dp).animateContentSize(),
@@ -93,8 +96,14 @@ internal fun MainCategoriesHorizontalList(
                 isSelected = category == selectedCategory,
                 category = category,
                 onSelected = { onSelectCategory(category) },
-                onUpdate = { onUpdateCategory(category.copy(name = it)) },
                 onDelete = { onDeleteCategory(category) },
+                onUpdate = {
+                    val languageCategory = when (language) {
+                        TimePlannerLanguage.RU -> category.copy(name = it)
+                        TimePlannerLanguage.EN -> category.copy(englishName = it)
+                    }
+                    onUpdateCategory(languageCategory)
+                },
             )
         }
     }
@@ -139,11 +148,11 @@ internal fun MainCategoryItem(
                 MainCategoryItemLeading(
                     modifier = Modifier.align(Alignment.Center),
                     icon = category.icon?.toIconPainter(),
-                    name = category.name,
+                    name = category.fetchNameByLanguage(),
                 )
             }
             Text(
-                text = category.name,
+                text = category.fetchNameByLanguage(),
                 color = MaterialTheme.colorScheme.onSurface,
                 style = MaterialTheme.typography.labelLarge,
             )

@@ -18,8 +18,9 @@ package ru.aleshin.features.editor.impl.presentation.ui.editor.contract
 import kotlinx.parcelize.Parcelize
 import ru.aleshin.core.utils.functional.TimeRange
 import ru.aleshin.core.utils.platform.screenmodel.contract.*
-import ru.aleshin.features.editor.api.domain.EditModel
 import ru.aleshin.features.editor.impl.domain.entites.EditorFailures
+import ru.aleshin.features.editor.impl.presentation.models.EditModelUi
+import ru.aleshin.features.editor.impl.presentation.models.EditParameters
 import ru.aleshin.features.editor.impl.presentation.ui.editor.screenmodel.CategoryValidateError
 import ru.aleshin.features.editor.impl.presentation.ui.editor.screenmodel.TimeRangeError
 import ru.aleshin.features.home.api.domains.entities.categories.Categories
@@ -32,7 +33,7 @@ import ru.aleshin.features.home.api.domains.entities.template.Template
  */
 @Parcelize
 internal data class EditorViewState(
-    val editModel: EditModel? = null,
+    val editModel: EditModelUi? = null,
     val categories: List<Categories> = emptyList(),
     val templates: List<Template>? = null,
     val timeRangeValid: TimeRangeError? = null,
@@ -41,10 +42,9 @@ internal data class EditorViewState(
 
 internal sealed class EditorEvent : BaseEvent {
     object Init : EditorEvent()
-    data class ChangeCategory(val category: MainCategory) : EditorEvent()
-    data class ChangeSubCategory(val subCategory: SubCategory?) : EditorEvent()
+    data class ChangeCategories(val category: MainCategory, val subCategory: SubCategory?) : EditorEvent()
     data class ChangeTime(val timeRange: TimeRange) : EditorEvent()
-    data class ChangeParameters(val notification: Boolean, val statistics: Boolean) : EditorEvent()
+    data class ChangeParameters(val parameters: EditParameters) : EditorEvent()
     data class ApplyTemplate(val template: Template) : EditorEvent()
     object PressManageCategoriesButton : EditorEvent()
     object PressControlTemplateButton : EditorEvent()
@@ -65,10 +65,10 @@ internal sealed class EditorEffect : BaseUiEffect {
 
 internal sealed class EditorAction : BaseAction {
     object Navigate : EditorAction()
-    data class SetUp(val editModel: EditModel, val categories: List<Categories>) : EditorAction()
+    data class SetUp(val editModel: EditModelUi, val categories: List<Categories>) : EditorAction()
     data class UpdateTimeRange(val timeRange: TimeRange, val duration: Long) : EditorAction()
     data class UpdateTemplateId(val templateId: Int?) : EditorAction()
-    data class UpdateEditModel(val editModel: EditModel?) : EditorAction()
+    data class UpdateEditModel(val editModel: EditModelUi?) : EditorAction()
     data class UpdateTemplates(val templates: List<Template>) : EditorAction()
     data class SetValidError(val timeRange: TimeRangeError?, val category: CategoryValidateError?) : EditorAction()
 }

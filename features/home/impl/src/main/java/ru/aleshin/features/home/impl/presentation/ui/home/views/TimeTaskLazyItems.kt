@@ -35,6 +35,7 @@ import com.google.accompanist.placeholder.placeholder
 import com.google.accompanist.placeholder.shimmer
 import ru.aleshin.core.ui.views.toMinutesOrHoursTitle
 import ru.aleshin.core.utils.extensions.duration
+import ru.aleshin.features.home.api.presentation.mappers.fetchNameByLanguage
 import ru.aleshin.features.home.api.presentation.mappers.toDescription
 import ru.aleshin.features.home.api.presentation.mappers.toIconPainter
 import ru.aleshin.features.home.impl.presentation.models.TimeTaskUi
@@ -77,11 +78,12 @@ internal fun LazyItemScope.PlannedTimeTaskItem(
                 PlannedTimeTask(
                     modifier = Modifier.fillMaxWidth().padding(bottom = 4.dp).animateContentSize(),
                     onViewClicked = { onItemClick.invoke(key) },
-                    taskTitle = mainCategory.name,
+                    taskTitle = mainCategory.fetchNameByLanguage(),
                     taskSubTitle = model.subCategory?.name,
                     taskDurationTitle = duration.toMinutesOrHoursTitle(),
                     categoryIcon = mainCategory.icon?.toIconPainter(),
                     categoryIconDescription = mainCategory.icon?.toDescription(),
+                    isImportant = isImportant,
                 )
             }
         }
@@ -121,7 +123,7 @@ internal fun LazyItemScope.CompletedTimeTaskItem(
                 CompletedTimeTask(
                     modifier = Modifier.fillMaxWidth().padding(bottom = 4.dp).animateContentSize(),
                     onViewClicked = { onItemClick.invoke(key) },
-                    taskTitle = mainCategory.name,
+                    taskTitle = mainCategory.fetchNameByLanguage(),
                     taskSubTitle = subCategory?.name,
                     categoryIcon = mainCategory.icon?.toIconPainter(),
                     categoryIconDescription = mainCategory.icon?.toDescription(),
@@ -173,10 +175,11 @@ internal fun LazyItemScope.RunningTimeTaskItem(
                     onMoreButtonClick = { onMoreButtonClick.invoke(key) },
                     onIncreaseTime = onIncreaseTime,
                     onReduceTime = onReduceTime,
-                    taskTitle = mainCategory.name,
+                    taskTitle = mainCategory.fetchNameByLanguage(),
                     taskSubTitle = subCategory?.name,
                     categoryIcon = mainCategory.icon?.toIconPainter(),
                     categoryIconDescription = mainCategory.icon?.toDescription(),
+                    isImportant = isImportant,
                 )
             }
         }

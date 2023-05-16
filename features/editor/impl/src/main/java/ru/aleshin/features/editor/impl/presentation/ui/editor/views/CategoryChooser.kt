@@ -41,6 +41,7 @@ import ru.aleshin.core.ui.views.DialogButtons
 import ru.aleshin.features.editor.impl.presentation.theme.EditorThemeRes
 import ru.aleshin.features.home.api.domains.common.MainIcon
 import ru.aleshin.features.home.api.domains.entities.categories.MainCategory
+import ru.aleshin.features.home.api.presentation.mappers.fetchNameByLanguage
 import ru.aleshin.features.home.api.presentation.mappers.toDescription
 import ru.aleshin.features.home.api.presentation.mappers.toIconPainter
 
@@ -53,7 +54,7 @@ internal fun MainCategoryChooser(
     isError: Boolean = false,
     currentCategory: MainCategory?,
     allMainCategories: List<MainCategory>,
-    onCategoryChoose: (MainCategory) -> Unit,
+    onCategoryChange: (MainCategory) -> Unit,
 ) {
     val openDialog = rememberSaveable { mutableStateOf(false) }
     Surface(
@@ -82,7 +83,7 @@ internal fun MainCategoryChooser(
             }
             if (currentCategory != null && currentCategory.icon == null) {
                 CategoryTextMonogram(
-                    text = checkNotNull(currentCategory.name).first().toString(),
+                    text = checkNotNull(currentCategory.fetchNameByLanguage()).first().toString(),
                     textColor = MaterialTheme.colorScheme.primary,
                     backgroundColor = MaterialTheme.colorScheme.primaryContainer,
                 )
@@ -107,7 +108,7 @@ internal fun MainCategoryChooser(
                     style = MaterialTheme.typography.labelMedium,
                 )
                 Text(
-                    text = currentCategory?.name ?: EditorThemeRes.strings.categoryNotSelectedTitle,
+                    text = currentCategory?.fetchNameByLanguage() ?: EditorThemeRes.strings.categoryNotSelectedTitle,
                     color = categoryNameColor,
                     style = MaterialTheme.typography.titleMedium,
                 )
@@ -125,7 +126,7 @@ internal fun MainCategoryChooser(
             allMainCategories = allMainCategories,
             onCloseDialog = { openDialog.value = false },
             onChooseCategory = {
-                onCategoryChoose(it)
+                onCategoryChange(it)
                 openDialog.value = false
             },
         )
@@ -164,7 +165,7 @@ internal fun MainCategoryDialogChooser(
                         MainCategoryDialogItem(
                             modifier = Modifier.fillMaxWidth(),
                             selected = selectedCategory == category,
-                            title = category.name,
+                            title = category.fetchNameByLanguage(),
                             icon = category.icon?.toIconPainter(),
                             onSelectChange = { selectedCategory = category },
                         )

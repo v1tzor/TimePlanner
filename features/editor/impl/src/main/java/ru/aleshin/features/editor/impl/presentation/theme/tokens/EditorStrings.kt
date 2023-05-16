@@ -81,6 +81,8 @@ internal data class EditorStrings(
     val saveTemplateWarningUnsave: String,
     val categoriesManageWarningTitle: String,
     val confirmNavigateTitle: String,
+    val importantParameterTitle: String,
+    val importantParameterDesc: String,
 )
 
 internal val russianHomeString = EditorStrings(
@@ -144,6 +146,8 @@ internal val russianHomeString = EditorStrings(
     categoriesManageWarningTitle = "Вы уверены что хотите перейти на экран управления категориями? " +
         "Текущие параметры останутся несохранёнными.",
     confirmNavigateTitle = "Перейти",
+    importantParameterTitle = "Особый приоритет",
+    importantParameterDesc = "Обязательное выполнение без возможности сдвига",
 )
 
 internal val englishHomeString = EditorStrings(
@@ -207,6 +211,8 @@ internal val englishHomeString = EditorStrings(
     categoriesManageWarningTitle = "Are you sure you want to go to the category management screen? " +
         "The current parameters will remain unsaved",
     confirmNavigateTitle = "Go",
+    importantParameterTitle = "Special priority",
+    importantParameterDesc = "Mandatory execution without the possibility of shifting",
 )
 
 internal val LocalEditorStrings = staticCompositionLocalOf<EditorStrings> {

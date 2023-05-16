@@ -16,7 +16,6 @@
 package ru.aleshin.features.home.impl.presentation.ui.home.contract
 
 import kotlinx.parcelize.Parcelize
-import ru.aleshin.core.utils.functional.TimeRange
 import ru.aleshin.core.utils.platform.screenmodel.contract.*
 import ru.aleshin.features.home.api.domains.entities.schedules.status.DailyScheduleStatus
 import ru.aleshin.features.home.impl.domain.entities.HomeFailures
@@ -43,7 +42,7 @@ internal sealed class HomeEvent : BaseEvent {
     data class TimeTaskShiftDown(val timeTask: TimeTaskUi) : HomeEvent()
     data class LoadSchedule(val date: Date?) : HomeEvent()
     data class PressEditTimeTaskButton(val timeTask: TimeTaskUi) : HomeEvent()
-    data class PressAddTimeTaskButton(val timeRange: TimeRange) : HomeEvent()
+    data class PressAddTimeTaskButton(val startTime: Date, val endTime: Date) : HomeEvent()
     data class PressViewToggleButton(val status: ViewToggleStatus) : HomeEvent()
 }
 

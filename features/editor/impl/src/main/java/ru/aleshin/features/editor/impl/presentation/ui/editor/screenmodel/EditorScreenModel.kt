@@ -21,8 +21,8 @@ import cafe.adriel.voyager.core.screen.Screen
 import ru.aleshin.core.utils.managers.CoroutineManager
 import ru.aleshin.core.utils.platform.screenmodel.BaseScreenModel
 import ru.aleshin.core.utils.platform.screenmodel.work.WorkScope
-import ru.aleshin.features.editor.api.domain.EditModel
 import ru.aleshin.features.editor.impl.di.holder.EditorComponentHolder
+import ru.aleshin.features.editor.impl.presentation.models.EditModelUi
 import ru.aleshin.features.editor.impl.presentation.ui.editor.contract.EditorAction
 import ru.aleshin.features.editor.impl.presentation.ui.editor.contract.EditorEffect
 import ru.aleshin.features.editor.impl.presentation.ui.editor.contract.EditorEvent
@@ -66,13 +66,10 @@ internal class EditorScreenModel @Inject constructor(
             editorWorkProcessor.work(EditorWorkCommand.ChangeIsTemplate(this)).handleWork()
         }
         is EditorEvent.ChangeParameters -> updateEditModel {
-            copy(isEnableNotification = event.notification, isConsiderInStatistics = event.statistics)
+            copy(parameters = event.parameters)
         }
-        is EditorEvent.ChangeCategory -> updateEditModel {
-            copy(mainCategory = event.category, subCategory = null)
-        }
-        is EditorEvent.ChangeSubCategory -> updateEditModel {
-            copy(subCategory = event.subCategory)
+        is EditorEvent.ChangeCategories -> updateEditModel {
+            copy(mainCategory = event.category, subCategory = event.subCategory)
         }
         is EditorEvent.PressDeleteButton -> with(checkNotNull(state().editModel)) {
             timeTaskWorkProcessor.work(TimeTaskWorkCommand.DeleteModel(this)).handleWork()
@@ -142,7 +139,7 @@ internal class EditorScreenModel @Inject constructor(
     }
 
     private suspend fun WorkScope<EditorViewState, EditorAction, EditorEffect>.updateEditModel(
-        onTransform: EditModel.() -> EditModel,
+        onTransform: EditModelUi.() -> EditModelUi,
     ) {
         val editModel = checkNotNull(state().editModel)
         sendAction(EditorAction.UpdateEditModel(onTransform(editModel)))

@@ -20,14 +20,14 @@ import ru.aleshin.core.utils.functional.Constants
 import ru.aleshin.core.utils.functional.Either
 import ru.aleshin.core.utils.managers.DateManager
 import ru.aleshin.core.utils.platform.screenmodel.work.*
-import ru.aleshin.features.editor.api.domain.EditModel
-import ru.aleshin.features.editor.api.domain.convertToTemplate
 import ru.aleshin.features.editor.api.presentation.TimeTaskAlarmManager
 import ru.aleshin.features.editor.impl.domain.entites.EditorFailures
 import ru.aleshin.features.editor.impl.domain.interactors.TemplatesInteractor
 import ru.aleshin.features.editor.impl.domain.interactors.TimeTaskInteractor
 import ru.aleshin.features.editor.impl.navigation.NavigationManager
-import ru.aleshin.features.editor.impl.presentation.mappers.EditModelToTimeTaskMapper
+import ru.aleshin.features.editor.impl.presentation.mappers.convertToTemplate
+import ru.aleshin.features.editor.impl.presentation.mappers.convertToTimeTask
+import ru.aleshin.features.editor.impl.presentation.models.EditModelUi
 import ru.aleshin.features.editor.impl.presentation.ui.editor.contract.EditorAction
 import ru.aleshin.features.editor.impl.presentation.ui.editor.contract.EditorEffect
 import ru.aleshin.features.home.api.domains.entities.schedules.TimeTask
@@ -44,7 +44,6 @@ internal interface TimeTaskWorkProcessor : WorkProcessor<TimeTaskWorkCommand, Ed
         private val timeTaskAlarmManager: TimeTaskAlarmManager,
         private val navigationManager: NavigationManager,
         private val dateManager: DateManager,
-        private val mapperToTimeTask: EditModelToTimeTaskMapper,
     ) : TimeTaskWorkProcessor {
 
         override suspend fun work(command: TimeTaskWorkCommand) = when (command) {
@@ -53,14 +52,13 @@ internal interface TimeTaskWorkProcessor : WorkProcessor<TimeTaskWorkCommand, Ed
             is TimeTaskWorkCommand.LoadTemplateTimeTasks -> loadTemplates()
         }
 
-        private suspend fun deleteModel(editModel: EditModel): WorkResult<EditorAction, EditorEffect> {
-            val timeTask = editModel.map(mapperToTimeTask)
+        private suspend fun deleteModel(editModel: EditModelUi): WorkResult<EditorAction, EditorEffect> {
             if (editModel.key != 0L) {
                 val deleteResult = timeTaskInteractor.deleteTimeTask(editModel.key)
                 if (deleteResult is Either.Left) {
                     return EffectResult(EditorEffect.ShowError(deleteResult.data))
                 } else {
-                    timeTaskAlarmManager.deleteNotifyAlarm(timeTask)
+                    timeTaskAlarmManager.deleteNotifyAlarm(editModel.convertToTimeTask())
                 }
             }
             return navigationManager.navigateToPreviousFeature().let {
@@ -69,10 +67,10 @@ internal interface TimeTaskWorkProcessor : WorkProcessor<TimeTaskWorkCommand, Ed
         }
 
         private suspend fun saveOrAddModel(
-            editModel: EditModel,
+            editModel: EditModelUi,
             isTemplateUpdate: Boolean,
         ): WorkResult<EditorAction, EditorEffect> {
-            val timeTask = mapperToTimeTask.map(editModel)
+            val timeTask = editModel.convertToTimeTask()
             val templateId = editModel.templateId
             if (templateId != null && isTemplateUpdate) {
                 templatesInteractor.updateTemplate(editModel.convertToTemplate(templateId))
@@ -126,7 +124,7 @@ internal interface TimeTaskWorkProcessor : WorkProcessor<TimeTaskWorkCommand, Ed
 }
 
 internal sealed class TimeTaskWorkCommand : WorkCommand {
-    data class AddOrSaveModel(val editModel: EditModel, val isTemplateUpdate: Boolean) : TimeTaskWorkCommand()
-    data class DeleteModel(val editModel: EditModel) : TimeTaskWorkCommand()
+    data class AddOrSaveModel(val editModel: EditModelUi, val isTemplateUpdate: Boolean) : TimeTaskWorkCommand()
+    data class DeleteModel(val editModel: EditModelUi) : TimeTaskWorkCommand()
     object LoadTemplateTimeTasks : TimeTaskWorkCommand()
 }

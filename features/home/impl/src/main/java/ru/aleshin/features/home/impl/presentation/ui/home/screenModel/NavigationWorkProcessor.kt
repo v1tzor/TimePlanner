@@ -15,14 +15,12 @@
  */
 package ru.aleshin.features.home.impl.presentation.ui.home.screenModel
 
-import ru.aleshin.core.utils.functional.TimeRange
 import ru.aleshin.core.utils.functional.rightOrElse
 import ru.aleshin.core.utils.platform.screenmodel.work.ActionResult
 import ru.aleshin.core.utils.platform.screenmodel.work.WorkCommand
 import ru.aleshin.core.utils.platform.screenmodel.work.WorkProcessor
 import ru.aleshin.core.utils.platform.screenmodel.work.WorkResult
 import ru.aleshin.features.editor.api.domain.EditModel
-import ru.aleshin.features.home.api.domains.entities.categories.MainCategory
 import ru.aleshin.features.home.impl.domain.interactors.TemplatesInteractor
 import ru.aleshin.features.home.impl.navigation.NavigationManager
 import ru.aleshin.features.home.impl.presentation.mapppers.TimeTaskToEditModelMapper
@@ -38,9 +36,13 @@ import javax.inject.Inject
  */
 internal interface NavigationWorkProcessor : WorkProcessor<NavigationWorkCommand, HomeAction, HomeEffect> {
 
-    suspend fun navigateToEditor(timeTask: TimeTaskUi): WorkResult<HomeAction, HomeEffect>
+    suspend fun navigateToEditorWithTimeTask(timeTask: TimeTaskUi): WorkResult<HomeAction, HomeEffect>
 
-    suspend fun navigateToEditorWithEmptyData(date: Date, timeRange: TimeRange): WorkResult<HomeAction, HomeEffect>
+    suspend fun navigateToEditor(
+        date: Date,
+        startTime: Date,
+        endTime: Date,
+    ): WorkResult<HomeAction, HomeEffect>
 
     class Base @Inject constructor(
         private val navigationManager: NavigationManager,
@@ -49,18 +51,19 @@ internal interface NavigationWorkProcessor : WorkProcessor<NavigationWorkCommand
         private val mapperToEditModel: TimeTaskToEditModelMapper,
     ) : NavigationWorkProcessor {
 
-        override suspend fun navigateToEditor(timeTask: TimeTaskUi) = work(
+        override suspend fun navigateToEditorWithTimeTask(timeTask: TimeTaskUi) = work(
             command = NavigationWorkCommand.NavigateToEditorWithTimeTask(timeTask),
         )
 
-        override suspend fun navigateToEditorWithEmptyData(date: Date, timeRange: TimeRange) = work(
-            command = NavigationWorkCommand.NavigateToEditorWithEmptyTimeTask(date, timeRange),
+        override suspend fun navigateToEditor(date: Date, startTime: Date, endTime: Date) = work(
+            command = NavigationWorkCommand.NavigateToEditor(date, startTime, endTime),
         )
 
         override suspend fun work(command: NavigationWorkCommand) = when (command) {
-            is NavigationWorkCommand.NavigateToEditorWithEmptyTimeTask -> {
-                navigateWithEmptyTimeTask(command.currentDate, command.timeRange)
+            is NavigationWorkCommand.NavigateToEditor -> {
+                navigateWithEmptyTimeTask(command.currentDate, command.startTime, command.endTime)
             }
+
             is NavigationWorkCommand.NavigateToEditorWithTimeTask -> {
                 navigateWithTimeTask(command.timeTask)
             }
@@ -76,13 +79,10 @@ internal interface NavigationWorkProcessor : WorkProcessor<NavigationWorkCommand
 
         private fun navigateWithEmptyTimeTask(
             date: Date,
-            timeRange: TimeRange,
+            startTime: Date,
+            endTime: Date,
         ): WorkResult<HomeAction, HomeEffect> {
-            val editModel = EditModel(
-                date = date,
-                mainCategory = MainCategory.absent(),
-                timeRanges = timeRange,
-            )
+            val editModel = EditModel(date = date, startTime = startTime, endTime = endTime)
             return navigationManager.navigateToEditorFeature(editModel).let {
                 ActionResult(HomeAction.Navigate)
             }
@@ -92,8 +92,6 @@ internal interface NavigationWorkProcessor : WorkProcessor<NavigationWorkCommand
 
 internal sealed class NavigationWorkCommand : WorkCommand {
     data class NavigateToEditorWithTimeTask(val timeTask: TimeTaskUi) : NavigationWorkCommand()
-    data class NavigateToEditorWithEmptyTimeTask(
-        val currentDate: Date,
-        val timeRange: TimeRange,
-    ) : NavigationWorkCommand()
+    data class NavigateToEditor(val currentDate: Date, val startTime: Date, val endTime: Date) :
+        NavigationWorkCommand()
 }

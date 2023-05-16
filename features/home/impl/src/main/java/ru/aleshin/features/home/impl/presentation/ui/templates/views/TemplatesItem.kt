@@ -42,6 +42,7 @@ import ru.aleshin.core.utils.extensions.duration
 import ru.aleshin.features.home.api.domains.entities.categories.MainCategory
 import ru.aleshin.features.home.api.domains.entities.categories.SubCategory
 import ru.aleshin.features.home.api.domains.entities.template.Template
+import ru.aleshin.features.home.api.presentation.mappers.fetchNameByLanguage
 import ru.aleshin.features.home.api.presentation.mappers.toDescription
 import ru.aleshin.features.home.api.presentation.mappers.toIconPainter
 import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
@@ -85,7 +86,7 @@ internal fun TemplatesItem(
                 } else {
                     CategoryTextMonogram(
                         modifier.align(Alignment.Top),
-                        text = model.category.name.first().toString(),
+                        text = model.category.fetchNameByLanguage().first().toString(),
                         textColor = MaterialTheme.colorScheme.primary,
                         backgroundColor = MaterialTheme.colorScheme.primaryContainer,
                     )
@@ -129,8 +130,8 @@ internal fun TemplatesItemInfo(
     val endTimeFormat = timeFormat.format(endTime)
     val duration = duration(startTime, endTime).toMinutesOrHoursTitle()
     val mainText = when (subCategory != null) {
-        true -> TimePlannerRes.strings.splitFormat.format(mainCategory.name, subCategory.name)
-        false -> mainCategory.name
+        true -> TimePlannerRes.strings.splitFormat.format(mainCategory.fetchNameByLanguage(), subCategory.name)
+        false -> mainCategory.fetchNameByLanguage()
     }
     val notificationTitle = when (isEnableNotification) {
         true -> HomeThemeRes.strings.notificationEnabledTitle

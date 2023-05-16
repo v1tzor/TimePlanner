@@ -65,6 +65,7 @@ import ru.aleshin.features.editor.impl.presentation.theme.EditorThemeRes
 import ru.aleshin.features.home.api.domains.entities.categories.MainCategory
 import ru.aleshin.features.home.api.domains.entities.categories.SubCategory
 import ru.aleshin.features.home.api.domains.entities.template.Template
+import ru.aleshin.features.home.api.presentation.mappers.fetchNameByLanguage
 import ru.aleshin.features.home.api.presentation.mappers.toDescription
 import ru.aleshin.features.home.api.presentation.mappers.toIconPainter
 import java.text.SimpleDateFormat
@@ -183,7 +184,6 @@ internal fun TemplateBottomSheetItem(
         modifier = modifier.fillMaxWidth(),
         shape = MaterialTheme.shapes.large,
         color = MaterialTheme.colorScheme.surface,
-//        tonalElevation = TimePlannerRes.elevations.levelFour,
     ) {
         Column(modifier = Modifier.animateContentSize()) {
             Row(
@@ -201,7 +201,7 @@ internal fun TemplateBottomSheetItem(
                     )
                 } else {
                     CategoryTextMonogram(
-                        text = model.category.name.first().toString(),
+                        text = model.category.fetchNameByLanguage().first().toString(),
                         textColor = MaterialTheme.colorScheme.primary,
                         backgroundColor = MaterialTheme.colorScheme.primaryContainer,
                     )
@@ -255,8 +255,8 @@ internal fun TemplateBottomSheetItemInfo(
     val endTimeFormat = timeFormat.format(endTime)
     val duration = duration(startTime, endTime).toMinutesOrHoursTitle()
     val mainText = when (subCategory != null) {
-        true -> TimePlannerRes.strings.splitFormat.format(mainCategory.name, subCategory.name)
-        false -> mainCategory.name
+        true -> TimePlannerRes.strings.splitFormat.format(mainCategory.fetchNameByLanguage(), subCategory.name)
+        false -> mainCategory.fetchNameByLanguage()
     }
     val notificationTitle = when (isEnableNotification) {
         true -> EditorThemeRes.strings.notificationEnabledTitle

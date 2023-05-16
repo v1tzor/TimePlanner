@@ -34,6 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import ru.aleshin.core.ui.views.toMinutesAndHoursTitle
 import ru.aleshin.features.analytics.impl.domain.entities.CategoryAnalytic
+import ru.aleshin.features.home.api.presentation.mappers.fetchNameByLanguage
 
 @Composable
 internal fun SubAnalyticsTimeLegend(
@@ -66,7 +67,7 @@ internal fun SubAnalyticsTimeLegend(
 
                 SubAnalyticsTimeLegendItem(
                     number = otherAnalytics.indexOf(it).inc(),
-                    name = it.mainCategory.name,
+                    name = it.mainCategory.fetchNameByLanguage(),
                     duration = it.duration,
                     percent = percent,
                 )
