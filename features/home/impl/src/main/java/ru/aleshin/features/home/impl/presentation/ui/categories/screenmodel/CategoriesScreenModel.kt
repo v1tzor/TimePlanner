@@ -43,8 +43,11 @@ internal class CategoriesScreenModel @Inject constructor(
     coroutineManager = coroutineManager,
 ) {
 
-    init {
-        dispatchEvent(CategoriesEvent.Init(MainCategory.absent()))
+    override fun init() {
+        if (!isInitialize.get()) {
+            super.init()
+            dispatchEvent(CategoriesEvent.Init(MainCategory.absent()))
+        }
     }
 
     override suspend fun WorkScope<CategoriesViewState, CategoriesAction, CategoriesEffect>.handleEvent(

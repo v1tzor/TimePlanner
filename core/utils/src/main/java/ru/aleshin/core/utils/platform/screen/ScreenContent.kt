@@ -11,11 +11,12 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License.
-*/
+ * imitations under the License.
+ */
 package ru.aleshin.core.utils.platform.screen
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import ru.aleshin.core.utils.platform.screenmodel.ContractProvider
 import ru.aleshin.core.utils.platform.screenmodel.contract.BaseEvent
 import ru.aleshin.core.utils.platform.screenmodel.contract.BaseUiEffect
@@ -30,6 +31,7 @@ fun <S : BaseViewState, E : BaseEvent, F : BaseUiEffect, CP : ContractProvider<S
     initialState: S,
     content: @Composable ScreenScope<S, E, F>.(state: S) -> Unit,
 ) {
+    LaunchedEffect(key1 = Unit) { screenModel.init() }
     val screenScope = rememberScreenScope(
         contractProvider = screenModel,
         initialState = initialState,

@@ -83,6 +83,7 @@ dependencies {
     implementation(Dependencies.AndroidX.core)
     implementation(Dependencies.AndroidX.appcompat)
     implementation(Dependencies.AndroidX.lifecycleRuntime)
+    implementation(Dependencies.AndroidX.lifecycleViewModel)
     implementation(Dependencies.AndroidX.material)
     implementation(Dependencies.AndroidX.placeHolder)
     implementation(Dependencies.AndroidX.systemUiController)
@@ -98,6 +99,7 @@ dependencies {
 
     testImplementation(Dependencies.Test.jUnit)
     testImplementation(Dependencies.Test.turbine)
+    testImplementation(Dependencies.Test.coroutinesTest)
     androidTestImplementation(Dependencies.Test.jUnitExt)
     androidTestImplementation(Dependencies.Test.espresso)
     androidTestImplementation(Dependencies.Test.composeJUnit)

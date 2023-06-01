@@ -43,8 +43,11 @@ internal class AnalyticsScreenModel @Inject constructor(
     coroutineManager = coroutineManager,
 ) {
 
-    init {
-        dispatchEvent(AnalyticsEvent.ChangeTimePeriod(TimePeriod.WEEK))
+    override fun init() {
+        if (!isInitialize.get()) {
+            dispatchEvent(AnalyticsEvent.ChangeTimePeriod(TimePeriod.WEEK))
+            super.init()
+        }
     }
 
     override suspend fun WorkScope<AnalyticsViewState, AnalyticsAction, AnalyticsEffect>.handleEvent(

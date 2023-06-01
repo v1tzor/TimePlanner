@@ -11,8 +11,8 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License.
-*/
+ * imitations under the License.
+ */
 package ru.aleshin.timeplanner.presentation.ui.main.viewmodel
 
 import ru.aleshin.core.utils.managers.CoroutineManager
@@ -41,8 +41,11 @@ class MainViewModel @Inject constructor(
     coroutineManager = coroutineManager,
 ) {
 
-    init {
-        dispatchEvent(MainEvent.Init)
+    override fun init() {
+        if (!isInitialize.get()) {
+            super.init()
+            dispatchEvent(MainEvent.Init)
+        }
     }
 
     override suspend fun WorkScope<MainViewState, MainAction, MainEffect>.handleEvent(

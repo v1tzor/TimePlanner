@@ -11,8 +11,8 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License.
-*/
+ * imitations under the License.
+ */
 package ru.aleshin.core.utils.platform.screenmodel
 
 import cafe.adriel.voyager.core.model.ScreenModel
@@ -26,6 +26,7 @@ import ru.aleshin.core.utils.platform.screenmodel.contract.BaseEvent
 import ru.aleshin.core.utils.platform.screenmodel.contract.BaseUiEffect
 import ru.aleshin.core.utils.platform.screenmodel.contract.BaseViewState
 import ru.aleshin.core.utils.platform.screenmodel.store.launchedStore
+import java.util.concurrent.atomic.AtomicBoolean
 
 /**
  * @author Stanislav Aleshin on 14.02.2023.
@@ -38,6 +39,8 @@ abstract class BaseScreenModel<S : BaseViewState, E : BaseEvent, A : BaseAction,
 
     private val scope get() = coroutineScope
 
+    protected var isInitialize = AtomicBoolean(false)
+
     private val store = launchedStore(
         scope = scope,
         effectCommunicator = effectCommunicator,
@@ -46,6 +49,10 @@ abstract class BaseScreenModel<S : BaseViewState, E : BaseEvent, A : BaseAction,
         reducer = this,
         coroutineManager = coroutineManager,
     )
+
+    override fun init() {
+        isInitialize.set(true)
+    }
 
     override fun dispatchEvent(event: E) = store.sendEvent(event)
 

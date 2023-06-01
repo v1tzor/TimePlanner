@@ -42,8 +42,11 @@ internal class SettingsScreenModel @Inject constructor(
     coroutineManager = coroutineManager,
 ) {
 
-    init {
-        dispatchEvent(SettingsEvent.Init)
+    override fun init() {
+        if (!isInitialize.get()) {
+            dispatchEvent(SettingsEvent.Init)
+            super.init()
+        }
     }
 
     override suspend fun WorkScope<SettingsViewState, SettingsAction, SettingsEffect>.handleEvent(

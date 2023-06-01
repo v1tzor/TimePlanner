@@ -49,8 +49,11 @@ internal class EditorScreenModel @Inject constructor(
     effectCommunicator = effectCommunicator,
     coroutineManager = coroutineManager,
 ) {
-    init {
-        dispatchEvent(EditorEvent.Init)
+    override fun init() {
+        if (!isInitialize.get()) {
+            dispatchEvent(EditorEvent.Init)
+            super.init()
+        }
     }
 
     override suspend fun WorkScope<EditorViewState, EditorAction, EditorEffect>.handleEvent(

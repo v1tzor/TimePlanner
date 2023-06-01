@@ -11,8 +11,8 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License.
-*/
+ * imitations under the License.
+ */
 package ru.aleshin.core.utils.platform.screenmodel
 
 import androidx.lifecycle.ViewModel
@@ -24,6 +24,7 @@ import ru.aleshin.core.utils.platform.communications.state.EffectCommunicator
 import ru.aleshin.core.utils.platform.communications.state.StateCommunicator
 import ru.aleshin.core.utils.platform.screenmodel.contract.*
 import ru.aleshin.core.utils.platform.screenmodel.store.launchedStore
+import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Provider
 
 /**
@@ -37,6 +38,8 @@ abstract class BaseViewModel<S : BaseViewState, E : BaseEvent, A : BaseAction, F
 
     private val scope get() = viewModelScope
 
+    protected val isInitialize = AtomicBoolean(false)
+
     private val store = launchedStore(
         scope = scope,
         effectCommunicator = effectCommunicator,
@@ -45,6 +48,10 @@ abstract class BaseViewModel<S : BaseViewState, E : BaseEvent, A : BaseAction, F
         reducer = this,
         coroutineManager = coroutineManager,
     )
+
+    override fun init() {
+        isInitialize.set(true)
+    }
 
     override fun dispatchEvent(event: E) = store.sendEvent(event)
 

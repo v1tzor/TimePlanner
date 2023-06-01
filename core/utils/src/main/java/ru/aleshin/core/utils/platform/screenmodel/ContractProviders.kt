@@ -11,8 +11,8 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License.
-*/
+ * imitations under the License.
+ */
 package ru.aleshin.core.utils.platform.screenmodel
 
 import kotlinx.coroutines.flow.FlowCollector
@@ -38,4 +38,5 @@ interface EventReceiver<E : BaseEvent> {
 interface ContractProvider<S : BaseViewState, E : BaseEvent, F : BaseUiEffect> :
     StateProvider<S>,
     EventReceiver<E>,
-    UiEffectProvider<F>
+    UiEffectProvider<F>,
+    Init

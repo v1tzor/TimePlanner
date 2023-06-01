@@ -81,25 +81,20 @@ internal interface TimeTaskWorkProcessor : WorkProcessor<TimeTaskWorkCommand, Ed
             if (templateId != null && isTemplateUpdate) {
                 templatesInteractor.updateTemplate(domainModel.convertToTemplate(templateId))
             }
-            val saveResult = if (timeTask.key != 0L) {
-                timeTaskInteractor.updateTimeTask(timeTask)
-            } else {
-                timeTaskInteractor.addTimeTask(timeTask)
+            val saveResult = when (timeTask.key != 0L) {
+                true -> timeTaskInteractor.updateTimeTask(timeTask)
+                false -> timeTaskInteractor.addTimeTask(timeTask)
             }
 
             return when (saveResult) {
-                is Either.Right -> {
-                    notifyUpdateOrAdd(timeTask)
-                    navigationManager.navigateToHomeScreen().let {
-                        ActionResult(EditorAction.Navigate)
-                    }
+                is Either.Right -> notifyUpdateOrAdd(timeTask).let {
+                    navigationManager.navigateToHomeScreen()
+                    ActionResult(EditorAction.Navigate)
                 }
-
                 is Either.Left -> with(saveResult.data) {
-                    val effect = if (this is EditorFailures.TimeOverlayError) {
-                        EditorEffect.ShowOverlayError(editModel.timeRanges, this)
-                    } else {
-                        EditorEffect.ShowError(this)
+                    val effect = when (this is EditorFailures.TimeOverlayError) {
+                        true -> EditorEffect.ShowOverlayError(editModel.timeRanges, this)
+                        false -> EditorEffect.ShowError(this)
                     }
                     EffectResult(effect)
                 }
@@ -110,10 +105,9 @@ internal interface TimeTaskWorkProcessor : WorkProcessor<TimeTaskWorkCommand, Ed
             if (timeTask.isEnableNotification) {
                 val currentTime = dateManager.fetchCurrentDate()
                 if (timeTask.timeRanges.from > currentTime) {
-                    if (timeTask.key != 0L) {
-                        timeTaskAlarmManager.updateNotifyAlarm(timeTask)
-                    } else {
-                        timeTaskAlarmManager.addNotifyAlarm(timeTask)
+                    when (timeTask.key != 0L) {
+                        true -> timeTaskAlarmManager.updateNotifyAlarm(timeTask)
+                        false -> timeTaskAlarmManager.addNotifyAlarm(timeTask)
                     }
                 }
             }
