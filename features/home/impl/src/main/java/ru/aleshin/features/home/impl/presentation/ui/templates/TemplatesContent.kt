@@ -61,9 +61,11 @@ internal fun TemplatesContent(
     modifier: Modifier = Modifier,
     onChangeSortedType: (TemplatesSortedType) -> Unit,
     onChangeToggleStatus: (ViewToggleStatus) -> Unit,
+    onUpdateTemplate: (Template) -> Unit,
     onDeleteTemplate: (Template) -> Unit,
 ) {
     val templates = state.templates
+
     Column(modifier = modifier) {
         TemplatesFiltersHeader(
             sortedType = state.sortedType,
@@ -82,7 +84,9 @@ internal fun TemplatesContent(
                 ) { template ->
                     TemplatesItem(
                         model = template,
+                        categories = state.categories,
                         isFullInfo = state.viewToggleStatus == ViewToggleStatus.EXPANDED,
+                        onUpdateTemplate = { onUpdateTemplate(it) },
                         onDeleteTemplate = { onDeleteTemplate(template) },
                     )
                 }

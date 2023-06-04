@@ -16,6 +16,7 @@
 package ru.aleshin.features.home.impl.domain.interactors
 
 import ru.aleshin.core.utils.functional.DomainResult
+import ru.aleshin.core.utils.functional.UnitDomainResult
 import ru.aleshin.features.home.api.domains.entities.schedules.TimeTask
 import ru.aleshin.features.home.api.domains.entities.template.Template
 import ru.aleshin.features.home.api.domains.entities.template.equalsIsTemplate
@@ -30,6 +31,7 @@ import javax.inject.Inject
 internal interface TemplatesInteractor {
 
     suspend fun fetchTemplates(): DomainResult<HomeFailures, List<Template>>
+    suspend fun updateTemplate(template: Template): UnitDomainResult<HomeFailures>
     suspend fun checkIsTemplate(timeTask: TimeTask): DomainResult<HomeFailures, Int?>
     suspend fun addTemplate(template: Template): DomainResult<HomeFailures, Int>
     suspend fun deleteTemplate(id: Int): DomainResult<HomeFailures, Unit>
@@ -41,6 +43,10 @@ internal interface TemplatesInteractor {
 
         override suspend fun fetchTemplates() = eitherWrapper.wrap {
             templatesRepository.fetchAllTemplates()
+        }
+
+        override suspend fun updateTemplate(template: Template) = eitherWrapper.wrap {
+            templatesRepository.updateTemplate(template)
         }
 
         override suspend fun checkIsTemplate(timeTask: TimeTask) = eitherWrapper.wrap {

@@ -32,6 +32,13 @@ internal data class HomeIcons(
     val menu: Int,
     val check: Int,
     val notFound: Int,
+    val category: Int,
+    val subCategory: Int,
+    val startTime: Int,
+    val endTime: Int,
+    val notification: Int,
+    val info: Int,
+    val importance: Int,
 )
 
 internal val baseHomeIcons = HomeIcons(
@@ -45,6 +52,13 @@ internal val baseHomeIcons = HomeIcons(
     menu = R.drawable.ic_menu,
     check = R.drawable.ic_check,
     notFound = R.drawable.ic_not_found,
+    category = R.drawable.ic_category,
+    subCategory = R.drawable.ic_subcategory,
+    startTime = R.drawable.ic_start_time,
+    endTime = R.drawable.ic_end_time,
+    notification = R.drawable.ic_notification,
+    info = R.drawable.ic_info,
+    importance = R.drawable.ic_priority_high,
 )
 
 internal val LocalHomeIcons = staticCompositionLocalOf<HomeIcons> {

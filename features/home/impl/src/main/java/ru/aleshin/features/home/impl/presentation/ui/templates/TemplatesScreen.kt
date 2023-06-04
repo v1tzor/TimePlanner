@@ -15,15 +15,23 @@
  */
 package ru.aleshin.features.home.impl.presentation.ui.templates
 
+import android.util.Log
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.core.screen.Screen
 import kotlinx.coroutines.launch
@@ -36,6 +44,7 @@ import ru.aleshin.features.home.impl.presentation.ui.templates.contract.Template
 import ru.aleshin.features.home.impl.presentation.ui.templates.contract.TemplatesEvent
 import ru.aleshin.features.home.impl.presentation.ui.templates.contract.TemplatesViewState
 import ru.aleshin.features.home.impl.presentation.ui.templates.screenmodel.rememberTemplatesScreenModel
+import ru.aleshin.features.home.impl.presentation.ui.templates.views.TemplateEditorDialog
 import ru.aleshin.features.home.impl.presentation.ui.templates.views.TemplatesTopAppBar
 
 /**
@@ -51,6 +60,7 @@ internal class TemplatesScreen : Screen {
     ) { state ->
         val scope = rememberCoroutineScope()
         val snackbarState = remember { SnackbarHostState() }
+        var isShowTemplateCreator by rememberSaveable { mutableStateOf(false) }
         val drawerManager = LocalDrawerManager.current
         val strings = HomeThemeRes.strings
 
@@ -62,6 +72,7 @@ internal class TemplatesScreen : Screen {
                     modifier = Modifier.padding(paddingValues),
                     onChangeSortedType = { dispatchEvent(TemplatesEvent.UpdatedSortedType(it)) },
                     onChangeToggleStatus = { dispatchEvent(TemplatesEvent.UpdatedToggleStatus(it)) },
+                    onUpdateTemplate = { dispatchEvent(TemplatesEvent.UpdateTemplate(it)) },
                     onDeleteTemplate = { dispatchEvent(TemplatesEvent.DeleteTemplate(it.templateId)) },
                 )
             },
@@ -71,12 +82,35 @@ internal class TemplatesScreen : Screen {
             snackbarHost = {
                 SnackbarHost(hostState = snackbarState)
             },
+            floatingActionButton = {
+                FloatingActionButton(
+                    onClick = { isShowTemplateCreator = true },
+                    content = {
+                        Text(
+                            text = HomeThemeRes.strings.addTemplatesFabTitle,
+                            style = MaterialTheme.typography.titleLarge,
+                        )
+                    },
+                )
+            },
         )
+
+        if (isShowTemplateCreator) {
+            TemplateEditorDialog(
+                categories = state.categories,
+                editTemplateModel = null,
+                onDismiss = { isShowTemplateCreator = false },
+                onConfirm = { template ->
+                    dispatchEvent(TemplatesEvent.AddTemplate(template))
+                    isShowTemplateCreator = false
+                },
+            )
+        }
 
         handleEffect { effect ->
             when (effect) {
                 is TemplatesEffect.ShowError -> snackbarState.showSnackbar(
-                    message = effect.failure.mapToMessage(strings),
+                    message = effect.failure.mapToMessage(strings).apply { Log.d("test", "error -> ${effect.failure}") },
                 )
             }
         }

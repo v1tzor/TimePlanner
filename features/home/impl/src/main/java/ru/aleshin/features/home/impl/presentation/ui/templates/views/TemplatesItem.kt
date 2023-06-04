@@ -31,6 +31,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -39,6 +43,7 @@ import ru.aleshin.core.ui.views.CategoryIconMonogram
 import ru.aleshin.core.ui.views.CategoryTextMonogram
 import ru.aleshin.core.ui.views.toMinutesOrHoursTitle
 import ru.aleshin.core.utils.extensions.duration
+import ru.aleshin.features.home.api.domains.entities.categories.Categories
 import ru.aleshin.features.home.api.domains.entities.categories.MainCategory
 import ru.aleshin.features.home.api.domains.entities.categories.SubCategory
 import ru.aleshin.features.home.api.domains.entities.template.Template
@@ -55,13 +60,16 @@ import java.util.Date
 @Composable
 internal fun TemplatesItem(
     modifier: Modifier = Modifier,
+    categories: List<Categories>,
     model: Template,
     isFullInfo: Boolean,
-    onClick: () -> Unit = {},
+    onUpdateTemplate: (Template) -> Unit = {},
     onDeleteTemplate: () -> Unit,
 ) {
+    var isShowTemplateEditor by rememberSaveable { mutableStateOf(false) }
+
     Surface(
-        onClick = onClick,
+        onClick = { isShowTemplateEditor = true },
         modifier = modifier.fillMaxWidth(),
         shape = MaterialTheme.shapes.large,
         color = MaterialTheme.colorScheme.surface,
@@ -111,6 +119,18 @@ internal fun TemplatesItem(
                 }
             }
         }
+    }
+
+    if (isShowTemplateEditor) {
+        TemplateEditorDialog(
+            categories = categories,
+            editTemplateModel = model,
+            onDismiss = { isShowTemplateEditor = false },
+            onConfirm = { template ->
+                onUpdateTemplate(template)
+                isShowTemplateEditor = false
+            },
+        )
     }
 }
 

@@ -33,6 +33,7 @@ import ru.aleshin.core.ui.theme.TimePlannerRes
 @Composable
 fun DialogButtons(
     modifier: Modifier = Modifier,
+    isConfirmEnabled: Boolean = true,
     confirmTitle: String = TimePlannerRes.strings.alertDialogSelectConfirmTitle,
     onCancelClick: () -> Unit,
     onConfirmClick: () -> Unit,
@@ -49,10 +50,13 @@ fun DialogButtons(
                 style = MaterialTheme.typography.labelLarge,
             )
         }
-        TextButton(onClick = onConfirmClick) {
+        TextButton(enabled = isConfirmEnabled, onClick = onConfirmClick) {
             Text(
                 text = confirmTitle,
-                color = MaterialTheme.colorScheme.primary,
+                color = when (isConfirmEnabled) {
+                    true -> MaterialTheme.colorScheme.primary
+                    false -> MaterialTheme.colorScheme.onSurfaceVariant
+                },
                 style = MaterialTheme.typography.labelLarge,
             )
         }

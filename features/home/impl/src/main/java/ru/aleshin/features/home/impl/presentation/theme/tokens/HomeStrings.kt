@@ -86,6 +86,16 @@ internal data class HomeStrings(
     val notificationDisabledTitle: String,
     val statisticsActiveTitle: String,
     val statisticsDisabledTitle: String,
+    val addTemplatesFabTitle: String,
+    val templateEditorHeader: String,
+    val mainCategoryLabel: String,
+    val subCategoryLabel: String,
+    val startTimeLabel: String,
+    val endTimeLabel: String,
+    val notificationLabel: String,
+    val statisticsLabel: String,
+    val importanceLabel: String,
+    val subCategoryEmptyTitle: String,
 )
 
 internal val russianHomeString = HomeStrings(
@@ -154,6 +164,16 @@ internal val russianHomeString = HomeStrings(
     notificationDisabledTitle = "Уведомления: выключены",
     statisticsActiveTitle = "Статистика: активна",
     statisticsDisabledTitle = "Статистика: выключена",
+    addTemplatesFabTitle = "+",
+    templateEditorHeader = "Шаблон",
+    mainCategoryLabel = "Категория",
+    subCategoryLabel = "Подкатегория",
+    startTimeLabel = "Начало",
+    endTimeLabel = "Конец",
+    notificationLabel = "Отправка уведомлений",
+    statisticsLabel = "Учёт статистики",
+    importanceLabel = "Высокий приоритет",
+    subCategoryEmptyTitle = "Отсутствует",
 )
 
 internal val englishHomeString = HomeStrings(
@@ -222,6 +242,16 @@ internal val englishHomeString = HomeStrings(
     notificationDisabledTitle = "Notification: disabled",
     statisticsActiveTitle = "Statistics: active",
     statisticsDisabledTitle = "Statistics: disabled",
+    addTemplatesFabTitle = "+",
+    templateEditorHeader = "Template",
+    mainCategoryLabel = "Category",
+    subCategoryLabel = "Subcategory",
+    startTimeLabel = "Start",
+    endTimeLabel = "End",
+    notificationLabel = "Sending notification",
+    statisticsLabel = "Consider in statistics",
+    importanceLabel = "High priority",
+    subCategoryEmptyTitle = "Absent",
 )
 
 internal val LocalHomeStrings = staticCompositionLocalOf<HomeStrings> {

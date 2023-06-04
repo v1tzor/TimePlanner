@@ -91,6 +91,11 @@ fun Calendar.setEndDay() = this.apply {
     set(Calendar.MILLISECOND, 59)
 }
 
+fun Calendar.setHoursAndMinutes(hours: Int, minutes: Int) = this.apply {
+    set(Calendar.HOUR_OF_DAY, hours)
+    set(Calendar.MINUTE, minutes)
+}
+
 fun Date.changeDay(date: Date): Date {
     val changedDateCalendar = Calendar.getInstance().apply {
         time = this@changeDay

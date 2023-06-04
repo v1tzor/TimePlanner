@@ -15,6 +15,7 @@
  */
 package ru.aleshin.features.home.impl.presentation.ui.templates.screenmodel
 
+import android.util.Log
 import kotlinx.coroutines.delay
 import ru.aleshin.core.utils.extensions.duration
 import ru.aleshin.core.utils.functional.Constants
@@ -24,6 +25,8 @@ import ru.aleshin.core.utils.platform.screenmodel.work.EffectResult
 import ru.aleshin.core.utils.platform.screenmodel.work.WorkCommand
 import ru.aleshin.core.utils.platform.screenmodel.work.WorkProcessor
 import ru.aleshin.core.utils.platform.screenmodel.work.WorkResult
+import ru.aleshin.features.home.api.domains.entities.template.Template
+import ru.aleshin.features.home.impl.domain.interactors.CategoriesInteractor
 import ru.aleshin.features.home.impl.domain.interactors.TemplatesInteractor
 import ru.aleshin.features.home.impl.presentation.models.TemplatesSortedType
 import ru.aleshin.features.home.impl.presentation.ui.templates.contract.TemplatesAction
@@ -37,6 +40,7 @@ internal interface TemplatesWorkProcessor : WorkProcessor<TemplatesWorkCommand, 
 
     class Base @Inject constructor(
         private val templatesInteractor: TemplatesInteractor,
+        private val categoriesInteractor: CategoriesInteractor,
     ) : TemplatesWorkProcessor {
 
         override suspend fun work(command: TemplatesWorkCommand) = when (command) {
@@ -45,6 +49,32 @@ internal interface TemplatesWorkProcessor : WorkProcessor<TemplatesWorkCommand, 
                 loadTemplatesWork(command.sortedType)
             }
             is TemplatesWorkCommand.DeleteTemplate -> deleteTemplateWork(command.id, command.sortedType)
+            is TemplatesWorkCommand.AddTemplate -> addTemplate(command.template, command.sortedType)
+            is TemplatesWorkCommand.UpdateTemplate -> updateTemplate(command.template, command.sortedType)
+            is TemplatesWorkCommand.LoadCategories -> loadCategories()
+        }
+
+        private suspend fun updateTemplate(
+            template: Template,
+            sortedType: TemplatesSortedType,
+        ): WorkResult<TemplatesAction, TemplatesEffect> {
+            return when (val result = templatesInteractor.updateTemplate(template)) {
+                is Either.Right -> loadTemplatesWork(sortedType)
+                is Either.Left -> EffectResult(TemplatesEffect.ShowError(result.data))
+            }
+        }
+
+        private suspend fun addTemplate(
+            template: Template,
+            sortedType: TemplatesSortedType,
+        ): WorkResult<TemplatesAction, TemplatesEffect> {
+            return when (val result = templatesInteractor.addTemplate(template)) {
+                is Either.Right -> {
+                    Log.d("test", "new id -> ${result.data}")
+                    loadTemplatesWork(sortedType)
+                }
+                is Either.Left -> EffectResult(TemplatesEffect.ShowError(result.data))
+            }
         }
 
         private suspend fun loadTemplatesWork(
@@ -73,10 +103,20 @@ internal interface TemplatesWorkProcessor : WorkProcessor<TemplatesWorkCommand, 
                 is Either.Left -> EffectResult(TemplatesEffect.ShowError(deleteResult.data))
             }
         }
+
+        private suspend fun loadCategories(): WorkResult<TemplatesAction, TemplatesEffect> {
+            return when (val result = categoriesInteractor.fetchAllCategories()) {
+                is Either.Right -> ActionResult(TemplatesAction.UpdateCategories(result.data))
+                is Either.Left -> EffectResult(TemplatesEffect.ShowError(result.data))
+            }
+        }
     }
 }
 
 internal sealed class TemplatesWorkCommand : WorkCommand {
+    object LoadCategories : TemplatesWorkCommand()
     data class LoadTemplates(val sortedType: TemplatesSortedType) : TemplatesWorkCommand()
     data class DeleteTemplate(val id: Int, val sortedType: TemplatesSortedType) : TemplatesWorkCommand()
+    data class AddTemplate(val template: Template, val sortedType: TemplatesSortedType) : TemplatesWorkCommand()
+    data class UpdateTemplate(val template: Template, val sortedType: TemplatesSortedType) : TemplatesWorkCommand()
 }

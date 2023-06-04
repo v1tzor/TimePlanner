@@ -43,11 +43,25 @@ internal class TemplatesScreenModel @Inject constructor(
     coroutineManager = coroutineManager,
 ) {
 
+    override fun init() {
+        if (!isInitialize.get()) {
+            super.init()
+            dispatchEvent(TemplatesEvent.Init)
+        }
+    }
+
     override suspend fun WorkScope<TemplatesViewState, TemplatesAction, TemplatesEffect>.handleEvent(
         event: TemplatesEvent,
     ) = when (event) {
         is TemplatesEvent.Init -> with(state()) {
             templatesWorkProcessor.work(TemplatesWorkCommand.LoadTemplates(sortedType)).handleWork()
+            templatesWorkProcessor.work(TemplatesWorkCommand.LoadCategories).handleWork()
+        }
+        is TemplatesEvent.AddTemplate -> with(state()) {
+            templatesWorkProcessor.work(TemplatesWorkCommand.AddTemplate(event.template, sortedType)).handleWork()
+        }
+        is TemplatesEvent.UpdateTemplate -> with(state()) {
+            templatesWorkProcessor.work(TemplatesWorkCommand.UpdateTemplate(event.template, sortedType)).handleWork()
         }
         is TemplatesEvent.DeleteTemplate -> with(state()) {
             templatesWorkProcessor.work(TemplatesWorkCommand.DeleteTemplate(event.id, sortedType)).handleWork()
@@ -78,6 +92,9 @@ internal class TemplatesScreenModel @Inject constructor(
         )
         is TemplatesAction.ChangeToggleStatus -> currentState.copy(
             viewToggleStatus = action.status,
+        )
+        is TemplatesAction.UpdateCategories -> currentState.copy(
+            categories = action.categories,
         )
     }
 }
