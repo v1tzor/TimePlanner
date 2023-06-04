@@ -46,6 +46,7 @@ import androidx.compose.ui.unit.dp
 import ru.aleshin.core.ui.theme.TimePlannerRes
 import ru.aleshin.features.home.api.domains.entities.categories.MainCategory
 import ru.aleshin.features.home.api.domains.entities.categories.SubCategory
+import ru.aleshin.features.home.api.presentation.mappers.fetchNameByLanguage
 import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
 import ru.aleshin.features.home.impl.presentation.ui.home.views.EmptyDateView
 
@@ -118,7 +119,7 @@ internal fun SubCategoryViewItem(
         ) {
             Text(
                 modifier = Modifier.weight(1f),
-                text = subCategory.name,
+                text = subCategory.fetchNameByLanguage(),
                 color = MaterialTheme.colorScheme.onSurface,
                 overflow = TextOverflow.Ellipsis,
                 style = MaterialTheme.typography.titleMedium,

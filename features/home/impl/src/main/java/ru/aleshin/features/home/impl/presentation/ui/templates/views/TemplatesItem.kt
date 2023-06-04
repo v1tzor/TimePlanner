@@ -130,7 +130,10 @@ internal fun TemplatesItemInfo(
     val endTimeFormat = timeFormat.format(endTime)
     val duration = duration(startTime, endTime).toMinutesOrHoursTitle()
     val mainText = when (subCategory != null) {
-        true -> TimePlannerRes.strings.splitFormat.format(mainCategory.fetchNameByLanguage(), subCategory.name)
+        true -> TimePlannerRes.strings.splitFormat.format(
+            mainCategory.fetchNameByLanguage(),
+            subCategory.fetchNameByLanguage(),
+        )
         false -> mainCategory.fetchNameByLanguage()
     }
     val notificationTitle = when (isEnableNotification) {

@@ -55,7 +55,7 @@ internal fun SubAnalyticsTimeLegend(
                 val percent = it.duration.toFloat() / allSubCategoryAnalytics.duration * 100
                 SubAnalyticsTimeLegendItem(
                     number = subCategoryAnalytic.indexOf(it).inc(),
-                    name = it.subCategory.name,
+                    name = it.subCategory.fetchNameByLanguage(),
                     duration = it.duration,
                     percent = percent,
                 )

@@ -34,6 +34,7 @@ import ru.aleshin.core.ui.theme.TimePlannerRes
 import ru.aleshin.core.ui.views.DialogButtons
 import ru.aleshin.features.home.api.domains.entities.categories.MainCategory
 import ru.aleshin.features.home.api.domains.entities.categories.SubCategory
+import ru.aleshin.features.home.api.presentation.mappers.fetchNameByLanguage
 import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
 
 /**
@@ -49,9 +50,10 @@ internal fun SubCategoryEditorDialog(
     onConfirm: (name: String) -> Unit,
 ) {
     var isError by rememberSaveable { mutableStateOf(false) }
-    val textRange = TextRange(editSubCategory?.name?.length ?: 0)
+    val subCategoryName = editSubCategory?.fetchNameByLanguage()
+    val textRange = TextRange(subCategoryName?.length ?: 0)
     var subCategoryNameValue by remember {
-        mutableStateOf(TextFieldValue(text = editSubCategory?.name ?: "", selection = textRange))
+        mutableStateOf(TextFieldValue(text = subCategoryName ?: "", selection = textRange))
     }
     AlertDialog(onDismissRequest = onDismiss) {
         Surface(
@@ -102,7 +104,7 @@ internal fun SubCategoryEditorDialogHeader(
         modifier = modifier.padding(top = 24.dp, bottom = 12.dp, start = 24.dp, end = 12.dp),
         verticalArrangement = Arrangement.spacedBy(2.dp),
     ) {
-        val mainCategoryName = mainCategory.name
+        val mainCategoryName = mainCategory.fetchNameByLanguage()
         Text(
             text = HomeThemeRes.strings.subCategoryChooserTitle,
             color = MaterialTheme.colorScheme.onSurface,

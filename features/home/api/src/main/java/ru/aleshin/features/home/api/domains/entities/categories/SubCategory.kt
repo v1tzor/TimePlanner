@@ -25,6 +25,7 @@ import kotlinx.parcelize.Parcelize
 data class SubCategory(
     val id: Int = 0,
     val name: String,
+    val englishName: String? = null,
     val mainCategory: MainCategory,
     val description: String? = null,
 ) : Parcelable {
@@ -33,6 +34,7 @@ data class SubCategory(
         fun absentSubCategory(mainCategory: MainCategory) = SubCategory(
             id = -1,
             name = "Отсутствует",
+            englishName = "Absent",
             mainCategory = mainCategory,
         )
     }
