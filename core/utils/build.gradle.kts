@@ -84,8 +84,6 @@ dependencies {
     implementation(Dependencies.Dagger.core)
     kapt(Dependencies.Dagger.kapt)
 
-    implementation(Dependencies.Retrofit.core)
-
     implementation(Dependencies.Voyager.navigator)
     implementation(Dependencies.Voyager.screenModel)
     implementation(Dependencies.Voyager.transitions)

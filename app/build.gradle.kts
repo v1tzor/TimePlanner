@@ -130,11 +130,6 @@ dependencies {
     implementation(Dependencies.Room.core)
     kapt(Dependencies.Room.kapt)
 
-    implementation(Dependencies.Retrofit.core)
-    implementation(Dependencies.Retrofit.okHttp)
-    implementation(Dependencies.Retrofit.converter)
-    implementation(Dependencies.Retrofit.interceptor)
-
     implementation(Dependencies.Voyager.navigator)
     implementation(Dependencies.Voyager.screenModel)
     implementation(Dependencies.Voyager.transitions)

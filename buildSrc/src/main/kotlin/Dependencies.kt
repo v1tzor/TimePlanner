@@ -68,13 +68,6 @@ object Dependencies {
         const val kapt = "androidx.room:room-compiler:${Versions.room}"
     }
 
-    object Retrofit {
-        const val core = "com.squareup.retrofit2:retrofit:${Versions.retrofit}"
-        const val converter = "com.squareup.retrofit2:converter-gson:${Versions.retrofit}"
-        const val okHttp = "com.squareup.okhttp3:okhttp:${Versions.okHttp}"
-        const val interceptor = "com.squareup.okhttp3:logging-interceptor:${Versions.okHttp}"
-    }
-
     object Test {
         const val jUnit = "junit:junit:${Versions.jUnit}"
         const val composeJUnit = "androidx.compose.ui:ui-test-junit4:${Versions.compose}"
