@@ -214,36 +214,47 @@ internal fun RunningTimeTask(
 internal fun CompletedTimeTask(
     modifier: Modifier = Modifier,
     onViewClicked: () -> Unit,
+    onDoneChange: () -> Unit,
     taskTitle: String,
     taskSubTitle: String?,
     categoryIcon: Painter?,
+    isCompleted: Boolean,
     categoryIconDescription: String?,
 ) {
     Surface(
         modifier = modifier,
         onClick = onViewClicked,
         enabled = true,
-        color = MaterialTheme.colorScheme.tertiaryContainer,
+        color = when (isCompleted) {
+            true -> MaterialTheme.colorScheme.tertiaryContainer
+            false -> MaterialTheme.colorScheme.secondaryContainer
+        },
         shape = MaterialTheme.shapes.medium,
     ) {
         Row(
-            modifier = Modifier.padding(16.dp).fillMaxWidth(),
+            modifier = Modifier
+                .padding(top = 16.dp, bottom = 16.dp, start = 16.dp, end = 8.dp)
+                .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             Box(modifier = Modifier.align(Alignment.Top)) {
+                val monogramBackgroundColor = when (isCompleted) {
+                    true -> MaterialTheme.colorScheme.tertiary
+                    false -> MaterialTheme.colorScheme.secondary
+                }
                 if (categoryIcon != null) {
                     CategoryIconMonogram(
                         icon = categoryIcon,
                         iconDescription = categoryIconDescription,
                         iconColor = MaterialTheme.colorScheme.onTertiary,
-                        backgroundColor = MaterialTheme.colorScheme.tertiary,
+                        backgroundColor = monogramBackgroundColor,
                     )
                 } else {
                     CategoryTextMonogram(
                         text = taskTitle.first().toString(),
                         textColor = MaterialTheme.colorScheme.onTertiary,
-                        backgroundColor = MaterialTheme.colorScheme.tertiary,
+                        backgroundColor = monogramBackgroundColor,
                     )
                 }
             }
@@ -253,12 +264,26 @@ internal fun CompletedTimeTask(
                 titleColor = MaterialTheme.colorScheme.onSurface,
                 subTitle = taskSubTitle,
             )
-            Icon(
-                modifier = Modifier.size(20.dp),
-                painter = painterResource(HomeThemeRes.icons.check),
-                contentDescription = HomeThemeRes.strings.timeTaskCheckIconDesc,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
+            IconButton(
+                modifier = Modifier.size(36.dp),
+                onClick = onDoneChange,
+            ) {
+                if (isCompleted) {
+                    Icon(
+                        modifier = Modifier.size(24.dp),
+                        painter = painterResource(HomeThemeRes.icons.check),
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                } else {
+                    Icon(
+                        modifier = Modifier.size(24.dp),
+                        painter = painterResource(HomeThemeRes.icons.cancel),
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSurface,
+                    )
+                }
+            }
         }
     }
 }

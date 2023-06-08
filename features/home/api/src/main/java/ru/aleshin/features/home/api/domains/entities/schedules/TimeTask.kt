@@ -11,8 +11,8 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License.
-*/
+ * imitations under the License.
+ */
 package ru.aleshin.features.home.api.domains.entities.schedules
 
 import android.os.Parcelable
@@ -33,6 +33,7 @@ data class TimeTask(
     val timeRanges: TimeRange,
     val category: MainCategory,
     val subCategory: SubCategory? = null,
+    val isCompleted: Boolean = true,
     val isImportant: Boolean = false,
     val isEnableNotification: Boolean = true,
     val isConsiderInStatistics: Boolean = true,

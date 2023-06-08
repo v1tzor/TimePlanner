@@ -32,6 +32,7 @@ internal fun EditModel.mapToUi() = EditModelUi(
     mainCategory = mainCategory,
     subCategory = subCategory,
     parameters = EditParameters(isImportant, isEnableNotification, isConsiderInStatistics),
+    isCompleted = isCompleted,
     templateId = templateId,
 )
 
@@ -42,6 +43,7 @@ internal fun EditModelUi.mapToDomain() = EditModel(
     endTime = timeRanges.to,
     mainCategory = mainCategory,
     subCategory = subCategory,
+    isCompleted = isCompleted,
     isImportant = parameters.isImportant,
     isEnableNotification = parameters.isEnableNotification,
     isConsiderInStatistics = parameters.isConsiderInStatistics,

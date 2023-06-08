@@ -20,6 +20,7 @@ import kotlinx.coroutines.flow.flow
 import ru.aleshin.core.utils.functional.Constants
 import ru.aleshin.core.utils.functional.TimeRange
 import ru.aleshin.core.utils.functional.handle
+import ru.aleshin.core.utils.functional.rightOrElse
 import ru.aleshin.core.utils.managers.DateManager
 import ru.aleshin.core.utils.platform.screenmodel.work.*
 import ru.aleshin.features.home.api.domains.common.TimeTaskStatusManager
@@ -27,7 +28,7 @@ import ru.aleshin.features.home.api.domains.entities.schedules.status.TimeTaskSt
 import ru.aleshin.features.home.impl.domain.interactors.ScheduleInteractor
 import ru.aleshin.features.home.impl.domain.interactors.TimeShiftInteractor
 import ru.aleshin.features.home.impl.presentation.mapppers.ScheduleDomainToUiMapper
-import ru.aleshin.features.home.impl.presentation.mapppers.TimeTaskUiToDomainMapper
+import ru.aleshin.features.home.impl.presentation.mapppers.mapToDomain
 import ru.aleshin.features.home.impl.presentation.models.TimeTaskUi
 import ru.aleshin.features.home.impl.presentation.ui.home.contract.HomeAction
 import ru.aleshin.features.home.impl.presentation.ui.home.contract.HomeEffect
@@ -43,12 +44,12 @@ internal interface ScheduleWorkProcessor : FlowWorkProcessor<ScheduleWorkCommand
     suspend fun createSchedule(date: Date): FlowWorkResult<HomeAction, HomeEffect>
     suspend fun shiftDownTimeTask(timeTask: TimeTaskUi): FlowWorkResult<HomeAction, HomeEffect>
     suspend fun shiftUpTimeTask(timeTask: TimeTaskUi): FlowWorkResult<HomeAction, HomeEffect>
+    suspend fun changeDoneState(date: Date, key: Long): FlowWorkResult<HomeAction, HomeEffect>
 
     class Base @Inject constructor(
         private val scheduleInteractor: ScheduleInteractor,
         private val timeShiftInteractor: TimeShiftInteractor,
         private val mapperToUi: ScheduleDomainToUiMapper,
-        private val mapperToDomain: TimeTaskUiToDomainMapper,
         private val statusManager: TimeTaskStatusManager,
         private val dateManager: DateManager,
     ) : ScheduleWorkProcessor {
@@ -69,11 +70,32 @@ internal interface ScheduleWorkProcessor : FlowWorkProcessor<ScheduleWorkCommand
             command = ScheduleWorkCommand.TimeTaskShiftUp(timeTask),
         )
 
+        override suspend fun changeDoneState(date: Date, key: Long) = work(
+            command = ScheduleWorkCommand.ChangeDoneState(date, key),
+        )
+
         override suspend fun work(command: ScheduleWorkCommand) = when (command) {
             is ScheduleWorkCommand.LoadScheduleByDate -> loadScheduleByDateWork(command.date)
             is ScheduleWorkCommand.CreateSchedule -> createScheduleWork(command.date)
             is ScheduleWorkCommand.TimeTaskShiftDown -> shiftDownTimeWork(command.timeTask)
             is ScheduleWorkCommand.TimeTaskShiftUp -> shiftUpTimeWork(command.timeTask)
+            is ScheduleWorkCommand.ChangeDoneState -> changeDoneStateWork(command.date, command.key)
+        }
+
+        private fun changeDoneStateWork(date: Date, key: Long) = flow {
+            val schedule = scheduleInteractor.fetchScheduleByDate(date.time).rightOrElse(null)
+            if (schedule != null) {
+                val timeTasks = schedule.timeTasks.toMutableList().apply {
+                    val index = indexOfFirst { it.key == key }
+                    val changedTimeTask = get(index)
+                    val newTimeTask = changedTimeTask.copy(isCompleted = !changedTimeTask.isCompleted)
+                    set(index, newTimeTask)
+                }
+                val newSchedule = schedule.copy(timeTasks = timeTasks)
+                scheduleInteractor.updateSchedule(newSchedule).handle(
+                    onLeftAction = { emit(EffectResult(HomeEffect.ShowError(it))) },
+                )
+            }
         }
 
         private suspend fun loadScheduleByDateWork(date: Date) = flow {
@@ -85,7 +107,9 @@ internal interface ScheduleWorkProcessor : FlowWorkProcessor<ScheduleWorkCommand
                         var isWorking = true
                         while (isWorking) {
                             timeTasks = timeTasks.map { it.updateTimeTask() }
-                            emit(ActionResult(HomeAction.UpdateSchedule(schedule.copy(timeTasks = timeTasks))))
+                            val newSchedule = schedule.copy(timeTasks = timeTasks)
+                            emit(ActionResult(HomeAction.UpdateSchedule(newSchedule)))
+                            scheduleInteractor.updateSchedule(newSchedule.mapToDomain())
                             isWorking = timeTasks.find { it.executionStatus != TimeTaskStatus.COMPLETED } != null
                             if (isWorking) delay(Constants.Delay.CHECK_STATUS)
                         }
@@ -105,16 +129,19 @@ internal interface ScheduleWorkProcessor : FlowWorkProcessor<ScheduleWorkCommand
                     executionStatus = status,
                     progress = 1f,
                     leftTime = 0,
+                    isCompleted = !(executionStatus == TimeTaskStatus.COMPLETED && !isCompleted),
                 )
                 TimeTaskStatus.PLANNED -> copy(
                     executionStatus = status,
                     progress = 0f,
                     leftTime = -1,
+                    isCompleted = false,
                 )
                 TimeTaskStatus.RUNNING -> copy(
                     executionStatus = status,
                     progress = dateManager.calculateProgress(startTime, endTime),
                     leftTime = dateManager.calculateLeftTime(endTime),
+                    isCompleted = false,
                 )
             }
         }
@@ -127,14 +154,14 @@ internal interface ScheduleWorkProcessor : FlowWorkProcessor<ScheduleWorkCommand
 
         private suspend fun shiftUpTimeWork(timeTask: TimeTaskUi) = flow {
             val shiftValue = 5
-            timeShiftInteractor.shiftUpTimeTask(timeTask.map(mapperToDomain), shiftValue).handle(
+            timeShiftInteractor.shiftUpTimeTask(timeTask.mapToDomain(), shiftValue).handle(
                 onLeftAction = { emit(EffectResult(HomeEffect.ShowError(it))) },
             )
         }
 
         private suspend fun shiftDownTimeWork(timeTask: TimeTaskUi) = flow {
             val shiftValue = 5
-            timeShiftInteractor.shiftDownTimeTask(timeTask.map(mapperToDomain), shiftValue).handle(
+            timeShiftInteractor.shiftDownTimeTask(timeTask.mapToDomain(), shiftValue).handle(
                 onLeftAction = { emit(EffectResult(HomeEffect.ShowError(it))) },
             )
         }
@@ -144,6 +171,7 @@ internal interface ScheduleWorkProcessor : FlowWorkProcessor<ScheduleWorkCommand
 internal sealed class ScheduleWorkCommand : WorkCommand {
     data class LoadScheduleByDate(val date: Date) : ScheduleWorkCommand()
     data class CreateSchedule(val date: Date) : ScheduleWorkCommand()
+    data class ChangeDoneState(val date: Date, val key: Long) : ScheduleWorkCommand()
     data class TimeTaskShiftUp(val timeTask: TimeTaskUi) : ScheduleWorkCommand()
     data class TimeTaskShiftDown(val timeTask: TimeTaskUi) : ScheduleWorkCommand()
 }

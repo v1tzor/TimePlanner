@@ -96,6 +96,7 @@ internal fun LazyItemScope.CompletedTimeTaskItem(
     model: TimeTaskUi,
     isCompactView: Boolean = true,
     onItemClick: (Long) -> Unit,
+    onDoneChange: () -> Unit,
 ) {
     Column(
         modifier = modifier.padding(top = 4.dp),
@@ -110,7 +111,10 @@ internal fun LazyItemScope.CompletedTimeTaskItem(
             LinearProgressIndicator(
                 progress = 1f,
                 modifier = Modifier.fillMaxWidth().clip(MaterialTheme.shapes.small),
-                color = MaterialTheme.colorScheme.tertiary,
+                color = when (model.isCompleted) {
+                    true -> MaterialTheme.colorScheme.tertiary
+                    false -> MaterialTheme.colorScheme.secondary
+                },
             )
         }
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -123,10 +127,12 @@ internal fun LazyItemScope.CompletedTimeTaskItem(
                 CompletedTimeTask(
                     modifier = Modifier.fillMaxWidth().padding(bottom = 4.dp).animateContentSize(),
                     onViewClicked = { onItemClick.invoke(key) },
+                    onDoneChange = onDoneChange,
                     taskTitle = mainCategory.fetchNameByLanguage(),
                     taskSubTitle = subCategory?.name,
                     categoryIcon = mainCategory.icon?.toIconPainter(),
                     categoryIconDescription = mainCategory.icon?.toDescription(),
+                    isCompleted = isCompleted,
                 )
             }
         }

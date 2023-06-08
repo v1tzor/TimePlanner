@@ -35,6 +35,7 @@ internal data class EditModelUi(
     val duration: Long = duration(timeRanges.from, timeRanges.to),
     val mainCategory: MainCategory = MainCategory.absent(),
     val subCategory: SubCategory? = null,
+    val isCompleted: Boolean = true,
     val parameters: EditParameters = EditParameters(),
     val templateId: Int? = null,
 ) : Parcelable {

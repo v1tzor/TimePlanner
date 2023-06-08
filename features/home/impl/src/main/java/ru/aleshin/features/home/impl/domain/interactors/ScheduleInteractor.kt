@@ -34,6 +34,8 @@ internal interface ScheduleInteractor {
 
     suspend fun createSchedule(requiredDay: Date): Either<HomeFailures, Unit>
 
+    suspend fun updateSchedule(schedule: Schedule): Either<HomeFailures, Unit>
+
     class Base @Inject constructor(
         private val scheduleRepository: ScheduleRepository,
         private val statusManager: ScheduleStatusManager,
@@ -53,6 +55,10 @@ internal interface ScheduleInteractor {
             val status = statusManager.fetchState(requiredDay, currentDate)
             val schedule = Schedule(date = requiredDay.time, status = status)
             scheduleRepository.createSchedule(schedule)
+        }
+
+        override suspend fun updateSchedule(schedule: Schedule) = eitherWrapper.wrap {
+            scheduleRepository.updateSchedule(schedule)
         }
     }
 }

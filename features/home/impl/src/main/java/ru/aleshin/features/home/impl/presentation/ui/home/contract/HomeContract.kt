@@ -42,6 +42,7 @@ internal sealed class HomeEvent : BaseEvent {
     data class TimeTaskShiftDown(val timeTask: TimeTaskUi) : HomeEvent()
     data class LoadSchedule(val date: Date?) : HomeEvent()
     data class PressEditTimeTaskButton(val timeTask: TimeTaskUi) : HomeEvent()
+    data class PressChangeDoneStateButton(val timeTask: TimeTaskUi) : HomeEvent()
     data class PressAddTimeTaskButton(val startTime: Date, val endTime: Date) : HomeEvent()
     data class PressViewToggleButton(val status: ViewToggleStatus) : HomeEvent()
 }

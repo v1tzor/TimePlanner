@@ -25,7 +25,7 @@ import ru.aleshin.features.home.api.domains.entities.categories.MainCategory
 import ru.aleshin.features.home.api.domains.entities.schedules.TimeTask
 import ru.aleshin.features.home.impl.domain.interactors.TemplatesInteractor
 import ru.aleshin.features.home.impl.navigation.NavigationManager
-import ru.aleshin.features.home.impl.presentation.mapppers.TimeTaskUiToDomainMapper
+import ru.aleshin.features.home.impl.presentation.mapppers.mapToDomain
 import ru.aleshin.features.home.impl.presentation.models.TimeTaskUi
 import ru.aleshin.features.home.impl.presentation.ui.home.contract.HomeAction
 import ru.aleshin.features.home.impl.presentation.ui.home.contract.HomeEffect
@@ -48,7 +48,6 @@ internal interface NavigationWorkProcessor : WorkProcessor<NavigationWorkCommand
     class Base @Inject constructor(
         private val navigationManager: NavigationManager,
         private val templatesInteractor: TemplatesInteractor,
-        private val mapperToDomain: TimeTaskUiToDomainMapper,
     ) : NavigationWorkProcessor {
 
         override suspend fun navigateToEditorWithTimeTask(timeTask: TimeTaskUi) = work(
@@ -70,10 +69,10 @@ internal interface NavigationWorkProcessor : WorkProcessor<NavigationWorkCommand
         }
 
         private suspend fun navigateWithTimeTask(timeTask: TimeTaskUi): WorkResult<HomeAction, HomeEffect> {
-            val templateId = templatesInteractor.checkIsTemplate(timeTask.map(mapperToDomain))
+            val templateId = templatesInteractor.checkIsTemplate(timeTask.mapToDomain())
 
             return navigationManager.navigateToEditorFeature(
-                timeTask = timeTask.map(mapperToDomain),
+                timeTask = timeTask.mapToDomain(),
                 templateId = templateId.rightOrElse(null),
             ).let { ActionResult(HomeAction.Navigate) }
         }

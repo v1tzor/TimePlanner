@@ -11,8 +11,8 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License.
-*/
+ * imitations under the License.
+ */
 package ru.aleshin.features.home.api.data.mappers.schedules
 
 import ru.aleshin.core.utils.extensions.mapToDate
@@ -31,6 +31,7 @@ fun TimeTaskDetails.mapToDomain() = TimeTask(
     timeRanges = TimeRange(timeTask.startTime.mapToDate(), timeTask.endTime.mapToDate()),
     category = mainCategory.mainCategory.mapToDomain(),
     subCategory = subCategory?.mapToDomain(mainCategory.mainCategory.mapToDomain()),
+    isCompleted = timeTask.isCompleted,
     isImportant = timeTask.isImportant,
     isEnableNotification = timeTask.isEnableNotification,
     isConsiderInStatistics = timeTask.isConsiderInStatistics,
@@ -43,6 +44,7 @@ fun TimeTask.mapToData(dailyScheduleDate: Long) = TimeTaskEntity(
     endTime = timeRanges.to.time,
     mainCategoryId = category.id,
     subCategoryId = subCategory?.id,
+    isCompleted = isCompleted,
     isImportant = isImportant,
     isEnableNotification = isEnableNotification,
     isConsiderInStatistics = isConsiderInStatistics,

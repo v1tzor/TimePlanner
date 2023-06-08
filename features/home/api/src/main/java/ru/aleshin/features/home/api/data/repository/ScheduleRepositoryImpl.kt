@@ -11,8 +11,8 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License.
-*/
+ * imitations under the License.
+ */
 package ru.aleshin.features.home.api.data.repository
 
 import ru.aleshin.core.utils.functional.TimeRange
@@ -43,5 +43,9 @@ class ScheduleRepositoryImpl @Inject constructor(
         val dailySchedule = schedule.mapToData()
         val timeTasks = schedule.timeTasks.map { it.mapToData(schedule.date) }
         localDataSource.addSchedule(dailySchedule, timeTasks)
+    }
+
+    override suspend fun updateSchedule(schedule: Schedule) {
+        localDataSource.updateTimeTasks(schedule.timeTasks.map { it.mapToData(schedule.date) })
     }
 }

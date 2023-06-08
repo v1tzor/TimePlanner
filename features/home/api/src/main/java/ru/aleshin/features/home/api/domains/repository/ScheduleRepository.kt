@@ -11,8 +11,8 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License.
-*/
+ * imitations under the License.
+ */
 package ru.aleshin.features.home.api.domains.repository
 
 import ru.aleshin.core.utils.functional.TimeRange
@@ -25,4 +25,5 @@ interface ScheduleRepository {
     suspend fun createSchedule(schedule: Schedule)
     suspend fun fetchSchedulesByRange(timeRange: TimeRange): List<Schedule>
     suspend fun fetchScheduleByDate(date: Long): Schedule?
+    suspend fun updateSchedule(schedule: Schedule)
 }

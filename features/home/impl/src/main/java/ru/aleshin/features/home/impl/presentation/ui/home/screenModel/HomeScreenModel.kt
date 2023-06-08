@@ -93,6 +93,13 @@ internal class HomeScreenModel @Inject constructor(
                 }
                 sendAction(HomeAction.UpdateViewStatus(status))
             }
+            is HomeEvent.PressChangeDoneStateButton -> {
+                val date = checkNotNull(state().currentDate)
+                scheduleWorkProcessor.changeDoneState(date, event.timeTask.key).collectAndHandleWork()
+                launchBackgroundWork(HomeWorkKey.SUBSCRIBE_SCHEDULE) {
+                    scheduleWorkProcessor.loadScheduleByDate(checkNotNull(state().currentDate)).collectAndHandleWork()
+                }
+            }
         }
     }
 

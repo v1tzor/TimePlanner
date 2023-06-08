@@ -39,6 +39,7 @@ internal data class TimeTaskUi(
     val progress: Float,
     val mainCategory: MainCategory,
     val subCategory: SubCategory? = null,
+    val isCompleted: Boolean = true,
     val isImportant: Boolean = false,
     val isEnableNotification: Boolean = true,
     val isConsiderInStatistics: Boolean = true,

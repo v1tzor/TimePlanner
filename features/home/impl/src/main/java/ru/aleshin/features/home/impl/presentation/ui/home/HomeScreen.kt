@@ -62,6 +62,7 @@ internal class HomeScreen : Screen {
                     modifier = Modifier.padding(paddingValues),
                     onChangeDate = { date -> dispatchEvent(HomeEvent.LoadSchedule(date)) },
                     onTimeTaskEdit = { dispatchEvent(HomeEvent.PressEditTimeTaskButton(it)) },
+                    onDoneChange = { dispatchEvent(HomeEvent.PressChangeDoneStateButton(it)) },
                     onTimeTaskAdd = { start, end -> dispatchEvent(HomeEvent.PressAddTimeTaskButton(start, end)) },
                     onCreateSchedule = { dispatchEvent(HomeEvent.CreateSchedule) },
                     onTimeTaskIncrease = { dispatchEvent(HomeEvent.TimeTaskShiftUp(it)) },

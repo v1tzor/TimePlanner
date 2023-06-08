@@ -36,3 +36,9 @@ internal interface ScheduleDomainToUiMapper : Mapper<Schedule, ScheduleUi> {
         )
     }
 }
+
+internal fun ScheduleUi.mapToDomain() = Schedule(
+    date = date.time,
+    status = dateStatus,
+    timeTasks = timeTasks.map { it.mapToDomain() },
+)

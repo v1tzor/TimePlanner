@@ -54,6 +54,7 @@ internal fun HomeContent(
     onChangeDate: (Date) -> Unit,
     onCreateSchedule: () -> Unit,
     onTimeTaskEdit: (TimeTaskUi) -> Unit,
+    onDoneChange: (TimeTaskUi) -> Unit,
     onTimeTaskAdd: (startTime: Date, endTime: Date) -> Unit,
     onTimeTaskIncrease: (TimeTaskUi) -> Unit,
     onTimeTaskReduce: (TimeTaskUi) -> Unit,
@@ -90,6 +91,7 @@ internal fun HomeContent(
                                 onTimeTaskEdit = onTimeTaskEdit,
                                 onTimeTaskIncrease = onTimeTaskIncrease,
                                 onTimeTaskReduce = onTimeTaskReduce,
+                                onDoneChange = onDoneChange,
                                 isCompactView = isCompactView &&
                                     nextItem != null &&
                                     timeTask.endTime.isNotZeroDifference(nextItem.startTime),
@@ -229,6 +231,7 @@ internal fun LazyItemScope.TimeTaskViewItem(
     onTimeTaskEdit: (TimeTaskUi) -> Unit,
     onTimeTaskIncrease: (TimeTaskUi) -> Unit,
     onTimeTaskReduce: (TimeTaskUi) -> Unit,
+    onDoneChange: (TimeTaskUi) -> Unit,
     isCompactView: Boolean,
 ) {
     when (timeTask.executionStatus) {
@@ -240,7 +243,6 @@ internal fun LazyItemScope.TimeTaskViewItem(
                 isCompactView = isCompactView,
             )
         }
-
         TimeTaskStatus.RUNNING -> {
             RunningTimeTaskItem(
                 modifier = modifier,
@@ -251,12 +253,12 @@ internal fun LazyItemScope.TimeTaskViewItem(
                 isCompactView = isCompactView,
             )
         }
-
         TimeTaskStatus.COMPLETED -> {
             CompletedTimeTaskItem(
                 modifier = modifier,
                 model = timeTask,
                 onItemClick = { onTimeTaskEdit.invoke(timeTask) },
+                onDoneChange = { onDoneChange.invoke(timeTask) },
                 isCompactView = isCompactView,
             )
         }

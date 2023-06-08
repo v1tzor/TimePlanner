@@ -30,6 +30,7 @@ data class EditModel(
     val endTime: Date,
     val mainCategory: MainCategory = MainCategory.absent(),
     val subCategory: SubCategory? = null,
+    val isCompleted: Boolean = true,
     val isImportant: Boolean = false,
     val isEnableNotification: Boolean = true,
     val isConsiderInStatistics: Boolean = true,

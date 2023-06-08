@@ -15,6 +15,7 @@
  */
 package ru.aleshin.features.home.api.data.datasources.schedules
 
+import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import ru.aleshin.features.home.api.data.datasources.categories.MainCategoriesDao
@@ -30,7 +31,7 @@ import ru.aleshin.features.home.api.data.models.timetasks.TimeTaskEntity
  * @author Stanislav Aleshin on 25.02.2023.
  */
 @Database(
-    version = 1,
+    version = 2,
     entities = [
         TemplateEntity::class,
         DailyScheduleEntity::class,
@@ -38,7 +39,10 @@ import ru.aleshin.features.home.api.data.models.timetasks.TimeTaskEntity
         MainCategoryEntity::class,
         SubCategoryEntity::class,
     ],
-    exportSchema = false,
+    exportSchema = true,
+    autoMigrations = [
+        AutoMigration(from = 1, to = 2),
+    ],
 )
 abstract class SchedulesDataBase : RoomDatabase() {
 

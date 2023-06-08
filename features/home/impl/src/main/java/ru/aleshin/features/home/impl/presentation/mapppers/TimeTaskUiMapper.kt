@@ -16,7 +16,6 @@
 package ru.aleshin.features.home.impl.presentation.mapppers
 
 import ru.aleshin.core.utils.extensions.duration
-import ru.aleshin.core.utils.functional.Mapper
 import ru.aleshin.core.utils.functional.ParameterizedMapper
 import ru.aleshin.core.utils.functional.TimeRange
 import ru.aleshin.core.utils.managers.DateManager
@@ -47,6 +46,7 @@ internal interface TimeTaskDomainToUiMapper : ParameterizedMapper<TimeTask, Time
             progress = dateManager.calculateProgress(input.timeRanges.from, input.timeRanges.to),
             mainCategory = input.category,
             subCategory = input.subCategory,
+            isCompleted = input.isCompleted,
             isImportant = input.isImportant,
             isEnableNotification = input.isEnableNotification,
             isConsiderInStatistics = input.isConsiderInStatistics,
@@ -55,17 +55,14 @@ internal interface TimeTaskDomainToUiMapper : ParameterizedMapper<TimeTask, Time
     }
 }
 
-internal interface TimeTaskUiToDomainMapper : Mapper<TimeTaskUi, TimeTask> {
-    class Base @Inject constructor() : TimeTaskUiToDomainMapper {
-        override fun map(input: TimeTaskUi) = TimeTask(
-            key = input.key,
-            date = input.date,
-            timeRanges = TimeRange(input.startTime, input.endTime),
-            category = checkNotNull(input.mainCategory),
-            subCategory = input.subCategory,
-            isImportant = input.isImportant,
-            isEnableNotification = input.isEnableNotification,
-            isConsiderInStatistics = input.isConsiderInStatistics,
-        )
-    }
-}
+internal fun TimeTaskUi.mapToDomain() = TimeTask(
+    key = key,
+    date = date,
+    timeRanges = TimeRange(startTime, endTime),
+    category = mainCategory,
+    subCategory = subCategory,
+    isImportant = isImportant,
+    isCompleted = isCompleted,
+    isEnableNotification = isEnableNotification,
+    isConsiderInStatistics = isConsiderInStatistics,
+)

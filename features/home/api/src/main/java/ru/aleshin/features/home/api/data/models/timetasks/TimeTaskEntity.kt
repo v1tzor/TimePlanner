@@ -11,8 +11,8 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License.
-*/
+ * imitations under the License.
+ */
 package ru.aleshin.features.home.api.data.models.timetasks
 
 import androidx.room.*
@@ -53,6 +53,7 @@ data class TimeTaskEntity(
     @ColumnInfo("end_time") val endTime: Long,
     @ColumnInfo("main_category_id", index = true) val mainCategoryId: Int,
     @ColumnInfo("sub_category_id", index = true) val subCategoryId: Int?,
+    @ColumnInfo("is_completed", defaultValue = "1") val isCompleted: Boolean,
     @ColumnInfo("is_important") val isImportant: Boolean,
     @ColumnInfo("is_enable_notification") val isEnableNotification: Boolean,
     @ColumnInfo("is_consider_in_statistics") val isConsiderInStatistics: Boolean,
