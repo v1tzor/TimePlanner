@@ -1,11 +1,17 @@
 # TimePlanner
 
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/v1tzor/TimePlanner)
+
 Mobile app for planning tasks for the day with multimodule architecture, MVI, Compose, Room, Voyager, AlarmManager, Notification, Charts
 
 Support:
 - Dynamic Color
 - Theme: Dark, Light
 - Languages: RU, EN
+
+## Download
+<a href="https://apt.izzysoft.de/fdroid/index/apk/ru.aleshin.timeplanner" target="_blank">
+<img src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png" alt="Get it on IzzyOnDroid" height="80"/></a>
 
 ## Screenshots
 <table>
