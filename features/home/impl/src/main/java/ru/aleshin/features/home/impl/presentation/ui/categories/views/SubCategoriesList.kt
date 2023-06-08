@@ -22,8 +22,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -41,7 +41,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import ru.aleshin.core.ui.theme.TimePlannerRes
 import ru.aleshin.features.home.api.domains.entities.categories.MainCategory
@@ -101,7 +100,7 @@ internal fun SubCategoryViewItem(
     var isEditable by remember { mutableStateOf(false) }
     Surface(
         onClick = { isEditable = !isEditable },
-        modifier = modifier.height(56.dp).animateContentSize(),
+        modifier = modifier.animateContentSize(),
         enabled = true,
         shape = MaterialTheme.shapes.large,
         color = MaterialTheme.colorScheme.surface,
@@ -114,18 +113,21 @@ internal fun SubCategoryViewItem(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 16.dp, end = 8.dp, top = 16.dp, bottom = 16.dp),
+                .padding(start = 16.dp, end = 8.dp, top = 12.dp, bottom = 12.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
                 modifier = Modifier.weight(1f),
                 text = subCategory.fetchNameByLanguage(),
                 color = MaterialTheme.colorScheme.onSurface,
-                overflow = TextOverflow.Ellipsis,
                 style = MaterialTheme.typography.titleMedium,
             )
-            IconButton(onClick = { onDelete(subCategory) }) {
+            IconButton(
+                modifier = Modifier.size(36.dp),
+                onClick = { onDelete(subCategory) },
+            ) {
                 Icon(
+                    modifier = Modifier.size(24.dp),
                     imageVector = Icons.Default.Delete,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.primary,

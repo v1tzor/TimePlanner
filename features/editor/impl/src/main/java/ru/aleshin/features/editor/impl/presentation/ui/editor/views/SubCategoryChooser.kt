@@ -207,7 +207,7 @@ internal fun SubCategoryDialogItem(
                 .clip(MaterialTheme.shapes.medium)
                 .clickable(onClick = onSelectChange)
                 .padding(start = 8.dp, end = 16.dp)
-                .requiredHeight(56.dp),
+                .sizeIn(minHeight = 56.dp),
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -220,7 +220,7 @@ internal fun SubCategoryDialogItem(
                     text = title,
                     color = MaterialTheme.colorScheme.onSurface,
                     overflow = TextOverflow.Ellipsis,
-                    maxLines = 2,
+                    maxLines = 4,
                     style = MaterialTheme.typography.bodyLarge,
                 )
                 if (description != null) {

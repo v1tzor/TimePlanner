@@ -82,7 +82,7 @@ internal fun SubCategoryEditorDialog(
                     },
                     onConfirmClick = {
                         val text = subCategoryNameValue.text
-                        if (text.isNotEmpty() && text.length < 50) {
+                        if (text.isNotEmpty() && text.length < 100) {
                             onConfirm(subCategoryNameValue.text)
                         } else {
                             isError = true

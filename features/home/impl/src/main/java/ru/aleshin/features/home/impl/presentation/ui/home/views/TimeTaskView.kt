@@ -65,21 +65,23 @@ internal fun PlannedTimeTask(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            if (categoryIcon != null) {
-                CategoryIconMonogram(
-                    icon = categoryIcon,
-                    iconDescription = categoryIconDescription,
-                    iconColor = MaterialTheme.colorScheme.primary,
-                    badgeEnabled = isImportant,
-                    backgroundColor = MaterialTheme.colorScheme.primaryContainer,
-                )
-            } else {
-                CategoryTextMonogram(
-                    text = taskTitle.first().toString(),
-                    textColor = MaterialTheme.colorScheme.primary,
-                    badgeEnabled = isImportant,
-                    backgroundColor = MaterialTheme.colorScheme.primaryContainer,
-                )
+            Box(modifier = Modifier.align(Alignment.Top)) {
+                if (categoryIcon != null) {
+                    CategoryIconMonogram(
+                        icon = categoryIcon,
+                        iconDescription = categoryIconDescription,
+                        iconColor = MaterialTheme.colorScheme.primary,
+                        badgeEnabled = isImportant,
+                        backgroundColor = MaterialTheme.colorScheme.primaryContainer,
+                    )
+                } else {
+                    CategoryTextMonogram(
+                        text = taskTitle.first().toString(),
+                        textColor = MaterialTheme.colorScheme.primary,
+                        badgeEnabled = isImportant,
+                        backgroundColor = MaterialTheme.colorScheme.primaryContainer,
+                    )
+                }
             }
             TimeTaskTitles(
                 modifier = Modifier.weight(1f),
