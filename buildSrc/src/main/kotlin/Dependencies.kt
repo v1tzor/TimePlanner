@@ -32,10 +32,6 @@ object Dependencies {
         const val lifecycleRuntime = "androidx.lifecycle:lifecycle-runtime-ktx:${Versions.lifecycle}"
     }
 
-    object GooglePlayService {
-        const val gms = "com.google.android.gms:play-services-location:${Versions.googlePlayGms}"
-    }
-
     object Charts {
         val library = "ma.hu:compose-charts:${Versions.charts}"
         val libraryHimanshoe = "com.himanshoe:charty:${Versions.chartsHm}"
@@ -86,11 +82,5 @@ object Dependencies {
         const val coroutinesTest = "org.jetbrains.kotlinx:kotlinx-coroutines-test:${Versions.coroutinesTest}"
         const val turbine = "app.cash.turbine:turbine:${Versions.turbine}"
         const val espresso = "androidx.test.espresso:espresso-core:${Versions.espresso}"
-    }
-
-    object FireBase {
-        const val bom = "com.google.firebase:firebase-bom:${Versions.firebaseBom}"
-        const val crashlytics = "com.google.firebase:firebase-crashlytics-ktx"
-        const val analytics = "com.google.firebase:firebase-analytics-ktx"
     }
 }

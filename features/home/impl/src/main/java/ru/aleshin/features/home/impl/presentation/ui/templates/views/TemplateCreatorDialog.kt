@@ -386,7 +386,7 @@ internal fun TemplateEditorStartTimeChooser(
                 color = MaterialTheme.colorScheme.onSurface,
             )
             OutlinedTextField(
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.weight(1f).align(Alignment.Bottom),
                 value = minutes?.toString() ?: "",
                 onValueChange = {
                     val time = it.toIntOrNull()
@@ -421,7 +421,7 @@ internal fun TemplateEditorEndTimeChooser(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             OutlinedTextField(
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.weight(1f).align(Alignment.Bottom),
                 value = hours?.toString() ?: "",
                 onValueChange = {
                     val time = it.toIntOrNull()
@@ -437,7 +437,7 @@ internal fun TemplateEditorEndTimeChooser(
                 color = MaterialTheme.colorScheme.onSurface,
             )
             OutlinedTextField(
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.weight(1f).align(Alignment.Bottom),
                 value = minutes?.toString() ?: "",
                 onValueChange = {
                     val time = it.toIntOrNull()

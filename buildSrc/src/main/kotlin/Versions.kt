@@ -26,9 +26,6 @@ object Versions {
 
     const val accompanist = "0.28.0"
 
-    const val googlePlayGms = "21.0.1"
-    const val firebaseBom = "32.0.0"
-
     const val charts = "0.3.5"
     const val chartsHm = "1.0.1"
 
