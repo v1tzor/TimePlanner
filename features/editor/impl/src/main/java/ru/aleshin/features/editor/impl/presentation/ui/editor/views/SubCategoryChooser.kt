@@ -15,23 +15,32 @@
  */
 package ru.aleshin.features.editor.impl.presentation.ui.editor.views
 
+import android.util.Log
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Create
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -52,7 +61,7 @@ internal fun SubCategoryChooser(
     allSubCategories: List<SubCategory>,
     currentSubCategory: SubCategory?,
     onSubCategoryChange: (SubCategory?) -> Unit,
-    onManageCategories: () -> Unit,
+    onAddCategory: (String) -> Unit,
 ) {
     val openDialog = rememberSaveable { mutableStateOf(false) }
     Surface(
@@ -102,9 +111,8 @@ internal fun SubCategoryChooser(
             mainCategory = mainCategory,
             allSubCategories = allSubCategories,
             onCloseDialog = { openDialog.value = false },
-            onManageCategories = {
-                onManageCategories()
-                openDialog.value = false
+            onAddCategory = {
+                onAddCategory(it)
             },
             onChooseSubCategory = {
                 onSubCategoryChange(it)
@@ -123,7 +131,7 @@ internal fun SubCategoryDialogChooser(
     allSubCategories: List<SubCategory>,
     onCloseDialog: () -> Unit,
     onChooseSubCategory: (SubCategory?) -> Unit,
-    onManageCategories: () -> Unit,
+    onAddCategory: (String) -> Unit,
 ) {
     val initItem = initCategory?.let { allSubCategories.find { it.id == initCategory.id } }
     val initPosition = initItem?.let { allSubCategories.indexOf(it) } ?: 0
@@ -177,10 +185,13 @@ internal fun SubCategoryDialogChooser(
                         )
                     }
                     item {
-                        ManageCategoriesDialogItem(
-                            modifier = Modifier.fillMaxWidth(),
-                            onManage = onManageCategories,
-                        )
+                        Log.d("test", "main -> $mainCategory")
+                        if (mainCategory?.id != 0 && mainCategory != null) {
+                            AddCategoriesDialogItem(
+                                modifier = Modifier.fillMaxWidth(),
+                                onAddCategory = onAddCategory,
+                            )
+                        }
                     }
                 }
                 DialogButtons(
@@ -240,30 +251,81 @@ internal fun SubCategoryDialogItem(
 }
 
 @Composable
-internal fun ManageCategoriesDialogItem(
+internal fun AddCategoriesDialogItem(
     modifier: Modifier = Modifier,
-    onManage: () -> Unit,
+    onAddCategory: (String) -> Unit,
 ) {
+    var isSubCategoryEdited by remember { mutableStateOf(false) }
+    var subCategoryEditedName by remember { mutableStateOf("") }
+
     Column {
         Row(
             modifier = modifier
-                .padding(vertical = 8.dp, horizontal = 24.dp).height(48.dp)
+                .padding(vertical = 4.dp, horizontal = 24.dp).height(48.dp)
                 .clip(MaterialTheme.shapes.medium)
-                .clickable(onClick = onManage),
+                .clickable(onClick = { isSubCategoryEdited = true }),
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Icon(
                 modifier = Modifier.size(24.dp),
-                imageVector = Icons.Default.Create,
-                contentDescription = EditorThemeRes.strings.subCategoryDialogManageTitle,
+                imageVector = when (isSubCategoryEdited) {
+                    true -> Icons.Default.Edit
+                    false -> Icons.Default.Add
+                },
+                contentDescription = EditorThemeRes.strings.subCategoryDialogAddedTitle,
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
             )
-            Text(
-                text = EditorThemeRes.strings.subCategoryDialogManageTitle,
-                color = MaterialTheme.colorScheme.onSurface,
-                style = MaterialTheme.typography.bodyLarge,
-            )
+            if (!isSubCategoryEdited) {
+                Text(
+                    text = EditorThemeRes.strings.subCategoryDialogAddedTitle,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    style = MaterialTheme.typography.bodyLarge,
+                )
+            } else {
+                val focusRequester = remember { FocusRequester() }
+                BasicTextField(
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(vertical = 4.dp)
+                        .focusRequester(focusRequester),
+                    value = subCategoryEditedName,
+                    onValueChange = { subCategoryEditedName = it },
+                    textStyle = MaterialTheme.typography.bodyLarge.copy(
+                        color = MaterialTheme.colorScheme.onSurface,
+                    ),
+                    cursorBrush = SolidColor(MaterialTheme.colorScheme.onSurface),
+                )
+                IconButton(
+                    onClick = { isSubCategoryEdited = false; subCategoryEditedName = "" },
+                ) {
+                    Icon(
+                        modifier = Modifier.size(18.dp),
+                        imageVector = Icons.Default.Close,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSurface,
+                    )
+                }
+
+                LaunchedEffect(key1 = isSubCategoryEdited) {
+                    when (isSubCategoryEdited) {
+                        true -> focusRequester.requestFocus()
+                        false -> focusRequester.freeFocus()
+                    }
+                }
+            }
+        }
+        if (isSubCategoryEdited) {
+            Button(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 16.dp, end = 16.dp, top = 4.dp, bottom = 8.dp),
+                onClick = {
+                    if (subCategoryEditedName.isNotEmpty()) onAddCategory(subCategoryEditedName)
+                },
+            ) {
+                Text(text = EditorThemeRes.strings.subCategoryDialogAddedTitle)
+            }
         }
         Divider(
             modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),

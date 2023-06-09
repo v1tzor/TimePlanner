@@ -22,7 +22,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -40,40 +39,6 @@ import ru.aleshin.features.editor.impl.presentation.theme.EditorThemeRes
 /**
  * @author Stanislav Aleshin on 09.05.2023.
  */
-@Composable
-@OptIn(ExperimentalMaterial3Api::class)
-internal fun CategoriesManageWarningDialog(
-    modifier: Modifier = Modifier,
-    onDismiss: () -> Unit,
-    onAction: () -> Unit,
-) {
-    AlertDialog(
-        modifier = modifier.width(300.dp),
-        onDismissRequest = onDismiss,
-    ) {
-        Surface(
-            shape = MaterialTheme.shapes.extraLarge,
-            color = MaterialTheme.colorScheme.surface,
-            tonalElevation = TimePlannerRes.elevations.levelThree,
-        ) {
-            Column {
-                CategoriesWarningDialogHeader(modifier = Modifier.fillMaxWidth())
-                Text(
-                    modifier = Modifier.padding(start = 24.dp, end = 24.dp, top = 16.dp).fillMaxWidth(),
-                    text = EditorThemeRes.strings.categoriesManageWarningTitle,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-                DialogButtons(
-                    confirmTitle = EditorThemeRes.strings.confirmNavigateTitle,
-                    onCancelClick = onDismiss,
-                    onConfirmClick = onAction,
-                )
-            }
-        }
-    }
-}
-
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 internal fun TemplateSaveWarningDialog(
@@ -122,28 +87,6 @@ internal fun TemplateWarningDialogHeader(
     ) {
         Icon(
             imageVector = Icons.Default.Info,
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.secondary,
-        )
-        Text(
-            text = TimePlannerRes.strings.warningDialogTitle,
-            color = MaterialTheme.colorScheme.onSurface,
-            style = MaterialTheme.typography.headlineSmall,
-        )
-    }
-}
-
-@Composable
-internal fun CategoriesWarningDialogHeader(
-    modifier: Modifier = Modifier,
-) {
-    Column(
-        modifier = modifier.padding(start = 24.dp, end = 24.dp, top = 24.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Icon(
-            imageVector = Icons.Default.Warning,
             contentDescription = null,
             tint = MaterialTheme.colorScheme.secondary,
         )

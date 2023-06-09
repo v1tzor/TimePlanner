@@ -19,7 +19,9 @@ import ru.aleshin.core.utils.functional.DomainResult
 import ru.aleshin.features.editor.impl.domain.common.EditorEitherWrapper
 import ru.aleshin.features.editor.impl.domain.entites.EditorFailures
 import ru.aleshin.features.home.api.domains.entities.categories.Categories
+import ru.aleshin.features.home.api.domains.entities.categories.SubCategory
 import ru.aleshin.features.home.api.domains.repository.CategoriesRepository
+import ru.aleshin.features.home.api.domains.repository.SubCategoriesRepository
 import javax.inject.Inject
 
 /**
@@ -28,14 +30,20 @@ import javax.inject.Inject
 internal interface CategoriesInteractor {
 
     suspend fun fetchCategories(): DomainResult<EditorFailures, List<Categories>>
+    suspend fun addSubCategory(subCategory: SubCategory): DomainResult<EditorFailures, Unit>
 
     class Base @Inject constructor(
         private val categoriesRepository: CategoriesRepository,
+        private val subCategoriesRepository: SubCategoriesRepository,
         private val eitherWrapper: EditorEitherWrapper,
     ) : CategoriesInteractor {
 
         override suspend fun fetchCategories() = eitherWrapper.wrap {
             categoriesRepository.fetchCategories()
+        }
+
+        override suspend fun addSubCategory(subCategory: SubCategory) = eitherWrapper.wrap {
+            subCategoriesRepository.addSubCategory(subCategory)
         }
     }
 }

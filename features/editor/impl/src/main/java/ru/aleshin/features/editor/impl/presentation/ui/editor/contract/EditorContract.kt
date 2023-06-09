@@ -46,7 +46,7 @@ internal sealed class EditorEvent : BaseEvent {
     data class ChangeTime(val timeRange: TimeRange) : EditorEvent()
     data class ChangeParameters(val parameters: EditParameters) : EditorEvent()
     data class ApplyTemplate(val template: Template) : EditorEvent()
-    object PressManageCategoriesButton : EditorEvent()
+    data class AddSubCategory(val name: String) : EditorEvent()
     object PressControlTemplateButton : EditorEvent()
     object LoadTemplates : EditorEvent()
     object ChangeIsTemplate : EditorEvent()
@@ -66,6 +66,7 @@ internal sealed class EditorEffect : BaseUiEffect {
 internal sealed class EditorAction : BaseAction {
     object Navigate : EditorAction()
     data class SetUp(val editModel: EditModelUi, val categories: List<Categories>) : EditorAction()
+    data class UpdateCategories(val categories: List<Categories>) : EditorAction()
     data class UpdateTimeRange(val timeRange: TimeRange, val duration: Long) : EditorAction()
     data class UpdateTemplateId(val templateId: Int?) : EditorAction()
     data class UpdateEditModel(val editModel: EditModelUi?) : EditorAction()

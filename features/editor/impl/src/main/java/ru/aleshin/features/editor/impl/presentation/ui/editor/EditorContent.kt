@@ -57,7 +57,7 @@ internal fun EditorContent(
     state: EditorViewState,
     modifier: Modifier = Modifier,
     onCategoriesChange: (MainCategory, SubCategory?) -> Unit,
-    onManageCategories: () -> Unit,
+    onAddSubCategory: (String) -> Unit,
     onTimeRangeChange: (TimeRange) -> Unit,
     onChangeParameters: (EditParameters) -> Unit,
     onChangeTemplate: (Boolean) -> Unit,
@@ -65,7 +65,6 @@ internal fun EditorContent(
     onCancelClick: () -> Unit,
 ) {
     val scrollState = rememberScrollState()
-    var isManageWarningDialog by rememberSaveable { mutableStateOf(false) }
     Column(modifier = modifier.fillMaxSize().animateContentSize()) {
         if (state.editModel != null) {
             Column(
@@ -78,7 +77,7 @@ internal fun EditorContent(
                     subCategory = state.editModel.subCategory,
                     allCategories = state.categories,
                     onCategoriesChange = onCategoriesChange,
-                    onSubCategoriesManage = { isManageWarningDialog = true },
+                    onAddSubCategory = onAddSubCategory,
                 )
                 Divider(Modifier.padding(horizontal = 32.dp))
                 DateTimeSection(
@@ -102,12 +101,6 @@ internal fun EditorContent(
             )
         }
     }
-    if (isManageWarningDialog) {
-        CategoriesManageWarningDialog(
-            onDismiss = { isManageWarningDialog = false },
-            onAction = { isManageWarningDialog = false; onManageCategories() },
-        )
-    }
 }
 
 @Composable
@@ -118,7 +111,7 @@ internal fun CategoriesSection(
     subCategory: SubCategory?,
     allCategories: List<Categories>,
     onCategoriesChange: (MainCategory, SubCategory?) -> Unit,
-    onSubCategoriesManage: () -> Unit,
+    onAddSubCategory: (String) -> Unit,
 ) {
     Column(
         modifier = modifier.padding(horizontal = 16.dp),
@@ -151,10 +144,10 @@ internal fun CategoriesSection(
             mainCategory = mainCategory,
             allSubCategories = findCategories?.subCategories ?: emptyList(),
             currentSubCategory = subCategory,
+            onAddCategory = onAddSubCategory,
             onSubCategoryChange = { newSubCategory ->
                 if (mainCategory != null) onCategoriesChange(mainCategory, newSubCategory)
             },
-            onManageCategories = onSubCategoriesManage,
         )
     }
 }

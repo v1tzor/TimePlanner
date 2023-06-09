@@ -31,6 +31,8 @@ import ru.aleshin.features.editor.impl.presentation.mappers.mapToUi
 import ru.aleshin.features.editor.impl.presentation.models.EditModelUi
 import ru.aleshin.features.editor.impl.presentation.ui.editor.contract.EditorAction
 import ru.aleshin.features.editor.impl.presentation.ui.editor.contract.EditorEffect
+import ru.aleshin.features.home.api.domains.entities.categories.MainCategory
+import ru.aleshin.features.home.api.domains.entities.categories.SubCategory
 import ru.aleshin.features.home.api.domains.entities.template.Template
 import javax.inject.Inject
 
@@ -49,7 +51,7 @@ internal interface EditorWorkProcessor : WorkProcessor<EditorWorkCommand, Editor
         override suspend fun work(command: EditorWorkCommand) = when (command) {
             is EditorWorkCommand.GoBack -> navigateToBack()
             is EditorWorkCommand.GoTemplates -> navigateToTemplates()
-            is EditorWorkCommand.ManageCategories -> navigateToCategories()
+            is EditorWorkCommand.AddSubCategory -> addSubCategoryWork(command.name, command.mainCategory)
             is EditorWorkCommand.LoadSendEditModel -> loadSendModel()
             is EditorWorkCommand.ChangeIsTemplate -> changeIsTemplate(command.editModel)
             is EditorWorkCommand.ChangeTimeRange -> changeTimeRange(command.timeRange)
@@ -68,9 +70,19 @@ internal interface EditorWorkProcessor : WorkProcessor<EditorWorkCommand, Editor
             }
         }
 
-        private fun navigateToCategories(): WorkResult<EditorAction, EditorEffect> {
-            return navigationManager.navigateToCategoriesScreen().let {
-                ActionResult(EditorAction.Navigate)
+        private suspend fun addSubCategoryWork(
+            name: String,
+            mainCategory: MainCategory,
+        ): WorkResult<EditorAction, EditorEffect> {
+            val subCategory = SubCategory(name = name, mainCategory = mainCategory)
+            return when (val result = categoriesInteractor.addSubCategory(subCategory)) {
+                is Either.Right -> {
+                    when (val categories = categoriesInteractor.fetchCategories()) {
+                        is Either.Right -> ActionResult(EditorAction.UpdateCategories(categories.data))
+                        is Either.Left -> EffectResult(EditorEffect.ShowError(categories.data))
+                    }
+                }
+                is Either.Left -> EffectResult(EditorEffect.ShowError(result.data))
             }
         }
 
@@ -78,7 +90,7 @@ internal interface EditorWorkProcessor : WorkProcessor<EditorWorkCommand, Editor
             val editModel = editorInteractor.fetchEditModel().mapToUi()
             return when (val result = categoriesInteractor.fetchCategories()) {
                 is Either.Right -> ActionResult(EditorAction.SetUp(editModel, result.data))
-                is Either.Left -> return EffectResult(EditorEffect.ShowError(result.data))
+                is Either.Left -> EffectResult(EditorEffect.ShowError(result.data))
             }
         }
 
@@ -115,7 +127,7 @@ internal interface EditorWorkProcessor : WorkProcessor<EditorWorkCommand, Editor
 
 internal sealed class EditorWorkCommand : WorkCommand {
     object GoBack : EditorWorkCommand()
-    object ManageCategories : EditorWorkCommand()
+    data class AddSubCategory(val name: String, val mainCategory: MainCategory) : EditorWorkCommand()
     object GoTemplates : EditorWorkCommand()
     object LoadSendEditModel : EditorWorkCommand()
     data class ChangeIsTemplate(val editModel: EditModelUi) : EditorWorkCommand()

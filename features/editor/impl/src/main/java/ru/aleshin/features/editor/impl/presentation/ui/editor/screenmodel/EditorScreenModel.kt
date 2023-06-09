@@ -94,8 +94,9 @@ internal class EditorScreenModel @Inject constructor(
         is EditorEvent.PressBackButton -> {
             editorWorkProcessor.work(EditorWorkCommand.GoBack).handleWork()
         }
-        is EditorEvent.PressManageCategoriesButton -> {
-            editorWorkProcessor.work(EditorWorkCommand.ManageCategories).handleWork()
+        is EditorEvent.AddSubCategory -> {
+            val mainCategory = checkNotNull(state().editModel?.mainCategory)
+            editorWorkProcessor.work(EditorWorkCommand.AddSubCategory(event.name, mainCategory)).handleWork()
         }
         is EditorEvent.LoadTemplates -> {
             timeTaskWorkProcessor.work(TimeTaskWorkCommand.LoadTemplateTimeTasks).handleWork()
@@ -138,6 +139,9 @@ internal class EditorScreenModel @Inject constructor(
         )
         is EditorAction.Navigate -> currentState.copy(
             templates = null,
+        )
+        is EditorAction.UpdateCategories -> currentState.copy(
+            categories = action.categories,
         )
     }
 
