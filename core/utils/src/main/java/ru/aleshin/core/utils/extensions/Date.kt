@@ -222,8 +222,9 @@ fun TimeRange.toDaysTitle(): String {
 
 fun TimeRange.toMonthTitle(): String {
     val calendar = Calendar.getInstance()
-    val month = calendar.apply { time = from }.get(Calendar.MONTH) + 1
-    return month.toString()
+    val monthStart = calendar.apply { time = from }.get(Calendar.MONTH) + 1
+    val monthEnd = calendar.apply { time = to }.get(Calendar.MONTH) + 1
+    return "$monthStart-$monthEnd"
 }
 
 fun countWeeksByDays(days: Int): Int {

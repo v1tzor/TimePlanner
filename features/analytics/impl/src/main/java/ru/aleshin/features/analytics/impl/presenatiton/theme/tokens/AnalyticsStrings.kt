@@ -40,6 +40,7 @@ internal data class AnalyticsStrings(
     val averageTimeTaskTitle: String,
     val planningStatisticsTitle: String,
     val otherError: String,
+    val halfYearTimePeriod: String,
 )
 
 internal val russianAnalyticsStrings = AnalyticsStrings(
@@ -61,6 +62,7 @@ internal val russianAnalyticsStrings = AnalyticsStrings(
     averageTimeTaskTitle = "Среднее время задачи",
     planningStatisticsTitle = "Статистика планирования",
     otherError = "Ошибка! Обратитесь к разработчику.",
+    halfYearTimePeriod = "Полгода",
 )
 
 internal val englishAnalyticsStrings = AnalyticsStrings(
@@ -82,6 +84,7 @@ internal val englishAnalyticsStrings = AnalyticsStrings(
     averageTimeTaskTitle = "Average time of tasks",
     planningStatisticsTitle = "Planning statistics",
     otherError = "Error! Contact the developer.",
+    halfYearTimePeriod = "Half a year",
 )
 
 internal val LocalAnalyticsStrings = staticCompositionLocalOf<AnalyticsStrings> {

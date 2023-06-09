@@ -113,7 +113,7 @@ internal fun WorkLoadAnalyticsChart(
 ) {
     val barData = mutableListOf<BarData>().apply {
         workLoadMap.forEach { (timeRange, timeTasks) ->
-            val xValue = when (period == TimePeriod.YEAR) {
+            val xValue = when (period == TimePeriod.YEAR || period == TimePeriod.HALF_YEAR) {
                 true -> timeRange.toMonthTitle()
                 false -> timeRange.toDaysTitle()
             }

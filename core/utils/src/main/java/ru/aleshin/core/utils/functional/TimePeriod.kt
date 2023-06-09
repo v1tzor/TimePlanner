@@ -11,19 +11,20 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License.
-*/
+ * imitations under the License.
+ */
 package ru.aleshin.core.utils.functional
 
 /**
  * @author Stanislav Aleshin on 22.04.2023.
  */
 enum class TimePeriod {
-    WEEK, MONTH, YEAR;
+    WEEK, MONTH, HALF_YEAR, YEAR;
 
     fun convertToDays() = when (this) {
         WEEK -> Constants.Date.DAYS_IN_WEEK
         MONTH -> Constants.Date.DAYS_IN_MONTH
+        HALF_YEAR -> Constants.Date.DAYS_IN_HALF_YEAR
         YEAR -> Constants.Date.DAYS_IN_YEAR
     }
 }

@@ -26,5 +26,6 @@ import ru.aleshin.features.analytics.impl.presenatiton.theme.AnalyticsThemeRes
 internal fun TimePeriod.mapToString() = when (this) {
     TimePeriod.WEEK -> AnalyticsThemeRes.strings.weekTimePeriod
     TimePeriod.MONTH -> AnalyticsThemeRes.strings.monthTimePeriod
+    TimePeriod.HALF_YEAR -> AnalyticsThemeRes.strings.halfYearTimePeriod
     TimePeriod.YEAR -> AnalyticsThemeRes.strings.yearTimePeriod
 }

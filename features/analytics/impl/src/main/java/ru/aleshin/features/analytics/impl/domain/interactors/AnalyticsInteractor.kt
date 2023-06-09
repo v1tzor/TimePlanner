@@ -71,11 +71,13 @@ internal interface AnalyticsInteractor {
             val periodCount = when (period) {
                 TimePeriod.WEEK -> Constants.Date.DAY
                 TimePeriod.MONTH -> Constants.Date.DAYS_IN_WEEK
+                TimePeriod.HALF_YEAR -> Constants.Date.DAYS_IN_MONTH
                 TimePeriod.YEAR -> Constants.Date.DAYS_IN_MONTH
             }
             val periodValue = when (period) {
                 TimePeriod.WEEK -> Constants.Date.DAYS_IN_WEEK
                 TimePeriod.MONTH -> countWeeksByDays(shiftAmount)
+                TimePeriod.HALF_YEAR -> countMonthByDays(shiftAmount)
                 TimePeriod.YEAR -> countMonthByDays(shiftAmount)
             }
             val workLoadPeriodMap = mutableMapOf<TimeRange, List<TimeTask>>().apply {

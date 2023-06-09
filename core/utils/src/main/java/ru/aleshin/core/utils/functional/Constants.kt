@@ -50,6 +50,7 @@ object Constants {
         const val DAY = 1
         const val DAYS_IN_WEEK = 7
         const val DAYS_IN_MONTH = 31
+        const val DAYS_IN_HALF_YEAR = 183
         const val DAYS_IN_YEAR = 365
 
         const val EMPTY_DURATION = 0L
