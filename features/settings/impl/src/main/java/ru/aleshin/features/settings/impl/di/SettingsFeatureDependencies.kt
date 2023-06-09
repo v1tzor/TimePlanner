@@ -17,6 +17,10 @@ package ru.aleshin.features.settings.impl.di
 
 import ru.aleshin.core.utils.managers.CoroutineManager
 import ru.aleshin.core.utils.navigation.Router
+import ru.aleshin.features.home.api.domains.repository.CategoriesRepository
+import ru.aleshin.features.home.api.domains.repository.ScheduleRepository
+import ru.aleshin.features.home.api.domains.repository.SubCategoriesRepository
+import ru.aleshin.features.home.api.domains.repository.TemplatesRepository
 import ru.aleshin.features.settings.api.domain.repositories.ThemeSettingsRepository
 import ru.aleshin.module_injector.BaseFeatureDependencies
 
@@ -25,6 +29,10 @@ import ru.aleshin.module_injector.BaseFeatureDependencies
  */
 interface SettingsFeatureDependencies : BaseFeatureDependencies {
     val themeSettingsRepository: ThemeSettingsRepository
+    val categoriesRepository: CategoriesRepository
+    val subCategoriesRepository: SubCategoriesRepository
+    val templatesRepository: TemplatesRepository
+    val scheduleRepository: ScheduleRepository
     val coroutineManager: CoroutineManager
     val globalRouter: Router
 }

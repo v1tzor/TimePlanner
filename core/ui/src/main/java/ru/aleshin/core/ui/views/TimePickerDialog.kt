@@ -61,7 +61,7 @@ fun TimePickerDialog(
 
     AlertDialog(onDismissRequest = onDismissRequest) {
         Surface(
-            modifier = modifier,
+            modifier = modifier.width(if (is24Format) 243.dp else 348.dp),
             tonalElevation = TimePlannerRes.elevations.levelThree,
             shape = MaterialTheme.shapes.extraLarge,
         ) {

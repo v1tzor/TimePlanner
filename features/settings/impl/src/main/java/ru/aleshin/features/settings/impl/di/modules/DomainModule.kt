@@ -19,7 +19,10 @@ import dagger.Binds
 import dagger.Module
 import ru.aleshin.features.settings.impl.domain.common.SettingsEitherWrapper
 import ru.aleshin.features.settings.impl.domain.common.SettingsErrorHandler
+import ru.aleshin.features.settings.impl.domain.interactors.CategoriesInteractor
+import ru.aleshin.features.settings.impl.domain.interactors.ScheduleInteractor
 import ru.aleshin.features.settings.impl.domain.interactors.SettingsInteractor
+import ru.aleshin.features.settings.impl.domain.interactors.TemplatesInteractor
 
 /**
  * @author Stanislav Aleshin on 17.02.2023.
@@ -29,6 +32,15 @@ internal interface DomainModule {
 
     @Binds
     fun bindSettingsInteractor(interactor: SettingsInteractor.Base): SettingsInteractor
+
+    @Binds
+    fun bindScheduleInteractor(interactor: ScheduleInteractor.Base): ScheduleInteractor
+
+    @Binds
+    fun bindCategoriesInteractor(interactor: CategoriesInteractor.Base): CategoriesInteractor
+
+    @Binds
+    fun bindTemplatesInteractor(interactor: TemplatesInteractor.Base): TemplatesInteractor
 
     @Binds
     fun bindSettingsEitherWrapper(wrapper: SettingsEitherWrapper.Base): SettingsEitherWrapper

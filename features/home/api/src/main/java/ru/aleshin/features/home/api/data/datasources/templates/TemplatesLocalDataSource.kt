@@ -11,8 +11,8 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License.
-*/
+ * imitations under the License.
+ */
 package ru.aleshin.features.home.api.data.datasources.templates
 
 import ru.aleshin.features.home.api.data.models.template.TemplateDetails
@@ -28,6 +28,7 @@ interface TemplatesLocalDataSource {
     suspend fun fetchAllTemplates(): List<TemplateDetails>
     suspend fun updateTemplate(template: TemplateEntity)
     suspend fun deleteTemplateById(id: Int)
+    suspend fun deleteAllTemplates()
 
     class Base @Inject constructor(
         private val templatesDao: TemplatesDao,
@@ -47,6 +48,10 @@ interface TemplatesLocalDataSource {
 
         override suspend fun deleteTemplateById(id: Int) {
             templatesDao.deleteTemplate(id)
+        }
+
+        override suspend fun deleteAllTemplates() {
+            templatesDao.deleteAllTemplates()
         }
     }
 }

@@ -48,4 +48,8 @@ class ScheduleRepositoryImpl @Inject constructor(
     override suspend fun updateSchedule(schedule: Schedule) {
         localDataSource.updateTimeTasks(schedule.timeTasks.map { it.mapToData(schedule.date) })
     }
+
+    override suspend fun deleteAllSchedules() {
+        localDataSource.removeAllSchedules()
+    }
 }

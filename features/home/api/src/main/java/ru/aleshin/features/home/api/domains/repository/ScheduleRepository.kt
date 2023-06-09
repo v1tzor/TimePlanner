@@ -26,4 +26,5 @@ interface ScheduleRepository {
     suspend fun fetchSchedulesByRange(timeRange: TimeRange): List<Schedule>
     suspend fun fetchScheduleByDate(date: Long): Schedule?
     suspend fun updateSchedule(schedule: Schedule)
+    suspend fun deleteAllSchedules()
 }

@@ -36,6 +36,10 @@ internal data class SettingsStrings(
     val moreIconDesc: String,
     val resetToDefaultTitle: String,
     val menuIconDesc: String,
+    val mainSettingsClearDataTitle: String,
+    val clearDataTitle: String,
+    val clearDataButtonTitle: String,
+    val clearDataWarning: String,
 )
 
 internal val russianSettingsString = SettingsStrings(
@@ -53,6 +57,10 @@ internal val russianSettingsString = SettingsStrings(
     moreIconDesc = "Дополнительно",
     resetToDefaultTitle = "По умолчанию",
     menuIconDesc = "Меню",
+    clearDataTitle = "Удалить все данные",
+    mainSettingsClearDataTitle = "Данные",
+    clearDataButtonTitle = "Очистить",
+    clearDataWarning = "Данное действие приведёт к полной очистке данных приложения!",
 )
 
 internal val englishSettingsString = SettingsStrings(
@@ -70,6 +78,10 @@ internal val englishSettingsString = SettingsStrings(
     moreIconDesc = "More",
     resetToDefaultTitle = "Reset to defualt",
     menuIconDesc = "Menu",
+    clearDataTitle = "Delete all data",
+    mainSettingsClearDataTitle = "Data",
+    clearDataButtonTitle = "Clear",
+    clearDataWarning = "This action will lead to a complete cleaning of the application data!",
 )
 
 internal val LocalSettingsStrings = staticCompositionLocalOf<SettingsStrings> {

@@ -16,7 +16,6 @@
 
 package ru.aleshin.features.home.api.data.datasources.categories
 
-import android.util.Log
 import ru.aleshin.features.home.api.data.models.categories.MainCategoryDetails
 import ru.aleshin.features.home.api.data.models.categories.MainCategoryEntity
 import ru.aleshin.features.home.api.domains.entities.categories.MainCategory
@@ -32,15 +31,14 @@ interface CategoriesLocalDataSource {
     suspend fun fetchCategoriesByType(mainCategory: MainCategory): MainCategoryDetails?
     suspend fun updateMainCategory(mainCategory: MainCategoryEntity)
     suspend fun removeMainCategory(id: Int)
+    suspend fun removeAllCategories()
 
     class Base @Inject constructor(
         private val mainCategoriesDao: MainCategoriesDao,
     ) : CategoriesLocalDataSource {
 
         override suspend fun addMainCategory(mainCategory: MainCategoryEntity): Long {
-            return mainCategoriesDao.addCategory(mainCategory).apply {
-                Log.d("test", "id -> $this")
-            }
+            return mainCategoriesDao.addCategory(mainCategory)
         }
 
         override suspend fun fetchMainCategories(): List<MainCategoryDetails> {
@@ -57,6 +55,10 @@ interface CategoriesLocalDataSource {
 
         override suspend fun removeMainCategory(id: Int) {
             mainCategoriesDao.removeCategory(id)
+        }
+
+        override suspend fun removeAllCategories() {
+            mainCategoriesDao.removeAllCategories()
         }
     }
 }

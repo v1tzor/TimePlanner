@@ -52,6 +52,7 @@ internal class SettingsScreen @Inject constructor() : Screen {
                     SettingsContent(
                         state = state,
                         modifier = Modifier.padding(paddingValues),
+                        onClearData = { dispatchEvent(SettingsEvent.PressClearDataButton) },
                         onUpdateThemeSettings = { themeSettings ->
                             dispatchEvent(SettingsEvent.ChangedThemeSettings(themeSettings))
                         },

@@ -11,8 +11,8 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License.
-*/
+ * imitations under the License.
+ */
 package ru.aleshin.features.home.api.domains.repository
 
 import ru.aleshin.features.home.api.domains.entities.categories.MainCategory
@@ -26,4 +26,5 @@ interface SubCategoriesRepository {
     suspend fun fetchSubCategories(type: MainCategory): List<SubCategory>
     suspend fun updateSubCategory(category: SubCategory)
     suspend fun deleteSubCategory(category: SubCategory)
+    suspend fun deleteAllSubCategories()
 }

@@ -11,8 +11,8 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License.
-*/
+ * imitations under the License.
+ */
 package ru.aleshin.features.home.api.data.repository
 
 import ru.aleshin.features.home.api.data.datasources.categories.CategoriesLocalDataSource
@@ -30,6 +30,10 @@ class CategoriesRepositoryImpl @Inject constructor(
     private val localDataSource: CategoriesLocalDataSource,
 ) : CategoriesRepository {
 
+    override suspend fun addMainCategory(category: MainCategory) {
+        localDataSource.addMainCategory(category.mapToData())
+    }
+
     override suspend fun fetchCategories(): List<Categories> {
         return localDataSource.fetchMainCategories().map { mainCategory ->
             mainCategory.mapToDomain()
@@ -40,15 +44,15 @@ class CategoriesRepositoryImpl @Inject constructor(
         return localDataSource.fetchCategoriesByType(mainCategory)?.mapToDomain()
     }
 
-    override suspend fun addMainCategory(category: MainCategory) {
-        localDataSource.addMainCategory(category.mapToData())
+    override suspend fun updateMainCategory(category: MainCategory) {
+        localDataSource.updateMainCategory(category.mapToData())
     }
 
     override suspend fun deleteMainCategory(category: MainCategory) {
         localDataSource.removeMainCategory(category.id)
     }
 
-    override suspend fun updateMainCategory(category: MainCategory) {
-        localDataSource.updateMainCategory(category.mapToData())
+    override suspend fun deleteAllCategories() {
+        localDataSource.removeAllCategories()
     }
 }

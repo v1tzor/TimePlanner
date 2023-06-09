@@ -18,8 +18,15 @@ package ru.aleshin.features.settings.impl.presentation.ui
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import ru.aleshin.core.ui.theme.TimePlannerRes
+import ru.aleshin.core.ui.views.WarningDeleteDialog
 import ru.aleshin.features.settings.api.domain.entities.LanguageType
 import ru.aleshin.features.settings.api.domain.entities.ThemeColorsType
 import ru.aleshin.features.settings.api.domain.entities.ThemeSettings
@@ -35,6 +42,7 @@ import ru.aleshin.features.settings.impl.presentation.ui.views.ThemeColorsChoose
 internal fun SettingsContent(
     state: SettingsViewState,
     modifier: Modifier = Modifier,
+    onClearData: () -> Unit,
     onUpdateThemeSettings: (ThemeSettings) -> Unit,
 ) {
     Column(modifier = modifier.fillMaxSize()) {
@@ -53,7 +61,13 @@ internal fun SettingsContent(
                         onUpdateThemeSettings.invoke(state.themeSettings.copy(language = language))
                     },
                 )
-                Divider(modifier = Modifier.padding(vertical = 8.dp, horizontal = 8.dp))
+                Divider(modifier = Modifier.padding(top = 8.dp, bottom = 0.dp))
+            }
+            Column(
+                modifier = Modifier.padding(horizontal = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                DataSettingsSection(onClear = onClearData)
             }
         }
     }
@@ -70,8 +84,8 @@ internal fun MainSettingsSection(
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(16.dp)) {
         Text(
             text = SettingsThemeRes.strings.mainSettingsTitle,
-            color = MaterialTheme.colorScheme.onBackground,
-            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.labelMedium,
         )
         ThemeColorsChooser(
             modifier = Modifier.fillMaxWidth(),
@@ -85,7 +99,62 @@ internal fun MainSettingsSection(
     }
 }
 
-/* ----------------------- Release Preview -----------------------
+@Composable
+internal fun DataSettingsSection(
+    modifier: Modifier = Modifier,
+    onClear: () -> Unit,
+) {
+    Column(modifier = modifier) {
+        Text(
+            modifier = Modifier.padding(bottom = 8.dp),
+            text = SettingsThemeRes.strings.mainSettingsClearDataTitle,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.labelMedium,
+        )
+        ClearDataView(onClear = onClear)
+    }
+}
+
+@Composable
+internal fun ClearDataView(
+    modifier: Modifier = Modifier,
+    onClear: () -> Unit,
+) {
+    var isOpenDialog by rememberSaveable { mutableStateOf(false) }
+    Surface(
+        onClick = { isOpenDialog = true },
+        modifier = modifier.fillMaxWidth(),
+        shape = MaterialTheme.shapes.medium,
+        tonalElevation = TimePlannerRes.elevations.levelTwo,
+    ) {
+        Row(
+            modifier = Modifier.padding(vertical = 12.dp, horizontal = 16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                modifier = Modifier.weight(1f),
+                text = SettingsThemeRes.strings.clearDataTitle,
+                color = MaterialTheme.colorScheme.onSurface,
+                style = MaterialTheme.typography.titleMedium,
+            )
+            Button(onClick = { isOpenDialog = true }) {
+                Text(text = SettingsThemeRes.strings.clearDataButtonTitle)
+            }
+        }
+    }
+    if (isOpenDialog) {
+        WarningDeleteDialog(
+            text = SettingsThemeRes.strings.clearDataWarning,
+            onDismiss = { isOpenDialog = false },
+            onAction = {
+                isOpenDialog = false
+                onClear()
+            },
+        )
+    }
+}
+
+/* ----------------------- Release Preview-----------------------
 @Preview(showSystemUi = true, showBackground = true)
 @Composable
 private fun SettingsContent_Preview() {

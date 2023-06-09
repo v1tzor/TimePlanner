@@ -20,8 +20,12 @@ import ru.aleshin.core.utils.platform.screenmodel.work.ActionResult
 import ru.aleshin.core.utils.platform.screenmodel.work.EffectResult
 import ru.aleshin.core.utils.platform.screenmodel.work.WorkCommand
 import ru.aleshin.core.utils.platform.screenmodel.work.WorkProcessor
+import ru.aleshin.core.utils.platform.screenmodel.work.WorkResult
 import ru.aleshin.features.settings.api.domain.entities.ThemeSettings
+import ru.aleshin.features.settings.impl.domain.interactors.CategoriesInteractor
+import ru.aleshin.features.settings.impl.domain.interactors.ScheduleInteractor
 import ru.aleshin.features.settings.impl.domain.interactors.SettingsInteractor
+import ru.aleshin.features.settings.impl.domain.interactors.TemplatesInteractor
 import ru.aleshin.features.settings.impl.presentation.ui.contract.SettingsAction
 import ru.aleshin.features.settings.impl.presentation.ui.contract.SettingsEffect
 import javax.inject.Inject
@@ -31,12 +35,16 @@ import javax.inject.Inject
  */
 internal interface SettingsWorkProcessor : WorkProcessor<SettingsWorkCommand, SettingsAction, SettingsEffect> {
 
-    suspend fun loadAllSettings(): Either<SettingsAction, SettingsEffect>
-    suspend fun updateThemeSettings(settings: ThemeSettings): Either<SettingsAction, SettingsEffect>
-    suspend fun resetSettings(): Either<SettingsAction, SettingsEffect>
+    suspend fun loadAllSettings(): WorkResult<SettingsAction, SettingsEffect>
+    suspend fun updateThemeSettings(settings: ThemeSettings): WorkResult<SettingsAction, SettingsEffect>
+    suspend fun resetSettings(): WorkResult<SettingsAction, SettingsEffect>
+    suspend fun clearData(): WorkResult<SettingsAction, SettingsEffect>
 
     class Base @Inject constructor(
         private val settingsInteractor: SettingsInteractor,
+        private val scheduleInteractor: ScheduleInteractor,
+        private val categoriesInteractor: CategoriesInteractor,
+        private val templatesInteractor: TemplatesInteractor,
     ) : SettingsWorkProcessor {
 
         override suspend fun loadAllSettings() = work(
@@ -51,10 +59,15 @@ internal interface SettingsWorkProcessor : WorkProcessor<SettingsWorkCommand, Se
             command = SettingsWorkCommand.ResetSettings,
         )
 
+        override suspend fun clearData() = work(
+            command = SettingsWorkCommand.ClearData,
+        )
+
         override suspend fun work(command: SettingsWorkCommand) = when (command) {
             is SettingsWorkCommand.UpdateThemeSettings -> updateThemeSettingsWork(command.settings)
             is SettingsWorkCommand.LoadAllSettings -> loadAllSettingsWork()
             is SettingsWorkCommand.ResetSettings -> resetSettingsWork()
+            is SettingsWorkCommand.ClearData -> clearDataWork()
         }
 
         private suspend fun updateThemeSettingsWork(settings: ThemeSettings): Either<SettingsAction, SettingsEffect> {
@@ -80,11 +93,25 @@ internal interface SettingsWorkProcessor : WorkProcessor<SettingsWorkCommand, Se
                 is Either.Left -> EffectResult(SettingsEffect.ShowError(result.data))
             }
         }
+
+        private suspend fun clearDataWork(): Either<SettingsAction, SettingsEffect> {
+            scheduleInteractor.removeAllSchedules().apply {
+                if (this is Either.Left) return EffectResult(SettingsEffect.ShowError(data))
+            }
+            templatesInteractor.removeAllTemplates().apply {
+                if (this is Either.Left) return EffectResult(SettingsEffect.ShowError(data))
+            }
+            categoriesInteractor.removeAllCategories().apply {
+                if (this is Either.Left) return EffectResult(SettingsEffect.ShowError(data))
+            }
+            return resetSettingsWork()
+        }
     }
 }
 
 internal sealed class SettingsWorkCommand : WorkCommand {
     object LoadAllSettings : SettingsWorkCommand()
     object ResetSettings : SettingsWorkCommand()
+    object ClearData : SettingsWorkCommand()
     data class UpdateThemeSettings(val settings: ThemeSettings) : SettingsWorkCommand()
 }

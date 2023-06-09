@@ -52,4 +52,7 @@ interface SchedulesDao {
 
     @Query("DELETE FROM timeTasks WHERE key = :key")
     suspend fun removeTimeTaskByKey(key: Long)
+
+    @Query("DELETE FROM dailySchedules")
+    suspend fun removeAllSchedules()
 }

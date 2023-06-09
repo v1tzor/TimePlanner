@@ -58,8 +58,11 @@ internal class SettingsScreenModel @Inject constructor(
         is SettingsEvent.ChangedThemeSettings -> {
             settingsWorkProcessor.updateThemeSettings(event.themeSettings).handleWork()
         }
-        SettingsEvent.PressResetButton -> {
+        is SettingsEvent.PressResetButton -> {
             settingsWorkProcessor.resetSettings().handleWork()
+        }
+        is SettingsEvent.PressClearDataButton -> {
+            settingsWorkProcessor.clearData().handleWork()
         }
     }
 

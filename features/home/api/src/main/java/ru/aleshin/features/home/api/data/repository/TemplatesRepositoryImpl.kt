@@ -46,4 +46,8 @@ class TemplatesRepositoryImpl @Inject constructor(
     override suspend fun deleteTemplateById(id: Int) {
         localDataSource.deleteTemplateById(id)
     }
+
+    override suspend fun deleteAllTemplates() {
+        localDataSource.deleteAllTemplates()
+    }
 }

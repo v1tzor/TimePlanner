@@ -11,8 +11,8 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License.
-*/
+ * imitations under the License.
+ */
 package ru.aleshin.features.home.api.data.datasources.schedules
 
 import ru.aleshin.core.utils.functional.TimeRange
@@ -32,6 +32,7 @@ interface SchedulesLocalDataSource {
     suspend fun fetchScheduleByRange(timeRange: TimeRange): List<ScheduleDetails>
     suspend fun updateTimeTasks(timeTasks: List<TimeTaskEntity>)
     suspend fun removeDailySchedule(schedule: DailyScheduleEntity)
+    suspend fun removeAllSchedules()
     suspend fun removeTimeTaskByKey(key: Long)
 
     class Base @Inject constructor(
@@ -68,6 +69,10 @@ interface SchedulesLocalDataSource {
 
         override suspend fun removeDailySchedule(schedule: DailyScheduleEntity) {
             scheduleDao.removeDailySchedule(schedule)
+        }
+
+        override suspend fun removeAllSchedules() {
+            scheduleDao.removeAllSchedules()
         }
     }
 }

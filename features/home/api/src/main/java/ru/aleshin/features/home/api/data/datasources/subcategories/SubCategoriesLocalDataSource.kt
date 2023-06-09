@@ -28,6 +28,7 @@ interface SubCategoriesLocalDataSource {
     suspend fun fetchSubCategoriesByType(type: MainCategory): List<SubCategoryEntity>
     suspend fun updateSubCategory(subCategory: SubCategoryEntity)
     suspend fun removeSubCategory(id: Int)
+    suspend fun removeAllSubCategories()
 
     class Base @Inject constructor(
         private val subCategoriesDao: SubCategoriesDao,
@@ -47,6 +48,10 @@ interface SubCategoriesLocalDataSource {
 
         override suspend fun removeSubCategory(id: Int) {
             subCategoriesDao.removeSubCategory(id)
+        }
+
+        override suspend fun removeAllSubCategories() {
+            subCategoriesDao.removeAllSubCategories()
         }
     }
 }

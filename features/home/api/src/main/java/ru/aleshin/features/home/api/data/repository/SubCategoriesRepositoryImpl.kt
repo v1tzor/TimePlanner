@@ -11,8 +11,8 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License.
-*/
+ * imitations under the License.
+ */
 package ru.aleshin.features.home.api.data.repository
 
 import ru.aleshin.features.home.api.data.datasources.subcategories.SubCategoriesLocalDataSource
@@ -30,21 +30,25 @@ class SubCategoriesRepositoryImpl @Inject constructor(
     private val localDataSource: SubCategoriesLocalDataSource,
 ) : SubCategoriesRepository {
 
+    override suspend fun addSubCategory(category: SubCategory) {
+        localDataSource.addSubCategory(category.mapToData())
+    }
+
     override suspend fun fetchSubCategories(type: MainCategory): List<SubCategory> {
         return localDataSource.fetchSubCategoriesByType(type).map { subCategory ->
             subCategory.mapToDomain(type)
         }
     }
 
-    override suspend fun addSubCategory(category: SubCategory) {
-        localDataSource.addSubCategory(category.mapToData())
+    override suspend fun updateSubCategory(category: SubCategory) {
+        localDataSource.updateSubCategory(category.mapToData())
     }
 
     override suspend fun deleteSubCategory(category: SubCategory) {
         localDataSource.removeSubCategory(category.id)
     }
 
-    override suspend fun updateSubCategory(category: SubCategory) {
-        localDataSource.updateSubCategory(category.mapToData())
+    override suspend fun deleteAllSubCategories() {
+        localDataSource.removeAllSubCategories()
     }
 }

@@ -322,4 +322,13 @@ private class FakeTemplatesRepository : TemplatesRepository {
             throw SQLiteException()
         }
     }
+
+    override suspend fun deleteAllTemplates() {
+        deleteTemplatesCount++
+        if (!errorWhileAction) {
+            templatesList.clear()
+        } else {
+            throw SQLiteException()
+        }
+    }
 }
