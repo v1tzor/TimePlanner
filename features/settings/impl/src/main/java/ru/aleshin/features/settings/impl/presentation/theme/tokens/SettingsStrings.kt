@@ -40,6 +40,9 @@ internal data class SettingsStrings(
     val clearDataTitle: String,
     val clearDataButtonTitle: String,
     val clearDataWarning: String,
+    val backupDataTitle: String,
+    val backupDataButtonTitle: String,
+    val restoreDataButtonTitle: String,
 )
 
 internal val russianSettingsString = SettingsStrings(
@@ -61,6 +64,9 @@ internal val russianSettingsString = SettingsStrings(
     mainSettingsClearDataTitle = "Данные",
     clearDataButtonTitle = "Очистить",
     clearDataWarning = "Данное действие приведёт к полной очистке данных приложения!",
+    backupDataTitle = "Резервная копия",
+    backupDataButtonTitle = "Сохранить",
+    restoreDataButtonTitle = "Восстановить",
 )
 
 internal val englishSettingsString = SettingsStrings(
@@ -72,7 +78,7 @@ internal val englishSettingsString = SettingsStrings(
     systemThemeTitle = "System",
     rusLanguageTitle = "Russian",
     engLanguageTitle = "English",
-    defaultLanguageTitle = "Defualt",
+    defaultLanguageTitle = "Default",
     mainSettingsLanguageTitle = "App language",
     backIconDesc = "Navigate up",
     moreIconDesc = "More",
@@ -82,6 +88,9 @@ internal val englishSettingsString = SettingsStrings(
     mainSettingsClearDataTitle = "Data",
     clearDataButtonTitle = "Clear",
     clearDataWarning = "This action will lead to a complete cleaning of the application data!",
+    backupDataTitle = "Backup copy",
+    backupDataButtonTitle = "Save",
+    restoreDataButtonTitle = "Restore",
 )
 
 internal val LocalSettingsStrings = staticCompositionLocalOf<SettingsStrings> {
