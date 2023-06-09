@@ -9,6 +9,9 @@ Support:
 - Theme: Dark, Light
 - Languages: RU, EN
 
+UI:
+- Material Design 3
+
 ## Download
 <a href="https://apt.izzysoft.de/fdroid/index/apk/ru.aleshin.timeplanner" target="_blank">
 <img src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png" alt="Get it on IzzyOnDroid" height="80"/></a>
@@ -21,8 +24,8 @@ Support:
      <td>Categories Screen</td>
   </tr>
   <tr>
-    <td valign="top"><img src="https://i.imgur.com/5vXBi4a.png" align="left" width="350dp"></td>
-    <td valign="top"><img src="https://i.imgur.com/nOUZ8xn.png" align="right" width="350dp"></td>
+    <td valign="top"><img src="https://i.imgur.com/UvcjQwU.png" align="left" width="350dp"></td>
+    <td valign="top"><img src="https://i.imgur.com/qWwzGPG.png" align="right" width="350dp"></td>
     <td valign="top"><img src="https://i.imgur.com/sOkGjT4.png" align="right" width="350dp"></td>
   </tr>
   <tr>
@@ -41,8 +44,8 @@ Support:
      <td>Editor Duration Dialog</td>
   </tr>
   <tr>
-    <td valign="top"><img src="https://i.imgur.com/pQ6YAdd.png" align="left" width="350dp"></td>
-    <td valign="top"><img src="https://i.imgur.com/iuUy3p6.png" align="right" width="350dp"></td>
+    <td valign="top"><img src="https://i.imgur.com/x1UZ3zq.png" align="left" width="350dp"></td>
+    <td valign="top"><img src="https://i.imgur.com/YkgH8GG.png" align="right" width="350dp"></td>
     <td valign="top"><img src="https://i.imgur.com/Hb320Jt.png" align="right" width="350dp"></td>
   </tr>
   <tr>
@@ -51,8 +54,8 @@ Support:
      <td>Settings Language Dialog</td>
   </tr>
   <tr>
-    <td valign="top"><img src="https://i.imgur.com/l4Uavn4.png" align="left" width="350dp"></td>
-    <td valign="top"><img src="https://i.imgur.com/vg49voR.png" align="right" width="350dp"></td>
+    <td valign="top"><img src="https://i.imgur.com/6L6HKbh.png" align="left" width="350dp"></td>
+    <td valign="top"><img src="https://i.imgur.com/gm5PVsS.png" align="right" width="350dp"></td>
     <td valign="top"><img src="https://i.imgur.com/HCc43FV.png" align="right" width="350dp"></td>
   </tr>
  </table>
