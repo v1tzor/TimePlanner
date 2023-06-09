@@ -11,8 +11,8 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License.
-*/
+ * imitations under the License.
+ */
 package ru.aleshin.core.ui.theme.tokens
 
 import androidx.compose.runtime.staticCompositionLocalOf
@@ -57,6 +57,8 @@ data class TimePlannerStrings(
     val templateDrawerTitle: String,
     val categoriesDrawerTitle: String,
     val splitFormat: String,
+    val amFormatTitle: String,
+    val pmFormatTitle: String,
 )
 
 internal val russianTimePlannerString = TimePlannerStrings(
@@ -96,6 +98,8 @@ internal val russianTimePlannerString = TimePlannerStrings(
     drawerTitle = "TimePlanner",
     drawerMainSection = "Планы",
     splitFormat = "%s | %s",
+    amFormatTitle = "AM",
+    pmFormatTitle = "PM",
 )
 
 internal val englishTimePlannerString = TimePlannerStrings(
@@ -135,6 +139,8 @@ internal val englishTimePlannerString = TimePlannerStrings(
     drawerTitle = "TimePlanner",
     drawerMainSection = "Plans",
     splitFormat = "%s | %s",
+    amFormatTitle = "AM",
+    pmFormatTitle = "PM",
 )
 
 val LocalTimePlannerStrings = staticCompositionLocalOf<TimePlannerStrings> {

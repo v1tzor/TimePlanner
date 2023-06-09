@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -56,6 +57,7 @@ import androidx.compose.ui.unit.dp
 import ru.aleshin.core.ui.theme.TimePlannerRes
 import ru.aleshin.core.ui.views.DialogButtons
 import ru.aleshin.core.ui.views.ExpandedIcon
+import ru.aleshin.core.ui.views.TimeFormatSelector
 import ru.aleshin.core.utils.extensions.generateUniqueKey
 import ru.aleshin.core.utils.extensions.setHoursAndMinutes
 import ru.aleshin.core.utils.functional.TimeFormat
@@ -378,10 +380,10 @@ internal fun TemplateEditorStartTimeChooser(
     minutes: Int?,
     onTimeChange: (hours: Int?, minutes: Int?) -> Unit,
 ) {
-    var format by remember {
-        mutableStateOf(if (hours != null && (hours > 12 || hours == 0)) TimeFormat.PM else TimeFormat.AM)
-    }
     val is24Format = DateFormat.is24HourFormat(LocalContext.current)
+    var format by remember {
+        mutableStateOf(if (hours != null && hours > 11) TimeFormat.PM else TimeFormat.AM)
+    }
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
@@ -399,10 +401,15 @@ internal fun TemplateEditorStartTimeChooser(
         ) {
             OutlinedTextField(
                 modifier = Modifier.weight(1f),
-                value = if (is24Format || format == TimeFormat.AM) {
+                value = if (is24Format) {
                     hours?.toString() ?: ""
                 } else {
-                    if (hours == 0) "12" else hours?.minus(12)?.toString() ?: ""
+                    when {
+                        hours == 0 && format == TimeFormat.AM -> "12"
+                        hours == 0 && format == TimeFormat.PM -> "12"
+                        format == TimeFormat.PM && hours != 12 -> hours?.minus(12)?.toString() ?: ""
+                        else -> hours?.toString() ?: ""
+                    }
                 },
                 onValueChange = {
                     val time = it.toIntOrNull()
@@ -410,8 +417,8 @@ internal fun TemplateEditorStartTimeChooser(
                         onTimeChange(time, minutes)
                     } else if (time != null && !is24Format && time in 1..12) {
                         val formatTime = when (format) {
-                            TimeFormat.PM -> if (time != 12) time + 12 else 0
-                            TimeFormat.AM -> time
+                            TimeFormat.PM -> if (time != 12) time + 12 else 12
+                            TimeFormat.AM -> if (time != 12) time else 0
                         }
                         onTimeChange(formatTime, minutes)
                     } else if (it.isBlank()) {
@@ -439,7 +446,7 @@ internal fun TemplateEditorStartTimeChooser(
             )
         }
         TimeFormatSelector(
-            modifier = Modifier.align(Alignment.Bottom),
+            modifier = Modifier.size(height = 60.dp, width = 45.dp).align(Alignment.Bottom),
             isVisible = !is24Format,
             format = format,
             onChangeFormat = {
@@ -459,7 +466,7 @@ internal fun TemplateEditorEndTimeChooser(
 ) {
     val is24Format = DateFormat.is24HourFormat(LocalContext.current)
     var format by remember {
-        mutableStateOf(if (hours != null && (hours > 12 || hours == 0)) TimeFormat.PM else TimeFormat.AM)
+        mutableStateOf(if (hours != null && hours > 11) TimeFormat.PM else TimeFormat.AM)
     }
     Row(
         modifier = modifier,
@@ -477,23 +484,28 @@ internal fun TemplateEditorEndTimeChooser(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             OutlinedTextField(
-                modifier = Modifier.weight(1f).align(Alignment.Bottom),
-                value = if (is24Format || format == TimeFormat.AM) {
+                modifier = Modifier.weight(1f),
+                value = if (is24Format) {
                     hours?.toString() ?: ""
                 } else {
-                    hours?.minus(12)?.toString() ?: ""
+                    when {
+                        hours == 0 && format == TimeFormat.AM -> "12"
+                        hours == 0 && format == TimeFormat.PM -> "12"
+                        format == TimeFormat.PM && hours != 12 -> hours?.minus(12)?.toString() ?: ""
+                        else -> hours?.toString() ?: ""
+                    }
                 },
                 onValueChange = {
                     val time = it.toIntOrNull()
                     if (time != null && is24Format && time in 0..23) {
                         onTimeChange(time, minutes)
-                    } else if (time != null && !is24Format) {
-                        if ((time in 1..12 && format == TimeFormat.AM) ||
-                            (time in 1..11 && format == TimeFormat.PM)
+                    } else if (time != null && !is24Format && time in 1..12) {
+                        if ((time in 1..12 && format == TimeFormat.PM) ||
+                            (time in 1..11 && format == TimeFormat.AM)
                         ) {
                             val formatTime = when (format) {
-                                TimeFormat.PM -> time + 12
-                                TimeFormat.AM -> time
+                                TimeFormat.PM -> if (time != 12) time + 12 else 12
+                                TimeFormat.AM -> if (time != 12) time else 0
                             }
                             onTimeChange(formatTime, minutes)
                         }
@@ -520,7 +532,7 @@ internal fun TemplateEditorEndTimeChooser(
             )
         }
         TimeFormatSelector(
-            modifier = Modifier.align(Alignment.Bottom),
+            modifier = Modifier.size(height = 60.dp, width = 45.dp).align(Alignment.Bottom),
             isVisible = !is24Format,
             format = format,
             onChangeFormat = {

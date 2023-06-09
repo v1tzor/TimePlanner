@@ -135,13 +135,13 @@ internal interface ScheduleWorkProcessor : FlowWorkProcessor<ScheduleWorkCommand
                     executionStatus = status,
                     progress = 0f,
                     leftTime = -1,
-                    isCompleted = false,
+                    isCompleted = true,
                 )
                 TimeTaskStatus.RUNNING -> copy(
                     executionStatus = status,
                     progress = dateManager.calculateProgress(startTime, endTime),
                     leftTime = dateManager.calculateLeftTime(endTime),
-                    isCompleted = false,
+                    isCompleted = true,
                 )
             }
         }

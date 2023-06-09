@@ -13,13 +13,11 @@
  * See the License for the specific language governing permissions and
  * imitations under the License.
  */
-package ru.aleshin.features.home.impl.presentation.ui.templates.views
+package ru.aleshin.core.ui.views
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -28,15 +26,12 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import ru.aleshin.core.ui.theme.TimePlannerRes
 import ru.aleshin.core.ui.theme.material.surfaceThree
 import ru.aleshin.core.utils.functional.TimeFormat
-import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
 
-/**
- * @author Stanislav Aleshin on 09.06.2023.
- */
 @Composable
-internal fun TimeFormatSelector(
+fun TimeFormatSelector(
     modifier: Modifier = Modifier,
     isVisible: Boolean,
     format: TimeFormat,
@@ -44,7 +39,7 @@ internal fun TimeFormatSelector(
 ) {
     if (isVisible) {
         Column(
-            modifier = modifier.width(45.dp).height(60.dp),
+            modifier = modifier,
             verticalArrangement = Arrangement.spacedBy(0.dp),
         ) {
             TextButton(
@@ -60,7 +55,7 @@ internal fun TimeFormatSelector(
                 ),
             ) {
                 Text(
-                    text = HomeThemeRes.strings.amFormatTitle,
+                    text = TimePlannerRes.strings.amFormatTitle,
                     color = when (format) {
                         TimeFormat.AM -> MaterialTheme.colorScheme.onPrimaryContainer
                         TimeFormat.PM -> MaterialTheme.colorScheme.onSurfaceVariant
@@ -81,7 +76,7 @@ internal fun TimeFormatSelector(
                 ),
             ) {
                 Text(
-                    text = HomeThemeRes.strings.pmFormatTitle,
+                    text = TimePlannerRes.strings.pmFormatTitle,
                     color = when (format) {
                         TimeFormat.AM -> MaterialTheme.colorScheme.onSurfaceVariant
                         TimeFormat.PM -> MaterialTheme.colorScheme.onPrimaryContainer
