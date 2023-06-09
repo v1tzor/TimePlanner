@@ -15,6 +15,7 @@
  */
 package ru.aleshin.features.home.impl.presentation.ui.templates.views
 
+import android.text.format.DateFormat
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
@@ -48,6 +49,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
@@ -56,6 +58,7 @@ import ru.aleshin.core.ui.views.DialogButtons
 import ru.aleshin.core.ui.views.ExpandedIcon
 import ru.aleshin.core.utils.extensions.generateUniqueKey
 import ru.aleshin.core.utils.extensions.setHoursAndMinutes
+import ru.aleshin.core.utils.functional.TimeFormat
 import ru.aleshin.features.home.api.domains.entities.categories.Categories
 import ru.aleshin.features.home.api.domains.entities.categories.MainCategory
 import ru.aleshin.features.home.api.domains.entities.categories.SubCategory
@@ -95,7 +98,9 @@ internal fun TemplateEditorDialog(
 
     AlertDialog(onDismissRequest = onDismiss) {
         Surface(
-            modifier = modifier.width(328.dp).wrapContentHeight(),
+            modifier = modifier
+                .width(328.dp)
+                .wrapContentHeight(),
             shape = MaterialTheme.shapes.extraLarge,
             tonalElevation = TimePlannerRes.elevations.levelThree,
         ) {
@@ -103,13 +108,16 @@ internal fun TemplateEditorDialog(
                 TemplateEditorDialogHeader()
                 Divider(Modifier.fillMaxWidth())
                 Column(
-                    modifier = Modifier.height(400.dp).padding(
-                        start = 20.dp,
-                        end = 20.dp,
-                        top = 16.dp,
-                        bottom = 0.dp,
-                    ).verticalScroll(scrollState),
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    modifier = Modifier
+                        .height(400.dp)
+                        .padding(
+                            start = 20.dp,
+                            end = 20.dp,
+                            top = 16.dp,
+                            bottom = 0.dp,
+                        )
+                        .verticalScroll(scrollState),
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
                     TemplateEditorCategoryChooser(
                         allCategories = categories,
@@ -151,19 +159,28 @@ internal fun TemplateEditorDialog(
                         onImportanceChange = { isImportance = it },
                     )
                 }
+
+                val isEnabled = if (timeStartHours != null && timeStartMinutes != null &&
+                    timeEndHours != null && timeEndMinutes != null
+                ) {
+                    val startTimeInMinutes = timeStartHours!! * 60 + timeStartMinutes!!
+                    val endTimeInMinutes = timeEndHours!! * 60 + timeEndMinutes!!
+                    endTimeInMinutes - startTimeInMinutes > 0
+                } else {
+                    false
+                }
                 DialogButtons(
-                    isConfirmEnabled = timeStartHours != null && timeStartMinutes != null && timeEndHours != null && timeEndMinutes != null,
+                    isConfirmEnabled = isEnabled,
                     confirmTitle = when (editTemplateModel != null) {
                         true -> TimePlannerRes.strings.alertDialogOkConfirmTitle
                         false -> HomeThemeRes.strings.dialogCreateTitle
                     },
                     onConfirmClick = {
-                        if (timeStartHours != null && timeStartMinutes != null &&
-                            timeEndHours != null && timeEndMinutes != null
-                        ) {
+                        if (isEnabled) {
                             val calendar = Calendar.getInstance()
                             val template = Template(
-                                templateId = editTemplateModel?.templateId ?: generateUniqueKey().toInt(),
+                                templateId = editTemplateModel?.templateId
+                                    ?: generateUniqueKey().toInt(),
                                 startTime = calendar.setHoursAndMinutes(
                                     hours = timeStartHours!!,
                                     minutes = timeStartMinutes!!,
@@ -232,7 +249,9 @@ internal fun TemplateEditorCategoryChooser(
     }
 
     LaunchedEffect(key1 = isPressed) {
-        if (isPressed) { isCategoryMenuOpen = !isCategoryMenuOpen }
+        if (isPressed) {
+            isCategoryMenuOpen = !isCategoryMenuOpen
+        }
     }
 }
 
@@ -276,7 +295,8 @@ internal fun TemplateEditorSubCategoryChooser(
     val interactionSource = remember { MutableInteractionSource() }
     var isSubCategoryMenuOpen by remember { mutableStateOf(false) }
     val isPressed: Boolean by interactionSource.collectIsPressedAsState()
-    val subCategories = allCategories.find { it.mainCategory == selectedMainCategory }?.subCategories ?: emptyList()
+    val subCategories =
+        allCategories.find { it.mainCategory == selectedMainCategory }?.subCategories ?: emptyList()
 
     Row(
         modifier = modifier,
@@ -290,7 +310,8 @@ internal fun TemplateEditorSubCategoryChooser(
         )
         OutlinedTextField(
             modifier = Modifier.weight(1f),
-            value = selectedSubCategory?.fetchNameByLanguage() ?: HomeThemeRes.strings.subCategoryEmptyTitle,
+            value = selectedSubCategory?.fetchNameByLanguage()
+                ?: HomeThemeRes.strings.subCategoryEmptyTitle,
             onValueChange = {},
             readOnly = true,
             label = { Text(text = HomeThemeRes.strings.subCategoryLabel) },
@@ -313,7 +334,9 @@ internal fun TemplateEditorSubCategoryChooser(
     }
 
     LaunchedEffect(key1 = isPressed) {
-        if (isPressed) { isSubCategoryMenuOpen = !isSubCategoryMenuOpen }
+        if (isPressed) {
+            isSubCategoryMenuOpen = !isSubCategoryMenuOpen
+        }
     }
 }
 
@@ -355,6 +378,10 @@ internal fun TemplateEditorStartTimeChooser(
     minutes: Int?,
     onTimeChange: (hours: Int?, minutes: Int?) -> Unit,
 ) {
+    var format by remember {
+        mutableStateOf(if (hours != null && (hours > 12 || hours == 0)) TimeFormat.PM else TimeFormat.AM)
+    }
+    val is24Format = DateFormat.is24HourFormat(LocalContext.current)
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
@@ -366,17 +393,30 @@ internal fun TemplateEditorStartTimeChooser(
             tint = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         Row(
+            modifier = Modifier.weight(1f),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             OutlinedTextField(
                 modifier = Modifier.weight(1f),
-                value = hours?.toString() ?: "",
+                value = if (is24Format || format == TimeFormat.AM) {
+                    hours?.toString() ?: ""
+                } else {
+                    if (hours == 0) "12" else hours?.minus(12)?.toString() ?: ""
+                },
                 onValueChange = {
                     val time = it.toIntOrNull()
-                    if (time != null && time in 0..23) {
+                    if (time != null && is24Format && time in 0..23) {
                         onTimeChange(time, minutes)
-                    } else if (it.isBlank()) onTimeChange(null, minutes)
+                    } else if (time != null && !is24Format && time in 1..12) {
+                        val formatTime = when (format) {
+                            TimeFormat.PM -> if (time != 12) time + 12 else 0
+                            TimeFormat.AM -> time
+                        }
+                        onTimeChange(formatTime, minutes)
+                    } else if (it.isBlank()) {
+                        onTimeChange(null, minutes)
+                    }
                 },
                 label = { Text(text = HomeThemeRes.strings.startTimeLabel) },
             )
@@ -392,10 +432,21 @@ internal fun TemplateEditorStartTimeChooser(
                     val time = it.toIntOrNull()
                     if (time != null && time in 0..59) {
                         onTimeChange(hours, time)
-                    } else if (it.isBlank()) onTimeChange(hours, null)
+                    } else if (it.isBlank()) {
+                        onTimeChange(hours, null)
+                    }
                 },
             )
         }
+        TimeFormatSelector(
+            modifier = Modifier.align(Alignment.Bottom),
+            isVisible = !is24Format,
+            format = format,
+            onChangeFormat = {
+                onTimeChange(null, minutes)
+                format = it
+            },
+        )
     }
 }
 
@@ -406,6 +457,10 @@ internal fun TemplateEditorEndTimeChooser(
     minutes: Int?,
     onTimeChange: (hours: Int?, minutes: Int?) -> Unit,
 ) {
+    val is24Format = DateFormat.is24HourFormat(LocalContext.current)
+    var format by remember {
+        mutableStateOf(if (hours != null && (hours > 12 || hours == 0)) TimeFormat.PM else TimeFormat.AM)
+    }
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
@@ -417,17 +472,34 @@ internal fun TemplateEditorEndTimeChooser(
             tint = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         Row(
+            modifier = Modifier.weight(1f),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             OutlinedTextField(
                 modifier = Modifier.weight(1f).align(Alignment.Bottom),
-                value = hours?.toString() ?: "",
+                value = if (is24Format || format == TimeFormat.AM) {
+                    hours?.toString() ?: ""
+                } else {
+                    hours?.minus(12)?.toString() ?: ""
+                },
                 onValueChange = {
                     val time = it.toIntOrNull()
-                    if (time != null && time in 0..23) {
+                    if (time != null && is24Format && time in 0..23) {
                         onTimeChange(time, minutes)
-                    } else if (it.isBlank()) onTimeChange(null, minutes)
+                    } else if (time != null && !is24Format) {
+                        if ((time in 1..12 && format == TimeFormat.AM) ||
+                            (time in 1..11 && format == TimeFormat.PM)
+                        ) {
+                            val formatTime = when (format) {
+                                TimeFormat.PM -> time + 12
+                                TimeFormat.AM -> time
+                            }
+                            onTimeChange(formatTime, minutes)
+                        }
+                    } else if (it.isBlank()) {
+                        onTimeChange(null, minutes)
+                    }
                 },
                 label = { Text(text = HomeThemeRes.strings.endTimeLabel) },
             )
@@ -447,6 +519,15 @@ internal fun TemplateEditorEndTimeChooser(
                 },
             )
         }
+        TimeFormatSelector(
+            modifier = Modifier.align(Alignment.Bottom),
+            isVisible = !is24Format,
+            format = format,
+            onChangeFormat = {
+                onTimeChange(null, minutes)
+                format = it
+            },
+        )
     }
 }
 

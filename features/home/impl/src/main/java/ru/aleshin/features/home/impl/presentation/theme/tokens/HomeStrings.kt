@@ -96,6 +96,8 @@ internal data class HomeStrings(
     val statisticsLabel: String,
     val importanceLabel: String,
     val subCategoryEmptyTitle: String,
+    val amFormatTitle: String,
+    val pmFormatTitle: String,
 )
 
 internal val russianHomeString = HomeStrings(
@@ -174,6 +176,8 @@ internal val russianHomeString = HomeStrings(
     statisticsLabel = "Учёт статистики",
     importanceLabel = "Высокий приоритет",
     subCategoryEmptyTitle = "Отсутствует",
+    amFormatTitle = "AM",
+    pmFormatTitle = "PM",
 )
 
 internal val englishHomeString = HomeStrings(
@@ -252,6 +256,8 @@ internal val englishHomeString = HomeStrings(
     statisticsLabel = "Consider in statistics",
     importanceLabel = "High priority",
     subCategoryEmptyTitle = "Absent",
+    amFormatTitle = "AM",
+    pmFormatTitle = "PM",
 )
 
 internal val LocalHomeStrings = staticCompositionLocalOf<HomeStrings> {
