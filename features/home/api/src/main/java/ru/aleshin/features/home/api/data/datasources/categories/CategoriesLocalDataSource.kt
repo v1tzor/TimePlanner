@@ -27,6 +27,7 @@ import javax.inject.Inject
 interface CategoriesLocalDataSource {
 
     suspend fun addMainCategory(mainCategory: MainCategoryEntity): Long
+    suspend fun addMainCategories(mainCategories: List<MainCategoryEntity>)
     suspend fun fetchMainCategories(): List<MainCategoryDetails>
     suspend fun fetchCategoriesByType(mainCategory: MainCategory): MainCategoryDetails?
     suspend fun updateMainCategory(mainCategory: MainCategoryEntity)
@@ -39,6 +40,10 @@ interface CategoriesLocalDataSource {
 
         override suspend fun addMainCategory(mainCategory: MainCategoryEntity): Long {
             return mainCategoriesDao.addCategory(mainCategory)
+        }
+
+        override suspend fun addMainCategories(mainCategories: List<MainCategoryEntity>) {
+            mainCategoriesDao.addCategories(mainCategories)
         }
 
         override suspend fun fetchMainCategories(): List<MainCategoryDetails> {

@@ -22,7 +22,7 @@ import ru.aleshin.features.home.api.domains.entities.categories.SubCategory
  * @author Stanislav Aleshin on 07.03.2023.
  */
 interface SubCategoriesRepository {
-    suspend fun addSubCategory(category: SubCategory)
+    suspend fun addSubCategories(categories: List<SubCategory>)
     suspend fun fetchSubCategories(type: MainCategory): List<SubCategory>
     suspend fun updateSubCategory(category: SubCategory)
     suspend fun deleteSubCategory(category: SubCategory)

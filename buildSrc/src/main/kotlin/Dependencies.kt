@@ -32,6 +32,10 @@ object Dependencies {
         const val lifecycleRuntime = "androidx.lifecycle:lifecycle-runtime-ktx:${Versions.lifecycle}"
     }
 
+    object Google {
+        const val gson = "com.google.code.gson:gson:${Versions.gson}"
+    }
+
     object Charts {
         val library = "ma.hu:compose-charts:${Versions.charts}"
         val libraryHimanshoe = "com.himanshoe:charty:${Versions.chartsHm}"

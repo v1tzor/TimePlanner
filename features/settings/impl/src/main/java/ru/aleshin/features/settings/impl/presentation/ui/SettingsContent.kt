@@ -15,7 +15,12 @@
  */
 package ru.aleshin.features.settings.impl.presentation.ui
 
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -31,7 +36,10 @@ import ru.aleshin.features.settings.api.domain.entities.LanguageType
 import ru.aleshin.features.settings.api.domain.entities.ThemeColorsType
 import ru.aleshin.features.settings.api.domain.entities.ThemeSettings
 import ru.aleshin.features.settings.impl.presentation.theme.SettingsThemeRes
+import ru.aleshin.features.settings.impl.presentation.ui.contract.RestoreBackupContract
+import ru.aleshin.features.settings.impl.presentation.ui.contract.SaveBackupContract
 import ru.aleshin.features.settings.impl.presentation.ui.contract.SettingsViewState
+import ru.aleshin.features.settings.impl.presentation.ui.contract.launch
 import ru.aleshin.features.settings.impl.presentation.ui.views.LanguageChooser
 import ru.aleshin.features.settings.impl.presentation.ui.views.ThemeColorsChooser
 
@@ -43,9 +51,12 @@ internal fun SettingsContent(
     state: SettingsViewState,
     modifier: Modifier = Modifier,
     onClearData: () -> Unit,
+    onRestoreData: (uri: Uri) -> Unit,
+    onBackupData: (uri: Uri) -> Unit,
     onUpdateThemeSettings: (ThemeSettings) -> Unit,
 ) {
-    Column(modifier = modifier.fillMaxSize()) {
+    val scrollState = rememberScrollState()
+    Column(modifier = modifier.fillMaxSize().verticalScroll(scrollState)) {
         if (state.themeSettings != null) {
             Column(
                 modifier = Modifier.padding(16.dp),
@@ -67,7 +78,12 @@ internal fun SettingsContent(
                 modifier = Modifier.padding(horizontal = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                DataSettingsSection(onClear = onClearData)
+                DataSettingsSection(
+                    onClear = onClearData,
+                    isLoading = state.isBackupLoading,
+                    onBackupData = onBackupData,
+                    onRestoreData = onRestoreData,
+                )
             }
         }
     }
@@ -102,16 +118,23 @@ internal fun MainSettingsSection(
 @Composable
 internal fun DataSettingsSection(
     modifier: Modifier = Modifier,
+    isLoading: Boolean,
+    onRestoreData: (uri: Uri) -> Unit,
+    onBackupData: (uri: Uri) -> Unit,
     onClear: () -> Unit,
 ) {
-    Column(modifier = modifier) {
+    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(16.dp)) {
         Text(
-            modifier = Modifier.padding(bottom = 8.dp),
             text = SettingsThemeRes.strings.mainSettingsClearDataTitle,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.labelMedium,
         )
         ClearDataView(onClear = onClear)
+        BackupDataView(
+            onBackupData = onBackupData,
+            onRestoreData = onRestoreData,
+            isLoading = isLoading,
+        )
     }
 }
 
@@ -122,7 +145,6 @@ internal fun ClearDataView(
 ) {
     var isOpenDialog by rememberSaveable { mutableStateOf(false) }
     Surface(
-        onClick = { isOpenDialog = true },
         modifier = modifier.fillMaxWidth(),
         shape = MaterialTheme.shapes.medium,
         tonalElevation = TimePlannerRes.elevations.levelTwo,
@@ -151,6 +173,59 @@ internal fun ClearDataView(
                 onClear()
             },
         )
+    }
+}
+
+@Composable
+internal fun BackupDataView(
+    modifier: Modifier = Modifier,
+    isLoading: Boolean,
+    onRestoreData: (uri: Uri) -> Unit,
+    onBackupData: (uri: Uri) -> Unit,
+) {
+    val restoreBackupLauncher = rememberLauncherForActivityResult(RestoreBackupContract) { uri ->
+        if (uri != null) onRestoreData(uri)
+    }
+    val saveBackupLauncher = rememberLauncherForActivityResult(SaveBackupContract) { uri ->
+        if (uri != null) onBackupData(uri)
+    }
+    Surface(
+        modifier = modifier.fillMaxWidth().animateContentSize(),
+        shape = MaterialTheme.shapes.medium,
+        tonalElevation = TimePlannerRes.elevations.levelTwo,
+    ) {
+        Row(
+            modifier = Modifier.padding(vertical = 12.dp, horizontal = 16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(24.dp),
+        ) {
+            Text(
+                text = SettingsThemeRes.strings.backupDataTitle,
+                color = MaterialTheme.colorScheme.onSurface,
+                style = MaterialTheme.typography.titleMedium,
+            )
+            if (!isLoading) {
+                Column(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    Button(
+                        modifier = Modifier.height(40.dp).fillMaxWidth(),
+                        onClick = { saveBackupLauncher.launch() },
+                        content = { Text(text = SettingsThemeRes.strings.backupDataButtonTitle) },
+                    )
+                    Button(
+                        modifier = Modifier.height(40.dp).fillMaxWidth(),
+                        onClick = { restoreBackupLauncher.launch() },
+                        content = { Text(text = SettingsThemeRes.strings.restoreDataButtonTitle) },
+                    )
+                }
+            } else {
+                Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.CenterEnd) {
+                    CircularProgressIndicator()
+                }
+            }
+        }
     }
 }
 

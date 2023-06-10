@@ -16,6 +16,7 @@
 package ru.aleshin.features.settings.impl.domain.common
 
 import ru.aleshin.core.utils.handlers.ErrorHandler
+import java.io.IOException
 import javax.inject.Inject
 
 /**
@@ -25,6 +26,7 @@ internal interface SettingsErrorHandler : ErrorHandler<SettingsFailures> {
 
     class Base @Inject constructor() : SettingsErrorHandler {
         override fun handle(throwable: Throwable) = when (throwable) {
+            is IOException -> SettingsFailures.BackupError(throwable)
             else -> SettingsFailures.OtherError(throwable)
         }
     }

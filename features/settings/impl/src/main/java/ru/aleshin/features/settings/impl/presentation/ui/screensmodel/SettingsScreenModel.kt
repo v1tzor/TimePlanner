@@ -18,8 +18,10 @@ package ru.aleshin.features.settings.impl.presentation.ui.screensmodel
 import androidx.compose.runtime.Composable
 import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
+import kotlinx.coroutines.Dispatchers
 import ru.aleshin.core.utils.managers.CoroutineManager
 import ru.aleshin.core.utils.platform.screenmodel.BaseScreenModel
+import ru.aleshin.core.utils.platform.screenmodel.work.BackgroundWorkKey
 import ru.aleshin.core.utils.platform.screenmodel.work.WorkScope
 import ru.aleshin.features.settings.impl.di.holder.SettingsComponentHolder
 import ru.aleshin.features.settings.impl.presentation.ui.contract.SettingsAction
@@ -33,6 +35,7 @@ import javax.inject.Inject
  */
 internal class SettingsScreenModel @Inject constructor(
     private val settingsWorkProcessor: SettingsWorkProcessor,
+    private val dataWorkProcessor: DataWorkProcessor,
     stateCommunicator: SettingsStateCommunicator,
     effectCommunicator: SettingsEffectCommunicator,
     coroutineManager: CoroutineManager,
@@ -51,18 +54,27 @@ internal class SettingsScreenModel @Inject constructor(
 
     override suspend fun WorkScope<SettingsViewState, SettingsAction, SettingsEffect>.handleEvent(
         event: SettingsEvent,
-    ) = when (event) {
-        is SettingsEvent.Init -> {
-            settingsWorkProcessor.loadAllSettings().handleWork()
-        }
-        is SettingsEvent.ChangedThemeSettings -> {
-            settingsWorkProcessor.updateThemeSettings(event.themeSettings).handleWork()
-        }
-        is SettingsEvent.PressResetButton -> {
-            settingsWorkProcessor.resetSettings().handleWork()
-        }
-        is SettingsEvent.PressClearDataButton -> {
-            settingsWorkProcessor.clearData().handleWork()
+    ) {
+        when (event) {
+            is SettingsEvent.Init -> {
+                settingsWorkProcessor.loadAllSettings().handleWork()
+            }
+            is SettingsEvent.ChangedThemeSettings -> {
+                settingsWorkProcessor.updateThemeSettings(event.themeSettings).handleWork()
+            }
+            is SettingsEvent.PressResetButton -> {
+                settingsWorkProcessor.resetSettings().handleWork()
+            }
+            is SettingsEvent.PressClearDataButton -> launchBackgroundWork(SettingsWorkKey.DATA_WORK, Dispatchers.IO) {
+                dataWorkProcessor.work(DataWorkCommand.ClearAllData).collectAndHandleWork()
+            }
+            is SettingsEvent.PressRestoreBackupData -> launchBackgroundWork(SettingsWorkKey.DATA_WORK, Dispatchers.IO) {
+                dataWorkProcessor.work(DataWorkCommand.RestoreBackupData(event.uri)).collectAndHandleWork()
+            }
+            is SettingsEvent.PressSaveBackupData -> launchBackgroundWork(SettingsWorkKey.DATA_WORK, Dispatchers.IO) {
+                dataWorkProcessor.work(DataWorkCommand.SaveBackupData(event.uri)).collectAndHandleWork()
+            }
+            is SettingsEvent.StopLoading -> sendAction(SettingsAction.ShowLoadingBackup(false))
         }
     }
 
@@ -71,10 +83,14 @@ internal class SettingsScreenModel @Inject constructor(
             is SettingsAction.ChangeAllSettings -> currentState.copy(
                 themeSettings = action.settings.themeSettings,
                 failure = null,
+                isBackupLoading = false,
             )
             is SettingsAction.ChangeThemeSettings -> currentState.copy(
                 themeSettings = action.settings,
                 failure = null,
+            )
+            is SettingsAction.ShowLoadingBackup -> currentState.copy(
+                isBackupLoading = action.isLoading,
             )
         }
 
@@ -82,6 +98,10 @@ internal class SettingsScreenModel @Inject constructor(
         super.onDispose()
         SettingsComponentHolder.clear()
     }
+}
+
+internal enum class SettingsWorkKey : BackgroundWorkKey {
+    DATA_WORK,
 }
 
 @Composable

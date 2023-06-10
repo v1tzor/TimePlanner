@@ -32,6 +32,10 @@ interface SchedulesDao {
     suspend fun fetchDailySchedulesByRange(start: Long, end: Long): List<ScheduleDetails>
 
     @Transaction
+    @Query("SELECT * FROM dailySchedules")
+    suspend fun fetchAllSchedules(): List<ScheduleDetails>
+
+    @Transaction
     @Query("SELECT * FROM dailySchedules WHERE date = :date")
     suspend fun fetchDailyScheduleByDate(date: Long): ScheduleDetails?
 
@@ -41,11 +45,11 @@ interface SchedulesDao {
     @Update
     suspend fun updateTimeTasks(schedules: List<TimeTaskEntity>)
 
-    @Insert
-    suspend fun addDailySchedule(schedule: DailyScheduleEntity)
+    @Insert(entity = DailyScheduleEntity::class)
+    suspend fun addDailySchedules(schedules: List<DailyScheduleEntity>)
 
-    @Insert
-    suspend fun addTimeTasks(tasks: List<TimeTaskEntity>)
+    @Insert(entity = TimeTaskEntity::class)
+    suspend fun addTimeTasks(tasks: List<TimeTaskEntity>): List<Long?>
 
     @Delete
     suspend fun removeDailySchedule(schedule: DailyScheduleEntity)

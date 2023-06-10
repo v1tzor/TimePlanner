@@ -28,6 +28,9 @@ interface TemplatesDao {
     @Insert(entity = TemplateEntity::class)
     suspend fun addTemplate(template: TemplateEntity): Long
 
+    @Insert(entity = TemplateEntity::class)
+    fun addTemplates(templates: List<TemplateEntity>)
+
     @Transaction
     @Query("SELECT * FROM timeTaskTemplates")
     suspend fun fetchAllTemplates(): List<TemplateDetails>

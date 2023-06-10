@@ -34,8 +34,11 @@ interface MainCategoriesDao {
     @Query("SELECT * FROM mainCategories WHERE id = :id")
     suspend fun fetchCategoriesById(id: Int): MainCategoryDetails?
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addCategory(entity: MainCategoryEntity): Long
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun addCategories(entities: List<MainCategoryEntity>)
 
     @Query("DELETE FROM mainCategories WHERE id = :id")
     suspend fun removeCategory(id: Int)

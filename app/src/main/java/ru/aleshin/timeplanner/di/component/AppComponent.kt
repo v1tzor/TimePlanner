@@ -11,14 +11,13 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License.
-*/
+ * imitations under the License.
+ */
 package ru.aleshin.timeplanner.di.component
 
 import android.content.Context
 import dagger.BindsInstance
 import dagger.Component
-import ru.aleshin.core.utils.di.ApplicationContext
 import ru.aleshin.core.utils.navigation.navigator.NavigatorManager
 import ru.aleshin.core.utils.notifications.NotificationCreator
 import ru.aleshin.features.analytics.impl.di.AnalyticsFeatureDependencies
@@ -64,7 +63,7 @@ interface AppComponent :
     @Component.Builder
     interface Builder {
         @BindsInstance
-        fun applicationContext(@ApplicationContext context: Context): Builder
+        fun applicationContext(context: Context): Builder
         fun navigationModule(module: NavigationModule): Builder
         fun featureModule(module: FeatureModule): Builder
         fun dataBaseModule(module: DataBaseModule): Builder

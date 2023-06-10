@@ -18,14 +18,20 @@ package ru.aleshin.features.settings.impl.presentation.ui
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.core.screen.Screen
 import kotlinx.coroutines.launch
 import ru.aleshin.core.utils.managers.LocalDrawerManager
 import ru.aleshin.core.utils.platform.screen.ScreenContent
+import ru.aleshin.features.settings.impl.presentation.mappers.mapToMessage
 import ru.aleshin.features.settings.impl.presentation.theme.SettingsTheme
+import ru.aleshin.features.settings.impl.presentation.theme.SettingsThemeRes
+import ru.aleshin.features.settings.impl.presentation.ui.contract.SettingsEffect
 import ru.aleshin.features.settings.impl.presentation.ui.contract.SettingsEvent
 import ru.aleshin.features.settings.impl.presentation.ui.contract.SettingsViewState
 import ru.aleshin.features.settings.impl.presentation.ui.screensmodel.rememberSettingsScreenModel
@@ -43,7 +49,9 @@ internal class SettingsScreen @Inject constructor() : Screen {
         initialState = SettingsViewState(),
     ) { state ->
         SettingsTheme {
+            val strings = SettingsThemeRes.strings
             val scope = rememberCoroutineScope()
+            val snackbarState = remember { SnackbarHostState() }
             val drawerManager = LocalDrawerManager.current
 
             Scaffold(
@@ -52,6 +60,8 @@ internal class SettingsScreen @Inject constructor() : Screen {
                     SettingsContent(
                         state = state,
                         modifier = Modifier.padding(paddingValues),
+                        onBackupData = { dispatchEvent(SettingsEvent.PressSaveBackupData(it)) },
+                        onRestoreData = { dispatchEvent(SettingsEvent.PressRestoreBackupData(it)) },
                         onClearData = { dispatchEvent(SettingsEvent.PressClearDataButton) },
                         onUpdateThemeSettings = { themeSettings ->
                             dispatchEvent(SettingsEvent.ChangedThemeSettings(themeSettings))
@@ -64,7 +74,22 @@ internal class SettingsScreen @Inject constructor() : Screen {
                         onMenuButtonClick = { scope.launch { drawerManager?.openDrawer() } },
                     )
                 },
+                snackbarHost = {
+                    SnackbarHost(hostState = snackbarState)
+                },
             )
+
+            handleEffect { effect ->
+                when (effect) {
+                    is SettingsEffect.ShowError -> {
+                        dispatchEvent(SettingsEvent.StopLoading)
+                        snackbarState.showSnackbar(
+                            message = effect.failures.mapToMessage(strings),
+                            withDismissAction = true,
+                        )
+                    }
+                }
+            }
         }
     }
 }

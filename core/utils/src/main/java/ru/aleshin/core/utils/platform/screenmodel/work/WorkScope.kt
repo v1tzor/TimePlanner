@@ -11,14 +11,16 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License.
-*/
+ * imitations under the License.
+ */
 package ru.aleshin.core.utils.platform.screenmodel.work
 
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import ru.aleshin.core.utils.functional.Either
 import ru.aleshin.core.utils.managers.CoroutineBlock
 import ru.aleshin.core.utils.platform.screenmodel.contract.BaseAction
@@ -34,6 +36,7 @@ interface WorkScope<S : BaseViewState, A : BaseAction, F : BaseUiEffect> : WorkR
 
     fun launchBackgroundWork(
         key: BackgroundWorkKey,
+        dispatcher: CoroutineDispatcher? = null,
         scope: CoroutineScope? = null,
         block: CoroutineBlock,
     ): Job
@@ -63,6 +66,7 @@ interface WorkScope<S : BaseViewState, A : BaseAction, F : BaseUiEffect> : WorkR
 
         override fun launchBackgroundWork(
             key: BackgroundWorkKey,
+            dispatcher: CoroutineDispatcher?,
             scope: CoroutineScope?,
             block: CoroutineBlock,
         ): Job {
@@ -72,7 +76,9 @@ interface WorkScope<S : BaseViewState, A : BaseAction, F : BaseUiEffect> : WorkR
                     backgroundWorkMap.remove(key)
                 }
             }
-            return (scope ?: coroutineScope).launch(block = block).apply {
+            return (scope ?: coroutineScope).launch {
+                dispatcher?.let { withContext(it, block) } ?: block()
+            }.apply {
                 backgroundWorkMap[key] = this
                 start()
             }

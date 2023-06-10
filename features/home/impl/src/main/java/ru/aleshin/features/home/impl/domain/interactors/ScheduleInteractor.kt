@@ -54,7 +54,7 @@ internal interface ScheduleInteractor {
             val currentDate = dateManager.fetchBeginningCurrentDay()
             val status = statusManager.fetchState(requiredDay, currentDate)
             val schedule = Schedule(date = requiredDay.time, status = status)
-            scheduleRepository.createSchedule(schedule)
+            scheduleRepository.createSchedules(listOf(schedule))
         }
 
         override suspend fun updateSchedule(schedule: Schedule) = eitherWrapper.wrap {

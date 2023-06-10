@@ -30,8 +30,8 @@ class SubCategoriesRepositoryImpl @Inject constructor(
     private val localDataSource: SubCategoriesLocalDataSource,
 ) : SubCategoriesRepository {
 
-    override suspend fun addSubCategory(category: SubCategory) {
-        localDataSource.addSubCategory(category.mapToData())
+    override suspend fun addSubCategories(categories: List<SubCategory>) {
+        localDataSource.addSubCategories(categories.map { it.mapToData() })
     }
 
     override suspend fun fetchSubCategories(type: MainCategory): List<SubCategory> {

@@ -19,6 +19,7 @@ import ru.aleshin.core.utils.functional.TimeRange
 import ru.aleshin.features.home.api.data.datasources.schedules.SchedulesLocalDataSource
 import ru.aleshin.features.home.api.data.mappers.schedules.ScheduleDataToDomainMapper
 import ru.aleshin.features.home.api.data.mappers.schedules.mapToData
+import ru.aleshin.features.home.api.data.models.timetasks.TimeTaskEntity
 import ru.aleshin.features.home.api.domains.entities.schedules.Schedule
 import ru.aleshin.features.home.api.domains.repository.ScheduleRepository
 import javax.inject.Inject
@@ -31,7 +32,7 @@ class ScheduleRepositoryImpl @Inject constructor(
     private val mapperToDomain: ScheduleDataToDomainMapper,
 ) : ScheduleRepository {
 
-    override suspend fun fetchSchedulesByRange(timeRange: TimeRange): List<Schedule> {
+    override suspend fun fetchSchedulesByRange(timeRange: TimeRange?): List<Schedule> {
         return localDataSource.fetchScheduleByRange(timeRange).map { mapperToDomain.map(it) }
     }
 
@@ -39,10 +40,14 @@ class ScheduleRepositoryImpl @Inject constructor(
         return localDataSource.fetchScheduleByDate(date)?.map(mapperToDomain)
     }
 
-    override suspend fun createSchedule(schedule: Schedule) {
-        val dailySchedule = schedule.mapToData()
-        val timeTasks = schedule.timeTasks.map { it.mapToData(schedule.date) }
-        localDataSource.addSchedule(dailySchedule, timeTasks)
+    override suspend fun createSchedules(schedules: List<Schedule>) {
+        val dailySchedules = schedules.map { it.mapToData() }
+        val timeTasks = mutableListOf<TimeTaskEntity>().apply {
+            schedules.forEach { schedule ->
+                addAll(schedule.timeTasks.map { it.mapToData(schedule.date) })
+            }
+        }
+        localDataSource.addSchedules(dailySchedules, timeTasks)
     }
 
     override suspend fun updateSchedule(schedule: Schedule) {

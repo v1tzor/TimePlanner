@@ -22,7 +22,7 @@ import ru.aleshin.features.home.api.domains.entities.categories.MainCategory
  * @author Stanislav Aleshin on 15.04.2023.
  */
 interface CategoriesRepository {
-    suspend fun addMainCategory(category: MainCategory)
+    suspend fun addMainCategories(categories: List<MainCategory>)
     suspend fun fetchCategories(): List<Categories>
     suspend fun fetchCategoriesByType(mainCategory: MainCategory): Categories?
     suspend fun updateMainCategory(category: MainCategory)

@@ -21,7 +21,8 @@ import ru.aleshin.features.home.api.domains.entities.template.Template
  * @author Stanislav Aleshin on 08.03.2023.
  */
 interface TemplatesRepository {
-    suspend fun addTemplate(template: Template): Int
+    suspend fun addTemplates(templates: List<Template>)
+    suspend fun addTemplate(templates: Template): Int
     suspend fun fetchAllTemplates(): List<Template>
     suspend fun updateTemplate(template: Template)
     suspend fun deleteTemplateById(id: Int)

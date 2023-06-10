@@ -15,6 +15,7 @@
  */
 package ru.aleshin.features.settings.impl.presentation.ui.contract
 
+import android.net.Uri
 import kotlinx.parcelize.Parcelize
 import ru.aleshin.core.utils.platform.screenmodel.contract.*
 import ru.aleshin.features.settings.api.domain.entities.ThemeSettings
@@ -28,12 +29,16 @@ import ru.aleshin.features.settings.impl.domain.entities.Settings
 internal data class SettingsViewState(
     val themeSettings: ThemeSettings? = null,
     val failure: SettingsFailures? = null,
+    val isBackupLoading: Boolean = false,
 ) : BaseViewState
 
 internal sealed class SettingsEvent : BaseEvent {
     object Init : SettingsEvent()
     object PressResetButton : SettingsEvent()
     object PressClearDataButton : SettingsEvent()
+    object StopLoading : SettingsEvent()
+    data class PressSaveBackupData(val uri: Uri) : SettingsEvent()
+    data class PressRestoreBackupData(val uri: Uri) : SettingsEvent()
     data class ChangedThemeSettings(val themeSettings: ThemeSettings) : SettingsEvent()
 }
 
@@ -41,7 +46,8 @@ internal sealed class SettingsEffect : BaseUiEffect {
     data class ShowError(val failures: SettingsFailures) : SettingsEffect()
 }
 
-internal sealed class SettingsAction : SettingsEffect(), BaseAction {
+internal sealed class SettingsAction : BaseAction {
+    data class ShowLoadingBackup(val isLoading: Boolean) : SettingsAction()
     data class ChangeAllSettings(val settings: Settings) : SettingsAction()
     data class ChangeThemeSettings(val settings: ThemeSettings) : SettingsAction()
 }

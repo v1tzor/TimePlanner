@@ -43,6 +43,9 @@ internal data class SettingsStrings(
     val backupDataTitle: String,
     val backupDataButtonTitle: String,
     val restoreDataButtonTitle: String,
+    val errorBackupMessage: String,
+    val errorBackupFileMessage: String,
+    val otherError: String,
 )
 
 internal val russianSettingsString = SettingsStrings(
@@ -67,6 +70,9 @@ internal val russianSettingsString = SettingsStrings(
     backupDataTitle = "Резервная копия",
     backupDataButtonTitle = "Сохранить",
     restoreDataButtonTitle = "Восстановить",
+    errorBackupMessage = "Ошибка резервного копирования",
+    errorBackupFileMessage = "Ошибка при работе с файлом",
+    otherError = "Ошибка! Обратитесь к разработчику.",
 )
 
 internal val englishSettingsString = SettingsStrings(
@@ -91,6 +97,9 @@ internal val englishSettingsString = SettingsStrings(
     backupDataTitle = "Backup copy",
     backupDataButtonTitle = "Save",
     restoreDataButtonTitle = "Restore",
+    errorBackupMessage = "Backup Error",
+    errorBackupFileMessage = "Error when working with the file",
+    otherError = "Error! Contact the developer.",
 )
 
 internal val LocalSettingsStrings = staticCompositionLocalOf<SettingsStrings> {

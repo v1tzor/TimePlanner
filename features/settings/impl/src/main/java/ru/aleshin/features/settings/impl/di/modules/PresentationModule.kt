@@ -24,6 +24,8 @@ import ru.aleshin.features.settings.api.navigation.SettingsFeatureStarter
 import ru.aleshin.features.settings.impl.navigation.NavigationManager
 import ru.aleshin.features.settings.impl.navigation.SettingsFeatureStarterImpl
 import ru.aleshin.features.settings.impl.presentation.ui.SettingsScreen
+import ru.aleshin.features.settings.impl.presentation.ui.managers.BackupManager
+import ru.aleshin.features.settings.impl.presentation.ui.screensmodel.DataWorkProcessor
 import ru.aleshin.features.settings.impl.presentation.ui.screensmodel.SettingsEffectCommunicator
 import ru.aleshin.features.settings.impl.presentation.ui.screensmodel.SettingsScreenModel
 import ru.aleshin.features.settings.impl.presentation.ui.screensmodel.SettingsStateCommunicator
@@ -45,6 +47,10 @@ internal interface PresentationModule {
 
     @Binds
     @FeatureScope
+    fun bindBackupManager(manager: BackupManager.Base): BackupManager
+
+    @Binds
+    @FeatureScope
     fun bindSettingsScreen(screen: SettingsScreen): Screen
 
     @Binds
@@ -60,4 +66,7 @@ internal interface PresentationModule {
 
     @Binds
     fun bindSettingsWorkProcessor(processor: SettingsWorkProcessor.Base): SettingsWorkProcessor
+
+    @Binds
+    fun bindDataWorkProcessor(processor: DataWorkProcessor.Base): DataWorkProcessor
 }

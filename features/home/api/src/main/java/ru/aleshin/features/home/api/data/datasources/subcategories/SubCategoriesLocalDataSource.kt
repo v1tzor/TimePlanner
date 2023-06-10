@@ -24,7 +24,7 @@ import javax.inject.Inject
  */
 interface SubCategoriesLocalDataSource {
 
-    suspend fun addSubCategory(subCategory: SubCategoryEntity)
+    suspend fun addSubCategories(subCategories: List<SubCategoryEntity>)
     suspend fun fetchSubCategoriesByType(type: MainCategory): List<SubCategoryEntity>
     suspend fun updateSubCategory(subCategory: SubCategoryEntity)
     suspend fun removeSubCategory(id: Int)
@@ -34,8 +34,8 @@ interface SubCategoriesLocalDataSource {
         private val subCategoriesDao: SubCategoriesDao,
     ) : SubCategoriesLocalDataSource {
 
-        override suspend fun addSubCategory(subCategory: SubCategoryEntity) {
-            subCategoriesDao.addSubCategory(subCategory)
+        override suspend fun addSubCategories(subCategories: List<SubCategoryEntity>) {
+            subCategoriesDao.addSubCategories(subCategories)
         }
 
         override suspend fun fetchSubCategoriesByType(type: MainCategory): List<SubCategoryEntity> {

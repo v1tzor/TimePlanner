@@ -23,5 +23,6 @@ import ru.aleshin.core.utils.functional.DomainFailures
  */
 @Parcelize
 internal sealed class SettingsFailures : DomainFailures {
+    data class BackupError(val throwable: Throwable) : SettingsFailures()
     data class OtherError(val throwable: Throwable) : SettingsFailures()
 }

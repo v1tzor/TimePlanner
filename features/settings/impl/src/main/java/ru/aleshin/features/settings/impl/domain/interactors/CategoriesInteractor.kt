@@ -15,7 +15,10 @@
  */
 package ru.aleshin.features.settings.impl.domain.interactors
 
+import ru.aleshin.core.utils.functional.DomainResult
 import ru.aleshin.core.utils.functional.UnitDomainResult
+import ru.aleshin.features.home.api.domains.entities.categories.Categories
+import ru.aleshin.features.home.api.domains.entities.categories.SubCategory
 import ru.aleshin.features.home.api.domains.repository.CategoriesRepository
 import ru.aleshin.features.home.api.domains.repository.SubCategoriesRepository
 import ru.aleshin.features.settings.impl.domain.common.SettingsEitherWrapper
@@ -28,6 +31,8 @@ import javax.inject.Inject
 internal interface CategoriesInteractor {
 
     suspend fun removeAllCategories(): UnitDomainResult<SettingsFailures>
+    suspend fun fetchAllCategories(): DomainResult<SettingsFailures, List<Categories>>
+    suspend fun addCategories(categories: List<Categories>): UnitDomainResult<SettingsFailures>
 
     class Base @Inject constructor(
         private val categoriesRepository: CategoriesRepository,
@@ -38,6 +43,18 @@ internal interface CategoriesInteractor {
         override suspend fun removeAllCategories() = eitherWrapper.wrap {
             categoriesRepository.deleteAllCategories()
             subCategoriesRepository.deleteAllSubCategories()
+        }
+
+        override suspend fun fetchAllCategories() = eitherWrapper.wrap {
+            categoriesRepository.fetchCategories()
+        }
+
+        override suspend fun addCategories(categories: List<Categories>) = eitherWrapper.wrap {
+            val subCategories = mutableListOf<SubCategory>().apply {
+                categories.map { it.subCategories }.forEach { addAll(it) }
+            }
+            categoriesRepository.addMainCategories(categories.map { it.mainCategory })
+            subCategoriesRepository.addSubCategories(subCategories)
         }
     }
 }

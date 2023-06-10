@@ -20,7 +20,6 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import ru.aleshin.core.ui.theme.tokens.fetchCoreIcons
-import ru.aleshin.core.utils.di.ApplicationContext
 import ru.aleshin.core.utils.extensions.fetchCurrentLanguage
 import ru.aleshin.features.home.api.domains.entities.categories.MainCategory
 import ru.aleshin.features.home.api.domains.entities.categories.SubCategory
@@ -38,7 +37,7 @@ interface TimeTaskAlarmManager {
     fun deleteNotifyAlarm(timeTask: TimeTask)
 
     class Base @Inject constructor(
-        @ApplicationContext private val context: Context,
+        private val context: Context,
         private val receiverProvider: AlarmReceiverProvider,
     ) : TimeTaskAlarmManager {
 
@@ -96,7 +95,7 @@ interface TimeTaskAlarmManager {
             context,
             requestId,
             alarmIntent,
-            PendingIntent.FLAG_IMMUTABLE,
+            PendingIntent.FLAG_MUTABLE,
         )
     }
 }

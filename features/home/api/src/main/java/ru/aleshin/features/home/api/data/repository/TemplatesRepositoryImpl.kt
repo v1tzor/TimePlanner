@@ -35,8 +35,12 @@ class TemplatesRepositoryImpl @Inject constructor(
         return localDataSource.fetchAllTemplates().map { mapperToDomain.map(it) }
     }
 
-    override suspend fun addTemplate(template: Template): Int {
-        return localDataSource.createTemplate(template.map(mapperToData)).toInt()
+    override suspend fun addTemplate(templates: Template): Int {
+        return localDataSource.createTemplate(templates.map(mapperToData)).toInt()
+    }
+
+    override suspend fun addTemplates(templates: List<Template>) {
+        localDataSource.createTemplates(templates.map { it.map(mapperToData) })
     }
 
     override suspend fun updateTemplate(template: Template) {

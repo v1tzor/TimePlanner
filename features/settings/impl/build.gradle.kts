@@ -77,6 +77,7 @@ dependencies {
     implementation(project(":core:ui"))
     implementation(project(":features:settings:api"))
     implementation(project(":features:home:api"))
+    implementation(project(":features:editor:api"))
 
     implementation(Dependencies.AndroidX.core)
     implementation(Dependencies.AndroidX.appcompat)
@@ -85,6 +86,8 @@ dependencies {
 
     implementation(Dependencies.Compose.ui)
     implementation(Dependencies.Compose.activity)
+
+    implementation(Dependencies.Google.gson)
 
     implementation(Dependencies.Dagger.core)
     kapt(Dependencies.Dagger.kapt)

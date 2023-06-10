@@ -37,7 +37,7 @@ internal interface SubCategoriesInteractor {
     ) : SubCategoriesInteractor {
 
         override suspend fun addSubCategory(subCategory: SubCategory) = eitherWrapper.wrap {
-            subCategoriesRepository.addSubCategory(subCategory)
+            subCategoriesRepository.addSubCategories(listOf(subCategory))
         }
 
         override suspend fun deleteSubCategory(subCategory: SubCategory) = eitherWrapper.wrap {

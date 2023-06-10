@@ -15,7 +15,9 @@
  */
 package ru.aleshin.features.settings.impl.domain.interactors
 
+import ru.aleshin.core.utils.functional.DomainResult
 import ru.aleshin.core.utils.functional.UnitDomainResult
+import ru.aleshin.features.home.api.domains.entities.schedules.Schedule
 import ru.aleshin.features.home.api.domains.repository.ScheduleRepository
 import ru.aleshin.features.settings.impl.domain.common.SettingsEitherWrapper
 import ru.aleshin.features.settings.impl.domain.common.SettingsFailures
@@ -27,6 +29,8 @@ import javax.inject.Inject
 internal interface ScheduleInteractor {
 
     suspend fun removeAllSchedules(): UnitDomainResult<SettingsFailures>
+    suspend fun fetchAllSchedules(): DomainResult<SettingsFailures, List<Schedule>>
+    suspend fun addSchedules(schedules: List<Schedule>): UnitDomainResult<SettingsFailures>
 
     class Base @Inject constructor(
         private val scheduleRepository: ScheduleRepository,
@@ -35,6 +39,14 @@ internal interface ScheduleInteractor {
 
         override suspend fun removeAllSchedules() = eitherWrapper.wrap {
             scheduleRepository.deleteAllSchedules()
+        }
+
+        override suspend fun fetchAllSchedules() = eitherWrapper.wrap {
+            scheduleRepository.fetchSchedulesByRange(null)
+        }
+
+        override suspend fun addSchedules(schedules: List<Schedule>) = eitherWrapper.wrap {
+            scheduleRepository.createSchedules(schedules)
         }
     }
 }

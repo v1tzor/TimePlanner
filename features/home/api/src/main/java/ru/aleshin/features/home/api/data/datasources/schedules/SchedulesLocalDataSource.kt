@@ -26,10 +26,10 @@ import javax.inject.Inject
  */
 interface SchedulesLocalDataSource {
 
-    suspend fun addSchedule(schedule: DailyScheduleEntity, timeTasks: List<TimeTaskEntity>)
+    suspend fun addSchedules(schedules: List<DailyScheduleEntity>, timeTasks: List<TimeTaskEntity>)
     suspend fun addTimeTasks(tasks: List<TimeTaskEntity>)
     suspend fun fetchScheduleByDate(date: Long): ScheduleDetails?
-    suspend fun fetchScheduleByRange(timeRange: TimeRange): List<ScheduleDetails>
+    suspend fun fetchScheduleByRange(timeRange: TimeRange?): List<ScheduleDetails>
     suspend fun updateTimeTasks(timeTasks: List<TimeTaskEntity>)
     suspend fun removeDailySchedule(schedule: DailyScheduleEntity)
     suspend fun removeAllSchedules()
@@ -39,11 +39,11 @@ interface SchedulesLocalDataSource {
         private val scheduleDao: SchedulesDao,
     ) : SchedulesLocalDataSource {
 
-        override suspend fun addSchedule(
-            schedule: DailyScheduleEntity,
+        override suspend fun addSchedules(
+            schedules: List<DailyScheduleEntity>,
             timeTasks: List<TimeTaskEntity>,
         ) {
-            scheduleDao.addDailySchedule(schedule)
+            scheduleDao.addDailySchedules(schedules)
             scheduleDao.addTimeTasks(timeTasks)
         }
 
@@ -55,8 +55,12 @@ interface SchedulesLocalDataSource {
             return scheduleDao.fetchDailyScheduleByDate(date)
         }
 
-        override suspend fun fetchScheduleByRange(timeRange: TimeRange): List<ScheduleDetails> {
-            return scheduleDao.fetchDailySchedulesByRange(timeRange.from.time, timeRange.to.time)
+        override suspend fun fetchScheduleByRange(timeRange: TimeRange?): List<ScheduleDetails> {
+            return if (timeRange != null) {
+                scheduleDao.fetchDailySchedulesByRange(timeRange.from.time, timeRange.to.time)
+            } else {
+                scheduleDao.fetchAllSchedules()
+            }
         }
 
         override suspend fun updateTimeTasks(timeTasks: List<TimeTaskEntity>) {

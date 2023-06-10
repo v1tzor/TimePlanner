@@ -28,6 +28,12 @@ object Constants {
         const val CHANNEL_ID = "timeTaskAlarmChannel"
     }
 
+    object Backup {
+        const val ZIP_FILE_TYPE = "application/zip"
+        const val BACKUP_ZIP_NAME = "timeplanner_backup_%s.zip"
+        const val BACKUP_JSON_NAME = "timeplanner_backup.json"
+    }
+
     object Alarm {
         const val ALARM_NOTIFICATION_ACTION = "ru.aleshin.ALARM_NOTIFICATION_ACTION"
         const val NOTIFICATION_CATEGORY = "ALARM_DATA_CATEGORY"

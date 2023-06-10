@@ -15,7 +15,6 @@
  */
 package ru.aleshin.features.editor.impl.presentation.ui.editor.views
 
-import android.util.Log
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -185,7 +184,6 @@ internal fun SubCategoryDialogChooser(
                         )
                     }
                     item {
-                        Log.d("test", "main -> $mainCategory")
                         if (mainCategory?.id != 0 && mainCategory != null) {
                             AddCategoriesDialogItem(
                                 modifier = Modifier.fillMaxWidth(),

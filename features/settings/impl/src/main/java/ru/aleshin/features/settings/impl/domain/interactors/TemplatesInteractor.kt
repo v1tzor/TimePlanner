@@ -15,7 +15,9 @@
  */
 package ru.aleshin.features.settings.impl.domain.interactors
 
+import ru.aleshin.core.utils.functional.DomainResult
 import ru.aleshin.core.utils.functional.UnitDomainResult
+import ru.aleshin.features.home.api.domains.entities.template.Template
 import ru.aleshin.features.home.api.domains.repository.TemplatesRepository
 import ru.aleshin.features.settings.impl.domain.common.SettingsEitherWrapper
 import ru.aleshin.features.settings.impl.domain.common.SettingsFailures
@@ -27,6 +29,8 @@ import javax.inject.Inject
 internal interface TemplatesInteractor {
 
     suspend fun removeAllTemplates(): UnitDomainResult<SettingsFailures>
+    suspend fun fetchAllTemplates(): DomainResult<SettingsFailures, List<Template>>
+    suspend fun addTemplates(templates: List<Template>): UnitDomainResult<SettingsFailures>
 
     class Base @Inject constructor(
         private val templatesRepository: TemplatesRepository,
@@ -35,6 +39,14 @@ internal interface TemplatesInteractor {
 
         override suspend fun removeAllTemplates() = eitherWrapper.wrap {
             templatesRepository.deleteAllTemplates()
+        }
+
+        override suspend fun fetchAllTemplates() = eitherWrapper.wrap {
+            templatesRepository.fetchAllTemplates()
+        }
+
+        override suspend fun addTemplates(templates: List<Template>) = eitherWrapper.wrap {
+            templatesRepository.addTemplates(templates)
         }
     }
 }

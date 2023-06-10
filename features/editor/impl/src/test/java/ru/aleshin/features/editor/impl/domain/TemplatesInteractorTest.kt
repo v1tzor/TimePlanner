@@ -285,11 +285,20 @@ private class FakeTemplatesRepository : TemplatesRepository {
 
     var errorWhileAction = false
 
-    override suspend fun addTemplate(template: Template): Int {
+    override suspend fun addTemplate(templates: Template): Int {
         addedTemplatesCount++
         return if (!errorWhileAction) {
             val templateId = templatesList.lastOrNull()?.templateId?.inc() ?: 0
-            templatesList.add(template.copy(templateId = templateId)).let { templateId }
+            templatesList.add(templates.copy(templateId = templateId)).let { templateId }
+        } else {
+            throw SQLiteException()
+        }
+    }
+
+    override suspend fun addTemplates(templates: List<Template>) {
+        addedTemplatesCount++
+        if (!errorWhileAction) {
+            templatesList.addAll(templates)
         } else {
             throw SQLiteException()
         }

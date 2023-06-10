@@ -22,8 +22,8 @@ import ru.aleshin.features.home.api.domains.entities.schedules.Schedule
  * @author Stanislav Aleshin on 25.02.2023.
  */
 interface ScheduleRepository {
-    suspend fun createSchedule(schedule: Schedule)
-    suspend fun fetchSchedulesByRange(timeRange: TimeRange): List<Schedule>
+    suspend fun createSchedules(schedules: List<Schedule>)
+    suspend fun fetchSchedulesByRange(timeRange: TimeRange?): List<Schedule>
     suspend fun fetchScheduleByDate(date: Long): Schedule?
     suspend fun updateSchedule(schedule: Schedule)
     suspend fun deleteAllSchedules()

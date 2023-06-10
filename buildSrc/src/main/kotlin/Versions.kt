@@ -25,6 +25,7 @@ object Versions {
     const val lifecycle = "2.5.1" // "2.6.0-beta01"
 
     const val accompanist = "0.28.0"
+    const val gson = "2.10.1"
 
     const val charts = "0.3.5"
     const val chartsHm = "1.0.1"

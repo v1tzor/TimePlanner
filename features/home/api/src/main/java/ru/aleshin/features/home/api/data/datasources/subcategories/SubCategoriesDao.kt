@@ -31,7 +31,7 @@ interface SubCategoriesDao {
     suspend fun fetchSubCategoriesByTypeId(id: Int): List<SubCategoryEntity>
 
     @Insert
-    suspend fun addSubCategory(entity: SubCategoryEntity)
+    suspend fun addSubCategories(entity: List<SubCategoryEntity>)
 
     @Query("DELETE FROM subCategories WHERE id = :id")
     suspend fun removeSubCategory(id: Int)

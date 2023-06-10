@@ -11,8 +11,8 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License.
-*/
+ * imitations under the License.
+ */
 package ru.aleshin.core.utils.notifications
 
 import android.app.Notification
@@ -24,7 +24,6 @@ import android.graphics.Bitmap
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
-import ru.aleshin.core.utils.di.ApplicationContext
 import ru.aleshin.core.utils.notifications.parameters.*
 import javax.inject.Inject
 
@@ -58,7 +57,7 @@ interface NotificationCreator {
     fun createNotifyChannel(channelId: String, channelName: String, priority: NotificationPriority)
 
     class Base @Inject constructor(
-        @ApplicationContext private val context: Context,
+        private val context: Context,
     ) : NotificationCreator {
 
         private val notificationManager: NotificationManager

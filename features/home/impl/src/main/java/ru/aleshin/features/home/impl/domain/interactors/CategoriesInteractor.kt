@@ -44,7 +44,7 @@ internal interface CategoriesInteractor {
         }
 
         override suspend fun addMainCategory(mainCategory: MainCategory) = eitherWrapper.wrap {
-            categoriesRepository.addMainCategory(mainCategory)
+            categoriesRepository.addMainCategories(listOf(mainCategory))
         }
 
         override suspend fun deleteMainCategory(mainCategory: MainCategory) = eitherWrapper.wrap {
