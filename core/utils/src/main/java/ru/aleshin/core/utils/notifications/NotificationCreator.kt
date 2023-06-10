@@ -21,10 +21,12 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.graphics.Bitmap
+import android.media.RingtoneManager
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import ru.aleshin.core.utils.notifications.parameters.*
+import java.lang.Exception
 import javax.inject.Inject
 
 /**
@@ -51,10 +53,15 @@ interface NotificationCreator {
         progress: NotificationProgress? = null,
     ): Notification
 
-    fun showNotify(notification: Notification, notifyId: Int)
-
     @RequiresApi(Build.VERSION_CODES.O)
-    fun createNotifyChannel(channelId: String, channelName: String, priority: NotificationPriority)
+    fun createNotifyChannel(
+        channelId: String,
+        channelName: String,
+        priority: NotificationPriority,
+        defaults: NotificationDefaults,
+    )
+
+    fun showNotify(notification: Notification, notifyId: Int)
 
     class Base @Inject constructor(
         private val context: Context,
@@ -98,7 +105,15 @@ interface NotificationCreator {
                 setAutoCancel(autoCancel)
                 setOngoing(ongoing)
                 if (notificationDefaults.isVibrate) setDefaults(NotificationCompat.DEFAULT_VIBRATE)
-                if (notificationDefaults.isSound) setDefaults(NotificationCompat.DEFAULT_SOUND)
+                if (notificationDefaults.isSound) {
+                    setDefaults(NotificationCompat.DEFAULT_SOUND)
+                    try {
+                        val soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+                        RingtoneManager.getRingtone(context, soundUri).play()
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                }
                 if (notificationDefaults.isLights) setDefaults(NotificationCompat.DEFAULT_LIGHTS)
                 if (progress != null) with(progress) { setProgress(max, value, isIndeterminate) }
                 if (style != null) setStyle(style.style)
@@ -116,8 +131,13 @@ interface NotificationCreator {
             channelId: String,
             channelName: String,
             priority: NotificationPriority,
+            defaults: NotificationDefaults,
         ) {
-            val channel = NotificationChannel(channelId, channelName, priority.importance)
+            val channel = NotificationChannel(channelId, channelName, priority.importance).apply {
+                enableLights(defaults.isLights)
+                enableVibration(defaults.isVibrate)
+                vibrationPattern = longArrayOf(500, 500, 500)
+            }
             notificationManager.createNotificationChannel(channel)
         }
     }

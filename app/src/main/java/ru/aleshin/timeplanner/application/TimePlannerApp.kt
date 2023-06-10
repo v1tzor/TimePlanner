@@ -26,6 +26,7 @@ import ru.aleshin.core.ui.theme.tokens.fetchAppLanguage
 import ru.aleshin.core.ui.theme.tokens.fetchCoreStrings
 import ru.aleshin.core.utils.extensions.fetchLocale
 import ru.aleshin.core.utils.functional.Constants
+import ru.aleshin.core.utils.notifications.parameters.NotificationDefaults
 import ru.aleshin.core.utils.notifications.parameters.NotificationPriority
 import ru.aleshin.timeplanner.di.component.AppComponent
 
@@ -57,6 +58,7 @@ class TimePlannerApp : Application() {
         channelId = Constants.Notification.CHANNEL_ID,
         channelName = coreStrings.timeTaskChannelName,
         priority = NotificationPriority.MAX,
+        defaults = NotificationDefaults(true, true, true),
     )
 }
 

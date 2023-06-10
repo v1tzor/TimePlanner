@@ -11,14 +11,15 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License.
-*/
+ * imitations under the License.
+ */
 package ru.aleshin.timeplanner.presentation.receiver
 
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
 import ru.aleshin.core.ui.theme.tokens.fetchAppLanguage
@@ -26,6 +27,7 @@ import ru.aleshin.core.ui.theme.tokens.fetchCoreStrings
 import ru.aleshin.core.utils.extensions.fetchLocale
 import ru.aleshin.core.utils.functional.Constants
 import ru.aleshin.core.utils.notifications.NotificationCreator
+import ru.aleshin.core.utils.notifications.parameters.NotificationDefaults
 import ru.aleshin.core.utils.notifications.parameters.NotificationPriority
 import ru.aleshin.timeplanner.R
 import ru.aleshin.timeplanner.presentation.ui.main.MainActivity
@@ -57,6 +59,7 @@ class TimeTaskAlarmReceiver : BroadcastReceiver() {
                 autoCancel = true,
                 priority = NotificationPriority.MAX,
                 contentIntent = contentIntent,
+                notificationDefaults = NotificationDefaults(true, true, true),
                 color = ContextCompat.getColor(context, R.color.notification_icon),
             )
             notificationCreator.showNotify(notification, 0)
