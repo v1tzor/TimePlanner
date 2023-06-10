@@ -5,12 +5,13 @@
 Mobile app for planning tasks for the day with multimodule architecture, MVI, Compose, Room, Voyager, AlarmManager, Notification, Charts
 
 Support:
-- Dynamic Color
+- Dynamic Color (min: android 12)
 - Theme: Dark, Light
 - Languages: RU, EN
+- Data backup
+- Scheduled notifications
 
-UI:
-- Material Design 3
+UI - Material Design 3
 
 ## Download
 <a href="https://apt.izzysoft.de/fdroid/index/apk/ru.aleshin.timeplanner" target="_blank">
