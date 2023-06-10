@@ -40,6 +40,7 @@ import ru.aleshin.features.settings.impl.presentation.ui.contract.RestoreBackupC
 import ru.aleshin.features.settings.impl.presentation.ui.contract.SaveBackupContract
 import ru.aleshin.features.settings.impl.presentation.ui.contract.SettingsViewState
 import ru.aleshin.features.settings.impl.presentation.ui.contract.launch
+import ru.aleshin.features.settings.impl.presentation.ui.views.DynamicColorChooser
 import ru.aleshin.features.settings.impl.presentation.ui.views.LanguageChooser
 import ru.aleshin.features.settings.impl.presentation.ui.views.ThemeColorsChooser
 
@@ -65,11 +66,15 @@ internal fun SettingsContent(
                 MainSettingsSection(
                     themeColors = state.themeSettings.themeColors,
                     languageType = state.themeSettings.language,
+                    dynamicColorEnabled = state.themeSettings.isDynamicColorEnable,
                     onThemeColorUpdate = { colorsType ->
-                        onUpdateThemeSettings.invoke(state.themeSettings.copy(themeColors = colorsType))
+                        onUpdateThemeSettings(state.themeSettings.copy(themeColors = colorsType))
                     },
                     onLanguageChanged = { language ->
-                        onUpdateThemeSettings.invoke(state.themeSettings.copy(language = language))
+                        onUpdateThemeSettings(state.themeSettings.copy(language = language))
+                    },
+                    onEnableDynamicColorsChanged = {
+                        onUpdateThemeSettings(state.themeSettings.copy(isDynamicColorEnable = it))
                     },
                 )
                 Divider(modifier = Modifier.padding(top = 8.dp, bottom = 0.dp))
@@ -94,8 +99,10 @@ internal fun MainSettingsSection(
     modifier: Modifier = Modifier,
     themeColors: ThemeColorsType,
     languageType: LanguageType,
+    dynamicColorEnabled: Boolean,
     onThemeColorUpdate: (ThemeColorsType) -> Unit,
     onLanguageChanged: (LanguageType) -> Unit,
+    onEnableDynamicColorsChanged: (Boolean) -> Unit,
 ) {
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(16.dp)) {
         Text(
@@ -107,6 +114,10 @@ internal fun MainSettingsSection(
             modifier = Modifier.fillMaxWidth(),
             currentThemeColors = themeColors,
             onThemeColorUpdate = onThemeColorUpdate,
+        )
+        DynamicColorChooser(
+            dynamicColorEnabled = dynamicColorEnabled,
+            onEnabledChanged = onEnableDynamicColorsChanged,
         )
         LanguageChooser(
             language = languageType,

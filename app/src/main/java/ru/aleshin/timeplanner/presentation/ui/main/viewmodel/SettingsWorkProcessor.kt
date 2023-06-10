@@ -47,6 +47,7 @@ interface SettingsWorkProcessor : FlowWorkProcessor<SettingsWorkCommand, MainAct
                         val action = MainAction.ChangeThemeSettings(
                             language = it.language.mapToUi(),
                             themeColors = it.themeColors.mapToUi(),
+                            enableDynamicColors = it.isDynamicColorEnable,
                         )
                         emit(ActionResult(action))
                     },

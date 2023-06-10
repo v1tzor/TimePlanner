@@ -108,7 +108,9 @@ class DataBaseModule {
         context = context,
         klass = SettingsDataBase::class.java,
         name = SettingsDataBase.NAME,
-    ).createFromAsset("database/settings_prepopulated.db").build()
+    ).createFromAsset("database/settings_prepopulated.db")
+        .addMigrations(SettingsDataBase.MIGRATION_1_2)
+        .build()
 
     @Provides
     @Singleton

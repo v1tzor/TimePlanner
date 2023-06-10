@@ -49,7 +49,7 @@ fun LanguageChooser(
     var isOpenDialog by rememberSaveable { mutableStateOf(false) }
     Surface(
         onClick = { isOpenDialog = true },
-        modifier = modifier.height(56.dp),
+        modifier = modifier.height(60.dp),
         shape = MaterialTheme.shapes.medium,
         tonalElevation = TimePlannerRes.elevations.levelTwo,
     ) {

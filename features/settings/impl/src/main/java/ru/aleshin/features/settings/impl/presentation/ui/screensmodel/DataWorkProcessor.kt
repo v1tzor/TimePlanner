@@ -74,6 +74,7 @@ internal interface DataWorkProcessor : FlowWorkProcessor<DataWorkCommand, Settin
                     }
                     is Either.Left -> EffectResult(SettingsEffect.ShowError(clearResult.data))
                 }
+                delay(Constants.Delay.LOAD_ANIMATION)
                 emit(restoreWorkResult)
             } else if (backupResult is Either.Left) {
                 emit(EffectResult(SettingsEffect.ShowError(backupResult.data)))

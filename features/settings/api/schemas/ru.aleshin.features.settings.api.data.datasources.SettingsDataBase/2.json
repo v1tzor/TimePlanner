@@ -1,0 +1,52 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 2,
+    "identityHash": "3bcdd413f460b629e5902e23bfdc9e07",
+    "entities": [
+      {
+        "tableName": "ThemeSettings",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `language` TEXT NOT NULL, `themeColors` TEXT NOT NULL, `isDynamicColorEnable` INTEGER NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "settings.language",
+            "columnName": "language",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "settings.themeColors",
+            "columnName": "themeColors",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "settings.isDynamicColorEnable",
+            "columnName": "isDynamicColorEnable",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      }
+    ],
+    "views": [],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '3bcdd413f460b629e5902e23bfdc9e07')"
+    ]
+  }
+}

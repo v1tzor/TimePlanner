@@ -17,13 +17,15 @@ package ru.aleshin.features.settings.api.data.datasources
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import ru.aleshin.features.settings.api.data.models.ThemeSettingsEntity
 
 /**
  * @author Stanislav Aleshin on 17.02.2023.
  */
 @Database(
-    version = 1,
+    version = 2,
     entities = [ThemeSettingsEntity::class],
     exportSchema = true,
 )
@@ -33,5 +35,11 @@ abstract class SettingsDataBase : RoomDatabase() {
 
     companion object {
         const val NAME = "SettingsDataBase.db"
+
+        val MIGRATION_1_2 = object : Migration(1, 2) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE ThemeSettings ADD COLUMN isDynamicColorEnable INTEGER DEFAULT 0 NOT NULL",)
+            }
+        }
     }
 }

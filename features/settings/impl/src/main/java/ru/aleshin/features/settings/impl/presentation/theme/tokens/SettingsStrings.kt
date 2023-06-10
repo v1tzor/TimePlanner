@@ -46,6 +46,7 @@ internal data class SettingsStrings(
     val errorBackupMessage: String,
     val errorBackupFileMessage: String,
     val otherError: String,
+    val mainSettingsDynamicColorTitle: String,
 )
 
 internal val russianSettingsString = SettingsStrings(
@@ -73,6 +74,7 @@ internal val russianSettingsString = SettingsStrings(
     errorBackupMessage = "Ошибка резервного копирования",
     errorBackupFileMessage = "Ошибка при работе с файлом",
     otherError = "Ошибка! Обратитесь к разработчику.",
+    mainSettingsDynamicColorTitle = "Динамические цвета",
 )
 
 internal val englishSettingsString = SettingsStrings(
@@ -100,6 +102,7 @@ internal val englishSettingsString = SettingsStrings(
     errorBackupMessage = "Backup Error",
     errorBackupFileMessage = "Error when working with the file",
     otherError = "Error! Contact the developer.",
+    mainSettingsDynamicColorTitle = "Dynamic colors",
 )
 
 internal val LocalSettingsStrings = staticCompositionLocalOf<SettingsStrings> {

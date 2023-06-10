@@ -26,6 +26,7 @@ import ru.aleshin.core.utils.functional.Mapper
 data class ThemeSettings(
     val language: LanguageType = LanguageType.DEFAULT,
     val themeColors: ThemeColorsType = ThemeColorsType.DEFAULT,
+    val isDynamicColorEnable: Boolean = false,
 ) : Parcelable {
     fun <O> map(mapper: Mapper<ThemeSettings, O>) = mapper.map(this)
 }

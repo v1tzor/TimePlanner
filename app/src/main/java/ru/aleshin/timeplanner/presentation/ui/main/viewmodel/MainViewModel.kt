@@ -19,7 +19,6 @@ import ru.aleshin.core.utils.managers.CoroutineManager
 import ru.aleshin.core.utils.platform.communications.state.EffectCommunicator
 import ru.aleshin.core.utils.platform.screenmodel.BaseViewModel
 import ru.aleshin.core.utils.platform.screenmodel.work.WorkScope
-import ru.aleshin.timeplanner.navigation.TabNavigationManager
 import ru.aleshin.timeplanner.presentation.ui.main.contract.MainAction
 import ru.aleshin.timeplanner.presentation.ui.main.contract.MainEffect
 import ru.aleshin.timeplanner.presentation.ui.main.contract.MainEvent
@@ -31,7 +30,6 @@ import javax.inject.Provider
  * @author Stanislav Aleshin on 14.02.2023.
  */
 class MainViewModel @Inject constructor(
-    private val navigationManager: TabNavigationManager,
     private val settingsWorkProcessor: SettingsWorkProcessor,
     communicator: MainStateCommunicator,
     coroutineManager: CoroutineManager,
@@ -50,10 +48,12 @@ class MainViewModel @Inject constructor(
 
     override suspend fun WorkScope<MainViewState, MainAction, MainEffect>.handleEvent(
         event: MainEvent,
-    ) = when (event) {
-        is MainEvent.Init -> launchBackgroundWork(SettingsWorkCommand.LoadThemeSettings) {
-            settingsWorkProcessor.work(SettingsWorkCommand.LoadThemeSettings).collectAndHandleWork()
-        }.let {}
+    ) {
+        when (event) {
+            is MainEvent.Init -> launchBackgroundWork(SettingsWorkCommand.LoadThemeSettings) {
+                settingsWorkProcessor.work(SettingsWorkCommand.LoadThemeSettings).collectAndHandleWork()
+            }
+        }
     }
 
     override suspend fun reduce(
@@ -63,6 +63,7 @@ class MainViewModel @Inject constructor(
         is MainAction.ChangeThemeSettings -> currentState.copy(
             language = action.language,
             colors = action.themeColors,
+            isEnableDynamicColors = action.enableDynamicColors,
         )
     }
 

@@ -47,6 +47,7 @@ class MainActivity : BaseActivity<MainViewState, MainEvent, MainAction, MainEffe
     @Composable
     override fun Content() = ScreenContent(viewModel, MainViewState()) { state ->
         TimePlannerTheme(
+            dynamicColor = state.isEnableDynamicColors,
             themeColorsType = state.colors,
             language = state.language,
         ) {
