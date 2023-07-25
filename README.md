@@ -1,3 +1,4 @@
+![image](https://i.imgur.com/TJtXqpF.png)
 # TimePlanner
 
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/v1tzor/TimePlanner)
@@ -21,43 +22,23 @@ UI - Material Design 3
 <table>
   <tr>
     <td>Home Screen</td>
-     <td>Templates Screen</td>
-     <td>Categories Screen</td>
-  </tr>
-  <tr>
-    <td valign="top"><img src="https://i.imgur.com/UvcjQwU.png" align="left" width="350dp"></td>
-    <td valign="top"><img src="https://i.imgur.com/qWwzGPG.png" align="right" width="350dp"></td>
-    <td valign="top"><img src="https://i.imgur.com/sOkGjT4.png" align="right" width="350dp"></td>
-  </tr>
-  <tr>
-    <td>Analytics Time Screen</td>
-     <td>Analytics WorkLoad 1 Screen</td>
-     <td>Analytics WorkLoad 2 Screen</td>
-  </tr>
-  <tr>
-    <td valign="top"><img src="https://i.imgur.com/TZmqZS7.png" align="left" width="350dp"></td>
-    <td valign="top"><img src="https://i.imgur.com/hIc1UwD.png" align="right" width="350dp"></td>
-    <td valign="top"><img src="https://i.imgur.com/hmzFdFe.png" align="right" width="350dp"></td>
-  </tr>
-  <tr>
     <td>Editor Screen</td>
-     <td>Editor Error Screen</td>
-     <td>Editor Duration Dialog</td>
+    <td>Analytics Screen</td>
   </tr>
   <tr>
-    <td valign="top"><img src="https://i.imgur.com/x1UZ3zq.png" align="left" width="350dp"></td>
-    <td valign="top"><img src="https://i.imgur.com/YkgH8GG.png" align="right" width="350dp"></td>
-    <td valign="top"><img src="https://i.imgur.com/Hb320Jt.png" align="right" width="350dp"></td>
+    <td valign="top"><img src="https://i.imgur.com/EMZPvVD.gif" align="left" width="350dp"></td>
+    <td valign="top"><img src="https://i.imgur.com/uCrrMzq.gif" align="center" width="350dp"></td>
+    <td valign="top"><img src="https://i.imgur.com/9m4YkfK.gif" align="right" width="350dp"></td>
   </tr>
   <tr>
-    <td>Settings Screen (alpha)</td>
-     <td>Settings English Screen</td>
-     <td>Settings Language Dialog</td>
+    <td>Templates Screen</td>
+    <td>Categories Screen</td>
+    <td>Settings Screen</td>
   </tr>
   <tr>
-    <td valign="top"><img src="https://i.imgur.com/6L6HKbh.png" align="left" width="350dp"></td>
-    <td valign="top"><img src="https://i.imgur.com/gm5PVsS.png" align="right" width="350dp"></td>
-    <td valign="top"><img src="https://i.imgur.com/HCc43FV.png" align="right" width="350dp"></td>
+    <td valign="top"><img src="https://i.imgur.com/g8HBCUl.gif" align="left" width="350dp"></td>
+    <td valign="top"><img src="https://i.imgur.com/vxLVEYC.gif" align="right" width="350dp"></td>
+    <td valign="top"><img src="https://i.imgur.com/my0sp1w.gif" align="right" width="350dp"></td>
   </tr>
  </table>
  
