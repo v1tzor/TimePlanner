@@ -112,12 +112,7 @@ internal fun TemplateEditorDialog(
                 Column(
                     modifier = Modifier
                         .height(400.dp)
-                        .padding(
-                            start = 20.dp,
-                            end = 20.dp,
-                            top = 16.dp,
-                            bottom = 0.dp,
-                        )
+                        .padding(start = 20.dp, end = 20.dp, top = 16.dp, bottom = 0.dp)
                         .verticalScroll(scrollState),
                     verticalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
@@ -162,7 +157,8 @@ internal fun TemplateEditorDialog(
                     )
                 }
 
-                val isEnabled = if (timeStartHours != null && timeStartMinutes != null &&
+                val isEnabled = if (
+                    timeStartHours != null && timeStartMinutes != null &&
                     timeEndHours != null && timeEndMinutes != null
                 ) {
                     val startTimeInMinutes = timeStartHours!! * 60 + timeStartMinutes!!
