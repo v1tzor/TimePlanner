@@ -15,15 +15,12 @@
  */
 package ru.aleshin.features.analytics.impl.domain.entities
 
-import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
 import ru.aleshin.core.utils.functional.TimeRange
 import ru.aleshin.features.home.api.domains.entities.schedules.TimeTask
 
 /**
  * @author Stanislav Aleshin on 30.04.2023.
  */
-@Parcelize
 internal data class ScheduleAnalytics(
     val dateWorkLoadMap: WorkLoadMap,
     val categoriesAnalytics: CategoriesAnalytics,
@@ -31,6 +28,6 @@ internal data class ScheduleAnalytics(
     val totalTasksTime: Long,
     val averageDayLoad: Int,
     val averageTaskTime: Long,
-) : Parcelable
+)
 
 internal typealias WorkLoadMap = Map<TimeRange, List<TimeTask>>

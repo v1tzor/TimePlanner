@@ -39,8 +39,8 @@ interface TemplatesLocalDataSource {
             return templatesDao.addTemplate(template)
         }
 
-        override suspend fun createTemplates(templates: List<TemplateEntity>) {
-            templatesDao.addTemplates(templates)
+        override suspend fun createTemplates(template: List<TemplateEntity>) {
+            templatesDao.addTemplates(template)
         }
 
         override suspend fun fetchAllTemplates(): List<TemplateDetails> {

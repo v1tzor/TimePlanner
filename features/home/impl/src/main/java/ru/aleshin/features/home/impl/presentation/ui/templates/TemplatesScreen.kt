@@ -71,7 +71,6 @@ internal class TemplatesScreen : Screen {
                     state = state,
                     modifier = Modifier.padding(paddingValues),
                     onChangeSortedType = { dispatchEvent(TemplatesEvent.UpdatedSortedType(it)) },
-                    onChangeToggleStatus = { dispatchEvent(TemplatesEvent.UpdatedToggleStatus(it)) },
                     onUpdateTemplate = { dispatchEvent(TemplatesEvent.UpdateTemplate(it)) },
                     onDeleteTemplate = { dispatchEvent(TemplatesEvent.DeleteTemplate(it.templateId)) },
                 )

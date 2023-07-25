@@ -88,6 +88,7 @@ dependencies {
 
     implementation(Dependencies.Compose.ui)
     implementation(Dependencies.Compose.activity)
+    implementation(Dependencies.Compose.refresh)
 
     implementation(Dependencies.Dagger.core)
     kapt(Dependencies.Dagger.kapt)

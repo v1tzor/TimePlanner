@@ -15,6 +15,7 @@
  */
 package ru.aleshin.core.ui.views
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -23,6 +24,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import ru.aleshin.core.utils.managers.DrawerItem
@@ -88,6 +90,30 @@ fun DrawerSectionHeader(
             text = header,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.titleSmall,
+        )
+    }
+}
+
+@Composable
+fun DrawerLogoSection(
+    modifier: Modifier = Modifier,
+    logoImage: Painter,
+    appName: String,
+) {
+    Row(
+        modifier = modifier.padding(start = 16.dp, end = 16.dp, top = 12.dp, bottom = 12.dp),
+        horizontalArrangement = Arrangement.spacedBy(10.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Image(
+            modifier = Modifier.size(48.dp),
+            painter = logoImage,
+            contentDescription = appName,
+        )
+        Text(
+            text = appName,
+            color = MaterialTheme.colorScheme.onSurface,
+            style = MaterialTheme.typography.titleLarge,
         )
     }
 }

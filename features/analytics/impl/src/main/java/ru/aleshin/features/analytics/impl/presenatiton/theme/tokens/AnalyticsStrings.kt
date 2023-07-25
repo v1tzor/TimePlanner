@@ -41,6 +41,8 @@ internal data class AnalyticsStrings(
     val planningStatisticsTitle: String,
     val otherError: String,
     val halfYearTimePeriod: String,
+    val categoryStatisticsTitle: String,
+    val executedStatisticsTitle: String
 )
 
 internal val russianAnalyticsStrings = AnalyticsStrings(
@@ -56,13 +58,15 @@ internal val russianAnalyticsStrings = AnalyticsStrings(
     refreshAnalyticIconDesc = "Обновить аналитику",
     otherAnalyticsName = "Прочее",
     allTimeTitle = "Всего:",
-    totalCountTaskTitle = "Общее кол-во задач",
-    averageCountTaskTitle = "Среднее число задач в день",
-    totalTimeTaskTitle = "Общее время задач",
-    averageTimeTaskTitle = "Среднее время задачи",
+    totalCountTaskTitle = "Количество\nзадач",
+    averageCountTaskTitle = "Число задач\nв день",
+    totalTimeTaskTitle = "Общее время\nзадач",
+    averageTimeTaskTitle = "Среднее время\nзадачи",
     planningStatisticsTitle = "Статистика планирования",
     otherError = "Ошибка! Обратитесь к разработчику.",
     halfYearTimePeriod = "Полгода",
+    categoryStatisticsTitle = "Статистика категорий",
+    executedStatisticsTitle = "Статистика выполнения"
 )
 
 internal val englishAnalyticsStrings = AnalyticsStrings(
@@ -78,13 +82,15 @@ internal val englishAnalyticsStrings = AnalyticsStrings(
     refreshAnalyticIconDesc = "Refresh analytics",
     otherAnalyticsName = "Else",
     allTimeTitle = "Total:",
-    totalCountTaskTitle = "Total number of tasks",
-    averageCountTaskTitle = "Average number of tasks",
-    totalTimeTaskTitle = "Total time of tasks",
-    averageTimeTaskTitle = "Average time of tasks",
+    totalCountTaskTitle = "Number\nof tasks",
+    averageCountTaskTitle = "Number\nof tasks per day",
+    totalTimeTaskTitle = "Total time\nof tasks",
+    averageTimeTaskTitle = "Average time\nof tasks",
     planningStatisticsTitle = "Planning statistics",
     otherError = "Error! Contact the developer.",
     halfYearTimePeriod = "Half a year",
+    categoryStatisticsTitle = "Category statistics",
+    executedStatisticsTitle = "Execution statistics"
 )
 
 internal val LocalAnalyticsStrings = staticCompositionLocalOf<AnalyticsStrings> {

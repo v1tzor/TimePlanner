@@ -23,6 +23,7 @@ import ru.aleshin.core.utils.platform.screenmodel.contract.BaseUiEffect
 import ru.aleshin.core.utils.platform.screenmodel.contract.BaseViewState
 import ru.aleshin.features.analytics.impl.domain.entities.AnalyticsFailure
 import ru.aleshin.features.analytics.impl.domain.entities.ScheduleAnalytics
+import ru.aleshin.features.analytics.impl.presenatiton.models.ScheduleAnalyticsUi
 
 /**
  * @author Stanislav Aleshin on 30.03.2023.
@@ -30,7 +31,7 @@ import ru.aleshin.features.analytics.impl.domain.entities.ScheduleAnalytics
 @Parcelize
 internal data class AnalyticsViewState(
     val timePeriod: TimePeriod? = null,
-    val scheduleAnalytics: ScheduleAnalytics? = null,
+    val scheduleAnalytics: ScheduleAnalyticsUi? = null,
 ) : BaseViewState
 
 internal sealed class AnalyticsEvent : BaseEvent {
@@ -43,7 +44,7 @@ internal sealed class AnalyticsEffect : BaseUiEffect {
 }
 
 internal sealed class AnalyticsAction : BaseAction {
-    data class LoadScheduleAnalytics(val analytics: ScheduleAnalytics) : AnalyticsAction()
+    data class LoadScheduleAnalytics(val analytics: ScheduleAnalyticsUi) : AnalyticsAction()
     data class UpdateTimePeriod(val period: TimePeriod) : AnalyticsAction()
     object RefreshAnalytics : AnalyticsAction()
 }

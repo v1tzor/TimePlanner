@@ -21,6 +21,7 @@ import androidx.compose.runtime.staticCompositionLocalOf
  * @author Stanislav Aleshin on 24.02.2023.
  */
 data class TimePlannerStrings(
+    val appName: String,
     val startTaskNotifyText: String,
     val timeTaskChannelName: String,
     val categoryWorkTitle: String,
@@ -51,7 +52,6 @@ data class TimePlannerStrings(
     val homeTabTitle: String,
     val analyticsTabTitle: String,
     val settingsTabTitle: String,
-    val drawerTitle: String,
     val mainDrawerTitle: String,
     val drawerMainSection: String,
     val templateDrawerTitle: String,
@@ -62,6 +62,7 @@ data class TimePlannerStrings(
 )
 
 internal val russianTimePlannerString = TimePlannerStrings(
+    appName = "Time Planner",
     startTaskNotifyText = "Начало события",
     timeTaskChannelName = "События",
     categoryWorkTitle = "Работа",
@@ -95,7 +96,6 @@ internal val russianTimePlannerString = TimePlannerStrings(
     mainDrawerTitle = "Главная",
     templateDrawerTitle = "Шаблоны",
     categoriesDrawerTitle = "Категории",
-    drawerTitle = "TimePlanner",
     drawerMainSection = "Планы",
     splitFormat = "%s | %s",
     amFormatTitle = "AM",
@@ -103,6 +103,7 @@ internal val russianTimePlannerString = TimePlannerStrings(
 )
 
 internal val englishTimePlannerString = TimePlannerStrings(
+    appName = "Time Planner",
     startTaskNotifyText = "The beginning of the event",
     timeTaskChannelName = "Events",
     categoryWorkTitle = "Work",
@@ -136,7 +137,6 @@ internal val englishTimePlannerString = TimePlannerStrings(
     mainDrawerTitle = "Main",
     templateDrawerTitle = "Templates",
     categoriesDrawerTitle = "Categories",
-    drawerTitle = "TimePlanner",
     drawerMainSection = "Plans",
     splitFormat = "%s | %s",
     amFormatTitle = "AM",

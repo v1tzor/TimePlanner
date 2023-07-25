@@ -49,6 +49,7 @@ object Dependencies {
         const val preview = "androidx.compose.ui:ui-tooling-preview:${Versions.compose}"
         const val uiTooling = "androidx.compose.ui:ui-tooling:${Versions.compose}"
         const val uiTestManifest = "androidx.compose.ui:ui-test-manifest:${Versions.compose}"
+        const val refresh = "com.google.accompanist:accompanist-swiperefresh:${Versions.accompanist}"
     }
 
     object Voyager {

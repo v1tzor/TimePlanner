@@ -56,28 +56,24 @@ internal fun CategoriesContent(
         val categories = state.categories.find { it.mainCategory == state.selectedMainCategory }
         val subCategories = categories?.subCategories ?: emptyList()
 
-        MainCategoriesHeader(
-            modifier = Modifier.padding(top = 8.dp, bottom = 4.dp).fillMaxWidth(),
-            onAddMainCategory = { isMainCategoryCreatorOpen = true },
-        )
+        MainCategoriesHeader(modifier = Modifier.padding(top = 8.dp, bottom = 4.dp).fillMaxWidth())
         MainCategoriesHorizontalList(
-            modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
+            modifier = Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 12.dp),
             mainCategories = state.categories.map { it.mainCategory },
             selectedCategory = state.selectedMainCategory,
             onSelectCategory = onChangeMainCategory,
             onUpdateCategory = onMainCategoryUpdate,
             onDeleteCategory = onMainCategoryDelete,
+            onAddCategory = { isMainCategoryCreatorOpen = true },
         )
-        SubCategoriesHeader(
-            modifier = Modifier.padding(vertical = 8.dp).fillMaxWidth(),
-            onAddSubCategory = onAddSubCategory,
-        )
+        SubCategoriesHeader(modifier = Modifier.padding(top = 12.dp, bottom = 8.dp).fillMaxWidth())
         SubCategoriesList(
-            modifier = Modifier.height(200.dp),
+            modifier = Modifier.height(250.dp),
             mainCategory = state.selectedMainCategory,
             subCategories = subCategories,
             onCategoryUpdate = onSubCategoryUpdate,
             onCategoryDelete = onSubCategoryDelete,
+            onAddSubCategory = onAddSubCategory,
         )
     }
     if (isMainCategoryCreatorOpen) {
@@ -92,10 +88,7 @@ internal fun CategoriesContent(
 }
 
 @Composable
-internal fun MainCategoriesHeader(
-    modifier: Modifier = Modifier,
-    onAddMainCategory: () -> Unit,
-) {
+internal fun MainCategoriesHeader(modifier: Modifier = Modifier) {
     Row(
         modifier = modifier.padding(start = 16.dp, end = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -106,42 +99,20 @@ internal fun MainCategoriesHeader(
             color = MaterialTheme.colorScheme.onBackground,
             style = MaterialTheme.typography.titleMedium,
         )
-        Divider(modifier.weight(1f))
-        IconButton(modifier = Modifier.size(36.dp), onClick = onAddMainCategory) {
-            Icon(
-                modifier = Modifier.size(24.dp),
-                imageVector = Icons.Default.Add,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        }
     }
 }
 
 @Composable
-internal fun SubCategoriesHeader(
-    modifier: Modifier = Modifier,
-    onAddSubCategory: () -> Unit,
-) {
+internal fun SubCategoriesHeader(modifier: Modifier = Modifier) {
     Row(
-        modifier = modifier.padding(start = 16.dp, end = 8.dp),
+        modifier = modifier.padding(horizontal = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
-            modifier = Modifier.padding(end = 8.dp),
             text = HomeThemeRes.strings.subCategoryTitle,
             color = MaterialTheme.colorScheme.onBackground,
             style = MaterialTheme.typography.titleMedium,
         )
-        Divider(modifier.weight(1f))
-        IconButton(modifier = Modifier.size(36.dp), onClick = onAddSubCategory) {
-            Icon(
-                modifier = Modifier.size(24.dp),
-                imageVector = Icons.Default.Add,
-                contentDescription = HomeThemeRes.strings.addSubCategoryTitle,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        }
     }
 }
 

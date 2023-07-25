@@ -16,24 +16,23 @@
 package ru.aleshin.features.home.impl.presentation.ui.categories.views
 
 import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.MoreVert
@@ -55,6 +54,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import ru.aleshin.core.ui.theme.TimePlannerRes
@@ -76,23 +76,23 @@ internal fun MainCategoriesHorizontalList(
     onSelectCategory: (MainCategory) -> Unit,
     onUpdateCategory: (MainCategory) -> Unit,
     onDeleteCategory: (MainCategory) -> Unit,
+    onAddCategory: () -> Unit,
 ) {
     val gridState = rememberLazyGridState()
     val language = TimePlannerRes.language
     LazyHorizontalGrid(
-        rows = GridCells.Fixed(3),
-        modifier = modifier.height(216.dp).animateContentSize(),
+        rows = GridCells.Fixed(2),
+        modifier = modifier.height(236.dp).animateContentSize(),
         state = gridState,
         contentPadding = PaddingValues(start = 16.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         items(
             items = mainCategories,
             key = { category -> category.id },
         ) { category ->
             MainCategoryItem(
-                modifier = Modifier.sizeIn(maxHeight = 56.dp),
                 isSelected = category == selectedCategory,
                 category = category,
                 onSelected = { onSelectCategory(category) },
@@ -105,6 +105,9 @@ internal fun MainCategoriesHorizontalList(
                     onUpdateCategory(languageCategory)
                 },
             )
+        }
+        item {
+            MainCategoryAddItem(onClick = onAddCategory)
         }
     }
     LaunchedEffect(key1 = selectedCategory) {
@@ -128,35 +131,54 @@ internal fun MainCategoryItem(
 
     Surface(
         onClick = onSelected,
-        modifier = modifier.size(width = 250.dp, height = 56.dp),
+        modifier = modifier.size(width = 180.dp, height = 80.dp),
         shape = MaterialTheme.shapes.small,
-        color = MaterialTheme.colorScheme.surface,
-        tonalElevation = TimePlannerRes.elevations.levelOne,
-        border = when (isSelected) {
-            true -> BorderStroke(1.dp, MaterialTheme.colorScheme.surfaceVariant)
-            false -> null
+        color = when (isSelected) {
+            true -> MaterialTheme.colorScheme.primaryContainer
+            false -> MaterialTheme.colorScheme.surface
+        },
+        tonalElevation = when (isSelected) {
+            true -> TimePlannerRes.elevations.levelZero
+            false -> TimePlannerRes.elevations.levelOne
         },
     ) {
         Row(
             modifier = Modifier
-                .padding(top = 10.dp, bottom = 10.dp, start = 12.dp, end = 4.dp)
+                .padding(top = 12.dp, bottom = 12.dp, start = 12.dp, end = 4.dp)
                 .animateContentSize(),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Box(modifier = Modifier.width(32.dp).fillMaxHeight()) {
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
                 MainCategoryItemLeading(
-                    modifier = Modifier.align(Alignment.Center),
                     icon = category.icon?.toIconPainter(),
                     name = category.fetchNameByLanguage(),
+                    isSelected = isSelected,
                 )
+                Spacer(modifier = Modifier.weight(1f))
+                Column {
+                    Text(
+                        text = HomeThemeRes.strings.nameCategoryTitle,
+                        color = when (isSelected) {
+                            true -> MaterialTheme.colorScheme.onPrimaryContainer
+                            false -> MaterialTheme.colorScheme.onSurfaceVariant
+                        },
+                        style = MaterialTheme.typography.labelMedium,
+                    )
+                    Text(
+                        text = category.fetchNameByLanguage(),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        color = when (isSelected) {
+                            true -> MaterialTheme.colorScheme.onPrimaryContainer
+                            false -> MaterialTheme.colorScheme.onSurface
+                        },
+                        style = MaterialTheme.typography.labelLarge,
+                    )
+                }
             }
-            Text(
-                text = category.fetchNameByLanguage(),
-                color = MaterialTheme.colorScheme.onSurface,
-                style = MaterialTheme.typography.labelLarge,
-            )
-            Spacer(Modifier.weight(1f))
             if (isSelected) {
                 IconButton(modifier = Modifier.size(36.dp), onClick = { isExpanded = true }) {
                     Icon(
@@ -170,7 +192,7 @@ internal fun MainCategoryItem(
         }
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.TopEnd) {
             MainCategoriesOptionMenu(
-                modifier = Modifier.width(250.dp),
+                modifier = Modifier.width(180.dp),
                 isExpanded = isExpanded,
                 isDeleteEnabled = !category.isNotDeleted,
                 onUpdateClick = {
@@ -208,23 +230,59 @@ internal fun MainCategoryItem(
 }
 
 @Composable
+internal fun MainCategoryAddItem(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+) {
+    Surface(
+        modifier = modifier.size(180.dp, 100.dp),
+        tonalElevation = TimePlannerRes.elevations.levelOne,
+        shape = MaterialTheme.shapes.small,
+        onClick = onClick,
+    ) {
+        Box(contentAlignment = Alignment.Center) {
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text(
+                    text = HomeThemeRes.strings.addCategoryTitle,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    style = MaterialTheme.typography.labelLarge,
+                )
+                Icon(
+                    modifier = Modifier.size(18.dp),
+                    imageVector = Icons.Default.Add,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurface,
+                )
+            }
+        }
+    }
+}
+
+@Composable
 internal fun MainCategoryItemLeading(
     modifier: Modifier = Modifier,
     icon: Painter?,
     name: String,
+    isSelected: Boolean,
 ) {
     if (icon != null) {
         Icon(
             modifier = modifier.size(32.dp),
             painter = icon,
             contentDescription = name,
-            tint = MaterialTheme.colorScheme.primary,
+            tint = when (isSelected) {
+                true -> MaterialTheme.colorScheme.onPrimaryContainer
+                false -> MaterialTheme.colorScheme.primary
+            },
         )
     } else {
         Text(
             modifier = modifier,
             text = name.first().toString(),
-            color = MaterialTheme.colorScheme.primary,
+            color = when (isSelected) {
+                true -> MaterialTheme.colorScheme.onPrimaryContainer
+                false -> MaterialTheme.colorScheme.primary
+            },
             style = MaterialTheme.typography.headlineMedium,
         )
     }

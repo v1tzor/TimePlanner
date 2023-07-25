@@ -34,7 +34,6 @@ internal data class TemplatesViewState(
     val templates: List<Template>? = null,
     val categories: List<Categories> = emptyList(),
     val sortedType: TemplatesSortedType = TemplatesSortedType.DATE,
-    val viewToggleStatus: ViewToggleStatus = ViewToggleStatus.EXPANDED,
 ) : BaseViewState
 
 internal sealed class TemplatesEvent : BaseEvent {
@@ -42,7 +41,6 @@ internal sealed class TemplatesEvent : BaseEvent {
     data class AddTemplate(val template: Template) : TemplatesEvent()
     data class UpdateTemplate(val template: Template) : TemplatesEvent()
     data class UpdatedSortedType(val type: TemplatesSortedType) : TemplatesEvent()
-    data class UpdatedToggleStatus(val status: ViewToggleStatus) : TemplatesEvent()
     data class DeleteTemplate(val id: Int) : TemplatesEvent()
 }
 
@@ -54,5 +52,4 @@ internal sealed class TemplatesAction : BaseAction {
     data class UpdateCategories(val categories: List<Categories>) : TemplatesAction()
     data class UpdateTemplates(val templates: List<Template>) : TemplatesAction()
     data class ChangeSortedType(val type: TemplatesSortedType) : TemplatesAction()
-    data class ChangeToggleStatus(val status: ViewToggleStatus) : TemplatesAction()
 }

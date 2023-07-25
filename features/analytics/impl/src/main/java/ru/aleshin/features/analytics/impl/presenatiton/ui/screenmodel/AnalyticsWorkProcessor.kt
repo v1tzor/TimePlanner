@@ -25,6 +25,7 @@ import ru.aleshin.core.utils.platform.screenmodel.work.EffectResult
 import ru.aleshin.core.utils.platform.screenmodel.work.FlowWorkProcessor
 import ru.aleshin.core.utils.platform.screenmodel.work.WorkCommand
 import ru.aleshin.features.analytics.impl.domain.interactors.AnalyticsInteractor
+import ru.aleshin.features.analytics.impl.presenatiton.mappers.mapToUi
 import ru.aleshin.features.analytics.impl.presenatiton.ui.contract.AnalyticsAction
 import ru.aleshin.features.analytics.impl.presenatiton.ui.contract.AnalyticsEffect
 import javax.inject.Inject
@@ -46,7 +47,7 @@ internal interface AnalyticsWorkProcessor : FlowWorkProcessor<AnalyticsWorkComma
             emit(ActionResult(AnalyticsAction.RefreshAnalytics))
             delay(Constants.Delay.LOAD_ANIMATION)
             val result = when (val analytics = analyticsInteractor.fetchAnalytics(period)) {
-                is Either.Right -> ActionResult(AnalyticsAction.LoadScheduleAnalytics(analytics.data))
+                is Either.Right -> ActionResult(AnalyticsAction.LoadScheduleAnalytics(analytics.data.mapToUi()))
                 is Either.Left -> EffectResult(AnalyticsEffect.ShowFailure(analytics.data))
             }
             emit(result)

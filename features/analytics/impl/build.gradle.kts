@@ -90,6 +90,7 @@ dependencies {
     implementation(Dependencies.Compose.activity)
     implementation(Dependencies.Compose.foundation)
     implementation(Dependencies.Compose.layout)
+    implementation(Dependencies.Compose.refresh)
 
     implementation(Dependencies.Charts.library)
     implementation(Dependencies.Charts.libraryHimanshoe)

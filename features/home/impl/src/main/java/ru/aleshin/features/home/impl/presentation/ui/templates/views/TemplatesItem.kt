@@ -15,8 +15,6 @@
  */
 package ru.aleshin.features.home.impl.presentation.ui.templates.views
 
-import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -37,6 +35,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import ru.aleshin.core.ui.theme.TimePlannerRes
 import ru.aleshin.core.ui.views.CategoryIconMonogram
@@ -44,8 +44,6 @@ import ru.aleshin.core.ui.views.CategoryTextMonogram
 import ru.aleshin.core.ui.views.toMinutesOrHoursTitle
 import ru.aleshin.core.utils.extensions.duration
 import ru.aleshin.features.home.api.domains.entities.categories.Categories
-import ru.aleshin.features.home.api.domains.entities.categories.MainCategory
-import ru.aleshin.features.home.api.domains.entities.categories.SubCategory
 import ru.aleshin.features.home.api.domains.entities.template.Template
 import ru.aleshin.features.home.api.presentation.mappers.fetchNameByLanguage
 import ru.aleshin.features.home.api.presentation.mappers.toDescription
@@ -62,7 +60,6 @@ internal fun TemplatesItem(
     modifier: Modifier = Modifier,
     categories: List<Categories>,
     model: Template,
-    isFullInfo: Boolean,
     onUpdateTemplate: (Template) -> Unit = {},
     onDeleteTemplate: () -> Unit,
 ) {
@@ -74,18 +71,18 @@ internal fun TemplatesItem(
         shape = MaterialTheme.shapes.large,
         color = MaterialTheme.colorScheme.surface,
         tonalElevation = TimePlannerRes.elevations.levelOne,
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.surfaceVariant),
     ) {
-        Column(modifier = Modifier.animateContentSize()) {
-            Row(
-                modifier = Modifier.padding(start = 16.dp, end = 8.dp, top = 12.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
+        Row(
+            modifier = Modifier.padding(start = 16.dp, end = 8.dp, top = 16.dp, bottom = 16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
                 val categoryIcon = model.category.icon
                 if (categoryIcon != null) {
                     CategoryIconMonogram(
-                        modifier.align(Alignment.Top),
                         icon = categoryIcon.toIconPainter(),
                         iconDescription = categoryIcon.toDescription(),
                         iconColor = MaterialTheme.colorScheme.primary,
@@ -93,30 +90,36 @@ internal fun TemplatesItem(
                     )
                 } else {
                     CategoryTextMonogram(
-                        modifier.align(Alignment.Top),
                         text = model.category.fetchNameByLanguage().first().toString(),
                         textColor = MaterialTheme.colorScheme.primary,
                         backgroundColor = MaterialTheme.colorScheme.primaryContainer,
                     )
                 }
-                TemplatesItemInfo(
-                    modifier = Modifier.weight(1f),
-                    isFullInfo = isFullInfo,
-                    mainCategory = model.category,
-                    subCategory = model.subCategory,
+                Text(
+                    text = when (model.subCategory != null) {
+                        true -> TimePlannerRes.strings.splitFormat.format(
+                            model.category.fetchNameByLanguage(),
+                            model.subCategory!!.fetchNameByLanguage(),
+                        )
+                        false -> model.category.fetchNameByLanguage()
+                    },
+                    color = MaterialTheme.colorScheme.onSurface,
+                    style = MaterialTheme.typography.titleMedium,
+                )
+                TemplateItemInfo(
                     startTime = model.startTime,
                     endTime = model.endTime,
                     isEnableNotification = model.isEnableNotification,
                     isConsiderInStatistics = model.isConsiderInStatistics,
                 )
-                IconButton(onClick = onDeleteTemplate) {
-                    Icon(
-                        modifier = Modifier.size(24.dp),
-                        imageVector = Icons.Default.Delete,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                }
+            }
+            IconButton(onClick = onDeleteTemplate) {
+                Icon(
+                    modifier = Modifier.size(24.dp),
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
             }
         }
     }
@@ -135,60 +138,61 @@ internal fun TemplatesItem(
 }
 
 @Composable
-internal fun TemplatesItemInfo(
+internal fun TemplateItemInfo(
     modifier: Modifier = Modifier,
-    isFullInfo: Boolean,
-    mainCategory: MainCategory,
-    subCategory: SubCategory?,
     startTime: Date,
     endTime: Date,
     isEnableNotification: Boolean,
     isConsiderInStatistics: Boolean,
 ) {
     val timeFormat = SimpleDateFormat.getTimeInstance(SimpleDateFormat.SHORT)
-    val startTimeFormat = timeFormat.format(startTime)
-    val endTimeFormat = timeFormat.format(endTime)
-    val duration = duration(startTime, endTime).toMinutesOrHoursTitle()
-    val mainText = when (subCategory != null) {
-        true -> TimePlannerRes.strings.splitFormat.format(
-            mainCategory.fetchNameByLanguage(),
-            subCategory.fetchNameByLanguage(),
+    Row(modifier = modifier, horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            TemplateInfoIcon(
+                icon = painterResource(HomeThemeRes.icons.time),
+                title = "${timeFormat.format(startTime)} - ${timeFormat.format(endTime)}",
+            )
+            TemplateInfoIcon(
+                icon = painterResource(HomeThemeRes.icons.timer),
+                title = duration(startTime, endTime).toMinutesOrHoursTitle(),
+            )
+        }
+        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            TemplateInfoIcon(
+                icon = painterResource(HomeThemeRes.icons.statistics),
+                title = when (isConsiderInStatistics) {
+                    true -> HomeThemeRes.strings.statisticsActiveTitle
+                    false -> HomeThemeRes.strings.statisticsDisabledTitle
+                },
+            )
+            TemplateInfoIcon(
+                icon = painterResource(HomeThemeRes.icons.notification),
+                title = when (isEnableNotification) {
+                    true -> HomeThemeRes.strings.notificationEnabledTitle
+                    false -> HomeThemeRes.strings.notificationDisabledTitle
+                },
+            )
+        }
+    }
+}
+
+@Composable
+internal fun TemplateInfoIcon(
+    modifier: Modifier = Modifier,
+    icon: Painter,
+    title: String,
+) {
+    Row(modifier = modifier, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        Icon(
+            modifier = Modifier.size(18.dp),
+            painter = icon,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
         )
-        false -> mainCategory.fetchNameByLanguage()
-    }
-    val notificationTitle = when (isEnableNotification) {
-        true -> HomeThemeRes.strings.notificationEnabledTitle
-        false -> HomeThemeRes.strings.notificationDisabledTitle
-    }
-    val statisticsTitle = when (isConsiderInStatistics) {
-        true -> HomeThemeRes.strings.statisticsActiveTitle
-        false -> HomeThemeRes.strings.statisticsDisabledTitle
-    }
-    val subText = when (isFullInfo) {
-        true -> StringBuilder()
-            .appendLine(HomeThemeRes.strings.timeRangeFormat.format(startTimeFormat, endTimeFormat))
-            .appendLine(HomeThemeRes.strings.durationFormat.format(duration))
-            .appendLine(notificationTitle)
-            .appendLine(statisticsTitle)
-
-        false -> StringBuilder()
-            .appendLine(HomeThemeRes.strings.timeRangeFormat.format(startTimeFormat, endTimeFormat))
-            .appendLine(HomeThemeRes.strings.durationFormat.format(duration))
-    }
-
-    Column(
-        modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(4.dp),
-    ) {
         Text(
-            text = mainText,
+            text = title,
             color = MaterialTheme.colorScheme.onSurface,
-            style = MaterialTheme.typography.titleMedium,
-        )
-        Text(
-            text = subText.toString(),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.bodyMedium,
+            style = MaterialTheme.typography.labelMedium,
         )
     }
 }

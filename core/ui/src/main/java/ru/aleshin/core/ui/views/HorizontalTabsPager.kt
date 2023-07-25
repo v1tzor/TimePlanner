@@ -59,8 +59,8 @@ import kotlin.math.absoluteValue
 @ExperimentalFoundationApi
 fun <T : TabItem> HorizontalTabsPager(
     modifier: Modifier = Modifier,
-    state: PagerState = rememberPagerState(),
     tabs: List<T>,
+    state: PagerState = rememberPagerState { tabs.size },
     contentPadding: PaddingValues = PaddingValues(0.dp),
     pageSize: PageSize = PageSize.Fill,
     pageSpacing: Dp = 0.dp,
@@ -78,9 +78,8 @@ fun <T : TabItem> HorizontalTabsPager(
             },
         )
         HorizontalPager(
-            modifier = Modifier.fillMaxSize(),
-            pageCount = tabs.size,
             state = state,
+            modifier = Modifier.fillMaxSize(),
             contentPadding = contentPadding,
             pageSize = pageSize,
             pageSpacing = pageSpacing,
@@ -93,7 +92,7 @@ fun <T : TabItem> HorizontalTabsPager(
 }
 
 @Composable
-@OptIn(ExperimentalFoundationApi::class)
+@ExperimentalFoundationApi
 fun <T : TabItem> TabList(
     modifier: Modifier = Modifier,
     tabs: List<T>,

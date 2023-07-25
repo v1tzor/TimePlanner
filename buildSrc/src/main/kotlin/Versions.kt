@@ -24,7 +24,7 @@ object Versions {
     const val refreshLayout = "1.1.0"
     const val lifecycle = "2.5.1" // "2.6.0-beta01"
 
-    const val accompanist = "0.28.0"
+    const val accompanist = "0.31.5-beta"
     const val gson = "2.10.1"
 
     const val charts = "0.3.5"

@@ -16,11 +16,10 @@
 package ru.aleshin.features.home.impl.presentation.ui.categories.views
 
 import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -28,6 +27,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -47,7 +47,6 @@ import ru.aleshin.features.home.api.domains.entities.categories.MainCategory
 import ru.aleshin.features.home.api.domains.entities.categories.SubCategory
 import ru.aleshin.features.home.api.presentation.mappers.fetchNameByLanguage
 import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
-import ru.aleshin.features.home.impl.presentation.ui.home.views.EmptyDateView
 
 /**
  * @author Stanislav Aleshin on 16.04.2023.
@@ -59,23 +58,17 @@ internal fun SubCategoriesList(
     subCategories: List<SubCategory>,
     onCategoryUpdate: (SubCategory) -> Unit,
     onCategoryDelete: (SubCategory) -> Unit,
+    onAddSubCategory: () -> Unit,
 ) {
     val listState = rememberLazyListState()
     if (mainCategory != null) {
-        if (subCategories.isEmpty()) {
-            Box(modifier) {
-                EmptyDateView(
-                    modifier = Modifier.align(Alignment.Center),
-                    emptyTitle = HomeThemeRes.strings.emptyListTitle,
-                )
-            }
-        } else {
-            LazyColumn(
-                modifier = modifier.padding(top = 8.dp),
-                state = listState,
-                contentPadding = PaddingValues(horizontal = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(10.dp),
-            ) {
+        LazyColumn(
+            modifier = modifier.padding(top = 8.dp).animateContentSize(),
+            state = listState,
+            contentPadding = PaddingValues(horizontal = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp),
+        ) {
+            if (subCategories.isNotEmpty()) {
                 items(subCategories) { subCategory ->
                     SubCategoryViewItem(
                         mainCategory = mainCategory,
@@ -84,6 +77,9 @@ internal fun SubCategoriesList(
                         onDelete = onCategoryDelete,
                     )
                 }
+            }
+            item {
+                SubCategoryAddItem(onClick = onAddSubCategory)
             }
         }
     }
@@ -103,25 +99,26 @@ internal fun SubCategoryViewItem(
         modifier = modifier.animateContentSize(),
         enabled = true,
         shape = MaterialTheme.shapes.large,
-        color = MaterialTheme.colorScheme.surface,
-        tonalElevation = TimePlannerRes.elevations.levelOne,
-        border = when (isEditable) {
-            true -> BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
-            false -> null
+        color = when (isEditable) {
+            true -> MaterialTheme.colorScheme.secondaryContainer
+            false -> MaterialTheme.colorScheme.surface
+        },
+        tonalElevation = when (isEditable) {
+            true -> TimePlannerRes.elevations.levelZero
+            false -> TimePlannerRes.elevations.levelTwo
         },
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 16.dp, end = 8.dp, top = 12.dp, bottom = 12.dp),
+            modifier = Modifier.fillMaxWidth().padding(start = 16.dp, end = 8.dp, top = 12.dp, bottom = 12.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.align(Alignment.CenterVertically),
                 text = subCategory.fetchNameByLanguage(),
                 color = MaterialTheme.colorScheme.onSurface,
                 style = MaterialTheme.typography.titleMedium,
             )
+            Spacer(modifier = Modifier.weight(1f))
             IconButton(
                 modifier = Modifier.size(36.dp),
                 onClick = { onDelete(subCategory) },
@@ -130,7 +127,7 @@ internal fun SubCategoryViewItem(
                     modifier = Modifier.size(24.dp),
                     imageVector = Icons.Default.Delete,
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
         }
@@ -145,5 +142,43 @@ internal fun SubCategoryViewItem(
                 isEditable = false
             },
         )
+    }
+}
+
+@Composable
+internal fun SubCategoryAddItem(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+) {
+    Surface(
+        onClick = onClick,
+        modifier = modifier.animateContentSize(),
+        enabled = true,
+        shape = MaterialTheme.shapes.large,
+        color = MaterialTheme.colorScheme.surface,
+        tonalElevation = TimePlannerRes.elevations.levelOne,
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(start = 16.dp, end = 8.dp, top = 4.dp, bottom = 4.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                modifier = Modifier.weight(1f),
+                text = HomeThemeRes.strings.addCategoryTitle,
+                color = MaterialTheme.colorScheme.primary,
+                style = MaterialTheme.typography.labelLarge,
+            )
+            IconButton(
+                modifier = Modifier.size(36.dp),
+                onClick = onClick,
+            ) {
+                Icon(
+                    modifier = Modifier.size(24.dp),
+                    imageVector = Icons.Default.Add,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                )
+            }
+        }
     }
 }

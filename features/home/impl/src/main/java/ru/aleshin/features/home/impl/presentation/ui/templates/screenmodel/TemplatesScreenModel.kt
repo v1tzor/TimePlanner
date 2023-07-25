@@ -70,13 +70,6 @@ internal class TemplatesScreenModel @Inject constructor(
             sendAction(TemplatesAction.ChangeSortedType(event.type))
             templatesWorkProcessor.work(TemplatesWorkCommand.LoadTemplates(event.type)).handleWork()
         }
-        is TemplatesEvent.UpdatedToggleStatus -> {
-            val status = when (event.status) {
-                ViewToggleStatus.EXPANDED -> ViewToggleStatus.COMPACT
-                ViewToggleStatus.COMPACT -> ViewToggleStatus.EXPANDED
-            }
-            sendAction(TemplatesAction.ChangeToggleStatus(status))
-        }
     }
 
     override suspend fun reduce(
@@ -89,9 +82,6 @@ internal class TemplatesScreenModel @Inject constructor(
         is TemplatesAction.ChangeSortedType -> currentState.copy(
             templates = null,
             sortedType = action.type,
-        )
-        is TemplatesAction.ChangeToggleStatus -> currentState.copy(
-            viewToggleStatus = action.status,
         )
         is TemplatesAction.UpdateCategories -> currentState.copy(
             categories = action.categories,

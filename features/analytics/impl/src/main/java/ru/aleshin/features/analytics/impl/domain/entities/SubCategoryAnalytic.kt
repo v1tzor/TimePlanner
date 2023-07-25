@@ -15,17 +15,14 @@
  */
 package ru.aleshin.features.analytics.impl.domain.entities
 
-import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
 import ru.aleshin.features.home.api.domains.entities.categories.SubCategory
 
 /**
  * @author Stanislav Aleshin on 22.04.2023.
  */
-@Parcelize
 internal data class SubCategoryAnalytic(
     val subCategory: SubCategory,
     val duration: Long = 0L,
-) : Parcelable
+)
 
 internal typealias SubCategoryAnalytics = List<SubCategoryAnalytic>
