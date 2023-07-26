@@ -6,11 +6,11 @@
 Mobile app for planning tasks for the day with multimodule architecture, MVI, Compose, Room, Voyager, AlarmManager, Notification, Charts
 
 Support:
-- Dynamic Color (min: android 12)
+- Dynamic Color (min: Android 12)
 - Theme: Dark, Light
 - Languages: RU, EN
-- Data backup
-- Scheduled notifications
+- Data Backup & Recovery
+- Scheduled Notifications
 
 UI - Material Design 3
 
