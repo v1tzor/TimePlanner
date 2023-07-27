@@ -38,6 +38,9 @@ import ru.aleshin.features.home.impl.presentation.ui.home.contract.HomeViewState
 import ru.aleshin.features.home.impl.presentation.ui.home.screenModel.rememberHomeScreenModel
 import ru.aleshin.features.home.impl.presentation.ui.home.views.HomeDatePicker
 import ru.aleshin.features.home.impl.presentation.ui.home.views.HomeTopAppBar
+import java.time.Clock
+import java.time.LocalDate
+import java.util.Date
 
 /**
  * @author Stanislav Aleshin on 18.02.2023.
@@ -74,6 +77,9 @@ internal class HomeScreen : Screen {
                 HomeTopAppBar(
                     onMenuIconClick = { scope.launch { drawerManager?.openDrawer() } },
                     onCalendarIconClick = { isDateDialogShow = true },
+                    onGoToToday = {
+                        dispatchEvent(HomeEvent.LoadSchedule(Date()))
+                    }
                 )
             },
             snackbarHost = {

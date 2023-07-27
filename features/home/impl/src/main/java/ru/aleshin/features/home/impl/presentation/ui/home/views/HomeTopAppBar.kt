@@ -34,6 +34,7 @@ import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
 internal fun HomeTopAppBar(
     onMenuIconClick: () -> Unit,
     onCalendarIconClick: () -> Unit,
+    onGoToToday: () -> Unit,
 ) {
     TopAppBar(
         title = {
@@ -53,7 +54,8 @@ internal fun HomeTopAppBar(
             TopAppBarButton(
                 imagePainter = painterResource(HomeThemeRes.icons.calendar),
                 imageDescription = HomeThemeRes.strings.topAppBarCalendarIconDesc,
-                onButtonClick = onCalendarIconClick,
+                onButtonClick = onGoToToday,
+                onLongButtonClick = onCalendarIconClick
             )
         },
         colors = TopAppBarDefaults.topAppBarColors(
