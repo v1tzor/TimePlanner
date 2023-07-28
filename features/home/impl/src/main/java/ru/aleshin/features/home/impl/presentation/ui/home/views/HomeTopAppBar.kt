@@ -15,7 +15,6 @@
  */
 package ru.aleshin.features.home.impl.presentation.ui.home.views
 
-import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
@@ -55,7 +54,7 @@ internal fun HomeTopAppBar(
                 imagePainter = painterResource(HomeThemeRes.icons.calendar),
                 imageDescription = HomeThemeRes.strings.topAppBarCalendarIconDesc,
                 onButtonClick = onGoToToday,
-                onLongButtonClick = onCalendarIconClick
+                onLongButtonClick = onCalendarIconClick,
             )
         },
         colors = TopAppBarDefaults.topAppBarColors(

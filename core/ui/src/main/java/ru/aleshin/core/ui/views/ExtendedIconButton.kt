@@ -39,8 +39,11 @@ val SIZE = 40.dp
 val SHAPE = CircleShape
 const val DisabledIconOpacity = 0.38f
 
-@OptIn(ExperimentalFoundationApi::class)
+/**
+ * @author Myzel394 on 27.07.2023.
+ */
 @Composable
+@OptIn(ExperimentalFoundationApi::class)
 fun ExtendedIconButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
@@ -48,7 +51,7 @@ fun ExtendedIconButton(
     onDoubleClick: (() -> Unit)? = null,
     enabled: Boolean = true,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     val containerColor: Color = Color.Transparent
     val contentColor: Color = LocalContentColor.current
@@ -73,10 +76,10 @@ fun ExtendedIconButton(
                 interactionSource = interactionSource,
                 indication = rememberRipple(
                     bounded = false,
-                    radius = SIZE / 2
-                )
+                    radius = SIZE / 2,
+                ),
             ),
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) {
         val color = if (enabled) contentColor else disabledContentColor
         CompositionLocalProvider(LocalContentColor provides color, content = content)

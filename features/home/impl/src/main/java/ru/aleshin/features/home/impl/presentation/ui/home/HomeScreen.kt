@@ -28,6 +28,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.core.screen.Screen
 import kotlinx.coroutines.launch
+import ru.aleshin.core.utils.extensions.startThisDay
 import ru.aleshin.core.utils.managers.LocalDrawerManager
 import ru.aleshin.core.utils.platform.screen.ScreenContent
 import ru.aleshin.features.home.impl.presentation.mapppers.mapToMessage
@@ -38,8 +39,6 @@ import ru.aleshin.features.home.impl.presentation.ui.home.contract.HomeViewState
 import ru.aleshin.features.home.impl.presentation.ui.home.screenModel.rememberHomeScreenModel
 import ru.aleshin.features.home.impl.presentation.ui.home.views.HomeDatePicker
 import ru.aleshin.features.home.impl.presentation.ui.home.views.HomeTopAppBar
-import java.time.Clock
-import java.time.LocalDate
 import java.util.Date
 
 /**
@@ -77,9 +76,7 @@ internal class HomeScreen : Screen {
                 HomeTopAppBar(
                     onMenuIconClick = { scope.launch { drawerManager?.openDrawer() } },
                     onCalendarIconClick = { isDateDialogShow = true },
-                    onGoToToday = {
-                        dispatchEvent(HomeEvent.LoadSchedule(Date()))
-                    }
+                    onGoToToday = { dispatchEvent(HomeEvent.LoadSchedule(Date().startThisDay())) },
                 )
             },
             snackbarHost = {

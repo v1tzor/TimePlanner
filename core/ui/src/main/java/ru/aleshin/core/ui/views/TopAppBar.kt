@@ -15,12 +15,14 @@
  */
 package ru.aleshin.core.ui.views
 
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -69,13 +71,21 @@ fun TopAppBarEmptyButton(modifier: Modifier = Modifier) {
 @Composable
 fun TopAppBarButton(
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     imageVector: ImageVector,
     imageDescription: String?,
     onButtonClick: () -> Unit,
+    onDoubleButtonClick: (() -> Unit)? = null,
+    onLongButtonClick: (() -> Unit)? = null,
+    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
 ) {
-    IconButton(
+    ExtendedIconButton(
         modifier = modifier.size(48.dp),
+        enabled = enabled,
         onClick = onButtonClick,
+        onDoubleClick = onDoubleButtonClick,
+        onLongClick = onLongButtonClick,
+        interactionSource = interactionSource,
     ) {
         Icon(
             imageVector = imageVector,
@@ -88,13 +98,21 @@ fun TopAppBarButton(
 @Composable
 fun TopAppBarButton(
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     imagePainter: Painter,
     imageDescription: String,
     onButtonClick: () -> Unit,
+    onDoubleButtonClick: (() -> Unit)? = null,
+    onLongButtonClick: (() -> Unit)? = null,
+    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
 ) {
-    IconButton(
+    ExtendedIconButton(
         modifier = modifier.size(48.dp),
+        enabled = enabled,
         onClick = onButtonClick,
+        onDoubleClick = onDoubleButtonClick,
+        onLongClick = onLongButtonClick,
+        interactionSource = interactionSource,
     ) {
         Icon(
             painter = imagePainter,
