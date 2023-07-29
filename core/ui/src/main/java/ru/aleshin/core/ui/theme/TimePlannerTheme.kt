@@ -38,6 +38,7 @@ fun TimePlannerTheme(
         LanguageUiType.EN -> TimePlannerLanguage.EN
         LanguageUiType.RU -> TimePlannerLanguage.RU
         LanguageUiType.DE -> TimePlannerLanguage.DE
+        LanguageUiType.ES -> TimePlannerLanguage.ES
     }
     val appStrings = fetchCoreStrings(appLanguage)
     val appElevations = baseTimePlannerElevations
