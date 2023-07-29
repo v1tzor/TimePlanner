@@ -4,7 +4,7 @@
 
 ## Available languages 🌍
 - English 🇬🇧
-- Germany 🇩🇪
+- German 🇩🇪
 - Russian 🇷🇺
 - Persian 🇮🇷 (later)
 
