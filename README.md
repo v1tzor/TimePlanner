@@ -3,10 +3,12 @@
 #### Mobile app for planning tasks for the day
 
 ## Available languages 🌍
-- English 🇬🇧
-- German 🇩🇪
+Maximum language support will appear later
 - Russian 🇷🇺
-- Persian 🇮🇷 (later)
+- English 🇬🇧
+- German 🇩🇪 (beta)
+- Persian 🇮🇷 (beta)
+- Spanish 🇪🇸 (beta)
 
 ## Support 📱
 - Local time and task analytics 📊
