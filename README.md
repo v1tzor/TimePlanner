@@ -1,24 +1,39 @@
 ![image](https://i.imgur.com/TJtXqpF.png)
-# TimePlanner
+# TimePlanner ![GitHub release (latest by date)](https://img.shields.io/github/v/release/v1tzor/TimePlanner)
+#### Mobile app for planning tasks for the day
 
-![GitHub release (latest by date)](https://img.shields.io/github/v/release/v1tzor/TimePlanner)
+## Available languages 🌍
+- English 🇬🇧
+- Germany 🇩🇪
+- Russian 🇷🇺
+- Persian 🇮🇷 (later)
 
-Mobile app for planning tasks for the day with multimodule architecture, MVI, Compose, Room, Voyager, AlarmManager, Notification, Charts
+## Support 📱
+- Local time and task analytics 📊
+- Templates for everyday tasks 🏃‍♂️
+- Data Backup & Recovery 💾
+- Scheduled Notifications ⏰
+- Priorities and protection from overlaying tasks 📐
+- Theme: Dark | Light 🖤🤍
+- Dynamic Color (min: Android 12) 🎨
 
-Support:
-- Dynamic Color (min: Android 12)
-- Theme: Dark, Light
-- Languages: RU, EN
-- Data Backup & Recovery
-- Scheduled Notifications
+## Technologies stack 🚀
+- MVI Architecture
+- Clean Architecture
+- Multimodularity (by features)
+- Compose UI (Material Design 3)
+- Kotlin Coroutines & Flow
+- Room Database
+- Dagger 2
+- Unit tests
+- [Voyager](https://github.com/adrielcafe/voyager) navigation
+- Charts: [Charty](https://github.com/hi-manshu/Charty), [Compose-Charts](https://github.com/humawork/compose-charts)
 
-UI - Material Design 3
-
-## Download
+## Download 🔥
 <a href="https://apt.izzysoft.de/fdroid/index/apk/ru.aleshin.timeplanner" target="_blank">
 <img src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png" alt="Get it on IzzyOnDroid" height="80"/></a>
 
-## Screenshots
+## Screenshots 📸
 <table>
   <tr>
     <td>Home Screen</td>
@@ -42,17 +57,17 @@ UI - Material Design 3
   </tr>
  </table>
  
-## Project structure
+## Project structure ⚙️
 <p>
 <img src="https://i.imgur.com/OzVrH0D.png" width="100%"></img>
 </p>
 
-## Standart Feature structure
+## Standart Feature structure 📁
 <p>
 <img src="https://i.imgur.com/zXWMQI4.png" width="100%"></img>
 </p>
  
- ## MVI
+## MVI 🔨
 <p>
 <img src="https://i.imgur.com/52HH2rO.png"></img>
 </p>
