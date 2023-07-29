@@ -31,6 +31,7 @@ internal data class SettingsStrings(
     val mainSettingsLanguageTitle: String,
     val rusLanguageTitle: String,
     val engLanguageTitle: String,
+    val gerLanguageTitle: String,
     val defaultLanguageTitle: String,
     val backIconDesc: String,
     val moreIconDesc: String,
@@ -58,6 +59,7 @@ internal val russianSettingsString = SettingsStrings(
     systemThemeTitle = "Системная",
     rusLanguageTitle = "Русский",
     engLanguageTitle = "Английский",
+    gerLanguageTitle = "немецкий",
     defaultLanguageTitle = "По умолчанию",
     mainSettingsLanguageTitle = "Язык приложения",
     backIconDesc = "Назад",
@@ -86,6 +88,7 @@ internal val englishSettingsString = SettingsStrings(
     systemThemeTitle = "System",
     rusLanguageTitle = "Russian",
     engLanguageTitle = "English",
+    gerLanguageTitle = "German",
     defaultLanguageTitle = "Default",
     mainSettingsLanguageTitle = "App language",
     backIconDesc = "Navigate up",
@@ -105,6 +108,35 @@ internal val englishSettingsString = SettingsStrings(
     mainSettingsDynamicColorTitle = "Dynamic colors",
 )
 
+internal val germanSettingsString = SettingsStrings(
+    settingsTitle = "Einstellungen",
+    mainSettingsTitle = "Allgemeine Einstellungen",
+    mainSettingsThemeTitle = "Thema:",
+    darkThemeTitle = "Dunkel",
+    lightThemeTitle = "Hell",
+    systemThemeTitle = "System",
+    rusLanguageTitle = "Russisch",
+    engLanguageTitle = "Englisch",
+    gerLanguageTitle = "Deutsch",
+    defaultLanguageTitle = "Standard",
+    mainSettingsLanguageTitle = "Sprache der Anwendung",
+    backIconDesc = "Nach oben navigieren",
+    moreIconDesc = "Mehr",
+    resetToDefaultTitle = "Auf Standard zurücksetzen",
+    menuIconDesc = "Menü",
+    clearDataTitle = "Alle Daten löschen",
+    mainSettingsClearDataTitle = "Daten",
+    clearDataButtonTitle = "Löschen",
+    clearDataWarning = "Diese Aktion führt zu einer vollständigen Bereinigung der Anwendungsdaten!",
+    backupDataTitle = "Sicherung",
+    backupDataButtonTitle = "Sichern",
+    restoreDataButtonTitle = "Wiederherstellen",
+    errorBackupMessage = "Sicherungsfehler",
+    errorBackupFileMessage = "Fehler beim Arbeiten mit der Datei",
+    otherError = "Fehler! Kontaktieren Sie den Entwickler.",
+    mainSettingsDynamicColorTitle = "Dynamische Farben",
+)
+
 internal val LocalSettingsStrings = staticCompositionLocalOf<SettingsStrings> {
     error("Settings Strings is not provided")
 }
@@ -112,4 +144,5 @@ internal val LocalSettingsStrings = staticCompositionLocalOf<SettingsStrings> {
 internal fun fetchSettingsStrings(language: TimePlannerLanguage) = when (language) {
     TimePlannerLanguage.EN -> englishSettingsString
     TimePlannerLanguage.RU -> russianSettingsString
+    TimePlannerLanguage.DE -> germanSettingsString
 }
