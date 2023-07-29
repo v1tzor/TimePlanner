@@ -28,6 +28,7 @@ fun LanguageType.mapToUi() = when (this) {
     LanguageType.EN -> LanguageUiType.EN
     LanguageType.RU -> LanguageUiType.RU
     LanguageType.DE -> LanguageUiType.DE
+    LanguageType.ES -> LanguageUiType.ES
 }
 
 fun ThemeColorsType.mapToUi() = when (this) {
