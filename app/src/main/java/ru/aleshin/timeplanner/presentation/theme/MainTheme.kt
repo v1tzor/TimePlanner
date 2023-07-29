@@ -18,7 +18,6 @@ package ru.aleshin.timeplanner.presentation.theme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import ru.aleshin.core.ui.theme.TimePlannerRes
-import ru.aleshin.core.ui.theme.tokens.TimePlannerLanguage
 import ru.aleshin.timeplanner.presentation.theme.tokens.*
 
 /**
@@ -26,10 +25,7 @@ import ru.aleshin.timeplanner.presentation.theme.tokens.*
  */
 @Composable
 fun MainTheme(content: @Composable () -> Unit) {
-    val strings = when (TimePlannerRes.language) {
-        TimePlannerLanguage.EN -> englishMainStrings
-        TimePlannerLanguage.RU -> russianMainStrings
-    }
+    val strings = fetchMainStrings(TimePlannerRes.language)
     val icons = baseMainIcons
 
     CompositionLocalProvider(

@@ -143,6 +143,47 @@ internal val englishTimePlannerString = TimePlannerStrings(
     pmFormatTitle = "PM",
 )
 
+internal val germanTimePlannerString = TimePlannerStrings(
+    appName = "Time Planner",
+    startTaskNotifyText = "Beginn eines Ereignisses",
+    timeTaskChannelName = "Ereignisse",
+    categoryWorkTitle = "Arbeit",
+    categoryRestTitle = "Erholung",
+    categorySleepTitle = "Schlaf",
+    categoryCultureTitle = "Die Kultur",
+    categorySportTitle = "Sport",
+    categoryAffairsTitle = "Angelegenheiten",
+    categoryTransportTitle = "Verkehr",
+    categoryStudyTitle = "Studium",
+    categoryEatTitle = "Mahlzeit",
+    categoryEntertainmentsTitle = "Unterhaltung",
+    categoryOtherTitle = "Ander",
+    categoryEmptyTitle = "Fehlt",
+    categoryHugieneTitle = "Hygiene",
+    minutesSymbol = "m",
+    hoursSymbol = "h",
+    separator = ":",
+    alertDialogDismissTitle = "Abschaffen",
+    alertDialogSelectConfirmTitle = "Wählen",
+    alertDialogOkConfirmTitle = "OK",
+    expandedViewToggleTitle = "Erweiterte Ansicht",
+    compactViewToggleTitle = "Kompakte Optik",
+    warningDialogTitle = "Warnung!",
+    warningDeleteConfirmTitle = "Entfernen",
+    hoursTitle = "Uhr",
+    minutesTitle = "Minuten",
+    homeTabTitle = "Heim",
+    analyticsTabTitle = "Analytik",
+    settingsTabTitle = "Einstellungen",
+    mainDrawerTitle = "Startseite",
+    templateDrawerTitle = "Muster",
+    categoriesDrawerTitle = "Kategorien",
+    drawerMainSection = "Pläne",
+    splitFormat = "%s | %s",
+    amFormatTitle = "AM",
+    pmFormatTitle = "PM",
+)
+
 val LocalTimePlannerStrings = staticCompositionLocalOf<TimePlannerStrings> {
     error("Core Strings is not provided")
 }
@@ -150,4 +191,5 @@ val LocalTimePlannerStrings = staticCompositionLocalOf<TimePlannerStrings> {
 fun fetchCoreStrings(language: TimePlannerLanguage) = when (language) {
     TimePlannerLanguage.EN -> englishTimePlannerString
     TimePlannerLanguage.RU -> russianTimePlannerString
+    TimePlannerLanguage.DE -> germanTimePlannerString
 }

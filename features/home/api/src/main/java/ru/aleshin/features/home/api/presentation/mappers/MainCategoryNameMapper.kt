@@ -27,4 +27,5 @@ import ru.aleshin.features.home.api.domains.entities.categories.MainCategory
 fun MainCategory.fetchNameByLanguage() = when (TimePlannerRes.language) {
     TimePlannerLanguage.RU -> name
     TimePlannerLanguage.EN -> englishName ?: name
+    TimePlannerLanguage.DE -> englishName ?: name
 }

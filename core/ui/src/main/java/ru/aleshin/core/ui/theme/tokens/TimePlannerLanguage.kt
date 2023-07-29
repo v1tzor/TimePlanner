@@ -11,8 +11,8 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License.
-*/
+ * imitations under the License.
+ */
 package ru.aleshin.core.ui.theme.tokens
 
 import androidx.compose.runtime.staticCompositionLocalOf
@@ -21,11 +21,11 @@ import androidx.compose.runtime.staticCompositionLocalOf
  * @author Stanislav Aleshin on 14.02.2023.
  */
 enum class TimePlannerLanguage(val code: String) {
-    EN("en"), RU("ru")
+    EN("en"), RU("ru"), DE("de")
 }
 
 enum class LanguageUiType {
-    DEFAULT, EN, RU
+    DEFAULT, EN, RU, DE
 }
 
 val LocalTimePlannerLanguage = staticCompositionLocalOf<TimePlannerLanguage> {
@@ -35,5 +35,6 @@ val LocalTimePlannerLanguage = staticCompositionLocalOf<TimePlannerLanguage> {
 fun fetchAppLanguage(language: String) = when (language) {
     "ru" -> TimePlannerLanguage.RU
     "en" -> TimePlannerLanguage.EN
+    "de" -> TimePlannerLanguage.EN
     else -> TimePlannerLanguage.EN
 }

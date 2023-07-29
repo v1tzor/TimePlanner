@@ -42,7 +42,7 @@ internal data class AnalyticsStrings(
     val otherError: String,
     val halfYearTimePeriod: String,
     val categoryStatisticsTitle: String,
-    val executedStatisticsTitle: String
+    val executedStatisticsTitle: String,
 )
 
 internal val russianAnalyticsStrings = AnalyticsStrings(
@@ -66,7 +66,7 @@ internal val russianAnalyticsStrings = AnalyticsStrings(
     otherError = "Ошибка! Обратитесь к разработчику.",
     halfYearTimePeriod = "Полгода",
     categoryStatisticsTitle = "Статистика категорий",
-    executedStatisticsTitle = "Статистика выполнения"
+    executedStatisticsTitle = "Статистика выполнения",
 )
 
 internal val englishAnalyticsStrings = AnalyticsStrings(
@@ -90,7 +90,31 @@ internal val englishAnalyticsStrings = AnalyticsStrings(
     otherError = "Error! Contact the developer.",
     halfYearTimePeriod = "Half a year",
     categoryStatisticsTitle = "Category statistics",
-    executedStatisticsTitle = "Execution statistics"
+    executedStatisticsTitle = "Execution statistics",
+)
+
+internal val germanAnalyticsStrings = AnalyticsStrings(
+    topAppBarTitle = "Analytik",
+    menuIconDesc = "Das Menü",
+    timeTabTitle = "Zeit",
+    workLoadTabTitle = "Auslastung",
+    intelligenceTabTitle = "Daten",
+    weekTimePeriod = "Die Woche",
+    monthTimePeriod = "Monat",
+    yearTimePeriod = "Jahr",
+    timeSelectorTitle = "Zeitspanne:",
+    refreshAnalyticIconDesc = "Analyse aktualisieren",
+    otherAnalyticsName = "Ander",
+    allTimeTitle = "Insgesamt:",
+    totalCountTaskTitle = "Anzahl\nder Aufgaben",
+    averageCountTaskTitle = "Anzahl\nder Aufgaben am Tag",
+    totalTimeTaskTitle = "Gesamtzeit\nAufgaben",
+    averageTimeTaskTitle = "Durchschnittliche Zeit\ndie Aufgaben",
+    planningStatisticsTitle = "Planungsstatistiken",
+    otherError = "Fehler! Wenden Sie sich an den Entwickler.",
+    halfYearTimePeriod = "Halbjahr",
+    categoryStatisticsTitle = "Kategorienstatistiken",
+    executedStatisticsTitle = "Ausführungsstatistiken",
 )
 
 internal val LocalAnalyticsStrings = staticCompositionLocalOf<AnalyticsStrings> {
@@ -100,4 +124,5 @@ internal val LocalAnalyticsStrings = staticCompositionLocalOf<AnalyticsStrings> 
 internal fun fetchAnalyticsStrings(language: TimePlannerLanguage) = when (language) {
     TimePlannerLanguage.EN -> englishAnalyticsStrings
     TimePlannerLanguage.RU -> russianAnalyticsStrings
+    TimePlannerLanguage.DE -> germanAnalyticsStrings
 }

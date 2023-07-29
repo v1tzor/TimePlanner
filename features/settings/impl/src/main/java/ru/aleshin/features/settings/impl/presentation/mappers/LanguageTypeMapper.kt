@@ -27,4 +27,5 @@ fun LanguageType.toLanguageName(): String = when (this) {
     LanguageType.DEFAULT -> SettingsThemeRes.strings.defaultLanguageTitle
     LanguageType.EN -> SettingsThemeRes.strings.engLanguageTitle
     LanguageType.RU -> SettingsThemeRes.strings.rusLanguageTitle
+    LanguageType.DE -> SettingsThemeRes.strings.gerLanguageTitle
 }

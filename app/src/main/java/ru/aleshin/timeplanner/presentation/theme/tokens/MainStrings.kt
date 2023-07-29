@@ -16,6 +16,7 @@
 package ru.aleshin.timeplanner.presentation.theme.tokens
 
 import androidx.compose.runtime.compositionLocalOf
+import ru.aleshin.core.ui.theme.tokens.TimePlannerLanguage
 
 /**
  * @author Stanislav Aleshin on 17.02.2023.
@@ -35,6 +36,17 @@ val russianMainStrings = MainStrings(
     launcherIconDesc = "Time Planner",
 )
 
+val germanMainStrings = MainStrings(
+    authorTitle = "Created by Aleshin Stanislav",
+    launcherIconDesc = "Time Planner",
+)
+
 val LocalMainStrings = compositionLocalOf<MainStrings> {
     error("Splash strings is not provided")
+}
+
+fun fetchMainStrings(language: TimePlannerLanguage) = when (language) {
+    TimePlannerLanguage.EN -> englishMainStrings
+    TimePlannerLanguage.RU -> russianMainStrings
+    TimePlannerLanguage.DE -> germanMainStrings
 }
