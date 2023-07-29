@@ -138,7 +138,7 @@ internal val germanSettingsString = SettingsStrings(
 )
 
 
-internal val englishSettingsString = SettingsStrings(
+internal val persianSettingsString = SettingsStrings(
     settingsTitle = "تنظبمات",
     mainSettingsTitle = "تنظیمات عمومی",
     mainSettingsThemeTitle = "پوسته:",
