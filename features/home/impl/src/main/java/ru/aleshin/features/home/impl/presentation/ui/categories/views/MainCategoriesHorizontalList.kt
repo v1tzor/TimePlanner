@@ -102,6 +102,7 @@ internal fun MainCategoriesHorizontalList(
                         TimePlannerLanguage.RU -> category.copy(name = it)
                         TimePlannerLanguage.EN -> category.copy(englishName = it)
                         TimePlannerLanguage.DE -> category.copy(englishName = it)
+                        TimePlannerLanguage.ES -> category.copy(englishName = it)
                     }
                     onUpdateCategory(languageCategory)
                 },

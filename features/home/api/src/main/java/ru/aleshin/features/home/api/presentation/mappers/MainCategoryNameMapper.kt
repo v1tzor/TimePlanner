@@ -28,4 +28,5 @@ fun MainCategory.fetchNameByLanguage() = when (TimePlannerRes.language) {
     TimePlannerLanguage.RU -> name
     TimePlannerLanguage.EN -> englishName ?: name
     TimePlannerLanguage.DE -> englishName ?: name
+    TimePlannerLanguage.ES -> englishName ?: name
 }

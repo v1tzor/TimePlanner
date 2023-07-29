@@ -21,11 +21,11 @@ import androidx.compose.runtime.staticCompositionLocalOf
  * @author Stanislav Aleshin on 14.02.2023.
  */
 enum class TimePlannerLanguage(val code: String) {
-    EN("en"), RU("ru"), DE("de")
+    EN("en"), RU("ru"), DE("de"), ES("es")
 }
 
 enum class LanguageUiType {
-    DEFAULT, EN, RU, DE
+    DEFAULT, EN, RU, DE, ES
 }
 
 val LocalTimePlannerLanguage = staticCompositionLocalOf<TimePlannerLanguage> {
@@ -35,6 +35,7 @@ val LocalTimePlannerLanguage = staticCompositionLocalOf<TimePlannerLanguage> {
 fun fetchAppLanguage(language: String) = when (language) {
     "ru" -> TimePlannerLanguage.RU
     "en" -> TimePlannerLanguage.EN
-    "de" -> TimePlannerLanguage.EN
+    "de" -> TimePlannerLanguage.DE
+    "es" -> TimePlannerLanguage.ES
     else -> TimePlannerLanguage.EN
 }

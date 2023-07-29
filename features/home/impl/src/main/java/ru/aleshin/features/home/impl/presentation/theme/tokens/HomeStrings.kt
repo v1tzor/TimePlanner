@@ -272,6 +272,69 @@ internal val germanHomeString = HomeStrings(
     nameCategoryTitle = "Name",
 )
 
+internal val spanishHomeString = HomeStrings(
+    topAppBarHomeTitle = "Inicio",
+    topAppBarCategoriesTitle = "Categorías",
+    mainCategoryTitle = "Página principal",
+    topAppBarCalendarIconDesc = "Selecciona fecha",
+    topAppBarMenuIconDesc = "Abrir menú",
+    nextDateIconDesc = "Próxima fecha",
+    previousDateIconDesc = "Fecha anterior",
+    dateDialogPickerHeadline = "Selecciona fecha",
+    dateDialogPickerTitle = "Plan diario",
+    timeTaskExpandedIconDesc = "Más",
+    timeTaskCheckIconDesc = "Completado",
+    timeTaskMoreIconDesc = "Editar",
+    timeTaskAddIconDesc = "Añadir tiempo",
+    timeTaskRemoveIconDesc = "Reducir tiempo",
+    timeTaskIncreaseTimeTitle = "Aumentar",
+    timeTaskReduceTimeTitle = "Reducir",
+    startTimeTaskTitlePlaceHolder = "00:00",
+    addTimeTaskIconsDesc = "Añadir tarea",
+    addTimeTaskTitle = "Tiempo libre",
+    topAppBarBackIconDesc = "Volver",
+    topAppBarMoreIconDesc = "Más",
+    topAppBarTemplatesTitle = "Plantillas",
+    mainCategoryChooserTitle = "Categoría",
+    subCategoryChooserTitle = "Subcategoría",
+    subCategoryDialogMainCategoryFormat = "Categoría: %s",
+    emptyScheduleTitle = "Nada planeado todavía",
+    createScheduleTitle = "Añadir tarea",
+    createScheduleDesc = "Crea un plan para el día seleccionado",
+    shiftError = "¡No es posible aplazarla!",
+    importanceError = "¡La siguiente tarea tiene más prioridad!",
+    otherError = "¡Error! Contacta al desarrollador.",
+    addSubCategoryTitle = "Añadir subcategoría",
+    categoryFieldLabel = "Nombre",
+    dialogCreateTitle = "Crear",
+    emptyListTitle = "Lista vacía",
+    updateCategoryTitle = "Editar",
+    deleteCategoryTitle = "Eliminar",
+    subCategoryTitle = "Subcategorías",
+    warningDeleteCategoryText = "¿Quieres eliminar la categoría principal? " +
+        "Esto eliminará todas las tareas programadas anteriormente..",
+    sortedTypeTitle = "Ordenado",
+    sortedTypeDate = "Por fecha",
+    sortedTypeCategories = "Por categoría",
+    sortedTypeDuration = "Por duración",
+    notificationEnabledTitle = "Activada",
+    notificationDisabledTitle = "Desactivada",
+    statisticsActiveTitle = "Activada",
+    statisticsDisabledTitle = "Desactivada",
+    addTemplatesFabTitle = "+",
+    templateEditorHeader = "Plantilla",
+    mainCategoryLabel = "Categoría",
+    subCategoryLabel = "Subcategoría",
+    startTimeLabel = "Empieza",
+    endTimeLabel = "Termina",
+    notificationLabel = "Enviar notificación",
+    statisticsLabel = "Incluir en estadísticas",
+    importanceLabel = "Prioridad especial",
+    subCategoryEmptyTitle = "Inexistente",
+    addCategoryTitle = "Añadir",
+    nameCategoryTitle = "Nombre",
+)
+
 internal val LocalHomeStrings = staticCompositionLocalOf<HomeStrings> {
     error("Home Strings is not provided")
 }
@@ -280,4 +343,5 @@ internal fun fetchHomeStrings(language: TimePlannerLanguage) = when (language) {
     TimePlannerLanguage.EN -> englishHomeString
     TimePlannerLanguage.RU -> russianHomeString
     TimePlannerLanguage.DE -> germanHomeString
+    TimePlannerLanguage.ES -> spanishHomeString
 }
