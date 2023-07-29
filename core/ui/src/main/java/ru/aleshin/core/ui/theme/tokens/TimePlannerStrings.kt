@@ -184,6 +184,47 @@ internal val germanTimePlannerString = TimePlannerStrings(
     pmFormatTitle = "PM",
 )
 
+internal val spanishTimePlannerString = TimePlannerStrings(
+    appName = "Time Planner",
+    startTaskNotifyText = "Inicio del evento",
+    timeTaskChannelName = "Eventos",
+    categoryWorkTitle = "Trabajo",
+    categoryRestTitle = "Descanso",
+    categorySleepTitle = "Durmiendo",
+    categoryCultureTitle = "Cultura",
+    categoryAffairsTitle = "Citas",
+    categorySportTitle = "Deporte",
+    categoryTransportTitle = "Transporte",
+    categoryStudyTitle = "Estudio",
+    categoryEatTitle = "Comidas",
+    categoryEntertainmentsTitle = "Entretenimiento",
+    categoryOtherTitle = "Otros",
+    categoryEmptyTitle = "Inexistente",
+    categoryHugieneTitle = "Higiene",
+    minutesSymbol = "m",
+    hoursSymbol = "h",
+    separator = ":",
+    alertDialogDismissTitle = "Cancelar",
+    alertDialogSelectConfirmTitle = "Seleccionar",
+    alertDialogOkConfirmTitle = "Vale",
+    expandedViewToggleTitle = "Vista ampliada",
+    compactViewToggleTitle = "Vista compacta",
+    warningDialogTitle = "¡Cuidado!",
+    warningDeleteConfirmTitle = "Eliminar",
+    hoursTitle = "Horas",
+    minutesTitle = "Minutos",
+    homeTabTitle = "Inicio",
+    analyticsTabTitle = "Estadísticas",
+    settingsTabTitle = "Ajustes",
+    mainDrawerTitle = "Página principal",
+    templateDrawerTitle = "Plantillas",
+    categoriesDrawerTitle = "Categorías",
+    drawerMainSection = "Planes",
+    splitFormat = "%s | %s",
+    amFormatTitle = "AM",
+    pmFormatTitle = "PM",
+)
+
 val LocalTimePlannerStrings = staticCompositionLocalOf<TimePlannerStrings> {
     error("Core Strings is not provided")
 }
@@ -192,4 +233,5 @@ fun fetchCoreStrings(language: TimePlannerLanguage) = when (language) {
     TimePlannerLanguage.EN -> englishTimePlannerString
     TimePlannerLanguage.RU -> russianTimePlannerString
     TimePlannerLanguage.DE -> germanTimePlannerString
+    TimePlannerLanguage.ES -> spanishTimePlannerString
 }
