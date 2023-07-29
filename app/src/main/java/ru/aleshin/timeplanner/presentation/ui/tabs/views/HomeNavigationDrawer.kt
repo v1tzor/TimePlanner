@@ -15,10 +15,7 @@
  */
 package ru.aleshin.timeplanner.presentation.ui.tabs.views
 
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Divider
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
@@ -34,7 +31,6 @@ import kotlinx.coroutines.launch
 import ru.aleshin.core.ui.theme.TimePlannerRes
 import ru.aleshin.core.ui.views.DrawerItems
 import ru.aleshin.core.ui.views.DrawerLogoSection
-import ru.aleshin.core.ui.views.DrawerSectionHeader
 import ru.aleshin.core.utils.managers.DrawerItem
 import ru.aleshin.core.utils.managers.DrawerManager
 import ru.aleshin.core.utils.managers.LocalDrawerManager

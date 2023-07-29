@@ -96,6 +96,5 @@ internal interface NavigationWorkProcessor : WorkProcessor<NavigationWorkCommand
 
 internal sealed class NavigationWorkCommand : WorkCommand {
     data class NavigateToEditorWithTimeTask(val timeTask: TimeTaskUi) : NavigationWorkCommand()
-    data class NavigateToEditor(val currentDate: Date, val startTime: Date, val endTime: Date) :
-        NavigationWorkCommand()
+    data class NavigateToEditor(val currentDate: Date, val startTime: Date, val endTime: Date) : NavigationWorkCommand()
 }

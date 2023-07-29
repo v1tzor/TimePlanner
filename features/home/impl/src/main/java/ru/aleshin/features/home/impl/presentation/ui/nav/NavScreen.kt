@@ -44,7 +44,6 @@ internal class NavScreen @Inject constructor() : Screen {
         val drawerManager = LocalDrawerManager.current
 
         AppNavigator(
-            initialScreen = HomeScreen(),
             navigatorManager = navigatorManager,
             onBackPressed = {
                 when (drawerManager?.drawerValue?.value == DrawerValue.Open) {

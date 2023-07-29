@@ -17,27 +17,24 @@ package ru.aleshin.features.home.impl.navigation
 
 import cafe.adriel.voyager.core.screen.Screen
 import ru.aleshin.features.home.api.navigation.HomeFeatureStarter
+import ru.aleshin.features.home.api.navigation.HomeScreens
 import javax.inject.Inject
 
 /**
  * @author Stanislav Aleshin on 18.02.2023.
  */
 internal class HomeFeatureStarterImpl @Inject constructor(
-    private val navScreen: Screen,
+    private val localNavScreen: Screen,
     private val navigationManager: NavigationManager,
 ) : HomeFeatureStarter {
 
-    override fun provideNavScreen(): Screen = navScreen
-
-    override fun showHomeScreen() {
-        navigationManager.navigateToHomeScreen()
-    }
-
-    override fun showTemplatesScreen() {
-        navigationManager.navigateToTemplatesScreen()
-    }
-
-    override fun showCategoriesScreen() {
-        navigationManager.navigateToCategoriesScreen()
+    override fun provideHomeScreen(
+        navScreen: HomeScreens,
+        isRoot: Boolean,
+    ) = navigationManager.navigateToLocal(
+        homeScreens = navScreen,
+        isRoot = isRoot,
+    ).let {
+        return@let localNavScreen
     }
 }

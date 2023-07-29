@@ -12,8 +12,9 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License.
-*/package ru.aleshin.timeplanner.presentation.ui.tabs.screenmodel
+ * imitations under the License.
+ */
+package ru.aleshin.timeplanner.presentation.ui.tabs.screenmodel
 
 import androidx.compose.runtime.Composable
 import cafe.adriel.voyager.core.model.rememberScreenModel
@@ -22,6 +23,7 @@ import ru.aleshin.core.utils.managers.CoroutineManager
 import ru.aleshin.core.utils.platform.communications.state.EffectCommunicator
 import ru.aleshin.core.utils.platform.screenmodel.BaseScreenModel
 import ru.aleshin.core.utils.platform.screenmodel.work.WorkScope
+import ru.aleshin.features.home.api.navigation.HomeScreens
 import ru.aleshin.timeplanner.application.fetchAppComponent
 import ru.aleshin.timeplanner.navigation.TabNavigationManager
 import ru.aleshin.timeplanner.presentation.ui.tabs.contract.TabsAction
@@ -51,12 +53,24 @@ class TabScreenModel @Inject constructor(
     override suspend fun WorkScope<TabsViewState, TabsAction, TabsEffect>.handleEvent(
         event: TabsEvent,
     ) = when (event) {
-        TabsEvent.SelectedHomeTab -> navigate(TabsBottomBarItems.HOME) { showHomeFeature() }
-        TabsEvent.SelectedMainScreen -> navigate(TabsBottomBarItems.HOME) { showHomeScreen() }
-        TabsEvent.SelectedTemplateScreen -> navigate(TabsBottomBarItems.HOME) { showTemplatesScreen() }
-        TabsEvent.SelectedCategoriesScreen -> navigate(TabsBottomBarItems.HOME) { showCategoriesScreen() }
-        TabsEvent.SelectedAnalyticsTab -> navigate(TabsBottomBarItems.ANALYTICS) { showAnalyticsFeature() }
-        TabsEvent.SelectedSettingsTab -> navigate(TabsBottomBarItems.SETTINGS) { showSettingsFeature() }
+        TabsEvent.SelectedHomeTab -> navigate(TabsBottomBarItems.HOME) {
+            showHomeFeature(HomeScreens.Home, isRoot = true)
+        }
+        TabsEvent.SelectedMainScreen -> navigate(TabsBottomBarItems.HOME) {
+            showHomeFeature(HomeScreens.Home)
+        }
+        TabsEvent.SelectedTemplateScreen -> navigate(TabsBottomBarItems.HOME) {
+            showHomeFeature(HomeScreens.Templates)
+        }
+        TabsEvent.SelectedCategoriesScreen -> navigate(TabsBottomBarItems.HOME) {
+            showHomeFeature(HomeScreens.Categories)
+        }
+        TabsEvent.SelectedAnalyticsTab -> navigate(TabsBottomBarItems.ANALYTICS) {
+            showAnalyticsFeature()
+        }
+        TabsEvent.SelectedSettingsTab -> navigate(TabsBottomBarItems.SETTINGS) {
+            showSettingsFeature()
+        }
     }
 
     override suspend fun reduce(

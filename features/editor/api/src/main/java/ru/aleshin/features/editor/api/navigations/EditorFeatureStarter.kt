@@ -16,11 +16,10 @@
 package ru.aleshin.features.editor.api.navigations
 
 import cafe.adriel.voyager.core.screen.Screen
-import ru.aleshin.features.home.api.domains.entities.schedules.TimeTask
 
 /**
  * @author Stanislav Aleshin on 08.03.2023.
  */
 interface EditorFeatureStarter {
-    fun provideMainScreen(timeTask: TimeTask, templateId: Int?): Screen
+    fun provideEditorScreen(navScreens: EditorScreens): Screen
 }

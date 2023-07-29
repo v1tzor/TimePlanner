@@ -11,8 +11,8 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License.
-*/
+ * imitations under the License.
+ */
 package ru.aleshin.features.home.api.navigation
 
 import cafe.adriel.voyager.core.screen.Screen
@@ -21,8 +21,5 @@ import cafe.adriel.voyager.core.screen.Screen
  * @author Stanislav Aleshin on 18.02.2023.
  */
 interface HomeFeatureStarter {
-    fun provideNavScreen(): Screen
-    fun showHomeScreen()
-    fun showTemplatesScreen()
-    fun showCategoriesScreen()
+    fun provideHomeScreen(navScreen: HomeScreens, isRoot: Boolean): Screen
 }

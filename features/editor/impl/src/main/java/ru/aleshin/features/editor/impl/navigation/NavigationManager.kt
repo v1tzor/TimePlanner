@@ -16,7 +16,9 @@
 package ru.aleshin.features.editor.impl.navigation
 
 import ru.aleshin.core.utils.navigation.Router
+import ru.aleshin.core.utils.navigation.TabRouter
 import ru.aleshin.features.home.api.navigation.HomeFeatureStarter
+import ru.aleshin.features.home.api.navigation.HomeScreens
 import javax.inject.Inject
 import javax.inject.Provider
 
@@ -30,6 +32,7 @@ internal interface NavigationManager {
     fun navigateToPreviousFeature()
 
     class Base @Inject constructor(
+        private val tabRouter: TabRouter,
         private val globalRouter: Router,
         private val homeFeatureStarter: Provider<HomeFeatureStarter>,
     ) : NavigationManager {
@@ -39,8 +42,8 @@ internal interface NavigationManager {
         }
 
         override fun navigateToTemplatesScreen() {
-            val starter = homeFeatureStarter.get()
-            starter.showTemplatesScreen()
+            val screen = homeFeatureStarter.get().provideHomeScreen(HomeScreens.Templates, false)
+            tabRouter.showTab(screen)
             globalRouter.navigateBack()
         }
 

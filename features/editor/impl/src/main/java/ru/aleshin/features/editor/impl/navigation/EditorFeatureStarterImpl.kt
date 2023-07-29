@@ -17,9 +17,9 @@ package ru.aleshin.features.editor.impl.navigation
 
 import cafe.adriel.voyager.core.screen.Screen
 import ru.aleshin.features.editor.api.navigations.EditorFeatureStarter
+import ru.aleshin.features.editor.api.navigations.EditorScreens
 import ru.aleshin.features.editor.impl.domain.common.convertToEditModel
 import ru.aleshin.features.editor.impl.domain.interactors.EditorInteractor
-import ru.aleshin.features.home.api.domains.entities.schedules.TimeTask
 import javax.inject.Inject
 
 /**
@@ -30,10 +30,10 @@ internal class EditorFeatureStarterImpl @Inject constructor(
     private val editorInteractor: EditorInteractor,
 ) : EditorFeatureStarter {
 
-    override fun provideMainScreen(
-        timeTask: TimeTask,
-        templateId: Int?,
-    ) = editorInteractor.sendEditModel(timeTask.convertToEditModel(templateId)).let {
-        editorScreen
+    override fun provideEditorScreen(navScreens: EditorScreens): Screen {
+        if (navScreens is EditorScreens.Editor) {
+            editorInteractor.sendEditModel(navScreens.timeTask.convertToEditModel(navScreens.templateId))
+        }
+        return editorScreen
     }
 }

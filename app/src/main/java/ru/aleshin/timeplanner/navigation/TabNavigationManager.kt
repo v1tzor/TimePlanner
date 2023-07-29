@@ -19,6 +19,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import ru.aleshin.core.utils.navigation.TabRouter
 import ru.aleshin.features.analytics.api.navigation.AnalyticsFeatureStarter
 import ru.aleshin.features.home.api.navigation.HomeFeatureStarter
+import ru.aleshin.features.home.api.navigation.HomeScreens
 import ru.aleshin.features.settings.api.navigation.SettingsFeatureStarter
 import javax.inject.Inject
 import javax.inject.Provider
@@ -28,10 +29,7 @@ import javax.inject.Provider
  */
 interface TabNavigationManager {
 
-    fun showHomeFeature()
-    fun showHomeScreen()
-    fun showTemplatesScreen()
-    fun showCategoriesScreen()
+    fun showHomeFeature(screen: HomeScreens, isRoot: Boolean = false)
     fun showAnalyticsFeature()
     fun showSettingsFeature()
 
@@ -42,21 +40,9 @@ interface TabNavigationManager {
         private val router: TabRouter,
     ) : TabNavigationManager {
 
-        override fun showHomeFeature() = showTab(
-            screen = homeFeatureStarter.get().provideNavScreen(),
+        override fun showHomeFeature(screen: HomeScreens, isRoot: Boolean) = showTab(
+            screen = homeFeatureStarter.get().provideHomeScreen(screen, isRoot),
         )
-
-        override fun showHomeScreen() = showHomeFeature().let {
-            homeFeatureStarter.get().showHomeScreen()
-        }
-
-        override fun showTemplatesScreen() = showHomeFeature().let {
-            homeFeatureStarter.get().showTemplatesScreen()
-        }
-
-        override fun showCategoriesScreen() = showHomeFeature().let {
-            homeFeatureStarter.get().showCategoriesScreen()
-        }
 
         override fun showAnalyticsFeature() = showTab(
             screen = analyticsFeatureStarter.get().provideMainScreen(),

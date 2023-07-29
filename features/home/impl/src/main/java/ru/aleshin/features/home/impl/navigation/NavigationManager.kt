@@ -15,9 +15,12 @@
  */
 package ru.aleshin.features.home.impl.navigation
 
+import android.util.Log
 import ru.aleshin.core.utils.navigation.Router
 import ru.aleshin.features.editor.api.navigations.EditorFeatureStarter
+import ru.aleshin.features.editor.api.navigations.EditorScreens
 import ru.aleshin.features.home.api.domains.entities.schedules.TimeTask
+import ru.aleshin.features.home.api.navigation.HomeScreens
 import ru.aleshin.features.home.impl.di.annontation.LocalRouter
 import ru.aleshin.features.home.impl.presentation.ui.categories.CategoriesScreen
 import ru.aleshin.features.home.impl.presentation.ui.home.HomeScreen
@@ -30,36 +33,28 @@ import javax.inject.Provider
  */
 internal interface NavigationManager {
 
+    fun navigateToLocal(homeScreens: HomeScreens, isRoot: Boolean = true)
     fun navigateToEditorFeature(timeTask: TimeTask, templateId: Int?)
-    fun navigateToHomeScreen()
-    fun navigateToTemplatesScreen()
-    fun navigateToCategoriesScreen()
     fun navigateToLocalBack()
 
     class Base @Inject constructor(
-        private val editorFeatureStarter: Provider<EditorFeatureStarter>,
-        private val globalRouter: Router,
         @LocalRouter private val localRouter: Router,
+        private val globalRouter: Router,
+        private val editorFeatureStarter: Provider<EditorFeatureStarter>,
     ) : NavigationManager {
 
+        override fun navigateToLocal(homeScreens: HomeScreens, isRoot: Boolean) = with(localRouter) {
+            val screen = when (homeScreens) {
+                HomeScreens.Home -> HomeScreen()
+                HomeScreens.Templates -> TemplatesScreen()
+                HomeScreens.Categories -> CategoriesScreen()
+            }
+            if (isRoot) replaceTo(screen, true) else navigateTo(screen)
+        }
+
         override fun navigateToEditorFeature(timeTask: TimeTask, templateId: Int?) {
-            val screen = editorFeatureStarter.get().provideMainScreen(timeTask, templateId)
+            val screen = editorFeatureStarter.get().provideEditorScreen(EditorScreens.Editor(timeTask, templateId))
             globalRouter.navigateTo(screen)
-        }
-
-        override fun navigateToHomeScreen() {
-            val screen = HomeScreen()
-            localRouter.navigateTo(screen)
-        }
-
-        override fun navigateToTemplatesScreen() {
-            val screen = TemplatesScreen()
-            localRouter.navigateTo(screen)
-        }
-
-        override fun navigateToCategoriesScreen() {
-            val screen = CategoriesScreen()
-            localRouter.navigateTo(screen)
         }
 
         override fun navigateToLocalBack() = localRouter.navigateBack()

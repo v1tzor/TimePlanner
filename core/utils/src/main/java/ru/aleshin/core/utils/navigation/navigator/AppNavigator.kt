@@ -29,7 +29,7 @@ import cafe.adriel.voyager.navigator.OnBackPressed
  */
 @Composable
 fun AppNavigator(
-    initialScreen: Screen,
+    initialScreen: Screen = EmptyScreen,
     navigatorManager: NavigatorManager,
     onBackPressed: OnBackPressed = { true },
     content: NavigatorContent = { CurrentScreen() },
