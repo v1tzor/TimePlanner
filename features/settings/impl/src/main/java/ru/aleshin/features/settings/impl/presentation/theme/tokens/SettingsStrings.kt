@@ -32,6 +32,7 @@ internal data class SettingsStrings(
     val rusLanguageTitle: String,
     val engLanguageTitle: String,
     val gerLanguageTitle: String,
+    val spaLanguageTitle: String,
     val defaultLanguageTitle: String,
     val backIconDesc: String,
     val moreIconDesc: String,
@@ -60,6 +61,7 @@ internal val russianSettingsString = SettingsStrings(
     rusLanguageTitle = "Русский",
     engLanguageTitle = "Английский",
     gerLanguageTitle = "Немецкий (b)",
+    spaLanguageTitle = "испанский",
     defaultLanguageTitle = "По умолчанию",
     mainSettingsLanguageTitle = "Язык приложения",
     backIconDesc = "Назад",
@@ -89,6 +91,7 @@ internal val englishSettingsString = SettingsStrings(
     rusLanguageTitle = "Russian",
     engLanguageTitle = "English",
     gerLanguageTitle = "German (beta)",
+    spaLanguageTitle = "Spanish",
     defaultLanguageTitle = "Default",
     mainSettingsLanguageTitle = "App language",
     backIconDesc = "Navigate up",
@@ -118,6 +121,7 @@ internal val germanSettingsString = SettingsStrings(
     rusLanguageTitle = "Russisch",
     engLanguageTitle = "Englisch",
     gerLanguageTitle = "Deutsch (b)",
+    spaLanguageTitle = "Spanisch",
     defaultLanguageTitle = "Standard",
     mainSettingsLanguageTitle = "Sprache der Anwendung",
     backIconDesc = "Nach oben navigieren",
@@ -137,6 +141,36 @@ internal val germanSettingsString = SettingsStrings(
     mainSettingsDynamicColorTitle = "Dynamische Farben",
 )
 
+internal val spanishSettingsString = SettingsStrings(
+    settingsTitle = "Ajustes",
+    mainSettingsTitle = "Ajustes generales",
+    mainSettingsThemeTitle = "Estilo:",
+    darkThemeTitle = "Oscuro",
+    lightThemeTitle = "Claro",
+    systemThemeTitle = "Sistema",
+    rusLanguageTitle = "Ruso",
+    engLanguageTitle = "Inglés",
+    gerLanguageTitle = "Alemán (beta)",
+    spaLanguageTitle = "Español",
+    defaultLanguageTitle = "Por defecto",
+    mainSettingsLanguageTitle = "Idioma ",
+    backIconDesc = "Volver arriba",
+    moreIconDesc = "Más",
+    resetToDefaultTitle = "Restablecer valores",
+    menuIconDesc = "Menú",
+    clearDataTitle = "Borrar todos los datos",
+    mainSettingsClearDataTitle = "Datos",
+    clearDataButtonTitle = "Borrar",
+    clearDataWarning = "¡Esto supondrá la eliminación completa de todos los datos!",
+    backupDataTitle = "Respaldo",
+    backupDataButtonTitle = "Guardar",
+    restoreDataButtonTitle = "Restaurar",
+    errorBackupMessage = "Error de respaldo",
+    errorBackupFileMessage = "Error al trabajar con el archivo",
+    otherError = "¡Error! Contacta al desarrollador.",
+    mainSettingsDynamicColorTitle = "Colores dinámicos",
+)
+
 internal val LocalSettingsStrings = staticCompositionLocalOf<SettingsStrings> {
     error("Settings Strings is not provided")
 }
@@ -145,4 +179,5 @@ internal fun fetchSettingsStrings(language: TimePlannerLanguage) = when (languag
     TimePlannerLanguage.EN -> englishSettingsString
     TimePlannerLanguage.RU -> russianSettingsString
     TimePlannerLanguage.DE -> germanSettingsString
+    TimePlannerLanguage.ES -> spanishSettingsString	
 }
