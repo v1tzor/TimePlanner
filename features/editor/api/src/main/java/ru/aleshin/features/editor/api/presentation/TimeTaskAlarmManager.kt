@@ -73,7 +73,7 @@ interface TimeTaskAlarmManager {
 
         private fun createAlarmIntent(category: MainCategory, subCategory: SubCategory?): Intent {
             val categoryName = when (context.fetchCurrentLanguage() == "en") {
-                true -> category.englishName ?: category.name
+                true -> category.foreignName ?: category.name
                 false -> category.name
             }
             val subCategoryName = subCategory?.name ?: ""

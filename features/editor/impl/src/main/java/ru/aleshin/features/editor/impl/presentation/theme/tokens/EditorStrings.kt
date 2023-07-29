@@ -322,4 +322,5 @@ internal fun fetchEditorStrings(language: TimePlannerLanguage) = when (language)
     TimePlannerLanguage.RU -> russianHomeString
     TimePlannerLanguage.DE -> germanHomeString
     TimePlannerLanguage.ES -> spanishHomeString
+    TimePlannerLanguage.FA -> persianHomeString
 }

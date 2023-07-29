@@ -100,9 +100,10 @@ internal fun MainCategoriesHorizontalList(
                 onUpdate = {
                     val languageCategory = when (language) {
                         TimePlannerLanguage.RU -> category.copy(name = it)
-                        TimePlannerLanguage.EN -> category.copy(englishName = it)
-                        TimePlannerLanguage.DE -> category.copy(englishName = it)
-                        TimePlannerLanguage.ES -> category.copy(englishName = it)
+                        TimePlannerLanguage.EN -> category.copy(foreignName = it)
+                        TimePlannerLanguage.DE -> category.copy(foreignName = it)
+                        TimePlannerLanguage.ES -> category.copy(foreignName = it)
+                        TimePlannerLanguage.FA -> category.copy(foreignName = it)
                     }
                     onUpdateCategory(languageCategory)
                 },

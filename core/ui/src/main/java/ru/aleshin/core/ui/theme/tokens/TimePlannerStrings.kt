@@ -275,4 +275,5 @@ fun fetchCoreStrings(language: TimePlannerLanguage) = when (language) {
     TimePlannerLanguage.RU -> russianTimePlannerString
     TimePlannerLanguage.DE -> germanTimePlannerString
     TimePlannerLanguage.ES -> spanishTimePlannerString
+    TimePlannerLanguage.FA -> persianTimePlannerString
 }

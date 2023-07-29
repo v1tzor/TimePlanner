@@ -23,5 +23,5 @@ import kotlinx.parcelize.Parcelize
  */
 @Parcelize
 enum class LanguageType : Parcelable {
-    DEFAULT, EN, RU, DE, ES
+    DEFAULT, EN, RU, DE, ES, FA
 }

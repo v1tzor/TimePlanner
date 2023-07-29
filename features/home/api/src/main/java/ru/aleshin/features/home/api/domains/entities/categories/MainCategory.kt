@@ -26,14 +26,14 @@ import ru.aleshin.features.home.api.domains.common.MainIcon
 data class MainCategory(
     val id: Int = 0,
     val name: String,
-    val englishName: String? = null,
+    val foreignName: String? = null,
     val icon: MainIcon? = null,
     val isNotDeleted: Boolean = false,
 ) : Parcelable {
     companion object {
         fun absent() = MainCategory(
             name = "Отсутсвует",
-            englishName = "Empty",
+            foreignName = "Empty",
             icon = MainIcon.EMPTY,
             isNotDeleted = true,
         )

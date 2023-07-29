@@ -33,6 +33,7 @@ internal data class SettingsStrings(
     val engLanguageTitle: String,
     val gerLanguageTitle: String,
     val spaLanguageTitle: String,
+    val perLanguageTitle: String,
     val defaultLanguageTitle: String,
     val backIconDesc: String,
     val moreIconDesc: String,
@@ -60,8 +61,9 @@ internal val russianSettingsString = SettingsStrings(
     systemThemeTitle = "Системная",
     rusLanguageTitle = "Русский",
     engLanguageTitle = "Английский",
-    gerLanguageTitle = "Немецкий (b)",
-    spaLanguageTitle = "испанский",
+    gerLanguageTitle = "Немецкий",
+    spaLanguageTitle = "Испанский",
+    perLanguageTitle = "Персидский(b)",
     defaultLanguageTitle = "По умолчанию",
     mainSettingsLanguageTitle = "Язык приложения",
     backIconDesc = "Назад",
@@ -90,8 +92,9 @@ internal val englishSettingsString = SettingsStrings(
     systemThemeTitle = "System",
     rusLanguageTitle = "Russian",
     engLanguageTitle = "English",
-    gerLanguageTitle = "German (beta)",
+    gerLanguageTitle = "German",
     spaLanguageTitle = "Spanish",
+    perLanguageTitle = "Persian(b)",
     defaultLanguageTitle = "Default",
     mainSettingsLanguageTitle = "App language",
     backIconDesc = "Navigate up",
@@ -120,8 +123,9 @@ internal val germanSettingsString = SettingsStrings(
     systemThemeTitle = "System",
     rusLanguageTitle = "Russisch",
     engLanguageTitle = "Englisch",
-    gerLanguageTitle = "Deutsch (b)",
+    gerLanguageTitle = "Deutsch",
     spaLanguageTitle = "Spanisch",
+    perLanguageTitle = "Persisch(b)",
     defaultLanguageTitle = "Standard",
     mainSettingsLanguageTitle = "Sprache der Anwendung",
     backIconDesc = "Nach oben navigieren",
@@ -150,8 +154,9 @@ internal val spanishSettingsString = SettingsStrings(
     systemThemeTitle = "Sistema",
     rusLanguageTitle = "Ruso",
     engLanguageTitle = "Inglés",
-    gerLanguageTitle = "Alemán (beta)",
+    gerLanguageTitle = "Alemán",
     spaLanguageTitle = "Español",
+    perLanguageTitle = "Persa(b)",
     defaultLanguageTitle = "Por defecto",
     mainSettingsLanguageTitle = "Idioma ",
     backIconDesc = "Volver arriba",
@@ -174,14 +179,15 @@ internal val spanishSettingsString = SettingsStrings(
 internal val persianSettingsString = SettingsStrings(
     settingsTitle = "تنظبمات",
     mainSettingsTitle = "تنظیمات عمومی",
-    mainSettingsThemeTitle = "پوسته:",
+    mainSettingsThemeTitle = "پوسته",
     darkThemeTitle = "تاریک",
     lightThemeTitle = "روشن",
     systemThemeTitle = "سیستم",
     rusLanguageTitle = "روسی",
     engLanguageTitle = "انگلیسی",
     spaLanguageTitle = "اسپانیایی",
-    gerLanguageTitle = "آلمانی (غیر رسمی)",
+    perLanguageTitle = "فارسی (بیتا)",
+    gerLanguageTitle = "آلمانی",
     defaultLanguageTitle = "پیش فرض",
     mainSettingsLanguageTitle = "زبان برنامه",
     backIconDesc = "پیمایش به بالا",
@@ -209,5 +215,6 @@ internal fun fetchSettingsStrings(language: TimePlannerLanguage) = when (languag
     TimePlannerLanguage.EN -> englishSettingsString
     TimePlannerLanguage.RU -> russianSettingsString
     TimePlannerLanguage.DE -> germanSettingsString
-    TimePlannerLanguage.ES -> spanishSettingsString	
+    TimePlannerLanguage.ES -> spanishSettingsString
+    TimePlannerLanguage.FA -> persianSettingsString
 }

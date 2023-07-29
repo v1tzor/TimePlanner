@@ -174,4 +174,5 @@ internal fun fetchAnalyticsStrings(language: TimePlannerLanguage) = when (langua
     TimePlannerLanguage.RU -> russianAnalyticsStrings
     TimePlannerLanguage.DE -> germanAnalyticsStrings
     TimePlannerLanguage.ES -> spanishAnalyticsStrings
+    TimePlannerLanguage.FA -> persianAnalyticsStrings
 }

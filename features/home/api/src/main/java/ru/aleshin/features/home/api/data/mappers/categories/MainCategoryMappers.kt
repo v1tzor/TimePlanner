@@ -24,7 +24,7 @@ import ru.aleshin.features.home.api.domains.entities.categories.MainCategory
 fun MainCategoryEntity.mapToDomain() = MainCategory(
     id = id,
     name = categoryName,
-    englishName = categoryNameEng,
+    foreignName = categoryNameEng,
     icon = mainIcon,
     isNotDeleted = isNotDeleted,
 )
@@ -32,7 +32,7 @@ fun MainCategoryEntity.mapToDomain() = MainCategory(
 fun MainCategory.mapToData() = MainCategoryEntity(
     id = id,
     categoryName = name,
-    categoryNameEng = englishName,
+    categoryNameEng = foreignName,
     mainIcon = icon,
     isNotDeleted = isNotDeleted,
 )

@@ -26,7 +26,8 @@ import ru.aleshin.features.home.api.domains.entities.categories.SubCategory
 @Composable
 fun SubCategory.fetchNameByLanguage() = when (TimePlannerRes.language) {
     TimePlannerLanguage.RU -> name
-    TimePlannerLanguage.EN -> englishName ?: name
-    TimePlannerLanguage.DE -> englishName ?: name
-    TimePlannerLanguage.ES -> englishName ?: name
+    TimePlannerLanguage.EN -> foreignName ?: name
+    TimePlannerLanguage.DE -> foreignName ?: name
+    TimePlannerLanguage.ES -> foreignName ?: name
+    TimePlannerLanguage.FA -> foreignName ?: name
 }

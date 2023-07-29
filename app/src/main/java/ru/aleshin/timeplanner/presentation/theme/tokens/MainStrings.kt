@@ -11,8 +11,8 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License.
-*/
+ * imitations under the License.
+ */
 package ru.aleshin.timeplanner.presentation.theme.tokens
 
 import androidx.compose.runtime.compositionLocalOf
@@ -41,6 +41,11 @@ val germanMainStrings = MainStrings(
     launcherIconDesc = "Time Planner",
 )
 
+val persianMainStrings = MainStrings(
+    authorTitle = "ایجاد شده توسط Aleshin Stanislav",
+    launcherIconDesc = "Time Planner",
+)
+
 val spanishMainStrings = MainStrings(
     authorTitle = "Creado por Aleshin Stanislav",
     launcherIconDesc = "Time Planner",
@@ -55,4 +60,5 @@ fun fetchMainStrings(language: TimePlannerLanguage) = when (language) {
     TimePlannerLanguage.RU -> russianMainStrings
     TimePlannerLanguage.DE -> germanMainStrings
     TimePlannerLanguage.ES -> spanishMainStrings
+    TimePlannerLanguage.FA -> persianMainStrings
 }
