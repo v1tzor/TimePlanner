@@ -25,7 +25,7 @@ enum class TimePlannerLanguage(val code: String) {
 }
 
 enum class LanguageUiType {
-    DEFAULT, EN, RU, DE
+    DEFAULT, EN, RU, DE, ES
 }
 
 val LocalTimePlannerLanguage = staticCompositionLocalOf<TimePlannerLanguage> {
