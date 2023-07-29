@@ -93,6 +93,30 @@ internal val englishAnalyticsStrings = AnalyticsStrings(
     executedStatisticsTitle = "Execution statistics",
 )
 
+internal val persianAnalyticsStrings = AnalyticsStrings(
+    topAppBarTitle = "تحلیل ها",
+    menuIconDesc = "منو",
+    timeTabTitle = "زمان",
+    workLoadTabTitle = "حجم کار",
+    intelligenceTabTitle = "اطلاعات",
+    weekTimePeriod = "هفته",
+    monthTimePeriod = "ماه",
+    yearTimePeriod = "سال",
+    timeSelectorTitle = "بازه زمانی:",
+    refreshAnalyticIconDesc = "بروزرسانی تحلیل ها",
+    otherAnalyticsName = "دیگر",
+    allTimeTitle = "کل:",
+    totalCountTaskTitle = "تعداد\n وظایف",
+    averageCountTaskTitle = "تعداد\n وظایف در روز",
+    totalTimeTaskTitle = "زمان کل\n ظایف",
+    averageTimeTaskTitle = "میانگین کل\n وظایف",
+    planningStatisticsTitle = "آمار برنامه ریزی",
+    otherError = "خطا! با توسعه دهنده تماس بگیرید.",
+    halfYearTimePeriod = "نصف سال",
+    categoryStatisticsTitle = "آمار دسته بندی",
+    executedStatisticsTitle = "آمار اجرایی",
+)
+
 internal val germanAnalyticsStrings = AnalyticsStrings(
     topAppBarTitle = "Analytik",
     menuIconDesc = "Das Menü",
