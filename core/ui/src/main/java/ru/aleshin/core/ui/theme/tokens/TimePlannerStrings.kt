@@ -225,6 +225,47 @@ internal val spanishTimePlannerString = TimePlannerStrings(
     pmFormatTitle = "PM",
 )
 
+internal val persianTimePlannerString = TimePlannerStrings(
+    appName = "Time Planner",
+    startTaskNotifyText = "آغاز رویداد",
+    timeTaskChannelName = "رویدادها",
+    categoryWorkTitle = "کار",
+    categoryRestTitle = "استراحت کن",
+    categorySleepTitle = "خواب",
+    categoryCultureTitle = "فرهنگ",
+    categorySportTitle = "ورزش",
+    categoryAffairsTitle = "امور",
+    categoryTransportTitle = "حمل و نقل",
+    categoryStudyTitle = "مطالعه",
+    categoryEatTitle = "غذا خوردن",
+    categoryEntertainmentsTitle = "سرگرمی",
+    categoryOtherTitle = "سایر",
+    categoryEmptyTitle = "غایب",
+    categoryHugieneTitle = "بهداشت",
+    minutesSymbol = "m",
+    hoursSymbol = "h",
+    separator = ":",
+    alertDialogDismissTitle = "لغو",
+    alertDialogSelectConfirmTitle = "انتخاب کنید",
+    alertDialogOkConfirmTitle = "باشه",
+    expandedViewToggleTitle = "نمای گسترده",
+    compactViewToggleTitle = "نمای جمع و جور",
+    warningDialogTitle = "هشدار!",
+    warningDeleteConfirmTitle = "حذف کنید",
+    hoursTitle = "تماشا کنید",
+    minutesTitle = "دقیقه",
+    homeTabTitle = "اصلی",
+    analyticsTabTitle = "تجزیه و تحلیل",
+    settingsTabTitle = "تنظیمات",
+    mainDrawerTitle = "اصلی",
+    templateDrawerTitle = "قالب ها",
+    categoriesDrawerTitle = "دسته بندی ها",
+    drawerMainSection = "برنامه ها",
+    splitFormat = "%s | %s",
+    amFormatTitle = "AM",
+    pmFormatTitle = "PM",
+)
+
 val LocalTimePlannerStrings = staticCompositionLocalOf<TimePlannerStrings> {
     error("Core Strings is not provided")
 }

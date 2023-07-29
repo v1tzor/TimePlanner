@@ -171,6 +171,36 @@ internal val spanishSettingsString = SettingsStrings(
     mainSettingsDynamicColorTitle = "Colores dinámicos",
 )
 
+internal val persianSettingsString = SettingsStrings(
+    settingsTitle = "تنظبمات",
+    mainSettingsTitle = "تنظیمات عمومی",
+    mainSettingsThemeTitle = "پوسته:",
+    darkThemeTitle = "تاریک",
+    lightThemeTitle = "روشن",
+    systemThemeTitle = "سیستم",
+    rusLanguageTitle = "روسی",
+    engLanguageTitle = "انگلیسی",
+    spaLanguageTitle = "اسپانیایی",
+    gerLanguageTitle = "آلمانی (غیر رسمی)",
+    defaultLanguageTitle = "پیش فرض",
+    mainSettingsLanguageTitle = "زبان برنامه",
+    backIconDesc = "پیمایش به بالا",
+    moreIconDesc = "بیشتر",
+    resetToDefaultTitle = "تنظیم به حالت پیش فرض",
+    menuIconDesc = "منو",
+    clearDataTitle = "پاک کردن تمام داده ها",
+    mainSettingsClearDataTitle = "داده",
+    clearDataButtonTitle = "پاک کردن",
+    clearDataWarning = "این عمل منجر به پاکسازی کامل داده های برنامه می شود!",
+    backupDataTitle = "پشتیبان گیری",
+    backupDataButtonTitle = "ذخبره",
+    restoreDataButtonTitle = "بازگردانی",
+    errorBackupMessage = "خطای پشتیبان گیری",
+    errorBackupFileMessage = "خطا هنگام کار با فایل",
+    otherError = "خطا! با توسعه دهنده تماس بگیرید.",
+    mainSettingsDynamicColorTitle = "رنگ های پویا",
+)
+
 internal val LocalSettingsStrings = staticCompositionLocalOf<SettingsStrings> {
     error("Settings Strings is not provided")
 }
