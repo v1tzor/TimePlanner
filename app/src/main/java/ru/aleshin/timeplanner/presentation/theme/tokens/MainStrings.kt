@@ -41,6 +41,11 @@ val germanMainStrings = MainStrings(
     launcherIconDesc = "Time Planner",
 )
 
+val spanishMainStrings = MainStrings(
+    authorTitle = "Creado por Aleshin Stanislav",
+    launcherIconDesc = "Time Planner",
+)
+
 val LocalMainStrings = compositionLocalOf<MainStrings> {
     error("Splash strings is not provided")
 }
@@ -49,4 +54,5 @@ fun fetchMainStrings(language: TimePlannerLanguage) = when (language) {
     TimePlannerLanguage.EN -> englishMainStrings
     TimePlannerLanguage.RU -> russianMainStrings
     TimePlannerLanguage.DE -> germanMainStrings
+    TimePlannerLanguage.ES -> spanishMainStrings
 }
