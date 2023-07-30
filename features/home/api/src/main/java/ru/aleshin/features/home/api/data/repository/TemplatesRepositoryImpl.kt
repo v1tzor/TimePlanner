@@ -11,15 +11,15 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * imitations under the License.
+ * limitations under the License.
  */
 package ru.aleshin.features.home.api.data.repository
 
 import ru.aleshin.features.home.api.data.datasources.templates.TemplatesLocalDataSource
-import ru.aleshin.features.home.api.data.mappers.template.TemplatesDataToDomainMapper
-import ru.aleshin.features.home.api.data.mappers.template.TemplatesDomainToDataMapper
-import ru.aleshin.features.home.api.domains.entities.template.Template
-import ru.aleshin.features.home.api.domains.repository.TemplatesRepository
+import ru.aleshin.features.home.api.data.mappers.template.mapToData
+import ru.aleshin.features.home.api.data.mappers.template.mapToDomain
+import ru.aleshin.features.home.api.domain.entities.template.Template
+import ru.aleshin.features.home.api.domain.repository.TemplatesRepository
 import javax.inject.Inject
 
 /**
@@ -27,24 +27,22 @@ import javax.inject.Inject
  */
 class TemplatesRepositoryImpl @Inject constructor(
     private val localDataSource: TemplatesLocalDataSource,
-    private val mapperToDomain: TemplatesDataToDomainMapper,
-    private val mapperToData: TemplatesDomainToDataMapper,
 ) : TemplatesRepository {
 
     override suspend fun fetchAllTemplates(): List<Template> {
-        return localDataSource.fetchAllTemplates().map { mapperToDomain.map(it) }
+        return localDataSource.fetchAllTemplates().map { it.mapToDomain() }
     }
 
-    override suspend fun addTemplate(templates: Template): Int {
-        return localDataSource.createTemplate(templates.map(mapperToData)).toInt()
+    override suspend fun addTemplate(template: Template): Int {
+        return localDataSource.createTemplate(template.mapToData()).toInt()
     }
 
     override suspend fun addTemplates(templates: List<Template>) {
-        localDataSource.createTemplates(templates.map { it.map(mapperToData) })
+        localDataSource.createTemplates(templates.map { it.mapToData() })
     }
 
     override suspend fun updateTemplate(template: Template) {
-        localDataSource.updateTemplate(template.map(mapperToData))
+        localDataSource.updateTemplate(template.mapToData())
     }
 
     override suspend fun deleteTemplateById(id: Int) {

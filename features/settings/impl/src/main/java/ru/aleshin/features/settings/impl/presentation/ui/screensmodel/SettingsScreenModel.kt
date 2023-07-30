@@ -11,7 +11,7 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * imitations under the License.
+ * limitations under the License.
  */
 package ru.aleshin.features.settings.impl.presentation.ui.screensmodel
 
@@ -47,8 +47,8 @@ internal class SettingsScreenModel @Inject constructor(
 
     override fun init() {
         if (!isInitialize.get()) {
-            dispatchEvent(SettingsEvent.Init)
             super.init()
+            dispatchEvent(SettingsEvent.Init)
         }
     }
 
@@ -57,13 +57,13 @@ internal class SettingsScreenModel @Inject constructor(
     ) {
         when (event) {
             is SettingsEvent.Init -> {
-                settingsWorkProcessor.loadAllSettings().handleWork()
+                settingsWorkProcessor.work(SettingsWorkCommand.LoadAllSettings).handleWork()
             }
             is SettingsEvent.ChangedThemeSettings -> {
-                settingsWorkProcessor.updateThemeSettings(event.themeSettings).handleWork()
+                settingsWorkProcessor.work(SettingsWorkCommand.UpdateThemeSettings(event.themeSettings)).handleWork()
             }
             is SettingsEvent.PressResetButton -> {
-                settingsWorkProcessor.resetSettings().handleWork()
+                settingsWorkProcessor.work(SettingsWorkCommand.ResetSettings).handleWork()
             }
             is SettingsEvent.PressClearDataButton -> launchBackgroundWork(SettingsWorkKey.DATA_WORK, Dispatchers.IO) {
                 dataWorkProcessor.work(DataWorkCommand.ClearAllData).collectAndHandleWork()

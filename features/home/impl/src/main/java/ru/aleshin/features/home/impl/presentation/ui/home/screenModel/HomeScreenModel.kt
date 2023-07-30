@@ -11,13 +11,14 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * imitations under the License.
+ * limitations under the License.
  */
 package ru.aleshin.features.home.impl.presentation.ui.home.screenModel
 
 import androidx.compose.runtime.Composable
 import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
+import ru.aleshin.core.utils.functional.TimeRange
 import ru.aleshin.core.utils.managers.CoroutineManager
 import ru.aleshin.core.utils.managers.DateManager
 import ru.aleshin.core.utils.platform.screenmodel.BaseScreenModel
@@ -29,6 +30,7 @@ import ru.aleshin.features.home.impl.presentation.ui.home.contract.HomeEffect
 import ru.aleshin.features.home.impl.presentation.ui.home.contract.HomeEvent
 import ru.aleshin.features.home.impl.presentation.ui.home.contract.HomeViewState
 import ru.aleshin.features.home.impl.presentation.ui.home.views.ViewToggleStatus
+import java.util.Date
 import javax.inject.Inject
 
 /**
@@ -53,38 +55,39 @@ internal class HomeScreenModel @Inject constructor(
         when (event) {
             is HomeEvent.LoadSchedule -> launchBackgroundWork(HomeWorkKey.SUBSCRIBE_SCHEDULE) {
                 val date = event.date ?: dateManager.fetchBeginningCurrentDay()
-                scheduleWorkProcessor.loadScheduleByDate(date).collectAndHandleWork()
+                loadSchedule(date)
             }
             is HomeEvent.CreateSchedule -> {
                 val currentDate = checkNotNull(state().currentDate)
-                scheduleWorkProcessor.createSchedule(currentDate).collectAndHandleWork()
-                launchBackgroundWork(HomeWorkKey.SUBSCRIBE_SCHEDULE) {
-                    scheduleWorkProcessor.loadScheduleByDate(currentDate).collectAndHandleWork()
-                }
-            }
-            is HomeEvent.TimeTaskShiftUp -> {
-                scheduleWorkProcessor.shiftUpTimeTask(event.timeTask).collectAndHandleWork()
-                launchBackgroundWork(HomeWorkKey.SUBSCRIBE_SCHEDULE) {
-                    scheduleWorkProcessor.loadScheduleByDate(checkNotNull(state().currentDate)).collectAndHandleWork()
-                }
-            }
-            is HomeEvent.TimeTaskShiftDown -> {
-                scheduleWorkProcessor.shiftDownTimeTask(event.timeTask).collectAndHandleWork()
-                launchBackgroundWork(HomeWorkKey.SUBSCRIBE_SCHEDULE) {
-                    scheduleWorkProcessor.loadScheduleByDate(checkNotNull(state().currentDate)).collectAndHandleWork()
-                }
+                scheduleWorkProcessor.work(ScheduleWorkCommand.CreateSchedule(currentDate)).collectAndHandleWork()
+                loadSchedule(currentDate)
             }
             is HomeEvent.PressEditTimeTaskButton -> {
-                val command = NavigationWorkCommand.NavigateToEditorWithTimeTask(timeTask = event.timeTask)
-                navigationWorkProcessor.work(command).handleWork()
+                val navCommand = NavigationWorkCommand.NavigateToEditor(timeTask = event.timeTask)
+                navigationWorkProcessor.work(navCommand).handleWork()
             }
             is HomeEvent.PressAddTimeTaskButton -> {
-                val command = NavigationWorkCommand.NavigateToEditor(
+                val navCommand = NavigationWorkCommand.NavigateToEditorCreator(
                     currentDate = checkNotNull(state().currentDate),
-                    startTime = event.startTime,
-                    endTime = event.endTime,
+                    timeRange = TimeRange(event.startTime, event.endTime),
                 )
-                navigationWorkProcessor.work(command).handleWork()
+                navigationWorkProcessor.work(navCommand).handleWork()
+            }
+            is HomeEvent.TimeTaskShiftUp -> {
+                val shiftUpCommand = ScheduleWorkCommand.TimeTaskShiftUp(event.timeTask)
+                scheduleWorkProcessor.work(shiftUpCommand).collectAndHandleWork()
+                loadSchedule(checkNotNull(state().currentDate))
+            }
+            is HomeEvent.TimeTaskShiftDown -> {
+                val shiftDownCommand = ScheduleWorkCommand.TimeTaskShiftDown(event.timeTask)
+                scheduleWorkProcessor.work(shiftDownCommand).collectAndHandleWork()
+                loadSchedule(checkNotNull(state().currentDate))
+            }
+            is HomeEvent.PressChangeDoneStateButton -> {
+                val date = checkNotNull(state().currentDate)
+                val changeStatusCommand = ScheduleWorkCommand.ChangeDoneState(date, event.timeTask.key)
+                scheduleWorkProcessor.work(changeStatusCommand).collectAndHandleWork()
+                loadSchedule(checkNotNull(state().currentDate))
             }
             is HomeEvent.PressViewToggleButton -> {
                 val status = when (event.status) {
@@ -92,13 +95,6 @@ internal class HomeScreenModel @Inject constructor(
                     ViewToggleStatus.COMPACT -> ViewToggleStatus.EXPANDED
                 }
                 sendAction(HomeAction.UpdateViewStatus(status))
-            }
-            is HomeEvent.PressChangeDoneStateButton -> {
-                val date = checkNotNull(state().currentDate)
-                scheduleWorkProcessor.changeDoneState(date, event.timeTask.key).collectAndHandleWork()
-                launchBackgroundWork(HomeWorkKey.SUBSCRIBE_SCHEDULE) {
-                    scheduleWorkProcessor.loadScheduleByDate(checkNotNull(state().currentDate)).collectAndHandleWork()
-                }
             }
         }
     }
@@ -130,6 +126,13 @@ internal class HomeScreenModel @Inject constructor(
     override fun onDispose() {
         super.onDispose()
         HomeComponentHolder.clear()
+    }
+
+    private suspend fun WorkScope<HomeViewState, HomeAction, HomeEffect>.loadSchedule(date: Date) {
+        val loadCommand = ScheduleWorkCommand.LoadScheduleByDate(date)
+        launchBackgroundWork(HomeWorkKey.SUBSCRIBE_SCHEDULE) {
+            scheduleWorkProcessor.work(loadCommand).collectAndHandleWork()
+        }
     }
 }
 

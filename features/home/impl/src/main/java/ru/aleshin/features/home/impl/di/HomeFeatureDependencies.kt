@@ -11,7 +11,7 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * imitations under the License.
+ * limitations under the License.
  */
 package ru.aleshin.features.home.impl.di
 
@@ -19,13 +19,13 @@ import ru.aleshin.core.utils.managers.CoroutineManager
 import ru.aleshin.core.utils.managers.DateManager
 import ru.aleshin.core.utils.navigation.Router
 import ru.aleshin.features.editor.api.navigations.EditorFeatureStarter
-import ru.aleshin.features.home.api.domains.common.ScheduleStatusManager
-import ru.aleshin.features.home.api.domains.common.TimeTaskStatusManager
-import ru.aleshin.features.home.api.domains.repository.CategoriesRepository
-import ru.aleshin.features.home.api.domains.repository.ScheduleRepository
-import ru.aleshin.features.home.api.domains.repository.SubCategoriesRepository
-import ru.aleshin.features.home.api.domains.repository.TemplatesRepository
-import ru.aleshin.features.home.api.domains.repository.TimeTaskRepository
+import ru.aleshin.features.home.api.domain.common.ScheduleStatusManager
+import ru.aleshin.features.home.api.domain.common.TimeTaskStatusManager
+import ru.aleshin.features.home.api.domain.repository.CategoriesRepository
+import ru.aleshin.features.home.api.domain.repository.ScheduleRepository
+import ru.aleshin.features.home.api.domain.repository.SubCategoriesRepository
+import ru.aleshin.features.home.api.domain.repository.TemplatesRepository
+import ru.aleshin.features.home.api.domain.repository.TimeTaskRepository
 import ru.aleshin.module_injector.BaseFeatureDependencies
 
 /**

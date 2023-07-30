@@ -11,7 +11,7 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * imitations under the License.
+ * limitations under the License.
  */
 package ru.aleshin.features.home.impl.presentation.ui.categories.views
 
@@ -32,9 +32,9 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import ru.aleshin.core.ui.theme.TimePlannerRes
 import ru.aleshin.core.ui.views.DialogButtons
-import ru.aleshin.features.home.api.domains.entities.categories.MainCategory
-import ru.aleshin.features.home.api.domains.entities.categories.SubCategory
-import ru.aleshin.features.home.api.presentation.mappers.fetchNameByLanguage
+import ru.aleshin.features.home.api.presentation.mappers.mapToName
+import ru.aleshin.features.home.impl.presentation.models.categories.MainCategoryUi
+import ru.aleshin.features.home.impl.presentation.models.categories.SubCategoryUi
 import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
 
 /**
@@ -44,13 +44,13 @@ import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
 @Composable
 internal fun SubCategoryEditorDialog(
     modifier: Modifier = Modifier,
-    mainCategory: MainCategory,
-    editSubCategory: SubCategory? = null,
+    mainCategory: MainCategoryUi,
+    editSubCategory: SubCategoryUi? = null,
     onDismiss: () -> Unit,
     onConfirm: (name: String) -> Unit,
 ) {
     var isError by rememberSaveable { mutableStateOf(false) }
-    val subCategoryName = editSubCategory?.fetchNameByLanguage()
+    val subCategoryName = editSubCategory?.name
     val textRange = TextRange(subCategoryName?.length ?: 0)
     var subCategoryNameValue by remember {
         mutableStateOf(TextFieldValue(text = subCategoryName ?: "", selection = textRange))
@@ -62,15 +62,12 @@ internal fun SubCategoryEditorDialog(
             tonalElevation = TimePlannerRes.elevations.levelThree,
         ) {
             Column {
-                SubCategoryEditorDialogHeader(mainCategory = mainCategory)
+                SubCategoryEditorDialogHeader(
+                    mainCategory = mainCategory
+                )
                 Divider(Modifier.fillMaxWidth())
                 CategoryDialogField(
-                    modifier = Modifier.fillMaxWidth().padding(
-                        top = 18.dp,
-                        bottom = 8.dp,
-                        start = 24.dp,
-                        end = 24.dp,
-                    ),
+                    modifier = Modifier.fillMaxWidth().padding(top = 18.dp, bottom = 8.dp,start = 24.dp, end = 24.dp),
                     categoryNameValue = subCategoryNameValue,
                     isError = isError,
                     onNameChange = { nameValue -> subCategoryNameValue = nameValue },
@@ -98,13 +95,13 @@ internal fun SubCategoryEditorDialog(
 @Composable
 internal fun SubCategoryEditorDialogHeader(
     modifier: Modifier = Modifier,
-    mainCategory: MainCategory,
+    mainCategory: MainCategoryUi,
 ) {
     Column(
         modifier = modifier.padding(top = 24.dp, bottom = 12.dp, start = 24.dp, end = 12.dp),
         verticalArrangement = Arrangement.spacedBy(2.dp),
     ) {
-        val mainCategoryName = mainCategory.fetchNameByLanguage()
+        val mainCategoryName = mainCategory.let { it.defaultType?.mapToName() ?: it.customName } ?: "*"
         Text(
             text = HomeThemeRes.strings.subCategoryChooserTitle,
             color = MaterialTheme.colorScheme.onSurface,

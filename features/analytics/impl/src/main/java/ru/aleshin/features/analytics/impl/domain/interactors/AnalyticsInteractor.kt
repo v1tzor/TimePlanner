@@ -11,7 +11,7 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * imitations under the License.
+ * limitations under the License.
  */
 package ru.aleshin.features.analytics.impl.domain.interactors
 
@@ -31,12 +31,11 @@ import ru.aleshin.features.analytics.impl.domain.entities.AnalyticsFailure
 import ru.aleshin.features.analytics.impl.domain.entities.CategoryAnalytic
 import ru.aleshin.features.analytics.impl.domain.entities.ScheduleAnalytics
 import ru.aleshin.features.analytics.impl.domain.entities.SubCategoryAnalytic
-import ru.aleshin.features.home.api.domains.entities.categories.Categories
-import ru.aleshin.features.home.api.domains.entities.categories.SubCategory
-import ru.aleshin.features.home.api.domains.entities.schedules.TimeTask
-import ru.aleshin.features.home.api.domains.repository.CategoriesRepository
-import ru.aleshin.features.home.api.domains.repository.ScheduleRepository
-import java.util.Date
+import ru.aleshin.features.home.api.domain.entities.categories.Categories
+import ru.aleshin.features.home.api.domain.entities.categories.SubCategory
+import ru.aleshin.features.home.api.domain.entities.schedules.TimeTask
+import ru.aleshin.features.home.api.domain.repository.CategoriesRepository
+import ru.aleshin.features.home.api.domain.repository.ScheduleRepository
 import javax.inject.Inject
 
 /**
@@ -120,7 +119,7 @@ internal interface AnalyticsInteractor {
         ) = mutableListOf<CategoryAnalytic>().let { analytics ->
             categories.onEach { categories ->
                 val subCategories = categories.subCategories.toMutableList().apply {
-                    add(SubCategory.absentSubCategory(categories.mainCategory))
+                    add(SubCategory(mainCategory = categories.mainCategory))
                 }
                 val categoriesAnalytic = CategoryAnalytic(
                     mainCategory = categories.mainCategory,

@@ -11,7 +11,7 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * imitations under the License.
+ * limitations under the License.
  */
 package ru.aleshin.features.analytics.impl.presenatiton.ui.contract
 
@@ -22,8 +22,7 @@ import ru.aleshin.core.utils.platform.screenmodel.contract.BaseEvent
 import ru.aleshin.core.utils.platform.screenmodel.contract.BaseUiEffect
 import ru.aleshin.core.utils.platform.screenmodel.contract.BaseViewState
 import ru.aleshin.features.analytics.impl.domain.entities.AnalyticsFailure
-import ru.aleshin.features.analytics.impl.domain.entities.ScheduleAnalytics
-import ru.aleshin.features.analytics.impl.presenatiton.models.ScheduleAnalyticsUi
+import ru.aleshin.features.analytics.impl.presenatiton.models.analytics.ScheduleAnalyticsUi
 
 /**
  * @author Stanislav Aleshin on 30.03.2023.

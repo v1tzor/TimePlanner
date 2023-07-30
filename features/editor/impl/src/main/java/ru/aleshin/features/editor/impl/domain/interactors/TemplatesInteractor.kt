@@ -11,15 +11,15 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * imitations under the License.
+ * limitations under the License.
  */
 package ru.aleshin.features.editor.impl.domain.interactors
 
 import ru.aleshin.core.utils.functional.DomainResult
 import ru.aleshin.features.editor.impl.domain.common.EditorEitherWrapper
 import ru.aleshin.features.editor.impl.domain.entites.EditorFailures
-import ru.aleshin.features.home.api.domains.entities.template.Template
-import ru.aleshin.features.home.api.domains.repository.TemplatesRepository
+import ru.aleshin.features.home.api.domain.entities.template.Template
+import ru.aleshin.features.home.api.domain.repository.TemplatesRepository
 import javax.inject.Inject
 
 /**

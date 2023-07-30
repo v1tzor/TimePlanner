@@ -11,22 +11,15 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * imitations under the License.
+ * limitations under the License.
  */
 package ru.aleshin.features.settings.api.domain.entities
-
-import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
-import ru.aleshin.core.utils.functional.Mapper
 
 /**
  * @author Stanislav Aleshin on 17.02.2023.
  */
-@Parcelize
 data class ThemeSettings(
     val language: LanguageType = LanguageType.DEFAULT,
     val themeColors: ThemeColorsType = ThemeColorsType.DEFAULT,
     val isDynamicColorEnable: Boolean = false,
-) : Parcelable {
-    fun <O> map(mapper: Mapper<ThemeSettings, O>) = mapper.map(this)
-}
+)

@@ -11,7 +11,7 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * imitations under the License.
+ * limitations under the License.
  */
 package ru.aleshin.timeplanner.application
 
@@ -21,8 +21,9 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
+import ru.aleshin.core.ui.theme.tokens.TimePlannerLanguage
 import ru.aleshin.core.ui.theme.tokens.TimePlannerStrings
-import ru.aleshin.core.ui.theme.tokens.fetchAppLanguage
+import ru.aleshin.core.ui.theme.tokens.fetchCoreLanguage
 import ru.aleshin.core.ui.theme.tokens.fetchCoreStrings
 import ru.aleshin.core.utils.extensions.fetchLocale
 import ru.aleshin.core.utils.functional.Constants
@@ -44,7 +45,7 @@ class TimePlannerApp : Application() {
     }
 
     private val coreStrings: TimePlannerStrings
-        get() = fetchCoreStrings(fetchAppLanguage(fetchLocale().language))
+        get() = fetchCoreStrings(fetchCoreLanguage(fetchLocale().language))
 
     override fun onCreate() {
         super.onCreate()

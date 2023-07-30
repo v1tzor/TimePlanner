@@ -11,22 +11,22 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * imitations under the License.
+ * limitations under the License.
  */
 package ru.aleshin.features.analytics.impl.presenatiton.mappers
 
 import ru.aleshin.features.analytics.impl.domain.entities.CategoryAnalytic
 import ru.aleshin.features.analytics.impl.domain.entities.ScheduleAnalytics
 import ru.aleshin.features.analytics.impl.domain.entities.SubCategoryAnalytic
-import ru.aleshin.features.analytics.impl.presenatiton.models.CategoryAnalyticUi
-import ru.aleshin.features.analytics.impl.presenatiton.models.ScheduleAnalyticsUi
-import ru.aleshin.features.analytics.impl.presenatiton.models.SubCategoryAnalyticUi
+import ru.aleshin.features.analytics.impl.presenatiton.models.analytics.CategoryAnalyticUi
+import ru.aleshin.features.analytics.impl.presenatiton.models.analytics.ScheduleAnalyticsUi
+import ru.aleshin.features.analytics.impl.presenatiton.models.analytics.SubCategoryAnalyticUi
 
 /**
  * @author Stanislav Aleshin on 25.07.2023.
  */
 internal fun ScheduleAnalytics.mapToUi() = ScheduleAnalyticsUi(
-    dateWorkLoadMap = dateWorkLoadMap,
+    dateWorkLoadMap = dateWorkLoadMap.mapValues { map -> map.value.map { it.mapToUi() } },
     categoriesAnalytics = categoriesAnalytics.map { it.mapToUi() },
     totalTasksCount = totalTasksCount,
     totalTasksTime = totalTasksTime,
@@ -35,12 +35,12 @@ internal fun ScheduleAnalytics.mapToUi() = ScheduleAnalyticsUi(
 )
 
 internal fun CategoryAnalytic.mapToUi() = CategoryAnalyticUi(
-    mainCategory = mainCategory,
+    mainCategory = mainCategory.mapToUi(),
     duration = duration,
     subCategoriesInfo = subCategoriesInfo.map { it.mapToUi() },
 )
 
 internal fun SubCategoryAnalytic.mapToUi() = SubCategoryAnalyticUi(
-    subCategory = subCategory,
+    subCategory = subCategory.mapToUi(),
     duration = duration,
 )

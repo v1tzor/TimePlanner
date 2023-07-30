@@ -11,7 +11,7 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * imitations under the License.
+ * limitations under the License.
  */
 package ru.aleshin.features.home.impl.presentation.ui.templates.views
 
@@ -43,11 +43,10 @@ import ru.aleshin.core.ui.views.CategoryIconMonogram
 import ru.aleshin.core.ui.views.CategoryTextMonogram
 import ru.aleshin.core.ui.views.toMinutesOrHoursTitle
 import ru.aleshin.core.utils.extensions.duration
-import ru.aleshin.features.home.api.domains.entities.categories.Categories
-import ru.aleshin.features.home.api.domains.entities.template.Template
-import ru.aleshin.features.home.api.presentation.mappers.fetchNameByLanguage
-import ru.aleshin.features.home.api.presentation.mappers.toDescription
-import ru.aleshin.features.home.api.presentation.mappers.toIconPainter
+import ru.aleshin.features.home.api.presentation.mappers.mapToIconPainter
+import ru.aleshin.features.home.api.presentation.mappers.mapToName
+import ru.aleshin.features.home.impl.presentation.models.categories.CategoriesUi
+import ru.aleshin.features.home.impl.presentation.models.templates.TemplateUi
 import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -58,12 +57,14 @@ import java.util.Date
 @Composable
 internal fun TemplatesItem(
     modifier: Modifier = Modifier,
-    categories: List<Categories>,
-    model: Template,
-    onUpdateTemplate: (Template) -> Unit = {},
+    categories: List<CategoriesUi>,
+    model: TemplateUi,
+    onUpdateTemplate: (TemplateUi) -> Unit = {},
     onDeleteTemplate: () -> Unit,
 ) {
     var isShowTemplateEditor by rememberSaveable { mutableStateOf(false) }
+    val categoryIcon = model.category.defaultType?.mapToIconPainter()
+    val categoryName = model.category.let { it.defaultType?.mapToName() ?: it.customName } ?: "*"
 
     Surface(
         onClick = { isShowTemplateEditor = true },
@@ -80,28 +81,24 @@ internal fun TemplatesItem(
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
-                val categoryIcon = model.category.icon
                 if (categoryIcon != null) {
                     CategoryIconMonogram(
-                        icon = categoryIcon.toIconPainter(),
-                        iconDescription = categoryIcon.toDescription(),
+                        icon = categoryIcon,
+                        iconDescription = categoryName,
                         iconColor = MaterialTheme.colorScheme.primary,
                         backgroundColor = MaterialTheme.colorScheme.primaryContainer,
                     )
                 } else {
                     CategoryTextMonogram(
-                        text = model.category.fetchNameByLanguage().first().toString(),
+                        text = categoryName.first().toString(),
                         textColor = MaterialTheme.colorScheme.primary,
                         backgroundColor = MaterialTheme.colorScheme.primaryContainer,
                     )
                 }
                 Text(
                     text = when (model.subCategory != null) {
-                        true -> TimePlannerRes.strings.splitFormat.format(
-                            model.category.fetchNameByLanguage(),
-                            model.subCategory!!.fetchNameByLanguage(),
-                        )
-                        false -> model.category.fetchNameByLanguage()
+                        true -> TimePlannerRes.strings.splitFormat.format(categoryName, model.subCategory.name)
+                        false -> categoryName
                     },
                     color = MaterialTheme.colorScheme.onSurface,
                     style = MaterialTheme.typography.titleMedium,

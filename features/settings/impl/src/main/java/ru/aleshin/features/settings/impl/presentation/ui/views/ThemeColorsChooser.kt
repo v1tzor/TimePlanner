@@ -11,7 +11,7 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * imitations under the License.
+ * limitations under the License.
  */
 package ru.aleshin.features.settings.impl.presentation.ui.views
 
@@ -23,9 +23,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import ru.aleshin.core.ui.theme.TimePlannerRes
+import ru.aleshin.core.ui.theme.material.ThemeColorsUiType
 import ru.aleshin.core.ui.views.SegmentedButtonItem
 import ru.aleshin.core.ui.views.SegmentedButtons
-import ru.aleshin.features.settings.api.domain.entities.ThemeColorsType
 import ru.aleshin.features.settings.impl.presentation.theme.SettingsThemeRes
 
 /**
@@ -34,8 +34,8 @@ import ru.aleshin.features.settings.impl.presentation.theme.SettingsThemeRes
 @Composable
 internal fun ThemeColorsChooser(
     modifier: Modifier = Modifier,
-    currentThemeColors: ThemeColorsType,
-    onThemeColorUpdate: (ThemeColorsType) -> Unit,
+    currentThemeColors: ThemeColorsUiType,
+    onThemeColorUpdate: (ThemeColorsUiType) -> Unit,
 ) {
     Surface(
         modifier = modifier,
@@ -73,14 +73,14 @@ internal enum class ThemeColorsTypeSegmentedItems : SegmentedButtonItem {
     },
 }
 
-internal fun ThemeColorsType.toSegmentedItem() = when (this) {
-    ThemeColorsType.DEFAULT -> ThemeColorsTypeSegmentedItems.DEFAULT
-    ThemeColorsType.LIGHT -> ThemeColorsTypeSegmentedItems.LIGHT
-    ThemeColorsType.DARK -> ThemeColorsTypeSegmentedItems.DARK
+internal fun ThemeColorsUiType.toSegmentedItem() = when (this) {
+    ThemeColorsUiType.DEFAULT -> ThemeColorsTypeSegmentedItems.DEFAULT
+    ThemeColorsUiType.LIGHT -> ThemeColorsTypeSegmentedItems.LIGHT
+    ThemeColorsUiType.DARK -> ThemeColorsTypeSegmentedItems.DARK
 }
 
 internal fun ThemeColorsTypeSegmentedItems.toThemeColorsType() = when (this) {
-    ThemeColorsTypeSegmentedItems.LIGHT -> ThemeColorsType.LIGHT
-    ThemeColorsTypeSegmentedItems.DEFAULT -> ThemeColorsType.DEFAULT
-    ThemeColorsTypeSegmentedItems.DARK -> ThemeColorsType.DARK
+    ThemeColorsTypeSegmentedItems.LIGHT -> ThemeColorsUiType.LIGHT
+    ThemeColorsTypeSegmentedItems.DEFAULT -> ThemeColorsUiType.DEFAULT
+    ThemeColorsTypeSegmentedItems.DARK -> ThemeColorsUiType.DARK
 }

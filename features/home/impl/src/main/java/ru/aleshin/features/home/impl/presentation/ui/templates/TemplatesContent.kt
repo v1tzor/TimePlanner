@@ -11,12 +11,11 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * imitations under the License.
+ * limitations under the License.
  */
 package ru.aleshin.features.home.impl.presentation.ui.templates
 
 import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -43,14 +42,14 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import ru.aleshin.core.ui.views.ExpandedIcon
-import ru.aleshin.features.home.api.domains.entities.template.Template
-import ru.aleshin.features.home.impl.presentation.mapppers.mapToString
-import ru.aleshin.features.home.impl.presentation.models.TemplatesSortedType
+import ru.aleshin.features.home.impl.presentation.mapppers.templates.mapToString
+import ru.aleshin.features.home.impl.presentation.models.templates.TemplatesSortedType
+import ru.aleshin.features.home.impl.presentation.models.categories.CategoriesUi
+import ru.aleshin.features.home.impl.presentation.models.templates.TemplateUi
 import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
 import ru.aleshin.features.home.impl.presentation.ui.home.views.EmptyDateView
 import ru.aleshin.features.home.impl.presentation.ui.templates.contract.TemplatesViewState
@@ -64,46 +63,60 @@ internal fun TemplatesContent(
     state: TemplatesViewState,
     modifier: Modifier = Modifier,
     onChangeSortedType: (TemplatesSortedType) -> Unit,
-    onUpdateTemplate: (Template) -> Unit,
-    onDeleteTemplate: (Template) -> Unit,
+    onUpdateTemplate: (TemplateUi) -> Unit,
+    onDeleteTemplate: (TemplateUi) -> Unit,
 ) {
-    val templates = state.templates
-
     Column(modifier = modifier) {
         TemplatesFiltersHeader(
             sortedType = state.sortedType,
             onChangeSortedType = onChangeSortedType,
         )
         Divider()
-        if (!templates.isNullOrEmpty()) {
-            LazyColumn(
-                modifier = Modifier.padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-            ) {
-                items(
-                    items = templates,
-                    key = { it.templateId },
-                ) { template ->
-                    TemplatesItem(
-                        model = template,
-                        categories = state.categories,
-                        onUpdateTemplate = { onUpdateTemplate(it) },
-                        onDeleteTemplate = { onDeleteTemplate(template) },
-                    )
-                }
-                item { Spacer(modifier = Modifier.height(40.dp)) }
-            }
-        } else if (templates != null && templates.isEmpty()) {
-            Box(Modifier.fillMaxSize()) {
-                EmptyDateView(
-                    modifier = Modifier.align(Alignment.Center),
-                    emptyTitle = HomeThemeRes.strings.emptyListTitle,
+        TemplatesLazyColumn(
+            templates = state.templates,
+            categories = state.categories,
+            onUpdateTemplate = onUpdateTemplate,
+            onDeleteTemplate = onDeleteTemplate,
+        )
+    }
+}
+
+@Composable
+internal fun TemplatesLazyColumn(
+    modifier: Modifier = Modifier,
+    templates: List<TemplateUi>?,
+    categories: List<CategoriesUi>,
+    onUpdateTemplate: (TemplateUi) -> Unit,
+    onDeleteTemplate: (TemplateUi) -> Unit,
+) {
+    if (!templates.isNullOrEmpty()) {
+        LazyColumn(
+            modifier = modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            items(
+                items = templates,
+                key = { it.templateId },
+            ) { template ->
+                TemplatesItem(
+                    model = template,
+                    categories = categories,
+                    onUpdateTemplate = { onUpdateTemplate(it) },
+                    onDeleteTemplate = { onDeleteTemplate(template) },
                 )
             }
-        } else {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator()
-            }
+            item { Spacer(modifier = Modifier.height(40.dp)) }
+        }
+    } else if (templates != null && templates.isEmpty()) {
+        Box(Modifier.fillMaxSize()) {
+            EmptyDateView(
+                modifier = Modifier.align(Alignment.Center),
+                emptyTitle = HomeThemeRes.strings.emptyListTitle,
+            )
+        }
+    } else {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            CircularProgressIndicator()
         }
     }
 }

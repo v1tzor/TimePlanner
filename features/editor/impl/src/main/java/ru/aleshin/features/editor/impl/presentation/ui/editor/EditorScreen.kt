@@ -11,10 +11,11 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * imitations under the License.
+ * limitations under the License.
  */
 package ru.aleshin.features.editor.impl.presentation.ui.editor
 
+import android.util.Log
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -38,7 +39,6 @@ import ru.aleshin.features.editor.impl.presentation.ui.editor.contract.EditorVie
 import ru.aleshin.features.editor.impl.presentation.ui.editor.screenmodel.rememberEditorScreenModel
 import ru.aleshin.features.editor.impl.presentation.ui.editor.views.EditorTopAppBar
 import ru.aleshin.features.editor.impl.presentation.ui.editor.views.TemplatesBottomSheet
-import java.util.*
 import javax.inject.Inject
 
 /**
@@ -104,14 +104,14 @@ internal class EditorScreen @Inject constructor() : Screen {
                     }
                     is EditorEffect.ShowOverlayError -> {
                         val result = hostState.showSnackbar(
-                            message = effect.failure.mapToMessage(strings),
+                            message = effect.failures.mapToMessage(strings),
                             withDismissAction = true,
                             actionLabel = strings.correctOverlayTitle,
                         )
                         if (result == SnackbarResult.ActionPerformed) {
                             val currentTimeRange = effect.currentTimeRange
-                            val start = effect.failure.startOverlay ?: currentTimeRange.from
-                            val end = effect.failure.endOverlay ?: currentTimeRange.to
+                            val start = effect.failures.startOverlay ?: currentTimeRange.from
+                            val end = effect.failures.endOverlay ?: currentTimeRange.to
                             dispatchEvent(EditorEvent.ChangeTime(TimeRange(start, end)))
                         }
                     }

@@ -11,18 +11,24 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * imitations under the License.
+ * limitations under the License.
  */
 package ru.aleshin.features.settings.impl.presentation.models
 
-import ru.aleshin.features.home.api.domains.entities.categories.Categories
-import ru.aleshin.features.home.api.domains.entities.schedules.Schedule
-import ru.aleshin.features.home.api.domains.entities.template.Template
+import ru.aleshin.features.home.api.domain.entities.categories.Categories
+import ru.aleshin.features.home.api.domain.entities.schedules.Schedule
+import ru.aleshin.features.home.api.domain.entities.template.Template
 
 /**
  * @author Stanislav Aleshin on 10.06.2023.
  */
 internal data class BackupModel(
+    val schedules: List<Schedule>,
+    val templates: List<Template>,
+    val categories: List<Categories>,
+)
+
+internal data class BackupModelOld(
     val schedules: List<Schedule>,
     val templates: List<Template>,
     val categories: List<Categories>,

@@ -11,7 +11,7 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * imitations under the License.
+ * limitations under the License.
  */
 package ru.aleshin.timeplanner.presentation.ui.main.contract
 
@@ -20,6 +20,8 @@ import kotlinx.parcelize.Parcelize
 import ru.aleshin.core.ui.theme.material.ThemeColorsUiType
 import ru.aleshin.core.ui.theme.tokens.LanguageUiType
 import ru.aleshin.core.utils.platform.screenmodel.contract.*
+import ru.aleshin.features.settings.api.domain.entities.LanguageType
+import ru.aleshin.features.settings.api.domain.entities.ThemeColorsType
 
 /**
  * @author Stanislav Aleshin on 14.02.2023.

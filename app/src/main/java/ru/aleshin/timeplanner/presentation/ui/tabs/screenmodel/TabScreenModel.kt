@@ -12,7 +12,7 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * imitations under the License.
+ * limitations under the License.
  */
 package ru.aleshin.timeplanner.presentation.ui.tabs.screenmodel
 
@@ -47,14 +47,17 @@ class TabScreenModel @Inject constructor(
 ) {
 
     init {
-        dispatchEvent(TabsEvent.SelectedHomeTab)
+        dispatchEvent(TabsEvent.Init)
     }
 
     override suspend fun WorkScope<TabsViewState, TabsAction, TabsEffect>.handleEvent(
         event: TabsEvent,
     ) = when (event) {
-        TabsEvent.SelectedHomeTab -> navigate(TabsBottomBarItems.HOME) {
+        TabsEvent.Init -> navigate(TabsBottomBarItems.HOME) {
             showHomeFeature(HomeScreens.Home, isRoot = true)
+        }
+        TabsEvent.SelectedHomeTab -> navigate(TabsBottomBarItems.HOME) {
+            showHomeFeature(null)
         }
         TabsEvent.SelectedMainScreen -> navigate(TabsBottomBarItems.HOME) {
             showHomeFeature(HomeScreens.Home)

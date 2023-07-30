@@ -12,7 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
-*/
+ */
 package ru.aleshin.timeplanner.di.modules
 
 import dagger.Binds
@@ -23,8 +23,8 @@ import ru.aleshin.core.utils.managers.TimeOverlayManager
 import ru.aleshin.core.utils.notifications.NotificationCreator
 import ru.aleshin.features.editor.api.presentation.AlarmReceiverProvider
 import ru.aleshin.features.editor.api.presentation.TimeTaskAlarmManager
-import ru.aleshin.features.home.api.domains.common.ScheduleStatusManager
-import ru.aleshin.features.home.api.domains.common.TimeTaskStatusManager
+import ru.aleshin.features.home.api.domain.common.ScheduleStatusManager
+import ru.aleshin.features.home.api.domain.common.TimeTaskStatusManager
 import ru.aleshin.timeplanner.navigation.GlobalNavigationManager
 import ru.aleshin.timeplanner.navigation.TabNavigationManager
 import ru.aleshin.timeplanner.presentation.receiver.AlarmReceiverProviderImpl

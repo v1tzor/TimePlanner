@@ -11,7 +11,7 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * imitations under the License.
+ * limitations under the License.
  */
 package ru.aleshin.features.home.api.data.datasources.subcategories
 
@@ -30,7 +30,7 @@ interface SubCategoriesDao {
     @Query("SELECT * FROM subCategories WHERE main_category_id = :id")
     suspend fun fetchSubCategoriesByTypeId(id: Int): List<SubCategoryEntity>
 
-    @Insert
+    @Insert(entity = SubCategoryEntity::class)
     suspend fun addSubCategories(entity: List<SubCategoryEntity>)
 
     @Query("DELETE FROM subCategories WHERE id = :id")

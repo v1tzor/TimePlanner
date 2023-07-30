@@ -11,7 +11,7 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * imitations under the License.
+ * limitations under the License.
  */
 package ru.aleshin.timeplanner.presentation.ui.main.viewmodel
 
@@ -20,10 +20,10 @@ import ru.aleshin.core.utils.functional.handle
 import ru.aleshin.core.utils.platform.screenmodel.work.ActionResult
 import ru.aleshin.core.utils.platform.screenmodel.work.FlowWorkProcessor
 import ru.aleshin.core.utils.platform.screenmodel.work.WorkCommand
+import ru.aleshin.features.settings.impl.presentation.mappers.mapToUi
 import ru.aleshin.timeplanner.domain.interactors.SettingsInteractor
 import ru.aleshin.timeplanner.presentation.ui.main.contract.MainAction
 import ru.aleshin.timeplanner.presentation.ui.main.contract.MainEffect
-import ru.aleshin.timeplanner.presentation.ui.mappers.mapToUi
 import javax.inject.Inject
 
 /**

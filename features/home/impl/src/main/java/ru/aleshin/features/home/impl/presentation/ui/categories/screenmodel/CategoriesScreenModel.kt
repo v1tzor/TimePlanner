@@ -11,7 +11,7 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * imitations under the License.
+ * limitations under the License.
  */
 package ru.aleshin.features.home.impl.presentation.ui.categories.screenmodel
 
@@ -21,7 +21,6 @@ import cafe.adriel.voyager.core.screen.Screen
 import ru.aleshin.core.utils.managers.CoroutineManager
 import ru.aleshin.core.utils.platform.screenmodel.BaseScreenModel
 import ru.aleshin.core.utils.platform.screenmodel.work.WorkScope
-import ru.aleshin.features.home.api.domains.entities.categories.MainCategory
 import ru.aleshin.features.home.impl.di.holder.HomeComponentHolder
 import ru.aleshin.features.home.impl.presentation.ui.categories.contract.CategoriesAction
 import ru.aleshin.features.home.impl.presentation.ui.categories.contract.CategoriesEffect
@@ -46,7 +45,7 @@ internal class CategoriesScreenModel @Inject constructor(
     override fun init() {
         if (!isInitialize.get()) {
             super.init()
-            dispatchEvent(CategoriesEvent.Init(MainCategory.absent()))
+            dispatchEvent(CategoriesEvent.Init(0))
         }
     }
 
@@ -54,7 +53,7 @@ internal class CategoriesScreenModel @Inject constructor(
         event: CategoriesEvent,
     ) = when (event) {
         is CategoriesEvent.Init -> {
-            val command = CategoriesWorkCommand.LoadCategories(event.initCategory)
+            val command = CategoriesWorkCommand.LoadCategories(event.initCategoryId)
             categoriesWorkProcessor.work(command).handleWork()
         }
         is CategoriesEvent.ChangeMainCategory -> {

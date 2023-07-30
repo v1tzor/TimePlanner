@@ -11,7 +11,7 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * imitations under the License.
+ * limitations under the License.
  */
 package ru.aleshin.features.settings.impl.presentation.ui.contract
 
@@ -21,13 +21,15 @@ import ru.aleshin.core.utils.platform.screenmodel.contract.*
 import ru.aleshin.features.settings.api.domain.entities.ThemeSettings
 import ru.aleshin.features.settings.impl.domain.common.SettingsFailures
 import ru.aleshin.features.settings.impl.domain.entities.Settings
+import ru.aleshin.features.settings.impl.presentation.models.SettingsUi
+import ru.aleshin.features.settings.impl.presentation.models.ThemeSettingsUi
 
 /**
  * @author Stanislav Aleshin on 17.02.2023.
  */
 @Parcelize
 internal data class SettingsViewState(
-    val themeSettings: ThemeSettings? = null,
+    val themeSettings: ThemeSettingsUi? = null,
     val failure: SettingsFailures? = null,
     val isBackupLoading: Boolean = false,
 ) : BaseViewState
@@ -39,7 +41,7 @@ internal sealed class SettingsEvent : BaseEvent {
     object StopLoading : SettingsEvent()
     data class PressSaveBackupData(val uri: Uri) : SettingsEvent()
     data class PressRestoreBackupData(val uri: Uri) : SettingsEvent()
-    data class ChangedThemeSettings(val themeSettings: ThemeSettings) : SettingsEvent()
+    data class ChangedThemeSettings(val themeSettings: ThemeSettingsUi) : SettingsEvent()
 }
 
 internal sealed class SettingsEffect : BaseUiEffect {
@@ -48,6 +50,6 @@ internal sealed class SettingsEffect : BaseUiEffect {
 
 internal sealed class SettingsAction : BaseAction {
     data class ShowLoadingBackup(val isLoading: Boolean) : SettingsAction()
-    data class ChangeAllSettings(val settings: Settings) : SettingsAction()
-    data class ChangeThemeSettings(val settings: ThemeSettings) : SettingsAction()
+    data class ChangeAllSettings(val settings: SettingsUi) : SettingsAction()
+    data class ChangeThemeSettings(val settings: ThemeSettingsUi) : SettingsAction()
 }

@@ -11,7 +11,7 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * imitations under the License.
+ * limitations under the License.
  */
 package ru.aleshin.features.home.impl.presentation.ui.home.screenModel
 
@@ -23,13 +23,13 @@ import ru.aleshin.core.utils.functional.handle
 import ru.aleshin.core.utils.functional.rightOrElse
 import ru.aleshin.core.utils.managers.DateManager
 import ru.aleshin.core.utils.platform.screenmodel.work.*
-import ru.aleshin.features.home.api.domains.common.TimeTaskStatusManager
-import ru.aleshin.features.home.api.domains.entities.schedules.status.TimeTaskStatus
+import ru.aleshin.features.home.api.domain.common.TimeTaskStatusManager
+import ru.aleshin.features.home.api.domain.entities.schedules.TimeTaskStatus
 import ru.aleshin.features.home.impl.domain.interactors.ScheduleInteractor
 import ru.aleshin.features.home.impl.domain.interactors.TimeShiftInteractor
-import ru.aleshin.features.home.impl.presentation.mapppers.ScheduleDomainToUiMapper
-import ru.aleshin.features.home.impl.presentation.mapppers.mapToDomain
-import ru.aleshin.features.home.impl.presentation.models.TimeTaskUi
+import ru.aleshin.features.home.impl.presentation.mapppers.schedules.ScheduleDomainToUiMapper
+import ru.aleshin.features.home.impl.presentation.mapppers.schedules.mapToDomain
+import ru.aleshin.features.home.impl.presentation.models.schedules.TimeTaskUi
 import ru.aleshin.features.home.impl.presentation.ui.home.contract.HomeAction
 import ru.aleshin.features.home.impl.presentation.ui.home.contract.HomeEffect
 import java.util.*
@@ -40,12 +40,6 @@ import javax.inject.Inject
  */
 internal interface ScheduleWorkProcessor : FlowWorkProcessor<ScheduleWorkCommand, HomeAction, HomeEffect> {
 
-    suspend fun loadScheduleByDate(date: Date): FlowWorkResult<HomeAction, HomeEffect>
-    suspend fun createSchedule(date: Date): FlowWorkResult<HomeAction, HomeEffect>
-    suspend fun shiftDownTimeTask(timeTask: TimeTaskUi): FlowWorkResult<HomeAction, HomeEffect>
-    suspend fun shiftUpTimeTask(timeTask: TimeTaskUi): FlowWorkResult<HomeAction, HomeEffect>
-    suspend fun changeDoneState(date: Date, key: Long): FlowWorkResult<HomeAction, HomeEffect>
-
     class Base @Inject constructor(
         private val scheduleInteractor: ScheduleInteractor,
         private val timeShiftInteractor: TimeShiftInteractor,
@@ -53,26 +47,6 @@ internal interface ScheduleWorkProcessor : FlowWorkProcessor<ScheduleWorkCommand
         private val statusManager: TimeTaskStatusManager,
         private val dateManager: DateManager,
     ) : ScheduleWorkProcessor {
-
-        override suspend fun createSchedule(date: Date) = work(
-            command = ScheduleWorkCommand.CreateSchedule(date),
-        )
-
-        override suspend fun loadScheduleByDate(date: Date) = work(
-            command = ScheduleWorkCommand.LoadScheduleByDate(date),
-        )
-
-        override suspend fun shiftDownTimeTask(timeTask: TimeTaskUi) = work(
-            command = ScheduleWorkCommand.TimeTaskShiftDown(timeTask),
-        )
-
-        override suspend fun shiftUpTimeTask(timeTask: TimeTaskUi) = work(
-            command = ScheduleWorkCommand.TimeTaskShiftUp(timeTask),
-        )
-
-        override suspend fun changeDoneState(date: Date, key: Long) = work(
-            command = ScheduleWorkCommand.ChangeDoneState(date, key),
-        )
 
         override suspend fun work(command: ScheduleWorkCommand) = when (command) {
             is ScheduleWorkCommand.LoadScheduleByDate -> loadScheduleByDateWork(command.date)

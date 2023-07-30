@@ -11,15 +11,15 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * imitations under the License.
+ * limitations under the License.
  */
 package ru.aleshin.features.editor.impl.presentation.mappers
 
 import ru.aleshin.core.utils.extensions.duration
 import ru.aleshin.core.utils.functional.TimeRange
 import ru.aleshin.features.editor.impl.domain.entites.EditModel
-import ru.aleshin.features.editor.impl.presentation.models.EditModelUi
-import ru.aleshin.features.editor.impl.presentation.models.EditParameters
+import ru.aleshin.features.editor.impl.presentation.models.editmodel.EditModelUi
+import ru.aleshin.features.editor.impl.presentation.models.editmodel.EditParameters
 
 /**
  * @author Stanislav Aleshin on 16.05.2023.
@@ -29,8 +29,8 @@ internal fun EditModel.mapToUi() = EditModelUi(
     date = date,
     timeRanges = TimeRange(startTime, endTime),
     duration = duration(startTime, endTime),
-    mainCategory = mainCategory,
-    subCategory = subCategory,
+    mainCategory = mainCategory.mapToUi(),
+    subCategory = subCategory?.mapToUi(),
     parameters = EditParameters(isImportant, isEnableNotification, isConsiderInStatistics),
     isCompleted = isCompleted,
     templateId = templateId,
@@ -41,8 +41,8 @@ internal fun EditModelUi.mapToDomain() = EditModel(
     date = date,
     startTime = timeRanges.from,
     endTime = timeRanges.to,
-    mainCategory = mainCategory,
-    subCategory = subCategory,
+    mainCategory = mainCategory.mapToDomain(),
+    subCategory = subCategory?.mapToDomain(),
     isCompleted = isCompleted,
     isImportant = parameters.isImportant,
     isEnableNotification = parameters.isEnableNotification,

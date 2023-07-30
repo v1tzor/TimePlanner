@@ -11,7 +11,7 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * imitations under the License.
+ * limitations under the License.
  */
 package ru.aleshin.features.editor.impl.presentation.ui.editor
 
@@ -36,7 +36,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import ru.aleshin.core.utils.extensions.shiftMillis
 import ru.aleshin.core.utils.functional.TimeRange
-import ru.aleshin.features.editor.impl.presentation.models.EditParameters
+import ru.aleshin.features.editor.impl.presentation.models.categories.CategoriesUi
+import ru.aleshin.features.editor.impl.presentation.models.editmodel.EditParameters
+import ru.aleshin.features.editor.impl.presentation.models.categories.MainCategoryUi
+import ru.aleshin.features.editor.impl.presentation.models.categories.SubCategoryUi
 import ru.aleshin.features.editor.impl.presentation.theme.EditorThemeRes
 import ru.aleshin.features.editor.impl.presentation.ui.editor.contract.EditorViewState
 import ru.aleshin.features.editor.impl.presentation.ui.editor.screenmodel.CategoryValidateError
@@ -45,9 +48,6 @@ import ru.aleshin.features.editor.impl.presentation.ui.editor.views.*
 import ru.aleshin.features.editor.impl.presentation.ui.editor.views.EndTimeField
 import ru.aleshin.features.editor.impl.presentation.ui.editor.views.StartTimeField
 import ru.aleshin.features.editor.impl.presentation.ui.editor.views.SubCategoryChooser
-import ru.aleshin.features.home.api.domains.entities.categories.Categories
-import ru.aleshin.features.home.api.domains.entities.categories.MainCategory
-import ru.aleshin.features.home.api.domains.entities.categories.SubCategory
 
 /**
  * @author Stanislav Aleshin on 25.02.2023.
@@ -56,7 +56,7 @@ import ru.aleshin.features.home.api.domains.entities.categories.SubCategory
 internal fun EditorContent(
     state: EditorViewState,
     modifier: Modifier = Modifier,
-    onCategoriesChange: (MainCategory, SubCategory?) -> Unit,
+    onCategoriesChange: (MainCategoryUi, SubCategoryUi?) -> Unit,
     onAddSubCategory: (String) -> Unit,
     onTimeRangeChange: (TimeRange) -> Unit,
     onChangeParameters: (EditParameters) -> Unit,
@@ -107,10 +107,10 @@ internal fun EditorContent(
 internal fun CategoriesSection(
     modifier: Modifier = Modifier,
     isMainCategoryValid: Boolean,
-    mainCategory: MainCategory?,
-    subCategory: SubCategory?,
-    allCategories: List<Categories>,
-    onCategoriesChange: (MainCategory, SubCategory?) -> Unit,
+    mainCategory: MainCategoryUi?,
+    subCategory: SubCategoryUi?,
+    allCategories: List<CategoriesUi>,
+    onCategoriesChange: (MainCategoryUi, SubCategoryUi?) -> Unit,
     onAddSubCategory: (String) -> Unit,
 ) {
     Column(

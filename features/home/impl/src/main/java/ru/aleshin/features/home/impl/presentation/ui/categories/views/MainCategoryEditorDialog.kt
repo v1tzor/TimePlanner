@@ -11,7 +11,7 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * imitations under the License.
+ * limitations under the License.
  */
 package ru.aleshin.features.home.impl.presentation.ui.categories.views
 
@@ -44,9 +44,8 @@ import ru.aleshin.core.ui.views.CategoryIconMonogram
 import ru.aleshin.core.ui.views.CategoryTextMonogram
 import ru.aleshin.core.ui.views.DialogButtons
 import ru.aleshin.core.utils.functional.Constants
-import ru.aleshin.features.home.api.domains.entities.categories.MainCategory
-import ru.aleshin.features.home.api.presentation.mappers.fetchNameByLanguage
-import ru.aleshin.features.home.api.presentation.mappers.toIconPainter
+import ru.aleshin.features.home.api.presentation.mappers.mapToIconPainter
+import ru.aleshin.features.home.impl.presentation.models.categories.MainCategoryUi
 import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
 
 /**
@@ -56,12 +55,12 @@ import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
 @Composable
 internal fun MainCategoryEditorDialog(
     modifier: Modifier = Modifier,
-    editCategory: MainCategory? = null,
+    editCategory: MainCategoryUi? = null,
     onDismiss: () -> Unit,
     onConfirm: (name: String) -> Unit,
 ) {
     var isError by rememberSaveable { mutableStateOf(false) }
-    val categoryName = editCategory?.fetchNameByLanguage()
+    val categoryName = editCategory?.customName
     val textRange = TextRange(categoryName?.length ?: 0)
     var mainCategoryNameValue by remember {
         mutableStateOf(TextFieldValue(text = categoryName ?: "", selection = textRange))
@@ -80,10 +79,10 @@ internal fun MainCategoryEditorDialog(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(16.dp),
                 ) {
-                    if (editCategory?.icon != null) {
+                    if (editCategory?.defaultType?.mapToIconPainter() != null) {
                         CategoryIconMonogram(
-                            icon = checkNotNull(editCategory.icon).toIconPainter(),
-                            iconDescription = editCategory.fetchNameByLanguage(),
+                            icon = checkNotNull(editCategory.defaultType).mapToIconPainter(),
+                            iconDescription = editCategory.customName,
                             iconColor = MaterialTheme.colorScheme.primary,
                             backgroundColor = MaterialTheme.colorScheme.primaryContainer,
                         )

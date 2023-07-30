@@ -11,7 +11,7 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * imitations under the License.
+ * limitations under the License.
  */
 package ru.aleshin.features.home.impl.presentation.ui.categories.views
 
@@ -28,6 +28,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
@@ -58,11 +59,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import ru.aleshin.core.ui.theme.TimePlannerRes
-import ru.aleshin.core.ui.theme.tokens.TimePlannerLanguage
 import ru.aleshin.core.ui.views.WarningDeleteDialog
-import ru.aleshin.features.home.api.domains.entities.categories.MainCategory
-import ru.aleshin.features.home.api.presentation.mappers.fetchNameByLanguage
-import ru.aleshin.features.home.api.presentation.mappers.toIconPainter
+import ru.aleshin.features.home.api.presentation.mappers.mapToIconPainter
+import ru.aleshin.features.home.api.presentation.mappers.mapToName
+import ru.aleshin.features.home.impl.presentation.models.categories.MainCategoryUi
 import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
 
 /**
@@ -71,15 +71,14 @@ import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
 @Composable
 internal fun MainCategoriesHorizontalList(
     modifier: Modifier = Modifier,
-    mainCategories: List<MainCategory>,
-    selectedCategory: MainCategory?,
-    onSelectCategory: (MainCategory) -> Unit,
-    onUpdateCategory: (MainCategory) -> Unit,
-    onDeleteCategory: (MainCategory) -> Unit,
+    gridState: LazyGridState = rememberLazyGridState(),
+    mainCategories: List<MainCategoryUi>,
+    selectedCategory: MainCategoryUi?,
+    onSelectCategory: (MainCategoryUi) -> Unit,
+    onUpdateCategory: (MainCategoryUi) -> Unit,
+    onDeleteCategory: (MainCategoryUi) -> Unit,
     onAddCategory: () -> Unit,
 ) {
-    val gridState = rememberLazyGridState()
-    val language = TimePlannerRes.language
     LazyHorizontalGrid(
         rows = GridCells.Fixed(2),
         modifier = modifier.height(236.dp).animateContentSize(),
@@ -98,14 +97,7 @@ internal fun MainCategoriesHorizontalList(
                 onSelected = { onSelectCategory(category) },
                 onDelete = { onDeleteCategory(category) },
                 onUpdate = {
-                    val languageCategory = when (language) {
-                        TimePlannerLanguage.RU -> category.copy(name = it)
-                        TimePlannerLanguage.EN -> category.copy(foreignName = it)
-                        TimePlannerLanguage.DE -> category.copy(foreignName = it)
-                        TimePlannerLanguage.ES -> category.copy(foreignName = it)
-                        TimePlannerLanguage.FA -> category.copy(foreignName = it)
-                    }
-                    onUpdateCategory(languageCategory)
+                    onUpdateCategory(category.copy(customName = it))
                 },
             )
         }
@@ -123,7 +115,7 @@ internal fun MainCategoriesHorizontalList(
 internal fun MainCategoryItem(
     modifier: Modifier = Modifier,
     isSelected: Boolean,
-    category: MainCategory,
+    category: MainCategoryUi,
     onSelected: () -> Unit,
     onDelete: () -> Unit,
     onUpdate: (name: String) -> Unit,
@@ -156,8 +148,8 @@ internal fun MainCategoryItem(
                 verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
                 MainCategoryItemLeading(
-                    icon = category.icon?.toIconPainter(),
-                    name = category.fetchNameByLanguage(),
+                    icon = category.defaultType?.mapToIconPainter(),
+                    name = category.let { it.defaultType?.mapToName() ?: it.customName } ?: "*",
                     isSelected = isSelected,
                 )
                 Spacer(modifier = Modifier.weight(1f))
@@ -171,7 +163,7 @@ internal fun MainCategoryItem(
                         style = MaterialTheme.typography.labelMedium,
                     )
                     Text(
-                        text = category.fetchNameByLanguage(),
+                        text = category.let { it.defaultType?.mapToName() ?: it.customName } ?: "*",
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         color = when (isSelected) {
@@ -197,7 +189,7 @@ internal fun MainCategoryItem(
             MainCategoriesOptionMenu(
                 modifier = Modifier.width(180.dp),
                 isExpanded = isExpanded,
-                isDeleteEnabled = !category.isNotDeleted,
+                isChangeable = category.defaultType == null,
                 onUpdateClick = {
                     isCreatorDialogOpen = true
                     isExpanded = false
@@ -295,7 +287,7 @@ internal fun MainCategoryItemLeading(
 internal fun MainCategoriesOptionMenu(
     modifier: Modifier = Modifier,
     isExpanded: Boolean,
-    isDeleteEnabled: Boolean,
+    isChangeable: Boolean,
     onUpdateClick: () -> Unit,
     onDeleteClick: () -> Unit,
     onDismiss: () -> Unit,
@@ -307,7 +299,9 @@ internal fun MainCategoriesOptionMenu(
         offset = DpOffset(0.dp, 4.dp),
     ) {
         DropdownMenuItem(
+            modifier = Modifier.alpha(if (isChangeable) 1f else 0.5f),
             onClick = onUpdateClick,
+            enabled = isChangeable,
             text = {
                 Text(
                     text = HomeThemeRes.strings.updateCategoryTitle,
@@ -323,13 +317,13 @@ internal fun MainCategoriesOptionMenu(
                 )
             },
         )
-        val deleteContentColor = when (isDeleteEnabled) {
+        val deleteContentColor = when (isChangeable) {
             true -> MaterialTheme.colorScheme.onSurface
             false -> MaterialTheme.colorScheme.onSurfaceVariant
         }
         DropdownMenuItem(
-            modifier = Modifier.alpha(if (isDeleteEnabled) 1f else 0.5f),
-            enabled = isDeleteEnabled,
+            modifier = Modifier.alpha(if (isChangeable) 1f else 0.5f),
+            enabled = isChangeable,
             onClick = onDeleteClick,
             text = {
                 Text(

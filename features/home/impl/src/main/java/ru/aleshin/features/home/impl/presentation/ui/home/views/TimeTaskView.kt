@@ -11,7 +11,7 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * imitations under the License.
+ * limitations under the License.
  */
 package ru.aleshin.features.home.impl.presentation.ui.home.views
 
@@ -50,7 +50,6 @@ internal fun PlannedTimeTask(
     taskSubTitle: String?,
     taskDurationTitle: String,
     categoryIcon: Painter?,
-    categoryIconDescription: String?,
     isImportant: Boolean,
 ) {
     Surface(
@@ -69,7 +68,7 @@ internal fun PlannedTimeTask(
                 if (categoryIcon != null) {
                     CategoryIconMonogram(
                         icon = categoryIcon,
-                        iconDescription = categoryIconDescription,
+                        iconDescription = taskTitle,
                         iconColor = MaterialTheme.colorScheme.primary,
                         badgeEnabled = isImportant,
                         backgroundColor = MaterialTheme.colorScheme.primaryContainer,
@@ -112,7 +111,6 @@ internal fun RunningTimeTask(
     taskTitle: String,
     taskSubTitle: String?,
     categoryIcon: Painter?,
-    categoryIconDescription: String?,
     isImportant: Boolean,
 ) {
     var expanded by rememberSaveable { mutableStateOf(false) }
@@ -134,7 +132,7 @@ internal fun RunningTimeTask(
                     if (categoryIcon != null) {
                         CategoryIconMonogram(
                             icon = categoryIcon,
-                            iconDescription = categoryIconDescription,
+                            iconDescription = taskTitle,
                             iconColor = MaterialTheme.colorScheme.onPrimary,
                             badgeEnabled = isImportant,
                             backgroundColor = MaterialTheme.colorScheme.primary,
@@ -161,7 +159,7 @@ internal fun RunningTimeTask(
                     ExpandedIcon(
                         isExpanded = expanded,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        description = categoryIconDescription,
+                        description = null,
                     )
                 }
             }
@@ -219,7 +217,6 @@ internal fun CompletedTimeTask(
     taskSubTitle: String?,
     categoryIcon: Painter?,
     isCompleted: Boolean,
-    categoryIconDescription: String?,
 ) {
     Surface(
         modifier = modifier,
@@ -246,7 +243,7 @@ internal fun CompletedTimeTask(
                 if (categoryIcon != null) {
                     CategoryIconMonogram(
                         icon = categoryIcon,
-                        iconDescription = categoryIconDescription,
+                        iconDescription = taskTitle,
                         iconColor = MaterialTheme.colorScheme.onTertiary,
                         backgroundColor = monogramBackgroundColor,
                     )

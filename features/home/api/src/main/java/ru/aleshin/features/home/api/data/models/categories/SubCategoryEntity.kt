@@ -12,7 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
-*/
+ */
 package ru.aleshin.features.home.api.data.models.categories
 
 import androidx.room.ColumnInfo
@@ -36,7 +36,7 @@ import androidx.room.PrimaryKey
 )
 data class SubCategoryEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    @ColumnInfo("main_category_id", index = true) val mainCategoryId: Int,
     @ColumnInfo("sub_category_name") val subCategoryName: String,
     @ColumnInfo("sub_description") val description: String?,
-    @ColumnInfo("main_category_id", index = true) val mainCategoryId: Int,
 )

@@ -11,7 +11,7 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * imitations under the License.
+ * limitations under the License.
  */
 package ru.aleshin.features.home.impl.presentation.ui.home.views
 
@@ -35,10 +35,9 @@ import com.google.accompanist.placeholder.placeholder
 import com.google.accompanist.placeholder.shimmer
 import ru.aleshin.core.ui.views.toMinutesOrHoursTitle
 import ru.aleshin.core.utils.extensions.duration
-import ru.aleshin.features.home.api.presentation.mappers.fetchNameByLanguage
-import ru.aleshin.features.home.api.presentation.mappers.toDescription
-import ru.aleshin.features.home.api.presentation.mappers.toIconPainter
-import ru.aleshin.features.home.impl.presentation.models.TimeTaskUi
+import ru.aleshin.features.home.api.presentation.mappers.mapToIconPainter
+import ru.aleshin.features.home.api.presentation.mappers.mapToName
+import ru.aleshin.features.home.impl.presentation.models.schedules.TimeTaskUi
 import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
 import java.text.SimpleDateFormat
 import java.util.*
@@ -78,11 +77,10 @@ internal fun LazyItemScope.PlannedTimeTaskItem(
                 PlannedTimeTask(
                     modifier = Modifier.fillMaxWidth().padding(bottom = 4.dp).animateContentSize(),
                     onViewClicked = { onItemClick.invoke(key) },
-                    taskTitle = mainCategory.fetchNameByLanguage(),
+                    taskTitle = mainCategory.let { it.defaultType?.mapToName() ?: it.customName } ?: "*",
                     taskSubTitle = model.subCategory?.name,
                     taskDurationTitle = duration.toMinutesOrHoursTitle(),
-                    categoryIcon = mainCategory.icon?.toIconPainter(),
-                    categoryIconDescription = mainCategory.icon?.toDescription(),
+                    categoryIcon = mainCategory.defaultType?.mapToIconPainter(),
                     isImportant = isImportant,
                 )
             }
@@ -128,10 +126,9 @@ internal fun LazyItemScope.CompletedTimeTaskItem(
                     modifier = Modifier.fillMaxWidth().padding(bottom = 4.dp).animateContentSize(),
                     onViewClicked = { onItemClick.invoke(key) },
                     onDoneChange = onDoneChange,
-                    taskTitle = mainCategory.fetchNameByLanguage(),
+                    taskTitle = mainCategory.let { it.defaultType?.mapToName() ?: it.customName } ?: "*",
                     taskSubTitle = subCategory?.name,
-                    categoryIcon = mainCategory.icon?.toIconPainter(),
-                    categoryIconDescription = mainCategory.icon?.toDescription(),
+                    categoryIcon = mainCategory.defaultType?.mapToIconPainter(),
                     isCompleted = isCompleted,
                 )
             }
@@ -181,10 +178,9 @@ internal fun LazyItemScope.RunningTimeTaskItem(
                     onMoreButtonClick = { onMoreButtonClick.invoke(key) },
                     onIncreaseTime = onIncreaseTime,
                     onReduceTime = onReduceTime,
-                    taskTitle = mainCategory.fetchNameByLanguage(),
+                    taskTitle = mainCategory.let { it.defaultType?.mapToName() ?: it.customName } ?: "*",
                     taskSubTitle = subCategory?.name,
-                    categoryIcon = mainCategory.icon?.toIconPainter(),
-                    categoryIconDescription = mainCategory.icon?.toDescription(),
+                    categoryIcon = mainCategory.defaultType?.mapToIconPainter(),
                     isImportant = isImportant,
                 )
             }

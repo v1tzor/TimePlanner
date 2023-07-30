@@ -11,16 +11,16 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * imitations under the License.
+ * limitations under the License.
  */
 package ru.aleshin.features.settings.impl.domain.interactors
 
 import ru.aleshin.core.utils.functional.DomainResult
 import ru.aleshin.core.utils.functional.UnitDomainResult
-import ru.aleshin.features.home.api.domains.entities.categories.Categories
-import ru.aleshin.features.home.api.domains.entities.categories.SubCategory
-import ru.aleshin.features.home.api.domains.repository.CategoriesRepository
-import ru.aleshin.features.home.api.domains.repository.SubCategoriesRepository
+import ru.aleshin.features.home.api.domain.entities.categories.Categories
+import ru.aleshin.features.home.api.domain.entities.categories.SubCategory
+import ru.aleshin.features.home.api.domain.repository.CategoriesRepository
+import ru.aleshin.features.home.api.domain.repository.SubCategoriesRepository
 import ru.aleshin.features.settings.impl.domain.common.SettingsEitherWrapper
 import ru.aleshin.features.settings.impl.domain.common.SettingsFailures
 import javax.inject.Inject

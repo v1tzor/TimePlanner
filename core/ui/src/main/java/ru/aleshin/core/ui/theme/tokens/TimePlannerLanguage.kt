@@ -11,32 +11,39 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * imitations under the License.
+ * limitations under the License.
  */
 package ru.aleshin.core.ui.theme.tokens
 
+import android.os.Parcelable
 import androidx.compose.runtime.staticCompositionLocalOf
+import kotlinx.parcelize.Parcelize
 
 /**
  * @author Stanislav Aleshin on 14.02.2023.
  */
 enum class TimePlannerLanguage(val code: String) {
-    EN("en"), RU("ru"), DE("de"), ES("es"), FA("fa")
+    EN("en"),
+    RU("ru"),
+    DE("de"),
+    ES("es"),
+    FA("fa"),
 }
 
-enum class LanguageUiType {
-    DEFAULT, EN, RU, DE, ES, FA
+@Parcelize
+enum class LanguageUiType(val code: String?) : Parcelable {
+    DEFAULT(null),
+    EN("en"),
+    RU("ru"),
+    DE("de"),
+    ES("es"),
+    FA("fa"),
 }
 
 val LocalTimePlannerLanguage = staticCompositionLocalOf<TimePlannerLanguage> {
     error("Language is not provided")
 }
 
-fun fetchAppLanguage(language: String) = when (language) {
-    "ru" -> TimePlannerLanguage.RU
-    "en" -> TimePlannerLanguage.EN
-    "de" -> TimePlannerLanguage.DE
-    "es" -> TimePlannerLanguage.ES
-    "fa" -> TimePlannerLanguage.FA
-    else -> TimePlannerLanguage.EN
+fun fetchCoreLanguage(code: String): TimePlannerLanguage {
+    return TimePlannerLanguage.values().find { it.code == code } ?: TimePlannerLanguage.EN
 }

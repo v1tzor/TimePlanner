@@ -11,7 +11,7 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * imitations under the License.
+ * limitations under the License.
  */
 package ru.aleshin.features.settings.impl.presentation.ui
 
@@ -31,10 +31,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import ru.aleshin.core.ui.theme.TimePlannerRes
+import ru.aleshin.core.ui.theme.material.ThemeColorsUiType
+import ru.aleshin.core.ui.theme.tokens.LanguageUiType
 import ru.aleshin.core.ui.views.WarningDeleteDialog
 import ru.aleshin.features.settings.api.domain.entities.LanguageType
 import ru.aleshin.features.settings.api.domain.entities.ThemeColorsType
 import ru.aleshin.features.settings.api.domain.entities.ThemeSettings
+import ru.aleshin.features.settings.impl.presentation.models.ThemeSettingsUi
 import ru.aleshin.features.settings.impl.presentation.theme.SettingsThemeRes
 import ru.aleshin.features.settings.impl.presentation.ui.contract.RestoreBackupContract
 import ru.aleshin.features.settings.impl.presentation.ui.contract.SaveBackupContract
@@ -54,7 +57,7 @@ internal fun SettingsContent(
     onClearData: () -> Unit,
     onRestoreData: (uri: Uri) -> Unit,
     onBackupData: (uri: Uri) -> Unit,
-    onUpdateThemeSettings: (ThemeSettings) -> Unit,
+    onUpdateThemeSettings: (ThemeSettingsUi) -> Unit,
 ) {
     val scrollState = rememberScrollState()
     Column(modifier = modifier.fillMaxSize().verticalScroll(scrollState)) {
@@ -97,11 +100,11 @@ internal fun SettingsContent(
 @Composable
 internal fun MainSettingsSection(
     modifier: Modifier = Modifier,
-    themeColors: ThemeColorsType,
-    languageType: LanguageType,
+    themeColors: ThemeColorsUiType,
+    languageType: LanguageUiType,
     dynamicColorEnabled: Boolean,
-    onThemeColorUpdate: (ThemeColorsType) -> Unit,
-    onLanguageChanged: (LanguageType) -> Unit,
+    onThemeColorUpdate: (ThemeColorsUiType) -> Unit,
+    onLanguageChanged: (LanguageUiType) -> Unit,
     onEnableDynamicColorsChanged: (Boolean) -> Unit,
 ) {
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(16.dp)) {

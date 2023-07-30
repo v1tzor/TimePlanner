@@ -11,7 +11,7 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * imitations under the License.
+ * limitations under the License.
  */
 package ru.aleshin.timeplanner.presentation.receiver
 
@@ -19,10 +19,9 @@ import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
-import ru.aleshin.core.ui.theme.tokens.fetchAppLanguage
+import ru.aleshin.core.ui.theme.tokens.fetchCoreLanguage
 import ru.aleshin.core.ui.theme.tokens.fetchCoreStrings
 import ru.aleshin.core.utils.extensions.fetchLocale
 import ru.aleshin.core.utils.functional.Constants
@@ -40,7 +39,7 @@ class TimeTaskAlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
         if (intent == null || context == null) return
         val notificationCreator = NotificationCreator.Base(context)
-        val coreStrings = fetchCoreStrings(fetchAppLanguage(context.fetchLocale().language))
+        val coreStrings = fetchCoreStrings(fetchCoreLanguage(context.fetchLocale().language))
 
         if (intent.action == Constants.Alarm.ALARM_NOTIFICATION_ACTION) {
             val category = checkNotNull(intent.getStringExtra(Constants.Alarm.NOTIFICATION_CATEGORY))

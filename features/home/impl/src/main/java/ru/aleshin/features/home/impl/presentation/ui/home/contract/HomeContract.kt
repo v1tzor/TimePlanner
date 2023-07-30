@@ -11,16 +11,16 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * imitations under the License.
+ * limitations under the License.
  */
 package ru.aleshin.features.home.impl.presentation.ui.home.contract
 
 import kotlinx.parcelize.Parcelize
 import ru.aleshin.core.utils.platform.screenmodel.contract.*
-import ru.aleshin.features.home.api.domains.entities.schedules.status.DailyScheduleStatus
+import ru.aleshin.features.home.api.domain.entities.schedules.DailyScheduleStatus
 import ru.aleshin.features.home.impl.domain.entities.HomeFailures
-import ru.aleshin.features.home.impl.presentation.models.ScheduleUi
-import ru.aleshin.features.home.impl.presentation.models.TimeTaskUi
+import ru.aleshin.features.home.impl.presentation.models.schedules.ScheduleUi
+import ru.aleshin.features.home.impl.presentation.models.schedules.TimeTaskUi
 import ru.aleshin.features.home.impl.presentation.ui.home.views.ViewToggleStatus
 import java.util.*
 
@@ -29,21 +29,21 @@ import java.util.*
  */
 @Parcelize
 internal data class HomeViewState(
+    val isLoadingContent: Boolean = true,
     val currentDate: Date? = null,
     val dateStatus: DailyScheduleStatus? = null,
     val timeTaskViewStatus: ViewToggleStatus = ViewToggleStatus.COMPACT,
     val timeTasks: List<TimeTaskUi> = emptyList(),
-    val isLoadingContent: Boolean = true,
 ) : BaseViewState
 
 internal sealed class HomeEvent : BaseEvent {
     object CreateSchedule : HomeEvent()
-    data class TimeTaskShiftUp(val timeTask: TimeTaskUi) : HomeEvent()
-    data class TimeTaskShiftDown(val timeTask: TimeTaskUi) : HomeEvent()
     data class LoadSchedule(val date: Date?) : HomeEvent()
+    data class PressAddTimeTaskButton(val startTime: Date, val endTime: Date) : HomeEvent()
     data class PressEditTimeTaskButton(val timeTask: TimeTaskUi) : HomeEvent()
     data class PressChangeDoneStateButton(val timeTask: TimeTaskUi) : HomeEvent()
-    data class PressAddTimeTaskButton(val startTime: Date, val endTime: Date) : HomeEvent()
+    data class TimeTaskShiftUp(val timeTask: TimeTaskUi) : HomeEvent()
+    data class TimeTaskShiftDown(val timeTask: TimeTaskUi) : HomeEvent()
     data class PressViewToggleButton(val status: ViewToggleStatus) : HomeEvent()
 }
 
@@ -54,7 +54,7 @@ internal sealed class HomeEffect : BaseUiEffect {
 internal sealed class HomeAction : BaseAction {
     object Navigate : HomeAction()
     object ShowContentLoading : HomeAction()
+    data class UpdateDate(val date: Date, val status: DailyScheduleStatus?) : HomeAction()
     data class UpdateSchedule(val schedule: ScheduleUi) : HomeAction()
     data class UpdateViewStatus(val status: ViewToggleStatus) : HomeAction()
-    data class UpdateDate(val date: Date, val status: DailyScheduleStatus?) : HomeAction()
 }

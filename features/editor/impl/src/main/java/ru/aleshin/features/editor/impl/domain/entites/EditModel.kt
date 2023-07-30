@@ -11,13 +11,13 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * imitations under the License.
+ * limitations under the License.
  */
 package ru.aleshin.features.editor.impl.domain.entites
 
 import ru.aleshin.core.utils.functional.Mapper
-import ru.aleshin.features.home.api.domains.entities.categories.MainCategory
-import ru.aleshin.features.home.api.domains.entities.categories.SubCategory
+import ru.aleshin.features.home.api.domain.entities.categories.MainCategory
+import ru.aleshin.features.home.api.domain.entities.categories.SubCategory
 import java.util.*
 
 /**
@@ -28,7 +28,7 @@ data class EditModel(
     val date: Date,
     val startTime: Date,
     val endTime: Date,
-    val mainCategory: MainCategory = MainCategory.absent(),
+    val mainCategory: MainCategory = MainCategory(),
     val subCategory: SubCategory? = null,
     val isCompleted: Boolean = true,
     val isImportant: Boolean = false,

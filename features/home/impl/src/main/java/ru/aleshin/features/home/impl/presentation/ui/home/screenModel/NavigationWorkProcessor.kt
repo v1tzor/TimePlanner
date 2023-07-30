@@ -11,7 +11,7 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * imitations under the License.
+ * limitations under the License.
  */
 package ru.aleshin.features.home.impl.presentation.ui.home.screenModel
 
@@ -21,12 +21,12 @@ import ru.aleshin.core.utils.platform.screenmodel.work.ActionResult
 import ru.aleshin.core.utils.platform.screenmodel.work.WorkCommand
 import ru.aleshin.core.utils.platform.screenmodel.work.WorkProcessor
 import ru.aleshin.core.utils.platform.screenmodel.work.WorkResult
-import ru.aleshin.features.home.api.domains.entities.categories.MainCategory
-import ru.aleshin.features.home.api.domains.entities.schedules.TimeTask
+import ru.aleshin.features.home.api.domain.entities.categories.MainCategory
+import ru.aleshin.features.home.api.domain.entities.schedules.TimeTask
 import ru.aleshin.features.home.impl.domain.interactors.TemplatesInteractor
 import ru.aleshin.features.home.impl.navigation.NavigationManager
-import ru.aleshin.features.home.impl.presentation.mapppers.mapToDomain
-import ru.aleshin.features.home.impl.presentation.models.TimeTaskUi
+import ru.aleshin.features.home.impl.presentation.mapppers.schedules.mapToDomain
+import ru.aleshin.features.home.impl.presentation.models.schedules.TimeTaskUi
 import ru.aleshin.features.home.impl.presentation.ui.home.contract.HomeAction
 import ru.aleshin.features.home.impl.presentation.ui.home.contract.HomeEffect
 import java.util.*
@@ -37,57 +37,32 @@ import javax.inject.Inject
  */
 internal interface NavigationWorkProcessor : WorkProcessor<NavigationWorkCommand, HomeAction, HomeEffect> {
 
-    suspend fun navigateToEditorWithTimeTask(timeTask: TimeTaskUi): WorkResult<HomeAction, HomeEffect>
-
-    suspend fun navigateToEditor(
-        date: Date,
-        startTime: Date,
-        endTime: Date,
-    ): WorkResult<HomeAction, HomeEffect>
-
     class Base @Inject constructor(
         private val navigationManager: NavigationManager,
         private val templatesInteractor: TemplatesInteractor,
     ) : NavigationWorkProcessor {
 
-        override suspend fun navigateToEditorWithTimeTask(timeTask: TimeTaskUi) = work(
-            command = NavigationWorkCommand.NavigateToEditorWithTimeTask(timeTask),
-        )
-
-        override suspend fun navigateToEditor(date: Date, startTime: Date, endTime: Date) = work(
-            command = NavigationWorkCommand.NavigateToEditor(date, startTime, endTime),
-        )
-
         override suspend fun work(command: NavigationWorkCommand) = when (command) {
-            is NavigationWorkCommand.NavigateToEditor -> {
-                navigateWithEmptyTimeTask(command.currentDate, command.startTime, command.endTime)
-            }
-
-            is NavigationWorkCommand.NavigateToEditorWithTimeTask -> {
-                navigateWithTimeTask(command.timeTask)
-            }
+            is NavigationWorkCommand.NavigateToEditorCreator -> navigateToEditorCreator(command.currentDate, command.timeRange)
+            is NavigationWorkCommand.NavigateToEditor -> navigateToEditor(command.timeTask)
         }
 
-        private suspend fun navigateWithTimeTask(timeTask: TimeTaskUi): WorkResult<HomeAction, HomeEffect> {
-            val templateId = templatesInteractor.checkIsTemplate(timeTask.mapToDomain())
-
+        private suspend fun navigateToEditor(timeTask: TimeTaskUi): WorkResult<HomeAction, HomeEffect> {
+            val templateId = templatesInteractor.checkIsTemplate(timeTask.mapToDomain()).rightOrElse(null)
             return navigationManager.navigateToEditorFeature(
+                templateId = templateId,
                 timeTask = timeTask.mapToDomain(),
-                templateId = templateId.rightOrElse(null),
-            ).let { ActionResult(HomeAction.Navigate) }
+            ).let {
+                ActionResult(HomeAction.Navigate)
+            }
         }
 
-        private fun navigateWithEmptyTimeTask(
-            date: Date,
-            startTime: Date,
-            endTime: Date,
-        ): WorkResult<HomeAction, HomeEffect> {
-            val timeTask = TimeTask(
-                date = date,
-                category = MainCategory.absent(),
-                timeRanges = TimeRange(startTime, endTime),
-            )
-            return navigationManager.navigateToEditorFeature(timeTask, null).let {
+        private fun navigateToEditorCreator(date: Date, timeRange: TimeRange): WorkResult<HomeAction, HomeEffect> {
+            val timeTask = TimeTask(date = date, category = MainCategory(), timeRanges = timeRange)
+            return navigationManager.navigateToEditorFeature(
+                templateId = null,
+                timeTask = timeTask,
+            ).let {
                 ActionResult(HomeAction.Navigate)
             }
         }
@@ -95,6 +70,6 @@ internal interface NavigationWorkProcessor : WorkProcessor<NavigationWorkCommand
 }
 
 internal sealed class NavigationWorkCommand : WorkCommand {
-    data class NavigateToEditorWithTimeTask(val timeTask: TimeTaskUi) : NavigationWorkCommand()
-    data class NavigateToEditor(val currentDate: Date, val startTime: Date, val endTime: Date) : NavigationWorkCommand()
+    data class NavigateToEditor(val timeTask: TimeTaskUi) : NavigationWorkCommand()
+    data class NavigateToEditorCreator(val currentDate: Date, val timeRange: TimeRange) : NavigationWorkCommand()
 }

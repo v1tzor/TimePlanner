@@ -11,20 +11,26 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * imitations under the License.
+ * limitations under the License.
  */
 package ru.aleshin.core.ui.theme.material
 
 import android.os.Build
+import android.os.Parcelable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
+import kotlinx.parcelize.Parcelize
 import ru.aleshin.core.ui.theme.TimePlannerRes
 
 /**
  * @author Stanislav Aleshin on 14.02.2023.
  */
+@Parcelize
+enum class ThemeColorsUiType : Parcelable {
+    DEFAULT, LIGHT, DARK
+}
 
 private val baseLightColorScheme = lightColorScheme(
     primary = md_theme_light_primary,
@@ -89,10 +95,6 @@ private val baseDarkColorScheme = darkColorScheme(
     outlineVariant = md_theme_dark_outlineVariant,
     scrim = md_theme_dark_scrim,
 )
-
-enum class ThemeColorsUiType {
-    DEFAULT, LIGHT, DARK
-}
 
 @Composable
 fun ThemeColorsUiType.toColorScheme(

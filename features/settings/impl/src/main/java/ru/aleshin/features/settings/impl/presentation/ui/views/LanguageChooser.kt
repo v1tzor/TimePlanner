@@ -11,7 +11,7 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * imitations under the License.
+ * limitations under the License.
  */
 package ru.aleshin.features.settings.impl.presentation.ui.views
 
@@ -32,6 +32,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import ru.aleshin.core.ui.theme.TimePlannerRes
+import ru.aleshin.core.ui.theme.tokens.LanguageUiType
 import ru.aleshin.core.ui.views.DialogButtons
 import ru.aleshin.features.settings.api.domain.entities.LanguageType
 import ru.aleshin.features.settings.impl.presentation.mappers.toLanguageName
@@ -43,8 +44,8 @@ import ru.aleshin.features.settings.impl.presentation.theme.SettingsThemeRes
 @Composable
 fun LanguageChooser(
     modifier: Modifier = Modifier,
-    language: LanguageType,
-    onLanguageChanged: (LanguageType) -> Unit,
+    language: LanguageUiType,
+    onLanguageChanged: (LanguageUiType) -> Unit,
 ) {
     var isOpenDialog by rememberSaveable { mutableStateOf(false) }
     Surface(
@@ -87,12 +88,12 @@ fun LanguageChooser(
 fun LanguageDialogChooser(
     modifier: Modifier = Modifier,
     openDialog: Boolean,
-    initialLanguage: LanguageType,
+    initialLanguage: LanguageUiType,
     onCloseDialog: () -> Unit,
-    onLanguageChoose: (LanguageType) -> Unit,
+    onLanguageChoose: (LanguageUiType) -> Unit,
 ) {
     if (openDialog) {
-        val initPosition = LanguageType.values().indexOf(initialLanguage)
+        val initPosition = LanguageUiType.values().indexOf(initialLanguage)
         val listState = rememberLazyListState(initPosition)
         var selectedLanguage by rememberSaveable { mutableStateOf(initialLanguage) }
 
@@ -113,7 +114,7 @@ fun LanguageDialogChooser(
                         )
                     }
                     LazyColumn(modifier = Modifier.height(300.dp), state = listState) {
-                        items(LanguageType.values()) { language ->
+                        items(LanguageUiType.values()) { language ->
                             LanguageDialogItem(
                                 modifier = Modifier.fillMaxWidth(),
                                 title = language.toLanguageName(),

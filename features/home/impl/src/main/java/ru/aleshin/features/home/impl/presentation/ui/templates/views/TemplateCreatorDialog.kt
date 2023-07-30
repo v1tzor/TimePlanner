@@ -11,7 +11,7 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * imitations under the License.
+ * limitations under the License.
  */
 package ru.aleshin.features.home.impl.presentation.ui.templates.views
 
@@ -61,11 +61,11 @@ import ru.aleshin.core.ui.views.TimeFormatSelector
 import ru.aleshin.core.utils.extensions.generateUniqueKey
 import ru.aleshin.core.utils.extensions.setHoursAndMinutes
 import ru.aleshin.core.utils.functional.TimeFormat
-import ru.aleshin.features.home.api.domains.entities.categories.Categories
-import ru.aleshin.features.home.api.domains.entities.categories.MainCategory
-import ru.aleshin.features.home.api.domains.entities.categories.SubCategory
-import ru.aleshin.features.home.api.domains.entities.template.Template
-import ru.aleshin.features.home.api.presentation.mappers.fetchNameByLanguage
+import ru.aleshin.features.home.api.presentation.mappers.mapToName
+import ru.aleshin.features.home.impl.presentation.models.categories.CategoriesUi
+import ru.aleshin.features.home.impl.presentation.models.categories.MainCategoryUi
+import ru.aleshin.features.home.impl.presentation.models.categories.SubCategoryUi
+import ru.aleshin.features.home.impl.presentation.models.templates.TemplateUi
 import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
 import java.util.Calendar
 
@@ -76,14 +76,14 @@ import java.util.Calendar
 @OptIn(ExperimentalMaterial3Api::class)
 internal fun TemplateEditorDialog(
     modifier: Modifier = Modifier,
-    categories: List<Categories>,
-    editTemplateModel: Template?,
+    categories: List<CategoriesUi>,
+    editTemplateModel: TemplateUi?,
     onDismiss: () -> Unit,
-    onConfirm: (Template) -> Unit,
+    onConfirm: (TemplateUi) -> Unit,
 ) {
     val scrollState = rememberScrollState()
     var mainCategory by remember {
-        mutableStateOf(editTemplateModel?.category ?: MainCategory.absent())
+        mutableStateOf(editTemplateModel?.category ?: MainCategoryUi())
     }
     var isEnableNotification by remember {
         mutableStateOf(editTemplateModel?.isEnableNotification ?: true)
@@ -100,9 +100,7 @@ internal fun TemplateEditorDialog(
 
     AlertDialog(onDismissRequest = onDismiss) {
         Surface(
-            modifier = modifier
-                .width(328.dp)
-                .wrapContentHeight(),
+            modifier = modifier.width(328.dp).wrapContentHeight(),
             shape = MaterialTheme.shapes.extraLarge,
             tonalElevation = TimePlannerRes.elevations.levelThree,
         ) {
@@ -176,9 +174,8 @@ internal fun TemplateEditorDialog(
                     onConfirmClick = {
                         if (isEnabled) {
                             val calendar = Calendar.getInstance()
-                            val template = Template(
-                                templateId = editTemplateModel?.templateId
-                                    ?: generateUniqueKey().toInt(),
+                            val template = TemplateUi(
+                                templateId = editTemplateModel?.templateId ?: generateUniqueKey().toInt(),
                                 startTime = calendar.setHoursAndMinutes(
                                     hours = timeStartHours!!,
                                     minutes = timeStartMinutes!!,
@@ -206,9 +203,9 @@ internal fun TemplateEditorDialog(
 @Composable
 internal fun TemplateEditorCategoryChooser(
     modifier: Modifier = Modifier,
-    allCategories: List<Categories>,
-    selectedCategory: MainCategory,
-    onCategoryChange: (MainCategory) -> Unit,
+    allCategories: List<CategoriesUi>,
+    selectedCategory: MainCategoryUi,
+    onCategoryChange: (MainCategoryUi) -> Unit,
 ) {
     var isCategoryMenuOpen by remember { mutableStateOf(false) }
     val interactionSource = remember { MutableInteractionSource() }
@@ -226,7 +223,7 @@ internal fun TemplateEditorCategoryChooser(
         )
         OutlinedTextField(
             modifier = Modifier.weight(1f),
-            value = selectedCategory.fetchNameByLanguage(),
+            value = selectedCategory.let { it.defaultType?.mapToName() ?: it.customName } ?: "*",
             onValueChange = {},
             readOnly = true,
             label = { Text(text = HomeThemeRes.strings.mainCategoryLabel) },
@@ -257,9 +254,9 @@ internal fun TemplateEditorCategoryChooser(
 internal fun MainCategoriesChooseMenu(
     modifier: Modifier = Modifier,
     isExpanded: Boolean,
-    mainCategories: List<MainCategory>,
+    mainCategories: List<MainCategoryUi>,
     onDismiss: () -> Unit,
-    onChoose: (MainCategory) -> Unit,
+    onChoose: (MainCategoryUi) -> Unit,
 ) {
     DropdownMenu(
         expanded = isExpanded,
@@ -272,7 +269,7 @@ internal fun MainCategoriesChooseMenu(
                 onClick = { onChoose(category) },
                 text = {
                     Text(
-                        text = category.fetchNameByLanguage(),
+                        text = category.let { it.defaultType?.mapToName() ?: it.customName } ?: "*",
                         color = MaterialTheme.colorScheme.onSurface,
                         style = MaterialTheme.typography.titleMedium,
                     )
@@ -285,10 +282,10 @@ internal fun MainCategoriesChooseMenu(
 @Composable
 internal fun TemplateEditorSubCategoryChooser(
     modifier: Modifier = Modifier,
-    allCategories: List<Categories>,
-    selectedMainCategory: MainCategory,
-    selectedSubCategory: SubCategory?,
-    onSubCategoryChange: (SubCategory?) -> Unit,
+    allCategories: List<CategoriesUi>,
+    selectedMainCategory: MainCategoryUi,
+    selectedSubCategory: SubCategoryUi?,
+    onSubCategoryChange: (SubCategoryUi?) -> Unit,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     var isSubCategoryMenuOpen by remember { mutableStateOf(false) }
@@ -308,8 +305,7 @@ internal fun TemplateEditorSubCategoryChooser(
         )
         OutlinedTextField(
             modifier = Modifier.weight(1f),
-            value = selectedSubCategory?.fetchNameByLanguage()
-                ?: HomeThemeRes.strings.subCategoryEmptyTitle,
+            value = selectedSubCategory?.name ?: HomeThemeRes.strings.subCategoryEmptyTitle,
             onValueChange = {},
             readOnly = true,
             label = { Text(text = HomeThemeRes.strings.subCategoryLabel) },
@@ -319,9 +315,7 @@ internal fun TemplateEditorSubCategoryChooser(
         Box(contentAlignment = Alignment.TopEnd) {
             SubCategoriesChooseMenu(
                 isExpanded = isSubCategoryMenuOpen,
-                subCategories = subCategories.toMutableList().apply {
-                    add(SubCategory.absentSubCategory(MainCategory.absent()))
-                },
+                subCategories = subCategories.toMutableList().apply { add(SubCategoryUi()) },
                 onDismiss = { isSubCategoryMenuOpen = false },
                 onChoose = { subCategory ->
                     isSubCategoryMenuOpen = false
@@ -342,9 +336,9 @@ internal fun TemplateEditorSubCategoryChooser(
 internal fun SubCategoriesChooseMenu(
     modifier: Modifier = Modifier,
     isExpanded: Boolean,
-    subCategories: List<SubCategory>,
+    subCategories: List<SubCategoryUi>,
     onDismiss: () -> Unit,
-    onChoose: (SubCategory?) -> Unit,
+    onChoose: (SubCategoryUi?) -> Unit,
 ) {
     DropdownMenu(
         expanded = isExpanded,
@@ -359,7 +353,7 @@ internal fun SubCategoriesChooseMenu(
                 },
                 text = {
                     Text(
-                        text = subCategory.fetchNameByLanguage(),
+                        text = subCategory.name ?: TimePlannerRes.strings.categoryEmptyTitle,
                         color = MaterialTheme.colorScheme.onSurface,
                         style = MaterialTheme.typography.titleMedium,
                     )

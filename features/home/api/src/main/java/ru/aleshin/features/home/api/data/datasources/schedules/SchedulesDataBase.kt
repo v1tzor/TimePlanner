@@ -11,13 +11,17 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * imitations under the License.
+ * limitations under the License.
  */
 package ru.aleshin.features.home.api.data.datasources.schedules
 
+import android.content.ContentValues
+import android.database.sqlite.SQLiteDatabase.CONFLICT_REPLACE
 import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import ru.aleshin.features.home.api.data.datasources.categories.MainCategoriesDao
 import ru.aleshin.features.home.api.data.datasources.subcategories.SubCategoriesDao
 import ru.aleshin.features.home.api.data.datasources.templates.TemplatesDao
@@ -26,12 +30,13 @@ import ru.aleshin.features.home.api.data.models.categories.SubCategoryEntity
 import ru.aleshin.features.home.api.data.models.schedules.DailyScheduleEntity
 import ru.aleshin.features.home.api.data.models.template.TemplateEntity
 import ru.aleshin.features.home.api.data.models.timetasks.TimeTaskEntity
+import ru.aleshin.features.home.api.domain.entities.categories.DefaultCategoryType
 
 /**
  * @author Stanislav Aleshin on 25.02.2023.
  */
 @Database(
-    version = 2,
+    version = 3,
     entities = [
         TemplateEntity::class,
         DailyScheduleEntity::class,
@@ -53,5 +58,59 @@ abstract class SchedulesDataBase : RoomDatabase() {
 
     companion object {
         const val NAME = "SchedulesDataBase.db"
+
+        val MIGRATE_2_3 = object : Migration(2, 3) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.beginTransaction()
+                try {
+                    copyAndModifiedTable(database)
+                    rebaseTable(database)
+                    database.setTransactionSuccessful()
+                } finally {
+                    database.endTransaction()
+                }
+            }
+
+            private fun copyAndModifiedTable(database: SupportSQLiteDatabase) {
+                val values = ContentValues()
+                database.execSQL(
+                    "CREATE TEMPORARY TABLE IF NOT EXISTS `mainCategories_new` (" +
+                        "`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                        "`custom_name` TEXT, " +
+                        "`default_category_type` TEXT)",
+                )
+                database.query("SELECT * FROM mainCategories").apply {
+                    moveToFirst()
+                    while (moveToNext()) {
+                        values.clear()
+                        val id = getInt(getColumnIndexOrThrow("id"))
+                        val nameCategoryName = getString(getColumnIndexOrThrow("main_category_name"))
+                        val engCategoryName = getString(getColumnIndexOrThrow("main_category_name_eng"))
+                        val type = getString(getColumnIndexOrThrow("main_icon"))
+                        values.put("id", if (type == DefaultCategoryType.EMPTY.name) 0 else id)
+                        values.put("custom_name", nameCategoryName ?: engCategoryName ?: null)
+                        values.put("default_category_type", type)
+                        database.insert("mainCategories_new", CONFLICT_REPLACE, values)
+                    }
+                    close()
+                }
+            }
+
+            private fun rebaseTable(database: SupportSQLiteDatabase) {
+                database.execSQL("DROP TABLE mainCategories")
+                database.execSQL(
+                    "CREATE TABLE IF NOT EXISTS `mainCategories` (" +
+                        "`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                        "`custom_name` TEXT, " +
+                        "`default_category_type` TEXT)",
+                )
+                database.execSQL(
+                    "INSERT INTO mainCategories " +
+                        "SELECT id, custom_name, default_category_type " +
+                        "FROM mainCategories_new",
+                )
+                database.execSQL("DROP TABLE mainCategories_new")
+            }
+        }
     }
 }

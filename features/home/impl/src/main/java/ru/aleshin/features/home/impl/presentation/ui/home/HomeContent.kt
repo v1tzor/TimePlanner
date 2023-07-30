@@ -11,7 +11,7 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * imitations under the License.
+ * limitations under the License.
  */
 package ru.aleshin.features.home.impl.presentation.ui.home
 
@@ -32,8 +32,9 @@ import ru.aleshin.core.utils.extensions.endThisDay
 import ru.aleshin.core.utils.extensions.isNotZeroDifference
 import ru.aleshin.core.utils.extensions.shiftDay
 import ru.aleshin.core.utils.functional.Constants
-import ru.aleshin.features.home.api.domains.entities.schedules.status.TimeTaskStatus
-import ru.aleshin.features.home.impl.presentation.models.TimeTaskUi
+import ru.aleshin.features.home.api.domain.entities.schedules.DailyScheduleStatus
+import ru.aleshin.features.home.api.domain.entities.schedules.TimeTaskStatus
+import ru.aleshin.features.home.impl.presentation.models.schedules.TimeTaskUi
 import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
 import ru.aleshin.features.home.impl.presentation.ui.home.contract.HomeViewState
 import ru.aleshin.features.home.impl.presentation.ui.home.views.*
@@ -60,9 +61,10 @@ internal fun HomeContent(
     onTimeTaskReduce: (TimeTaskUi) -> Unit,
     onChangeToggleStatus: (ViewToggleStatus) -> Unit,
 ) {
-    val listState = rememberLazyListState()
     Column(modifier = modifier.fillMaxSize()) {
-        HorizontalProgressBar(isLoading = state.isLoadingContent)
+        HorizontalProgressBar(
+            isLoading = state.isLoadingContent,
+        )
         HomeFiltersHeader(
             isEnabled = !state.isLoadingContent,
             currentDate = state.currentDate,
@@ -70,91 +72,19 @@ internal fun HomeContent(
             onChangeDate = onChangeDate,
             onChangeToggleStatus = onChangeToggleStatus,
         )
-        Box(modifier = Modifier.fillMaxSize()) {
-            if (state.dateStatus != null) {
-                LazyColumn(
-                    state = listState,
-                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
-                    verticalArrangement = Arrangement.spacedBy(4.dp),
-                    userScrollEnabled = !state.isLoadingContent,
-                ) {
-                    if (state.isLoadingContent) {
-                        items(Constants.Placeholder.items) { TimeTaskPlaceHolderItem() }
-                    } else {
-                        items(state.timeTasks, key = { it.key }) { timeTask ->
-                            val isCompactView = state.timeTaskViewStatus == ViewToggleStatus.COMPACT
-                            val timeTaskIndex = state.timeTasks.indexOf(timeTask)
-                            val nextItem = state.timeTasks.getOrNull(timeTaskIndex + 1)
-
-                            TimeTaskViewItem(
-                                timeTask = timeTask,
-                                onTimeTaskEdit = onTimeTaskEdit,
-                                onTimeTaskIncrease = onTimeTaskIncrease,
-                                onTimeTaskReduce = onTimeTaskReduce,
-                                onDoneChange = onDoneChange,
-                                isCompactView = isCompactView &&
-                                    nextItem != null &&
-                                    timeTask.endTime.isNotZeroDifference(nextItem.startTime),
-                            )
-                            if (nextItem != null && timeTask.endTime.isNotZeroDifference(nextItem.startTime) && !isCompactView) {
-                                val trackColor = when (timeTask.executionStatus) {
-                                    TimeTaskStatus.PLANNED -> MaterialTheme.colorScheme.surfaceOne()
-                                    TimeTaskStatus.RUNNING -> MaterialTheme.colorScheme.primaryContainer
-                                    TimeTaskStatus.COMPLETED -> MaterialTheme.colorScheme.tertiaryContainer
-                                }
-                                AddTimeTaskViewItem(
-                                    onAddTimeTask = { onTimeTaskAdd.invoke(timeTask.endTime, nextItem.startTime) },
-                                    startTime = timeTask.endTime,
-                                    endTime = nextItem.startTime,
-                                    indicatorColor = trackColor,
-                                )
-                            }
-                        }
-                        item {
-                            val startTime = when (state.timeTasks.isEmpty()) {
-                                true -> checkNotNull(state.currentDate)
-                                false -> state.timeTasks.last().endTime
-                            }
-                            val endTime = startTime.endThisDay()
-                            AddTimeTaskViewItem(
-                                onAddTimeTask = { onTimeTaskAdd.invoke(startTime, endTime) },
-                                startTime = startTime,
-                                endTime = endTime,
-                            )
-                        }
-                        item { EmptyItem() }
-                    }
-                }
-            } else if (!state.isLoadingContent) {
-                EmptyDateView(
-                    modifier = Modifier.align(Alignment.Center),
-                    emptyTitle = HomeThemeRes.strings.emptyScheduleTitle,
-                ) {
-                    OutlinedButton(
-                        onClick = onCreateSchedule,
-                        modifier = Modifier.width(185.dp),
-                        colors = ButtonDefaults.outlinedButtonColors(
-                            contentColor = MaterialTheme.colorScheme.secondary,
-                        ),
-                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
-                        contentPadding = PaddingValues(horizontal = 4.dp),
-                    ) {
-                        Icon(
-                            modifier = Modifier.size(18.dp).align(Alignment.CenterVertically),
-                            imageVector = Icons.Default.Add,
-                            contentDescription = HomeThemeRes.strings.createScheduleDesc,
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
-                        Text(
-                            modifier = Modifier.padding(start = 4.dp).align(Alignment.CenterVertically),
-                            text = HomeThemeRes.strings.createScheduleTitle,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            style = MaterialTheme.typography.bodyMedium,
-                        )
-                    }
-                }
-            }
-        }
+        HomeTimeTasksLazyColumn(
+            isLoadingContent = state.isLoadingContent,
+            dateStatus = state.dateStatus,
+            currentDate = state.currentDate,
+            timeTasks = state.timeTasks,
+            timeTaskViewStatus = state.timeTaskViewStatus,
+            onCreateSchedule = onCreateSchedule,
+            onTimeTaskEdit = onTimeTaskEdit,
+            onDoneChange = onDoneChange,
+            onTimeTaskAdd = onTimeTaskAdd,
+            onTimeTaskIncrease = onTimeTaskIncrease,
+            onTimeTaskReduce = onTimeTaskReduce,
+        )
     }
 }
 
@@ -168,9 +98,7 @@ internal fun HomeFiltersHeader(
     onChangeToggleStatus: (ViewToggleStatus) -> Unit,
 ) {
     Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(start = 16.dp, end = 8.dp, top = 8.dp, bottom = 8.dp),
+        modifier = modifier.fillMaxWidth().padding(start = 16.dp, end = 8.dp, top = 8.dp, bottom = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(24.dp),
     ) {
@@ -182,16 +110,6 @@ internal fun HomeFiltersHeader(
         )
         Spacer(modifier = Modifier.weight(1f))
         ViewToggle(status = toggleState, onStatusChange = onChangeToggleStatus)
-    }
-}
-
-@Composable
-internal fun HorizontalProgressBar(
-    modifier: Modifier = Modifier,
-    isLoading: Boolean,
-) = Box(modifier = modifier.animateContentSize().padding(vertical = 4.dp)) {
-    if (isLoading) {
-        LinearProgressIndicator(modifier = modifier.fillMaxWidth())
     }
 }
 
@@ -222,6 +140,107 @@ internal fun HomeDataChooser(
             onChangeDate.invoke(it)
         },
     )
+}
+
+@Composable
+internal fun HomeTimeTasksLazyColumn(
+    modifier: Modifier = Modifier,
+    listState: LazyListState = rememberLazyListState(),
+    isLoadingContent: Boolean,
+    dateStatus: DailyScheduleStatus?,
+    currentDate: Date?,
+    timeTasks: List<TimeTaskUi>,
+    timeTaskViewStatus: ViewToggleStatus,
+    onCreateSchedule: () -> Unit,
+    onTimeTaskEdit: (TimeTaskUi) -> Unit,
+    onDoneChange: (TimeTaskUi) -> Unit,
+    onTimeTaskAdd: (startTime: Date, endTime: Date) -> Unit,
+    onTimeTaskIncrease: (TimeTaskUi) -> Unit,
+    onTimeTaskReduce: (TimeTaskUi) -> Unit,
+) = Box(modifier = modifier.fillMaxSize()) {
+    if (dateStatus != null) {
+        LazyColumn(
+            state = listState,
+            contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+            userScrollEnabled = !isLoadingContent,
+        ) {
+            if (isLoadingContent) {
+                items(Constants.Placeholder.items) { TimeTaskPlaceHolderItem() }
+            } else {
+                items(timeTasks, key = { it.key }) { timeTask ->
+                    val isCompactView = timeTaskViewStatus == ViewToggleStatus.COMPACT
+                    val timeTaskIndex = timeTasks.indexOf(timeTask)
+                    val nextItem = timeTasks.getOrNull(timeTaskIndex + 1)
+
+                    TimeTaskViewItem(
+                        timeTask = timeTask,
+                        onTimeTaskEdit = onTimeTaskEdit,
+                        onTimeTaskIncrease = onTimeTaskIncrease,
+                        onTimeTaskReduce = onTimeTaskReduce,
+                        onDoneChange = onDoneChange,
+                        isCompactView = isCompactView && nextItem != null && timeTask.endTime.isNotZeroDifference(
+                            nextItem.startTime,
+                        ),
+                    )
+                    if (nextItem != null && timeTask.endTime.isNotZeroDifference(nextItem.startTime) && !isCompactView) {
+                        val trackColor = when (timeTask.executionStatus) {
+                            TimeTaskStatus.PLANNED -> MaterialTheme.colorScheme.surfaceOne()
+                            TimeTaskStatus.RUNNING -> MaterialTheme.colorScheme.primaryContainer
+                            TimeTaskStatus.COMPLETED -> MaterialTheme.colorScheme.tertiaryContainer
+                        }
+                        AddTimeTaskViewItem(
+                            onAddTimeTask = { onTimeTaskAdd.invoke(timeTask.endTime, nextItem.startTime) },
+                            startTime = timeTask.endTime,
+                            endTime = nextItem.startTime,
+                            indicatorColor = trackColor,
+                        )
+                    }
+                }
+                item {
+                    val startTime = when (timeTasks.isEmpty()) {
+                        true -> checkNotNull(currentDate)
+                        false -> timeTasks.last().endTime
+                    }
+                    val endTime = startTime.endThisDay()
+                    AddTimeTaskViewItem(
+                        onAddTimeTask = { onTimeTaskAdd.invoke(startTime, endTime) },
+                        startTime = startTime,
+                        endTime = endTime,
+                    )
+                }
+                item { EmptyItem() }
+            }
+        }
+    } else if (!isLoadingContent) {
+        EmptyDateView(
+            modifier = Modifier.align(Alignment.Center),
+            emptyTitle = HomeThemeRes.strings.emptyScheduleTitle,
+        ) {
+            OutlinedButton(
+                onClick = onCreateSchedule,
+                modifier = Modifier.width(185.dp),
+                colors = ButtonDefaults.outlinedButtonColors(
+                    contentColor = MaterialTheme.colorScheme.secondary,
+                ),
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+                contentPadding = PaddingValues(horizontal = 4.dp),
+            ) {
+                Icon(
+                    modifier = Modifier.size(18.dp).align(Alignment.CenterVertically),
+                    imageVector = Icons.Default.Add,
+                    contentDescription = HomeThemeRes.strings.createScheduleDesc,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                Text(
+                    modifier = Modifier.padding(start = 4.dp).align(Alignment.CenterVertically),
+                    text = HomeThemeRes.strings.createScheduleTitle,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            }
+        }
+    }
 }
 
 @Composable
@@ -262,6 +281,18 @@ internal fun LazyItemScope.TimeTaskViewItem(
                 isCompactView = isCompactView,
             )
         }
+    }
+}
+
+@Composable
+internal fun HorizontalProgressBar(
+    modifier: Modifier = Modifier,
+    isLoading: Boolean,
+) = Box(
+    modifier = modifier.animateContentSize().padding(vertical = 4.dp),
+) {
+    if (isLoading) {
+        LinearProgressIndicator(modifier = modifier.fillMaxWidth())
     }
 }
 

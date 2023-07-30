@@ -11,7 +11,7 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * imitations under the License.
+ * limitations under the License.
  */
 package ru.aleshin.features.editor.impl.presentation.ui.editor.views
 
@@ -61,13 +61,12 @@ import ru.aleshin.core.ui.views.CategoryTextMonogram
 import ru.aleshin.core.ui.views.ExpandedIcon
 import ru.aleshin.core.ui.views.toMinutesOrHoursTitle
 import ru.aleshin.core.utils.extensions.duration
+import ru.aleshin.features.editor.impl.presentation.models.categories.MainCategoryUi
+import ru.aleshin.features.editor.impl.presentation.models.categories.SubCategoryUi
+import ru.aleshin.features.editor.impl.presentation.models.template.TemplateUi
 import ru.aleshin.features.editor.impl.presentation.theme.EditorThemeRes
-import ru.aleshin.features.home.api.domains.entities.categories.MainCategory
-import ru.aleshin.features.home.api.domains.entities.categories.SubCategory
-import ru.aleshin.features.home.api.domains.entities.template.Template
-import ru.aleshin.features.home.api.presentation.mappers.fetchNameByLanguage
-import ru.aleshin.features.home.api.presentation.mappers.toDescription
-import ru.aleshin.features.home.api.presentation.mappers.toIconPainter
+import ru.aleshin.features.home.api.presentation.mappers.mapToIconPainter
+import ru.aleshin.features.home.api.presentation.mappers.mapToName
 import java.text.SimpleDateFormat
 import java.util.Date
 
@@ -79,10 +78,10 @@ import java.util.Date
 internal fun TemplatesBottomSheet(
     modifier: Modifier = Modifier,
     isShow: Boolean,
-    templates: List<Template>?,
+    templates: List<TemplateUi>?,
     onDismiss: () -> Unit,
     onControlClick: () -> Unit,
-    onChooseTemplate: (Template) -> Unit,
+    onChooseTemplate: (TemplateUi) -> Unit,
 ) {
     val sheetState = rememberModalBottomSheetState()
     val systemUiController = rememberSystemUiController()
@@ -175,7 +174,7 @@ internal fun TemplatesBottomSheetHeader(
 @Composable
 internal fun TemplateBottomSheetItem(
     modifier: Modifier = Modifier,
-    model: Template,
+    model: TemplateUi,
     onChooseTemplate: () -> Unit,
 ) {
     var isExpanded by rememberSaveable { mutableStateOf(false) }
@@ -191,17 +190,18 @@ internal fun TemplateBottomSheetItem(
                 verticalAlignment = Alignment.Top,
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
             ) {
-                val categoryIcon = model.category.icon
+                val categoryIcon = model.category.defaultType?.mapToIconPainter()
+                val categoryName = model.category.let { it.defaultType?.mapToName() ?: it.customName } ?: "*"
                 if (categoryIcon != null) {
                     CategoryIconMonogram(
-                        icon = categoryIcon.toIconPainter(),
-                        iconDescription = categoryIcon.toDescription(),
+                        icon = categoryIcon,
+                        iconDescription = categoryName,
                         iconColor = MaterialTheme.colorScheme.primary,
                         backgroundColor = MaterialTheme.colorScheme.primaryContainer,
                     )
                 } else {
                     CategoryTextMonogram(
-                        text = model.category.fetchNameByLanguage().first().toString(),
+                        text = categoryName.first().toString(),
                         textColor = MaterialTheme.colorScheme.primary,
                         backgroundColor = MaterialTheme.colorScheme.primaryContainer,
                     )
@@ -244,8 +244,8 @@ internal fun TemplateBottomSheetItem(
 internal fun TemplateBottomSheetItemInfo(
     modifier: Modifier = Modifier,
     isFullInfo: Boolean,
-    mainCategory: MainCategory,
-    subCategory: SubCategory?,
+    mainCategory: MainCategoryUi,
+    subCategory: SubCategoryUi?,
     startTime: Date,
     endTime: Date,
     isEnableNotification: Boolean,
@@ -254,9 +254,11 @@ internal fun TemplateBottomSheetItemInfo(
     val startTimeFormat = timeFormat.format(startTime)
     val endTimeFormat = timeFormat.format(endTime)
     val duration = duration(startTime, endTime).toMinutesOrHoursTitle()
+    val categoryName = mainCategory.let { it.defaultType?.mapToName() ?: it.customName } ?: "*"
+    val subCategoryName = subCategory?.name ?: TimePlannerRes.strings.categoryEmptyTitle
     val mainText = when (subCategory != null) {
-        true -> TimePlannerRes.strings.splitFormat.format(mainCategory.fetchNameByLanguage(), subCategory.name)
-        false -> mainCategory.fetchNameByLanguage()
+        true -> TimePlannerRes.strings.splitFormat.format(categoryName, subCategoryName)
+        false -> categoryName
     }
     val notificationTitle = when (isEnableNotification) {
         true -> EditorThemeRes.strings.notificationEnabledTitle

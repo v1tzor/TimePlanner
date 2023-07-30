@@ -11,7 +11,7 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * imitations under the License.
+ * limitations under the License.
  */
 package ru.aleshin.timeplanner.di.modules
 
@@ -120,5 +120,6 @@ class DataBaseModule {
         context = context,
         klass = SchedulesDataBase::class.java,
         name = SchedulesDataBase.NAME,
-    ).createFromAsset("database/main_categories_prepopulate.db").build()
+    ).createFromAsset("database/categories_prepopulate.db")
+        .addMigrations(SchedulesDataBase.MIGRATE_2_3).build()
 }

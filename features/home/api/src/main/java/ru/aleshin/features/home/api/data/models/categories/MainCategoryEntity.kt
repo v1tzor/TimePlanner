@@ -11,14 +11,14 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * imitations under the License.
+ * limitations under the License.
  */
 package ru.aleshin.features.home.api.data.models.categories
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import ru.aleshin.features.home.api.domains.common.MainIcon
+import ru.aleshin.features.home.api.domain.entities.categories.DefaultCategoryType
 
 /**
  * @author Stanislav Aleshin on 15.04.2023.
@@ -26,8 +26,6 @@ import ru.aleshin.features.home.api.domains.common.MainIcon
 @Entity(tableName = "mainCategories")
 data class MainCategoryEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    @ColumnInfo("main_category_name") val categoryName: String,
-    @ColumnInfo("main_category_name_eng") val categoryNameEng: String?,
-    @ColumnInfo("main_icon") val mainIcon: MainIcon?,
-    @ColumnInfo("is_not_deleted") val isNotDeleted: Boolean = true,
+    @ColumnInfo("custom_name") val customName: String?,
+    @ColumnInfo("default_category_type") val defaultType: DefaultCategoryType?,
 )

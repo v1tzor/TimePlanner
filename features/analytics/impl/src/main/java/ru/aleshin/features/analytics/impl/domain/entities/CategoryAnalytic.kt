@@ -11,11 +11,11 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * imitations under the License.
+ * limitations under the License.
  */
 package ru.aleshin.features.analytics.impl.domain.entities
 
-import ru.aleshin.features.home.api.domains.entities.categories.MainCategory
+import ru.aleshin.features.home.api.domain.entities.categories.MainCategory
 
 /**
  * @author Stanislav Aleshin on 22.04.2023.

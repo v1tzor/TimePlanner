@@ -11,14 +11,14 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * imitations under the License.
+ * limitations under the License.
  */
 package ru.aleshin.features.analytics.impl.di
 
 import ru.aleshin.core.utils.managers.CoroutineManager
 import ru.aleshin.core.utils.managers.DateManager
-import ru.aleshin.features.home.api.domains.repository.CategoriesRepository
-import ru.aleshin.features.home.api.domains.repository.ScheduleRepository
+import ru.aleshin.features.home.api.domain.repository.CategoriesRepository
+import ru.aleshin.features.home.api.domain.repository.ScheduleRepository
 import ru.aleshin.module_injector.BaseFeatureDependencies
 
 /**

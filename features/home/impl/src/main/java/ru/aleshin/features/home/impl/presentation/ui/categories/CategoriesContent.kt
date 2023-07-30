@@ -11,23 +11,21 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * imitations under the License.
+ * limitations under the License.
  */
 package ru.aleshin.features.home.impl.presentation.ui.categories
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import ru.aleshin.features.home.api.domains.entities.categories.MainCategory
-import ru.aleshin.features.home.api.domains.entities.categories.SubCategory
+import ru.aleshin.features.home.impl.presentation.models.categories.MainCategoryUi
+import ru.aleshin.features.home.impl.presentation.models.categories.SubCategoryUi
 import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
 import ru.aleshin.features.home.impl.presentation.ui.categories.contract.CategoriesViewState
 import ru.aleshin.features.home.impl.presentation.ui.categories.views.MainCategoriesHorizontalList
@@ -43,11 +41,11 @@ internal fun CategoriesContent(
     modifier: Modifier = Modifier,
     onAddMainCategory: (name: String) -> Unit,
     onAddSubCategory: () -> Unit,
-    onChangeMainCategory: (MainCategory) -> Unit,
-    onSubCategoryUpdate: (SubCategory) -> Unit,
-    onMainCategoryUpdate: (MainCategory) -> Unit,
-    onMainCategoryDelete: (MainCategory) -> Unit,
-    onSubCategoryDelete: (SubCategory) -> Unit,
+    onChangeMainCategory: (MainCategoryUi) -> Unit,
+    onSubCategoryUpdate: (SubCategoryUi) -> Unit,
+    onMainCategoryUpdate: (MainCategoryUi) -> Unit,
+    onMainCategoryDelete: (MainCategoryUi) -> Unit,
+    onSubCategoryDelete: (SubCategoryUi) -> Unit,
 ) {
     var isMainCategoryCreatorOpen by rememberSaveable { mutableStateOf(false) }
     val scrollableState = rememberScrollState()
@@ -56,7 +54,9 @@ internal fun CategoriesContent(
         val categories = state.categories.find { it.mainCategory == state.selectedMainCategory }
         val subCategories = categories?.subCategories ?: emptyList()
 
-        MainCategoriesHeader(modifier = Modifier.padding(top = 8.dp, bottom = 4.dp).fillMaxWidth())
+        MainCategoriesHeader(
+            modifier = Modifier.padding(top = 8.dp, bottom = 4.dp).fillMaxWidth(),
+        )
         MainCategoriesHorizontalList(
             modifier = Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 12.dp),
             mainCategories = state.categories.map { it.mainCategory },
@@ -66,7 +66,9 @@ internal fun CategoriesContent(
             onDeleteCategory = onMainCategoryDelete,
             onAddCategory = { isMainCategoryCreatorOpen = true },
         )
-        SubCategoriesHeader(modifier = Modifier.padding(top = 12.dp, bottom = 8.dp).fillMaxWidth())
+        SubCategoriesHeader(
+            modifier = Modifier.padding(top = 12.dp, bottom = 8.dp).fillMaxWidth(),
+        )
         SubCategoriesList(
             modifier = Modifier.height(250.dp),
             mainCategory = state.selectedMainCategory,

@@ -11,7 +11,7 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * imitations under the License.
+ * limitations under the License.
  */
 package ru.aleshin.features.editor.impl.presentation.ui.editor.views
 
@@ -38,12 +38,11 @@ import ru.aleshin.core.ui.theme.TimePlannerRes
 import ru.aleshin.core.ui.views.CategoryIconMonogram
 import ru.aleshin.core.ui.views.CategoryTextMonogram
 import ru.aleshin.core.ui.views.DialogButtons
+import ru.aleshin.features.editor.impl.presentation.models.categories.MainCategoryUi
 import ru.aleshin.features.editor.impl.presentation.theme.EditorThemeRes
-import ru.aleshin.features.home.api.domains.common.MainIcon
-import ru.aleshin.features.home.api.domains.entities.categories.MainCategory
-import ru.aleshin.features.home.api.presentation.mappers.fetchNameByLanguage
-import ru.aleshin.features.home.api.presentation.mappers.toDescription
-import ru.aleshin.features.home.api.presentation.mappers.toIconPainter
+import ru.aleshin.features.home.api.domain.entities.categories.DefaultCategoryType
+import ru.aleshin.features.home.api.presentation.mappers.mapToIconPainter
+import ru.aleshin.features.home.api.presentation.mappers.mapToName
 
 /**
  * @author Stanislav Aleshin on 25.02.2023.
@@ -52,11 +51,14 @@ import ru.aleshin.features.home.api.presentation.mappers.toIconPainter
 internal fun MainCategoryChooser(
     modifier: Modifier = Modifier,
     isError: Boolean = false,
-    currentCategory: MainCategory?,
-    allMainCategories: List<MainCategory>,
-    onCategoryChange: (MainCategory) -> Unit,
+    currentCategory: MainCategoryUi?,
+    allMainCategories: List<MainCategoryUi>,
+    onCategoryChange: (MainCategoryUi) -> Unit,
 ) {
     val openDialog = rememberSaveable { mutableStateOf(false) }
+    val categoryIcon = currentCategory?.defaultType?.mapToIconPainter()
+    val categoryName = currentCategory.let { it?.defaultType?.mapToName() ?: it?.customName }
+    
     Surface(
         onClick = { openDialog.value = true },
         modifier = modifier.height(68.dp),
@@ -81,16 +83,16 @@ internal fun MainCategoryChooser(
                 true -> MaterialTheme.colorScheme.onSurface
                 false -> MaterialTheme.colorScheme.onSurfaceVariant
             }
-            if (currentCategory != null && currentCategory.icon == null) {
+            if (currentCategory != null && categoryIcon == null) {
                 CategoryTextMonogram(
-                    text = checkNotNull(currentCategory.fetchNameByLanguage()).first().toString(),
+                    text = categoryName?.first()?.toString() ?: "",
                     textColor = MaterialTheme.colorScheme.primary,
                     backgroundColor = MaterialTheme.colorScheme.primaryContainer,
                 )
             } else {
                 CategoryIconMonogram(
-                    icon = currentCategory?.icon?.toIconPainter() ?: MainIcon.EMPTY.toIconPainter(),
-                    iconDescription = currentCategory?.icon?.toDescription() ?: MainIcon.EMPTY.toDescription(),
+                    icon = categoryIcon ?: DefaultCategoryType.EMPTY.mapToIconPainter(),
+                    iconDescription = categoryName,
                     iconColor = when (isError) {
                         true -> MaterialTheme.colorScheme.errorContainer
                         false -> MaterialTheme.colorScheme.primary
@@ -108,7 +110,7 @@ internal fun MainCategoryChooser(
                     style = MaterialTheme.typography.labelMedium,
                 )
                 Text(
-                    text = currentCategory?.fetchNameByLanguage() ?: EditorThemeRes.strings.categoryNotSelectedTitle,
+                    text = categoryName ?: EditorThemeRes.strings.categoryNotSelectedTitle,
                     color = categoryNameColor,
                     style = MaterialTheme.typography.titleMedium,
                 )
@@ -137,10 +139,10 @@ internal fun MainCategoryChooser(
 @OptIn(ExperimentalMaterial3Api::class)
 internal fun MainCategoryDialogChooser(
     modifier: Modifier = Modifier,
-    initCategory: MainCategory,
-    allMainCategories: List<MainCategory>,
+    initCategory: MainCategoryUi,
+    allMainCategories: List<MainCategoryUi>,
     onCloseDialog: () -> Unit,
-    onChooseCategory: (MainCategory) -> Unit,
+    onChooseCategory: (MainCategoryUi) -> Unit,
 ) {
     val initPosition = allMainCategories.indexOf(initCategory).let { if (it == -1) 0 else it }
     val listState = rememberLazyListState(initPosition)
@@ -165,8 +167,8 @@ internal fun MainCategoryDialogChooser(
                         MainCategoryDialogItem(
                             modifier = Modifier.fillMaxWidth(),
                             selected = selectedCategory == category,
-                            title = category.fetchNameByLanguage(),
-                            icon = category.icon?.toIconPainter(),
+                            title = category.let { it.defaultType?.mapToName() ?: it.customName } ?: "*",
+                            icon = category.defaultType?.mapToIconPainter(),
                             onSelectChange = { selectedCategory = category },
                         )
                     }

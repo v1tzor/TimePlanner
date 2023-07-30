@@ -11,7 +11,7 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * imitations under the License.
+ * limitations under the License.
  */
 package ru.aleshin.features.analytics.impl.presenatiton.ui.tabs
 
@@ -49,12 +49,11 @@ import ru.aleshin.core.ui.views.toMinutesAndHoursTitle
 import ru.aleshin.core.utils.extensions.toDaysTitle
 import ru.aleshin.core.utils.extensions.toMonthTitle
 import ru.aleshin.core.utils.functional.TimePeriod
-import ru.aleshin.features.analytics.impl.domain.entities.WorkLoadMap
+import ru.aleshin.features.analytics.impl.presenatiton.models.analytics.WorkLoadMapUi
 import ru.aleshin.features.analytics.impl.presenatiton.theme.AnalyticsThemeRes
 import ru.aleshin.features.analytics.impl.presenatiton.ui.contract.AnalyticsViewState
 import ru.aleshin.features.analytics.impl.presenatiton.ui.views.TimeSelectorSection
 import java.math.RoundingMode
-import kotlin.math.roundToInt
 
 /**
  * @author Stanislav Aleshin on 20.04.2023.
@@ -148,7 +147,7 @@ internal fun WorkLoadTab(
 @Composable
 internal fun WorkLoadAnalyticsChart(
     modifier: Modifier = Modifier,
-    workLoadMap: WorkLoadMap,
+    workLoadMap: WorkLoadMapUi,
     period: TimePeriod,
 ) {
     val barData = mutableListOf<BarData>().apply {
@@ -183,7 +182,7 @@ internal fun WorkLoadAnalyticsChart(
 @Composable
 internal fun ExecutedAnalyticsChart(
     modifier: Modifier = Modifier,
-    workLoadMap: WorkLoadMap,
+    workLoadMap: WorkLoadMapUi,
     period: TimePeriod,
 ) {
     val lineData = mutableListOf<LineData>().apply {

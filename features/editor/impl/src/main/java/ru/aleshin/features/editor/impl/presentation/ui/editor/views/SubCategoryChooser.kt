@@ -11,7 +11,7 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * imitations under the License.
+ * limitations under the License.
  */
 package ru.aleshin.features.editor.impl.presentation.ui.editor.views
 
@@ -45,10 +45,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import ru.aleshin.core.ui.theme.TimePlannerRes
 import ru.aleshin.core.ui.views.DialogButtons
+import ru.aleshin.features.editor.impl.presentation.models.categories.MainCategoryUi
+import ru.aleshin.features.editor.impl.presentation.models.categories.SubCategoryUi
 import ru.aleshin.features.editor.impl.presentation.theme.EditorThemeRes
-import ru.aleshin.features.home.api.domains.entities.categories.MainCategory
-import ru.aleshin.features.home.api.domains.entities.categories.SubCategory
-import ru.aleshin.features.home.api.presentation.mappers.fetchNameByLanguage
+import ru.aleshin.features.home.api.presentation.mappers.mapToName
 
 /**
  * @author Stanislav Aleshin on 26.02.2023.
@@ -56,10 +56,10 @@ import ru.aleshin.features.home.api.presentation.mappers.fetchNameByLanguage
 @Composable
 internal fun SubCategoryChooser(
     modifier: Modifier = Modifier,
-    mainCategory: MainCategory?,
-    allSubCategories: List<SubCategory>,
-    currentSubCategory: SubCategory?,
-    onSubCategoryChange: (SubCategory?) -> Unit,
+    mainCategory: MainCategoryUi?,
+    allSubCategories: List<SubCategoryUi>,
+    currentSubCategory: SubCategoryUi?,
+    onSubCategoryChange: (SubCategoryUi?) -> Unit,
     onAddCategory: (String) -> Unit,
 ) {
     val openDialog = rememberSaveable { mutableStateOf(false) }
@@ -125,11 +125,11 @@ internal fun SubCategoryChooser(
 @OptIn(ExperimentalMaterial3Api::class)
 internal fun SubCategoryDialogChooser(
     modifier: Modifier = Modifier,
-    initCategory: SubCategory?,
-    mainCategory: MainCategory?,
-    allSubCategories: List<SubCategory>,
+    initCategory: SubCategoryUi?,
+    mainCategory: MainCategoryUi?,
+    allSubCategories: List<SubCategoryUi>,
     onCloseDialog: () -> Unit,
-    onChooseSubCategory: (SubCategory?) -> Unit,
+    onChooseSubCategory: (SubCategoryUi?) -> Unit,
     onAddCategory: (String) -> Unit,
 ) {
     val initItem = initCategory?.let { allSubCategories.find { it.id == initCategory.id } }
@@ -160,7 +160,7 @@ internal fun SubCategoryDialogChooser(
                     )
                     Text(
                         text = EditorThemeRes.strings.subCategoryDialogMainCategoryFormat.format(
-                            mainCategory?.fetchNameByLanguage() ?: EditorThemeRes.strings.categoryNotSelectedTitle,
+                            mainCategory?.let { it.defaultType?.mapToName() ?: it.customName } ?: EditorThemeRes.strings.categoryNotSelectedTitle,
                         ),
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         style = MaterialTheme.typography.bodyMedium,
@@ -178,7 +178,7 @@ internal fun SubCategoryDialogChooser(
                     items(allSubCategories) { subCategory ->
                         SubCategoryDialogItem(
                             selected = selectedSubCategory == subCategory,
-                            title = subCategory.name,
+                            title = subCategory.name ?: TimePlannerRes.strings.categoryEmptyTitle,
                             description = subCategory.description,
                             onSelectChange = { selectedSubCategory = subCategory },
                         )

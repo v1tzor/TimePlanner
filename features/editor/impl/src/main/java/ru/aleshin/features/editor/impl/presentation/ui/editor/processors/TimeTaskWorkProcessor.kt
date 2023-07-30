@@ -11,7 +11,7 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * imitations under the License.
+ * limitations under the License.
  */
 package ru.aleshin.features.editor.impl.presentation.ui.editor.processors
 
@@ -28,10 +28,10 @@ import ru.aleshin.features.editor.impl.domain.interactors.TemplatesInteractor
 import ru.aleshin.features.editor.impl.domain.interactors.TimeTaskInteractor
 import ru.aleshin.features.editor.impl.navigation.NavigationManager
 import ru.aleshin.features.editor.impl.presentation.mappers.mapToDomain
-import ru.aleshin.features.editor.impl.presentation.models.EditModelUi
+import ru.aleshin.features.editor.impl.presentation.models.editmodel.EditModelUi
 import ru.aleshin.features.editor.impl.presentation.ui.editor.contract.EditorAction
 import ru.aleshin.features.editor.impl.presentation.ui.editor.contract.EditorEffect
-import ru.aleshin.features.home.api.domains.entities.schedules.TimeTask
+import ru.aleshin.features.home.api.domain.entities.schedules.TimeTask
 import javax.inject.Inject
 
 /**
@@ -50,10 +50,7 @@ internal interface TimeTaskWorkProcessor : WorkProcessor<TimeTaskWorkCommand, Ed
         override suspend fun work(command: TimeTaskWorkCommand) = when (command) {
             is TimeTaskWorkCommand.DeleteModel -> deleteModel(command.editModel)
             is TimeTaskWorkCommand.LoadTemplateTimeTasks -> loadTemplates()
-            is TimeTaskWorkCommand.AddOrSaveModel -> saveOrAddModel(
-                command.editModel,
-                command.isTemplateUpdate,
-            )
+            is TimeTaskWorkCommand.AddOrSaveModel -> saveOrAddModel(command.editModel, command.isTemplateUpdate)
         }
 
         private suspend fun deleteModel(editModel: EditModelUi): WorkResult<EditorAction, EditorEffect> {
@@ -117,7 +114,7 @@ internal interface TimeTaskWorkProcessor : WorkProcessor<TimeTaskWorkCommand, Ed
             delay(Constants.Delay.LOAD_ANIMATION)
 
             return when (val templates = templatesInteractor.fetchTemplates()) {
-                is Either.Right -> ActionResult(EditorAction.UpdateTemplates(templates.data))
+                is Either.Right -> ActionResult(EditorAction.UpdateTemplates(templates.data.map { it.mapToDomain() }))
                 is Either.Left -> EffectResult(EditorEffect.ShowError(templates.data))
             }
         }

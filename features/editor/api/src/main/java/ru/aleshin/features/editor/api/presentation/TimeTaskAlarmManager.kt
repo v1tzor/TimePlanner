@@ -11,7 +11,7 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * imitations under the License.
+ * limitations under the License.
  */
 package ru.aleshin.features.editor.api.presentation
 
@@ -20,11 +20,16 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import ru.aleshin.core.ui.theme.tokens.fetchCoreIcons
+import ru.aleshin.core.ui.theme.tokens.fetchCoreLanguage
+import ru.aleshin.core.ui.theme.tokens.fetchCoreStrings
 import ru.aleshin.core.utils.extensions.fetchCurrentLanguage
-import ru.aleshin.features.home.api.domains.entities.categories.MainCategory
-import ru.aleshin.features.home.api.domains.entities.categories.SubCategory
-import ru.aleshin.features.home.api.domains.entities.schedules.TimeTask
-import ru.aleshin.features.home.api.presentation.mappers.toIconRes
+import ru.aleshin.core.utils.functional.Constants
+import ru.aleshin.core.utils.functional.Constants.App
+import ru.aleshin.features.home.api.domain.entities.categories.MainCategory
+import ru.aleshin.features.home.api.domain.entities.categories.SubCategory
+import ru.aleshin.features.home.api.domain.entities.schedules.TimeTask
+import ru.aleshin.features.home.api.presentation.mappers.mapToIcon
+import ru.aleshin.features.home.api.presentation.mappers.mapToString
 import javax.inject.Inject
 
 /**
@@ -72,19 +77,17 @@ interface TimeTaskAlarmManager {
         }
 
         private fun createAlarmIntent(category: MainCategory, subCategory: SubCategory?): Intent {
-            val categoryName = when (context.fetchCurrentLanguage() == "en") {
-                true -> category.foreignName ?: category.name
-                false -> category.name
-            }
+            val language = fetchCoreLanguage(context.fetchCurrentLanguage())
+            val categoryName = category.let { it.defaultType?.mapToString(fetchCoreStrings(language)) ?: it.customName }
             val subCategoryName = subCategory?.name ?: ""
-            val categoryIcon = category.icon?.toIconRes(fetchCoreIcons())
+            val categoryIcon = category.defaultType?.mapToIcon(fetchCoreIcons())
             val appIcon = fetchCoreIcons().calendar
 
             return receiverProvider.provideReceiverIntent(
-                categoryName,
-                subCategoryName,
-                categoryIcon,
-                appIcon,
+                category = categoryName ?: App.NAME,
+                subCategory = subCategoryName,
+                icon = categoryIcon,
+                appIcon = appIcon,
             )
         }
 

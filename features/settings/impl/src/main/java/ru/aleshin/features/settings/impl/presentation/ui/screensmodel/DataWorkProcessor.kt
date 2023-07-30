@@ -11,7 +11,7 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * imitations under the License.
+ * limitations under the License.
  */
 package ru.aleshin.features.settings.impl.presentation.ui.screensmodel
 
@@ -25,14 +25,15 @@ import ru.aleshin.core.utils.platform.screenmodel.work.EffectResult
 import ru.aleshin.core.utils.platform.screenmodel.work.FlowWorkProcessor
 import ru.aleshin.core.utils.platform.screenmodel.work.WorkCommand
 import ru.aleshin.features.editor.api.presentation.TimeTaskAlarmManager
-import ru.aleshin.features.home.api.domains.entities.categories.Categories
-import ru.aleshin.features.home.api.domains.entities.schedules.Schedule
-import ru.aleshin.features.home.api.domains.entities.template.Template
+import ru.aleshin.features.home.api.domain.entities.categories.Categories
+import ru.aleshin.features.home.api.domain.entities.schedules.Schedule
+import ru.aleshin.features.home.api.domain.entities.template.Template
 import ru.aleshin.features.settings.impl.domain.common.SettingsFailures
 import ru.aleshin.features.settings.impl.domain.interactors.CategoriesInteractor
 import ru.aleshin.features.settings.impl.domain.interactors.ScheduleInteractor
 import ru.aleshin.features.settings.impl.domain.interactors.SettingsInteractor
 import ru.aleshin.features.settings.impl.domain.interactors.TemplatesInteractor
+import ru.aleshin.features.settings.impl.presentation.mappers.mapToUi
 import ru.aleshin.features.settings.impl.presentation.models.BackupModel
 import ru.aleshin.features.settings.impl.presentation.ui.contract.SettingsAction
 import ru.aleshin.features.settings.impl.presentation.ui.contract.SettingsEffect
@@ -113,7 +114,7 @@ internal interface DataWorkProcessor : FlowWorkProcessor<DataWorkCommand, Settin
             val resetSettings = when (val clearResult = clearAllData()) {
                 is Either.Right -> when (val result = settingsInteractor.resetAllSettings()) {
                     is Either.Right -> when (val settings = settingsInteractor.fetchAllSettings()) {
-                        is Either.Right -> ActionResult(SettingsAction.ChangeAllSettings(settings.data))
+                        is Either.Right -> ActionResult(SettingsAction.ChangeAllSettings(settings.data.mapToUi()))
                         is Either.Left -> EffectResult(SettingsEffect.ShowError(settings.data))
                     }
                     is Either.Left -> EffectResult(SettingsEffect.ShowError(result.data))

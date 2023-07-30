@@ -11,7 +11,7 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * imitations under the License.
+ * limitations under the License.
  */
 package ru.aleshin.features.analytics.impl.presenatiton.ui.tabs
 
@@ -45,13 +45,13 @@ import hu.ma.charts.pie.data.PieChartEntry
 import ru.aleshin.core.ui.views.toMinutesAndHoursTitle
 import ru.aleshin.core.utils.charts.fetchPieColorByTop
 import ru.aleshin.core.utils.functional.TimePeriod
-import ru.aleshin.features.analytics.impl.presenatiton.models.CategoriesAnalyticsUi
+import ru.aleshin.features.analytics.impl.presenatiton.models.analytics.CategoriesAnalyticsUi
 import ru.aleshin.features.analytics.impl.presenatiton.theme.AnalyticsThemeRes
 import ru.aleshin.features.analytics.impl.presenatiton.ui.contract.AnalyticsViewState
 import ru.aleshin.features.analytics.impl.presenatiton.ui.views.AnalyticsTimeLegend
 import ru.aleshin.features.analytics.impl.presenatiton.ui.views.SubAnalyticsTimeLegend
 import ru.aleshin.features.analytics.impl.presenatiton.ui.views.TimeSelectorSection
-import ru.aleshin.features.home.api.presentation.mappers.fetchNameByLanguage
+import ru.aleshin.features.home.api.presentation.mappers.mapToName
 
 /**
  * @author Stanislav Aleshin on 20.04.2023.
@@ -112,9 +112,10 @@ internal fun CategoriesAnalyticsChart(
     val otherList = analytics.subList(5, analytics.lastIndex)
     val pieDataList = mutableListOf<PieChartEntry>().apply {
         topList.forEachIndexed { index, analytic ->
+            val label = analytic.mainCategory.let { it.defaultType?.mapToName() ?: it.customName } ?: "*"
             val data = PieChartEntry(
                 value = analytic.duration.toFloat() + 1f,
-                label = AnnotatedString(analytic.mainCategory.fetchNameByLanguage()),
+                label = AnnotatedString(label),
                 color = fetchPieColorByTop(index),
             )
             add(data)

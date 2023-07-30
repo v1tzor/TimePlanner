@@ -11,7 +11,7 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * imitations under the License.
+ * limitations under the License.
  */
 package ru.aleshin.features.editor.impl.presentation.ui.editor.contract
 
@@ -19,14 +19,14 @@ import kotlinx.parcelize.Parcelize
 import ru.aleshin.core.utils.functional.TimeRange
 import ru.aleshin.core.utils.platform.screenmodel.contract.*
 import ru.aleshin.features.editor.impl.domain.entites.EditorFailures
-import ru.aleshin.features.editor.impl.presentation.models.EditModelUi
-import ru.aleshin.features.editor.impl.presentation.models.EditParameters
+import ru.aleshin.features.editor.impl.presentation.models.categories.CategoriesUi
+import ru.aleshin.features.editor.impl.presentation.models.editmodel.EditModelUi
+import ru.aleshin.features.editor.impl.presentation.models.editmodel.EditParameters
+import ru.aleshin.features.editor.impl.presentation.models.categories.MainCategoryUi
+import ru.aleshin.features.editor.impl.presentation.models.categories.SubCategoryUi
+import ru.aleshin.features.editor.impl.presentation.models.template.TemplateUi
 import ru.aleshin.features.editor.impl.presentation.ui.editor.screenmodel.CategoryValidateError
 import ru.aleshin.features.editor.impl.presentation.ui.editor.screenmodel.TimeRangeError
-import ru.aleshin.features.home.api.domains.entities.categories.Categories
-import ru.aleshin.features.home.api.domains.entities.categories.MainCategory
-import ru.aleshin.features.home.api.domains.entities.categories.SubCategory
-import ru.aleshin.features.home.api.domains.entities.template.Template
 
 /**
  * @author Stanislav Aleshin on 25.02.2023.
@@ -34,18 +34,18 @@ import ru.aleshin.features.home.api.domains.entities.template.Template
 @Parcelize
 internal data class EditorViewState(
     val editModel: EditModelUi? = null,
-    val categories: List<Categories> = emptyList(),
-    val templates: List<Template>? = null,
+    val categories: List<CategoriesUi> = emptyList(),
+    val templates: List<TemplateUi>? = null,
     val timeRangeValid: TimeRangeError? = null,
     val categoryValid: CategoryValidateError? = null,
 ) : BaseViewState
 
 internal sealed class EditorEvent : BaseEvent {
     object Init : EditorEvent()
-    data class ChangeCategories(val category: MainCategory, val subCategory: SubCategory?) : EditorEvent()
+    data class ChangeCategories(val category: MainCategoryUi, val subCategory: SubCategoryUi?) : EditorEvent()
     data class ChangeTime(val timeRange: TimeRange) : EditorEvent()
     data class ChangeParameters(val parameters: EditParameters) : EditorEvent()
-    data class ApplyTemplate(val template: Template) : EditorEvent()
+    data class ApplyTemplate(val template: TemplateUi) : EditorEvent()
     data class AddSubCategory(val name: String) : EditorEvent()
     object PressControlTemplateButton : EditorEvent()
     object LoadTemplates : EditorEvent()
@@ -59,17 +59,17 @@ internal sealed class EditorEffect : BaseUiEffect {
     data class ShowError(val failures: EditorFailures) : EditorEffect()
     data class ShowOverlayError(
         val currentTimeRange: TimeRange,
-        val failure: EditorFailures.TimeOverlayError,
+        val failures: EditorFailures.TimeOverlayError,
     ) : EditorEffect()
 }
 
 internal sealed class EditorAction : BaseAction {
     object Navigate : EditorAction()
-    data class SetUp(val editModel: EditModelUi, val categories: List<Categories>) : EditorAction()
-    data class UpdateCategories(val categories: List<Categories>) : EditorAction()
+    data class SetUp(val editModel: EditModelUi, val categories: List<CategoriesUi>) : EditorAction()
+    data class UpdateCategories(val categories: List<CategoriesUi>) : EditorAction()
     data class UpdateTimeRange(val timeRange: TimeRange, val duration: Long) : EditorAction()
     data class UpdateTemplateId(val templateId: Int?) : EditorAction()
     data class UpdateEditModel(val editModel: EditModelUi?) : EditorAction()
-    data class UpdateTemplates(val templates: List<Template>) : EditorAction()
+    data class UpdateTemplates(val templates: List<TemplateUi>) : EditorAction()
     data class SetValidError(val timeRange: TimeRangeError?, val category: CategoryValidateError?) : EditorAction()
 }

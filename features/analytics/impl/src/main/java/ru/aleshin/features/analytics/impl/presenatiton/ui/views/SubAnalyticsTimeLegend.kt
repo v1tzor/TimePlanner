@@ -11,7 +11,7 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * imitations under the License.
+ * limitations under the License.
  */
 package ru.aleshin.features.analytics.impl.presenatiton.ui.views
 
@@ -32,8 +32,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import ru.aleshin.core.ui.theme.TimePlannerRes
 import ru.aleshin.core.ui.views.toMinutesAndHoursTitle
-import ru.aleshin.features.analytics.impl.presenatiton.models.CategoryAnalyticUi
-import ru.aleshin.features.home.api.presentation.mappers.fetchNameByLanguage
+import ru.aleshin.features.analytics.impl.presenatiton.models.analytics.CategoryAnalyticUi
+import ru.aleshin.features.home.api.presentation.mappers.mapToIconPainter
+import ru.aleshin.features.home.api.presentation.mappers.mapToName
 
 @Composable
 internal fun SubAnalyticsTimeLegend(
@@ -50,22 +51,23 @@ internal fun SubAnalyticsTimeLegend(
             val allSubCategoryAnalytics = analytics[selectedItem]
             val subCategoryAnalytic = allSubCategoryAnalytics.subCategoriesInfo
 
-            items(subCategoryAnalytic) {
-                val percent = it.duration.toFloat() / allSubCategoryAnalytics.duration * 100
+            items(subCategoryAnalytic) { analytic ->
+                val percent = analytic.duration.toFloat() / allSubCategoryAnalytics.duration * 100
+
                 SubAnalyticsTimeLegendItem(
-                    name = it.subCategory.fetchNameByLanguage(),
-                    duration = it.duration,
+                    name = analytic.subCategory.name ?: TimePlannerRes.strings.categoryEmptyTitle,
+                    duration = analytic.duration,
                     percent = percent,
                 )
             }
         } else {
             val otherAnalytics = analytics.subList(5, analytics.lastIndex)
-            items(otherAnalytics) {
-                val percent = it.duration.toFloat() / otherAnalytics.sumOf { it.duration } * 100
+            items(otherAnalytics) { analytic ->
+                val percent = analytic.duration.toFloat() / otherAnalytics.sumOf { it.duration } * 100
 
                 SubAnalyticsTimeLegendItem(
-                    name = it.mainCategory.fetchNameByLanguage(),
-                    duration = it.duration,
+                    name = analytic.mainCategory.let { it.defaultType?.mapToName() ?: it.customName } ?: "*",
+                    duration = analytic.duration,
                     percent = percent,
                 )
             }

@@ -11,7 +11,7 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * imitations under the License.
+ * limitations under the License.
  */
 package ru.aleshin.features.editor.impl.ui
 
@@ -43,8 +43,8 @@ import ru.aleshin.features.editor.impl.domain.interactors.TimeTaskInteractor
 import ru.aleshin.features.editor.impl.navigation.NavigationManager
 import ru.aleshin.features.editor.impl.presentation.mappers.mapToDomain
 import ru.aleshin.features.editor.impl.presentation.mappers.mapToUi
-import ru.aleshin.features.editor.impl.presentation.models.EditModelUi
-import ru.aleshin.features.editor.impl.presentation.models.EditParameters
+import ru.aleshin.features.editor.impl.presentation.models.editmodel.EditModelUi
+import ru.aleshin.features.editor.impl.presentation.models.editmodel.EditParameters
 import ru.aleshin.features.editor.impl.presentation.ui.editor.contract.EditorEffect
 import ru.aleshin.features.editor.impl.presentation.ui.editor.contract.EditorEvent
 import ru.aleshin.features.editor.impl.presentation.ui.editor.contract.EditorViewState
@@ -55,11 +55,11 @@ import ru.aleshin.features.editor.impl.presentation.ui.editor.screenmodel.Editor
 import ru.aleshin.features.editor.impl.presentation.ui.editor.screenmodel.EditorScreenModel
 import ru.aleshin.features.editor.impl.presentation.ui.editor.screenmodel.EditorStateCommunicator
 import ru.aleshin.features.editor.impl.presentation.ui.editor.screenmodel.TimeRangeValidator
-import ru.aleshin.features.home.api.domains.entities.categories.Categories
-import ru.aleshin.features.home.api.domains.entities.categories.MainCategory
-import ru.aleshin.features.home.api.domains.entities.categories.SubCategory
-import ru.aleshin.features.home.api.domains.entities.schedules.TimeTask
-import ru.aleshin.features.home.api.domains.entities.template.Template
+import ru.aleshin.features.home.api.domain.entities.categories.Categories
+import ru.aleshin.features.home.api.domain.entities.categories.MainCategory
+import ru.aleshin.features.home.api.domain.entities.categories.SubCategory
+import ru.aleshin.features.home.api.domain.entities.schedules.TimeTask
+import ru.aleshin.features.home.api.domain.entities.template.Template
 import java.lang.NullPointerException
 import java.util.Calendar
 import java.util.Date
@@ -194,7 +194,7 @@ internal class EditorScreenModelTest {
     @Test
     fun test_save_edit_model_success() {
         val date = Calendar.getInstance().time
-        val fakeMainCategory = MainCategory(id = 1, name = "Work")
+        val fakeMainCategory = MainCategory(id = 1, customName = "Work")
         val initEditModel = EditModel(
             key = 100L,
             date = date,
@@ -258,7 +258,7 @@ internal class EditorScreenModelTest {
     @Test
     fun test_add_edit_model() {
         val date = Calendar.getInstance().time
-        val fakeMainCategory = MainCategory(id = 1, name = "Work")
+        val fakeMainCategory = MainCategory(id = 1, customName = "Work")
         val fakeEditModel = EditModelUi(
             key = 0L,
             date = date,
@@ -459,7 +459,7 @@ internal class EditorScreenModelTest {
     @Test
     fun test_change_parameters_and_categories() {
         val date = Calendar.getInstance().time
-        val fakeMainCategory = MainCategory(id = 1, name = "Work")
+        val fakeMainCategory = MainCategory(id = 1, customName = "Work")
         val fakeCategories = listOf(
             Categories(
                 MainCategory.absent(),

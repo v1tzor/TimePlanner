@@ -11,21 +11,15 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * imitations under the License.
+ * limitations under the License.
  */
 package ru.aleshin.features.settings.impl.domain.entities
 
-import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
-import ru.aleshin.core.utils.functional.Mapper
 import ru.aleshin.features.settings.api.domain.entities.ThemeSettings
 
 /**
  * @author Stanislav Aleshin on 17.02.2023.
  */
-@Parcelize
 internal data class Settings(
     val themeSettings: ThemeSettings,
-) : Parcelable {
-    fun <T> map(mapper: Mapper<Settings, T>) = mapper.map(this)
-}
+)

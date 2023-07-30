@@ -11,7 +11,7 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * imitations under the License.
+ * limitations under the License.
  */
 package ru.aleshin.features.home.api.data.repository
 
@@ -20,8 +20,8 @@ import ru.aleshin.features.home.api.data.datasources.schedules.SchedulesLocalDat
 import ru.aleshin.features.home.api.data.mappers.schedules.ScheduleDataToDomainMapper
 import ru.aleshin.features.home.api.data.mappers.schedules.mapToData
 import ru.aleshin.features.home.api.data.models.timetasks.TimeTaskEntity
-import ru.aleshin.features.home.api.domains.entities.schedules.Schedule
-import ru.aleshin.features.home.api.domains.repository.ScheduleRepository
+import ru.aleshin.features.home.api.domain.entities.schedules.Schedule
+import ru.aleshin.features.home.api.domain.repository.ScheduleRepository
 import javax.inject.Inject
 
 /**

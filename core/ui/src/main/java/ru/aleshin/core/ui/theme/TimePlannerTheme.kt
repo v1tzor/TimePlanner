@@ -12,7 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
-*/
+ */
 package ru.aleshin.core.ui.theme
 
 import androidx.compose.material3.*
@@ -34,7 +34,7 @@ fun TimePlannerTheme(
     content: @Composable () -> Unit,
 ) {
     val appLanguage = when (language) {
-        LanguageUiType.DEFAULT -> fetchAppLanguage(Locale.current.language)
+        LanguageUiType.DEFAULT -> fetchCoreLanguage(Locale.current.language)
         LanguageUiType.EN -> TimePlannerLanguage.EN
         LanguageUiType.RU -> TimePlannerLanguage.RU
         LanguageUiType.DE -> TimePlannerLanguage.DE

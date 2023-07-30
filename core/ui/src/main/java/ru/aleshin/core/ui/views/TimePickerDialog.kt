@@ -11,7 +11,7 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * imitations under the License.
+ * limitations under the License.
  */
 package ru.aleshin.core.ui.views
 
@@ -214,9 +214,7 @@ internal fun TimePickerHourMinuteSelector(
         ),
     )
     TimeFormatSelector(
-        modifier = Modifier
-            .size(height = 80.dp, width = 52.dp)
-            .offset(x = 12.dp),
+        modifier = Modifier.size(height = 80.dp, width = 52.dp).offset(x = 12.dp),
         isVisible = !is24Format,
         format = format,
         onChangeFormat = onChangeFormat,

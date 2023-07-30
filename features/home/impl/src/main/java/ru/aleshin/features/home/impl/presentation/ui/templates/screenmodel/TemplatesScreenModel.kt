@@ -11,7 +11,7 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * imitations under the License.
+ * limitations under the License.
  */
 package ru.aleshin.features.home.impl.presentation.ui.templates.screenmodel
 
@@ -22,7 +22,6 @@ import ru.aleshin.core.utils.managers.CoroutineManager
 import ru.aleshin.core.utils.platform.screenmodel.BaseScreenModel
 import ru.aleshin.core.utils.platform.screenmodel.work.WorkScope
 import ru.aleshin.features.home.impl.di.holder.HomeComponentHolder
-import ru.aleshin.features.home.impl.presentation.ui.home.views.ViewToggleStatus
 import ru.aleshin.features.home.impl.presentation.ui.templates.contract.TemplatesAction
 import ru.aleshin.features.home.impl.presentation.ui.templates.contract.TemplatesEffect
 import ru.aleshin.features.home.impl.presentation.ui.templates.contract.TemplatesEvent

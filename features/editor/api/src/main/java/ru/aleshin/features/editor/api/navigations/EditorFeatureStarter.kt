@@ -11,7 +11,7 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * imitations under the License.
+ * limitations under the License.
  */
 package ru.aleshin.features.editor.api.navigations
 
@@ -21,5 +21,5 @@ import cafe.adriel.voyager.core.screen.Screen
  * @author Stanislav Aleshin on 08.03.2023.
  */
 interface EditorFeatureStarter {
-    fun provideEditorScreen(navScreens: EditorScreens): Screen
+    fun provideEditorScreen(navScreen: EditorScreens): Screen
 }

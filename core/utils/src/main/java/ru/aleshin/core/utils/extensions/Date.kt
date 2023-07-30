@@ -11,7 +11,7 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * imitations under the License.
+ * limitations under the License.
  */
 package ru.aleshin.core.utils.extensions
 
@@ -94,6 +94,8 @@ fun Calendar.setEndDay() = this.apply {
 fun Calendar.setHoursAndMinutes(hours: Int, minutes: Int) = this.apply {
     set(Calendar.HOUR_OF_DAY, hours)
     set(Calendar.MINUTE, minutes)
+    set(Calendar.SECOND, 0)
+    set(Calendar.MILLISECOND, 0)
 }
 
 fun Date.changeDay(date: Date): Date {

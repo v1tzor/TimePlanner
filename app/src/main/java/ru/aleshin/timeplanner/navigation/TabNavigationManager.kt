@@ -11,7 +11,7 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * imitations under the License.
+ * limitations under the License.
  */
 package ru.aleshin.timeplanner.navigation
 
@@ -29,7 +29,7 @@ import javax.inject.Provider
  */
 interface TabNavigationManager {
 
-    fun showHomeFeature(screen: HomeScreens, isRoot: Boolean = false)
+    fun showHomeFeature(screen: HomeScreens?, isRoot: Boolean = false)
     fun showAnalyticsFeature()
     fun showSettingsFeature()
 
@@ -40,7 +40,7 @@ interface TabNavigationManager {
         private val router: TabRouter,
     ) : TabNavigationManager {
 
-        override fun showHomeFeature(screen: HomeScreens, isRoot: Boolean) = showTab(
+        override fun showHomeFeature(screen: HomeScreens?, isRoot: Boolean) = showTab(
             screen = homeFeatureStarter.get().provideHomeScreen(screen, isRoot),
         )
 

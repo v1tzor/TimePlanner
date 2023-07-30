@@ -12,16 +12,15 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
-*/
+ */
 package ru.aleshin.features.home.api.data.mappers.schedules
 
 import ru.aleshin.core.utils.extensions.mapToDate
 import ru.aleshin.core.utils.functional.Mapper
 import ru.aleshin.core.utils.managers.DateManager
-import ru.aleshin.features.home.api.data.mappers.categories.mapToDomain
 import ru.aleshin.features.home.api.data.models.schedules.ScheduleDetails
-import ru.aleshin.features.home.api.domains.common.ScheduleStatusManager
-import ru.aleshin.features.home.api.domains.entities.schedules.Schedule
+import ru.aleshin.features.home.api.domain.common.ScheduleStatusManager
+import ru.aleshin.features.home.api.domain.entities.schedules.Schedule
 import javax.inject.Inject
 
 /**

@@ -11,11 +11,10 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * imitations under the License.
+ * limitations under the License.
  */
 package ru.aleshin.features.home.impl.presentation.ui.templates.screenmodel
 
-import android.util.Log
 import kotlinx.coroutines.delay
 import ru.aleshin.core.utils.extensions.duration
 import ru.aleshin.core.utils.functional.Constants
@@ -25,10 +24,12 @@ import ru.aleshin.core.utils.platform.screenmodel.work.EffectResult
 import ru.aleshin.core.utils.platform.screenmodel.work.WorkCommand
 import ru.aleshin.core.utils.platform.screenmodel.work.WorkProcessor
 import ru.aleshin.core.utils.platform.screenmodel.work.WorkResult
-import ru.aleshin.features.home.api.domains.entities.template.Template
 import ru.aleshin.features.home.impl.domain.interactors.CategoriesInteractor
 import ru.aleshin.features.home.impl.domain.interactors.TemplatesInteractor
-import ru.aleshin.features.home.impl.presentation.models.TemplatesSortedType
+import ru.aleshin.features.home.impl.presentation.mapppers.categories.mapToUi
+import ru.aleshin.features.home.impl.presentation.mapppers.templates.mapToDomain
+import ru.aleshin.features.home.impl.presentation.models.templates.TemplatesSortedType
+import ru.aleshin.features.home.impl.presentation.models.templates.TemplateUi
 import ru.aleshin.features.home.impl.presentation.ui.templates.contract.TemplatesAction
 import ru.aleshin.features.home.impl.presentation.ui.templates.contract.TemplatesEffect
 import javax.inject.Inject
@@ -55,24 +56,21 @@ internal interface TemplatesWorkProcessor : WorkProcessor<TemplatesWorkCommand, 
         }
 
         private suspend fun updateTemplate(
-            template: Template,
+            template: TemplateUi,
             sortedType: TemplatesSortedType,
         ): WorkResult<TemplatesAction, TemplatesEffect> {
-            return when (val result = templatesInteractor.updateTemplate(template)) {
+            return when (val result = templatesInteractor.updateTemplate(template.mapToDomain())) {
                 is Either.Right -> loadTemplatesWork(sortedType)
                 is Either.Left -> EffectResult(TemplatesEffect.ShowError(result.data))
             }
         }
 
         private suspend fun addTemplate(
-            template: Template,
+            template: TemplateUi,
             sortedType: TemplatesSortedType,
         ): WorkResult<TemplatesAction, TemplatesEffect> {
-            return when (val result = templatesInteractor.addTemplate(template)) {
-                is Either.Right -> {
-                    Log.d("test", "new id -> ${result.data}")
-                    loadTemplatesWork(sortedType)
-                }
+            return when (val result = templatesInteractor.addTemplate(template.mapToDomain())) {
+                is Either.Right -> loadTemplatesWork(sortedType)
                 is Either.Left -> EffectResult(TemplatesEffect.ShowError(result.data))
             }
         }
@@ -87,7 +85,7 @@ internal interface TemplatesWorkProcessor : WorkProcessor<TemplatesWorkCommand, 
                         TemplatesSortedType.CATEGORIES -> templates.data.sortedBy { it.category.id }
                         TemplatesSortedType.DURATION -> templates.data.sortedBy { duration(it.startTime, it.endTime) }
                     }
-                    ActionResult(TemplatesAction.UpdateTemplates(sortedTemplates))
+                    ActionResult(TemplatesAction.UpdateTemplates(sortedTemplates.map { it.mapToDomain() }))
                 }
                 is Either.Left -> EffectResult(TemplatesEffect.ShowError(templates.data))
             }
@@ -106,7 +104,7 @@ internal interface TemplatesWorkProcessor : WorkProcessor<TemplatesWorkCommand, 
 
         private suspend fun loadCategories(): WorkResult<TemplatesAction, TemplatesEffect> {
             return when (val result = categoriesInteractor.fetchAllCategories()) {
-                is Either.Right -> ActionResult(TemplatesAction.UpdateCategories(result.data))
+                is Either.Right -> ActionResult(TemplatesAction.UpdateCategories(result.data.map { it.mapToUi() }))
                 is Either.Left -> EffectResult(TemplatesEffect.ShowError(result.data))
             }
         }
@@ -117,6 +115,6 @@ internal sealed class TemplatesWorkCommand : WorkCommand {
     object LoadCategories : TemplatesWorkCommand()
     data class LoadTemplates(val sortedType: TemplatesSortedType) : TemplatesWorkCommand()
     data class DeleteTemplate(val id: Int, val sortedType: TemplatesSortedType) : TemplatesWorkCommand()
-    data class AddTemplate(val template: Template, val sortedType: TemplatesSortedType) : TemplatesWorkCommand()
-    data class UpdateTemplate(val template: Template, val sortedType: TemplatesSortedType) : TemplatesWorkCommand()
+    data class AddTemplate(val template: TemplateUi, val sortedType: TemplatesSortedType) : TemplatesWorkCommand()
+    data class UpdateTemplate(val template: TemplateUi, val sortedType: TemplatesSortedType) : TemplatesWorkCommand()
 }

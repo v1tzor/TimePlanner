@@ -11,7 +11,7 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * imitations under the License.
+ * limitations under the License.
  */
 package ru.aleshin.features.editor.impl.domain
 
@@ -29,9 +29,9 @@ import ru.aleshin.features.editor.impl.domain.common.EditorEitherWrapper
 import ru.aleshin.features.editor.impl.domain.common.EditorErrorHandler
 import ru.aleshin.features.editor.impl.domain.entites.EditorFailures
 import ru.aleshin.features.editor.impl.domain.interactors.TemplatesInteractor
-import ru.aleshin.features.home.api.domains.entities.categories.MainCategory
-import ru.aleshin.features.home.api.domains.entities.template.Template
-import ru.aleshin.features.home.api.domains.repository.TemplatesRepository
+import ru.aleshin.features.home.api.domain.entities.categories.MainCategory
+import ru.aleshin.features.home.api.domain.entities.template.Template
+import ru.aleshin.features.home.api.domain.repository.TemplatesRepository
 import java.util.Calendar
 import kotlin.NullPointerException
 
@@ -66,7 +66,7 @@ internal class TemplatesInteractorTest {
                 templateId = 100,
                 startTime = fakeTime.startThisDay(),
                 endTime = fakeTime.endThisDay(),
-                category = MainCategory.absent(),
+                category = MainCategory(),
             ),
         )
 
@@ -74,7 +74,7 @@ internal class TemplatesInteractorTest {
             templateId = 0,
             startTime = fakeTime.shiftMinutes(10),
             endTime = fakeTime.shiftMinutes(20),
-            category = MainCategory.absent(),
+            category = MainCategory(),
         )
 
         val actual = interactor.addTemplate(addedTemplate)
@@ -96,7 +96,7 @@ internal class TemplatesInteractorTest {
                 templateId = 100,
                 startTime = fakeTime.startThisDay(),
                 endTime = fakeTime.endThisDay(),
-                category = MainCategory.absent(),
+                category = MainCategory(),
             ),
         )
         templatesRepository.errorWhileAction = true
@@ -105,7 +105,7 @@ internal class TemplatesInteractorTest {
             templateId = 101,
             startTime = fakeTime.shiftMinutes(10),
             endTime = fakeTime.shiftMinutes(20),
-            category = MainCategory.absent(),
+            category = MainCategory(),
         )
 
         val actual = interactor.addTemplate(addedTemplate)
@@ -126,7 +126,7 @@ internal class TemplatesInteractorTest {
                 templateId = 100,
                 startTime = fakeTime.startThisDay(),
                 endTime = fakeTime.endThisDay(),
-                category = MainCategory.absent(),
+                category = MainCategory(),
             ),
         )
 
@@ -136,7 +136,7 @@ internal class TemplatesInteractorTest {
                 templateId = 100,
                 startTime = fakeTime.startThisDay(),
                 endTime = fakeTime.endThisDay(),
-                category = MainCategory.absent(),
+                category = MainCategory(),
             ),
         )
 
@@ -156,7 +156,7 @@ internal class TemplatesInteractorTest {
                 templateId = 100,
                 startTime = fakeTime.startThisDay(),
                 endTime = fakeTime.endThisDay(),
-                category = MainCategory.absent(),
+                category = MainCategory(),
             ),
         )
         templatesRepository.errorWhileAction = true
@@ -179,7 +179,7 @@ internal class TemplatesInteractorTest {
                 templateId = 100,
                 startTime = fakeTime.startThisDay(),
                 endTime = fakeTime.endThisDay(),
-                category = MainCategory.absent(),
+                category = MainCategory(),
             ),
         )
 
@@ -187,7 +187,7 @@ internal class TemplatesInteractorTest {
             templateId = 100,
             startTime = fakeTime.shiftMinutes(10),
             endTime = fakeTime.endThisDay(),
-            category = MainCategory.absent(),
+            category = MainCategory(),
         )
 
         val actual = interactor.updateTemplate(updatedTemplate)
@@ -208,7 +208,7 @@ internal class TemplatesInteractorTest {
                 templateId = 100,
                 startTime = fakeTime.startThisDay(),
                 endTime = fakeTime.endThisDay(),
-                category = MainCategory.absent(),
+                category = MainCategory(),
             ),
         )
         templatesRepository.errorWhileAction = true
@@ -217,7 +217,7 @@ internal class TemplatesInteractorTest {
             templateId = 100,
             startTime = fakeTime.shiftMinutes(10),
             endTime = fakeTime.endThisDay(),
-            category = MainCategory.absent(),
+            category = MainCategory(),
         )
 
         val actual = interactor.updateTemplate(updatedTemplate)
@@ -238,7 +238,7 @@ internal class TemplatesInteractorTest {
                 templateId = 100,
                 startTime = fakeTime.startThisDay(),
                 endTime = fakeTime.endThisDay(),
-                category = MainCategory.absent(),
+                category = MainCategory(),
             ),
         )
 
@@ -259,7 +259,7 @@ internal class TemplatesInteractorTest {
                 templateId = 100,
                 startTime = fakeTime.startThisDay(),
                 endTime = fakeTime.endThisDay(),
-                category = MainCategory.absent(),
+                category = MainCategory(),
             ),
         )
         templatesRepository.errorWhileAction = true
@@ -285,11 +285,11 @@ private class FakeTemplatesRepository : TemplatesRepository {
 
     var errorWhileAction = false
 
-    override suspend fun addTemplate(templates: Template): Int {
+    override suspend fun addTemplate(template: Template): Int {
         addedTemplatesCount++
         return if (!errorWhileAction) {
             val templateId = templatesList.lastOrNull()?.templateId?.inc() ?: 0
-            templatesList.add(templates.copy(templateId = templateId)).let { templateId }
+            templatesList.add(template.copy(templateId = templateId)).let { templateId }
         } else {
             throw SQLiteException()
         }

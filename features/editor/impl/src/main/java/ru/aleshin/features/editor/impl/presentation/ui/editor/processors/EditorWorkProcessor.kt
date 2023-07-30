@@ -11,7 +11,7 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * imitations under the License.
+ * limitations under the License.
  */
 package ru.aleshin.features.editor.impl.presentation.ui.editor.processors
 
@@ -28,12 +28,12 @@ import ru.aleshin.features.editor.impl.domain.interactors.TemplatesInteractor
 import ru.aleshin.features.editor.impl.navigation.NavigationManager
 import ru.aleshin.features.editor.impl.presentation.mappers.mapToDomain
 import ru.aleshin.features.editor.impl.presentation.mappers.mapToUi
-import ru.aleshin.features.editor.impl.presentation.models.EditModelUi
+import ru.aleshin.features.editor.impl.presentation.models.editmodel.EditModelUi
+import ru.aleshin.features.editor.impl.presentation.models.categories.MainCategoryUi
+import ru.aleshin.features.editor.impl.presentation.models.categories.SubCategoryUi
+import ru.aleshin.features.editor.impl.presentation.models.template.TemplateUi
 import ru.aleshin.features.editor.impl.presentation.ui.editor.contract.EditorAction
 import ru.aleshin.features.editor.impl.presentation.ui.editor.contract.EditorEffect
-import ru.aleshin.features.home.api.domains.entities.categories.MainCategory
-import ru.aleshin.features.home.api.domains.entities.categories.SubCategory
-import ru.aleshin.features.home.api.domains.entities.template.Template
 import javax.inject.Inject
 
 /**
@@ -72,13 +72,13 @@ internal interface EditorWorkProcessor : WorkProcessor<EditorWorkCommand, Editor
 
         private suspend fun addSubCategoryWork(
             name: String,
-            mainCategory: MainCategory,
+            mainCategory: MainCategoryUi,
         ): WorkResult<EditorAction, EditorEffect> {
-            val subCategory = SubCategory(name = name, mainCategory = mainCategory)
-            return when (val result = categoriesInteractor.addSubCategory(subCategory)) {
+            val subCategory = SubCategoryUi(id = 0, name = name, mainCategory = mainCategory)
+            return when (val result = categoriesInteractor.addSubCategory(subCategory.mapToDomain())) {
                 is Either.Right -> {
                     when (val categories = categoriesInteractor.fetchCategories()) {
-                        is Either.Right -> ActionResult(EditorAction.UpdateCategories(categories.data))
+                        is Either.Right -> ActionResult(EditorAction.UpdateCategories(categories.data.map { it.mapToUi() }))
                         is Either.Left -> EffectResult(EditorEffect.ShowError(categories.data))
                     }
                 }
@@ -89,7 +89,7 @@ internal interface EditorWorkProcessor : WorkProcessor<EditorWorkCommand, Editor
         private suspend fun loadSendModel(): WorkResult<EditorAction, EditorEffect> {
             val editModel = editorInteractor.fetchEditModel().mapToUi()
             return when (val result = categoriesInteractor.fetchCategories()) {
-                is Either.Right -> ActionResult(EditorAction.SetUp(editModel, result.data))
+                is Either.Right -> ActionResult(EditorAction.SetUp(editModel, result.data.map { it.mapToUi() }))
                 is Either.Left -> EffectResult(EditorEffect.ShowError(result.data))
             }
         }
@@ -116,10 +116,10 @@ internal interface EditorWorkProcessor : WorkProcessor<EditorWorkCommand, Editor
         }
 
         private fun applyTemplate(
-            template: Template,
+            template: TemplateUi,
             model: EditModelUi,
         ): WorkResult<EditorAction, EditorEffect> {
-            val domainEditModel = template.convertToEditModel(model.date).copy(key = model.key)
+            val domainEditModel = template.mapToDomain().convertToEditModel(model.date).copy(key = model.key)
             return ActionResult(EditorAction.UpdateEditModel(domainEditModel.mapToUi()))
         }
     }
@@ -127,10 +127,10 @@ internal interface EditorWorkProcessor : WorkProcessor<EditorWorkCommand, Editor
 
 internal sealed class EditorWorkCommand : WorkCommand {
     object GoBack : EditorWorkCommand()
-    data class AddSubCategory(val name: String, val mainCategory: MainCategory) : EditorWorkCommand()
+    data class AddSubCategory(val name: String, val mainCategory: MainCategoryUi) : EditorWorkCommand()
     object GoTemplates : EditorWorkCommand()
     object LoadSendEditModel : EditorWorkCommand()
     data class ChangeIsTemplate(val editModel: EditModelUi) : EditorWorkCommand()
     data class ChangeTimeRange(val timeRange: TimeRange) : EditorWorkCommand()
-    data class ApplyTemplate(val template: Template, val model: EditModelUi) : EditorWorkCommand()
+    data class ApplyTemplate(val template: TemplateUi, val model: EditModelUi) : EditorWorkCommand()
 }
