@@ -375,7 +375,7 @@ internal val spanishHomeString = HomeStrings(
     deleteCategoryTitle = "Eliminar",
     subCategoryTitle = "Subcategorías",
     warningDeleteCategoryText = "¿Quieres eliminar la categoría principal? " +
-        "Esto eliminará todas las tareas programadas anteriormente..",
+        "Esto eliminará todas las tareas programadas anteriormente.",
     sortedTypeTitle = "Ordenado",
     sortedTypeDate = "Por fecha",
     sortedTypeCategories = "Por categoría",
@@ -393,7 +393,7 @@ internal val spanishHomeString = HomeStrings(
     notificationLabel = "Enviar notificación",
     statisticsLabel = "Incluir en estadísticas",
     importanceLabel = "Prioridad especial",
-    subCategoryEmptyTitle = "Inexistente",
+    subCategoryEmptyTitle = "Ninguna",
     addCategoryTitle = "Añadir",
     nameCategoryTitle = "Nombre",
 )
