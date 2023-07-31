@@ -46,7 +46,6 @@ internal interface BackupManager {
     ) : BackupManager {
 
         override suspend fun restoreBackup(uri: Uri) = eitherWrapper.wrap {
-            var backupModel: BackupModel? = null
             val contentResolver = applicationContext.contentResolver
             val inputStream = contentResolver.openInputStream(uri)
             ZipInputStream(BufferedInputStream(inputStream)).use { input ->
@@ -55,13 +54,13 @@ internal interface BackupManager {
                     when (entry.name) {
                         Constants.Backup.BACKUP_JSON_NAME -> {
                             val jsonString = input.bufferedReader().use { it.readText() }
-                            backupModel = Gson().fromJson(jsonString, BackupModel::class.java)
-                            break
+                            // TODO: Not work with old model
+                            return@wrap Gson().fromJson(jsonString, BackupModel::class.java) ?: throw IOException()
                         }
                     }
                 }
             }
-            return@wrap if (backupModel != null) backupModel!! else throw IOException()
+            throw IOException()
         }
 
         override suspend fun saveBackup(

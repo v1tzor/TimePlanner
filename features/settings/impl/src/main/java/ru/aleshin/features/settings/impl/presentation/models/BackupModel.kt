@@ -27,9 +27,3 @@ internal data class BackupModel(
     val templates: List<Template>,
     val categories: List<Categories>,
 )
-
-internal data class BackupModelOld(
-    val schedules: List<Schedule>,
-    val templates: List<Template>,
-    val categories: List<Categories>,
-)

@@ -30,6 +30,7 @@ import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Divider
@@ -52,6 +53,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import ru.aleshin.core.ui.theme.TimePlannerRes
@@ -415,6 +417,7 @@ internal fun TemplateEditorStartTimeChooser(
                         onTimeChange(null, minutes)
                     }
                 },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 label = { Text(text = HomeThemeRes.strings.startTimeLabel) },
             )
             Text(
@@ -433,6 +436,7 @@ internal fun TemplateEditorStartTimeChooser(
                         onTimeChange(hours, null)
                     }
                 },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             )
         }
         TimeFormatSelector(
@@ -503,6 +507,7 @@ internal fun TemplateEditorEndTimeChooser(
                         onTimeChange(null, minutes)
                     }
                 },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 label = { Text(text = HomeThemeRes.strings.endTimeLabel) },
             )
             Text(
@@ -519,6 +524,7 @@ internal fun TemplateEditorEndTimeChooser(
                         onTimeChange(hours, time)
                     } else if (it.isBlank()) onTimeChange(hours, null)
                 },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             )
         }
         TimeFormatSelector(
