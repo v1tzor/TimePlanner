@@ -16,7 +16,6 @@
 
 package ru.aleshin.features.home.api.data.datasources.categories
 
-import android.util.Log
 import ru.aleshin.features.home.api.data.models.categories.MainCategoryDetails
 import ru.aleshin.features.home.api.data.models.categories.MainCategoryEntity
 import ru.aleshin.features.home.api.domain.entities.categories.MainCategory
@@ -64,9 +63,7 @@ interface CategoriesLocalDataSource {
         }
 
         override suspend fun removeAllCategories() {
-            Log.d("test", "before -> ${fetchMainCategories()}")
             mainCategoriesDao.removeAllCategories()
-            Log.d("test", "after -> ${fetchMainCategories()}")
         }
     }
 }
