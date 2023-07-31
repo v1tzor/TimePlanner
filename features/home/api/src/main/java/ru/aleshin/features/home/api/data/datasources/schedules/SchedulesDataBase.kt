@@ -17,6 +17,7 @@ package ru.aleshin.features.home.api.data.datasources.schedules
 
 import android.content.ContentValues
 import android.database.sqlite.SQLiteDatabase.CONFLICT_REPLACE
+import android.util.Log
 import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.RoomDatabase
@@ -80,14 +81,13 @@ abstract class SchedulesDataBase : RoomDatabase() {
                         "`default_category_type` TEXT)",
                 )
                 database.query("SELECT * FROM mainCategories").apply {
-                    moveToFirst()
                     while (moveToNext()) {
                         values.clear()
                         val id = getInt(getColumnIndexOrThrow("id"))
                         val nameCategoryName = getString(getColumnIndexOrThrow("main_category_name"))
                         val engCategoryName = getString(getColumnIndexOrThrow("main_category_name_eng"))
                         val type = getString(getColumnIndexOrThrow("main_icon"))
-                        values.put("id", if (type == DefaultCategoryType.EMPTY.name) 0 else id)
+                        values.put("id", id)
                         values.put("custom_name", nameCategoryName ?: engCategoryName ?: null)
                         values.put("default_category_type", type)
                         database.insert("mainCategories_new", CONFLICT_REPLACE, values)

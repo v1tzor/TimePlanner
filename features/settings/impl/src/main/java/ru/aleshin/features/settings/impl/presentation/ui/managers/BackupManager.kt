@@ -17,7 +17,9 @@ package ru.aleshin.features.settings.impl.presentation.ui.managers
 
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import ru.aleshin.core.utils.functional.Constants
 import ru.aleshin.core.utils.functional.Either
 import ru.aleshin.features.settings.impl.domain.common.SettingsEitherWrapper
@@ -55,7 +57,9 @@ internal interface BackupManager {
                         Constants.Backup.BACKUP_JSON_NAME -> {
                             val jsonString = input.bufferedReader().use { it.readText() }
                             // TODO: Not work with old model
-                            return@wrap Gson().fromJson(jsonString, BackupModel::class.java) ?: throw IOException()
+                            val gson = GsonBuilder().serializeNulls().create()
+                            val backup = gson.fromJson(jsonString, BackupModel::class.java)
+                            return@wrap backup ?: throw IOException()
                         }
                     }
                 }
@@ -67,7 +71,7 @@ internal interface BackupManager {
             uri: Uri,
             model: BackupModel,
         ) = eitherWrapper.wrap {
-            val jsonString = Gson().toJson(model)
+            val jsonString = GsonBuilder().serializeNulls().create().toJson(model)
             val contentResolver = applicationContext.contentResolver
             val outputStream = contentResolver.openOutputStream(uri)
             ZipOutputStream(BufferedOutputStream(outputStream)).use { output ->

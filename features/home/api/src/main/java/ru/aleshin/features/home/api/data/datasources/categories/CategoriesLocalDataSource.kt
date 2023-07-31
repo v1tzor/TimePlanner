@@ -64,7 +64,9 @@ interface CategoriesLocalDataSource {
         }
 
         override suspend fun removeAllCategories() {
+            Log.d("test", "before -> ${fetchMainCategories()}")
             mainCategoriesDao.removeAllCategories()
+            Log.d("test", "after -> ${fetchMainCategories()}")
         }
     }
 }
