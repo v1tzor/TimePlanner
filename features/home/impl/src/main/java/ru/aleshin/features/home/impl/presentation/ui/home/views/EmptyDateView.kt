@@ -31,6 +31,7 @@ import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
 internal fun EmptyDateView(
     modifier: Modifier = Modifier,
     emptyTitle: String,
+    subTitle: String? = null,
     onActionButton: (@Composable () -> Unit)? = null,
 ) {
     Column(
@@ -47,11 +48,20 @@ internal fun EmptyDateView(
             verticalArrangement = Arrangement.spacedBy(12.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Text(
-                text = emptyTitle,
-                color = MaterialTheme.colorScheme.surfaceVariant,
-                style = MaterialTheme.typography.headlineSmall,
-            )
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Text(
+                    text = emptyTitle,
+                    color = MaterialTheme.colorScheme.surfaceVariant,
+                    style = MaterialTheme.typography.headlineSmall,
+                )
+                if (subTitle != null) {
+                    Text(
+                        text = subTitle,
+                        color = MaterialTheme.colorScheme.outlineVariant,
+                        style = MaterialTheme.typography.titleSmall,
+                    )
+                }
+            }
             onActionButton?.invoke()
         }
     }

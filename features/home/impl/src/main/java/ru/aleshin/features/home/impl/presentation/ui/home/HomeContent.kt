@@ -35,6 +35,7 @@ import ru.aleshin.core.utils.functional.Constants
 import ru.aleshin.features.home.api.domain.entities.schedules.DailyScheduleStatus
 import ru.aleshin.features.home.api.domain.entities.schedules.TimeTaskStatus
 import ru.aleshin.features.home.impl.presentation.models.schedules.TimeTaskUi
+import ru.aleshin.features.home.impl.presentation.models.templates.TemplateUi
 import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
 import ru.aleshin.features.home.impl.presentation.ui.home.contract.HomeViewState
 import ru.aleshin.features.home.impl.presentation.ui.home.views.*
@@ -55,7 +56,7 @@ internal fun HomeContent(
     onChangeDate: (Date) -> Unit,
     onCreateSchedule: () -> Unit,
     onTimeTaskEdit: (TimeTaskUi) -> Unit,
-    onDoneChange: (TimeTaskUi) -> Unit,
+    onTaskDoneChange: (TimeTaskUi) -> Unit,
     onTimeTaskAdd: (startTime: Date, endTime: Date) -> Unit,
     onTimeTaskIncrease: (TimeTaskUi) -> Unit,
     onTimeTaskReduce: (TimeTaskUi) -> Unit,
@@ -74,13 +75,14 @@ internal fun HomeContent(
         )
         HomeTimeTasksLazyColumn(
             isLoadingContent = state.isLoadingContent,
-            dateStatus = state.dateStatus,
             currentDate = state.currentDate,
+            dateStatus = state.dateStatus,
+            schedulePlannedTemplates = state.schedulePlannedTemplates,
             timeTasks = state.timeTasks,
             timeTaskViewStatus = state.timeTaskViewStatus,
             onCreateSchedule = onCreateSchedule,
             onTimeTaskEdit = onTimeTaskEdit,
-            onDoneChange = onDoneChange,
+            onTaskDoneChange = onTaskDoneChange,
             onTimeTaskAdd = onTimeTaskAdd,
             onTimeTaskIncrease = onTimeTaskIncrease,
             onTimeTaskReduce = onTimeTaskReduce,
@@ -109,7 +111,10 @@ internal fun HomeFiltersHeader(
             onChangeDate = onChangeDate,
         )
         Spacer(modifier = Modifier.weight(1f))
-        ViewToggle(status = toggleState, onStatusChange = onChangeToggleStatus)
+        ViewToggle(
+            status = toggleState, 
+            onStatusChange = onChangeToggleStatus,
+        )
     }
 }
 
@@ -125,10 +130,10 @@ internal fun HomeDataChooser(
 
     DateChooser(
         modifier = modifier,
-        isEnabled = isEnabled,
+        enabled = isEnabled,
         dateTitle = currentDate?.let { dateFormat.format(it) } ?: "",
-        onNextDate = { currentDate?.let { onChangeDate.invoke(it.shiftDay(amount = 1)) } },
-        onPreviousDate = { currentDate?.let { onChangeDate.invoke(it.shiftDay(amount = -1)) } },
+        onNext = { currentDate?.let { onChangeDate.invoke(it.shiftDay(amount = 1)) } },
+        onPrevious = { currentDate?.let { onChangeDate.invoke(it.shiftDay(amount = -1)) } },
         onChooseDate = { isDateDialogShow.value = true },
     )
 
@@ -148,12 +153,13 @@ internal fun HomeTimeTasksLazyColumn(
     listState: LazyListState = rememberLazyListState(),
     isLoadingContent: Boolean,
     dateStatus: DailyScheduleStatus?,
+    schedulePlannedTemplates: List<TemplateUi>,
     currentDate: Date?,
     timeTasks: List<TimeTaskUi>,
     timeTaskViewStatus: ViewToggleStatus,
     onCreateSchedule: () -> Unit,
     onTimeTaskEdit: (TimeTaskUi) -> Unit,
-    onDoneChange: (TimeTaskUi) -> Unit,
+    onTaskDoneChange: (TimeTaskUi) -> Unit,
     onTimeTaskAdd: (startTime: Date, endTime: Date) -> Unit,
     onTimeTaskIncrease: (TimeTaskUi) -> Unit,
     onTimeTaskReduce: (TimeTaskUi) -> Unit,
@@ -175,10 +181,10 @@ internal fun HomeTimeTasksLazyColumn(
 
                     TimeTaskViewItem(
                         timeTask = timeTask,
-                        onTimeTaskEdit = onTimeTaskEdit,
-                        onTimeTaskIncrease = onTimeTaskIncrease,
-                        onTimeTaskReduce = onTimeTaskReduce,
-                        onDoneChange = onDoneChange,
+                        onEdit = onTimeTaskEdit,
+                        onIncrease = onTimeTaskIncrease,
+                        onReduce = onTimeTaskReduce,
+                        onDoneChange = onTaskDoneChange,
                         isCompactView = isCompactView && nextItem != null && timeTask.endTime.isNotZeroDifference(
                             nextItem.startTime,
                         ),
@@ -190,7 +196,7 @@ internal fun HomeTimeTasksLazyColumn(
                             TimeTaskStatus.COMPLETED -> MaterialTheme.colorScheme.tertiaryContainer
                         }
                         AddTimeTaskViewItem(
-                            onAddTimeTask = { onTimeTaskAdd.invoke(timeTask.endTime, nextItem.startTime) },
+                            onAddClick = { onTimeTaskAdd.invoke(timeTask.endTime, nextItem.startTime) },
                             startTime = timeTask.endTime,
                             endTime = nextItem.startTime,
                             indicatorColor = trackColor,
@@ -204,7 +210,7 @@ internal fun HomeTimeTasksLazyColumn(
                     }
                     val endTime = startTime.endThisDay()
                     AddTimeTaskViewItem(
-                        onAddTimeTask = { onTimeTaskAdd.invoke(startTime, endTime) },
+                        onAddClick = { onTimeTaskAdd.invoke(startTime, endTime) },
                         startTime = startTime,
                         endTime = endTime,
                     )
@@ -216,6 +222,12 @@ internal fun HomeTimeTasksLazyColumn(
         EmptyDateView(
             modifier = Modifier.align(Alignment.Center),
             emptyTitle = HomeThemeRes.strings.emptyScheduleTitle,
+            subTitle = when (schedulePlannedTemplates.isNotEmpty()) {
+                true -> schedulePlannedTemplates.size.toString().let { count ->
+                    HomeThemeRes.strings.foundedPlannedTasksTitle.format(count)
+                }
+                false -> null
+            },
         ) {
             OutlinedButton(
                 onClick = onCreateSchedule,
@@ -247,9 +259,9 @@ internal fun HomeTimeTasksLazyColumn(
 internal fun LazyItemScope.TimeTaskViewItem(
     modifier: Modifier = Modifier,
     timeTask: TimeTaskUi,
-    onTimeTaskEdit: (TimeTaskUi) -> Unit,
-    onTimeTaskIncrease: (TimeTaskUi) -> Unit,
-    onTimeTaskReduce: (TimeTaskUi) -> Unit,
+    onEdit: (TimeTaskUi) -> Unit,
+    onIncrease: (TimeTaskUi) -> Unit,
+    onReduce: (TimeTaskUi) -> Unit,
     onDoneChange: (TimeTaskUi) -> Unit,
     isCompactView: Boolean,
 ) {
@@ -258,7 +270,7 @@ internal fun LazyItemScope.TimeTaskViewItem(
             PlannedTimeTaskItem(
                 modifier = modifier,
                 model = timeTask,
-                onItemClick = { onTimeTaskEdit.invoke(timeTask) },
+                onItemClick = { onEdit.invoke(timeTask) },
                 isCompactView = isCompactView,
             )
         }
@@ -266,9 +278,9 @@ internal fun LazyItemScope.TimeTaskViewItem(
             RunningTimeTaskItem(
                 modifier = modifier,
                 model = timeTask,
-                onMoreButtonClick = { onTimeTaskEdit.invoke(timeTask) },
-                onIncreaseTime = { onTimeTaskIncrease.invoke(timeTask) },
-                onReduceTime = { onTimeTaskReduce.invoke(timeTask) },
+                onMoreButtonClick = { onEdit.invoke(timeTask) },
+                onIncreaseTime = { onIncrease.invoke(timeTask) },
+                onReduceTime = { onReduce.invoke(timeTask) },
                 isCompactView = isCompactView,
             )
         }
@@ -276,7 +288,7 @@ internal fun LazyItemScope.TimeTaskViewItem(
             CompletedTimeTaskItem(
                 modifier = modifier,
                 model = timeTask,
-                onItemClick = { onTimeTaskEdit.invoke(timeTask) },
+                onItemClick = { onEdit.invoke(timeTask) },
                 onDoneChange = { onDoneChange.invoke(timeTask) },
                 isCompactView = isCompactView,
             )

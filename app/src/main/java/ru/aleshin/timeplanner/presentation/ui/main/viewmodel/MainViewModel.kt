@@ -31,6 +31,7 @@ import javax.inject.Provider
  */
 class MainViewModel @Inject constructor(
     private val settingsWorkProcessor: SettingsWorkProcessor,
+    private val navigationWorkProcessor: NavigationWorkProcessor,
     communicator: MainStateCommunicator,
     coroutineManager: CoroutineManager,
 ) : BaseViewModel<MainViewState, MainEvent, MainAction, MainEffect>(
@@ -50,8 +51,13 @@ class MainViewModel @Inject constructor(
         event: MainEvent,
     ) {
         when (event) {
-            is MainEvent.Init -> launchBackgroundWork(SettingsWorkCommand.LoadThemeSettings) {
-                settingsWorkProcessor.work(SettingsWorkCommand.LoadThemeSettings).collectAndHandleWork()
+            is MainEvent.Init -> {
+                launchBackgroundWork(SettingsWorkCommand.LoadThemeSettings) {
+                    settingsWorkProcessor.work(SettingsWorkCommand.LoadThemeSettings).collectAndHandleWork()
+                }
+                launchBackgroundWork(NavWorkCommand.NavigateToTab()) {
+                    navigationWorkProcessor.work(NavWorkCommand.NavigateToTab())
+                }
             }
         }
     }
@@ -60,6 +66,7 @@ class MainViewModel @Inject constructor(
         action: MainAction,
         currentState: MainViewState,
     ) = when (action) {
+        is MainAction.Navigate -> currentState
         is MainAction.ChangeThemeSettings -> currentState.copy(
             language = action.language,
             colors = action.themeColors,

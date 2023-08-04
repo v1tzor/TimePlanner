@@ -19,7 +19,7 @@ import ru.aleshin.core.utils.extensions.mapToDate
 import ru.aleshin.core.utils.functional.Mapper
 import ru.aleshin.core.utils.managers.DateManager
 import ru.aleshin.features.home.api.data.models.schedules.ScheduleDetails
-import ru.aleshin.features.home.api.domain.common.ScheduleStatusManager
+import ru.aleshin.features.home.api.domain.common.ScheduleStatusChecker
 import ru.aleshin.features.home.api.domain.entities.schedules.Schedule
 import javax.inject.Inject
 
@@ -28,12 +28,12 @@ import javax.inject.Inject
  */
 interface ScheduleDataToDomainMapper : Mapper<ScheduleDetails, Schedule> {
     class Base @Inject constructor(
-        private val scheduleStatusManager: ScheduleStatusManager,
+        private val scheduleStatusChecker: ScheduleStatusChecker,
         private val dateManager: DateManager,
     ) : ScheduleDataToDomainMapper {
         override fun map(input: ScheduleDetails) = Schedule(
             date = input.dailySchedule.date,
-            status = scheduleStatusManager.fetchState(
+            status = scheduleStatusChecker.fetchState(
                 requiredDate = input.dailySchedule.date.mapToDate(),
                 currentDate = dateManager.fetchBeginningCurrentDay(),
             ),

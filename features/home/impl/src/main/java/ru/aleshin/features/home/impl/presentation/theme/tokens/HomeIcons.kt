@@ -22,7 +22,6 @@ import ru.aleshin.features.home.impl.R
  * @author Stanislav Aleshin on 22.02.2023.
  */
 internal data class HomeIcons(
-    val settingsIcon: Int,
     val nextDate: Int,
     val previousDate: Int,
     val more: Int,
@@ -41,12 +40,16 @@ internal data class HomeIcons(
     val importance: Int,
     val cancel: Int,
     val statistics: Int,
-    val timer: Int,
+    val duration: Int,
     val time: Int,
+    val repeat: Int,
+    val updateRepeat: Int,
+    val repeatVariant: Int,
+    val turnOffRepeat: Int,
+    val menuNavArrow: Int,
 )
 
 internal val baseHomeIcons = HomeIcons(
-    settingsIcon = R.drawable.ic_settings,
     nextDate = R.drawable.ic_next,
     previousDate = R.drawable.ic_previous,
     more = R.drawable.ic_more,
@@ -65,8 +68,13 @@ internal val baseHomeIcons = HomeIcons(
     importance = R.drawable.ic_priority_high,
     cancel = R.drawable.ic_cancel,
     statistics = R.drawable.ic_charts,
+    duration = R.drawable.ic_timer,
     time = R.drawable.ic_time,
-    timer = R.drawable.ic_timer,
+    repeat = R.drawable.ic_repeat,
+    updateRepeat = R.drawable.ic_update_repeat,
+    repeatVariant = R.drawable.ic_repeat_variant,
+    turnOffRepeat = R.drawable.ic_off_repeat,
+    menuNavArrow = R.drawable.ic_arrow_right,
 )
 
 internal val LocalHomeIcons = staticCompositionLocalOf<HomeIcons> {

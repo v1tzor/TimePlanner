@@ -18,6 +18,7 @@ package ru.aleshin.features.editor.impl.presentation.ui.editor.screenmodel
 import androidx.compose.runtime.Composable
 import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
+import ru.aleshin.core.utils.extensions.duration
 import ru.aleshin.core.utils.managers.CoroutineManager
 import ru.aleshin.core.utils.platform.screenmodel.BaseScreenModel
 import ru.aleshin.core.utils.platform.screenmodel.work.WorkScope
@@ -60,19 +61,32 @@ internal class EditorScreenModel @Inject constructor(
         event: EditorEvent,
     ) = when (event) {
         is EditorEvent.Init -> {
-            editorWorkProcessor.work(EditorWorkCommand.LoadSendEditModel).handleWork()
+            val command = EditorWorkCommand.LoadSendEditModel
+            editorWorkProcessor.work(command).handleWork()
         }
-        is EditorEvent.ChangeTime -> with(event.timeRange) {
-            editorWorkProcessor.work(EditorWorkCommand.ChangeTimeRange(this)).handleWork()
+        is EditorEvent.LoadTemplates -> {
+            timeTaskWorkProcessor.work(TimeTaskWorkCommand.LoadTemplateTimeTasks).handleWork()
         }
-        is EditorEvent.ChangeIsTemplate -> with(checkNotNull(state().editModel)) {
-            editorWorkProcessor.work(EditorWorkCommand.ChangeIsTemplate(this)).handleWork()
+        is EditorEvent.ChangeTime -> updateEditModel {
+            copy(timeRanges = event.timeRange, duration = duration(event.timeRange))
         }
         is EditorEvent.ChangeParameters -> updateEditModel {
             copy(parameters = event.parameters)
         }
         is EditorEvent.ChangeCategories -> updateEditModel {
             copy(mainCategory = event.category, subCategory = event.subCategory)
+        }
+        is EditorEvent.AddSubCategory -> {
+            val mainCategory = checkNotNull(state().editModel?.mainCategory)
+            editorWorkProcessor.work(EditorWorkCommand.AddSubCategory(event.name, mainCategory)).handleWork()
+        }
+        is EditorEvent.CreateTemplate -> with(checkNotNull(state().editModel)) {
+            val command = EditorWorkCommand.AddTemplate(this)
+            editorWorkProcessor.work(command).handleWork()
+        }
+        is EditorEvent.ApplyTemplate -> {
+            val model = checkNotNull(state().editModel)
+            editorWorkProcessor.work(EditorWorkCommand.ApplyTemplate(event.template, model)).handleWork()
         }
         is EditorEvent.PressDeleteButton -> with(checkNotNull(state().editModel)) {
             timeTaskWorkProcessor.work(TimeTaskWorkCommand.DeleteModel(this)).handleWork()
@@ -81,7 +95,7 @@ internal class EditorScreenModel @Inject constructor(
             val timeValidate = timeRangeValidator.validate(timeRanges)
             val categoryValidate = categoryValidator.validate(mainCategory)
             if (timeValidate.isValid && categoryValidate.isValid) {
-                val command = TimeTaskWorkCommand.AddOrSaveModel(this, event.isTemplateUpdate)
+                val command = TimeTaskWorkCommand.AddOrSaveModel(this)
                 timeTaskWorkProcessor.work(command).handleWork()
             } else {
                 val action = EditorAction.SetValidError(timeValidate.validError, categoryValidate.validError)
@@ -93,17 +107,6 @@ internal class EditorScreenModel @Inject constructor(
         }
         is EditorEvent.PressBackButton -> {
             editorWorkProcessor.work(EditorWorkCommand.GoBack).handleWork()
-        }
-        is EditorEvent.AddSubCategory -> {
-            val mainCategory = checkNotNull(state().editModel?.mainCategory)
-            editorWorkProcessor.work(EditorWorkCommand.AddSubCategory(event.name, mainCategory)).handleWork()
-        }
-        is EditorEvent.LoadTemplates -> {
-            timeTaskWorkProcessor.work(TimeTaskWorkCommand.LoadTemplateTimeTasks).handleWork()
-        }
-        is EditorEvent.ApplyTemplate -> {
-            val model = checkNotNull(state().editModel)
-            editorWorkProcessor.work(EditorWorkCommand.ApplyTemplate(event.template, model)).handleWork()
         }
     }
 
@@ -119,13 +122,6 @@ internal class EditorScreenModel @Inject constructor(
         )
         is EditorAction.UpdateEditModel -> currentState.copy(
             editModel = action.editModel,
-        )
-        is EditorAction.UpdateTimeRange -> currentState.copy(
-            editModel = currentState.editModel?.copy(
-                timeRanges = action.timeRange,
-                duration = action.duration,
-            ),
-            timeRangeValid = null,
         )
         is EditorAction.UpdateTemplateId -> currentState.copy(
             editModel = currentState.editModel?.copy(templateId = action.templateId),

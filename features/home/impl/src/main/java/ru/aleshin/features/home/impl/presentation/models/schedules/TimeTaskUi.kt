@@ -18,6 +18,7 @@ package ru.aleshin.features.home.impl.presentation.models.schedules
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 import ru.aleshin.core.utils.extensions.duration
+import ru.aleshin.core.utils.functional.TimeRange
 import ru.aleshin.features.home.api.domain.entities.schedules.TimeTaskStatus
 import ru.aleshin.features.home.impl.presentation.models.categories.MainCategoryUi
 import ru.aleshin.features.home.impl.presentation.models.categories.SubCategoryUi
@@ -43,4 +44,6 @@ internal data class TimeTaskUi(
     val isEnableNotification: Boolean = true,
     val isConsiderInStatistics: Boolean = true,
     val isTemplate: Boolean = false,
-) : Parcelable
+) : Parcelable {
+    fun timeToTimeRange() = TimeRange(startTime, endTime)
+}

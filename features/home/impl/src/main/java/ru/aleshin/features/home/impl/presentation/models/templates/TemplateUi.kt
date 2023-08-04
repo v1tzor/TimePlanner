@@ -17,6 +17,7 @@ package ru.aleshin.features.home.impl.presentation.models.templates
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
+import ru.aleshin.features.home.api.domain.entities.template.RepeatTime
 import ru.aleshin.features.home.impl.presentation.models.categories.MainCategoryUi
 import ru.aleshin.features.home.impl.presentation.models.categories.SubCategoryUi
 import java.util.Date
@@ -34,4 +35,5 @@ internal data class TemplateUi(
     val isImportant: Boolean = false,
     val isEnableNotification: Boolean = true,
     val isConsiderInStatistics: Boolean = true,
+    val repeatTimes: List<RepeatTime> = emptyList(),
 ) : Parcelable

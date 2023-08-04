@@ -17,11 +17,14 @@ package ru.aleshin.features.settings.impl.presentation.ui.managers
 
 import android.content.Context
 import android.net.Uri
-import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.google.gson.TypeAdapter
+import com.google.gson.TypeAdapterFactory
+import com.google.gson.reflect.TypeToken
 import ru.aleshin.core.utils.functional.Constants
 import ru.aleshin.core.utils.functional.Either
+import ru.aleshin.core.utils.platform.SealedClassTypeAdapter
 import ru.aleshin.features.settings.impl.domain.common.SettingsEitherWrapper
 import ru.aleshin.features.settings.impl.domain.common.SettingsFailures
 import ru.aleshin.features.settings.impl.presentation.models.BackupModel
@@ -32,6 +35,7 @@ import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
 import java.util.zip.ZipOutputStream
 import javax.inject.Inject
+import kotlin.jvm.internal.Reflection
 
 /**
  * @author Stanislav Aleshin on 10.06.2023.
@@ -45,6 +49,7 @@ internal interface BackupManager {
     class Base @Inject constructor(
         private val applicationContext: Context,
         private val eitherWrapper: SettingsEitherWrapper,
+        private val gson: Gson,
     ) : BackupManager {
 
         override suspend fun restoreBackup(uri: Uri) = eitherWrapper.wrap {
@@ -57,7 +62,6 @@ internal interface BackupManager {
                         Constants.Backup.BACKUP_JSON_NAME -> {
                             val jsonString = input.bufferedReader().use { it.readText() }
                             // TODO: Not work with old model
-                            val gson = GsonBuilder().serializeNulls().create()
                             val backup = gson.fromJson(jsonString, BackupModel::class.java)
                             return@wrap backup ?: throw IOException()
                         }
@@ -71,7 +75,7 @@ internal interface BackupManager {
             uri: Uri,
             model: BackupModel,
         ) = eitherWrapper.wrap {
-            val jsonString = GsonBuilder().serializeNulls().create().toJson(model)
+            val jsonString = gson.toJson(model)
             val contentResolver = applicationContext.contentResolver
             val outputStream = contentResolver.openOutputStream(uri)
             ZipOutputStream(BufferedOutputStream(outputStream)).use { output ->

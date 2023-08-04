@@ -38,4 +38,10 @@ data class TemplateDetails(
         entity = SubCategoryEntity::class,
     )
     val subCategory: SubCategoryEntity?,
+    @Relation(
+        parentColumn = "id",
+        entityColumn = "template_id",
+        entity = RepeatTimeEntity::class,
+    )
+    val repeatTime: List<RepeatTimeEntity>,
 )

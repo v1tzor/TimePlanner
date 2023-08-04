@@ -17,6 +17,8 @@
 package ru.aleshin.features.home.api.data.datasources.schedules
 
 import androidx.room.*
+import androidx.room.OnConflictStrategy.Companion.REPLACE
+import kotlinx.coroutines.flow.Flow
 import ru.aleshin.features.home.api.data.models.schedules.DailyScheduleEntity
 import ru.aleshin.features.home.api.data.models.schedules.ScheduleDetails
 import ru.aleshin.features.home.api.data.models.timetasks.TimeTaskEntity
@@ -37,7 +39,7 @@ interface SchedulesDao {
 
     @Transaction
     @Query("SELECT * FROM dailySchedules WHERE date = :date")
-    suspend fun fetchDailyScheduleByDate(date: Long): ScheduleDetails?
+    fun fetchDailyScheduleByDate(date: Long): Flow<ScheduleDetails?>
 
     @Update
     suspend fun updateDailySchedules(schedules: List<DailyScheduleEntity>)
@@ -54,8 +56,8 @@ interface SchedulesDao {
     @Delete
     suspend fun removeDailySchedule(schedule: DailyScheduleEntity)
 
-    @Query("DELETE FROM timeTasks WHERE key = :key")
-    suspend fun removeTimeTaskByKey(key: Long)
+    @Query("DELETE FROM timeTasks WHERE key IN (:keys)")
+    suspend fun removeTimeTasksByKey(keys: List<Long>)
 
     @Query("DELETE FROM dailySchedules")
     suspend fun removeAllSchedules()

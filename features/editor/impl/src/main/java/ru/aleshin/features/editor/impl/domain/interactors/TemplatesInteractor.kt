@@ -15,6 +15,7 @@
  */
 package ru.aleshin.features.editor.impl.domain.interactors
 
+import kotlinx.coroutines.flow.first
 import ru.aleshin.core.utils.functional.DomainResult
 import ru.aleshin.features.editor.impl.domain.common.EditorEitherWrapper
 import ru.aleshin.features.editor.impl.domain.entites.EditorFailures
@@ -38,7 +39,7 @@ internal interface TemplatesInteractor {
     ) : TemplatesInteractor {
 
         override suspend fun fetchTemplates() = eitherWrapper.wrap {
-            templatesRepository.fetchAllTemplates()
+            templatesRepository.fetchAllTemplates().first()
         }
 
         override suspend fun updateTemplate(template: Template) = eitherWrapper.wrap {

@@ -27,7 +27,6 @@ import ru.aleshin.features.settings.impl.di.SettingsFeatureDependencies
 import ru.aleshin.timeplanner.di.annotation.TabNavigation
 import ru.aleshin.timeplanner.di.modules.*
 import ru.aleshin.timeplanner.presentation.ui.main.MainActivity
-import ru.aleshin.timeplanner.presentation.ui.splash.screenmodel.SplashScreenModel
 import ru.aleshin.timeplanner.presentation.ui.tabs.screenmodel.TabScreenModel
 import javax.inject.Singleton
 
@@ -55,7 +54,6 @@ interface AppComponent :
 
     @TabNavigation
     fun fetchTabNavigatorManager(): NavigatorManager
-    fun fetchSplashScreenModel(): SplashScreenModel
     fun fetchTabScreenModel(): TabScreenModel
     fun fetchNotificationCreator(): NotificationCreator
     fun inject(activity: MainActivity)

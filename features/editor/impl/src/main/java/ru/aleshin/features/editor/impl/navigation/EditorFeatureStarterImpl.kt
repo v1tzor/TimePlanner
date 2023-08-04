@@ -32,7 +32,8 @@ internal class EditorFeatureStarterImpl @Inject constructor(
 
     override fun provideEditorScreen(navScreen: EditorScreens): Screen {
         if (navScreen is EditorScreens.Editor) {
-            editorInteractor.sendEditModel(navScreen.timeTask.convertToEditModel(navScreen.templateId))
+            val editModel = navScreen.timeTask.convertToEditModel(navScreen.template)
+            editorInteractor.sendEditModel(editModel)
         }
         return editorScreen
     }

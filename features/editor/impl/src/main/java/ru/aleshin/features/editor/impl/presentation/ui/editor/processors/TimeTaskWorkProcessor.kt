@@ -48,9 +48,40 @@ internal interface TimeTaskWorkProcessor : WorkProcessor<TimeTaskWorkCommand, Ed
     ) : TimeTaskWorkProcessor {
 
         override suspend fun work(command: TimeTaskWorkCommand) = when (command) {
-            is TimeTaskWorkCommand.DeleteModel -> deleteModel(command.editModel)
             is TimeTaskWorkCommand.LoadTemplateTimeTasks -> loadTemplates()
-            is TimeTaskWorkCommand.AddOrSaveModel -> saveOrAddModel(command.editModel, command.isTemplateUpdate)
+            is TimeTaskWorkCommand.AddOrSaveModel -> saveOrAddModel(command.editModel)
+            is TimeTaskWorkCommand.DeleteModel -> deleteModel(command.editModel)
+        }
+
+        private suspend fun loadTemplates(): WorkResult<EditorAction, EditorEffect> {
+            delay(Constants.Delay.LOAD_ANIMATION)
+
+            return when (val templates = templatesInteractor.fetchTemplates()) {
+                is Either.Right -> ActionResult(EditorAction.UpdateTemplates(templates.data.map { it.mapToDomain() }))
+                is Either.Left -> EffectResult(EditorEffect.ShowError(templates.data))
+            }
+        }
+
+        private suspend fun saveOrAddModel(editModel: EditModelUi): WorkResult<EditorAction, EditorEffect> {
+            val domainModel = editModel.mapToDomain()
+            val timeTask = domainModel.convertToTimeTask()
+            val saveResult = when (timeTask.key != 0L) {
+                true -> timeTaskInteractor.updateTimeTask(timeTask)
+                false -> timeTaskInteractor.addTimeTask(timeTask)
+            }
+            return when (saveResult) {
+                is Either.Right -> notifyUpdateOrAdd(timeTask).let {
+                    navigationManager.navigateToHomeScreen()
+                    ActionResult(EditorAction.Navigate)
+                }
+                is Either.Left -> with(saveResult.data) {
+                    val effect = when (this is EditorFailures.TimeOverlayError) {
+                        true -> EditorEffect.ShowOverlayError(editModel.timeRanges, this)
+                        false -> EditorEffect.ShowError(this)
+                    }
+                    EffectResult(effect)
+                }
+            }
         }
 
         private suspend fun deleteModel(editModel: EditModelUi): WorkResult<EditorAction, EditorEffect> {
@@ -68,36 +99,6 @@ internal interface TimeTaskWorkProcessor : WorkProcessor<TimeTaskWorkCommand, Ed
             }
         }
 
-        private suspend fun saveOrAddModel(
-            editModel: EditModelUi,
-            isTemplateUpdate: Boolean,
-        ): WorkResult<EditorAction, EditorEffect> {
-            val domainModel = editModel.mapToDomain()
-            val timeTask = domainModel.convertToTimeTask()
-            val templateId = editModel.templateId
-            if (templateId != null && isTemplateUpdate) {
-                templatesInteractor.updateTemplate(domainModel.convertToTemplate(templateId))
-            }
-            val saveResult = when (timeTask.key != 0L) {
-                true -> timeTaskInteractor.updateTimeTask(timeTask)
-                false -> timeTaskInteractor.addTimeTask(timeTask)
-            }
-
-            return when (saveResult) {
-                is Either.Right -> notifyUpdateOrAdd(timeTask).let {
-                    navigationManager.navigateToHomeScreen()
-                    ActionResult(EditorAction.Navigate)
-                }
-                is Either.Left -> with(saveResult.data) {
-                    val effect = when (this is EditorFailures.TimeOverlayError) {
-                        true -> EditorEffect.ShowOverlayError(editModel.timeRanges, this)
-                        false -> EditorEffect.ShowError(this)
-                    }
-                    EffectResult(effect)
-                }
-            }
-        }
-
         private fun notifyUpdateOrAdd(timeTask: TimeTask) {
             if (timeTask.isEnableNotification) {
                 val currentTime = dateManager.fetchCurrentDate()
@@ -109,20 +110,11 @@ internal interface TimeTaskWorkProcessor : WorkProcessor<TimeTaskWorkCommand, Ed
                 }
             }
         }
-
-        private suspend fun loadTemplates(): WorkResult<EditorAction, EditorEffect> {
-            delay(Constants.Delay.LOAD_ANIMATION)
-
-            return when (val templates = templatesInteractor.fetchTemplates()) {
-                is Either.Right -> ActionResult(EditorAction.UpdateTemplates(templates.data.map { it.mapToDomain() }))
-                is Either.Left -> EffectResult(EditorEffect.ShowError(templates.data))
-            }
-        }
     }
 }
 
 internal sealed class TimeTaskWorkCommand : WorkCommand {
-    data class AddOrSaveModel(val editModel: EditModelUi, val isTemplateUpdate: Boolean) : TimeTaskWorkCommand()
+    data class AddOrSaveModel(val editModel: EditModelUi) : TimeTaskWorkCommand()
     data class DeleteModel(val editModel: EditModelUi) : TimeTaskWorkCommand()
     object LoadTemplateTimeTasks : TimeTaskWorkCommand()
 }

@@ -15,6 +15,7 @@
  */
 package ru.aleshin.features.settings.impl.domain.interactors
 
+import kotlinx.coroutines.flow.first
 import ru.aleshin.core.utils.functional.DomainResult
 import ru.aleshin.core.utils.functional.UnitDomainResult
 import ru.aleshin.features.home.api.domain.entities.template.Template
@@ -42,7 +43,7 @@ internal interface TemplatesInteractor {
         }
 
         override suspend fun fetchAllTemplates() = eitherWrapper.wrap {
-            templatesRepository.fetchAllTemplates()
+            templatesRepository.fetchAllTemplates().first()
         }
 
         override suspend fun addTemplates(templates: List<Template>) = eitherWrapper.wrap {

@@ -15,6 +15,7 @@
  */
 package ru.aleshin.features.home.api.domain.entities.schedules
 
+import ru.aleshin.core.utils.extensions.extractAllItem
 import ru.aleshin.core.utils.functional.Mapper
 
 /**
@@ -28,6 +29,4 @@ data class Schedule(
     fun <T> map(mapper: Mapper<Schedule, T>) = mapper.map(this)
 }
 
-fun List<Schedule>.fetchAllTimeTasks() = mutableListOf<TimeTask>().apply {
-    this@fetchAllTimeTasks.map { it.timeTasks }.forEach { timeTaskList -> addAll(timeTaskList) }
-}
+fun List<Schedule>.fetchAllTimeTasks() = map { it.timeTasks }.extractAllItem()

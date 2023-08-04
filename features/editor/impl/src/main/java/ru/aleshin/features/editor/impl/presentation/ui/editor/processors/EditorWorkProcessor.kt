@@ -15,9 +15,7 @@
  */
 package ru.aleshin.features.editor.impl.presentation.ui.editor.processors
 
-import ru.aleshin.core.utils.extensions.duration
 import ru.aleshin.core.utils.functional.Either
-import ru.aleshin.core.utils.functional.TimeRange
 import ru.aleshin.core.utils.functional.rightOrElse
 import ru.aleshin.core.utils.platform.screenmodel.work.*
 import ru.aleshin.features.editor.impl.domain.common.convertToEditModel
@@ -28,9 +26,9 @@ import ru.aleshin.features.editor.impl.domain.interactors.TemplatesInteractor
 import ru.aleshin.features.editor.impl.navigation.NavigationManager
 import ru.aleshin.features.editor.impl.presentation.mappers.mapToDomain
 import ru.aleshin.features.editor.impl.presentation.mappers.mapToUi
-import ru.aleshin.features.editor.impl.presentation.models.editmodel.EditModelUi
 import ru.aleshin.features.editor.impl.presentation.models.categories.MainCategoryUi
 import ru.aleshin.features.editor.impl.presentation.models.categories.SubCategoryUi
+import ru.aleshin.features.editor.impl.presentation.models.editmodel.EditModelUi
 import ru.aleshin.features.editor.impl.presentation.models.template.TemplateUi
 import ru.aleshin.features.editor.impl.presentation.ui.editor.contract.EditorAction
 import ru.aleshin.features.editor.impl.presentation.ui.editor.contract.EditorEffect
@@ -49,24 +47,19 @@ internal interface EditorWorkProcessor : WorkProcessor<EditorWorkCommand, Editor
     ) : EditorWorkProcessor {
 
         override suspend fun work(command: EditorWorkCommand) = when (command) {
+            is EditorWorkCommand.LoadSendEditModel -> loadSendModel()
+            is EditorWorkCommand.AddSubCategory -> addSubCategoryWork(command.name, command.mainCategory)
+            is EditorWorkCommand.AddTemplate -> addTemplate(command.editModel)
+            is EditorWorkCommand.ApplyTemplate -> applyTemplate(command.template, command.model)
             is EditorWorkCommand.GoBack -> navigateToBack()
             is EditorWorkCommand.GoTemplates -> navigateToTemplates()
-            is EditorWorkCommand.AddSubCategory -> addSubCategoryWork(command.name, command.mainCategory)
-            is EditorWorkCommand.LoadSendEditModel -> loadSendModel()
-            is EditorWorkCommand.ChangeIsTemplate -> changeIsTemplate(command.editModel)
-            is EditorWorkCommand.ChangeTimeRange -> changeTimeRange(command.timeRange)
-            is EditorWorkCommand.ApplyTemplate -> applyTemplate(command.template, command.model)
         }
 
-        private fun navigateToBack(): WorkResult<EditorAction, EditorEffect> {
-            return navigationManager.navigateToPreviousFeature().let {
-                ActionResult(EditorAction.Navigate)
-            }
-        }
-
-        private fun navigateToTemplates(): WorkResult<EditorAction, EditorEffect> {
-            return navigationManager.navigateToTemplatesScreen().let {
-                ActionResult(EditorAction.Navigate)
+        private suspend fun loadSendModel(): WorkResult<EditorAction, EditorEffect> {
+            val editModel = editorInteractor.fetchEditModel().mapToUi()
+            return when (val result = categoriesInteractor.fetchCategories()) {
+                is Either.Right -> ActionResult(EditorAction.SetUp(editModel, result.data.map { it.mapToUi() }))
+                is Either.Left -> EffectResult(EditorEffect.ShowError(result.data))
             }
         }
 
@@ -86,51 +79,36 @@ internal interface EditorWorkProcessor : WorkProcessor<EditorWorkCommand, Editor
             }
         }
 
-        private suspend fun loadSendModel(): WorkResult<EditorAction, EditorEffect> {
-            val editModel = editorInteractor.fetchEditModel().mapToUi()
-            return when (val result = categoriesInteractor.fetchCategories()) {
-                is Either.Right -> ActionResult(EditorAction.SetUp(editModel, result.data.map { it.mapToUi() }))
-                is Either.Left -> EffectResult(EditorEffect.ShowError(result.data))
+        private suspend fun addTemplate(editModel: EditModelUi): WorkResult<EditorAction, EditorEffect> {
+            val template = editModel.mapToDomain().convertToTemplate()
+            val templateId = templatesInteractor.addTemplate(template).rightOrElse(null)
+            return ActionResult(EditorAction.UpdateTemplateId(templateId))
+        }
+
+        private fun applyTemplate(template: TemplateUi, model: EditModelUi): WorkResult<EditorAction, EditorEffect> {
+            val domainModel = template.mapToDomain().convertToEditModel(model.date).copy(key = model.key)
+            return ActionResult(EditorAction.UpdateEditModel(domainModel.mapToUi()))
+        }
+
+        private fun navigateToBack(): WorkResult<EditorAction, EditorEffect> {
+            return navigationManager.navigateToPreviousFeature().let {
+                ActionResult(EditorAction.Navigate)
             }
         }
 
-        private suspend fun changeIsTemplate(editModel: EditModelUi): WorkResult<EditorAction, EditorEffect> {
-            val currentTemplateId = editModel.templateId
-            val newId = if (currentTemplateId == null) {
-                val template = editModel.mapToDomain().convertToTemplate()
-                templatesInteractor.addTemplate(template).rightOrElse(null)
-            } else {
-                templatesInteractor.deleteTemplateById(currentTemplateId).let { result ->
-                    when (result) {
-                        is Either.Right -> null
-                        is Either.Left -> return EffectResult(EditorEffect.ShowError(result.data))
-                    }
-                }
+        private fun navigateToTemplates(): WorkResult<EditorAction, EditorEffect> {
+            return navigationManager.navigateToTemplatesScreen().let {
+                ActionResult(EditorAction.Navigate)
             }
-            return ActionResult(EditorAction.UpdateTemplateId(newId))
-        }
-
-        private fun changeTimeRange(timeRange: TimeRange): WorkResult<EditorAction, EditorEffect> {
-            val duration = duration(timeRange)
-            return ActionResult(EditorAction.UpdateTimeRange(timeRange, duration))
-        }
-
-        private fun applyTemplate(
-            template: TemplateUi,
-            model: EditModelUi,
-        ): WorkResult<EditorAction, EditorEffect> {
-            val domainEditModel = template.mapToDomain().convertToEditModel(model.date).copy(key = model.key)
-            return ActionResult(EditorAction.UpdateEditModel(domainEditModel.mapToUi()))
         }
     }
 }
 
 internal sealed class EditorWorkCommand : WorkCommand {
     object GoBack : EditorWorkCommand()
-    data class AddSubCategory(val name: String, val mainCategory: MainCategoryUi) : EditorWorkCommand()
     object GoTemplates : EditorWorkCommand()
     object LoadSendEditModel : EditorWorkCommand()
-    data class ChangeIsTemplate(val editModel: EditModelUi) : EditorWorkCommand()
-    data class ChangeTimeRange(val timeRange: TimeRange) : EditorWorkCommand()
+    data class AddSubCategory(val name: String, val mainCategory: MainCategoryUi) : EditorWorkCommand()
+    data class AddTemplate(val editModel: EditModelUi) : EditorWorkCommand()
     data class ApplyTemplate(val template: TemplateUi, val model: EditModelUi) : EditorWorkCommand()
 }

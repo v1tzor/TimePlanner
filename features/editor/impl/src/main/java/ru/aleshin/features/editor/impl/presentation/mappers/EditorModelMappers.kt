@@ -34,6 +34,7 @@ internal fun EditModel.mapToUi() = EditModelUi(
     parameters = EditParameters(isImportant, isEnableNotification, isConsiderInStatistics),
     isCompleted = isCompleted,
     templateId = templateId,
+    repeatTimes = repeatTimes,
 )
 
 internal fun EditModelUi.mapToDomain() = EditModel(
@@ -48,4 +49,5 @@ internal fun EditModelUi.mapToDomain() = EditModel(
     isEnableNotification = parameters.isEnableNotification,
     isConsiderInStatistics = parameters.isConsiderInStatistics,
     templateId = templateId,
+    repeatTimes = repeatTimes,
 )

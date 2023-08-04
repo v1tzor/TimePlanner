@@ -74,7 +74,6 @@ internal class SettingsScreenModel @Inject constructor(
             is SettingsEvent.PressSaveBackupData -> launchBackgroundWork(SettingsWorkKey.DATA_WORK, Dispatchers.IO) {
                 dataWorkProcessor.work(DataWorkCommand.SaveBackupData(event.uri)).collectAndHandleWork()
             }
-            is SettingsEvent.StopLoading -> sendAction(SettingsAction.ShowLoadingBackup(false))
         }
     }
 

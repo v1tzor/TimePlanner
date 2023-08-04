@@ -16,18 +16,15 @@
 package ru.aleshin.features.settings.impl.presentation.ui.screensmodel
 
 import android.net.Uri
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.flow
-import ru.aleshin.core.utils.functional.Constants
 import ru.aleshin.core.utils.functional.Either
+import ru.aleshin.core.utils.functional.handle
 import ru.aleshin.core.utils.platform.screenmodel.work.ActionResult
 import ru.aleshin.core.utils.platform.screenmodel.work.EffectResult
 import ru.aleshin.core.utils.platform.screenmodel.work.FlowWorkProcessor
 import ru.aleshin.core.utils.platform.screenmodel.work.WorkCommand
-import ru.aleshin.features.editor.api.presentation.TimeTaskAlarmManager
-import ru.aleshin.features.home.api.domain.entities.categories.Categories
-import ru.aleshin.features.home.api.domain.entities.schedules.Schedule
-import ru.aleshin.features.home.api.domain.entities.template.Template
+import ru.aleshin.core.utils.platform.screenmodel.work.WorkResult
 import ru.aleshin.features.settings.impl.domain.common.SettingsFailures
 import ru.aleshin.features.settings.impl.domain.interactors.CategoriesInteractor
 import ru.aleshin.features.settings.impl.domain.interactors.ScheduleInteractor
@@ -51,7 +48,6 @@ internal interface DataWorkProcessor : FlowWorkProcessor<DataWorkCommand, Settin
         private val categoriesInteractor: CategoriesInteractor,
         private val templatesInteractor: TemplatesInteractor,
         private val backupManager: BackupManager,
-        private val alarmManager: TimeTaskAlarmManager,
     ) : DataWorkProcessor {
 
         override suspend fun work(command: DataWorkCommand) = when (command) {
@@ -62,84 +58,50 @@ internal interface DataWorkProcessor : FlowWorkProcessor<DataWorkCommand, Settin
 
         private fun restoreBackupDataWork(uri: Uri) = flow {
             emit(ActionResult(SettingsAction.ShowLoadingBackup(true)))
-            val backupResult = backupManager.restoreBackup(uri)
-            if (backupResult is Either.Right) {
-                val restoreWorkResult = when (val clearResult = clearAllData()) {
-                    is Either.Right -> with(backupResult.data) {
-                        when (val restoreResult = restoreAllData(categories, schedules, templates)) {
-                            is Either.Right -> {
-                                ActionResult(SettingsAction.ShowLoadingBackup(false))
-                            }
-                            is Either.Left -> EffectResult(SettingsEffect.ShowError(restoreResult.data))
-                        }
+            backupManager.restoreBackup(uri).handle(
+                onLeftAction = { emit(EffectResult(SettingsEffect.ShowError(it))) },
+                onRightAction = { backupModel ->
+                    scheduleInteractor.removeAllSchedules().dataOrError(this@flow) ?: return@handle
+                    templatesInteractor.removeAllTemplates().dataOrError(this@flow) ?: return@handle
+                    categoriesInteractor.removeAllCategories().dataOrError(this@flow) ?: return@handle
+                    with(backupModel) {
+                        categoriesInteractor.addCategories(categories).dataOrError(this@flow)
+                        templatesInteractor.addTemplates(templates).dataOrError(this@flow)
+                        scheduleInteractor.addSchedules(schedules).dataOrError(this@flow)
                     }
-                    is Either.Left -> EffectResult(SettingsEffect.ShowError(clearResult.data))
-                }
-                delay(Constants.Delay.LOAD_ANIMATION)
-                emit(restoreWorkResult)
-            } else if (backupResult is Either.Left) {
-                emit(EffectResult(SettingsEffect.ShowError(backupResult.data)))
-            }
+                },
+            )
+            emit(ActionResult(SettingsAction.ShowLoadingBackup(false)))
         }
 
         private fun saveBackupDataWork(uri: Uri) = flow {
             emit(ActionResult(SettingsAction.ShowLoadingBackup(true)))
             run {
-                val schedules = scheduleInteractor.fetchAllSchedules().let { schedules ->
-                    when (schedules) {
-                        is Either.Right -> schedules.data
-                        is Either.Left -> return@run emit(EffectResult(SettingsEffect.ShowError(schedules.data)))
-                    }
-                }
-                val categories = categoriesInteractor.fetchAllCategories().let { categories ->
-                    when (categories) {
-                        is Either.Right -> categories.data
-                        is Either.Left -> return@run emit(EffectResult(SettingsEffect.ShowError(categories.data)))
-                    }
-                }
-                val templates = templatesInteractor.fetchAllTemplates().let { templates ->
-                    when (templates) {
-                        is Either.Right -> templates.data
-                        is Either.Left -> return@run emit(EffectResult(SettingsEffect.ShowError(templates.data)))
-                    }
-                }
+                val schedules = scheduleInteractor.fetchAllSchedules().dataOrError(this) ?: return@run 
+                val categories = categoriesInteractor.fetchAllCategories().dataOrError(this) ?: return@run
+                val templates = templatesInteractor.fetchAllTemplates().dataOrError(this) ?: return@run
                 val backupModel = BackupModel(schedules, templates, categories)
+
                 backupManager.saveBackup(uri, backupModel)
             }
-            delay(Constants.Delay.LOAD_ANIMATION)
             emit(ActionResult(SettingsAction.ShowLoadingBackup(false)))
         }
 
         private fun clearAllDataWork() = flow {
-            val resetSettings = when (val clearResult = clearAllData()) {
-                is Either.Right -> when (val result = settingsInteractor.resetAllSettings()) {
-                    is Either.Right -> when (val settings = settingsInteractor.fetchAllSettings()) {
-                        is Either.Right -> ActionResult(SettingsAction.ChangeAllSettings(settings.data.mapToUi()))
-                        is Either.Left -> EffectResult(SettingsEffect.ShowError(settings.data))
-                    }
-                    is Either.Left -> EffectResult(SettingsEffect.ShowError(result.data))
-                }
-                is Either.Left -> EffectResult(SettingsEffect.ShowError(clearResult.data))
+            scheduleInteractor.removeAllSchedules().dataOrError(this)
+            templatesInteractor.removeAllTemplates().dataOrError(this)
+            categoriesInteractor.removeAllCategories().dataOrError(this)
+            
+            settingsInteractor.resetAllSettings().dataOrError(this)?.let {
+                emit(ActionResult(SettingsAction.ChangeAllSettings(it.mapToUi()))) 
             }
-            emit(resetSettings)
         }
 
-        private suspend fun clearAllData(): Either<SettingsFailures, Unit> {
-            scheduleInteractor.removeAllSchedules().apply { if (this is Either.Left) return this }
-            templatesInteractor.removeAllTemplates().apply { if (this is Either.Left) return this }
-            categoriesInteractor.removeAllCategories().apply { if (this is Either.Left) return this }
-            return Either.Right(Unit)
-        }
-
-        private suspend fun restoreAllData(
-            categories: List<Categories>,
-            schedules: List<Schedule>,
-            templates: List<Template>,
-        ): Either<SettingsFailures, Unit> {
-            categoriesInteractor.addCategories(categories).apply { if (this is Either.Left) return this }
-            templatesInteractor.addTemplates(templates).apply { if (this is Either.Left) return this }
-            scheduleInteractor.addSchedules(schedules).apply { if (this is Either.Left) return this }
-            return Either.Right(Unit)
+        private suspend fun <R> Either<SettingsFailures, R>.dataOrError(
+            collector: FlowCollector<WorkResult<SettingsAction, SettingsEffect>>,
+        ): R? = when (this) {
+            is Either.Right -> data
+            is Either.Left -> collector.emit(EffectResult(SettingsEffect.ShowError(data))).let { null }
         }
     }
 }

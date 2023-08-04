@@ -21,6 +21,7 @@ import ru.aleshin.core.utils.platform.screenmodel.work.ActionResult
 import ru.aleshin.core.utils.platform.screenmodel.work.WorkCommand
 import ru.aleshin.core.utils.platform.screenmodel.work.WorkProcessor
 import ru.aleshin.core.utils.platform.screenmodel.work.WorkResult
+import ru.aleshin.features.editor.api.navigations.EditorScreens
 import ru.aleshin.features.home.api.domain.entities.categories.MainCategory
 import ru.aleshin.features.home.api.domain.entities.schedules.TimeTask
 import ru.aleshin.features.home.impl.domain.interactors.TemplatesInteractor
@@ -48,21 +49,17 @@ internal interface NavigationWorkProcessor : WorkProcessor<NavigationWorkCommand
         }
 
         private suspend fun navigateToEditor(timeTask: TimeTaskUi): WorkResult<HomeAction, HomeEffect> {
-            val templateId = templatesInteractor.checkIsTemplate(timeTask.mapToDomain()).rightOrElse(null)
-            return navigationManager.navigateToEditorFeature(
-                templateId = templateId,
-                timeTask = timeTask.mapToDomain(),
-            ).let {
+            val template = templatesInteractor.checkIsTemplate(timeTask.mapToDomain()).rightOrElse(null)
+            val screen = EditorScreens.Editor(timeTask.mapToDomain(), template)
+            return navigationManager.navigateToEditorFeature(screen).let {
                 ActionResult(HomeAction.Navigate)
             }
         }
 
         private fun navigateToEditorCreator(date: Date, timeRange: TimeRange): WorkResult<HomeAction, HomeEffect> {
             val timeTask = TimeTask(date = date, category = MainCategory(), timeRanges = timeRange)
-            return navigationManager.navigateToEditorFeature(
-                templateId = null,
-                timeTask = timeTask,
-            ).let {
+            val screen = EditorScreens.Editor(timeTask, null)
+            return navigationManager.navigateToEditorFeature(screen).let {
                 ActionResult(HomeAction.Navigate)
             }
         }

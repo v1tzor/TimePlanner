@@ -21,7 +21,6 @@ import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 import ru.aleshin.features.home.api.data.models.categories.MainCategoryEntity
 import ru.aleshin.features.home.api.data.models.categories.SubCategoryEntity
-import java.util.*
 
 /**
  * @author Stanislav Aleshin on 08.03.2023.

@@ -15,9 +15,7 @@
  */
 package ru.aleshin.core.utils.extensions
 
-import java.lang.Math.abs
-import java.util.*
-import kotlin.random.Random
+import java.util.UUID
 
 /**
  * @author Stanislav Aleshin on 25.02.2023.
@@ -25,6 +23,10 @@ import kotlin.random.Random
 fun <T> List<T>.equalsIgnoreOrder(other: List<T>) =
     this.size == other.size && this.toSet() == other.toSet()
 
+fun <T> List<List<T>>.extractAllItem() = mutableListOf<T>().apply {
+    this@extractAllItem.forEach { addAll(it) }
+}
+
 fun Int?.toStringOrEmpty() = this?.toString() ?: ""
 
-fun generateUniqueKey() = abs(Random(Calendar.getInstance().timeInMillis).nextLong())
+fun generateUniqueKey() = UUID.randomUUID().mostSignificantBits and Long.MAX_VALUE

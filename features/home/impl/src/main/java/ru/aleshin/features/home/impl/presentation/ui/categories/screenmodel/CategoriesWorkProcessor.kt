@@ -15,7 +15,8 @@
  */
 package ru.aleshin.features.home.impl.presentation.ui.categories.screenmodel
 
-import ru.aleshin.core.utils.functional.Either
+import kotlinx.coroutines.flow.flow
+import ru.aleshin.core.utils.functional.handle
 import ru.aleshin.core.utils.platform.screenmodel.work.*
 import ru.aleshin.features.home.impl.domain.interactors.CategoriesInteractor
 import ru.aleshin.features.home.impl.domain.interactors.SubCategoriesInteractor
@@ -30,7 +31,7 @@ import javax.inject.Inject
 /**
  * @author Stanislav Aleshin on 06.04.2023.
  */
-internal interface CategoriesWorkProcessor : WorkProcessor<CategoriesWorkCommand, CategoriesAction, CategoriesEffect> {
+internal interface CategoriesWorkProcessor : FlowWorkProcessor<CategoriesWorkCommand, CategoriesAction, CategoriesEffect> {
 
     class Base @Inject constructor(
         private val categoriesInteractor: CategoriesInteractor,
@@ -38,7 +39,7 @@ internal interface CategoriesWorkProcessor : WorkProcessor<CategoriesWorkCommand
     ) : CategoriesWorkProcessor {
 
         override suspend fun work(command: CategoriesWorkCommand) = when (command) {
-            is CategoriesWorkCommand.LoadCategories -> loadCategoriesWork(command.mainCategoryId)
+            is CategoriesWorkCommand.LoadCategories -> loadCategoriesWork()
             is CategoriesWorkCommand.AddMainCategory -> addMainCategory(command.name)
             is CategoriesWorkCommand.AddSubCategory -> addSubCategory(command.name, command.mainCategory)
             is CategoriesWorkCommand.UpdateMainCategory -> updateMainCategory(command.mainCategory)
@@ -47,94 +48,68 @@ internal interface CategoriesWorkProcessor : WorkProcessor<CategoriesWorkCommand
             is CategoriesWorkCommand.DeleteSubCategory -> deleteSubCategory(command.subCategory)
         }
 
-        private suspend fun loadCategoriesWork(
-            categoryId: Int,
-        ): WorkResult<CategoriesAction, CategoriesEffect> {
-            val loadResult = categoriesInteractor.fetchAllCategories()
-            return when (loadResult) {
-                is Either.Right -> {
-                    val categories = loadResult.data.map { it.mapToUi() }
-                    val selectedCategory = categories.find { it.mainCategory.id == categoryId }?.mainCategory
-                    ActionResult(CategoriesAction.SetUp(categories = categories, category = selectedCategory))
-                }
-                is Either.Left -> EffectResult(CategoriesEffect.ShowError(loadResult.data))
+        private suspend fun loadCategoriesWork() = flow {
+            categoriesInteractor.fetchCategories().collect { categoryEither ->
+                categoryEither.handle(
+                    onLeftAction = { emit(EffectResult(CategoriesEffect.ShowError(it))) },
+                    onRightAction = { domainCategories ->
+                        val categories = domainCategories.map { it.mapToUi() }
+                        emit(ActionResult(CategoriesAction.SetUp(categories = categories)))
+                    },
+                )
             }
         }
 
-        private suspend fun addSubCategory(
-            name: String,
-            mainCategory: MainCategoryUi,
-        ): WorkResult<CategoriesAction, CategoriesEffect> {
-            val subCategory = SubCategoryUi(id = 0, name = name, mainCategory = mainCategory)
-            val addResult = subCategoriesInteractor.addSubCategory(subCategory.mapToDomain())
-            return when (addResult) {
-                is Either.Right -> loadCategoriesWork(mainCategory.id)
-                is Either.Left -> EffectResult(CategoriesEffect.ShowError(addResult.data))
-            }
+        private suspend fun addSubCategory(name: String, mainCategory: MainCategoryUi) = flow {
+            val subCategory = SubCategoryUi(name = name, mainCategory = mainCategory)
+            subCategoriesInteractor.addSubCategory(subCategory.mapToDomain()).handle(
+                onLeftAction = { emit(EffectResult(CategoriesEffect.ShowError(it))) },
+            )
         }
 
-        private suspend fun addMainCategory(
-            categoryName: String,
-        ): WorkResult<CategoriesAction, CategoriesEffect> {
+        private suspend fun addMainCategory(categoryName: String) = flow {
             val mainCategory = MainCategoryUi(customName = categoryName, defaultType = null)
-            val addResult = categoriesInteractor.addMainCategory(mainCategory.mapToDomain())
-            return when (addResult) {
-                is Either.Right -> loadCategoriesWork(mainCategory.id)
-                is Either.Left -> EffectResult(CategoriesEffect.ShowError(addResult.data))
-            }
+            categoriesInteractor.addMainCategory(mainCategory.mapToDomain()).handle(
+                onLeftAction = { emit(EffectResult(CategoriesEffect.ShowError(it))) },
+                onRightAction = { id ->
+                    emit(ActionResult(CategoriesAction.ChangeMainCategory(mainCategory.copy(id = id))))
+                },
+            )
         }
 
-        private suspend fun deleteSubCategory(
-            subCategory: SubCategoryUi,
-        ): WorkResult<CategoriesAction, CategoriesEffect> {
-            val deleteResult = subCategoriesInteractor.deleteSubCategory(subCategory.mapToDomain())
-            return when (deleteResult) {
-                is Either.Right -> loadCategoriesWork(subCategory.mainCategory.id)
-                is Either.Left -> EffectResult(CategoriesEffect.ShowError(deleteResult.data))
-            }
+        private suspend fun deleteSubCategory(subCategory: SubCategoryUi) = flow {
+            subCategoriesInteractor.deleteSubCategory(subCategory.mapToDomain()).handle(
+                onLeftAction = { emit(EffectResult(CategoriesEffect.ShowError(it))) },
+            )
         }
 
-        private suspend fun updateSubCategory(
-            subCategory: SubCategoryUi,
-        ): WorkResult<CategoriesAction, CategoriesEffect> {
-            val updateResult = subCategoriesInteractor.updateSubCategory(subCategory.mapToDomain())
-            return when (updateResult) {
-                is Either.Right -> loadCategoriesWork(subCategory.mainCategory.id)
-                is Either.Left -> EffectResult(CategoriesEffect.ShowError(updateResult.data))
-            }
+        private suspend fun updateSubCategory(subCategory: SubCategoryUi) = flow {
+            subCategoriesInteractor.updateSubCategory(subCategory.mapToDomain()).handle(
+                onLeftAction = { emit(EffectResult(CategoriesEffect.ShowError(it))) },
+            )
         }
 
-        private suspend fun deleteMainCategory(
-            category: MainCategoryUi,
-        ): WorkResult<CategoriesAction, CategoriesEffect> {
-            val deleteResult = categoriesInteractor.deleteMainCategory(category.mapToDomain())
-            return when (deleteResult) {
-                is Either.Right -> loadCategoriesWork(category.id)
-                is Either.Left -> EffectResult(CategoriesEffect.ShowError(deleteResult.data))
-            }
+        private suspend fun deleteMainCategory(category: MainCategoryUi) = flow {
+            categoriesInteractor.deleteMainCategory(category.mapToDomain()).handle(
+                onLeftAction = { emit(EffectResult(CategoriesEffect.ShowError(it))) },
+            )
         }
 
-        private suspend fun updateMainCategory(
-            category: MainCategoryUi,
-        ): WorkResult<CategoriesAction, CategoriesEffect> {
-            val updateResult = categoriesInteractor.updateMainCategory(category.mapToDomain())
-            return when (updateResult) {
-                is Either.Right -> loadCategoriesWork(category.id)
-                is Either.Left -> EffectResult(CategoriesEffect.ShowError(updateResult.data))
-            }
+        private suspend fun updateMainCategory(category: MainCategoryUi) = flow {
+            categoriesInteractor.updateMainCategory(category.mapToDomain()).handle(
+                onRightAction = { emit(ActionResult(CategoriesAction.ChangeMainCategory(category))) },
+                onLeftAction = { emit(EffectResult(CategoriesEffect.ShowError(it))) },
+            )
         }
     }
 }
 
 internal sealed class CategoriesWorkCommand : WorkCommand {
-    data class LoadCategories(val mainCategoryId: Int) : CategoriesWorkCommand()
-
+    object LoadCategories : CategoriesWorkCommand()
     data class AddSubCategory(val name: String, val mainCategory: MainCategoryUi) : CategoriesWorkCommand()
     data class AddMainCategory(val name: String) : CategoriesWorkCommand()
-
     data class UpdateSubCategory(val subCategory: SubCategoryUi) : CategoriesWorkCommand()
     data class UpdateMainCategory(val mainCategory: MainCategoryUi) : CategoriesWorkCommand()
-
     data class DeleteSubCategory(val subCategory: SubCategoryUi) : CategoriesWorkCommand()
     data class DeleteMainCategory(val mainCategory: MainCategoryUi) : CategoriesWorkCommand()
 }

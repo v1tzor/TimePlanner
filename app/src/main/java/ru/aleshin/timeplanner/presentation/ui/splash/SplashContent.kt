@@ -20,14 +20,11 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.delay
-import ru.aleshin.core.utils.functional.Constants
-import ru.aleshin.timeplanner.presentation.theme.MainThemeRes
+import ru.aleshin.core.ui.theme.TimePlannerRes
 
 /**
  * @author Stanislav Aleshin on 14.02.2023.
@@ -35,25 +32,19 @@ import ru.aleshin.timeplanner.presentation.theme.MainThemeRes
 @Composable
 fun SplashContent(
     modifier: Modifier = Modifier,
-    onSplashExit: () -> Unit,
 ) {
     Box(modifier = modifier.fillMaxSize()) {
         Image(
             modifier = Modifier.align(Alignment.Center).size(64.dp),
-            painter = painterResource(id = MainThemeRes.icons.launcher),
-            contentDescription = MainThemeRes.strings.launcherIconDesc,
+            painter = painterResource(id = TimePlannerRes.icons.logo),
+            contentDescription = TimePlannerRes.strings.appName,
         )
         Text(
             modifier = Modifier.align(Alignment.BottomCenter).padding(18.dp),
-            text = MainThemeRes.strings.authorTitle,
+            text = TimePlannerRes.strings.authorTitle,
             style = MaterialTheme.typography.labelSmall,
             color = MaterialTheme.colorScheme.surfaceVariant,
         )
-    }
-
-    LaunchedEffect(key1 = Unit) {
-        delay(Constants.Delay.SPLASH)
-        onSplashExit.invoke()
     }
 }
 

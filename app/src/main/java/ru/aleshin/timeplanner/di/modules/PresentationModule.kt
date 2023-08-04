@@ -22,8 +22,6 @@ import dagger.Binds
 import dagger.Module
 import ru.aleshin.core.utils.di.ScreenModelKey
 import ru.aleshin.timeplanner.presentation.ui.main.viewmodel.*
-import ru.aleshin.timeplanner.presentation.ui.splash.screenmodel.SplashScreenModel
-import ru.aleshin.timeplanner.presentation.ui.splash.screenmodel.SplashStateCommunicator
 import ru.aleshin.timeplanner.presentation.ui.tabs.screenmodel.TabScreenModel
 import ru.aleshin.timeplanner.presentation.ui.tabs.screenmodel.TabsStateCommunicator
 import javax.inject.Singleton
@@ -49,15 +47,8 @@ interface PresentationModule {
     @Binds
     fun bindSettingsWorkProcessor(processor: SettingsWorkProcessor.Base): SettingsWorkProcessor
 
-    // Splash ScreenModel
-
     @Binds
-    @ScreenModelKey(SplashScreenModel::class)
-    fun bindSplashScreenModel(screenModel: SplashScreenModel): ScreenModel
-
-    @Binds
-    @Singleton
-    fun bindSplashStateCommunicator(communicator: SplashStateCommunicator.Base): SplashStateCommunicator
+    fun bindNavigationWorkProcessor(processor: NavigationWorkProcessor.Base): NavigationWorkProcessor
 
     // Tabs ScreenModel
 

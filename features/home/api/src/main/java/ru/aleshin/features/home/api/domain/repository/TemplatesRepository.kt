@@ -15,6 +15,7 @@
  */
 package ru.aleshin.features.home.api.domain.repository
 
+import kotlinx.coroutines.flow.Flow
 import ru.aleshin.features.home.api.domain.entities.template.Template
 
 /**
@@ -23,7 +24,8 @@ import ru.aleshin.features.home.api.domain.entities.template.Template
 interface TemplatesRepository {
     suspend fun addTemplates(templates: List<Template>)
     suspend fun addTemplate(template: Template): Int
-    suspend fun fetchAllTemplates(): List<Template>
+    suspend fun fetchTemplatesById(templateId: Int): Template?
+    fun fetchAllTemplates(): Flow<List<Template>>
     suspend fun updateTemplate(template: Template)
     suspend fun deleteTemplateById(id: Int)
     suspend fun deleteAllTemplates()

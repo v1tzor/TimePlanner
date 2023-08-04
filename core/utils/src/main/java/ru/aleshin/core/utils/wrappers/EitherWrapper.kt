@@ -48,9 +48,11 @@ interface FlowEitherWrapper<F : DomainFailures> : EitherWrapper<F> {
     ) : FlowEitherWrapper<F>, EitherWrapper.Abstract<F>(errorHandler) {
 
         override suspend fun <O> wrapFlow(block: suspend () -> Flow<O>) = flow {
-            block.invoke()
-                .catch { error -> this@flow.emit(Either.Left(data = errorHandler.handle(error))) }
-                .collect { data -> emit(Either.Right(data = data)) }
+            block.invoke().catch { error -> 
+                this@flow.emit(Either.Left(data = errorHandler.handle(error))) 
+            }.collect { data ->
+                emit(Either.Right(data = data)) 
+            }
         }
     }
 }

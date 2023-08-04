@@ -81,6 +81,8 @@ dependencies {
 
     implementation(Dependencies.Charts.library)
 
+    implementation(Dependencies.Google.gson)
+
     implementation(Dependencies.Dagger.core)
     kapt(Dependencies.Dagger.kapt)
 
@@ -91,4 +93,5 @@ dependencies {
     testImplementation(Dependencies.Test.jUnit)
     androidTestImplementation(Dependencies.Test.jUnitExt)
     androidTestImplementation(Dependencies.Test.espresso)
+    implementation(kotlin("reflect"))
 }

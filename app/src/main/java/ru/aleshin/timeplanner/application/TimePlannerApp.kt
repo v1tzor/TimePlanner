@@ -21,7 +21,6 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
-import ru.aleshin.core.ui.theme.tokens.TimePlannerLanguage
 import ru.aleshin.core.ui.theme.tokens.TimePlannerStrings
 import ru.aleshin.core.ui.theme.tokens.fetchCoreLanguage
 import ru.aleshin.core.ui.theme.tokens.fetchCoreStrings

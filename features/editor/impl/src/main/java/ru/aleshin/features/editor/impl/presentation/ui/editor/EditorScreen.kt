@@ -15,7 +15,6 @@
  */
 package ru.aleshin.features.editor.impl.presentation.ui.editor
 
-import android.util.Log
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -64,11 +63,12 @@ internal class EditorScreen @Inject constructor() : Screen {
                         modifier = Modifier.padding(paddingValues),
                         onCategoriesChange = { main, sub -> dispatchEvent(EditorEvent.ChangeCategories(main, sub)) },
                         onAddSubCategory = { dispatchEvent(EditorEvent.AddSubCategory(it)) },
-                        onChangeTemplate = { dispatchEvent(EditorEvent.ChangeIsTemplate) },
-                        onSaveClick = { dispatchEvent(EditorEvent.PressSaveButton(it)) },
-                        onCancelClick = { dispatchEvent(EditorEvent.PressBackButton) },
                         onTimeRangeChange = { dispatchEvent(EditorEvent.ChangeTime(it)) },
                         onChangeParameters = { dispatchEvent(EditorEvent.ChangeParameters(it)) },
+                        onControlTemplate = { dispatchEvent(EditorEvent.PressControlTemplateButton) },
+                        onCreateTemplate = { dispatchEvent(EditorEvent.CreateTemplate) },
+                        onSaveClick = { dispatchEvent(EditorEvent.PressSaveButton) },
+                        onCancelClick = { dispatchEvent(EditorEvent.PressBackButton) },
                     )
                 },
                 topBar = {
@@ -89,6 +89,7 @@ internal class EditorScreen @Inject constructor() : Screen {
             TemplatesBottomSheet(
                 isShow = isTemplatesSheetOpen,
                 templates = state.templates,
+                currentTemplateId = state.editModel?.templateId,
                 onDismiss = { isTemplatesSheetOpen = false },
                 onControlClick = { dispatchEvent(EditorEvent.PressControlTemplateButton) },
                 onChooseTemplate = { template ->

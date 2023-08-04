@@ -15,6 +15,7 @@
  */
 package ru.aleshin.features.home.api.domain.repository
 
+import kotlinx.coroutines.flow.Flow
 import ru.aleshin.features.home.api.domain.entities.categories.Categories
 import ru.aleshin.features.home.api.domain.entities.categories.MainCategory
 
@@ -22,8 +23,8 @@ import ru.aleshin.features.home.api.domain.entities.categories.MainCategory
  * @author Stanislav Aleshin on 15.04.2023.
  */
 interface CategoriesRepository {
-    suspend fun addMainCategories(categories: List<MainCategory>)
-    suspend fun fetchCategories(): List<Categories>
+    suspend fun addMainCategories(categories: List<MainCategory>): List<Int>
+    fun fetchCategories(): Flow<List<Categories>>
     suspend fun fetchCategoriesByType(mainCategory: MainCategory): Categories?
     suspend fun updateMainCategory(category: MainCategory)
     suspend fun deleteMainCategory(category: MainCategory)

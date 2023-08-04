@@ -35,6 +35,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.core.screen.Screen
 import kotlinx.coroutines.launch
+import ru.aleshin.core.ui.views.ErrorSnackbar
 import ru.aleshin.core.ui.views.Scaffold
 import ru.aleshin.core.utils.managers.LocalDrawerManager
 import ru.aleshin.core.utils.platform.screen.ScreenContent
@@ -71,15 +72,25 @@ internal class TemplatesScreen : Screen {
                     state = state,
                     modifier = Modifier.padding(paddingValues),
                     onChangeSortedType = { dispatchEvent(TemplatesEvent.UpdatedSortedType(it)) },
-                    onUpdateTemplate = { dispatchEvent(TemplatesEvent.UpdateTemplate(it)) },
                     onDeleteTemplate = { dispatchEvent(TemplatesEvent.DeleteTemplate(it.templateId)) },
+                    onUpdateTemplate = { dispatchEvent(TemplatesEvent.UpdateTemplate(it)) },
+                    onAddRepeatTemplate = { time, template ->
+                        dispatchEvent(TemplatesEvent.AddRepeatTemplate(time, template))
+                    },
+                    onDeleteRepeatTemplate = { time, template ->
+                        dispatchEvent(TemplatesEvent.DeleteRepeatTemplate(time, template))
+                    },
                 )
             },
             topBar = {
-                TemplatesTopAppBar(onMenuIconClick = { scope.launch { drawerManager?.openDrawer() } })
+                TemplatesTopAppBar(
+                    onMenuIconClick = { scope.launch { drawerManager?.openDrawer() } },
+                )
             },
             snackbarHost = {
-                SnackbarHost(hostState = snackbarState)
+                SnackbarHost(hostState = snackbarState) {
+                    ErrorSnackbar(snackbarData = it)
+                }
             },
             floatingActionButton = {
                 FloatingActionButton(
@@ -109,7 +120,7 @@ internal class TemplatesScreen : Screen {
         handleEffect { effect ->
             when (effect) {
                 is TemplatesEffect.ShowError -> snackbarState.showSnackbar(
-                    message = effect.failure.mapToMessage(strings).apply { Log.d("test", "error -> ${effect.failure}") },
+                    message = effect.failures.mapToMessage(strings),
                 )
             }
         }

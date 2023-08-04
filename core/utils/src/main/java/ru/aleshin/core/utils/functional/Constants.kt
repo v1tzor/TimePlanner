@@ -75,5 +75,7 @@ object Constants {
         const val minutesFormat = "%s%s"
         const val hoursFormat = "%s%s"
         const val hoursAndMinutesFormat = "%s%s %s%s"
+
+        const val SHIFT_MINUTE_VALUE = 5
     }
 }

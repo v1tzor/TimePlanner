@@ -30,6 +30,7 @@ internal fun TemplateUi.mapToDomain() = Template(
     isImportant = isImportant,
     isEnableNotification = isEnableNotification,
     isConsiderInStatistics = isConsiderInStatistics,
+    repeatTimes = repeatTimes
 )
 
 internal fun Template.mapToDomain() = TemplateUi(
@@ -41,4 +42,5 @@ internal fun Template.mapToDomain() = TemplateUi(
     isImportant = isImportant,
     isEnableNotification = isEnableNotification,
     isConsiderInStatistics = isConsiderInStatistics,
+    repeatTimes = repeatTimes,
 )

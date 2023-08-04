@@ -30,6 +30,9 @@ internal data class EditorIcons(
     val endTime: Int,
     val templates: Int,
     val delete: Int,
+    val favorite: Int,
+    val unFavorite: Int,
+    val repeat: Int,
 )
 
 internal val baseHomeIcons = EditorIcons(
@@ -41,6 +44,9 @@ internal val baseHomeIcons = EditorIcons(
     endTime = R.drawable.ic_end_time,
     templates = R.drawable.ic_task,
     delete = R.drawable.ic_delete,
+    favorite = R.drawable.ic_favorite,
+    unFavorite = R.drawable.ic_favorite_border,
+    repeat = R.drawable.ic_repeat,
 )
 
 internal val LocalEditorIcons = staticCompositionLocalOf<EditorIcons> {

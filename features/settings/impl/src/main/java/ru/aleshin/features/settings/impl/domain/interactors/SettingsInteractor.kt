@@ -33,7 +33,7 @@ internal interface SettingsInteractor {
 
     suspend fun fetchAllSettings(): DomainResult<SettingsFailures, Settings>
 
-    suspend fun resetAllSettings(): UnitDomainResult<SettingsFailures>
+    suspend fun resetAllSettings(): DomainResult<SettingsFailures, Settings>
 
     class Base @Inject constructor(
         private val themeSettingsRepository: ThemeSettingsRepository,
@@ -51,7 +51,10 @@ internal interface SettingsInteractor {
         }
 
         override suspend fun resetAllSettings() = eitherWrapper.wrap {
-            themeSettingsRepository.updateSettings(ThemeSettings())
+            val themeSettings = ThemeSettings()
+            themeSettingsRepository.updateSettings(themeSettings)
+
+            return@wrap Settings(themeSettings)
         }
     }
 }

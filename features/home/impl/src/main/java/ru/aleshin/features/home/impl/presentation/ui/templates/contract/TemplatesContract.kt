@@ -20,6 +20,7 @@ import ru.aleshin.core.utils.platform.screenmodel.contract.BaseAction
 import ru.aleshin.core.utils.platform.screenmodel.contract.BaseEvent
 import ru.aleshin.core.utils.platform.screenmodel.contract.BaseUiEffect
 import ru.aleshin.core.utils.platform.screenmodel.contract.BaseViewState
+import ru.aleshin.features.home.api.domain.entities.template.RepeatTime
 import ru.aleshin.features.home.impl.domain.entities.HomeFailures
 import ru.aleshin.features.home.impl.presentation.models.templates.TemplatesSortedType
 import ru.aleshin.features.home.impl.presentation.models.categories.CategoriesUi
@@ -39,12 +40,14 @@ internal sealed class TemplatesEvent : BaseEvent {
     object Init : TemplatesEvent()
     data class AddTemplate(val template: TemplateUi) : TemplatesEvent()
     data class UpdateTemplate(val template: TemplateUi) : TemplatesEvent()
+    data class AddRepeatTemplate(val time: RepeatTime, val template: TemplateUi) : TemplatesEvent()
+    data class DeleteRepeatTemplate(val time: RepeatTime, val template: TemplateUi) : TemplatesEvent()
     data class UpdatedSortedType(val type: TemplatesSortedType) : TemplatesEvent()
     data class DeleteTemplate(val id: Int) : TemplatesEvent()
 }
 
 internal sealed class TemplatesEffect : BaseUiEffect {
-    data class ShowError(val failure: HomeFailures) : TemplatesEffect()
+    data class ShowError(val failures: HomeFailures) : TemplatesEffect()
 }
 
 internal sealed class TemplatesAction : BaseAction {

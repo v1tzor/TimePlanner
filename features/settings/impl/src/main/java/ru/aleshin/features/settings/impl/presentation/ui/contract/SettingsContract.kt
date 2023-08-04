@@ -38,7 +38,6 @@ internal sealed class SettingsEvent : BaseEvent {
     object Init : SettingsEvent()
     object PressResetButton : SettingsEvent()
     object PressClearDataButton : SettingsEvent()
-    object StopLoading : SettingsEvent()
     data class PressSaveBackupData(val uri: Uri) : SettingsEvent()
     data class PressRestoreBackupData(val uri: Uri) : SettingsEvent()
     data class ChangedThemeSettings(val themeSettings: ThemeSettingsUi) : SettingsEvent()

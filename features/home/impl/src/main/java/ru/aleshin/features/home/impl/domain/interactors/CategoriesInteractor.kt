@@ -15,6 +15,7 @@
  */
 package ru.aleshin.features.home.impl.domain.interactors
 
+import kotlinx.coroutines.flow.Flow
 import ru.aleshin.core.utils.functional.DomainResult
 import ru.aleshin.core.utils.functional.UnitDomainResult
 import ru.aleshin.features.home.api.domain.entities.categories.Categories
@@ -29,8 +30,8 @@ import javax.inject.Inject
  */
 internal interface CategoriesInteractor {
 
-    suspend fun fetchAllCategories(): DomainResult<HomeFailures, List<Categories>>
-    suspend fun addMainCategory(mainCategory: MainCategory): UnitDomainResult<HomeFailures>
+    suspend fun fetchCategories(): Flow<DomainResult<HomeFailures, List<Categories>>>
+    suspend fun addMainCategory(mainCategory: MainCategory): DomainResult<HomeFailures, Int>
     suspend fun updateMainCategory(mainCategory: MainCategory): UnitDomainResult<HomeFailures>
     suspend fun deleteMainCategory(mainCategory: MainCategory): UnitDomainResult<HomeFailures>
 
@@ -39,12 +40,12 @@ internal interface CategoriesInteractor {
         private val eitherWrapper: HomeEitherWrapper,
     ) : CategoriesInteractor {
 
-        override suspend fun fetchAllCategories() = eitherWrapper.wrap {
+        override suspend fun fetchCategories() = eitherWrapper.wrapFlow {
             categoriesRepository.fetchCategories()
         }
 
         override suspend fun addMainCategory(mainCategory: MainCategory) = eitherWrapper.wrap {
-            categoriesRepository.addMainCategories(listOf(mainCategory))
+            categoriesRepository.addMainCategories(listOf(mainCategory))[0]
         }
 
         override suspend fun deleteMainCategory(mainCategory: MainCategory) = eitherWrapper.wrap {

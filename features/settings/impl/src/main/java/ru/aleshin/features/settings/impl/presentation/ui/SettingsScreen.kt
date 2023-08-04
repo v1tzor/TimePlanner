@@ -81,13 +81,10 @@ internal class SettingsScreen @Inject constructor() : Screen {
 
             handleEffect { effect ->
                 when (effect) {
-                    is SettingsEffect.ShowError -> {
-                        dispatchEvent(SettingsEvent.StopLoading)
-                        snackbarState.showSnackbar(
-                            message = effect.failures.mapToMessage(strings),
-                            withDismissAction = true,
-                        )
-                    }
+                    is SettingsEffect.ShowError -> snackbarState.showSnackbar(
+                        message = effect.failures.mapToMessage(strings),
+                        withDismissAction = true,
+                    )
                 }
             }
         }

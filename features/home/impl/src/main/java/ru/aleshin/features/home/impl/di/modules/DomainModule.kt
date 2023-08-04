@@ -20,6 +20,7 @@ import dagger.Module
 import ru.aleshin.features.home.impl.domain.common.HomeEitherWrapper
 import ru.aleshin.features.home.impl.domain.common.HomeErrorHandler
 import ru.aleshin.features.home.impl.domain.interactors.CategoriesInteractor
+import ru.aleshin.features.home.impl.domain.interactors.RepeatTaskInteractor
 import ru.aleshin.features.home.impl.domain.interactors.ScheduleInteractor
 import ru.aleshin.features.home.impl.domain.interactors.SubCategoriesInteractor
 import ru.aleshin.features.home.impl.domain.interactors.TemplatesInteractor
@@ -45,6 +46,9 @@ internal interface DomainModule {
 
     @Binds
     fun bindTemplatesInteractor(interactor: TemplatesInteractor.Base): TemplatesInteractor
+
+    @Binds
+    fun bindRepeatTaskInteractor(interactor: RepeatTaskInteractor.Base): RepeatTaskInteractor
 
     @Binds
     fun bindHomeEitherWrapper(wrapper: HomeEitherWrapper.Base): HomeEitherWrapper

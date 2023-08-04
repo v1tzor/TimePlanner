@@ -15,6 +15,7 @@
  */
 package ru.aleshin.features.analytics.impl.domain.interactors
 
+import kotlinx.coroutines.flow.first
 import ru.aleshin.core.utils.extensions.countMonthByDays
 import ru.aleshin.core.utils.extensions.countWeeksByDays
 import ru.aleshin.core.utils.extensions.duration
@@ -95,7 +96,7 @@ internal interface AnalyticsInteractor {
             }
 
             val categoriesAnalytics = countCategoriesAnalytic(
-                categories = categoriesRepository.fetchCategories(),
+                categories = categoriesRepository.fetchCategories().first(),
                 timeTasks = timeTasks,
             )
             val totalTasksCount = timeTasks.count { it.isConsiderInStatistics }

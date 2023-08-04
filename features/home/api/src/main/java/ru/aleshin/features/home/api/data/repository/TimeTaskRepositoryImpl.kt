@@ -15,6 +15,7 @@
  */
 package ru.aleshin.features.home.api.data.repository
 
+import kotlinx.coroutines.flow.first
 import ru.aleshin.features.home.api.data.datasources.schedules.SchedulesLocalDataSource
 import ru.aleshin.features.home.api.data.mappers.schedules.mapToData
 import ru.aleshin.features.home.api.data.mappers.schedules.mapToDomain
@@ -35,16 +36,19 @@ class TimeTaskRepositoryImpl @Inject constructor(
     }
 
     override suspend fun fetchAllTimeTaskByDate(date: Date): List<TimeTask> {
-        return localDataSource.fetchScheduleByDate(date.time)?.timeTasks?.map { timeTaskDetails ->
-            timeTaskDetails.mapToDomain()
-        } ?: emptyList()
+        val schedules = localDataSource.fetchScheduleByDate(date.time).first()
+        return schedules?.timeTasks?.map { timeTaskDetails -> timeTaskDetails.mapToDomain() } ?: emptyList()
+    }
+
+    override suspend fun updateTimeTaskList(timeTaskList: List<TimeTask>) {
+        localDataSource.updateTimeTasks(timeTaskList.map { it.mapToData(it.date.time) })
     }
 
     override suspend fun updateTimeTask(timeTask: TimeTask) {
         localDataSource.updateTimeTasks(listOf(timeTask.mapToData(timeTask.date.time)))
     }
 
-    override suspend fun deleteTimeTask(key: Long) {
-        localDataSource.removeTimeTaskByKey(key)
+    override suspend fun deleteTimeTasks(keys: List<Long>) {
+        localDataSource.removeTimeTasksByKey(keys)
     }
 }

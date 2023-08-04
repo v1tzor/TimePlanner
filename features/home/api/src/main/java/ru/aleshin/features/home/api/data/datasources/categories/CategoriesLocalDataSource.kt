@@ -16,6 +16,7 @@
 
 package ru.aleshin.features.home.api.data.datasources.categories
 
+import kotlinx.coroutines.flow.Flow
 import ru.aleshin.features.home.api.data.models.categories.MainCategoryDetails
 import ru.aleshin.features.home.api.data.models.categories.MainCategoryEntity
 import ru.aleshin.features.home.api.domain.entities.categories.MainCategory
@@ -27,8 +28,8 @@ import javax.inject.Inject
 interface CategoriesLocalDataSource {
 
     suspend fun addMainCategory(mainCategory: MainCategoryEntity): Long
-    suspend fun addMainCategories(mainCategories: List<MainCategoryEntity>)
-    suspend fun fetchMainCategories(): List<MainCategoryDetails>
+    suspend fun addMainCategories(mainCategories: List<MainCategoryEntity>): List<Long>
+    fun fetchMainCategories(): Flow<List<MainCategoryDetails>>
     suspend fun fetchCategoriesByType(mainCategory: MainCategory): MainCategoryDetails?
     suspend fun updateMainCategory(mainCategory: MainCategoryEntity)
     suspend fun removeMainCategory(id: Int)
@@ -42,11 +43,11 @@ interface CategoriesLocalDataSource {
             return mainCategoriesDao.addCategory(mainCategory)
         }
 
-        override suspend fun addMainCategories(mainCategories: List<MainCategoryEntity>) {
-            mainCategoriesDao.addCategories(mainCategories)
+        override suspend fun addMainCategories(mainCategories: List<MainCategoryEntity>): List<Long> {
+            return mainCategoriesDao.addCategories(mainCategories)
         }
 
-        override suspend fun fetchMainCategories(): List<MainCategoryDetails> {
+        override fun fetchMainCategories(): Flow<List<MainCategoryDetails>> {
             return mainCategoriesDao.fetchAllCategories()
         }
 

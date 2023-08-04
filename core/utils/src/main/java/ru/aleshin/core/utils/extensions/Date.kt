@@ -16,7 +16,9 @@
 package ru.aleshin.core.utils.extensions
 
 import ru.aleshin.core.utils.functional.Constants
+import ru.aleshin.core.utils.functional.Month
 import ru.aleshin.core.utils.functional.TimeRange
+import ru.aleshin.core.utils.functional.WeekDay
 import java.util.*
 import kotlin.math.ceil
 
@@ -50,8 +52,7 @@ fun Date.shiftMillis(amount: Int, locale: Locale = Locale.getDefault()): Date {
 
 fun Date.isCurrentDay(date: Date): Boolean {
     val currentDate = Calendar.getInstance().apply { time = date }.get(Calendar.DAY_OF_YEAR)
-    val compareDate =
-        Calendar.getInstance().apply { time = this@isCurrentDay }.get(Calendar.DAY_OF_YEAR)
+    val compareDate = Calendar.getInstance().apply { time = this@isCurrentDay }.get(Calendar.DAY_OF_YEAR)
 
     return currentDate == compareDate
 }
@@ -96,6 +97,12 @@ fun Calendar.setHoursAndMinutes(hours: Int, minutes: Int) = this.apply {
     set(Calendar.MINUTE, minutes)
     set(Calendar.SECOND, 0)
     set(Calendar.MILLISECOND, 0)
+}
+
+fun Calendar.setPreviousMonth() = this.apply {
+    val current = get(Calendar.MONTH)
+    val previous = if (current == 0) 11 else current - 1
+    set(Calendar.MONTH, previous)
 }
 
 fun Date.changeDay(date: Date): Date {
@@ -235,4 +242,28 @@ fun countWeeksByDays(days: Int): Int {
 
 fun countMonthByDays(days: Int): Int {
     return ceil(days.toDouble() / Constants.Date.DAYS_IN_MONTH).toInt()
+}
+
+fun Date.fetchMonth(): Month {
+    val calendar = Calendar.getInstance().apply { time = this@fetchMonth }
+    val monthNumber = calendar.get(Calendar.MONTH)
+    return Month.fetchByMonthNumber(monthNumber)
+}
+
+fun Date.fetchWeekDay(): WeekDay {
+    val calendar = Calendar.getInstance().apply { time = this@fetchWeekDay }
+    val weekDayNumber = calendar.get(Calendar.DAY_OF_WEEK)
+    return WeekDay.fetchByWeekDayNumber(weekDayNumber)
+}
+
+fun Date.fetchWeekNumber(): Int {
+    val calendar = Calendar.getInstance().apply { time = this@fetchWeekNumber }
+    return calendar.get(Calendar.DAY_OF_WEEK_IN_MONTH)
+}
+
+fun Date.fetchDayNumberByMax(dayNumber: Int): Int {
+    val calendar = Calendar.getInstance().apply { time = this@fetchDayNumberByMax }
+    val currentDayNumber = calendar.get(Calendar.DAY_OF_MONTH)
+    val previousMonthDaysCount = calendar.setPreviousMonth().getActualMaximum(Calendar.DAY_OF_MONTH)
+    return if (dayNumber > previousMonthDaysCount) currentDayNumber + dayNumber else currentDayNumber
 }

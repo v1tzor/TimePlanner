@@ -39,8 +39,6 @@ internal fun ThemeSettingsUi.mapToDomain() = ThemeSettings(
 
 fun LanguageType.mapToUi() = LanguageUiType.values().find { it.code == this.code }!!
 
-fun LanguageUiType.mapToDomain() = LanguageType.values().find { it.code == this.code }!!
-
 fun ThemeColorsType.mapToUi() = when (this) {
     ThemeColorsType.DEFAULT -> ThemeColorsUiType.DEFAULT
     ThemeColorsType.LIGHT -> ThemeColorsUiType.LIGHT
@@ -52,3 +50,5 @@ fun ThemeColorsUiType.mapToDomain() = when (this) {
     ThemeColorsUiType.LIGHT -> ThemeColorsType.LIGHT
     ThemeColorsUiType.DARK -> ThemeColorsType.DARK
 }
+
+fun LanguageUiType.mapToDomain() = LanguageType.values().find { it.code == this.code }!!

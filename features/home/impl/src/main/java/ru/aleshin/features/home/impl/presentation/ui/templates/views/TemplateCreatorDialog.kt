@@ -191,6 +191,7 @@ internal fun TemplateEditorDialog(
                                 isEnableNotification = isEnableNotification,
                                 isConsiderInStatistics = isConsiderInStatistics,
                                 isImportant = isImportance,
+                                repeatTimes = editTemplateModel?.repeatTimes ?: emptyList(),
                             )
                             onConfirm(template)
                         }
@@ -292,8 +293,7 @@ internal fun TemplateEditorSubCategoryChooser(
     val interactionSource = remember { MutableInteractionSource() }
     var isSubCategoryMenuOpen by remember { mutableStateOf(false) }
     val isPressed: Boolean by interactionSource.collectIsPressedAsState()
-    val subCategories =
-        allCategories.find { it.mainCategory == selectedMainCategory }?.subCategories ?: emptyList()
+    val subCategories = allCategories.find { it.mainCategory == selectedMainCategory }?.subCategories ?: emptyList()
 
     Row(
         modifier = modifier,
@@ -351,7 +351,7 @@ internal fun SubCategoriesChooseMenu(
         subCategories.forEach { subCategory ->
             DropdownMenuItem(
                 onClick = {
-                    if (subCategory.id == -1) onChoose(null) else onChoose(subCategory)
+                    if (subCategory.id == 0) onChoose(null) else onChoose(subCategory)
                 },
                 text = {
                     Text(

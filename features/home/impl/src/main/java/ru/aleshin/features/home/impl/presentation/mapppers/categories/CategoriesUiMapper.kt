@@ -28,13 +28,13 @@ import ru.aleshin.features.home.impl.presentation.models.categories.SubCategoryU
 internal fun MainCategoryUi.mapToDomain() = MainCategory(
     id = id,
     customName = customName,
-    defaultType = defaultType
+    defaultType = defaultType,
 )
 
 internal fun MainCategory.mapToUi() = MainCategoryUi(
     id = id,
     customName = customName,
-    defaultType = defaultType
+    defaultType = defaultType,
 )
 
 internal fun SubCategoryUi.mapToDomain() = SubCategory(

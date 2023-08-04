@@ -35,7 +35,7 @@ internal data class CategoriesViewState(
 ) : BaseViewState
 
 internal sealed class CategoriesEvent : BaseEvent {
-    data class Init(val initCategoryId: Int) : CategoriesEvent()
+    object Init : CategoriesEvent()
     data class AddSubCategory(val name: String, val mainCategory: MainCategoryUi) : CategoriesEvent()
     data class AddMainCategory(val name: String) : CategoriesEvent()
     data class ChangeMainCategory(val mainCategory: MainCategoryUi) : CategoriesEvent()
@@ -50,6 +50,6 @@ internal sealed class CategoriesEffect : BaseUiEffect {
 }
 
 internal sealed class CategoriesAction : BaseAction {
-    data class SetUp(val categories: List<CategoriesUi>, val category: MainCategoryUi?) : CategoriesAction()
+    data class SetUp(val categories: List<CategoriesUi>) : CategoriesAction()
     data class ChangeMainCategory(val category: MainCategoryUi) : CategoriesAction()
 }

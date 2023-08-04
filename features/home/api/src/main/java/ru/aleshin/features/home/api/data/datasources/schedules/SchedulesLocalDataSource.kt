@@ -15,6 +15,7 @@
  */
 package ru.aleshin.features.home.api.data.datasources.schedules
 
+import kotlinx.coroutines.flow.Flow
 import ru.aleshin.core.utils.functional.TimeRange
 import ru.aleshin.features.home.api.data.models.schedules.DailyScheduleEntity
 import ru.aleshin.features.home.api.data.models.schedules.ScheduleDetails
@@ -28,12 +29,12 @@ interface SchedulesLocalDataSource {
 
     suspend fun addSchedules(schedules: List<DailyScheduleEntity>, timeTasks: List<TimeTaskEntity>)
     suspend fun addTimeTasks(tasks: List<TimeTaskEntity>)
-    suspend fun fetchScheduleByDate(date: Long): ScheduleDetails?
+    fun fetchScheduleByDate(date: Long): Flow<ScheduleDetails?>
     suspend fun fetchScheduleByRange(timeRange: TimeRange?): List<ScheduleDetails>
     suspend fun updateTimeTasks(timeTasks: List<TimeTaskEntity>)
     suspend fun removeDailySchedule(schedule: DailyScheduleEntity)
     suspend fun removeAllSchedules()
-    suspend fun removeTimeTaskByKey(key: Long)
+    suspend fun removeTimeTasksByKey(keys: List<Long>)
 
     class Base @Inject constructor(
         private val scheduleDao: SchedulesDao,
@@ -51,7 +52,7 @@ interface SchedulesLocalDataSource {
             scheduleDao.addTimeTasks(tasks)
         }
 
-        override suspend fun fetchScheduleByDate(date: Long): ScheduleDetails? {
+        override fun fetchScheduleByDate(date: Long): Flow<ScheduleDetails?> {
             return scheduleDao.fetchDailyScheduleByDate(date)
         }
 
@@ -67,8 +68,8 @@ interface SchedulesLocalDataSource {
             scheduleDao.updateTimeTasks(timeTasks)
         }
 
-        override suspend fun removeTimeTaskByKey(key: Long) {
-            scheduleDao.removeTimeTaskByKey(key)
+        override suspend fun removeTimeTasksByKey(keys: List<Long>) {
+            scheduleDao.removeTimeTasksByKey(keys)
         }
 
         override suspend fun removeDailySchedule(schedule: DailyScheduleEntity) {

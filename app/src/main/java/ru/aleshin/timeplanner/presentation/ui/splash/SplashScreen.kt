@@ -16,16 +16,10 @@
 package ru.aleshin.timeplanner.presentation.ui.splash
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.core.screen.Screen
-import ru.aleshin.core.utils.platform.screen.ScreenContent
-import ru.aleshin.timeplanner.presentation.theme.MainTheme
-import ru.aleshin.timeplanner.presentation.ui.splash.contract.SplashEvent
-import ru.aleshin.timeplanner.presentation.ui.splash.contract.SplashViewState
-import ru.aleshin.timeplanner.presentation.ui.splash.screenmodel.rememberSplashScreenModel
 
 /**
  * @author Stanislav Aleshin on 14.02.2023.
@@ -33,16 +27,7 @@ import ru.aleshin.timeplanner.presentation.ui.splash.screenmodel.rememberSplashS
 class SplashScreen : Screen {
 
     @Composable
-    override fun Content() = ScreenContent(
-        screenModel = rememberSplashScreenModel(),
-        initialState = SplashViewState.Default,
-    ) {
-        MainTheme {
-            Box(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
-                SplashContent(
-                    onSplashExit = { dispatchEvent(SplashEvent.Init) },
-                )
-            }
-        }
-    }
+    override fun Content() = SplashContent(
+        modifier = Modifier.background(MaterialTheme.colorScheme.background),
+    )
 }

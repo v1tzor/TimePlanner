@@ -21,25 +21,19 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import ru.aleshin.core.ui.theme.TimePlannerRes
 import ru.aleshin.core.utils.extensions.shiftMillis
 import ru.aleshin.core.utils.functional.TimeRange
 import ru.aleshin.features.editor.impl.presentation.models.categories.CategoriesUi
-import ru.aleshin.features.editor.impl.presentation.models.editmodel.EditParameters
 import ru.aleshin.features.editor.impl.presentation.models.categories.MainCategoryUi
 import ru.aleshin.features.editor.impl.presentation.models.categories.SubCategoryUi
+import ru.aleshin.features.editor.impl.presentation.models.editmodel.EditParameters
 import ru.aleshin.features.editor.impl.presentation.theme.EditorThemeRes
 import ru.aleshin.features.editor.impl.presentation.ui.editor.contract.EditorViewState
 import ru.aleshin.features.editor.impl.presentation.ui.editor.screenmodel.CategoryValidateError
@@ -60,8 +54,9 @@ internal fun EditorContent(
     onAddSubCategory: (String) -> Unit,
     onTimeRangeChange: (TimeRange) -> Unit,
     onChangeParameters: (EditParameters) -> Unit,
-    onChangeTemplate: (Boolean) -> Unit,
-    onSaveClick: (isTemplateUpdate: Boolean) -> Unit,
+    onControlTemplate: () -> Unit,
+    onCreateTemplate: () -> Unit,
+    onSaveClick: () -> Unit,
     onCancelClick: () -> Unit,
 ) {
     val scrollState = rememberScrollState()
@@ -94,9 +89,11 @@ internal fun EditorContent(
             }
             ActionButtonsSection(
                 enableTemplateSelector = state.editModel.key != 0L,
+                isRepeatTemplate = state.editModel.repeatTimes.isNotEmpty(),
                 isTemplateSelect = state.editModel.templateId != null,
-                onChangeTemplate = onChangeTemplate,
                 onCancelClick = onCancelClick,
+                onControl = onControlTemplate,
+                onCreateTemplate = onCreateTemplate,
                 onSaveClick = onSaveClick,
             )
         }
@@ -125,8 +122,8 @@ internal fun CategoriesSection(
                 modifier = Modifier.fillMaxWidth(),
                 isError = isMainCategoryValid,
                 currentCategory = mainCategory,
-                allMainCategories = allCategories.map { it.mainCategory },
-                onCategoryChange = { newMainCategory ->
+                allCategories = allCategories.map { it.mainCategory },
+                onChange = { newMainCategory ->
                     onCategoriesChange(newMainCategory, null)
                 },
             )
@@ -144,8 +141,8 @@ internal fun CategoriesSection(
             mainCategory = mainCategory,
             allSubCategories = findCategories?.subCategories ?: emptyList(),
             currentSubCategory = subCategory,
-            onAddCategory = onAddSubCategory,
-            onSubCategoryChange = { newSubCategory ->
+            onAddSubCategory = onAddSubCategory,
+            onChangeCategory = { newSubCategory ->
                 if (mainCategory != null) onCategoriesChange(mainCategory, newSubCategory)
             },
         )
@@ -232,12 +229,13 @@ internal fun ParametersSection(
 internal fun ActionButtonsSection(
     modifier: Modifier = Modifier,
     enableTemplateSelector: Boolean,
+    isRepeatTemplate: Boolean,
     isTemplateSelect: Boolean,
-    onChangeTemplate: (Boolean) -> Unit,
+    onControl: () -> Unit,
+    onCreateTemplate: () -> Unit,
     onCancelClick: () -> Unit,
-    onSaveClick: (isTemplateUpdate: Boolean) -> Unit,
+    onSaveClick: () -> Unit,
 ) {
-    var isWarningDialogOpen by rememberSaveable { mutableStateOf(false) }
     Box(modifier = modifier, contentAlignment = Alignment.BottomStart) {
         Row(
             modifier = Modifier.fillMaxWidth().padding(16.dp),
@@ -251,31 +249,19 @@ internal fun ActionButtonsSection(
                 content = { Text(text = EditorThemeRes.strings.cancelButtonTitle) },
             )
             Button(
-                onClick = {
-                    when (enableTemplateSelector && isTemplateSelect) {
-                        true -> isWarningDialogOpen = true
-                        false -> onSaveClick(false)
-                    }
-                },
+                onClick = onSaveClick,
                 content = { Text(text = EditorThemeRes.strings.saveTaskButtonTitle) },
             )
             Spacer(modifier = Modifier.weight(1f))
             if (enableTemplateSelector) {
                 TemplateSelector(
                     isSelect = isTemplateSelect,
-                    onSelectChanges = onChangeTemplate,
+                    isRepeat = isRepeatTemplate,
+                    onControl = onControl,
+                    onCreateTemplate = onCreateTemplate,
                 )
             }
         }
-    }
-    if (isWarningDialogOpen) {
-        TemplateSaveWarningDialog(
-            onDismiss = { isWarningDialogOpen = false },
-            onAction = { isSave ->
-                onSaveClick(isSave)
-                isWarningDialogOpen = false
-            },
-        )
     }
 }
 
@@ -284,22 +270,27 @@ internal fun TemplateSelector(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     isSelect: Boolean,
-    onSelectChanges: (Boolean) -> Unit,
+    isRepeat: Boolean,
+    onControl: () -> Unit,
+    onCreateTemplate: () -> Unit,
 ) {
     IconButton(
-        onClick = { onSelectChanges.invoke(!isSelect) },
-        modifier = modifier
-            .size(40.dp)
-            .clip(RoundedCornerShape(40.dp))
-            .background(MaterialTheme.colorScheme.primaryContainer),
+        onClick = { if (isSelect) onControl() else onCreateTemplate() },
+        modifier = modifier.size(40.dp).background(
+            color = MaterialTheme.colorScheme.primaryContainer,
+            shape = RoundedCornerShape(40.dp),
+        ),
         enabled = enabled,
     ) {
         val templatesButton = when (isSelect) {
-            true -> Icons.Default.Favorite
-            false -> Icons.Default.FavoriteBorder
+            true -> when (isRepeat) {
+                true -> EditorThemeRes.icons.repeat
+                false -> TimePlannerRes.icons.enabledSettingsIcon
+            }
+            false -> EditorThemeRes.icons.unFavorite
         }
         Icon(
-            imageVector = templatesButton,
+            painter = painterResource(id = templatesButton),
             contentDescription = EditorThemeRes.strings.templateIconDesc,
             tint = MaterialTheme.colorScheme.onPrimaryContainer,
         )

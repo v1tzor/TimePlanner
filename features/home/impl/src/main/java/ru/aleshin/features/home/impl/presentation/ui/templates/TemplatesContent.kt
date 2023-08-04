@@ -46,10 +46,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import ru.aleshin.core.ui.views.ExpandedIcon
+import ru.aleshin.features.home.api.domain.entities.template.RepeatTime
 import ru.aleshin.features.home.impl.presentation.mapppers.templates.mapToString
-import ru.aleshin.features.home.impl.presentation.models.templates.TemplatesSortedType
 import ru.aleshin.features.home.impl.presentation.models.categories.CategoriesUi
 import ru.aleshin.features.home.impl.presentation.models.templates.TemplateUi
+import ru.aleshin.features.home.impl.presentation.models.templates.TemplatesSortedType
 import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
 import ru.aleshin.features.home.impl.presentation.ui.home.views.EmptyDateView
 import ru.aleshin.features.home.impl.presentation.ui.templates.contract.TemplatesViewState
@@ -64,6 +65,8 @@ internal fun TemplatesContent(
     modifier: Modifier = Modifier,
     onChangeSortedType: (TemplatesSortedType) -> Unit,
     onUpdateTemplate: (TemplateUi) -> Unit,
+    onAddRepeatTemplate: (RepeatTime, TemplateUi) -> Unit,
+    onDeleteRepeatTemplate: (RepeatTime, TemplateUi) -> Unit,
     onDeleteTemplate: (TemplateUi) -> Unit,
 ) {
     Column(modifier = modifier) {
@@ -76,6 +79,8 @@ internal fun TemplatesContent(
             templates = state.templates,
             categories = state.categories,
             onUpdateTemplate = onUpdateTemplate,
+            onAddRepeatTemplate = onAddRepeatTemplate,
+            onDeleteRepeatTemplate = onDeleteRepeatTemplate,
             onDeleteTemplate = onDeleteTemplate,
         )
     }
@@ -87,6 +92,8 @@ internal fun TemplatesLazyColumn(
     templates: List<TemplateUi>?,
     categories: List<CategoriesUi>,
     onUpdateTemplate: (TemplateUi) -> Unit,
+    onAddRepeatTemplate: (RepeatTime, TemplateUi) -> Unit,
+    onDeleteRepeatTemplate: (RepeatTime, TemplateUi) -> Unit,
     onDeleteTemplate: (TemplateUi) -> Unit,
 ) {
     if (!templates.isNullOrEmpty()) {
@@ -101,7 +108,9 @@ internal fun TemplatesLazyColumn(
                 TemplatesItem(
                     model = template,
                     categories = categories,
-                    onUpdateTemplate = { onUpdateTemplate(it) },
+                    onUpdate = { onUpdateTemplate(it) },
+                    onAddRepeat = { onAddRepeatTemplate(it, template) },
+                    onDeleteRepeat = { onDeleteRepeatTemplate(it, template) },
                     onDeleteTemplate = { onDeleteTemplate(template) },
                 )
             }

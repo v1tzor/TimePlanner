@@ -15,6 +15,7 @@
  */
 package ru.aleshin.features.editor.impl.domain.interactors
 
+import kotlinx.coroutines.flow.first
 import ru.aleshin.core.utils.functional.DomainResult
 import ru.aleshin.features.editor.impl.domain.common.EditorEitherWrapper
 import ru.aleshin.features.editor.impl.domain.entites.EditorFailures
@@ -39,7 +40,7 @@ internal interface CategoriesInteractor {
     ) : CategoriesInteractor {
 
         override suspend fun fetchCategories() = eitherWrapper.wrap {
-            categoriesRepository.fetchCategories()
+            categoriesRepository.fetchCategories().first()
         }
 
         override suspend fun addSubCategory(subCategory: SubCategory) = eitherWrapper.wrap {

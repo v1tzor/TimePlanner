@@ -17,7 +17,6 @@ package ru.aleshin.features.home.api.data.datasources.schedules
 
 import android.content.ContentValues
 import android.database.sqlite.SQLiteDatabase.CONFLICT_REPLACE
-import android.util.Log
 import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.RoomDatabase
@@ -29,17 +28,18 @@ import ru.aleshin.features.home.api.data.datasources.templates.TemplatesDao
 import ru.aleshin.features.home.api.data.models.categories.MainCategoryEntity
 import ru.aleshin.features.home.api.data.models.categories.SubCategoryEntity
 import ru.aleshin.features.home.api.data.models.schedules.DailyScheduleEntity
+import ru.aleshin.features.home.api.data.models.template.RepeatTimeEntity
 import ru.aleshin.features.home.api.data.models.template.TemplateEntity
 import ru.aleshin.features.home.api.data.models.timetasks.TimeTaskEntity
-import ru.aleshin.features.home.api.domain.entities.categories.DefaultCategoryType
 
 /**
  * @author Stanislav Aleshin on 25.02.2023.
  */
 @Database(
-    version = 3,
+    version = 4,
     entities = [
         TemplateEntity::class,
+        RepeatTimeEntity::class,
         DailyScheduleEntity::class,
         TimeTaskEntity::class,
         MainCategoryEntity::class,
@@ -48,6 +48,7 @@ import ru.aleshin.features.home.api.domain.entities.categories.DefaultCategoryTy
     exportSchema = true,
     autoMigrations = [
         AutoMigration(from = 1, to = 2),
+        AutoMigration(from = 3, to = 4),
     ],
 )
 abstract class SchedulesDataBase : RoomDatabase() {

@@ -53,14 +53,15 @@ internal class HomeScreenModel @Inject constructor(
         event: HomeEvent,
     ) {
         when (event) {
-            is HomeEvent.LoadSchedule -> launchBackgroundWork(HomeWorkKey.SUBSCRIBE_SCHEDULE) {
+            is HomeEvent.LoadSchedule -> {
                 val date = event.date ?: dateManager.fetchBeginningCurrentDay()
                 loadSchedule(date)
             }
             is HomeEvent.CreateSchedule -> {
                 val currentDate = checkNotNull(state().currentDate)
-                scheduleWorkProcessor.work(ScheduleWorkCommand.CreateSchedule(currentDate)).collectAndHandleWork()
-                loadSchedule(currentDate)
+                val plannedTemplates = state().schedulePlannedTemplates
+                val createCommand = ScheduleWorkCommand.CreateSchedule(currentDate, plannedTemplates)
+                scheduleWorkProcessor.work(createCommand).collectAndHandleWork()
             }
             is HomeEvent.PressEditTimeTaskButton -> {
                 val navCommand = NavigationWorkCommand.NavigateToEditor(timeTask = event.timeTask)
@@ -83,9 +84,9 @@ internal class HomeScreenModel @Inject constructor(
                 scheduleWorkProcessor.work(shiftDownCommand).collectAndHandleWork()
                 loadSchedule(checkNotNull(state().currentDate))
             }
-            is HomeEvent.PressChangeDoneStateButton -> {
+            is HomeEvent.ChangeTaskDoneStateButton -> {
                 val date = checkNotNull(state().currentDate)
-                val changeStatusCommand = ScheduleWorkCommand.ChangeDoneState(date, event.timeTask.key)
+                val changeStatusCommand = ScheduleWorkCommand.ChangeTaskDoneState(date, event.timeTask.key)
                 scheduleWorkProcessor.work(changeStatusCommand).collectAndHandleWork()
                 loadSchedule(checkNotNull(state().currentDate))
             }
@@ -106,15 +107,18 @@ internal class HomeScreenModel @Inject constructor(
         is HomeAction.ShowContentLoading -> currentState.copy(
             isLoadingContent = true,
         )
-        is HomeAction.UpdateDate -> currentState.copy(
+        is HomeAction.SetEmptySchedule -> currentState.copy(
+            timeTasks = emptyList(),
             currentDate = action.date,
             dateStatus = action.status,
+            schedulePlannedTemplates = action.plannedTemplates,
             isLoadingContent = false,
         )
         is HomeAction.UpdateSchedule -> currentState.copy(
             timeTasks = action.schedule.timeTasks,
             currentDate = action.schedule.date,
             dateStatus = action.schedule.dateStatus,
+            schedulePlannedTemplates = emptyList(),
             isLoadingContent = false,
         )
         is HomeAction.UpdateViewStatus -> currentState.copy(

@@ -15,9 +15,14 @@
  */
 package ru.aleshin.features.home.api.data.datasources.templates
 
-import androidx.room.*
+import androidx.room.* // ktlint-disable import-ordering
+import kotlinx.coroutines.flow.Flow
+import ru.aleshin.features.home.api.data.models.template.RepeatTimeEntity
+import ru.aleshin.features.home.api.data.models.template.TemplateCompound
 import ru.aleshin.features.home.api.data.models.template.TemplateDetails
 import ru.aleshin.features.home.api.data.models.template.TemplateEntity
+import ru.aleshin.features.home.api.data.models.template.allRepeatTimes
+import ru.aleshin.features.home.api.data.models.template.allTemplatesId
 
 /**
  * @author Stanislav Aleshin on 08.03.2023.
@@ -25,22 +30,36 @@ import ru.aleshin.features.home.api.data.models.template.TemplateEntity
 @Dao
 interface TemplatesDao {
 
-    @Insert(entity = TemplateEntity::class)
-    suspend fun addTemplate(template: TemplateEntity): Long
+    @Insert(entity = TemplateEntity::class, onConflict = OnConflictStrategy.REPLACE)
+    suspend fun addOrUpdateTemplates(templates: List<TemplateEntity>): List<Long>
 
-    @Insert(entity = TemplateEntity::class)
-    fun addTemplates(templates: List<TemplateEntity>)
+    @Insert(entity = RepeatTimeEntity::class, onConflict = OnConflictStrategy.REPLACE)
+    suspend fun addOrUpdateRepeatTimes(repeatTimes: List<RepeatTimeEntity>): List<Long>
+
+    @Transaction
+    suspend fun addOrUpdateCompoundTemplates(templates: List<TemplateCompound>): List<Long> {
+        deleteRepeatTimesByTemplates(templates.allTemplatesId())
+        addOrUpdateRepeatTimes(templates.allRepeatTimes())
+        return addOrUpdateTemplates(templates.map { it.template })
+    }
 
     @Transaction
     @Query("SELECT * FROM timeTaskTemplates")
-    suspend fun fetchAllTemplates(): List<TemplateDetails>
-
-    @Update
-    suspend fun updateTemplate(template: TemplateEntity)
+    fun fetchAllTemplates(): Flow<List<TemplateDetails>> 
+    
+    @Transaction
+    @Query("SELECT * FROM timeTaskTemplates WHERE id = :templateId")
+    fun fetchTemplateById(templateId: Int): TemplateDetails?
 
     @Query("DELETE FROM timeTaskTemplates WHERE id = :id")
     suspend fun deleteTemplate(id: Int)
 
     @Query("DELETE FROM timeTaskTemplates")
-    fun deleteAllTemplates()
+    suspend fun deleteAllTemplates()
+
+    @Query("DELETE FROM repeatTimes WHERE template_id IN (:templatesId)")
+    suspend fun deleteRepeatTimesByTemplates(templatesId: List<Int>)
+
+    @Query("DELETE FROM repeatTimes")
+    suspend fun deleteAllRepeatTimes()
 }

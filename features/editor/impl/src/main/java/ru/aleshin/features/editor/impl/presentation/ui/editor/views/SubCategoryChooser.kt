@@ -59,8 +59,8 @@ internal fun SubCategoryChooser(
     mainCategory: MainCategoryUi?,
     allSubCategories: List<SubCategoryUi>,
     currentSubCategory: SubCategoryUi?,
-    onSubCategoryChange: (SubCategoryUi?) -> Unit,
-    onAddCategory: (String) -> Unit,
+    onChangeCategory: (SubCategoryUi?) -> Unit,
+    onAddSubCategory: (String) -> Unit,
 ) {
     val openDialog = rememberSaveable { mutableStateOf(false) }
     Surface(
@@ -109,14 +109,9 @@ internal fun SubCategoryChooser(
             initCategory = currentSubCategory,
             mainCategory = mainCategory,
             allSubCategories = allSubCategories,
-            onCloseDialog = { openDialog.value = false },
-            onAddCategory = {
-                onAddCategory(it)
-            },
-            onChooseSubCategory = {
-                onSubCategoryChange(it)
-                openDialog.value = false
-            },
+            onDismiss = { openDialog.value = false },
+            onAddCategory = { onAddSubCategory(it) },
+            onChooseSubCategory = { onChangeCategory(it); openDialog.value = false },
         )
     }
 }
@@ -128,7 +123,7 @@ internal fun SubCategoryDialogChooser(
     initCategory: SubCategoryUi?,
     mainCategory: MainCategoryUi?,
     allSubCategories: List<SubCategoryUi>,
-    onCloseDialog: () -> Unit,
+    onDismiss: () -> Unit,
     onChooseSubCategory: (SubCategoryUi?) -> Unit,
     onAddCategory: (String) -> Unit,
 ) {
@@ -137,7 +132,7 @@ internal fun SubCategoryDialogChooser(
     val listState = rememberLazyListState(initPosition)
     var selectedSubCategory by rememberSaveable { mutableStateOf(initCategory) }
 
-    AlertDialog(onDismissRequest = onCloseDialog) {
+    AlertDialog(onDismissRequest = onDismiss) {
         Surface(
             modifier = modifier.width(280.dp).wrapContentHeight(),
             shape = MaterialTheme.shapes.extraLarge,
@@ -172,7 +167,7 @@ internal fun SubCategoryDialogChooser(
                             selected = selectedSubCategory == null,
                             title = EditorThemeRes.strings.categoryNotSelectedTitle,
                             description = null,
-                            onSelectChange = { selectedSubCategory = null },
+                            onSelectedChange = { selectedSubCategory = null },
                         )
                     }
                     items(allSubCategories) { subCategory ->
@@ -180,7 +175,7 @@ internal fun SubCategoryDialogChooser(
                             selected = selectedSubCategory == subCategory,
                             title = subCategory.name ?: TimePlannerRes.strings.categoryEmptyTitle,
                             description = subCategory.description,
-                            onSelectChange = { selectedSubCategory = subCategory },
+                            onSelectedChange = { selectedSubCategory = subCategory },
                         )
                     }
                     item {
@@ -193,7 +188,7 @@ internal fun SubCategoryDialogChooser(
                     }
                 }
                 DialogButtons(
-                    onCancelClick = onCloseDialog,
+                    onCancelClick = onDismiss,
                     onConfirmClick = { onChooseSubCategory.invoke(selectedSubCategory) },
                 )
             }
@@ -207,14 +202,14 @@ internal fun SubCategoryDialogItem(
     selected: Boolean,
     title: String,
     description: String?,
-    onSelectChange: () -> Unit,
+    onSelectedChange: () -> Unit,
 ) {
     Column {
         Row(
             modifier = modifier
                 .padding(vertical = 8.dp, horizontal = 16.dp)
                 .clip(MaterialTheme.shapes.medium)
-                .clickable(onClick = onSelectChange)
+                .clickable(onClick = onSelectedChange)
                 .padding(start = 8.dp, end = 16.dp)
                 .sizeIn(minHeight = 56.dp),
             horizontalArrangement = Arrangement.spacedBy(16.dp),
@@ -283,10 +278,7 @@ internal fun AddCategoriesDialogItem(
             } else {
                 val focusRequester = remember { FocusRequester() }
                 BasicTextField(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(vertical = 4.dp)
-                        .focusRequester(focusRequester),
+                    modifier = Modifier.weight(1f).padding(vertical = 4.dp).focusRequester(focusRequester),
                     value = subCategoryEditedName,
                     onValueChange = { subCategoryEditedName = it },
                     textStyle = MaterialTheme.typography.bodyLarge.copy(
@@ -294,9 +286,7 @@ internal fun AddCategoriesDialogItem(
                     ),
                     cursorBrush = SolidColor(MaterialTheme.colorScheme.onSurface),
                 )
-                IconButton(
-                    onClick = { isSubCategoryEdited = false; subCategoryEditedName = "" },
-                ) {
+                IconButton(onClick = { isSubCategoryEdited = false; subCategoryEditedName = "" }) {
                     Icon(
                         modifier = Modifier.size(18.dp),
                         imageVector = Icons.Default.Close,
@@ -315,12 +305,13 @@ internal fun AddCategoriesDialogItem(
         }
         if (isSubCategoryEdited) {
             Button(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 16.dp, end = 16.dp, top = 4.dp, bottom = 8.dp),
-                onClick = {
-                    if (subCategoryEditedName.isNotEmpty()) onAddCategory(subCategoryEditedName)
-                },
+                onClick = { if (subCategoryEditedName.isNotEmpty()) onAddCategory(subCategoryEditedName) },
+                modifier = Modifier.fillMaxWidth().padding(
+                    start = 16.dp,
+                    end = 16.dp,
+                    top = 4.dp,
+                    bottom = 8.dp,
+                ),
             ) {
                 Text(text = EditorThemeRes.strings.subCategoryDialogAddedTitle)
             }

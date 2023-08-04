@@ -18,7 +18,6 @@ package ru.aleshin.features.home.impl.navigation
 import ru.aleshin.core.utils.navigation.Router
 import ru.aleshin.features.editor.api.navigations.EditorFeatureStarter
 import ru.aleshin.features.editor.api.navigations.EditorScreens
-import ru.aleshin.features.home.api.domain.entities.schedules.TimeTask
 import ru.aleshin.features.home.api.navigation.HomeScreens
 import ru.aleshin.features.home.impl.di.annontation.LocalRouter
 import ru.aleshin.features.home.impl.presentation.ui.categories.CategoriesScreen
@@ -33,7 +32,7 @@ import javax.inject.Provider
 internal interface NavigationManager {
 
     fun navigateToLocal(screen: HomeScreens?, isRoot: Boolean = true)
-    fun navigateToEditorFeature(timeTask: TimeTask, templateId: Int?)
+    fun navigateToEditorFeature(screen: EditorScreens)
     fun navigateToLocalBack()
 
     class Base @Inject constructor(
@@ -52,10 +51,9 @@ internal interface NavigationManager {
             if (isRoot) replaceTo(screenInstance, true) else navigateTo(screenInstance)
         }
 
-        override fun navigateToEditorFeature(timeTask: TimeTask, templateId: Int?) {
-            val navScreen = EditorScreens.Editor(timeTask, templateId)
-            val screen = editorFeatureStarter.get().provideEditorScreen(navScreen)
-            globalRouter.navigateTo(screen)
+        override fun navigateToEditorFeature(screen: EditorScreens) {
+            val editorNavScreen = editorFeatureStarter.get().provideEditorScreen(screen)
+            globalRouter.navigateTo(editorNavScreen)
         }
 
         override fun navigateToLocalBack() = localRouter.navigateBack()

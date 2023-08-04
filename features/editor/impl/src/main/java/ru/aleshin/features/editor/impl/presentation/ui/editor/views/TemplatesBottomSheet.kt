@@ -51,6 +51,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
@@ -65,8 +66,10 @@ import ru.aleshin.features.editor.impl.presentation.models.categories.MainCatego
 import ru.aleshin.features.editor.impl.presentation.models.categories.SubCategoryUi
 import ru.aleshin.features.editor.impl.presentation.models.template.TemplateUi
 import ru.aleshin.features.editor.impl.presentation.theme.EditorThemeRes
+import ru.aleshin.features.home.api.domain.entities.template.RepeatTime
 import ru.aleshin.features.home.api.presentation.mappers.mapToIconPainter
 import ru.aleshin.features.home.api.presentation.mappers.mapToName
+import ru.aleshin.features.home.api.presentation.mappers.mapToString
 import java.text.SimpleDateFormat
 import java.util.Date
 
@@ -79,14 +82,13 @@ internal fun TemplatesBottomSheet(
     modifier: Modifier = Modifier,
     isShow: Boolean,
     templates: List<TemplateUi>?,
+    currentTemplateId: Int?,
     onDismiss: () -> Unit,
     onControlClick: () -> Unit,
     onChooseTemplate: (TemplateUi) -> Unit,
 ) {
     val sheetState = rememberModalBottomSheetState()
-    val systemUiController = rememberSystemUiController()
     val containerColor = MaterialTheme.colorScheme.surfaceThree()
-    val backgroundColor = MaterialTheme.colorScheme.background
 
     if (isShow) {
         ModalBottomSheet(
@@ -106,13 +108,11 @@ internal fun TemplatesBottomSheet(
             ) {
                 if (templates != null) {
                     if (templates.isNotEmpty()) {
-                        items(
-                            items = templates,
-                            key = { it.templateId },
-                        ) { template ->
+                        items(items = templates, key = { it.templateId }) { template ->
                             TemplateBottomSheetItem(
+                                enable = template.templateId != currentTemplateId,
                                 model = template,
-                                onChooseTemplate = { onChooseTemplate(template) },
+                                onChoose = { onChooseTemplate(template) },
                             )
                         }
                     } else {
@@ -120,8 +120,8 @@ internal fun TemplatesBottomSheet(
                             Text(
                                 modifier = Modifier.fillMaxSize(),
                                 text = EditorThemeRes.strings.emptyTemplatesTitle,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 textAlign = TextAlign.Center,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 style = MaterialTheme.typography.headlineSmall,
                             )
                         }
@@ -136,12 +136,10 @@ internal fun TemplatesBottomSheet(
             }
         }
     }
-    DisposableEffect(key1 = isShow) {
-        systemUiController.setNavigationBarColor(color = if (isShow) containerColor else backgroundColor)
-        onDispose {
-            systemUiController.setNavigationBarColor(color = backgroundColor)
-        }
-    }
+    TemplatesBottomSheetSystemUi(
+        isShow = isShow,
+        containerColor = containerColor,
+    )
 }
 
 @Composable
@@ -174,8 +172,9 @@ internal fun TemplatesBottomSheetHeader(
 @Composable
 internal fun TemplateBottomSheetItem(
     modifier: Modifier = Modifier,
+    enable: Boolean = true,
     model: TemplateUi,
-    onChooseTemplate: () -> Unit,
+    onChoose: () -> Unit,
 ) {
     var isExpanded by rememberSaveable { mutableStateOf(false) }
     Surface(
@@ -214,16 +213,17 @@ internal fun TemplateBottomSheetItem(
                     startTime = model.startTime,
                     endTime = model.endTime,
                     isEnableNotification = model.isEnableNotification,
+                    repeatTimes = model.repeatTimes,
                 )
                 ExpandedIcon(
                     modifier = Modifier.size(24.dp),
                     isExpanded = isExpanded,
                 )
             }
-            if (isExpanded) {
+            if (isExpanded && enable) {
                 Row(Modifier.fillMaxWidth().padding(end = 16.dp, bottom = 4.dp)) {
                     Spacer(modifier = Modifier.weight(1f))
-                    TextButton(onClick = onChooseTemplate) {
+                    TextButton(onClick = onChoose) {
                         Icon(
                             modifier = Modifier.size(18.dp),
                             imageVector = Icons.Default.Check,
@@ -249,6 +249,7 @@ internal fun TemplateBottomSheetItemInfo(
     startTime: Date,
     endTime: Date,
     isEnableNotification: Boolean,
+    repeatTimes: List<RepeatTime>,
 ) {
     val timeFormat = SimpleDateFormat.getTimeInstance(SimpleDateFormat.SHORT)
     val startTimeFormat = timeFormat.format(startTime)
@@ -256,6 +257,10 @@ internal fun TemplateBottomSheetItemInfo(
     val duration = duration(startTime, endTime).toMinutesOrHoursTitle()
     val categoryName = mainCategory.let { it.defaultType?.mapToName() ?: it.customName } ?: "*"
     val subCategoryName = subCategory?.name ?: TimePlannerRes.strings.categoryEmptyTitle
+    val repeatTimesTitle = when (repeatTimes.isEmpty()) {
+        true -> ""
+        false -> "${repeatTimes.first().type.mapToString()} (${repeatTimes.size})"
+    }
     val mainText = when (subCategory != null) {
         true -> TimePlannerRes.strings.splitFormat.format(categoryName, subCategoryName)
         false -> categoryName
@@ -269,6 +274,7 @@ internal fun TemplateBottomSheetItemInfo(
             .appendLine(EditorThemeRes.strings.timeRangeFormat.format(startTimeFormat, endTimeFormat))
             .appendLine(EditorThemeRes.strings.durationFormat.format(duration))
             .appendLine(notificationTitle)
+            .appendLine(repeatTimesTitle)
 
         false -> StringBuilder()
             .appendLine(EditorThemeRes.strings.timeRangeFormat.format(startTimeFormat, endTimeFormat))
@@ -289,5 +295,20 @@ internal fun TemplateBottomSheetItemInfo(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.bodyMedium,
         )
+    }
+}
+
+@Composable
+private fun TemplatesBottomSheetSystemUi(
+    isShow: Boolean,
+    containerColor: Color = MaterialTheme.colorScheme.surfaceThree(),
+    backgroundColor: Color = MaterialTheme.colorScheme.background,
+) {
+    val systemUiController = rememberSystemUiController()
+
+    DisposableEffect(key1 = isShow) {
+        val color = if (isShow) containerColor else backgroundColor
+        systemUiController.setNavigationBarColor(color = color)
+        onDispose { systemUiController.setNavigationBarColor(color = backgroundColor) }
     }
 }

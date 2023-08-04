@@ -41,7 +41,7 @@ internal data class HomeStrings(
     val startTimeTaskTitlePlaceHolder: String,
     val addTimeTaskIconsDesc: String,
     val addTimeTaskTitle: String,
-    val topAppBarBackIconDesc: String,
+    val navToBackTitle: String,
     val topAppBarMoreIconDesc: String,
     val topAppBarTemplatesTitle: String,
     val mainCategoryChooserTitle: String,
@@ -81,6 +81,11 @@ internal data class HomeStrings(
     val subCategoryEmptyTitle: String,
     val addCategoryTitle: String,
     val nameCategoryTitle: String,
+    val foundedPlannedTasksTitle: String,
+    val monthTitle: String,
+    val dayTitle: String,
+    val weekNumberTitle: String,
+    val weekDayTitle: String,
 )
 
 internal val russianHomeString = HomeStrings(
@@ -103,7 +108,7 @@ internal val russianHomeString = HomeStrings(
     startTimeTaskTitlePlaceHolder = "00:00",
     addTimeTaskIconsDesc = "Добавить задачу",
     addTimeTaskTitle = "Свободное время",
-    topAppBarBackIconDesc = "Назад",
+    navToBackTitle = "Назад",
     topAppBarMoreIconDesc = "Дополнительно",
     topAppBarTemplatesTitle = "Шаблоны",
     mainCategoryChooserTitle = "Категория",
@@ -144,6 +149,11 @@ internal val russianHomeString = HomeStrings(
     subCategoryEmptyTitle = "Отсутствует",
     addCategoryTitle = "Добавить",
     nameCategoryTitle = "Название",
+    foundedPlannedTasksTitle = "Найдено запланированных задач: %s",
+    monthTitle = "Месяц",
+    dayTitle = "День",
+    weekNumberTitle = "Номер недели",
+    weekDayTitle = "День недели",
 )
 
 internal val englishHomeString = HomeStrings(
@@ -166,7 +176,7 @@ internal val englishHomeString = HomeStrings(
     startTimeTaskTitlePlaceHolder = "00:00",
     addTimeTaskIconsDesc = "Add task",
     addTimeTaskTitle = "Free time",
-    topAppBarBackIconDesc = "Back",
+    navToBackTitle = "Back",
     topAppBarMoreIconDesc = "More",
     topAppBarTemplatesTitle = "Templates",
     mainCategoryChooserTitle = "Category",
@@ -207,6 +217,11 @@ internal val englishHomeString = HomeStrings(
     subCategoryEmptyTitle = "Absent",
     addCategoryTitle = "Add",
     nameCategoryTitle = "Name",
+    foundedPlannedTasksTitle = "Found scheduled tasks: %s",
+    monthTitle = "Month",
+    dayTitle = "Day",
+    weekNumberTitle = "Week number",
+    weekDayTitle = "Day of the week",
 )
 
 internal val persianHomeString = HomeStrings(
@@ -229,7 +244,7 @@ internal val persianHomeString = HomeStrings(
     startTimeTaskTitlePlaceHolder = "00:00",
     addTimeTaskIconsDesc = "افزودن وظیفه",
     addTimeTaskTitle = "وقت آزاد",
-    topAppBarBackIconDesc = "بازگشت",
+    navToBackTitle = "بازگشت",
     topAppBarMoreIconDesc = "بیشتر",
     topAppBarTemplatesTitle = "قالب ها",
     mainCategoryChooserTitle = "دسته بندی",
@@ -270,6 +285,11 @@ internal val persianHomeString = HomeStrings(
     subCategoryEmptyTitle = "خالی",
     addCategoryTitle = "افزودن",
     nameCategoryTitle = "نام",
+    foundedPlannedTasksTitle = "وظایف برنامه ریزی شده یافت شد: s%",
+    monthTitle = "ماه",
+    dayTitle = "روز",
+    weekNumberTitle = "شماره هفته",
+    weekDayTitle = "روز هفته",
 )
 
 internal val germanHomeString = HomeStrings(
@@ -292,7 +312,7 @@ internal val germanHomeString = HomeStrings(
     startTimeTaskTitlePlaceHolder = "00:00",
     addTimeTaskIconsDesc = "Aufgabe hinzufügen",
     addTimeTaskTitle = "Freizeit",
-    topAppBarBackIconDesc = "Zurück",
+    navToBackTitle = "Zurück",
     topAppBarMoreIconDesc = "Zusätzlich",
     topAppBarTemplatesTitle = "Muster",
     mainCategoryChooserTitle = "Kategorie",
@@ -333,6 +353,11 @@ internal val germanHomeString = HomeStrings(
     subCategoryEmptyTitle = "Fehlt",
     addCategoryTitle = "Hinzufügen",
     nameCategoryTitle = "Name",
+    foundedPlannedTasksTitle = "Geplante Aufgaben gefunden: %s",
+    monthTitle = "Monat",
+    dayTitle = "Der Tag",
+    weekNumberTitle = "Wochennummer",
+    weekDayTitle = "Wochentag",
 )
 
 internal val spanishHomeString = HomeStrings(
@@ -355,7 +380,7 @@ internal val spanishHomeString = HomeStrings(
     startTimeTaskTitlePlaceHolder = "00:00",
     addTimeTaskIconsDesc = "Añadir tarea",
     addTimeTaskTitle = "Tiempo libre",
-    topAppBarBackIconDesc = "Volver",
+    navToBackTitle = "Volver",
     topAppBarMoreIconDesc = "Más",
     topAppBarTemplatesTitle = "Plantillas",
     mainCategoryChooserTitle = "Categoría",
@@ -396,6 +421,11 @@ internal val spanishHomeString = HomeStrings(
     subCategoryEmptyTitle = "Ninguna",
     addCategoryTitle = "Añadir",
     nameCategoryTitle = "Nombre",
+    foundedPlannedTasksTitle = "Encontrado tareas programadas: %s",
+    monthTitle = "Mesв",
+    dayTitle = "Día",
+    weekNumberTitle = "Número de la semana",
+    weekDayTitle = "Feria",
 )
 
 internal val LocalHomeStrings = staticCompositionLocalOf<HomeStrings> {

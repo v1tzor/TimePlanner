@@ -16,7 +16,6 @@
 package ru.aleshin.features.home.impl.presentation.ui.home.views
 
 import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -28,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -43,70 +43,92 @@ import java.util.*
 @Composable
 internal fun DateChooser(
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     dateTitle: String,
-    isEnabled: Boolean = true,
+    onNext: () -> Unit,
+    onPrevious: () -> Unit,
     onChooseDate: () -> Unit,
-    onNextDate: () -> Unit,
-    onPreviousDate: () -> Unit,
 ) {
-    val alpha: Float by animateFloatAsState(if (isEnabled) 1f else 0.5f)
     Surface(
         modifier = modifier.height(36.dp),
         shape = MaterialTheme.shapes.large,
         tonalElevation = TimePlannerRes.elevations.levelOne,
     ) {
         Row(modifier = Modifier.fillMaxHeight(), verticalAlignment = Alignment.CenterVertically) {
-            IconButton(
-                onClick = onPreviousDate,
-                modifier = Modifier.size(36.dp),
-                enabled = isEnabled,
-            ) {
-                Icon(
-                    modifier = Modifier.size(12.dp).graphicsLayer(alpha = alpha),
-                    painter = painterResource(HomeThemeRes.icons.previousDate),
-                    contentDescription = HomeThemeRes.strings.previousDateIconDesc,
-                    tint = MaterialTheme.colorScheme.onSurface,
-                )
-            }
-            Box(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .weight(1f)
-                    .clip(MaterialTheme.shapes.medium)
-                    .clickable(onClick = onChooseDate, enabled = isEnabled),
-                contentAlignment = Alignment.Center,
-            ) {
-                Text(
-                    modifier = Modifier
-                        .animateContentSize()
-                        .padding(horizontal = 12.dp)
-                        .graphicsLayer(alpha = alpha),
-                    text = dateTitle,
-                    textAlign = TextAlign.Center,
-                    maxLines = 1,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    style = MaterialTheme.typography.titleMedium,
-                )
-            }
-            IconButton(
-                onClick = onNextDate,
-                modifier = Modifier.size(36.dp),
-                enabled = isEnabled,
-            ) {
-                Icon(
-                    modifier = Modifier.size(12.dp).graphicsLayer(alpha = alpha),
-                    painter = painterResource(HomeThemeRes.icons.nextDate),
-                    contentDescription = HomeThemeRes.strings.nextDateIconDesc,
-                    tint = MaterialTheme.colorScheme.onSurface,
-                )
-            }
+            DateChooserIcon(
+                enabled = enabled, 
+                icon = painterResource(HomeThemeRes.icons.previousDate), 
+                description = HomeThemeRes.strings.previousDateIconDesc,
+                onClick = onPrevious,
+            )
+            DateChooserContent(
+                modifier = Modifier.weight(1f),
+                enabled = enabled,
+                dateTitle = dateTitle,
+                onClick = onChooseDate,
+            )
+            DateChooserIcon(
+                enabled = enabled,
+                icon = painterResource(HomeThemeRes.icons.nextDate),
+                description = HomeThemeRes.strings.nextDateIconDesc,
+                onClick = onNext,
+            )
         }
     }
 }
 
 @Composable
+internal fun DateChooserIcon(
+    modifier: Modifier = Modifier,
+    enabled: Boolean,
+    icon: Painter,
+    description: String?,
+    onClick: () -> Unit,
+) {
+    IconButton(
+        onClick = onClick,
+        modifier = modifier.size(36.dp),
+        enabled = enabled,
+    ) {
+        Icon(
+            modifier = Modifier.size(12.dp).graphicsLayer(alpha = if (enabled) 1f else 0.5f),
+            painter = icon,
+            contentDescription = description,
+            tint = MaterialTheme.colorScheme.onSurface,
+        )
+    }
+}
+
+@Composable
+internal fun DateChooserContent(
+    modifier: Modifier = Modifier,
+    enabled: Boolean,
+    dateTitle: String,
+    onClick: () -> Unit,
+) {
+    Box(
+        modifier = modifier.fillMaxHeight().clip(MaterialTheme.shapes.medium).clickable(
+            enabled = enabled,
+            onClick = onClick, 
+        ),
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(
+            modifier = Modifier.animateContentSize().padding(horizontal = 12.dp).graphicsLayer(
+                alpha = if (enabled) 1f else 0.5f,
+            ),
+            text = dateTitle,
+            textAlign = TextAlign.Center,
+            maxLines = 1,
+            color = MaterialTheme.colorScheme.onSurface,
+            style = MaterialTheme.typography.titleMedium,
+        )
+    }
+}
+
+@Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun HomeDatePicker(
+internal fun HomeDatePicker(
     modifier: Modifier = Modifier,
     isOpenDialog: Boolean,
     onDismiss: () -> Unit,

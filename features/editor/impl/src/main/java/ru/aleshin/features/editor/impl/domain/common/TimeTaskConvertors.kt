@@ -18,11 +18,12 @@ package ru.aleshin.features.editor.impl.domain.common
 import ru.aleshin.core.utils.functional.TimeRange
 import ru.aleshin.features.editor.impl.domain.entites.EditModel
 import ru.aleshin.features.home.api.domain.entities.schedules.TimeTask
+import ru.aleshin.features.home.api.domain.entities.template.Template
 
 /**
  * @author Stanislav Aleshin on 17.05.2023.
  */
-internal fun TimeTask.convertToEditModel(templateId: Int?) = EditModel(
+internal fun TimeTask.convertToEditModel(template: Template?) = EditModel(
     key = key,
     date = date,
     startTime = timeRanges.from,
@@ -33,7 +34,8 @@ internal fun TimeTask.convertToEditModel(templateId: Int?) = EditModel(
     isCompleted = isCompleted,
     isEnableNotification = isEnableNotification,
     isConsiderInStatistics = isConsiderInStatistics,
-    templateId = templateId,
+    templateId = template?.templateId,
+    repeatTimes = template?.repeatTimes ?: emptyList(),
 )
 
 internal fun EditModel.convertToTimeTask() = TimeTask(

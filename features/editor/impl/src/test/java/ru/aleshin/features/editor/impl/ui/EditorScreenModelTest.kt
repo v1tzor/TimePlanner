@@ -374,7 +374,7 @@ internal class EditorScreenModelTest {
             EditorViewState(editModel = fakeEditModel, categories = listOf(fakeCategories)),
         )
 
-        screenModel.dispatchEvent(EditorEvent.ChangeIsTemplate)
+        screenModel.dispatchEvent(EditorEvent.CreateTemplate)
 
         assertEquals(1, templatesInteractor.addedTemplatesCount)
 
@@ -427,7 +427,7 @@ internal class EditorScreenModelTest {
         )
         templatesInteractor.templatesList.add(fakeTemplate)
 
-        screenModel.dispatchEvent(EditorEvent.ChangeIsTemplate)
+        screenModel.dispatchEvent(EditorEvent.CreateTemplate)
 
         assertEquals(1, templatesInteractor.deleteTemplatesCount)
 

@@ -15,7 +15,6 @@
  */
 package ru.aleshin.features.home.impl.presentation.ui.home
 
-import android.util.Log
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -65,7 +64,7 @@ internal class HomeScreen : Screen {
                     modifier = Modifier.padding(paddingValues),
                     onChangeDate = { date -> dispatchEvent(HomeEvent.LoadSchedule(date)) },
                     onTimeTaskEdit = { dispatchEvent(HomeEvent.PressEditTimeTaskButton(it)) },
-                    onDoneChange = { dispatchEvent(HomeEvent.PressChangeDoneStateButton(it)) },
+                    onTaskDoneChange = { dispatchEvent(HomeEvent.ChangeTaskDoneStateButton(it)) },
                     onTimeTaskAdd = { start, end -> dispatchEvent(HomeEvent.PressAddTimeTaskButton(start, end)) },
                     onCreateSchedule = { dispatchEvent(HomeEvent.CreateSchedule) },
                     onTimeTaskIncrease = { dispatchEvent(HomeEvent.TimeTaskShiftUp(it)) },

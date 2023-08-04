@@ -51,9 +51,9 @@ import ru.aleshin.features.home.api.presentation.mappers.mapToName
 internal fun MainCategoryChooser(
     modifier: Modifier = Modifier,
     isError: Boolean = false,
+    allCategories: List<MainCategoryUi>,
     currentCategory: MainCategoryUi?,
-    allMainCategories: List<MainCategoryUi>,
-    onCategoryChange: (MainCategoryUi) -> Unit,
+    onChange: (MainCategoryUi) -> Unit,
 ) {
     val openDialog = rememberSaveable { mutableStateOf(false) }
     val categoryIcon = currentCategory?.defaultType?.mapToIconPainter()
@@ -125,10 +125,10 @@ internal fun MainCategoryChooser(
     if (openDialog.value && currentCategory != null) {
         MainCategoryDialogChooser(
             initCategory = currentCategory,
-            allMainCategories = allMainCategories,
-            onCloseDialog = { openDialog.value = false },
+            allCategories = allCategories,
+            onDismiss = { openDialog.value = false },
             onChooseCategory = {
-                onCategoryChange(it)
+                onChange(it)
                 openDialog.value = false
             },
         )
@@ -139,16 +139,16 @@ internal fun MainCategoryChooser(
 @OptIn(ExperimentalMaterial3Api::class)
 internal fun MainCategoryDialogChooser(
     modifier: Modifier = Modifier,
+    allCategories: List<MainCategoryUi>,
     initCategory: MainCategoryUi,
-    allMainCategories: List<MainCategoryUi>,
-    onCloseDialog: () -> Unit,
+    onDismiss: () -> Unit,
     onChooseCategory: (MainCategoryUi) -> Unit,
 ) {
-    val initPosition = allMainCategories.indexOf(initCategory).let { if (it == -1) 0 else it }
+    val initPosition = allCategories.indexOf(initCategory).let { if (it == -1) 0 else it }
     val listState = rememberLazyListState(initPosition)
     var selectedCategory by rememberSaveable { mutableStateOf(initCategory) }
 
-    AlertDialog(onDismissRequest = onCloseDialog) {
+    AlertDialog(onDismissRequest = onDismiss) {
         Surface(
             modifier = modifier.width(280.dp).wrapContentHeight(),
             shape = MaterialTheme.shapes.extraLarge,
@@ -163,18 +163,18 @@ internal fun MainCategoryDialogChooser(
                     )
                 }
                 LazyColumn(modifier = Modifier.height(300.dp), state = listState) {
-                    items(allMainCategories) { category ->
+                    items(allCategories) { category ->
                         MainCategoryDialogItem(
                             modifier = Modifier.fillMaxWidth(),
                             selected = selectedCategory == category,
                             title = category.let { it.defaultType?.mapToName() ?: it.customName } ?: "*",
                             icon = category.defaultType?.mapToIconPainter(),
-                            onSelectChange = { selectedCategory = category },
+                            onSelectedChange = { selectedCategory = category },
                         )
                     }
                 }
                 DialogButtons(
-                    onCancelClick = onCloseDialog,
+                    onCancelClick = onDismiss,
                     onConfirmClick = { onChooseCategory.invoke(selectedCategory) },
                 )
             }
@@ -188,14 +188,14 @@ internal fun MainCategoryDialogItem(
     selected: Boolean,
     title: String,
     icon: Painter?,
-    onSelectChange: () -> Unit,
+    onSelectedChange: () -> Unit,
 ) {
     Column {
         Row(
             modifier = modifier
                 .padding(vertical = 8.dp, horizontal = 8.dp)
                 .clip(MaterialTheme.shapes.medium)
-                .clickable(onClick = onSelectChange)
+                .clickable(onClick = onSelectedChange)
                 .padding(start = 8.dp, end = 16.dp)
                 .requiredHeight(56.dp),
             horizontalArrangement = Arrangement.spacedBy(16.dp),

@@ -17,6 +17,7 @@
 package ru.aleshin.features.home.api.data.datasources.categories
 
 import androidx.room.*
+import kotlinx.coroutines.flow.Flow
 import ru.aleshin.features.home.api.data.models.categories.MainCategoryDetails
 import ru.aleshin.features.home.api.data.models.categories.MainCategoryEntity
 
@@ -28,7 +29,7 @@ interface MainCategoriesDao {
 
     @Transaction
     @Query("SELECT * FROM mainCategories")
-    suspend fun fetchAllCategories(): List<MainCategoryDetails>
+    fun fetchAllCategories(): Flow<List<MainCategoryDetails>>
 
     @Transaction
     @Query("SELECT * FROM mainCategories WHERE id = :id")
@@ -38,7 +39,7 @@ interface MainCategoriesDao {
     suspend fun addCategory(entity: MainCategoryEntity): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun addCategories(entities: List<MainCategoryEntity>)
+    suspend fun addCategories(entities: List<MainCategoryEntity>): List<Long>
 
     @Query("DELETE FROM mainCategories WHERE id = :id")
     suspend fun removeCategory(id: Int)

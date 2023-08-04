@@ -15,12 +15,21 @@
  */
 package ru.aleshin.features.home.impl.domain.interactors
 
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
+import ru.aleshin.core.utils.extensions.mapToDate
 import ru.aleshin.core.utils.functional.Either
 import ru.aleshin.core.utils.managers.DateManager
-import ru.aleshin.features.home.api.domain.common.ScheduleStatusManager
+import ru.aleshin.core.utils.managers.TimeOverlayManager
+import ru.aleshin.features.home.api.domain.common.ScheduleStatusChecker
 import ru.aleshin.features.home.api.domain.entities.schedules.Schedule
+import ru.aleshin.features.home.api.domain.entities.schedules.TimeTask
+import ru.aleshin.features.home.api.domain.entities.template.Template
 import ru.aleshin.features.home.api.domain.repository.ScheduleRepository
+import ru.aleshin.features.home.api.domain.repository.TemplatesRepository
 import ru.aleshin.features.home.impl.domain.common.HomeEitherWrapper
+import ru.aleshin.features.home.impl.domain.entities.FoundedSchedule
 import ru.aleshin.features.home.impl.domain.entities.HomeFailures
 import java.util.*
 import javax.inject.Inject
@@ -30,35 +39,59 @@ import javax.inject.Inject
  */
 internal interface ScheduleInteractor {
 
-    suspend fun fetchScheduleByDate(date: Long): Either<HomeFailures, Schedule?>
+    suspend fun fetchScheduleByDate(date: Long): Flow<Either<HomeFailures, FoundedSchedule>>
 
-    suspend fun createSchedule(requiredDay: Date): Either<HomeFailures, Unit>
+    suspend fun createSchedule(requiredDay: Date, timeTasks: List<TimeTask>): Either<HomeFailures, Unit>
 
     suspend fun updateSchedule(schedule: Schedule): Either<HomeFailures, Unit>
 
     class Base @Inject constructor(
         private val scheduleRepository: ScheduleRepository,
-        private val statusManager: ScheduleStatusManager,
+        private val templatesRepository: TemplatesRepository,
+        private val statusChecker: ScheduleStatusChecker,
         private val dateManager: DateManager,
+        private val overlayManager: TimeOverlayManager,
         private val eitherWrapper: HomeEitherWrapper,
     ) : ScheduleInteractor {
 
-        override suspend fun fetchScheduleByDate(date: Long) = eitherWrapper.wrap {
-            scheduleRepository.fetchScheduleByDate(date)?.let { schedule ->
-                val timeTasks = schedule.timeTasks.sortedBy { timeTask -> timeTask.timeRanges.to }
-                schedule.copy(timeTasks = timeTasks)
+        override suspend fun fetchScheduleByDate(date: Long) = eitherWrapper.wrapFlow {
+            scheduleRepository.fetchScheduleByDate(date).map { schedule ->
+                when (schedule != null) {
+                    true -> {
+                        val sortedSchedule = schedule.copy(
+                            timeTasks = schedule.timeTasks.sortedBy { timeTask -> timeTask.timeRanges.to },
+                        )
+                        Either.Right(sortedSchedule)
+                    }
+                    false -> Either.Left(foundPlannedTemplates(date.mapToDate()))
+                }
             }
         }
 
-        override suspend fun createSchedule(requiredDay: Date) = eitherWrapper.wrap {
+        override suspend fun createSchedule(requiredDay: Date, timeTasks: List<TimeTask>) = eitherWrapper.wrap {
+            val correctTimeTasks = mutableListOf<TimeTask>().apply {
+                timeTasks.sortedBy { it.timeRanges.from }.forEach { timeTask ->
+                    val allTimeRanges = map { it.timeRanges }
+                    val overlayResult = overlayManager.isOverlay(timeTask.timeRanges, allTimeRanges)
+                    if (!overlayResult.isOverlay) add(timeTask)
+                }
+            }
             val currentDate = dateManager.fetchBeginningCurrentDay()
-            val status = statusManager.fetchState(requiredDay, currentDate)
-            val schedule = Schedule(date = requiredDay.time, status = status)
+            val status = statusChecker.fetchState(requiredDay, currentDate)
+            val schedule = Schedule(date = requiredDay.time, status = status, timeTasks = correctTimeTasks)
             scheduleRepository.createSchedules(listOf(schedule))
         }
 
         override suspend fun updateSchedule(schedule: Schedule) = eitherWrapper.wrap {
             scheduleRepository.updateSchedule(schedule)
+        }
+        
+        private suspend fun foundPlannedTemplates(date: Date) = mutableListOf<Template>().apply {
+            templatesRepository.fetchAllTemplates().first().forEach { template ->
+                template.repeatTimes.forEach { repeatTime ->
+                    if (repeatTime.checkDateIsRepeat(date)) add(template)
+                }
+            }
         }
     }
 }

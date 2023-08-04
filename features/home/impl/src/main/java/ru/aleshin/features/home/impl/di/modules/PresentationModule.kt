@@ -23,6 +23,7 @@ import ru.aleshin.core.utils.di.FeatureScope
 import ru.aleshin.features.home.api.navigation.HomeFeatureStarter
 import ru.aleshin.features.home.impl.navigation.HomeFeatureStarterImpl
 import ru.aleshin.features.home.impl.navigation.NavigationManager
+import ru.aleshin.features.home.impl.presentation.common.TimeTaskStatusController
 import ru.aleshin.features.home.impl.presentation.mapppers.schedules.ScheduleDomainToUiMapper
 import ru.aleshin.features.home.impl.presentation.mapppers.schedules.TimeTaskDomainToUiMapper
 import ru.aleshin.features.home.impl.presentation.ui.categories.screenmodel.CategoriesEffectCommunicator
@@ -53,6 +54,10 @@ internal interface PresentationModule {
     @Binds
     @FeatureScope
     fun bindNavigationManager(manager: NavigationManager.Base): NavigationManager
+
+    @Binds
+    @FeatureScope
+    fun bindTimeTaskStatusController(controller: TimeTaskStatusController.Base): TimeTaskStatusController
 
     // Nav ScreenModel
 

@@ -34,9 +34,6 @@ import ru.aleshin.core.ui.theme.TimePlannerRes
 import ru.aleshin.core.ui.theme.material.ThemeColorsUiType
 import ru.aleshin.core.ui.theme.tokens.LanguageUiType
 import ru.aleshin.core.ui.views.WarningDeleteDialog
-import ru.aleshin.features.settings.api.domain.entities.LanguageType
-import ru.aleshin.features.settings.api.domain.entities.ThemeColorsType
-import ru.aleshin.features.settings.api.domain.entities.ThemeSettings
 import ru.aleshin.features.settings.impl.presentation.models.ThemeSettingsUi
 import ru.aleshin.features.settings.impl.presentation.theme.SettingsThemeRes
 import ru.aleshin.features.settings.impl.presentation.ui.contract.RestoreBackupContract

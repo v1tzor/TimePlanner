@@ -15,6 +15,8 @@
  */
 package ru.aleshin.features.home.api.data.repository
 
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import ru.aleshin.features.home.api.data.datasources.categories.CategoriesLocalDataSource
 import ru.aleshin.features.home.api.data.mappers.categories.mapToData
 import ru.aleshin.features.home.api.data.mappers.categories.mapToDomain
@@ -30,13 +32,13 @@ class CategoriesRepositoryImpl @Inject constructor(
     private val localDataSource: CategoriesLocalDataSource,
 ) : CategoriesRepository {
 
-    override suspend fun addMainCategories(categories: List<MainCategory>) {
-        localDataSource.addMainCategories(categories.map { it.mapToData() })
+    override suspend fun addMainCategories(categories: List<MainCategory>): List<Int> {
+        return localDataSource.addMainCategories(categories.map { it.mapToData() }).map { it.toInt() }
     }
 
-    override suspend fun fetchCategories(): List<Categories> {
-        return localDataSource.fetchMainCategories().map { mainCategory ->
-            mainCategory.mapToDomain()
+    override fun fetchCategories(): Flow<List<Categories>> {
+        return localDataSource.fetchMainCategories().map { categories ->
+            categories.map { it.mapToDomain() }
         }
     }
 

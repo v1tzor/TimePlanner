@@ -32,6 +32,7 @@ internal fun Template.convertToEditModel(date: Date) = EditModel(
     isImportant = isImportant,
     isEnableNotification = isEnableNotification,
     isConsiderInStatistics = isConsiderInStatistics,
+    repeatTimes = repeatTimes,
     templateId = templateId,
 )
 
@@ -44,4 +45,5 @@ internal fun EditModel.convertToTemplate(id: Int = 0) = Template(
     isImportant = isImportant,
     isEnableNotification = isEnableNotification,
     isConsiderInStatistics = isConsiderInStatistics,
+    repeatTimes = repeatTimes,
 )

@@ -21,6 +21,7 @@ import ru.aleshin.core.utils.extensions.duration
 import ru.aleshin.core.utils.functional.TimeRange
 import ru.aleshin.features.editor.impl.presentation.models.categories.MainCategoryUi
 import ru.aleshin.features.editor.impl.presentation.models.categories.SubCategoryUi
+import ru.aleshin.features.home.api.domain.entities.template.RepeatTime
 import java.util.Date
 
 /**
@@ -37,4 +38,5 @@ internal data class EditModelUi(
     val isCompleted: Boolean = true,
     val parameters: EditParameters = EditParameters(),
     val templateId: Int? = null,
+    val repeatTimes: List<RepeatTime> = emptyList(),
 ) : Parcelable

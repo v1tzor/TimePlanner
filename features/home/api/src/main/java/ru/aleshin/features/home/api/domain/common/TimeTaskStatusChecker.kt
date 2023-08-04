@@ -15,26 +15,27 @@
  */
 package ru.aleshin.features.home.api.domain.common
 
-import ru.aleshin.features.home.api.domain.entities.schedules.DailyScheduleStatus
-import java.util.Date
+import ru.aleshin.core.utils.functional.TimeRange
+import ru.aleshin.features.home.api.domain.entities.schedules.TimeTaskStatus
+import java.util.*
 import javax.inject.Inject
 
 /**
  * @author Stanislav Aleshin on 24.03.2023.
  */
-interface ScheduleStatusManager {
+interface TimeTaskStatusChecker {
 
-    fun fetchState(requiredDate: Date, currentDate: Date): DailyScheduleStatus
+    fun fetchStatus(timeRange: TimeRange, currentDate: Date): TimeTaskStatus
 
-    class Base @Inject constructor() : ScheduleStatusManager {
+    class Base @Inject constructor() : TimeTaskStatusChecker {
 
-        override fun fetchState(requiredDate: Date, currentDate: Date): DailyScheduleStatus {
-            return if (requiredDate.time > currentDate.time) {
-                DailyScheduleStatus.PLANNED
-            } else if (requiredDate.time < currentDate.time) {
-                DailyScheduleStatus.REALIZED
+        override fun fetchStatus(timeRange: TimeRange, currentDate: Date): TimeTaskStatus {
+            return if (currentDate.time > timeRange.from.time && currentDate.time < timeRange.to.time) {
+                TimeTaskStatus.RUNNING
+            } else if (currentDate.time > timeRange.to.time) {
+                TimeTaskStatus.COMPLETED
             } else {
-                DailyScheduleStatus.ACCOMPLISHMENT
+                TimeTaskStatus.PLANNED
             }
         }
     }

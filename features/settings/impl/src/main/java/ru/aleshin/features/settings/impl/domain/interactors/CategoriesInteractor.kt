@@ -15,10 +15,11 @@
  */
 package ru.aleshin.features.settings.impl.domain.interactors
 
+import kotlinx.coroutines.flow.first
+import ru.aleshin.core.utils.extensions.extractAllItem
 import ru.aleshin.core.utils.functional.DomainResult
 import ru.aleshin.core.utils.functional.UnitDomainResult
 import ru.aleshin.features.home.api.domain.entities.categories.Categories
-import ru.aleshin.features.home.api.domain.entities.categories.SubCategory
 import ru.aleshin.features.home.api.domain.repository.CategoriesRepository
 import ru.aleshin.features.home.api.domain.repository.SubCategoriesRepository
 import ru.aleshin.features.settings.impl.domain.common.SettingsEitherWrapper
@@ -46,13 +47,11 @@ internal interface CategoriesInteractor {
         }
 
         override suspend fun fetchAllCategories() = eitherWrapper.wrap {
-            categoriesRepository.fetchCategories()
+            categoriesRepository.fetchCategories().first()
         }
 
         override suspend fun addCategories(categories: List<Categories>) = eitherWrapper.wrap {
-            val subCategories = mutableListOf<SubCategory>().apply {
-                categories.map { it.subCategories }.forEach { addAll(it) }
-            }
+            val subCategories = categories.map { it.subCategories }.extractAllItem()
             categoriesRepository.addMainCategories(categories.map { it.mainCategory })
             subCategoriesRepository.addSubCategories(subCategories)
         }

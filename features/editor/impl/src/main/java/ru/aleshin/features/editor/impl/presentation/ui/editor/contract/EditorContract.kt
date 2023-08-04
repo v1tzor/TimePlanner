@@ -20,10 +20,10 @@ import ru.aleshin.core.utils.functional.TimeRange
 import ru.aleshin.core.utils.platform.screenmodel.contract.*
 import ru.aleshin.features.editor.impl.domain.entites.EditorFailures
 import ru.aleshin.features.editor.impl.presentation.models.categories.CategoriesUi
-import ru.aleshin.features.editor.impl.presentation.models.editmodel.EditModelUi
-import ru.aleshin.features.editor.impl.presentation.models.editmodel.EditParameters
 import ru.aleshin.features.editor.impl.presentation.models.categories.MainCategoryUi
 import ru.aleshin.features.editor.impl.presentation.models.categories.SubCategoryUi
+import ru.aleshin.features.editor.impl.presentation.models.editmodel.EditModelUi
+import ru.aleshin.features.editor.impl.presentation.models.editmodel.EditParameters
 import ru.aleshin.features.editor.impl.presentation.models.template.TemplateUi
 import ru.aleshin.features.editor.impl.presentation.ui.editor.screenmodel.CategoryValidateError
 import ru.aleshin.features.editor.impl.presentation.ui.editor.screenmodel.TimeRangeError
@@ -42,16 +42,16 @@ internal data class EditorViewState(
 
 internal sealed class EditorEvent : BaseEvent {
     object Init : EditorEvent()
-    data class ChangeCategories(val category: MainCategoryUi, val subCategory: SubCategoryUi?) : EditorEvent()
-    data class ChangeTime(val timeRange: TimeRange) : EditorEvent()
-    data class ChangeParameters(val parameters: EditParameters) : EditorEvent()
-    data class ApplyTemplate(val template: TemplateUi) : EditorEvent()
-    data class AddSubCategory(val name: String) : EditorEvent()
-    object PressControlTemplateButton : EditorEvent()
     object LoadTemplates : EditorEvent()
-    object ChangeIsTemplate : EditorEvent()
+    object CreateTemplate : EditorEvent()
+    data class ApplyTemplate(val template: TemplateUi) : EditorEvent()
+    data class ChangeTime(val timeRange: TimeRange) : EditorEvent()
+    data class ChangeCategories(val category: MainCategoryUi, val subCategory: SubCategoryUi?) : EditorEvent()
+    data class ChangeParameters(val parameters: EditParameters) : EditorEvent()
+    data class AddSubCategory(val name: String) : EditorEvent()
     object PressDeleteButton : EditorEvent()
-    data class PressSaveButton(val isTemplateUpdate: Boolean) : EditorEvent()
+    object PressSaveButton : EditorEvent()
+    object PressControlTemplateButton : EditorEvent()
     object PressBackButton : EditorEvent()
 }
 
@@ -67,7 +67,6 @@ internal sealed class EditorAction : BaseAction {
     object Navigate : EditorAction()
     data class SetUp(val editModel: EditModelUi, val categories: List<CategoriesUi>) : EditorAction()
     data class UpdateCategories(val categories: List<CategoriesUi>) : EditorAction()
-    data class UpdateTimeRange(val timeRange: TimeRange, val duration: Long) : EditorAction()
     data class UpdateTemplateId(val templateId: Int?) : EditorAction()
     data class UpdateEditModel(val editModel: EditModelUi?) : EditorAction()
     data class UpdateTemplates(val templates: List<TemplateUi>) : EditorAction()

@@ -50,8 +50,9 @@ internal interface TimeTaskInteractor {
         }
 
         override suspend fun updateTimeTask(timeTask: TimeTask) = eitherWrapper.wrap {
-            val allTimeTask = timeTaskRepository.fetchAllTimeTaskByDate(timeTask.date).toMutableList()
-            allTimeTask.removeAll { it.key == timeTask.key }
+            val allTimeTask = timeTaskRepository.fetchAllTimeTaskByDate(timeTask.date).toMutableList().apply {
+                removeAll { it.key == timeTask.key }
+            }
 
             checkIsOverlay(allTimeTask.map { it.timeRanges }, timeTask.timeRanges) {
                 timeTaskRepository.updateTimeTask(timeTask)
@@ -59,7 +60,7 @@ internal interface TimeTaskInteractor {
         }
 
         override suspend fun deleteTimeTask(key: Long) = eitherWrapper.wrap {
-            timeTaskRepository.deleteTimeTask(key)
+            timeTaskRepository.deleteTimeTasks(listOf(key))
         }
 
         private suspend fun checkIsOverlay(

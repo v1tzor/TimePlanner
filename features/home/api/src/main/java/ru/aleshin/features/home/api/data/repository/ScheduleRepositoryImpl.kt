@@ -15,6 +15,8 @@
  */
 package ru.aleshin.features.home.api.data.repository
 
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import ru.aleshin.core.utils.functional.TimeRange
 import ru.aleshin.features.home.api.data.datasources.schedules.SchedulesLocalDataSource
 import ru.aleshin.features.home.api.data.mappers.schedules.ScheduleDataToDomainMapper
@@ -36,8 +38,8 @@ class ScheduleRepositoryImpl @Inject constructor(
         return localDataSource.fetchScheduleByRange(timeRange).map { mapperToDomain.map(it) }
     }
 
-    override suspend fun fetchScheduleByDate(date: Long): Schedule? {
-        return localDataSource.fetchScheduleByDate(date)?.map(mapperToDomain)
+    override suspend fun fetchScheduleByDate(date: Long): Flow<Schedule?> {
+        return localDataSource.fetchScheduleByDate(date).map { it?.map(mapperToDomain) }
     }
 
     override suspend fun createSchedules(schedules: List<Schedule>) {

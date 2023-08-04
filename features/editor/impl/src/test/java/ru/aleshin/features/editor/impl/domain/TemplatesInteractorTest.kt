@@ -17,6 +17,8 @@ package ru.aleshin.features.editor.impl.domain
 
 import android.database.sqlite.SQLiteException
 import junit.framework.TestCase.assertEquals
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
@@ -304,10 +306,10 @@ private class FakeTemplatesRepository : TemplatesRepository {
         }
     }
 
-    override suspend fun fetchAllTemplates(): List<Template> {
+    override fun fetchAllTemplates(): Flow<List<Template>> {
         fetchTemplatesCount++
         return if (!errorWhileAction) {
-            templatesList
+            flowOf(templatesList)
         } else {
             throw NullPointerException()
         }

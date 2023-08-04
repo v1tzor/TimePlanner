@@ -19,7 +19,7 @@ import ru.aleshin.core.utils.extensions.duration
 import ru.aleshin.core.utils.functional.ParameterizedMapper
 import ru.aleshin.core.utils.functional.TimeRange
 import ru.aleshin.core.utils.managers.DateManager
-import ru.aleshin.features.home.api.domain.common.TimeTaskStatusManager
+import ru.aleshin.features.home.api.domain.common.TimeTaskStatusChecker
 import ru.aleshin.features.home.api.domain.entities.schedules.TimeTask
 import ru.aleshin.features.home.impl.presentation.mapppers.categories.mapToDomain
 import ru.aleshin.features.home.impl.presentation.mapppers.categories.mapToUi
@@ -32,7 +32,7 @@ import javax.inject.Inject
 internal interface TimeTaskDomainToUiMapper : ParameterizedMapper<TimeTask, TimeTaskUi, Boolean> {
     class Base @Inject constructor(
         private val dateManager: DateManager,
-        private val statusManager: TimeTaskStatusManager,
+        private val statusManager: TimeTaskStatusChecker,
     ) : TimeTaskDomainToUiMapper {
         override fun map(input: TimeTask, parameter: Boolean) = TimeTaskUi(
             executionStatus = statusManager.fetchStatus(

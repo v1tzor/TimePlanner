@@ -34,6 +34,7 @@ data class Template(
     val isImportant: Boolean = false,
     val isEnableNotification: Boolean = true,
     val isConsiderInStatistics: Boolean = true,
+    val repeatTimes: List<RepeatTime> = emptyList(),
 ) {
     fun <T> map(mapper: Mapper<Template, T>) = mapper.map(this)
 

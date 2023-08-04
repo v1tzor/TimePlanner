@@ -19,6 +19,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import ru.aleshin.core.ui.views.*
 import ru.aleshin.features.editor.impl.presentation.theme.EditorThemeRes
@@ -46,36 +47,24 @@ internal fun EditorTopAppBar(
                 imageDescription = EditorThemeRes.strings.topAppBarBackIconDesc,
                 onButtonClick = onBackIconClick,
             )
+            TopAppBarEmptyButton()
         },
         actions = {
-            TopAppBarMoreActions(
-                items = EditorTopAppBarActions.values(),
-                onItemClick = {
-                    when (it) {
-                        EditorTopAppBarActions.TEMPLATES -> onTemplatesActionClick.invoke()
-                        EditorTopAppBarActions.DELETE -> onDeleteActionClick.invoke()
-                    }
-                },
-                moreIconDescription = EditorThemeRes.strings.topAppBarMoreIconDesc,
+            TopAppBarButton(
+                imagePainter = painterResource(id = EditorThemeRes.icons.delete),
+                imageDescription = EditorThemeRes.strings.topAppBarDeleteTitle,
+                onButtonClick = onDeleteActionClick,
+            )
+            TopAppBarButton(
+                imagePainter = painterResource(id = EditorThemeRes.icons.templates),
+                imageDescription = EditorThemeRes.strings.topAppBarTemplatesTitle,
+                onButtonClick = onTemplatesActionClick,
             )
         },
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.background,
         ),
     )
-}
-
-internal enum class EditorTopAppBarActions : TopAppBarAction {
-    TEMPLATES {
-        override val title: String @Composable get() = EditorThemeRes.strings.topAppBarTemplatesTitle
-        override val icon: Int @Composable get() = EditorThemeRes.icons.templates
-        override val isAlwaysShow: Boolean = false
-    },
-    DELETE {
-        override val title: String @Composable get() = EditorThemeRes.strings.topAppBarDeleteTitle
-        override val icon: Int @Composable get() = EditorThemeRes.icons.delete
-        override val isAlwaysShow: Boolean = false
-    },
 }
 
 /* ----------------------- Release Preview -----------------------

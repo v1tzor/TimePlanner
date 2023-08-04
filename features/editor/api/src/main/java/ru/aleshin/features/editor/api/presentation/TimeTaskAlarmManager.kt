@@ -23,7 +23,6 @@ import ru.aleshin.core.ui.theme.tokens.fetchCoreIcons
 import ru.aleshin.core.ui.theme.tokens.fetchCoreLanguage
 import ru.aleshin.core.ui.theme.tokens.fetchCoreStrings
 import ru.aleshin.core.utils.extensions.fetchCurrentLanguage
-import ru.aleshin.core.utils.functional.Constants
 import ru.aleshin.core.utils.functional.Constants.App
 import ru.aleshin.features.home.api.domain.entities.categories.MainCategory
 import ru.aleshin.features.home.api.domain.entities.categories.SubCategory

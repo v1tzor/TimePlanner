@@ -17,10 +17,12 @@ package ru.aleshin.features.home.impl.di
 
 import ru.aleshin.core.utils.managers.CoroutineManager
 import ru.aleshin.core.utils.managers.DateManager
+import ru.aleshin.core.utils.managers.TimeOverlayManager
 import ru.aleshin.core.utils.navigation.Router
 import ru.aleshin.features.editor.api.navigations.EditorFeatureStarter
-import ru.aleshin.features.home.api.domain.common.ScheduleStatusManager
-import ru.aleshin.features.home.api.domain.common.TimeTaskStatusManager
+import ru.aleshin.features.editor.api.presentation.TimeTaskAlarmManager
+import ru.aleshin.features.home.api.domain.common.ScheduleStatusChecker
+import ru.aleshin.features.home.api.domain.common.TimeTaskStatusChecker
 import ru.aleshin.features.home.api.domain.repository.CategoriesRepository
 import ru.aleshin.features.home.api.domain.repository.ScheduleRepository
 import ru.aleshin.features.home.api.domain.repository.SubCategoriesRepository
@@ -40,7 +42,9 @@ interface HomeFeatureDependencies : BaseFeatureDependencies {
     val categoriesRepository: CategoriesRepository
     val subCategoriesRepository: SubCategoriesRepository
     val coroutineManager: CoroutineManager
-    val scheduleStatusManager: ScheduleStatusManager
-    val taskStatusManager: TimeTaskStatusManager
+    val scheduleStatusChecker: ScheduleStatusChecker
+    val timeOverlayManager: TimeOverlayManager
+    val timeTaskAlarmManager: TimeTaskAlarmManager
+    val taskStatusManager: TimeTaskStatusChecker
     val dateManger: DateManager
 }

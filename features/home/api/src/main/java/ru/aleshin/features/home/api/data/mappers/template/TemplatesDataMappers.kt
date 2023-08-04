@@ -17,6 +17,7 @@ package ru.aleshin.features.home.api.data.mappers.template
 
 import ru.aleshin.core.utils.extensions.mapToDate
 import ru.aleshin.features.home.api.data.mappers.categories.mapToDomain
+import ru.aleshin.features.home.api.data.models.template.TemplateCompound
 import ru.aleshin.features.home.api.data.models.template.TemplateDetails
 import ru.aleshin.features.home.api.data.models.template.TemplateEntity
 import ru.aleshin.features.home.api.domain.entities.template.Template
@@ -33,15 +34,23 @@ fun TemplateDetails.mapToDomain() = Template(
     isEnableNotification = template.isEnableNotification,
     isConsiderInStatistics = template.isConsiderInStatistics,
     templateId = template.id,
+    repeatTimes = repeatTime?.let { list ->
+        list.map { repeatTimeEntity -> repeatTimeEntity.mapToDomain() }
+    } ?: emptyList()
 )
 
-fun Template.mapToData() = TemplateEntity(
-    id = templateId,
-    startTime = startTime.time,
-    endTime = endTime.time,
-    categoryId = category.id,
-    subCategoryId = subCategory?.id,
-    isImportant = isImportant,
-    isEnableNotification = isEnableNotification,
-    isConsiderInStatistics = isConsiderInStatistics,
+fun Template.mapToData() = TemplateCompound(
+    template = TemplateEntity(
+        id = templateId,
+        startTime = startTime.time,
+        endTime = endTime.time,
+        categoryId = category.id,
+        subCategoryId = subCategory?.id,
+        isImportant = isImportant,
+        isEnableNotification = isEnableNotification,
+        isConsiderInStatistics = isConsiderInStatistics,
+    ),
+    repeatTimes = repeatTimes.map {
+        it.mapToData(templateId)
+    }
 )

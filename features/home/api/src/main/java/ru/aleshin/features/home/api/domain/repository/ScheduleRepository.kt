@@ -15,6 +15,7 @@
  */
 package ru.aleshin.features.home.api.domain.repository
 
+import kotlinx.coroutines.flow.Flow
 import ru.aleshin.core.utils.functional.TimeRange
 import ru.aleshin.features.home.api.domain.entities.schedules.Schedule
 
@@ -24,7 +25,7 @@ import ru.aleshin.features.home.api.domain.entities.schedules.Schedule
 interface ScheduleRepository {
     suspend fun createSchedules(schedules: List<Schedule>)
     suspend fun fetchSchedulesByRange(timeRange: TimeRange?): List<Schedule>
-    suspend fun fetchScheduleByDate(date: Long): Schedule?
+    suspend fun fetchScheduleByDate(date: Long): Flow<Schedule?>
     suspend fun updateSchedule(schedule: Schedule)
     suspend fun deleteAllSchedules()
 }

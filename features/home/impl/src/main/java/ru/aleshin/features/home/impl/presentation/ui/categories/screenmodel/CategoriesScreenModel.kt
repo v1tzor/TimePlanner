@@ -45,43 +45,45 @@ internal class CategoriesScreenModel @Inject constructor(
     override fun init() {
         if (!isInitialize.get()) {
             super.init()
-            dispatchEvent(CategoriesEvent.Init(0))
+            dispatchEvent(CategoriesEvent.Init)
         }
     }
 
     override suspend fun WorkScope<CategoriesViewState, CategoriesAction, CategoriesEffect>.handleEvent(
         event: CategoriesEvent,
-    ) = when (event) {
-        is CategoriesEvent.Init -> {
-            val command = CategoriesWorkCommand.LoadCategories(event.initCategoryId)
-            categoriesWorkProcessor.work(command).handleWork()
-        }
-        is CategoriesEvent.ChangeMainCategory -> {
-            sendAction(CategoriesAction.ChangeMainCategory(event.mainCategory))
-        }
-        is CategoriesEvent.UpdateSubCategory -> {
-            val command = CategoriesWorkCommand.UpdateSubCategory(event.subCategory)
-            categoriesWorkProcessor.work(command).handleWork()
-        }
-        is CategoriesEvent.DeleteSubCategory -> {
-            val command = CategoriesWorkCommand.DeleteSubCategory(event.subCategory)
-            categoriesWorkProcessor.work(command).handleWork()
-        }
-        is CategoriesEvent.AddSubCategory -> {
-            val command = CategoriesWorkCommand.AddSubCategory(event.name, event.mainCategory)
-            categoriesWorkProcessor.work(command).handleWork()
-        }
-        is CategoriesEvent.AddMainCategory -> {
-            val command = CategoriesWorkCommand.AddMainCategory(event.name)
-            categoriesWorkProcessor.work(command).handleWork()
-        }
-        is CategoriesEvent.DeleteMainCategory -> {
-            val command = CategoriesWorkCommand.DeleteMainCategory(event.mainCategory)
-            categoriesWorkProcessor.work(command).handleWork()
-        }
-        is CategoriesEvent.UpdateMainCategory -> {
-            val command = CategoriesWorkCommand.UpdateMainCategory(event.mainCategory)
-            categoriesWorkProcessor.work(command).handleWork()
+    ) {
+        when (event) {
+            is CategoriesEvent.Init -> launchBackgroundWork(CategoriesWorkCommand.LoadCategories) {
+                val command = CategoriesWorkCommand.LoadCategories
+                categoriesWorkProcessor.work(command).collectAndHandleWork()
+            }
+            is CategoriesEvent.ChangeMainCategory -> {
+                sendAction(CategoriesAction.ChangeMainCategory(event.mainCategory))
+            }
+            is CategoriesEvent.UpdateSubCategory -> {
+                val command = CategoriesWorkCommand.UpdateSubCategory(event.subCategory)
+                categoriesWorkProcessor.work(command).collectAndHandleWork()
+            }
+            is CategoriesEvent.DeleteSubCategory -> {
+                val command = CategoriesWorkCommand.DeleteSubCategory(event.subCategory)
+                categoriesWorkProcessor.work(command).collectAndHandleWork()
+            }
+            is CategoriesEvent.AddSubCategory -> {
+                val command = CategoriesWorkCommand.AddSubCategory(event.name, event.mainCategory)
+                categoriesWorkProcessor.work(command).collectAndHandleWork()
+            }
+            is CategoriesEvent.AddMainCategory -> {
+                val command = CategoriesWorkCommand.AddMainCategory(event.name)
+                categoriesWorkProcessor.work(command).collectAndHandleWork()
+            }
+            is CategoriesEvent.DeleteMainCategory -> {
+                val command = CategoriesWorkCommand.DeleteMainCategory(event.mainCategory)
+                categoriesWorkProcessor.work(command).collectAndHandleWork()
+            }
+            is CategoriesEvent.UpdateMainCategory -> {
+                val command = CategoriesWorkCommand.UpdateMainCategory(event.mainCategory)
+                categoriesWorkProcessor.work(command).collectAndHandleWork()
+            }
         }
     }
 
@@ -93,7 +95,6 @@ internal class CategoriesScreenModel @Inject constructor(
             selectedMainCategory = action.category,
         )
         is CategoriesAction.SetUp -> currentState.copy(
-            selectedMainCategory = action.category,
             categories = action.categories,
         )
     }

@@ -15,8 +15,9 @@
  */
 package ru.aleshin.features.home.api.data.datasources.templates
 
+import kotlinx.coroutines.flow.Flow
+import ru.aleshin.features.home.api.data.models.template.TemplateCompound
 import ru.aleshin.features.home.api.data.models.template.TemplateDetails
-import ru.aleshin.features.home.api.data.models.template.TemplateEntity
 import javax.inject.Inject
 
 /**
@@ -24,10 +25,10 @@ import javax.inject.Inject
  */
 interface TemplatesLocalDataSource {
 
-    suspend fun createTemplate(template: TemplateEntity): Long
-    suspend fun createTemplates(template: List<TemplateEntity>)
-    suspend fun fetchAllTemplates(): List<TemplateDetails>
-    suspend fun updateTemplate(template: TemplateEntity)
+    suspend fun createTemplates(templates: List<TemplateCompound>): List<Long>
+    suspend fun fetchTemplatesById(templateId: Int): TemplateDetails?
+    fun fetchAllTemplates(): Flow<List<TemplateDetails>>
+    suspend fun updateTemplate(template: TemplateCompound)
     suspend fun deleteTemplateById(id: Int)
     suspend fun deleteAllTemplates()
 
@@ -35,28 +36,30 @@ interface TemplatesLocalDataSource {
         private val templatesDao: TemplatesDao,
     ) : TemplatesLocalDataSource {
 
-        override suspend fun createTemplate(template: TemplateEntity): Long {
-            return templatesDao.addTemplate(template)
+        override suspend fun createTemplates(templates: List<TemplateCompound>): List<Long> {
+            return templatesDao.addOrUpdateCompoundTemplates(templates)
         }
 
-        override suspend fun createTemplates(template: List<TemplateEntity>) {
-            templatesDao.addTemplates(template)
-        }
-
-        override suspend fun fetchAllTemplates(): List<TemplateDetails> {
+        override fun fetchAllTemplates(): Flow<List<TemplateDetails>> {
             return templatesDao.fetchAllTemplates()
         }
 
-        override suspend fun updateTemplate(template: TemplateEntity) {
-            templatesDao.updateTemplate(template)
+        override suspend fun fetchTemplatesById(templateId: Int): TemplateDetails? {
+            return templatesDao.fetchTemplateById(templateId)
+        }
+
+        override suspend fun updateTemplate(template: TemplateCompound) {
+            templatesDao.addOrUpdateCompoundTemplates(listOf(template))
         }
 
         override suspend fun deleteTemplateById(id: Int) {
             templatesDao.deleteTemplate(id)
+            templatesDao.deleteRepeatTimesByTemplates(listOf(id))
         }
 
         override suspend fun deleteAllTemplates() {
             templatesDao.deleteAllTemplates()
+            templatesDao.deleteAllRepeatTimes()
         }
     }
 }

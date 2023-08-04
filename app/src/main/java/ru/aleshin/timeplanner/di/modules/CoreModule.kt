@@ -23,8 +23,8 @@ import ru.aleshin.core.utils.managers.TimeOverlayManager
 import ru.aleshin.core.utils.notifications.NotificationCreator
 import ru.aleshin.features.editor.api.presentation.AlarmReceiverProvider
 import ru.aleshin.features.editor.api.presentation.TimeTaskAlarmManager
-import ru.aleshin.features.home.api.domain.common.ScheduleStatusManager
-import ru.aleshin.features.home.api.domain.common.TimeTaskStatusManager
+import ru.aleshin.features.home.api.domain.common.ScheduleStatusChecker
+import ru.aleshin.features.home.api.domain.common.TimeTaskStatusChecker
 import ru.aleshin.timeplanner.navigation.GlobalNavigationManager
 import ru.aleshin.timeplanner.navigation.TabNavigationManager
 import ru.aleshin.timeplanner.presentation.receiver.AlarmReceiverProviderImpl
@@ -62,10 +62,10 @@ interface CoreModule {
     fun bindTimeOverlayManager(manager: TimeOverlayManager.Base): TimeOverlayManager
 
     @Binds
-    fun bindTimeTaskStatusManager(manager: TimeTaskStatusManager.Base): TimeTaskStatusManager
+    fun bindTimeTaskStatusChecker(checker: TimeTaskStatusChecker.Base): TimeTaskStatusChecker
 
     @Binds
-    fun bindScheduleStatusManager(manager: ScheduleStatusManager.Base): ScheduleStatusManager
+    fun bindScheduleStatusChecker(checker: ScheduleStatusChecker.Base): ScheduleStatusChecker
 
     @Binds
     fun bindDateManager(interactor: DateManager.Base): DateManager

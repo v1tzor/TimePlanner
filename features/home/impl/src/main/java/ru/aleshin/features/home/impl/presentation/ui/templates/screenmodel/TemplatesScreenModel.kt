@@ -20,8 +20,10 @@ import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
 import ru.aleshin.core.utils.managers.CoroutineManager
 import ru.aleshin.core.utils.platform.screenmodel.BaseScreenModel
+import ru.aleshin.core.utils.platform.screenmodel.work.BackgroundWorkKey
 import ru.aleshin.core.utils.platform.screenmodel.work.WorkScope
 import ru.aleshin.features.home.impl.di.holder.HomeComponentHolder
+import ru.aleshin.features.home.impl.presentation.models.templates.TemplatesSortedType
 import ru.aleshin.features.home.impl.presentation.ui.templates.contract.TemplatesAction
 import ru.aleshin.features.home.impl.presentation.ui.templates.contract.TemplatesEffect
 import ru.aleshin.features.home.impl.presentation.ui.templates.contract.TemplatesEvent
@@ -51,23 +53,37 @@ internal class TemplatesScreenModel @Inject constructor(
 
     override suspend fun WorkScope<TemplatesViewState, TemplatesAction, TemplatesEffect>.handleEvent(
         event: TemplatesEvent,
-    ) = when (event) {
-        is TemplatesEvent.Init -> with(state()) {
-            templatesWorkProcessor.work(TemplatesWorkCommand.LoadTemplates(sortedType)).handleWork()
-            templatesWorkProcessor.work(TemplatesWorkCommand.LoadCategories).handleWork()
-        }
-        is TemplatesEvent.AddTemplate -> with(state()) {
-            templatesWorkProcessor.work(TemplatesWorkCommand.AddTemplate(event.template, sortedType)).handleWork()
-        }
-        is TemplatesEvent.UpdateTemplate -> with(state()) {
-            templatesWorkProcessor.work(TemplatesWorkCommand.UpdateTemplate(event.template, sortedType)).handleWork()
-        }
-        is TemplatesEvent.DeleteTemplate -> with(state()) {
-            templatesWorkProcessor.work(TemplatesWorkCommand.DeleteTemplate(event.id, sortedType)).handleWork()
-        }
-        is TemplatesEvent.UpdatedSortedType -> {
-            sendAction(TemplatesAction.ChangeSortedType(event.type))
-            templatesWorkProcessor.work(TemplatesWorkCommand.LoadTemplates(event.type)).handleWork()
+    ) {
+        when (event) {
+            is TemplatesEvent.Init -> {
+                templatesWorkProcessor.work(TemplatesWorkCommand.LoadCategories).collectAndHandleWork()
+                loadTemplates(state().sortedType)
+            }
+            is TemplatesEvent.AddTemplate -> {
+                val command = TemplatesWorkCommand.AddTemplate(event.template)
+                templatesWorkProcessor.work(command).collectAndHandleWork()
+            }
+            is TemplatesEvent.UpdateTemplate -> {
+                val oldModel = state().templates?.find { it.templateId == event.template.templateId }!!
+                val command = TemplatesWorkCommand.UpdateTemplate(oldModel, event.template)
+                templatesWorkProcessor.work(command).collectAndHandleWork()
+            }
+            is TemplatesEvent.AddRepeatTemplate -> {
+                val command = TemplatesWorkCommand.AddRepeatTemplate(event.time, event.template)
+                templatesWorkProcessor.work(command).collectAndHandleWork()
+            }
+            is TemplatesEvent.DeleteRepeatTemplate -> {
+                val command = TemplatesWorkCommand.DeleteRepeatTemplate(event.time, event.template)
+                templatesWorkProcessor.work(command).collectAndHandleWork()
+            }
+            is TemplatesEvent.DeleteTemplate -> with(state()) {
+                val command = TemplatesWorkCommand.DeleteTemplate(event.id)
+                templatesWorkProcessor.work(command).collectAndHandleWork()
+            }
+            is TemplatesEvent.UpdatedSortedType -> {
+                sendAction(TemplatesAction.ChangeSortedType(event.type))
+                loadTemplates(event.type)
+            }
         }
     }
 
@@ -86,6 +102,17 @@ internal class TemplatesScreenModel @Inject constructor(
             categories = action.categories,
         )
     }
+
+    private fun WorkScope<TemplatesViewState, TemplatesAction, TemplatesEffect>.loadTemplates(
+        sortedType: TemplatesSortedType,
+    ) = launchBackgroundWork(TemplatesWorkKey.LOAD_TEMPLATES) {
+        val command = TemplatesWorkCommand.LoadTemplates(sortedType)
+        templatesWorkProcessor.work(command).collectAndHandleWork()
+    }
+}
+
+internal enum class TemplatesWorkKey : BackgroundWorkKey {
+    LOAD_TEMPLATES,
 }
 
 @Composable

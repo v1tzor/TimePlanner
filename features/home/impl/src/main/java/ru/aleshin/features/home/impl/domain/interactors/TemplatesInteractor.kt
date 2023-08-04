@@ -15,6 +15,8 @@
  */
 package ru.aleshin.features.home.impl.domain.interactors
 
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import ru.aleshin.core.utils.functional.DomainResult
 import ru.aleshin.core.utils.functional.UnitDomainResult
 import ru.aleshin.features.home.api.domain.entities.schedules.TimeTask
@@ -29,9 +31,9 @@ import javax.inject.Inject
  */
 internal interface TemplatesInteractor {
 
-    suspend fun fetchTemplates(): DomainResult<HomeFailures, List<Template>>
+    suspend fun fetchTemplates(): Flow<DomainResult<HomeFailures, List<Template>>>
     suspend fun updateTemplate(template: Template): UnitDomainResult<HomeFailures>
-    suspend fun checkIsTemplate(timeTask: TimeTask): DomainResult<HomeFailures, Int?>
+    suspend fun checkIsTemplate(timeTask: TimeTask): DomainResult<HomeFailures, Template?>
     suspend fun addTemplate(template: Template): DomainResult<HomeFailures, Int>
     suspend fun deleteTemplate(id: Int): DomainResult<HomeFailures, Unit>
 
@@ -40,7 +42,7 @@ internal interface TemplatesInteractor {
         private val eitherWrapper: HomeEitherWrapper,
     ) : TemplatesInteractor {
 
-        override suspend fun fetchTemplates() = eitherWrapper.wrap {
+        override suspend fun fetchTemplates() = eitherWrapper.wrapFlow {
             templatesRepository.fetchAllTemplates()
         }
 
@@ -49,10 +51,9 @@ internal interface TemplatesInteractor {
         }
 
         override suspend fun checkIsTemplate(timeTask: TimeTask) = eitherWrapper.wrap {
-            val allTemplates = templatesRepository.fetchAllTemplates()
-            val foundTimeTask = allTemplates.find { it.equalsIsTemplate(timeTask) }
-
-            return@wrap foundTimeTask?.templateId
+            templatesRepository.fetchAllTemplates().first().find { template ->
+                template.equalsIsTemplate(timeTask)
+            }
         }
 
         override suspend fun addTemplate(template: Template) = eitherWrapper.wrap {

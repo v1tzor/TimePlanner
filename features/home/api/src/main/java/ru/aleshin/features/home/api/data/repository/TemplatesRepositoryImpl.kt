@@ -15,6 +15,8 @@
  */
 package ru.aleshin.features.home.api.data.repository
 
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import ru.aleshin.features.home.api.data.datasources.templates.TemplatesLocalDataSource
 import ru.aleshin.features.home.api.data.mappers.template.mapToData
 import ru.aleshin.features.home.api.data.mappers.template.mapToDomain
@@ -29,16 +31,22 @@ class TemplatesRepositoryImpl @Inject constructor(
     private val localDataSource: TemplatesLocalDataSource,
 ) : TemplatesRepository {
 
-    override suspend fun fetchAllTemplates(): List<Template> {
-        return localDataSource.fetchAllTemplates().map { it.mapToDomain() }
-    }
-
     override suspend fun addTemplate(template: Template): Int {
-        return localDataSource.createTemplate(template.mapToData()).toInt()
+        return localDataSource.createTemplates(listOf(template.mapToData()))[0].toInt()
     }
 
     override suspend fun addTemplates(templates: List<Template>) {
         localDataSource.createTemplates(templates.map { it.mapToData() })
+    }
+
+    override suspend fun fetchTemplatesById(templateId: Int): Template? {
+        return localDataSource.fetchTemplatesById(templateId)?.mapToDomain()
+    }
+
+    override fun fetchAllTemplates(): Flow<List<Template>> {
+        return localDataSource.fetchAllTemplates().map { templates ->
+            templates.map { template -> template.mapToDomain() }
+        }
     }
 
     override suspend fun updateTemplate(template: Template) {

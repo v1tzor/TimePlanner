@@ -24,6 +24,7 @@ import java.util.*
 interface TimeTaskRepository {
     suspend fun addTimeTasks(timeTasks: List<TimeTask>)
     suspend fun fetchAllTimeTaskByDate(date: Date): List<TimeTask>
+    suspend fun updateTimeTaskList(timeTaskList: List<TimeTask>)
     suspend fun updateTimeTask(timeTask: TimeTask)
-    suspend fun deleteTimeTask(key: Long)
+    suspend fun deleteTimeTasks(keys: List<Long>)
 }

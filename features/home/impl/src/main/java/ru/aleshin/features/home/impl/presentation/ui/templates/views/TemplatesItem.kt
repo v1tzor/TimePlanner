@@ -15,7 +15,9 @@
  */
 package ru.aleshin.features.home.impl.presentation.ui.templates.views
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -43,8 +45,10 @@ import ru.aleshin.core.ui.views.CategoryIconMonogram
 import ru.aleshin.core.ui.views.CategoryTextMonogram
 import ru.aleshin.core.ui.views.toMinutesOrHoursTitle
 import ru.aleshin.core.utils.extensions.duration
+import ru.aleshin.features.home.api.domain.entities.template.RepeatTime
 import ru.aleshin.features.home.api.presentation.mappers.mapToIconPainter
 import ru.aleshin.features.home.api.presentation.mappers.mapToName
+import ru.aleshin.features.home.api.presentation.mappers.mapToString
 import ru.aleshin.features.home.impl.presentation.models.categories.CategoriesUi
 import ru.aleshin.features.home.impl.presentation.models.templates.TemplateUi
 import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
@@ -59,7 +63,9 @@ internal fun TemplatesItem(
     modifier: Modifier = Modifier,
     categories: List<CategoriesUi>,
     model: TemplateUi,
-    onUpdateTemplate: (TemplateUi) -> Unit = {},
+    onAddRepeat: (RepeatTime) -> Unit,
+    onUpdate: (TemplateUi) -> Unit = {},
+    onDeleteRepeat: (RepeatTime) -> Unit,
     onDeleteTemplate: () -> Unit,
 ) {
     var isShowTemplateEditor by rememberSaveable { mutableStateOf(false) }
@@ -68,7 +74,7 @@ internal fun TemplatesItem(
 
     Surface(
         onClick = { isShowTemplateEditor = true },
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth().animateContentSize(),
         shape = MaterialTheme.shapes.large,
         color = MaterialTheme.colorScheme.surface,
         tonalElevation = TimePlannerRes.elevations.levelOne,
@@ -108,16 +114,15 @@ internal fun TemplatesItem(
                     endTime = model.endTime,
                     isEnableNotification = model.isEnableNotification,
                     isConsiderInStatistics = model.isConsiderInStatistics,
+                    repeatTimes = model.repeatTimes,
                 )
             }
-            IconButton(onClick = onDeleteTemplate) {
-                Icon(
-                    modifier = Modifier.size(24.dp),
-                    imageVector = Icons.Default.Delete,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
+            TemplateItemControlButtons(
+                repeatTimes = model.repeatTimes,
+                onDeleteTemplate = onDeleteTemplate,
+                onAddRepeat = onAddRepeat,
+                onDeleteRepeat = onDeleteRepeat,
+            )
         }
     }
 
@@ -127,7 +132,7 @@ internal fun TemplatesItem(
             editTemplateModel = model,
             onDismiss = { isShowTemplateEditor = false },
             onConfirm = { template ->
-                onUpdateTemplate(template)
+                onUpdate(template)
                 isShowTemplateEditor = false
             },
         )
@@ -141,33 +146,42 @@ internal fun TemplateItemInfo(
     endTime: Date,
     isEnableNotification: Boolean,
     isConsiderInStatistics: Boolean,
+    repeatTimes: List<RepeatTime>,
 ) {
     val timeFormat = SimpleDateFormat.getTimeInstance(SimpleDateFormat.SHORT)
-    Row(modifier = modifier, horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            TemplateInfoIcon(
-                icon = painterResource(HomeThemeRes.icons.time),
-                title = "${timeFormat.format(startTime)} - ${timeFormat.format(endTime)}",
-            )
-            TemplateInfoIcon(
-                icon = painterResource(HomeThemeRes.icons.timer),
-                title = duration(startTime, endTime).toMinutesOrHoursTitle(),
-            )
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Row(modifier = modifier, horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                TemplateInfoIcon(
+                    icon = painterResource(HomeThemeRes.icons.time),
+                    title = "${timeFormat.format(startTime)} - ${timeFormat.format(endTime)}",
+                )
+                TemplateInfoIcon(
+                    icon = painterResource(HomeThemeRes.icons.duration),
+                    title = duration(startTime, endTime).toMinutesOrHoursTitle(),
+                )
+            }
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                TemplateInfoIcon(
+                    icon = painterResource(HomeThemeRes.icons.statistics),
+                    title = when (isConsiderInStatistics) {
+                        true -> HomeThemeRes.strings.statisticsActiveTitle
+                        false -> HomeThemeRes.strings.statisticsDisabledTitle
+                    },
+                )
+                TemplateInfoIcon(
+                    icon = painterResource(HomeThemeRes.icons.notification),
+                    title = when (isEnableNotification) {
+                        true -> HomeThemeRes.strings.notificationEnabledTitle
+                        false -> HomeThemeRes.strings.notificationDisabledTitle
+                    },
+                )
+            }
         }
-        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        if (repeatTimes.isNotEmpty()) {
             TemplateInfoIcon(
-                icon = painterResource(HomeThemeRes.icons.statistics),
-                title = when (isConsiderInStatistics) {
-                    true -> HomeThemeRes.strings.statisticsActiveTitle
-                    false -> HomeThemeRes.strings.statisticsDisabledTitle
-                },
-            )
-            TemplateInfoIcon(
-                icon = painterResource(HomeThemeRes.icons.notification),
-                title = when (isEnableNotification) {
-                    true -> HomeThemeRes.strings.notificationEnabledTitle
-                    false -> HomeThemeRes.strings.notificationDisabledTitle
-                },
+                icon = painterResource(HomeThemeRes.icons.repeatVariant),
+                title = "${repeatTimes.first().type.mapToString()} (${repeatTimes.size})",
             )
         }
     }
@@ -190,6 +204,56 @@ internal fun TemplateInfoIcon(
             text = title,
             color = MaterialTheme.colorScheme.onSurface,
             style = MaterialTheme.typography.labelMedium,
+        )
+    }
+}
+
+@Composable
+internal fun TemplateItemControlButtons(
+    modifier: Modifier = Modifier,
+    repeatTimes: List<RepeatTime>,
+    onDeleteTemplate: () -> Unit,
+    onAddRepeat: (RepeatTime) -> Unit,
+    onDeleteRepeat: (RepeatTime) -> Unit,
+) {
+    var isShowRepeatTimesMenu by rememberSaveable { mutableStateOf(false) }
+
+    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        if (repeatTimes.isEmpty()) {
+            IconButton(onClick = { isShowRepeatTimesMenu = true }) {
+                Icon(
+                    modifier = Modifier.size(24.dp),
+                    painter = painterResource(id = HomeThemeRes.icons.repeat),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+            IconButton(onClick = onDeleteTemplate) {
+                Icon(
+                    modifier = Modifier.size(24.dp),
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        } else {
+            IconButton(onClick = { isShowRepeatTimesMenu = true }) {
+                Icon(
+                    modifier = Modifier.size(24.dp),
+                    painter = painterResource(id = HomeThemeRes.icons.updateRepeat),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        }
+    }
+    Box(contentAlignment = Alignment.TopEnd) {
+        RepeatTimeMenu(
+            isExpanded = isShowRepeatTimesMenu,
+            selectedTimes = repeatTimes,
+            onDismiss = { isShowRepeatTimesMenu = false },
+            onAddRepeat = onAddRepeat,
+            onDeleteRepeat = onDeleteRepeat,
         )
     }
 }

@@ -20,8 +20,6 @@ import kotlinx.parcelize.Parcelize
 import ru.aleshin.core.ui.theme.material.ThemeColorsUiType
 import ru.aleshin.core.ui.theme.tokens.LanguageUiType
 import ru.aleshin.core.utils.platform.screenmodel.contract.*
-import ru.aleshin.features.settings.api.domain.entities.LanguageType
-import ru.aleshin.features.settings.api.domain.entities.ThemeColorsType
 
 /**
  * @author Stanislav Aleshin on 14.02.2023.
@@ -40,7 +38,7 @@ sealed class MainEvent : BaseEvent {
 sealed class MainEffect : EmptyUiEffect
 
 sealed class MainAction : MainEffect(), BaseAction {
-
+    object Navigate : MainAction()
     data class ChangeThemeSettings(
         val language: LanguageUiType,
         val themeColors: ThemeColorsUiType,

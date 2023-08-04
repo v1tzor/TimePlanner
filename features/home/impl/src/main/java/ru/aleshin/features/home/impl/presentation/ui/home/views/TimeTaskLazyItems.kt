@@ -193,7 +193,7 @@ internal fun LazyItemScope.RunningTimeTaskItem(
 @Composable
 internal fun LazyItemScope.AddTimeTaskViewItem(
     modifier: Modifier = Modifier,
-    onAddTimeTask: () -> Unit,
+    onAddClick: () -> Unit,
     startTime: Date,
     endTime: Date,
     indicatorColor: Color = MaterialTheme.colorScheme.surfaceVariant,
@@ -215,7 +215,7 @@ internal fun LazyItemScope.AddTimeTaskViewItem(
                 }
             }
             AddTimeTaskView(
-                onViewClicked = { onAddTimeTask.invoke() },
+                onViewClicked = { onAddClick.invoke() },
                 remainingTimeTitle = duration(startTime, endTime).toMinutesOrHoursTitle(),
             )
         }
