@@ -12,6 +12,7 @@
 ## Support 📱
 - Local time and task analytics 📊
 - Templates for everyday tasks 🏃‍♂️
+- Recurring tasks by templates 🔁
 - Data Backup & Recovery 💾
 - Scheduled Notifications ⏰
 - Priorities and protection from overlaying tasks 📐
