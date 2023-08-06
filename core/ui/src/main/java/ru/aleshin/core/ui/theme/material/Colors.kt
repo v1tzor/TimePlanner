@@ -123,3 +123,6 @@ val md_theme_dark_surfaceDim = Color(0xFF171213)
 
 val seed = Color(0xFF8C4190)
 val badge = Color(0xFFDB1C11)
+
+val splashGradientColors = listOf(Color(0xFFF857A6), Color(0xFFFF5858))
+val onSplashGradient = Color(0xFFFFFFFF)

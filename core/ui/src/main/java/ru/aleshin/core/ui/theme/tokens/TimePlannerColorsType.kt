@@ -13,19 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ru.aleshin.features.settings.impl.presentation.models
 
-import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
+package ru.aleshin.core.ui.theme.tokens
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.staticCompositionLocalOf
 import ru.aleshin.core.ui.theme.material.ThemeUiType
-import ru.aleshin.core.ui.theme.tokens.LanguageUiType
+import ru.aleshin.core.ui.theme.material.isDarkTheme
 
 /**
- * @author Stanislav Aleshin on 10.06.2023.
+ * @author Stanislav Aleshin on 04.07.2023.
  */
-@Parcelize
-data class ThemeSettingsUi(
-    val language: LanguageUiType = LanguageUiType.DEFAULT,
-    val themeColors: ThemeUiType = ThemeUiType.DEFAULT,
-    val isDynamicColorEnable: Boolean = false,
-) : Parcelable
+data class TimePlannerColorsType(val isDark: Boolean)
+
+val LocalTimePlannerColorsType = staticCompositionLocalOf<TimePlannerColorsType> {
+    error("Colors type is not provided")
+}
+
+@Composable
+fun fetchAppColorsType(themeType: ThemeUiType) = TimePlannerColorsType(
+    isDark = themeType.isDarkTheme(),
+)

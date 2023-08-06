@@ -80,3 +80,5 @@ internal val baseHomeIcons = HomeIcons(
 internal val LocalHomeIcons = staticCompositionLocalOf<HomeIcons> {
     error("Home Icons is not provided")
 }
+
+internal fun fetchHomeIcons() = baseHomeIcons

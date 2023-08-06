@@ -17,6 +17,7 @@ package ru.aleshin.core.ui.theme.tokens
 
 import android.os.Parcelable
 import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.text.intl.Locale
 import kotlinx.parcelize.Parcelize
 
 /**
@@ -46,4 +47,13 @@ val LocalTimePlannerLanguage = staticCompositionLocalOf<TimePlannerLanguage> {
 
 fun fetchCoreLanguage(code: String): TimePlannerLanguage {
     return TimePlannerLanguage.values().find { it.code == code } ?: TimePlannerLanguage.EN
+}
+
+fun fetchAppLanguage(languageType: LanguageUiType) = when (languageType) {
+    LanguageUiType.DEFAULT -> fetchCoreLanguage(Locale.current.language)
+    LanguageUiType.EN -> TimePlannerLanguage.EN
+    LanguageUiType.RU -> TimePlannerLanguage.RU
+    LanguageUiType.DE -> TimePlannerLanguage.DE
+    LanguageUiType.ES -> TimePlannerLanguage.ES
+    LanguageUiType.FA -> TimePlannerLanguage.FA
 }

@@ -18,6 +18,7 @@ package ru.aleshin.features.home.impl.presentation.theme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import ru.aleshin.core.ui.theme.TimePlannerRes
+import ru.aleshin.core.ui.views.SystemBarsColor
 import ru.aleshin.features.home.impl.presentation.theme.tokens.*
 import ru.aleshin.features.home.impl.presentation.theme.tokens.LocalHomeIcons
 import ru.aleshin.features.home.impl.presentation.theme.tokens.LocalHomeStrings
@@ -28,10 +29,12 @@ import ru.aleshin.features.home.impl.presentation.theme.tokens.LocalHomeStrings
 @Composable
 internal fun HomeTheme(content: @Composable () -> Unit) {
     val strings = fetchHomeStrings(TimePlannerRes.language)
+    val icons = fetchHomeIcons()
 
     CompositionLocalProvider(
         LocalHomeStrings provides strings,
-        LocalHomeIcons provides baseHomeIcons,
+        LocalHomeIcons provides icons,
         content = content,
     )
+    SystemBarsColor(isDarkIcons = TimePlannerRes.colorsType.isDark)
 }

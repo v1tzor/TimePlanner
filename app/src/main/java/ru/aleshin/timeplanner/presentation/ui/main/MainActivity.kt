@@ -48,8 +48,8 @@ class MainActivity : BaseActivity<MainViewState, MainEvent, MainAction, MainEffe
     override fun Content() = ScreenContent(viewModel, MainViewState()) { state ->
         TimePlannerTheme(
             dynamicColor = state.isEnableDynamicColors,
-            themeColorsType = state.colors,
-            language = state.language,
+            themeType = state.colors,
+            languageType = state.language,
         ) {
             AppNavigator(
                 initialScreen = SplashScreen(),

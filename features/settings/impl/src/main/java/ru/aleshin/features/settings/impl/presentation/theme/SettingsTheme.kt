@@ -18,9 +18,10 @@ package ru.aleshin.features.settings.impl.presentation.theme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import ru.aleshin.core.ui.theme.TimePlannerRes
+import ru.aleshin.core.ui.views.SystemBarsColor
 import ru.aleshin.features.settings.impl.presentation.theme.tokens.LocalSettingsIcons
 import ru.aleshin.features.settings.impl.presentation.theme.tokens.LocalSettingsStrings
-import ru.aleshin.features.settings.impl.presentation.theme.tokens.baseSettingIcons
+import ru.aleshin.features.settings.impl.presentation.theme.tokens.fetchSettingsIcons
 import ru.aleshin.features.settings.impl.presentation.theme.tokens.fetchSettingsStrings
 
 /**
@@ -29,10 +30,12 @@ import ru.aleshin.features.settings.impl.presentation.theme.tokens.fetchSettings
 @Composable
 internal fun SettingsTheme(content: @Composable () -> Unit) {
     val strings = fetchSettingsStrings(TimePlannerRes.language)
+    val icons = fetchSettingsIcons()
 
     CompositionLocalProvider(
         LocalSettingsStrings provides strings,
-        LocalSettingsIcons provides baseSettingIcons,
+        LocalSettingsIcons provides icons,
         content = content,
     )
+    SystemBarsColor(isDarkIcons = TimePlannerRes.colorsType.isDark)
 }

@@ -34,3 +34,5 @@ internal val baseSettingIcons = SettingsIcons(
 internal val LocalSettingsIcons = staticCompositionLocalOf<SettingsIcons> {
     error("Settings Icons is not provided")
 }
+
+internal fun fetchSettingsIcons() = baseSettingIcons

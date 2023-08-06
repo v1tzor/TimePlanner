@@ -18,6 +18,7 @@ package ru.aleshin.features.analytics.impl.presenatiton.theme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import ru.aleshin.core.ui.theme.TimePlannerRes
+import ru.aleshin.core.ui.views.SystemBarsColor
 import ru.aleshin.features.analytics.impl.presenatiton.theme.tokens.LocalAnalyticsIcons
 import ru.aleshin.features.analytics.impl.presenatiton.theme.tokens.LocalAnalyticsStrings
 import ru.aleshin.features.analytics.impl.presenatiton.theme.tokens.fetchAnalyticsIcons
@@ -36,4 +37,5 @@ internal fun AnalyticsTheme(content: @Composable () -> Unit) {
         LocalAnalyticsIcons provides icons,
         content = content,
     )
+    SystemBarsColor(isDarkIcons = TimePlannerRes.colorsType.isDark)
 }

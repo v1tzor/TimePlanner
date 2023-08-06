@@ -31,7 +31,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import ru.aleshin.core.ui.theme.TimePlannerRes
-import ru.aleshin.core.ui.theme.material.ThemeColorsUiType
+import ru.aleshin.core.ui.theme.material.ThemeUiType
 import ru.aleshin.core.ui.theme.tokens.LanguageUiType
 import ru.aleshin.core.ui.views.WarningDeleteDialog
 import ru.aleshin.features.settings.impl.presentation.models.ThemeSettingsUi
@@ -97,10 +97,10 @@ internal fun SettingsContent(
 @Composable
 internal fun MainSettingsSection(
     modifier: Modifier = Modifier,
-    themeColors: ThemeColorsUiType,
+    themeColors: ThemeUiType,
     languageType: LanguageUiType,
     dynamicColorEnabled: Boolean,
-    onThemeColorUpdate: (ThemeColorsUiType) -> Unit,
+    onThemeColorUpdate: (ThemeUiType) -> Unit,
     onLanguageChanged: (LanguageUiType) -> Unit,
     onEnableDynamicColorsChanged: (Boolean) -> Unit,
 ) {

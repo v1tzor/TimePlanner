@@ -43,3 +43,5 @@ val baseTimePlannerElevations = TimePlannerElevations(
 val LocalTimePlannerElevations = staticCompositionLocalOf<TimePlannerElevations> {
     error("Elevations is not provided")
 }
+
+fun fetchAppElevations() = baseTimePlannerElevations

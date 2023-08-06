@@ -26,6 +26,9 @@ object TimePlannerRes {
     val elevations: TimePlannerElevations
         @Composable get() = LocalTimePlannerElevations.current
 
+    val colorsType: TimePlannerColorsType
+        @Composable get() = LocalTimePlannerColorsType.current
+
     val language: TimePlannerLanguage
         @Composable get() = LocalTimePlannerLanguage.current
 

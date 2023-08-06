@@ -15,10 +15,10 @@
  */
 package ru.aleshin.features.settings.impl.presentation.mappers
 
-import ru.aleshin.core.ui.theme.material.ThemeColorsUiType
+import ru.aleshin.core.ui.theme.material.ThemeUiType
 import ru.aleshin.core.ui.theme.tokens.LanguageUiType
 import ru.aleshin.features.settings.api.domain.entities.LanguageType
-import ru.aleshin.features.settings.api.domain.entities.ThemeColorsType
+import ru.aleshin.features.settings.api.domain.entities.ThemeType
 import ru.aleshin.features.settings.api.domain.entities.ThemeSettings
 import ru.aleshin.features.settings.impl.presentation.models.ThemeSettingsUi
 
@@ -39,16 +39,16 @@ internal fun ThemeSettingsUi.mapToDomain() = ThemeSettings(
 
 fun LanguageType.mapToUi() = LanguageUiType.values().find { it.code == this.code }!!
 
-fun ThemeColorsType.mapToUi() = when (this) {
-    ThemeColorsType.DEFAULT -> ThemeColorsUiType.DEFAULT
-    ThemeColorsType.LIGHT -> ThemeColorsUiType.LIGHT
-    ThemeColorsType.DARK -> ThemeColorsUiType.DARK
+fun ThemeType.mapToUi() = when (this) {
+    ThemeType.DEFAULT -> ThemeUiType.DEFAULT
+    ThemeType.LIGHT -> ThemeUiType.LIGHT
+    ThemeType.DARK -> ThemeUiType.DARK
 }
 
-fun ThemeColorsUiType.mapToDomain() = when (this) {
-    ThemeColorsUiType.DEFAULT -> ThemeColorsType.DEFAULT
-    ThemeColorsUiType.LIGHT -> ThemeColorsType.LIGHT
-    ThemeColorsUiType.DARK -> ThemeColorsType.DARK
+fun ThemeUiType.mapToDomain() = when (this) {
+    ThemeUiType.DEFAULT -> ThemeType.DEFAULT
+    ThemeUiType.LIGHT -> ThemeType.LIGHT
+    ThemeUiType.DARK -> ThemeType.DARK
 }
 
 fun LanguageUiType.mapToDomain() = LanguageType.values().find { it.code == this.code }!!

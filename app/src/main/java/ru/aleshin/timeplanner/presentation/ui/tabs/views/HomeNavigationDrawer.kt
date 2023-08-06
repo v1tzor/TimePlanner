@@ -55,8 +55,8 @@ fun HomeNavigationDrawer(
         drawerContent = {
             ModalDrawerSheet {
                 DrawerLogoSection(
-                    logoImage = painterResource(id = TimePlannerRes.icons.logo),
-                    appName = TimePlannerRes.strings.appName,
+                    logoIcon = painterResource(id = TimePlannerRes.icons.logo),
+                    description = TimePlannerRes.strings.appName,
                 )
                 DrawerItems(
                     modifier = Modifier.width(300.dp),

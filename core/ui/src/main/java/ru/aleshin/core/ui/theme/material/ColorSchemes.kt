@@ -28,7 +28,7 @@ import ru.aleshin.core.ui.theme.TimePlannerRes
  * @author Stanislav Aleshin on 14.02.2023.
  */
 @Parcelize
-enum class ThemeColorsUiType : Parcelable {
+enum class ThemeUiType : Parcelable {
     DEFAULT, LIGHT, DARK
 }
 
@@ -97,32 +97,32 @@ private val baseDarkColorScheme = darkColorScheme(
 )
 
 @Composable
-fun ThemeColorsUiType.toColorScheme(
+fun ThemeUiType.toColorScheme(
     dynamicColor: Boolean,
 ) = if (dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
     val context = LocalContext.current
     when (this) {
-        ThemeColorsUiType.DEFAULT -> if (isSystemInDarkTheme()) {
+        ThemeUiType.DEFAULT -> if (isSystemInDarkTheme()) {
             dynamicDarkColorScheme(context)
         } else {
             dynamicLightColorScheme(context)
         }
-        ThemeColorsUiType.LIGHT -> dynamicLightColorScheme(context)
-        ThemeColorsUiType.DARK -> dynamicDarkColorScheme(context)
+        ThemeUiType.LIGHT -> dynamicLightColorScheme(context)
+        ThemeUiType.DARK -> dynamicDarkColorScheme(context)
     }
 } else {
     when (this) {
-        ThemeColorsUiType.DEFAULT -> if (isSystemInDarkTheme()) baseDarkColorScheme else baseLightColorScheme
-        ThemeColorsUiType.LIGHT -> baseLightColorScheme
-        ThemeColorsUiType.DARK -> baseDarkColorScheme
+        ThemeUiType.DEFAULT -> if (isSystemInDarkTheme()) baseDarkColorScheme else baseLightColorScheme
+        ThemeUiType.LIGHT -> baseLightColorScheme
+        ThemeUiType.DARK -> baseDarkColorScheme
     }
 }
 
 @Composable
-fun ThemeColorsUiType.isDarkTheme() = when (this) {
-    ThemeColorsUiType.DEFAULT -> isSystemInDarkTheme()
-    ThemeColorsUiType.LIGHT -> false
-    ThemeColorsUiType.DARK -> true
+fun ThemeUiType.isDarkTheme() = when (this) {
+    ThemeUiType.DEFAULT -> isSystemInDarkTheme()
+    ThemeUiType.LIGHT -> false
+    ThemeUiType.DARK -> true
 }
 
 @Composable

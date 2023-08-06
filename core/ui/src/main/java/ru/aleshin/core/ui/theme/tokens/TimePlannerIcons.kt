@@ -54,7 +54,7 @@ data class TimePlannerIcons(
 )
 
 internal val baseTimePlannerIcons = TimePlannerIcons(
-    logo = R.drawable.ic_planner,
+    logo = R.drawable.ic_time_planner,
     calendar = R.drawable.ic_calendar,
     categoryWorkIcon = R.drawable.ic_work,
     categoryRestIcon = R.drawable.ic_rest,

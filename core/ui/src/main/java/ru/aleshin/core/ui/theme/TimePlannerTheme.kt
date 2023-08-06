@@ -16,64 +16,36 @@
 package ru.aleshin.core.ui.theme
 
 import androidx.compose.material3.*
-import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.SideEffect
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.intl.Locale
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import ru.aleshin.core.ui.theme.material.*
 import ru.aleshin.core.ui.theme.tokens.*
 
 @Composable
 fun TimePlannerTheme(
     dynamicColor: Boolean = false,
-    themeColorsType: ThemeColorsUiType = ThemeColorsUiType.DEFAULT,
-    language: LanguageUiType = LanguageUiType.DEFAULT,
+    themeType: ThemeUiType = ThemeUiType.DEFAULT,
+    languageType: LanguageUiType = LanguageUiType.DEFAULT,
     content: @Composable () -> Unit,
 ) {
-    val appLanguage = when (language) {
-        LanguageUiType.DEFAULT -> fetchCoreLanguage(Locale.current.language)
-        LanguageUiType.EN -> TimePlannerLanguage.EN
-        LanguageUiType.RU -> TimePlannerLanguage.RU
-        LanguageUiType.DE -> TimePlannerLanguage.DE
-        LanguageUiType.ES -> TimePlannerLanguage.ES
-        LanguageUiType.FA -> TimePlannerLanguage.FA
-    }
-    val appStrings = fetchCoreStrings(appLanguage)
-    val appElevations = baseTimePlannerElevations
-    val appIcons = baseTimePlannerIcons
+    val appLanguage = fetchAppLanguage(languageType)
+    val coreStrings = fetchCoreStrings(appLanguage)
+    val colorsType = fetchAppColorsType(themeType)
+    val appElevations = fetchAppElevations()
+    val coreIcons = fetchCoreIcons() 
 
     MaterialTheme(
-        colorScheme = themeColorsType.toColorScheme(dynamicColor),
+        colorScheme = themeType.toColorScheme(dynamicColor),
         shapes = baseShapes,
         typography = baseTypography,
     ) {
         CompositionLocalProvider(
+            LocalTimePlannerColorsType provides colorsType,
             LocalTimePlannerLanguage provides appLanguage,
             LocalTimePlannerElevations provides appElevations,
-            LocalTimePlannerStrings provides appStrings,
-            LocalTimePlannerIcons provides appIcons,
+            LocalTimePlannerStrings provides coreStrings,
+            LocalTimePlannerIcons provides coreIcons,
             content = content,
         )
-        TimePlannerSystemUi(
-            navigationBarColor = colorScheme.background,
-            statusBarColor = colorScheme.background,
-            isDarkIcons = themeColorsType.isDarkTheme(),
-        )
-    }
-}
-
-@Composable
-fun TimePlannerSystemUi(navigationBarColor: Color, statusBarColor: Color, isDarkIcons: Boolean) {
-    val systemUiController = rememberSystemUiController()
-
-    SideEffect {
-        systemUiController.setNavigationBarColor(
-            color = navigationBarColor,
-            darkIcons = !isDarkIcons,
-        )
-        systemUiController.setStatusBarColor(color = statusBarColor, darkIcons = !isDarkIcons)
     }
 }

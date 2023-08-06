@@ -52,3 +52,5 @@ internal val baseHomeIcons = EditorIcons(
 internal val LocalEditorIcons = staticCompositionLocalOf<EditorIcons> {
     error("Home Icons is not provided")
 }
+
+internal fun fetchEditorIcons() = baseHomeIcons

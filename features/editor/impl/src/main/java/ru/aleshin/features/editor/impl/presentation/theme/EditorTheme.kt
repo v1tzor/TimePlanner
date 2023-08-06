@@ -18,6 +18,7 @@ package ru.aleshin.features.editor.impl.presentation.theme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import ru.aleshin.core.ui.theme.TimePlannerRes
+import ru.aleshin.core.ui.views.SystemBarsColor
 import ru.aleshin.features.editor.impl.presentation.theme.tokens.*
 import ru.aleshin.features.editor.impl.presentation.theme.tokens.LocalEditorIcons
 import ru.aleshin.features.editor.impl.presentation.theme.tokens.LocalEditorStrings
@@ -28,10 +29,12 @@ import ru.aleshin.features.editor.impl.presentation.theme.tokens.LocalEditorStri
 @Composable
 internal fun EditorTheme(content: @Composable () -> Unit) {
     val strings = fetchEditorStrings(TimePlannerRes.language)
+    val icons = fetchEditorIcons()
 
     CompositionLocalProvider(
         LocalEditorStrings provides strings,
-        LocalEditorIcons provides baseHomeIcons,
+        LocalEditorIcons provides icons,
         content = content,
     )
+    SystemBarsColor(isDarkIcons = TimePlannerRes.colorsType.isDark)
 }
