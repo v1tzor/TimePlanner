@@ -18,13 +18,8 @@ package ru.aleshin.features.settings.impl.presentation.ui.managers
 import android.content.Context
 import android.net.Uri
 import com.google.gson.Gson
-import com.google.gson.GsonBuilder
-import com.google.gson.TypeAdapter
-import com.google.gson.TypeAdapterFactory
-import com.google.gson.reflect.TypeToken
 import ru.aleshin.core.utils.functional.Constants
 import ru.aleshin.core.utils.functional.Either
-import ru.aleshin.core.utils.platform.SealedClassTypeAdapter
 import ru.aleshin.features.settings.impl.domain.common.SettingsEitherWrapper
 import ru.aleshin.features.settings.impl.domain.common.SettingsFailures
 import ru.aleshin.features.settings.impl.presentation.models.BackupModel
@@ -35,7 +30,6 @@ import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
 import java.util.zip.ZipOutputStream
 import javax.inject.Inject
-import kotlin.jvm.internal.Reflection
 
 /**
  * @author Stanislav Aleshin on 10.06.2023.
@@ -62,8 +56,10 @@ internal interface BackupManager {
                         Constants.Backup.BACKUP_JSON_NAME -> {
                             val jsonString = input.bufferedReader().use { it.readText() }
                             // TODO: Not work with old model
-                            val backup = gson.fromJson(jsonString, BackupModel::class.java)
-                            return@wrap backup ?: throw IOException()
+                            val backup = gson.fromJson(jsonString, BackupModel::class.java) ?: throw IOException()
+                            return@wrap backup.copy(
+                                categories = backup.categories.filter { it.mainCategory.id != 0 },
+                            ) 
                         }
                     }
                 }

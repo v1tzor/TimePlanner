@@ -15,7 +15,6 @@
  */
 package ru.aleshin.features.home.impl.presentation.ui.home.views
 
-import android.util.Log
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyItemScope
@@ -123,7 +122,6 @@ internal fun LazyItemScope.CompletedTimeTaskItem(
                     isVisible = isCompactView,
                     time = model.endTime,
                 )
-                Log.d("test", "model -> $model")
                 CompletedTimeTask(
                     modifier = Modifier.fillMaxWidth().padding(bottom = 4.dp).animateContentSize(),
                     onViewClicked = { onItemClick.invoke(key) },

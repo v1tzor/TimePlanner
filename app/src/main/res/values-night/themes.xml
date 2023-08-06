@@ -15,9 +15,5 @@
   ~ limitations under the License.
   -->
 <resources>
-    <style name="Theme.TimePlanner" parent="Theme.Material3.Dark.NoActionBar">
-        <item name="android:statusBarColor">@color/background_dark</item>
-        <item name="android:windowLightStatusBar">false</item>
-        <item name="android:windowBackground">@color/background_dark</item>
-    </style>
+    <style name="Theme.TimePlanner" parent="Theme.Material3.Dark.NoActionBar"/>
 </resources>
