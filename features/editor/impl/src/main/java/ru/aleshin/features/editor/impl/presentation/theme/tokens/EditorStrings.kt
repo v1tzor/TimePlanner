@@ -313,6 +313,55 @@ internal val spanishHomeString = EditorStrings(
     importantParameterDesc = "Realización obligatoria sin posibilidad de desplazamiento",
 )
 
+internal val frenchHomeString = EditorStrings(
+    topAppBarEditorTitle = "Éditeur",
+    topAppBarBackIconDesc = "Retour",
+    topAppBarMoreIconDesc = "Plus",
+    topAppBarTemplatesTitle = "Modèles",
+    mainCategoryChooserTitle = "Catégorie",
+    mainCategoryChooserExpandedIconDesc = "Sélectionner la catégorie",
+    subCategoryChooserTitle = "Sous-catégorie",
+    categoryNotSelectedTitle = "Absent",
+    subCategoryDialogAddedTitle = "Ajouter",
+    subCategoryDialogMainCategoryFormat = "Catégorie: %s",
+    timeFieldStartLabel = "Début",
+    timeFieldEndLabel = "Fin",
+    parameterChooserSwitchIconDesc = "Set parameter",
+    timePickerHeader = "Entre l'heure",
+    timePickerSeparator = ":",
+    notifyParameterTitle = "Notifications",
+    notifyParameterDesc = "Envoyer une notification lorsque la tâche est terminée",
+    statisticsParameterTitle = "Statistiques",
+    statisticsParameterDesc = "Inclure cette tâche dans les statistiques",
+    saveTaskButtonTitle = "Sauvegarder",
+    cancelButtonTitle = "Annuler",
+    templateIconDesc = "Ajouter aux modèles",
+    topAppBarDeleteTitle = "Supprimer",
+    categoryValidateError = "* Sélectionnez une catégorie!",
+    otherError = "Erreur! Veuillez contater le developpeur.",
+    startOverlayError = "Conflit! Le début de la tâche se superpose.",
+    endOverlayError = "Conflict! La fin de la tâche se superpose.",
+    fullOverlayError = "Conflict! Deux tâches se chevanchent.",
+    correctOverlayTitle = "Corriger",
+    durationPickerTitle = "Durée",
+    templatesSheetTitle = "Modèles",
+    controlTitle = "Gestion",
+    applyTitle = "Appliquer",
+    timeRangeFormat = "Temps: de %S à %s",
+    durationFormat = "Durée: %s",
+    notificationEnabledTitle = "Notification: activées",
+    notificationDisabledTitle = "Notification: désactivées",
+    emptyTemplatesTitle = "La liste est vide",
+    saveTemplateWarningTitle = "Voulez-vous appliquer ces changement au modèle actuel ?",
+    saveTemplateWarningConfirm = "Oui",
+    saveTemplateWarningUnsave = "Non",
+    categoriesManageWarningTitle = "Êtes-vous sur(e) de vouloir retourner à la gestion des catégories? " +
+            "Les paramètres actuels ne seront pas sauvegardés.",
+    confirmNavigateTitle = "Aller",
+    importantParameterTitle = "Priorité spéciale",
+    importantParameterDesc = "Exécution prioriaire sans la possibilité de la décaler",
+)
+
 internal val LocalEditorStrings = staticCompositionLocalOf<EditorStrings> {
     error("Home Strings is not provided")
 }
@@ -323,4 +372,5 @@ internal fun fetchEditorStrings(language: TimePlannerLanguage) = when (language)
     TimePlannerLanguage.DE -> germanHomeString
     TimePlannerLanguage.ES -> spanishHomeString
     TimePlannerLanguage.FA -> persianHomeString
+    TimePlannerLanguage.FR -> frenchHomeString
 }
