@@ -30,6 +30,7 @@
             <option value="$PROJECT_DIR$/module-injector" />
           </set>
         </option>
+        <option name="resolveExternalAnnotations" value="false" />
       </GradleProjectSettings>
     </option>
   </component>

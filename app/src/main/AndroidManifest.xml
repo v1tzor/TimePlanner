@@ -35,8 +35,7 @@
         <activity
             android:name=".presentation.ui.main.MainActivity"
             android:exported="true"
-            android:launchMode="singleTop"
-            android:theme="@style/Theme.TimePlanner">
+            android:launchMode="singleTop">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

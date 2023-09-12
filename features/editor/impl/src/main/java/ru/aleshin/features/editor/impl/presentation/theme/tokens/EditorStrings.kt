@@ -356,7 +356,7 @@ internal val frenchHomeString = EditorStrings(
     saveTemplateWarningConfirm = "Oui",
     saveTemplateWarningUnsave = "Non",
     categoriesManageWarningTitle = "Êtes-vous sur(e) de vouloir retourner à la gestion des catégories? " +
-            "Les paramètres actuels ne seront pas sauvegardés.",
+        "Les paramètres actuels ne seront pas sauvegardés.",
     confirmNavigateTitle = "Aller",
     importantParameterTitle = "Priorité spéciale",
     importantParameterDesc = "Exécution prioriaire sans la possibilité de la décaler",

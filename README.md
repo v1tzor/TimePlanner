@@ -6,8 +6,9 @@
 - Russian 🇷🇺
 - English 🇬🇧
 - German 🇩🇪
-- Persian 🇮🇷 (beta)
 - Spanish 🇪🇸
+- French 🇫🇷
+- Persian 🇮🇷 (beta)
 
 ## Support 📱
 - Local time and task analytics 📊
@@ -64,7 +65,7 @@
 <img src="https://i.imgur.com/OzVrH0D.png" width="100%"></img>
 </p>
 
-## Standart Feature structure 📁
+## Standard Feature structure 📁
 <p>
 <img src="https://i.imgur.com/zXWMQI4.png" width="100%"></img>
 </p>
