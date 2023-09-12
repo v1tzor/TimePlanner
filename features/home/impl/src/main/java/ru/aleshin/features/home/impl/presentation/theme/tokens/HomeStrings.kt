@@ -428,6 +428,74 @@ internal val spanishHomeString = HomeStrings(
     weekDayTitle = "Feria",
 )
 
+internal val frenchHomeString = HomeStrings(
+    topAppBarHomeTitle = "Accueil",
+    topAppBarCategoriesTitle = "Categories",
+    mainCategoryTitle = "Principal",
+    topAppBarCalendarIconDesc = "Sélectionnez une date",
+    topAppBarMenuIconDesc = "Ouvrir le menu",
+    nextDateIconDesc = "Date suivante",
+    previousDateIconDesc = "Date précédente",
+    dateDialogPickerHeadline = "Selectionner une date",
+    dateDialogPickerTitle = "Planning journalier",
+    timeTaskExpandedIconDesc = "Plus",
+    timeTaskCheckIconDesc = "Complété",
+    timeTaskMoreIconDesc = "Modifier",
+    timeTaskAddIconDesc = "Ajouter du temps",
+    timeTaskRemoveIconDesc = "Enlever du temps",
+    timeTaskIncreaseTimeTitle = "Ajouter",
+    timeTaskReduceTimeTitle = "Réduire",
+    startTimeTaskTitlePlaceHolder = "00:00",
+    addTimeTaskIconsDesc = "Ajouter une tâche",
+    addTimeTaskTitle = "Temps libre",
+    navToBackTitle = "Retour",
+    topAppBarMoreIconDesc = "Plus",
+    topAppBarTemplatesTitle = "Modèles",
+    mainCategoryChooserTitle = "Catégories",
+    subCategoryChooserTitle = "Sous-catégories",
+    subCategoryDialogMainCategoryFormat = "Categorie: %s",
+    emptyScheduleTitle = "Rien de prévu pour le moment",
+    createScheduleTitle = "Ajouter quelque chose",
+    createScheduleDesc = "Créer un planning pour la journée selectionnée",
+    shiftError = "Impossible de déplacer cette tâche!",
+    importanceError = "La tâche suivante est prioritaire!",
+    otherError = "Erreur! Veuiller contacter le developpeur.",
+    addSubCategoryTitle = "Ajouter une sous-catégorie",
+    categoryFieldLabel = "Titre",
+    dialogCreateTitle = "Créer",
+    emptyListTitle = "La liste est vide",
+    updateCategoryTitle = "Modifier",
+    deleteCategoryTitle = "Supprimer",
+    subCategoryTitle = "Sous-catégories",
+    warningDeleteCategoryText = "Êtes-vous sur(e) de vouloir supprimer la catégorie principale? " +
+            "Cette action engendredra la suppression de toutes les tâches prévues.",
+    sortedTypeTitle = "Trié",
+    sortedTypeDate = "Par date",
+    sortedTypeCategories = "Par catégorie",
+    sortedTypeDuration = "Par durée",
+    notificationEnabledTitle = "Activé",
+    notificationDisabledTitle = "Désactivé",
+    statisticsActiveTitle = "Activé",
+    statisticsDisabledTitle = "Désactivé",
+    addTemplatesFabTitle = "+",
+    templateEditorHeader = "Modèle",
+    mainCategoryLabel = "Catégorie",
+    subCategoryLabel = "Sous-catégorie",
+    startTimeLabel = "Début",
+    endTimeLabel = "Fin",
+    notificationLabel = "Envoi d'une notification",
+    statisticsLabel = "Inclure dans les statistiques",
+    importanceLabel = "Priorité haute",
+    subCategoryEmptyTitle = "Absent",
+    addCategoryTitle = "Ajouter",
+    nameCategoryTitle = "Titre",
+    foundedPlannedTasksTitle = "Tâches planifiés trouvées: %s",
+    monthTitle = "Mois",
+    dayTitle = "Jour",
+    weekNumberTitle = "Semaine n°",
+    weekDayTitle = "Jour de la semaine",
+)
+
 internal val LocalHomeStrings = staticCompositionLocalOf<HomeStrings> {
     error("Home Strings is not provided")
 }
@@ -438,4 +506,5 @@ internal fun fetchHomeStrings(language: TimePlannerLanguage) = when (language) {
     TimePlannerLanguage.DE -> germanHomeString
     TimePlannerLanguage.ES -> spanishHomeString
     TimePlannerLanguage.FA -> persianHomeString
+    TimePlannerLanguage.FR -> frenchHomeString
 }

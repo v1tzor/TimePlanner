@@ -410,6 +410,71 @@ internal val persianTimePlannerString = TimePlannerStrings(
     decemberTitle = "دسامبر",
 )
 
+internal val frenchTimePlannerString = TimePlannerStrings(
+    appName = "Time Planner",
+    authorTitle = "Créée par Aleshin Stanislav",
+    startTaskNotifyText = "Début de l'évènement",
+    timeTaskChannelName = "Évènement",
+    categoryWorkTitle = "Travail",
+    categoryRestTitle = "Repos",
+    categorySportTitle = "Sport",
+    categorySleepTitle = "Sommeil",
+    categoryCultureTitle = "Culture",
+    categoryAffairsTitle = "Affaires",
+    categoryTransportTitle = "Déplacement",
+    categoryStudyTitle = "Études",
+    categoryEatTitle = "Repas",
+    categoryEntertainmentsTitle = "Divertissement",
+    categoryHugieneTitle = "Hygiène",
+    categoryOtherTitle = "Autres",
+    minutesSymbol = "m",
+    hoursSymbol = "h",
+    separator = ":",
+    alertDialogDismissTitle = "Annuler",
+    alertDialogSelectConfirmTitle = "Sélectionner",
+    alertDialogOkConfirmTitle = "OK",
+    categoryEmptyTitle = "Absent",
+    expandedViewToggleTitle = "Affichage étendu",
+    compactViewToggleTitle = "Affichage compact",
+    warningDialogTitle = "Avertissement!",
+    warningDeleteConfirmTitle = "Supprimer",
+    hoursTitle = "Heures",
+    minutesTitle = "Minutes",
+    homeTabTitle = "Accueil",
+    analyticsTabTitle = "Statistiques",
+    settingsTabTitle = "Paramètres",
+    mainDrawerTitle = "Principal",
+    drawerMainSection = "Plans",
+    templateDrawerTitle = "Modèles",
+    categoriesDrawerTitle = "Categories",
+    splitFormat = "%s | %s",
+    amFormatTitle = "",
+    pmFormatTitle = "",
+    repeatTimeDayInWeekTitle = "Toutes les semaines",
+    repeatTimeWeekDayInMonthTitle = "Toutes les semaines du mois",
+    repeatTimeDayInMonthTitle = "Tout les mois",
+    repeatTimeDayInYearTitle = "Tout les ans",
+    sundayTitle = "Dimanche",
+    mondayTitle = "Lundi",
+    tuesdayTitle = "Mardi",
+    wednesdayTitle = "Mercredi",
+    thursdayTitle = "Jeudi",
+    fridayTitle = "Vendredi",
+    saturdayTitle = "Samedi",
+    januaryTitle = "Janvier",
+    februaryTitle = "Février",
+    marchTitle = "Mars",
+    aprilTitle = "Avril",
+    mayTitle = "Mai",
+    juneTitle = "Juin",
+    julyTitle = "Juillet",
+    augustTitle = "Août",
+    septemberTitle = "Septembre",
+    octoberTitle = "Octobre",
+    novemberTitle = "Novembre",
+    decemberTitle = "Décembre",
+)
+
 val LocalTimePlannerStrings = staticCompositionLocalOf<TimePlannerStrings> {
     error("Core Strings is not provided")
 }
@@ -420,4 +485,5 @@ fun fetchCoreStrings(language: TimePlannerLanguage) = when (language) {
     TimePlannerLanguage.DE -> germanTimePlannerString
     TimePlannerLanguage.ES -> spanishTimePlannerString
     TimePlannerLanguage.FA -> persianTimePlannerString
+    TimePlannerLanguage.FR -> frenchTimePlannerString
 }
