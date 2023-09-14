@@ -51,6 +51,12 @@
  <img src="https://nowpayments.io/images/embeds/donation-button-black.svg" alt="Crypto donation button by NOWPayments" height="70">
 </a>
 
+## ✨Sponsors✨
+### These are our really cool sponsors!
+<p align="left">
+  <a href="https://github.com/serrq"><img src="https://avatars.githubusercontent.com/u/113377431?v=4" width="50px" alt="serrq" align="center" />
+</p>
+
 ## Screenshots 📸
 <table>
   <tr>
