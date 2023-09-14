@@ -36,6 +36,21 @@
 <a href="https://apt.izzysoft.de/fdroid/index/apk/ru.aleshin.timeplanner" target="_blank">
 <img src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png" alt="Get it on IzzyOnDroid" height="80"/></a>
 
+## Donation to support application development ❤️
+<details>
+  <summary>Main direct addresses</summary>
+  
+    1. BTC: bc1qu0a5ujldf8rpc8yz8atlgphrj9wutgfxw82dql
+    2. ETH: 0x4cAfa6De0D1968cA8C2a7aB06CE28d0A1aD2C7b9
+    3. TRX: TKC3NsKSS9hJRvofeJKceT5wC2bqTkPRUE
+    4. LTC: ltc1qj9fsz4pxrvr3eqyel4q8jnsnfpcfwdsj3mvpec
+    5. XEC: 0x4cAfa6De0D1968cA8C2a7aB06CE28d0A1aD2C7b9
+</details>
+
+<a href="https://nowpayments.io/donation?api_key=BQCNJB8-HRJ48T7-G31XH21-CFTX91M&source=lk_donation&medium=referral" target="_blank">
+ <img src="https://nowpayments.io/images/embeds/donation-button-black.svg" alt="Crypto donation button by NOWPayments" height="70">
+</a>
+
 ## Screenshots 📸
 <table>
   <tr>
