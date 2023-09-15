@@ -102,13 +102,12 @@ internal fun WorkLoadTab(
                 Divider(Modifier.padding(top = 8.dp, bottom = 16.dp))
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(2),
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp).height(300.dp),
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp).height(320.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     item {
                         StatisticInfoView(
-                            modifier = Modifier.weight(1f),
                             icon = AnalyticsThemeRes.icons.numberedList,
                             name = AnalyticsThemeRes.strings.totalCountTaskTitle,
                             value = analytics.totalTasksCount.toString(),
@@ -116,7 +115,6 @@ internal fun WorkLoadTab(
                     }
                     item {
                         StatisticInfoView(
-                            modifier = Modifier.weight(1f),
                             icon = AnalyticsThemeRes.icons.numericOneCircle,
                             name = AnalyticsThemeRes.strings.averageCountTaskTitle,
                             value = "~ ${analytics.averageDayLoad}",
@@ -124,7 +122,6 @@ internal fun WorkLoadTab(
                     }
                     item {
                         StatisticInfoView(
-                            modifier = Modifier.weight(1f),
                             icon = AnalyticsThemeRes.icons.timeComplete,
                             name = AnalyticsThemeRes.strings.totalTimeTaskTitle,
                             value = analytics.totalTasksTime.toMinutesAndHoursTitle(),
@@ -132,7 +129,6 @@ internal fun WorkLoadTab(
                     }
                     item {
                         StatisticInfoView(
-                            modifier = Modifier.weight(1f),
                             icon = AnalyticsThemeRes.icons.timeCheck,
                             name = AnalyticsThemeRes.strings.averageTimeTaskTitle,
                             value = analytics.averageTaskTime.toMinutesAndHoursTitle(),
@@ -224,13 +220,13 @@ internal fun StatisticInfoView(
     value: String,
 ) {
     Surface(
-        modifier = modifier.height(144.dp),
+        modifier = modifier,
         shape = MaterialTheme.shapes.large,
         color = MaterialTheme.colorScheme.surface,
         tonalElevation = TimePlannerRes.elevations.levelOne,
     ) {
         Column(
-            modifier = Modifier.fillMaxHeight().padding(16.dp),
+            modifier = Modifier.padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             Icon(
@@ -249,6 +245,8 @@ internal fun StatisticInfoView(
                 Text(
                     text = value,
                     color = MaterialTheme.colorScheme.onSurface,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
                     style = MaterialTheme.typography.titleLarge,
                 )
             }
