@@ -28,7 +28,9 @@ import ru.aleshin.features.home.api.domain.repository.ScheduleRepository
 import ru.aleshin.features.home.api.domain.repository.SubCategoriesRepository
 import ru.aleshin.features.home.api.domain.repository.TemplatesRepository
 import ru.aleshin.features.home.api.domain.repository.TimeTaskRepository
+import ru.aleshin.features.settings.api.data.repositories.TasksSettingsRepositoryImpl
 import ru.aleshin.features.settings.api.data.repositories.ThemeSettingsRepositoryImpl
+import ru.aleshin.features.settings.api.domain.repositories.TasksSettingsRepository
 import ru.aleshin.features.settings.api.domain.repositories.ThemeSettingsRepository
 import javax.inject.Singleton
 
@@ -51,6 +53,10 @@ interface DataModule {
     @Binds
     @Singleton
     fun bindThemeSettingsRepository(repository: ThemeSettingsRepositoryImpl): ThemeSettingsRepository
+
+    @Binds
+    @Singleton
+    fun bindTasksSettingsRepository(repository: TasksSettingsRepositoryImpl): TasksSettingsRepository
 
     @Binds
     @Singleton

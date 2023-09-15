@@ -22,6 +22,7 @@ import ru.aleshin.features.home.impl.domain.common.HomeErrorHandler
 import ru.aleshin.features.home.impl.domain.interactors.CategoriesInteractor
 import ru.aleshin.features.home.impl.domain.interactors.RepeatTaskInteractor
 import ru.aleshin.features.home.impl.domain.interactors.ScheduleInteractor
+import ru.aleshin.features.home.impl.domain.interactors.SettingsInteractor
 import ru.aleshin.features.home.impl.domain.interactors.SubCategoriesInteractor
 import ru.aleshin.features.home.impl.domain.interactors.TemplatesInteractor
 import ru.aleshin.features.home.impl.domain.interactors.TimeShiftInteractor
@@ -49,6 +50,9 @@ internal interface DomainModule {
 
     @Binds
     fun bindRepeatTaskInteractor(interactor: RepeatTaskInteractor.Base): RepeatTaskInteractor
+
+    @Binds
+    fun bindSettingsInteractor(interactor: SettingsInteractor.Base): SettingsInteractor
 
     @Binds
     fun bindHomeEitherWrapper(wrapper: HomeEitherWrapper.Base): HomeEitherWrapper

@@ -13,25 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ru.aleshin.features.home.api.domain.entities.categories
+package ru.aleshin.features.settings.api.data.datasources.tasks
+
+import androidx.room.Dao
+import androidx.room.Query
+import androidx.room.Update
+import kotlinx.coroutines.flow.Flow
+import ru.aleshin.features.settings.api.data.models.TasksSettingsEntity
 
 /**
- * @author Stanislav Aleshin on 15.04.2023.
+ * @author Stanislav Aleshin on 15.09.2023.
  */
-enum class DefaultCategoryType {
-    WORK,
-    REST,
-    SPORT,
-    SLEEP,
-    CULTURE,
-    AFFAIRS,
-    TRANSPORT,
-    STUDY,
-    EAT,
-    ENTERTAINMENTS,
-    EMPTY,
-    HYGIENE,
-    HEALTH,
-    SHOPPING,
-    OTHER,
+@Dao
+interface TasksSettingsDao {
+
+    @Query("SELECT * FROM TasksSettings WHERE id = 0")
+    fun fetchSettingsFlow(): Flow<TasksSettingsEntity>
+
+    @Update
+    suspend fun updateSettings(entity: TasksSettingsEntity)
 }

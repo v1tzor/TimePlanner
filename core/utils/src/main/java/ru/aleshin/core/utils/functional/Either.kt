@@ -15,6 +15,8 @@
  */
 package ru.aleshin.core.utils.functional
 
+import kotlinx.coroutines.flow.Flow
+
 /**
  * @author Stanislav Aleshin on 14.02.2023.
  */
@@ -47,6 +49,21 @@ suspend fun <L, R> Either<L, R>.handle(
     onLeftAction: suspend (L) -> Unit = {},
     onRightAction: suspend (R) -> Unit = {},
 ) = when (this) {
-    is Either.Left -> onLeftAction.invoke(this.data)
-    is Either.Right -> onRightAction.invoke(this.data)
+    is Either.Left -> onLeftAction(this.data)
+    is Either.Right -> onRightAction(this.data)
+}
+
+suspend fun <L, R, T> Either<L, R>.handleAndGet(
+    onLeftAction: suspend (L) -> T,
+    onRightAction: suspend (R) -> T,
+) = when (this) {
+    is Either.Left -> onLeftAction(this.data)
+    is Either.Right -> onRightAction(this.data)
+}
+
+suspend fun <L, R> Flow<Either<L, R>>.collectAndHandle(
+    onLeftAction: suspend (L) -> Unit = {},
+    onRightAction: suspend (R) -> Unit = {},
+) = collect { either ->
+    either.handle(onLeftAction, onRightAction)
 }

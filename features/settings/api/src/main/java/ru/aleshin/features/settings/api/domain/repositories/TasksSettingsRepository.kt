@@ -13,25 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ru.aleshin.features.home.api.domain.entities.categories
+package ru.aleshin.features.settings.api.domain.repositories
+
+import kotlinx.coroutines.flow.Flow
+import ru.aleshin.features.settings.api.domain.entities.TasksSettings
 
 /**
- * @author Stanislav Aleshin on 15.04.2023.
+ * @author Stanislav Aleshin on 15.09.2023.
  */
-enum class DefaultCategoryType {
-    WORK,
-    REST,
-    SPORT,
-    SLEEP,
-    CULTURE,
-    AFFAIRS,
-    TRANSPORT,
-    STUDY,
-    EAT,
-    ENTERTAINMENTS,
-    EMPTY,
-    HYGIENE,
-    HEALTH,
-    SHOPPING,
-    OTHER,
+interface TasksSettingsRepository {
+    fun fetchSettings(): Flow<TasksSettings>
+    suspend fun updateSettings(settings: TasksSettings)
 }

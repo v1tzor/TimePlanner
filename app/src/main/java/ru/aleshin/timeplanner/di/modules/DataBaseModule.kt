@@ -29,8 +29,10 @@ import ru.aleshin.features.home.api.data.datasources.subcategories.SubCategories
 import ru.aleshin.features.home.api.data.datasources.templates.TemplatesDao
 import ru.aleshin.features.home.api.data.datasources.templates.TemplatesLocalDataSource
 import ru.aleshin.features.settings.api.data.datasources.SettingsDataBase
-import ru.aleshin.features.settings.api.data.datasources.ThemeSettingsDao
-import ru.aleshin.features.settings.api.data.datasources.ThemeSettingsLocalDataSource
+import ru.aleshin.features.settings.api.data.datasources.tasks.TasksSettingsDao
+import ru.aleshin.features.settings.api.data.datasources.tasks.TasksSettingsLocalDataSource
+import ru.aleshin.features.settings.api.data.datasources.theme.ThemeSettingsDao
+import ru.aleshin.features.settings.api.data.datasources.theme.ThemeSettingsLocalDataSource
 import javax.inject.Singleton
 
 /**
@@ -52,6 +54,12 @@ class DataBaseModule {
     fun provideThemeSettingsLocalDataSource(
         dao: ThemeSettingsDao,
     ): ThemeSettingsLocalDataSource = ThemeSettingsLocalDataSource.Base(dao)
+
+    @Provides
+    @Singleton
+    fun provideTasksSettingsLocalDataSource(
+        dao: TasksSettingsDao,
+    ): TasksSettingsLocalDataSource = TasksSettingsLocalDataSource.Base(dao)
 
     @Provides
     @Singleton
@@ -77,6 +85,11 @@ class DataBaseModule {
     @Singleton
     fun provideThemeSettingsDao(dataBase: SettingsDataBase): ThemeSettingsDao =
         dataBase.fetchThemeSettingsDao()
+
+    @Provides
+    @Singleton
+    fun provideTasksSettingsDao(dataBase: SettingsDataBase): TasksSettingsDao =
+        dataBase.fetchTasksSettingsDao()
 
     @Provides
     @Singleton
@@ -110,6 +123,7 @@ class DataBaseModule {
         name = SettingsDataBase.NAME,
     ).createFromAsset("database/settings_prepopulated.db")
         .addMigrations(SettingsDataBase.MIGRATION_1_2)
+        .addMigrations(SettingsDataBase.MIGRATION_2_3)
         .build()
 
     @Provides
@@ -121,5 +135,7 @@ class DataBaseModule {
         klass = SchedulesDataBase::class.java,
         name = SchedulesDataBase.NAME,
     ).createFromAsset("database/categories_prepopulate.db")
-        .addMigrations(SchedulesDataBase.MIGRATE_2_3).build()
+        .addMigrations(SchedulesDataBase.MIGRATE_2_3)
+        .addMigrations(SchedulesDataBase.MIGRATE_4_5)
+        .build()
 }

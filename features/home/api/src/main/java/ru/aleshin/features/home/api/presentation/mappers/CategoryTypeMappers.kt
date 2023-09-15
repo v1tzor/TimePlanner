@@ -39,6 +39,8 @@ fun DefaultCategoryType.mapToIcon(icons: TimePlannerIcons): Int = when (this) {
     DefaultCategoryType.OTHER -> icons.categoryOtherIcon
     DefaultCategoryType.EMPTY -> icons.categoryEmptyIcon
     DefaultCategoryType.HYGIENE -> icons.categoryHygiene
+    DefaultCategoryType.HEALTH -> icons.categoryHealth
+    DefaultCategoryType.SHOPPING -> icons.categoryShopping
 }
 
 fun DefaultCategoryType.mapToString(strings: TimePlannerStrings): String = when (this) {
@@ -55,6 +57,8 @@ fun DefaultCategoryType.mapToString(strings: TimePlannerStrings): String = when 
     DefaultCategoryType.OTHER -> strings.categoryOtherTitle
     DefaultCategoryType.EMPTY -> strings.categoryEmptyTitle
     DefaultCategoryType.HYGIENE -> strings.categoryHugieneTitle
+    DefaultCategoryType.HEALTH -> strings.categoryHealthTitle
+    DefaultCategoryType.SHOPPING -> strings.categoryShoppingTitle
 }
 
 @Composable

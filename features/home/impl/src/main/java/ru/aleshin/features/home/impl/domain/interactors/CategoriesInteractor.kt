@@ -16,6 +16,7 @@
 package ru.aleshin.features.home.impl.domain.interactors
 
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import ru.aleshin.core.utils.functional.DomainResult
 import ru.aleshin.core.utils.functional.UnitDomainResult
 import ru.aleshin.features.home.api.domain.entities.categories.Categories
@@ -41,7 +42,9 @@ internal interface CategoriesInteractor {
     ) : CategoriesInteractor {
 
         override suspend fun fetchCategories() = eitherWrapper.wrapFlow {
-            categoriesRepository.fetchCategories()
+            categoriesRepository.fetchCategories().map { categories ->
+                categories.sortedBy { it.mainCategory.id != 0 }
+            }
         }
 
         override suspend fun addMainCategory(mainCategory: MainCategory) = eitherWrapper.wrap {

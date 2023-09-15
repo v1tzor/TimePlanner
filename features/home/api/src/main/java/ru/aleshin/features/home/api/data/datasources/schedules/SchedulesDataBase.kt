@@ -36,7 +36,7 @@ import ru.aleshin.features.home.api.data.models.timetasks.TimeTaskEntity
  * @author Stanislav Aleshin on 25.02.2023.
  */
 @Database(
-    version = 4,
+    version = 5,
     entities = [
         TemplateEntity::class,
         RepeatTimeEntity::class,
@@ -111,6 +111,28 @@ abstract class SchedulesDataBase : RoomDatabase() {
                         "FROM mainCategories_new",
                 )
                 database.execSQL("DROP TABLE mainCategories_new")
+            }
+        }
+        val MIGRATE_4_5 = object : Migration(4, 5) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.beginTransaction()
+                try {
+                    val healthValues = ContentValues().apply {
+                        put("id", -1)
+                        putNull("custom_name")
+                        put("default_category_type", "HEALTH")
+                    }
+                    val shoppingValues = ContentValues().apply {
+                        put("id", -2)
+                        putNull("custom_name")
+                        put("default_category_type", "SHOPPING")
+                    }
+                    database.insert("mainCategories", CONFLICT_REPLACE, healthValues)
+                    database.insert("mainCategories", CONFLICT_REPLACE, shoppingValues)
+                    database.setTransactionSuccessful()
+                } finally {
+                    database.endTransaction()
+                }
             }
         }
     }

@@ -13,25 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ru.aleshin.features.home.api.domain.entities.categories
+package ru.aleshin.features.settings.api.data.mappers
+
+import ru.aleshin.core.ui.views.ViewToggleStatus
+import ru.aleshin.features.settings.api.data.models.TasksSettingsEntity
+import ru.aleshin.features.settings.api.domain.entities.TasksSettings
 
 /**
- * @author Stanislav Aleshin on 15.04.2023.
+ * @author Stanislav Aleshin on 15.09.2023.
  */
-enum class DefaultCategoryType {
-    WORK,
-    REST,
-    SPORT,
-    SLEEP,
-    CULTURE,
-    AFFAIRS,
-    TRANSPORT,
-    STUDY,
-    EAT,
-    ENTERTAINMENTS,
-    EMPTY,
-    HYGIENE,
-    HEALTH,
-    SHOPPING,
-    OTHER,
-}
+fun TasksSettings.mapToData() = TasksSettingsEntity(
+    id = 0,
+    taskViewStatus = taskViewStatus.toString(),
+)
+
+fun TasksSettingsEntity.mapToDomain() = TasksSettings(
+    taskViewStatus = ViewToggleStatus.valueOf(taskViewStatus),
+)

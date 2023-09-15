@@ -15,6 +15,7 @@
  */
 package ru.aleshin.features.home.impl.presentation.ui.home.screenModel
 
+import android.util.Log
 import androidx.compose.runtime.Composable
 import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
@@ -29,7 +30,7 @@ import ru.aleshin.features.home.impl.presentation.ui.home.contract.HomeAction
 import ru.aleshin.features.home.impl.presentation.ui.home.contract.HomeEffect
 import ru.aleshin.features.home.impl.presentation.ui.home.contract.HomeEvent
 import ru.aleshin.features.home.impl.presentation.ui.home.contract.HomeViewState
-import ru.aleshin.features.home.impl.presentation.ui.home.views.ViewToggleStatus
+import ru.aleshin.core.ui.views.ViewToggleStatus
 import java.util.Date
 import javax.inject.Inject
 
@@ -49,10 +50,21 @@ internal class HomeScreenModel @Inject constructor(
     coroutineManager = coroutineManager,
 ) {
 
+    override fun init() {
+        if (!isInitialize.get()) {
+            dispatchEvent(HomeEvent.Init)
+            super.init()
+        }
+    }
+
     override suspend fun WorkScope<HomeViewState, HomeAction, HomeEffect>.handleEvent(
         event: HomeEvent,
     ) {
         when (event) {
+            is HomeEvent.Init -> launchBackgroundWork(HomeWorkKey.SETUP_SETTINGS) {
+                val setupCommand = ScheduleWorkCommand.SetupSettings
+                scheduleWorkProcessor.work(setupCommand).collectAndHandleWork()
+            }
             is HomeEvent.LoadSchedule -> {
                 val date = event.date ?: dateManager.fetchBeginningCurrentDay()
                 loadSchedule(date)
@@ -95,7 +107,8 @@ internal class HomeScreenModel @Inject constructor(
                     ViewToggleStatus.EXPANDED -> ViewToggleStatus.COMPACT
                     ViewToggleStatus.COMPACT -> ViewToggleStatus.EXPANDED
                 }
-                sendAction(HomeAction.UpdateViewStatus(status))
+                val changeCommand = ScheduleWorkCommand.ChangeTaskViewStatus(status)
+                scheduleWorkProcessor.work(changeCommand).collectAndHandleWork()
             }
         }
     }
@@ -105,24 +118,24 @@ internal class HomeScreenModel @Inject constructor(
         currentState: HomeViewState,
     ) = when (action) {
         is HomeAction.ShowContentLoading -> currentState.copy(
-            isLoadingContent = true,
+            isLoading = true,
+        )
+        is HomeAction.SetupSettings -> currentState.copy(
+            taskViewStatus = action.settings.taskViewStatus,
         )
         is HomeAction.SetEmptySchedule -> currentState.copy(
             timeTasks = emptyList(),
             currentDate = action.date,
             dateStatus = action.status,
             schedulePlannedTemplates = action.plannedTemplates,
-            isLoadingContent = false,
+            isLoading = false,
         )
         is HomeAction.UpdateSchedule -> currentState.copy(
             timeTasks = action.schedule.timeTasks,
             currentDate = action.schedule.date,
             dateStatus = action.schedule.dateStatus,
             schedulePlannedTemplates = emptyList(),
-            isLoadingContent = false,
-        )
-        is HomeAction.UpdateViewStatus -> currentState.copy(
-            timeTaskViewStatus = action.status,
+            isLoading = false,
         )
         is HomeAction.Navigate -> currentState.copy()
     }
@@ -141,7 +154,7 @@ internal class HomeScreenModel @Inject constructor(
 }
 
 internal enum class HomeWorkKey : BackgroundWorkKey {
-    SUBSCRIBE_SCHEDULE,
+    SUBSCRIBE_SCHEDULE, SETUP_SETTINGS
 }
 
 @Composable

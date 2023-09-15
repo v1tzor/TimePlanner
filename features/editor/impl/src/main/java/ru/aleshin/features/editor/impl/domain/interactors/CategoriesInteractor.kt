@@ -40,7 +40,7 @@ internal interface CategoriesInteractor {
     ) : CategoriesInteractor {
 
         override suspend fun fetchCategories() = eitherWrapper.wrap {
-            categoriesRepository.fetchCategories().first()
+            categoriesRepository.fetchCategories().first().sortedBy { it.mainCategory.id != 0 }
         }
 
         override suspend fun addSubCategory(subCategory: SubCategory) = eitherWrapper.wrap {

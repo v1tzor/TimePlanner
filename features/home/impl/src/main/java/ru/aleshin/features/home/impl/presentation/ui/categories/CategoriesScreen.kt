@@ -72,7 +72,9 @@ internal class CategoriesScreen : Screen {
                 )
             },
             topBar = {
-                CategoriesTopAppBar(onMenuIconClick = { scope.launch { drawerManager?.openDrawer() } })
+                CategoriesTopAppBar(
+                    onMenuIconClick = { scope.launch { drawerManager?.openDrawer() } },
+                )
             },
             snackbarHost = {
                 SnackbarHost(hostState = snackbarState)

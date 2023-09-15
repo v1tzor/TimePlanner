@@ -28,6 +28,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import ru.aleshin.core.ui.theme.material.surfaceOne
+import ru.aleshin.core.ui.views.ViewToggle
+import ru.aleshin.core.ui.views.ViewToggleStatus
 import ru.aleshin.core.utils.extensions.endThisDay
 import ru.aleshin.core.utils.extensions.isNotZeroDifference
 import ru.aleshin.core.utils.extensions.shiftDay
@@ -64,22 +66,22 @@ internal fun HomeContent(
 ) {
     Column(modifier = modifier.fillMaxSize()) {
         HorizontalProgressBar(
-            isLoading = state.isLoadingContent,
+            isLoading = state.isLoading,
         )
         HomeFiltersHeader(
-            isEnabled = !state.isLoadingContent,
+            isEnabled = !state.isLoading,
             currentDate = state.currentDate,
-            toggleState = state.timeTaskViewStatus,
+            toggleState = state.taskViewStatus,
             onChangeDate = onChangeDate,
             onChangeToggleStatus = onChangeToggleStatus,
         )
         HomeTimeTasksLazyColumn(
-            isLoadingContent = state.isLoadingContent,
+            isLoadingContent = state.isLoading,
             currentDate = state.currentDate,
             dateStatus = state.dateStatus,
             schedulePlannedTemplates = state.schedulePlannedTemplates,
             timeTasks = state.timeTasks,
-            timeTaskViewStatus = state.timeTaskViewStatus,
+            timeTaskViewStatus = state.taskViewStatus,
             onCreateSchedule = onCreateSchedule,
             onTimeTaskEdit = onTimeTaskEdit,
             onTaskDoneChange = onTaskDoneChange,

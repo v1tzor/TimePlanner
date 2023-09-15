@@ -17,7 +17,7 @@ package ru.aleshin.features.settings.api.data.repositories
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import ru.aleshin.features.settings.api.data.datasources.ThemeSettingsLocalDataSource
+import ru.aleshin.features.settings.api.data.datasources.theme.ThemeSettingsLocalDataSource
 import ru.aleshin.features.settings.api.data.models.ThemeSettingsEntity
 import ru.aleshin.features.settings.api.domain.entities.ThemeSettings
 import ru.aleshin.features.settings.api.domain.repositories.ThemeSettingsRepository

@@ -13,25 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ru.aleshin.features.home.api.domain.entities.categories
+package ru.aleshin.features.settings.api.data.models
+
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 
 /**
- * @author Stanislav Aleshin on 15.04.2023.
+ * @author Stanislav Aleshin on 15.09.2023.
  */
-enum class DefaultCategoryType {
-    WORK,
-    REST,
-    SPORT,
-    SLEEP,
-    CULTURE,
-    AFFAIRS,
-    TRANSPORT,
-    STUDY,
-    EAT,
-    ENTERTAINMENTS,
-    EMPTY,
-    HYGIENE,
-    HEALTH,
-    SHOPPING,
-    OTHER,
-}
+@Entity(tableName = "TasksSettings")
+data class TasksSettingsEntity(
+    @PrimaryKey val id: Int = 0,
+    @ColumnInfo("task_view_status") val taskViewStatus: String = "COMPACT",
+)

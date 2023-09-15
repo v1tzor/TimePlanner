@@ -16,13 +16,14 @@
 package ru.aleshin.features.home.impl.presentation.ui.home.contract
 
 import kotlinx.parcelize.Parcelize
+import ru.aleshin.core.ui.views.ViewToggleStatus
 import ru.aleshin.core.utils.platform.screenmodel.contract.*
 import ru.aleshin.features.home.api.domain.entities.schedules.DailyScheduleStatus
 import ru.aleshin.features.home.impl.domain.entities.HomeFailures
 import ru.aleshin.features.home.impl.presentation.models.schedules.ScheduleUi
 import ru.aleshin.features.home.impl.presentation.models.schedules.TimeTaskUi
 import ru.aleshin.features.home.impl.presentation.models.templates.TemplateUi
-import ru.aleshin.features.home.impl.presentation.ui.home.views.ViewToggleStatus
+import ru.aleshin.features.settings.api.domain.entities.TasksSettings
 import java.util.*
 
 /**
@@ -30,15 +31,16 @@ import java.util.*
  */
 @Parcelize
 internal data class HomeViewState(
-    val isLoadingContent: Boolean = true,
+    val isLoading: Boolean = true,
     val currentDate: Date? = null,
     val dateStatus: DailyScheduleStatus? = null,
     val schedulePlannedTemplates: List<TemplateUi> = emptyList(),
-    val timeTaskViewStatus: ViewToggleStatus = ViewToggleStatus.COMPACT,
+    val taskViewStatus: ViewToggleStatus = ViewToggleStatus.COMPACT,
     val timeTasks: List<TimeTaskUi> = emptyList(),
 ) : BaseViewState
 
 internal sealed class HomeEvent : BaseEvent {
+    object Init : HomeEvent()
     object CreateSchedule : HomeEvent()
     data class LoadSchedule(val date: Date?) : HomeEvent()
     data class PressAddTimeTaskButton(val startTime: Date, val endTime: Date) : HomeEvent()
@@ -56,7 +58,11 @@ internal sealed class HomeEffect : BaseUiEffect {
 internal sealed class HomeAction : BaseAction {
     object Navigate : HomeAction()
     object ShowContentLoading : HomeAction()
+    data class SetupSettings(val settings: TasksSettings) : HomeAction()
     data class UpdateSchedule(val schedule: ScheduleUi) : HomeAction()
-    data class SetEmptySchedule(val date: Date, val status: DailyScheduleStatus?, val plannedTemplates: List<TemplateUi>) : HomeAction()
-    data class UpdateViewStatus(val status: ViewToggleStatus) : HomeAction()
+    data class SetEmptySchedule(
+        val date: Date,
+        val status: DailyScheduleStatus?,
+        val plannedTemplates: List<TemplateUi>,
+    ) : HomeAction()
 }

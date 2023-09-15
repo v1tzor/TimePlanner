@@ -17,11 +17,15 @@ package ru.aleshin.features.home.impl.presentation.ui.home.screenModel
 
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.FlowCollector
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
+import ru.aleshin.core.ui.views.ViewToggleStatus
 import ru.aleshin.core.utils.functional.Constants
 import ru.aleshin.core.utils.functional.Either
+import ru.aleshin.core.utils.functional.collectAndHandle
 import ru.aleshin.core.utils.functional.handle
+import ru.aleshin.core.utils.functional.handleAndGet
 import ru.aleshin.core.utils.functional.rightOrElse
 import ru.aleshin.core.utils.managers.DateManager
 import ru.aleshin.core.utils.platform.screenmodel.work.*
@@ -30,6 +34,7 @@ import ru.aleshin.features.home.api.domain.entities.schedules.TimeTask
 import ru.aleshin.features.home.api.domain.entities.schedules.TimeTaskStatus
 import ru.aleshin.features.home.impl.domain.common.convertToTimeTask
 import ru.aleshin.features.home.impl.domain.interactors.ScheduleInteractor
+import ru.aleshin.features.home.impl.domain.interactors.SettingsInteractor
 import ru.aleshin.features.home.impl.domain.interactors.TimeShiftInteractor
 import ru.aleshin.features.home.impl.presentation.common.TimeTaskStatusController
 import ru.aleshin.features.home.impl.presentation.mapppers.schedules.ScheduleDomainToUiMapper
@@ -52,6 +57,7 @@ internal interface ScheduleWorkProcessor : FlowWorkProcessor<ScheduleWorkCommand
     class Base @Inject constructor(
         private val scheduleInteractor: ScheduleInteractor,
         private val timeShiftInteractor: TimeShiftInteractor,
+        private val settingsInteractor: SettingsInteractor,
         private val mapperToUi: ScheduleDomainToUiMapper,
         private val statusController: TimeTaskStatusController,
         private val timeTaskAlarmManager: TimeTaskAlarmManager,
@@ -59,31 +65,38 @@ internal interface ScheduleWorkProcessor : FlowWorkProcessor<ScheduleWorkCommand
     ) : ScheduleWorkProcessor {
 
         override suspend fun work(command: ScheduleWorkCommand) = when (command) {
+            is ScheduleWorkCommand.SetupSettings -> setupSettingsWork()
             is ScheduleWorkCommand.LoadScheduleByDate -> loadScheduleByDateWork(command.date)
             is ScheduleWorkCommand.ChangeTaskDoneState -> changeTaskDoneStateWork(command.date, command.key)
+            is ScheduleWorkCommand.ChangeTaskViewStatus -> changeTaskViewStatus(command.status)
             is ScheduleWorkCommand.CreateSchedule -> createScheduleWork(command.date, command.plannedTemplates)
             is ScheduleWorkCommand.TimeTaskShiftDown -> shiftDownTimeWork(command.timeTask)
             is ScheduleWorkCommand.TimeTaskShiftUp -> shiftUpTimeWork(command.timeTask)
         }
 
+        private fun setupSettingsWork() = flow {
+            settingsInteractor.fetchTasksSettings().collectAndHandle(
+                onLeftAction = { emit(EffectResult(HomeEffect.ShowError(it))) },
+                onRightAction = { emit(ActionResult(HomeAction.SetupSettings(it))) },
+            )
+        }
+
         private suspend fun loadScheduleByDateWork(date: Date) = flow {
-            scheduleInteractor.fetchScheduleByDate(date.time).collect { scheduleEither ->
-                scheduleEither.handle(
-                    onRightAction = { foundedDomainSchedule ->
-                        when (foundedDomainSchedule) {
-                            is Either.Right -> {
-                                val schedule = foundedDomainSchedule.data.map(mapperToUi)
-                                refreshScheduleState(schedule)
-                            }
-                            is Either.Left -> {
-                                val foundedRepeatTasks = foundedDomainSchedule.data.map { it.mapToUi() }
-                                emit(ActionResult(HomeAction.SetEmptySchedule(date, null, foundedRepeatTasks)))
-                            }
+            scheduleInteractor.fetchScheduleByDate(date.time).collectAndHandle(
+                onLeftAction = { error -> emit(EffectResult(HomeEffect.ShowError(error))) },
+                onRightAction = { foundedDomainSchedule ->
+                    when (foundedDomainSchedule) {
+                        is Either.Right -> {
+                            val schedule = foundedDomainSchedule.data.map(mapperToUi)
+                            refreshScheduleState(schedule)
                         }
-                    },
-                    onLeftAction = { error -> emit(EffectResult(HomeEffect.ShowError(error))) },
-                )
-            }
+                        is Either.Left -> {
+                            val foundedRepeatTasks = foundedDomainSchedule.data.map { it.mapToUi() }
+                            emit(ActionResult(HomeAction.SetEmptySchedule(date, null, foundedRepeatTasks)))
+                        }
+                    }
+                },
+            )
         }
         
         private suspend fun FlowCollector<WorkResult<HomeAction, HomeEffect>>.refreshScheduleState(
@@ -122,11 +135,22 @@ internal interface ScheduleWorkProcessor : FlowWorkProcessor<ScheduleWorkCommand
             }
         }
 
+        private fun changeTaskViewStatus(status: ViewToggleStatus) = flow {
+            val oldSettings = settingsInteractor.fetchTasksSettings().first().handleAndGet(
+                onLeftAction = { error("Error get tasks settings!") },
+                onRightAction = { it },
+            )
+            val newSettings = oldSettings.copy(taskViewStatus = status)
+            settingsInteractor.updateTasksSettings(newSettings).handle(
+                onLeftAction = { emit(EffectResult(HomeEffect.ShowError(it))) },
+            )
+        }
+
         private suspend fun createScheduleWork(date: Date, plannedTemplates: List<TemplateUi>) = flow {
             val plannedTimeTasks = plannedTemplates.map { it.mapToDomain().convertToTimeTask(date) }
             scheduleInteractor.createSchedule(date, plannedTimeTasks).handle(
-                onRightAction = { addNotifications(plannedTimeTasks) },
                 onLeftAction = { emit(EffectResult(HomeEffect.ShowError(it))) },
+                onRightAction = { addNotifications(plannedTimeTasks) },
             )
         }
 
@@ -158,9 +182,11 @@ internal interface ScheduleWorkProcessor : FlowWorkProcessor<ScheduleWorkCommand
 }
 
 internal sealed class ScheduleWorkCommand : WorkCommand {
+    object SetupSettings : ScheduleWorkCommand()
     data class LoadScheduleByDate(val date: Date) : ScheduleWorkCommand()
     data class CreateSchedule(val date: Date, val plannedTemplates: List<TemplateUi>) : ScheduleWorkCommand()
     data class ChangeTaskDoneState(val date: Date, val key: Long) : ScheduleWorkCommand()
+    data class ChangeTaskViewStatus(val status: ViewToggleStatus) : ScheduleWorkCommand()
     data class TimeTaskShiftUp(val timeTask: TimeTaskUi) : ScheduleWorkCommand()
     data class TimeTaskShiftDown(val timeTask: TimeTaskUi) : ScheduleWorkCommand()
 }
