@@ -15,10 +15,13 @@
  */
 package ru.aleshin.core.utils.extensions
 
+import android.content.ClipData
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
+import android.text.ClipboardManager
 import androidx.core.content.ContextCompat
-import java.util.*
 
 /**
  * @author Stanislav Aleshin on 14.02.2023.
@@ -30,3 +33,14 @@ fun Context.isAllowPermission(permission: String): Boolean {
 fun Context.fetchLocale() = resources.configuration.locales.get(0)
 
 fun Context.fetchCurrentLanguage() = fetchLocale().language
+
+fun Context.openNetworkUri(uri: String) {
+    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
+    startActivity(intent)
+}
+
+fun setClipboard(context: Context, text: String?) {
+    val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
+    val clip = ClipData.newPlainText("Copied Text", text)
+    clipboard.setPrimaryClip(clip)
+}

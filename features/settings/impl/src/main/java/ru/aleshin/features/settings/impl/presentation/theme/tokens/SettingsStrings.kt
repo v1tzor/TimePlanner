@@ -51,6 +51,15 @@ internal data class SettingsStrings(
     val errorBackupFileMessage: String,
     val otherError: String,
     val mainSettingsDynamicColorTitle: String,
+    val aboutAppHeader: String,
+    val versionCodeTitle: String,
+    val versionNameTitle: String,
+    val developerTitle: String,
+    val licenseTitle: String,
+    val githubTitle: String,
+    val askQuestionTitle: String,
+    val donateTitle: String,
+    val copyTitle: String,
 )
 
 internal val russianSettingsString = SettingsStrings(
@@ -65,7 +74,7 @@ internal val russianSettingsString = SettingsStrings(
     gerLanguageTitle = "Немецкий",
     spaLanguageTitle = "Испанский",
     perLanguageTitle = "Персидский(b)",
-    freLanguageTitle = "French", // Please translate :)
+    freLanguageTitle = "Французкий",
     defaultLanguageTitle = "По умолчанию",
     mainSettingsLanguageTitle = "Язык приложения",
     backIconDesc = "Назад",
@@ -83,6 +92,15 @@ internal val russianSettingsString = SettingsStrings(
     errorBackupFileMessage = "Ошибка при работе с файлом",
     otherError = "Ошибка! Обратитесь к разработчику.",
     mainSettingsDynamicColorTitle = "Динамические цвета",
+    aboutAppHeader = "О приложении",
+    versionCodeTitle = "Номер сборки",
+    versionNameTitle = "Версия",
+    githubTitle = "Github",
+    developerTitle = "Разработчик",
+    licenseTitle = "Лицензия",
+    askQuestionTitle = "Задать вопрос",
+    donateTitle = "Поддержать приложение",
+    copyTitle = "Копировать",
 )
 
 internal val englishSettingsString = SettingsStrings(
@@ -115,6 +133,15 @@ internal val englishSettingsString = SettingsStrings(
     errorBackupFileMessage = "Error when working with the file",
     otherError = "Error! Contact the developer.",
     mainSettingsDynamicColorTitle = "Dynamic colors",
+    aboutAppHeader = "About the app",
+    versionCodeTitle = "Build number",
+    versionNameTitle = "Version",
+    githubTitle = "Github",
+    developerTitle = "Developer",
+    licenseTitle = "License",
+    askQuestionTitle = "Ask a question",
+    donateTitle = "Support the application",
+    copyTitle = "Copy",
 )
 
 internal val germanSettingsString = SettingsStrings(
@@ -147,6 +174,15 @@ internal val germanSettingsString = SettingsStrings(
     errorBackupFileMessage = "Fehler beim Arbeiten mit der Datei",
     otherError = "Fehler! Kontaktieren Sie den Entwickler.",
     mainSettingsDynamicColorTitle = "Dynamische Farben",
+    aboutAppHeader = "Über die App",
+    versionCodeTitle = "Build-Nummer",
+    versionNameTitle = "Version",
+    githubTitle = "Github",
+    developerTitle = "Entwickler",
+    licenseTitle = "Lizenz",
+    askQuestionTitle = "eine Frage stellen",
+    donateTitle = "App unterstützen",
+    copyTitle = "kopieren",
 )
 
 internal val spanishSettingsString = SettingsStrings(
@@ -179,6 +215,15 @@ internal val spanishSettingsString = SettingsStrings(
     errorBackupFileMessage = "Error al trabajar con el archivo",
     otherError = "¡Error! Contacta al desarrollador.",
     mainSettingsDynamicColorTitle = "Colores dinámicos",
+    aboutAppHeader = "Acerca de la aplicación",
+    versionCodeTitle = "Número de construcción",
+    versionNameTitle = "Versión",
+    githubTitle = "Github",
+    developerTitle = "Elaborador",
+    licenseTitle = "Licencia",
+    askQuestionTitle = "Preguntar",
+    donateTitle = "Apoyar la aplicación",
+    copyTitle = "Copiar",
 )
 
 internal val persianSettingsString = SettingsStrings(
@@ -193,7 +238,7 @@ internal val persianSettingsString = SettingsStrings(
     spaLanguageTitle = "اسپانیایی",
     perLanguageTitle = "فارسی (بیتا)",
     gerLanguageTitle = "آلمانی",
-    freLanguageTitle = "French", // Please translate :)
+    freLanguageTitle = "فرانسوی",
     defaultLanguageTitle = "پیش فرض",
     mainSettingsLanguageTitle = "زبان برنامه",
     backIconDesc = "پیمایش به بالا",
@@ -211,6 +256,15 @@ internal val persianSettingsString = SettingsStrings(
     errorBackupFileMessage = "خطا هنگام کار با فایل",
     otherError = "خطا! با توسعه دهنده تماس بگیرید.",
     mainSettingsDynamicColorTitle = "رنگ های پویا",
+    aboutAppHeader = "درباره اپلیکیشن",
+    versionCodeTitle = "شماره ساخت",
+    versionNameTitle = "نسخه",
+    githubTitle = "Github",
+    developerTitle = "توسعه دهنده",
+    licenseTitle = "مجوز",
+    askQuestionTitle = "سوال بپرسید",
+    donateTitle = "از برنامه پشتیبانی کنید",
+    copyTitle = "کپی"
 )
 
 internal val frenchSettingsString = SettingsStrings(
@@ -243,6 +297,15 @@ internal val frenchSettingsString = SettingsStrings(
     errorBackupFileMessage = "Erreur pendant la manipulation du fichier",
     otherError = "Erreur! Contactez le developpeur.",
     mainSettingsDynamicColorTitle = "Couleurs dynamiques",
+    aboutAppHeader = "À propos de l'application",
+    versionCodeTitle = "Numéro d'assemblage",
+    versionNameTitle = "Version",
+    githubTitle = "Github",
+    developerTitle = "Développeur",
+    licenseTitle = "Licence",
+    askQuestionTitle = "Poser une question",
+    donateTitle = "Soutenir l'application",
+    copyTitle = "Copier",
 )
 
 internal val LocalSettingsStrings = staticCompositionLocalOf<SettingsStrings> {

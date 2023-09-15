@@ -22,6 +22,11 @@ object Constants {
 
     object App {
         const val NAME = "TimePlanner"
+        const val DEVELOPER = "Stanislav Aleshin"
+        const val LICENCE = "Apache Licence v2.0"
+        const val DONATE_URI = "https://nowpayments.io/donation?api_key=BQCNJB8-HRJ48T7-G31XH21-CFTX91M&source=lk_donation&medium=referral"
+        const val GITHUB_URI = "https://github.com/v1tzor/TimePlanner"
+        const val ISSUES_URI = "https://github.com/v1tzor/TimePlanner/issues"
     }
 
     object Text {

@@ -34,6 +34,9 @@ android {
 
         testInstrumentationRunner = Config.testInstrumentRunner
         consumerProguardFiles(Config.consumerProguardFiles)
+
+        buildConfigField("String", "VERSION_NAME", "\"${Config.versionName}\"")
+        buildConfigField("String", "VERSION_CODE", "\"${Config.versionCode}\"")
     }
 
     buildTypes {

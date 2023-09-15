@@ -29,17 +29,24 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.launch
 import ru.aleshin.core.ui.theme.TimePlannerRes
 import ru.aleshin.core.ui.theme.material.ThemeUiType
 import ru.aleshin.core.ui.theme.tokens.LanguageUiType
 import ru.aleshin.core.ui.views.WarningDeleteDialog
+import ru.aleshin.core.utils.extensions.openNetworkUri
+import ru.aleshin.core.utils.extensions.setClipboard
+import ru.aleshin.core.utils.functional.Constants
 import ru.aleshin.features.settings.impl.presentation.models.ThemeSettingsUi
 import ru.aleshin.features.settings.impl.presentation.theme.SettingsThemeRes
 import ru.aleshin.features.settings.impl.presentation.ui.contract.RestoreBackupContract
 import ru.aleshin.features.settings.impl.presentation.ui.contract.SaveBackupContract
 import ru.aleshin.features.settings.impl.presentation.ui.contract.SettingsViewState
 import ru.aleshin.features.settings.impl.presentation.ui.contract.launch
+import ru.aleshin.features.settings.impl.presentation.ui.views.AboutAppSection
+import ru.aleshin.features.settings.impl.presentation.ui.views.DonateView
 import ru.aleshin.features.settings.impl.presentation.ui.views.DynamicColorChooser
 import ru.aleshin.features.settings.impl.presentation.ui.views.LanguageChooser
 import ru.aleshin.features.settings.impl.presentation.ui.views.ThemeColorsChooser
@@ -57,6 +64,8 @@ internal fun SettingsContent(
     onUpdateThemeSettings: (ThemeSettingsUi) -> Unit,
 ) {
     val scrollState = rememberScrollState()
+    val context = LocalContext.current
+
     Column(modifier = modifier.fillMaxSize().verticalScroll(scrollState)) {
         if (state.themeSettings != null) {
             Column(
@@ -77,10 +86,10 @@ internal fun SettingsContent(
                         onUpdateThemeSettings(state.themeSettings.copy(isDynamicColorEnable = it))
                     },
                 )
-                Divider(modifier = Modifier.padding(top = 8.dp, bottom = 0.dp))
+                Divider(modifier = Modifier.padding(top = 8.dp))
             }
             Column(
-                modifier = Modifier.padding(horizontal = 16.dp),
+                modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 DataSettingsSection(
@@ -89,8 +98,23 @@ internal fun SettingsContent(
                     onBackupData = onBackupData,
                     onRestoreData = onRestoreData,
                 )
+                Divider(modifier = Modifier.padding(top = 8.dp))
+            }
+            Column(
+                modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                AboutAppSection(
+                    onOpenGit = { context.openNetworkUri(Constants.App.GITHUB_URI) },
+                    onOpenIssues = { context.openNetworkUri(Constants.App.ISSUES_URI) },
+                )
+                DonateView(
+                    onDonate = { context.openNetworkUri(Constants.App.DONATE_URI) },
+                    onCopyCryptoAddress = { setClipboard(context, it) },
+                )
             }
         }
+        Spacer(modifier = Modifier.height(90.dp))
     }
 }
 

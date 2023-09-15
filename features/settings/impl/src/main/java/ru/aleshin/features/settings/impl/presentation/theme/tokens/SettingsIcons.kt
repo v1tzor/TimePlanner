@@ -24,11 +24,13 @@ import ru.aleshin.features.settings.impl.R
 internal data class SettingsIcons(
     val back: Int,
     val default: Int,
+    val git: Int,
 )
 
 internal val baseSettingIcons = SettingsIcons(
     back = R.drawable.ic_back,
     default = R.drawable.ic_restart,
+    git = R.drawable.ic_github,
 )
 
 internal val LocalSettingsIcons = staticCompositionLocalOf<SettingsIcons> {
