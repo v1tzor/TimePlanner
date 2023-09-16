@@ -22,6 +22,7 @@ import ru.aleshin.core.utils.managers.DateManager
 import ru.aleshin.core.utils.managers.TimeOverlayManager
 import ru.aleshin.core.utils.notifications.NotificationCreator
 import ru.aleshin.features.editor.api.presentation.AlarmReceiverProvider
+import ru.aleshin.features.editor.api.presentation.TemplatesAlarmManager
 import ru.aleshin.features.editor.api.presentation.TimeTaskAlarmManager
 import ru.aleshin.features.home.api.domain.common.ScheduleStatusChecker
 import ru.aleshin.features.home.api.domain.common.TimeTaskStatusChecker
@@ -56,6 +57,9 @@ interface CoreModule {
 
     @Binds
     fun bindTimeTaskAlarmManager(manager: TimeTaskAlarmManager.Base): TimeTaskAlarmManager
+
+    @Binds
+    fun bindTemplatesAlarmManager(manager: TemplatesAlarmManager.Base): TemplatesAlarmManager
 
     @Binds
     @Singleton

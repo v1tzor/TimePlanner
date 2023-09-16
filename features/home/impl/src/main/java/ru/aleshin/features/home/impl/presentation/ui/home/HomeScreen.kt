@@ -15,6 +15,7 @@
  */
 package ru.aleshin.features.home.impl.presentation.ui.home
 
+import android.util.Log
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable

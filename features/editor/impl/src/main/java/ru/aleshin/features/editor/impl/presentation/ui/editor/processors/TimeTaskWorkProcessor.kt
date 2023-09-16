@@ -21,7 +21,6 @@ import ru.aleshin.core.utils.functional.Either
 import ru.aleshin.core.utils.managers.DateManager
 import ru.aleshin.core.utils.platform.screenmodel.work.*
 import ru.aleshin.features.editor.api.presentation.TimeTaskAlarmManager
-import ru.aleshin.features.editor.impl.domain.common.convertToTemplate
 import ru.aleshin.features.editor.impl.domain.common.convertToTimeTask
 import ru.aleshin.features.editor.impl.domain.entites.EditorFailures
 import ru.aleshin.features.editor.impl.domain.interactors.TemplatesInteractor
@@ -70,7 +69,7 @@ internal interface TimeTaskWorkProcessor : WorkProcessor<TimeTaskWorkCommand, Ed
                 false -> timeTaskInteractor.addTimeTask(timeTask)
             }
             return when (saveResult) {
-                is Either.Right -> notifyUpdateOrAdd(timeTask).let {
+                is Either.Right -> notifyUpdateOrAdd(timeTask.copy(key = saveResult.data)).let {
                     navigationManager.navigateToHomeScreen()
                     ActionResult(EditorAction.Navigate)
                 }
@@ -103,10 +102,8 @@ internal interface TimeTaskWorkProcessor : WorkProcessor<TimeTaskWorkCommand, Ed
             if (timeTask.isEnableNotification) {
                 val currentTime = dateManager.fetchCurrentDate()
                 if (timeTask.timeRanges.from > currentTime) {
-                    when (timeTask.key != 0L) {
-                        true -> timeTaskAlarmManager.updateNotifyAlarm(timeTask)
-                        false -> timeTaskAlarmManager.addNotifyAlarm(timeTask)
-                    }
+                    timeTaskAlarmManager.deleteNotifyAlarm(timeTask)
+                    timeTaskAlarmManager.addOrUpdateNotifyAlarm(timeTask)
                 }
             }
         }

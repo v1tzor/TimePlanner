@@ -22,9 +22,9 @@ import ru.aleshin.core.utils.platform.screenmodel.contract.BaseUiEffect
 import ru.aleshin.core.utils.platform.screenmodel.contract.BaseViewState
 import ru.aleshin.features.home.api.domain.entities.template.RepeatTime
 import ru.aleshin.features.home.impl.domain.entities.HomeFailures
-import ru.aleshin.features.home.impl.presentation.models.templates.TemplatesSortedType
 import ru.aleshin.features.home.impl.presentation.models.categories.CategoriesUi
 import ru.aleshin.features.home.impl.presentation.models.templates.TemplateUi
+import ru.aleshin.features.home.impl.presentation.models.templates.TemplatesSortedType
 
 /**
  * @author Stanislav Aleshin on 08.05.2023.
@@ -40,6 +40,8 @@ internal sealed class TemplatesEvent : BaseEvent {
     object Init : TemplatesEvent()
     data class AddTemplate(val template: TemplateUi) : TemplatesEvent()
     data class UpdateTemplate(val template: TemplateUi) : TemplatesEvent()
+    data class RestartTemplateRepeat(val template: TemplateUi) : TemplatesEvent()
+    data class StopTemplateRepeat(val template: TemplateUi) : TemplatesEvent()
     data class AddRepeatTemplate(val time: RepeatTime, val template: TemplateUi) : TemplatesEvent()
     data class DeleteRepeatTemplate(val time: RepeatTime, val template: TemplateUi) : TemplatesEvent()
     data class UpdatedSortedType(val type: TemplatesSortedType) : TemplatesEvent()

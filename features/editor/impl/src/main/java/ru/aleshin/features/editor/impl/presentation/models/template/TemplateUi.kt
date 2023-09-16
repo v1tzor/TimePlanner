@@ -35,5 +35,6 @@ internal data class TemplateUi(
     val isImportant: Boolean = false,
     val isEnableNotification: Boolean = true,
     val isConsiderInStatistics: Boolean = true,
+    val repeatEnabled: Boolean = true,
     val repeatTimes: List<RepeatTime> = emptyList(),
 ) : Parcelable

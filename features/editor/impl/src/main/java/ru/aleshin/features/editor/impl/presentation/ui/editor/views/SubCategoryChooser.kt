@@ -56,6 +56,7 @@ import ru.aleshin.features.home.api.presentation.mappers.mapToName
 @Composable
 internal fun SubCategoryChooser(
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     mainCategory: MainCategoryUi?,
     allSubCategories: List<SubCategoryUi>,
     currentSubCategory: SubCategoryUi?,
@@ -64,6 +65,7 @@ internal fun SubCategoryChooser(
 ) {
     val openDialog = rememberSaveable { mutableStateOf(false) }
     Surface(
+        enabled = enabled,
         onClick = { openDialog.value = true },
         modifier = modifier.sizeIn(minHeight = 68.dp),
         shape = MaterialTheme.shapes.medium,

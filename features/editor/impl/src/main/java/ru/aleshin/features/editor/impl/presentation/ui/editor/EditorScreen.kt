@@ -15,6 +15,7 @@
  */
 package ru.aleshin.features.editor.impl.presentation.ui.editor
 
+import android.util.Log
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -73,6 +74,7 @@ internal class EditorScreen @Inject constructor() : Screen {
                 },
                 topBar = {
                     EditorTopAppBar(
+                        actionsEnabled = !(state.editModel?.checkDateIsRepeat() ?: false),
                         onBackIconClick = { dispatchEvent(EditorEvent.PressBackButton) },
                         onDeleteActionClick = { dispatchEvent(EditorEvent.PressDeleteButton) },
                         onTemplatesActionClick = {

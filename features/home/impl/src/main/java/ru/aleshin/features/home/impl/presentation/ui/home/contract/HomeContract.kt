@@ -22,7 +22,6 @@ import ru.aleshin.features.home.api.domain.entities.schedules.DailyScheduleStatu
 import ru.aleshin.features.home.impl.domain.entities.HomeFailures
 import ru.aleshin.features.home.impl.presentation.models.schedules.ScheduleUi
 import ru.aleshin.features.home.impl.presentation.models.schedules.TimeTaskUi
-import ru.aleshin.features.home.impl.presentation.models.templates.TemplateUi
 import ru.aleshin.features.settings.api.domain.entities.TasksSettings
 import java.util.*
 
@@ -34,7 +33,6 @@ internal data class HomeViewState(
     val isLoading: Boolean = true,
     val currentDate: Date? = null,
     val dateStatus: DailyScheduleStatus? = null,
-    val schedulePlannedTemplates: List<TemplateUi> = emptyList(),
     val taskViewStatus: ViewToggleStatus = ViewToggleStatus.COMPACT,
     val timeTasks: List<TimeTaskUi> = emptyList(),
 ) : BaseViewState
@@ -60,9 +58,5 @@ internal sealed class HomeAction : BaseAction {
     object ShowContentLoading : HomeAction()
     data class SetupSettings(val settings: TasksSettings) : HomeAction()
     data class UpdateSchedule(val schedule: ScheduleUi) : HomeAction()
-    data class SetEmptySchedule(
-        val date: Date,
-        val status: DailyScheduleStatus?,
-        val plannedTemplates: List<TemplateUi>,
-    ) : HomeAction()
+    data class SetEmptySchedule(val date: Date, val status: DailyScheduleStatus?) : HomeAction()
 }

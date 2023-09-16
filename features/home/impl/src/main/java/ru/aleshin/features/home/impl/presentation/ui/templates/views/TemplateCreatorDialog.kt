@@ -191,6 +191,7 @@ internal fun TemplateEditorDialog(
                                 isEnableNotification = isEnableNotification,
                                 isConsiderInStatistics = isConsiderInStatistics,
                                 isImportant = isImportance,
+                                repeatEnabled = editTemplateModel?.repeatEnabled ?: false,
                                 repeatTimes = editTemplateModel?.repeatTimes ?: emptyList(),
                             )
                             onConfirm(template)

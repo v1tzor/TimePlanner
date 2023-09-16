@@ -65,6 +65,8 @@ internal fun TemplatesItem(
     model: TemplateUi,
     onAddRepeat: (RepeatTime) -> Unit,
     onUpdate: (TemplateUi) -> Unit = {},
+    onRestartRepeat: () -> Unit,
+    onStopRepeat: () -> Unit,
     onDeleteRepeat: (RepeatTime) -> Unit,
     onDeleteTemplate: () -> Unit,
 ) {
@@ -118,10 +120,13 @@ internal fun TemplatesItem(
                 )
             }
             TemplateItemControlButtons(
+                repeatEnabled = model.repeatEnabled,
                 repeatTimes = model.repeatTimes,
                 onDeleteTemplate = onDeleteTemplate,
                 onAddRepeat = onAddRepeat,
                 onDeleteRepeat = onDeleteRepeat,
+                onRestartRepeat = onRestartRepeat,
+                onStopRepeat = onStopRepeat,
             )
         }
     }
@@ -211,10 +216,13 @@ internal fun TemplateInfoIcon(
 @Composable
 internal fun TemplateItemControlButtons(
     modifier: Modifier = Modifier,
+    repeatEnabled: Boolean,
     repeatTimes: List<RepeatTime>,
     onDeleteTemplate: () -> Unit,
     onAddRepeat: (RepeatTime) -> Unit,
     onDeleteRepeat: (RepeatTime) -> Unit,
+    onRestartRepeat: () -> Unit,
+    onStopRepeat: () -> Unit,
 ) {
     var isShowRepeatTimesMenu by rememberSaveable { mutableStateOf(false) }
 
@@ -244,6 +252,25 @@ internal fun TemplateItemControlButtons(
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
+            }
+            if (repeatEnabled) {
+                IconButton(onClick = onStopRepeat) {
+                    Icon(
+                        modifier = Modifier.size(24.dp),
+                        painter = painterResource(id = HomeThemeRes.icons.stop),
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            } else {
+                IconButton(onClick = onRestartRepeat) {
+                    Icon(
+                        modifier = Modifier.size(24.dp),
+                        painter = painterResource(id = HomeThemeRes.icons.start),
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.error,
+                    )
+                }
             }
         }
     }

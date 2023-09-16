@@ -15,10 +15,10 @@
  */
 package ru.aleshin.features.home.impl.presentation.ui.home.screenModel
 
-import android.util.Log
 import androidx.compose.runtime.Composable
 import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
+import ru.aleshin.core.ui.views.ViewToggleStatus
 import ru.aleshin.core.utils.functional.TimeRange
 import ru.aleshin.core.utils.managers.CoroutineManager
 import ru.aleshin.core.utils.managers.DateManager
@@ -30,7 +30,6 @@ import ru.aleshin.features.home.impl.presentation.ui.home.contract.HomeAction
 import ru.aleshin.features.home.impl.presentation.ui.home.contract.HomeEffect
 import ru.aleshin.features.home.impl.presentation.ui.home.contract.HomeEvent
 import ru.aleshin.features.home.impl.presentation.ui.home.contract.HomeViewState
-import ru.aleshin.core.ui.views.ViewToggleStatus
 import java.util.Date
 import javax.inject.Inject
 
@@ -71,8 +70,7 @@ internal class HomeScreenModel @Inject constructor(
             }
             is HomeEvent.CreateSchedule -> {
                 val currentDate = checkNotNull(state().currentDate)
-                val plannedTemplates = state().schedulePlannedTemplates
-                val createCommand = ScheduleWorkCommand.CreateSchedule(currentDate, plannedTemplates)
+                val createCommand = ScheduleWorkCommand.CreateSchedule(currentDate)
                 scheduleWorkProcessor.work(createCommand).collectAndHandleWork()
             }
             is HomeEvent.PressEditTimeTaskButton -> {
@@ -127,14 +125,12 @@ internal class HomeScreenModel @Inject constructor(
             timeTasks = emptyList(),
             currentDate = action.date,
             dateStatus = action.status,
-            schedulePlannedTemplates = action.plannedTemplates,
             isLoading = false,
         )
         is HomeAction.UpdateSchedule -> currentState.copy(
             timeTasks = action.schedule.timeTasks,
             currentDate = action.schedule.date,
             dateStatus = action.schedule.dateStatus,
-            schedulePlannedTemplates = emptyList(),
             isLoading = false,
         )
         is HomeAction.Navigate -> currentState.copy()

@@ -47,6 +47,8 @@ internal data class HomeIcons(
     val repeatVariant: Int,
     val turnOffRepeat: Int,
     val menuNavArrow: Int,
+    val stop: Int,
+    val start: Int,
 )
 
 internal val baseHomeIcons = HomeIcons(
@@ -75,6 +77,8 @@ internal val baseHomeIcons = HomeIcons(
     repeatVariant = R.drawable.ic_repeat_variant,
     turnOffRepeat = R.drawable.ic_off_repeat,
     menuNavArrow = R.drawable.ic_arrow_right,
+    start = R.drawable.ic_play,
+    stop = R.drawable.ic_stop,
 )
 
 internal val LocalHomeIcons = staticCompositionLocalOf<HomeIcons> {

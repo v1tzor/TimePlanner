@@ -15,7 +15,6 @@
  */
 package ru.aleshin.features.editor.impl.domain.entites
 
-import ru.aleshin.core.utils.functional.Mapper
 import ru.aleshin.features.home.api.domain.entities.categories.MainCategory
 import ru.aleshin.features.home.api.domain.entities.categories.SubCategory
 import ru.aleshin.features.home.api.domain.entities.template.RepeatTime
@@ -35,8 +34,7 @@ data class EditModel(
     val isImportant: Boolean = false,
     val isEnableNotification: Boolean = true,
     val isConsiderInStatistics: Boolean = true,
+    val repeatEnabled: Boolean = false,
     val repeatTimes: List<RepeatTime> = emptyList(),
     val templateId: Int? = null,
-) {
-    fun <T> map(mapper: Mapper<EditModel, T>) = mapper.map(this)
-}
+)

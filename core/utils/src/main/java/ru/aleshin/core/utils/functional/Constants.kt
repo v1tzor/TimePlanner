@@ -49,6 +49,13 @@ object Constants {
         const val NOTIFICATION_SUBCATEGORY = "ALARM_DATA_SUBCATEGORY"
         const val NOTIFICATION_ICON = "ALARM_DATA_ICON"
         const val APP_ICON = "ALARM_DATA_APP_ICON"
+        const val REPEAT_TIME = "REPEAT_TIME"
+        const val REPEAT_TYPE = "REPEAT_TYPE"
+        const val TEMPLATE_ID = "REPEAT_TEMPLATE_ID"
+        const val DAY_OF_MONTH = "REPEAT_DAY_OF_MONTH"
+        const val WEEK_DAY = "REPEAT_WEEK_DAY"
+        const val WEEK_NUMBER = "REPEAT_WEEK_NUMBER"
+        const val MONTH = "REPEAT_MONTH"
     }
 
     object Placeholder {

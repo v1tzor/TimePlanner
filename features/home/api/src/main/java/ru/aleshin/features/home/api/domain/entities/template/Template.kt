@@ -34,9 +34,14 @@ data class Template(
     val isImportant: Boolean = false,
     val isEnableNotification: Boolean = true,
     val isConsiderInStatistics: Boolean = true,
+    val repeatEnabled: Boolean = false,
     val repeatTimes: List<RepeatTime> = emptyList(),
 ) {
     fun <T> map(mapper: Mapper<Template, T>) = mapper.map(this)
+
+    fun checkDateIsRepeat(date: Date): Boolean {
+        return repeatEnabled && repeatTimes.find { it.checkDateIsRepeat(date) } != null
+    }
 
     fun equalsIsTemplate(timeTask: TimeTask) =
         startTime.compareByHoursAndMinutes(timeTask.timeRanges.from) &&

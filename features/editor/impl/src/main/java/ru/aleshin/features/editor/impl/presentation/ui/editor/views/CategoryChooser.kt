@@ -49,6 +49,7 @@ import ru.aleshin.features.home.api.presentation.mappers.mapToName
  */
 @Composable
 internal fun MainCategoryChooser(
+    enabled: Boolean = true,
     modifier: Modifier = Modifier,
     isError: Boolean = false,
     allCategories: List<MainCategoryUi>,
@@ -62,7 +63,7 @@ internal fun MainCategoryChooser(
     Surface(
         onClick = { openDialog.value = true },
         modifier = modifier.height(68.dp),
-        enabled = currentCategory != null,
+        enabled = currentCategory != null && enabled,
         shape = MaterialTheme.shapes.medium,
         color = when (isError) {
             true -> MaterialTheme.colorScheme.errorContainer

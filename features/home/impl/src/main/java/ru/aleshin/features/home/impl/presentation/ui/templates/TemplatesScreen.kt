@@ -15,7 +15,6 @@
  */
 package ru.aleshin.features.home.impl.presentation.ui.templates
 
-import android.util.Log
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -74,6 +73,8 @@ internal class TemplatesScreen : Screen {
                     onChangeSortedType = { dispatchEvent(TemplatesEvent.UpdatedSortedType(it)) },
                     onDeleteTemplate = { dispatchEvent(TemplatesEvent.DeleteTemplate(it.templateId)) },
                     onUpdateTemplate = { dispatchEvent(TemplatesEvent.UpdateTemplate(it)) },
+                    onRestartRepeat = { dispatchEvent(TemplatesEvent.RestartTemplateRepeat(it)) },
+                    onStopRepeat = { dispatchEvent(TemplatesEvent.StopTemplateRepeat(it)) },
                     onAddRepeatTemplate = { time, template ->
                         dispatchEvent(TemplatesEvent.AddRepeatTemplate(time, template))
                     },

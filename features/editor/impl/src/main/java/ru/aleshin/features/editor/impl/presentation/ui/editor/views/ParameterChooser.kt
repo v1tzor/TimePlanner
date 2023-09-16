@@ -33,10 +33,11 @@ import ru.aleshin.features.editor.impl.presentation.theme.EditorThemeRes
 @Composable
 internal fun ParameterChooser(
     modifier: Modifier = Modifier,
-    enabled: Boolean,
+    enabled: Boolean = true,
+    selected: Boolean,
     title: String,
     description: String,
-    onChangeEnabled: (Boolean) -> Unit,
+    onChangeSelected: (Boolean) -> Unit,
 ) {
     Surface(
         modifier = modifier,
@@ -61,13 +62,14 @@ internal fun ParameterChooser(
                 )
             }
             Switch(
+                enabled = enabled,
                 modifier = Modifier.align(Alignment.Top),
-                checked = enabled,
-                onCheckedChange = onChangeEnabled,
+                checked = selected,
+                onCheckedChange = onChangeSelected,
                 thumbContent = {
                     Icon(
                         modifier = Modifier.size(SwitchDefaults.IconSize),
-                        imageVector = if (enabled) Icons.Default.Check else Icons.Default.Close,
+                        imageVector = if (selected) Icons.Default.Check else Icons.Default.Close,
                         contentDescription = EditorThemeRes.strings.parameterChooserSwitchIconDesc,
                     )
                 },

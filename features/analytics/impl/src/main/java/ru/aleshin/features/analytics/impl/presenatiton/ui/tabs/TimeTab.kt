@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -76,7 +77,7 @@ internal fun TimeTab(
             )
             Column(
                 modifier = Modifier
-                    .weight(1f)
+                    .fillMaxSize()
                     .padding(start = 16.dp, end = 16.dp)
                     .verticalScroll(rememberScrollState()),
             ) {

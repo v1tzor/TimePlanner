@@ -43,6 +43,7 @@ import java.util.*
 @Composable
 internal fun BaseTimeField(
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     currentTime: Date,
     isError: Boolean,
     label: String,
@@ -53,6 +54,7 @@ internal fun BaseTimeField(
     var openDialog by rememberSaveable { mutableStateOf(false) }
 
     Surface(
+        enabled = enabled,
         onClick = { openDialog = true },
         modifier = modifier.height(56.dp),
         shape = MaterialTheme.shapes.medium,
@@ -106,10 +108,12 @@ internal fun BaseTimeField(
 @Composable
 internal fun StartTimeField(
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     currentTime: Date,
     isError: Boolean,
     onChangeTime: (Date) -> Unit,
 ) = BaseTimeField(
+    enabled = enabled,
     modifier = modifier,
     currentTime = currentTime,
     isError = isError,
@@ -121,10 +125,12 @@ internal fun StartTimeField(
 @Composable
 internal fun EndTimeField(
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     currentTime: Date,
     isError: Boolean,
     onChangeTime: (Date) -> Unit,
 ) = BaseTimeField(
+    enabled = enabled,
     modifier = modifier,
     currentTime = currentTime,
     isError = isError,
@@ -136,6 +142,7 @@ internal fun EndTimeField(
 @Composable
 internal fun DurationTitle(
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     duration: Long,
     startTime: Date,
     isError: Boolean = false,
@@ -148,7 +155,7 @@ internal fun DurationTitle(
         false -> MaterialTheme.colorScheme.onSurface
     }
     Box(
-        modifier = modifier.clip(MaterialTheme.shapes.small).clickable {
+        modifier = modifier.clip(MaterialTheme.shapes.small).clickable(enabled) {
             isOpenDurationDialog = true
         },
     ) {

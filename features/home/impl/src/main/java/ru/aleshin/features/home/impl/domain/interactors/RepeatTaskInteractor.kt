@@ -38,9 +38,15 @@ import javax.inject.Inject
  */
 internal interface RepeatTaskInteractor {
 
-    suspend fun addRepeatTemplate(template: Template, repeatTime: RepeatTime): Either<HomeFailures, List<TimeTask>>
     suspend fun updateRepeatTemplate(oldTemplate: Template, template: Template): Either<HomeFailures, List<TimeTask>>
-    suspend fun deleteRepeatTemplates(template: Template, repeatTime: RepeatTime): Either<HomeFailures, List<TimeTask>>
+    suspend fun addRepeatsTemplate(
+        template: Template, 
+        repeatTimes: List<RepeatTime>,
+    ): Either<HomeFailures, List<TimeTask>>
+    suspend fun deleteRepeatsTemplates(
+        template: Template, 
+        repeatTimes: List<RepeatTime>,
+    ): Either<HomeFailures, List<TimeTask>>
 
     class Base @Inject constructor(
         private val timeTaskRepository: TimeTaskRepository,
@@ -50,13 +56,10 @@ internal interface RepeatTaskInteractor {
         private val dateManager: DateManager,
     ) : RepeatTaskInteractor {
 
-        override suspend fun addRepeatTemplate(template: Template, repeatTime: RepeatTime) = eitherWrapper.wrap {
-            return@wrap createRepeatTasksByTemplate(filteredSchedules(), template, repeatTime).apply {
-                timeTaskRepository.addTimeTasks(this)
-            }
-        }
-
-        override suspend fun updateRepeatTemplate(oldTemplate: Template, template: Template) = eitherWrapper.wrap {
+        override suspend fun updateRepeatTemplate(
+            oldTemplate: Template,
+            template: Template,
+        ) = eitherWrapper.wrap {
             val schedules = filteredSchedules()
             val updatedTasks = mutableListOf<TimeTask>()
             val deletableTasksId = mutableListOf<Long>()
@@ -70,10 +73,32 @@ internal interface RepeatTaskInteractor {
             }
         }
 
-        override suspend fun deleteRepeatTemplates(template: Template, repeatTime: RepeatTime) = eitherWrapper.wrap {
-            return@wrap findRepeatTasksByTemplate(filteredSchedules(), template, repeatTime).apply {
-                timeTaskRepository.deleteTimeTasks(map { timeTask -> timeTask.key })
+        override suspend fun addRepeatsTemplate(
+            template: Template, 
+            repeatTimes: List<RepeatTime>,
+        ) = eitherWrapper.wrap {
+            val repeatTimeTasks = mutableListOf<TimeTask>()
+            repeatTimes.forEach { repeatTime ->
+                val timeTasks = createRepeatTasksByTemplate(filteredSchedules(), template, repeatTime).apply {
+                    timeTaskRepository.addTimeTasks(this)
+                }
+                repeatTimeTasks.addAll(timeTasks)
             }
+            return@wrap repeatTimeTasks
+        }
+
+        override suspend fun deleteRepeatsTemplates(
+            template: Template, 
+            repeatTimes: List<RepeatTime>,
+        ) = eitherWrapper.wrap {
+            val repeatTimeTasks = mutableListOf<TimeTask>()
+            repeatTimes.forEach { repeatTime ->
+                val timeTasks = findRepeatTasksByTemplate(filteredSchedules(), template, repeatTime).apply {
+                    timeTaskRepository.deleteTimeTasks(map { timeTask -> timeTask.key })
+                }
+                repeatTimeTasks.addAll(timeTasks)
+            }
+            return@wrap repeatTimeTasks
         }
         
         private suspend fun filteredSchedules(): List<Schedule> {

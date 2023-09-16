@@ -68,6 +68,14 @@ internal class TemplatesScreenModel @Inject constructor(
                 val command = TemplatesWorkCommand.UpdateTemplate(oldModel, event.template)
                 templatesWorkProcessor.work(command).collectAndHandleWork()
             }
+            is TemplatesEvent.RestartTemplateRepeat -> {
+                val command = TemplatesWorkCommand.RestartRepeat(event.template)
+                templatesWorkProcessor.work(command).collectAndHandleWork()
+            }
+            is TemplatesEvent.StopTemplateRepeat -> {
+                val command = TemplatesWorkCommand.StopRepeat(event.template)
+                templatesWorkProcessor.work(command).collectAndHandleWork()
+            }
             is TemplatesEvent.AddRepeatTemplate -> {
                 val command = TemplatesWorkCommand.AddRepeatTemplate(event.time, event.template)
                 templatesWorkProcessor.work(command).collectAndHandleWork()
@@ -76,7 +84,7 @@ internal class TemplatesScreenModel @Inject constructor(
                 val command = TemplatesWorkCommand.DeleteRepeatTemplate(event.time, event.template)
                 templatesWorkProcessor.work(command).collectAndHandleWork()
             }
-            is TemplatesEvent.DeleteTemplate -> with(state()) {
+            is TemplatesEvent.DeleteTemplate -> {
                 val command = TemplatesWorkCommand.DeleteTemplate(event.id)
                 templatesWorkProcessor.work(command).collectAndHandleWork()
             }

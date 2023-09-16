@@ -20,6 +20,7 @@ import ru.aleshin.core.utils.managers.DateManager
 import ru.aleshin.core.utils.managers.TimeOverlayManager
 import ru.aleshin.core.utils.navigation.Router
 import ru.aleshin.features.editor.api.navigations.EditorFeatureStarter
+import ru.aleshin.features.editor.api.presentation.TemplatesAlarmManager
 import ru.aleshin.features.editor.api.presentation.TimeTaskAlarmManager
 import ru.aleshin.features.home.api.domain.common.ScheduleStatusChecker
 import ru.aleshin.features.home.api.domain.common.TimeTaskStatusChecker
@@ -47,6 +48,7 @@ interface HomeFeatureDependencies : BaseFeatureDependencies {
     val scheduleStatusChecker: ScheduleStatusChecker
     val timeOverlayManager: TimeOverlayManager
     val timeTaskAlarmManager: TimeTaskAlarmManager
+    val templatesAlarmManager: TemplatesAlarmManager
     val taskStatusManager: TimeTaskStatusChecker
     val dateManger: DateManager
 }

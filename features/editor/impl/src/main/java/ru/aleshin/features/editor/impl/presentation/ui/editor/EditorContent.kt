@@ -67,7 +67,8 @@ internal fun EditorContent(
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 CategoriesSection(
-                    isMainCategoryValid = state.categoryValid is CategoryValidateError.EmptyCategoryError,
+                    enabled = !state.editModel.checkDateIsRepeat(),
+                    isMainCategoryValidError = state.categoryValid is CategoryValidateError.EmptyCategoryError,
                     mainCategory = state.editModel.mainCategory,
                     subCategory = state.editModel.subCategory,
                     allCategories = state.categories,
@@ -76,20 +77,22 @@ internal fun EditorContent(
                 )
                 Divider(Modifier.padding(horizontal = 32.dp))
                 DateTimeSection(
-                    isTimeValid = state.timeRangeValid is TimeRangeError.DurationError,
+                    enabled = !state.editModel.checkDateIsRepeat(),
+                    isTimeValidError = state.timeRangeValid is TimeRangeError.DurationError,
                     timeRanges = state.editModel.timeRanges,
                     duration = state.editModel.duration,
                     onTimeRangeChange = onTimeRangeChange,
                 )
                 Divider(Modifier.padding(horizontal = 32.dp))
                 ParametersSection(
+                    enabled = !state.editModel.checkDateIsRepeat(),
                     parameters = state.editModel.parameters,
                     onChangeParameters = onChangeParameters,
                 )
             }
             ActionButtonsSection(
                 enableTemplateSelector = state.editModel.key != 0L,
-                isRepeatTemplate = state.editModel.repeatTimes.isNotEmpty(),
+                isRepeatTemplate = state.editModel.checkDateIsRepeat(),
                 isTemplateSelect = state.editModel.templateId != null,
                 onCancelClick = onCancelClick,
                 onControl = onControlTemplate,
@@ -103,7 +106,8 @@ internal fun EditorContent(
 @Composable
 internal fun CategoriesSection(
     modifier: Modifier = Modifier,
-    isMainCategoryValid: Boolean,
+    enabled: Boolean = true,
+    isMainCategoryValidError: Boolean,
     mainCategory: MainCategoryUi?,
     subCategory: SubCategoryUi?,
     allCategories: List<CategoriesUi>,
@@ -119,15 +123,16 @@ internal fun CategoriesSection(
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             MainCategoryChooser(
+                enabled = enabled,
                 modifier = Modifier.fillMaxWidth(),
-                isError = isMainCategoryValid,
+                isError = isMainCategoryValidError,
                 currentCategory = mainCategory,
                 allCategories = allCategories.map { it.mainCategory },
                 onChange = { newMainCategory ->
                     onCategoriesChange(newMainCategory, null)
                 },
             )
-            if (isMainCategoryValid) {
+            if (isMainCategoryValidError) {
                 Text(
                     text = EditorThemeRes.strings.categoryValidateError,
                     style = MaterialTheme.typography.labelSmall,
@@ -137,6 +142,7 @@ internal fun CategoriesSection(
         }
         val findCategories = allCategories.find { it.mainCategory == mainCategory }
         SubCategoryChooser(
+            enabled = enabled,
             modifier = Modifier.fillMaxWidth(),
             mainCategory = mainCategory,
             allSubCategories = findCategories?.subCategories ?: emptyList(),
@@ -152,7 +158,8 @@ internal fun CategoriesSection(
 @Composable
 internal fun DateTimeSection(
     modifier: Modifier = Modifier,
-    isTimeValid: Boolean,
+    enabled: Boolean = true,
+    isTimeValidError: Boolean,
     timeRanges: TimeRange,
     duration: Long,
     onTimeRangeChange: (TimeRange) -> Unit,
@@ -163,21 +170,24 @@ internal fun DateTimeSection(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         StartTimeField(
+            enabled = enabled,
             modifier = Modifier.weight(1f),
             currentTime = timeRanges.from,
-            isError = isTimeValid,
+            isError = isTimeValidError,
             onChangeTime = { newStartTime -> onTimeRangeChange(timeRanges.copy(from = newStartTime)) },
         )
         EndTimeField(
+            enabled = enabled,
             modifier = Modifier.weight(1f),
             currentTime = timeRanges.to,
-            isError = isTimeValid,
+            isError = isTimeValidError,
             onChangeTime = { newEndTime -> onTimeRangeChange(timeRanges.copy(to = newEndTime)) },
         )
         DurationTitle(
+            enabled = enabled,
             duration = duration,
             startTime = timeRanges.from,
-            isError = isTimeValid,
+            isError = isTimeValidError,
             onChangeDuration = { duration ->
                 onTimeRangeChange(timeRanges.copy(to = timeRanges.from.shiftMillis(duration.toInt())))
             },
@@ -188,6 +198,7 @@ internal fun DateTimeSection(
 @Composable
 internal fun ParametersSection(
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     parameters: EditParameters,
     onChangeParameters: (EditParameters) -> Unit,
 ) {
@@ -196,29 +207,32 @@ internal fun ParametersSection(
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         ParameterChooser(
+            enabled = enabled,
             modifier = Modifier,
-            enabled = parameters.isConsiderInStatistics,
+            selected = parameters.isConsiderInStatistics,
             title = EditorThemeRes.strings.statisticsParameterTitle,
             description = EditorThemeRes.strings.statisticsParameterDesc,
-            onChangeEnabled = { isConsider ->
+            onChangeSelected = { isConsider ->
                 onChangeParameters(parameters.copy(isConsiderInStatistics = isConsider))
             },
         )
         ParameterChooser(
+            enabled = enabled,
             modifier = Modifier,
-            enabled = parameters.isEnableNotification,
+            selected = parameters.isEnableNotification,
             title = EditorThemeRes.strings.notifyParameterTitle,
             description = EditorThemeRes.strings.notifyParameterDesc,
-            onChangeEnabled = { notification ->
+            onChangeSelected = { notification ->
                 onChangeParameters(parameters.copy(isEnableNotification = notification))
             },
         )
         ParameterChooser(
+            enabled = enabled,
             modifier = Modifier,
-            enabled = parameters.isImportant,
+            selected = parameters.isImportant,
             title = EditorThemeRes.strings.importantParameterTitle,
             description = EditorThemeRes.strings.importantParameterDesc,
-            onChangeEnabled = { isImportant ->
+            onChangeSelected = { isImportant ->
                 onChangeParameters(parameters.copy(isImportant = isImportant))
             },
         )
@@ -249,6 +263,7 @@ internal fun ActionButtonsSection(
                 content = { Text(text = EditorThemeRes.strings.cancelButtonTitle) },
             )
             Button(
+                enabled = !isRepeatTemplate,
                 onClick = onSaveClick,
                 content = { Text(text = EditorThemeRes.strings.saveTaskButtonTitle) },
             )

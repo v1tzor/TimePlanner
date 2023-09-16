@@ -36,8 +36,7 @@ import javax.inject.Inject
  */
 interface TimeTaskAlarmManager {
 
-    fun addNotifyAlarm(timeTask: TimeTask)
-    fun updateNotifyAlarm(timeTask: TimeTask)
+    fun addOrUpdateNotifyAlarm(timeTask: TimeTask)
     fun deleteNotifyAlarm(timeTask: TimeTask)
 
     class Base @Inject constructor(
@@ -48,24 +47,12 @@ interface TimeTaskAlarmManager {
         private val alarmManager: AlarmManager
             get() = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
-        override fun addNotifyAlarm(timeTask: TimeTask) {
+        override fun addOrUpdateNotifyAlarm(timeTask: TimeTask) {
             val alarmIntent = createAlarmIntent(timeTask.category, timeTask.subCategory)
             val pendingAlarmIntent = createPendingAlarmIntent(alarmIntent, timeTask.key.toInt())
             val triggerTime = timeTask.timeRanges.from.time
 
-            alarmManager.setExactAndAllowWhileIdle(
-                AlarmManager.RTC_WAKEUP,
-                triggerTime,
-                pendingAlarmIntent,
-            )
-        }
-
-        override fun updateNotifyAlarm(timeTask: TimeTask) {
-            val alarmIntent = createAlarmIntent(timeTask.category, timeTask.subCategory)
-            val pendingAlarmIntent = createPendingAlarmIntent(alarmIntent, timeTask.key.toInt())
-            val triggerTime = timeTask.timeRanges.from.time
-
-            alarmManager.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingAlarmIntent)
+            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerTime, pendingAlarmIntent)
         }
 
         override fun deleteNotifyAlarm(timeTask: TimeTask) {
@@ -73,6 +60,7 @@ interface TimeTaskAlarmManager {
             val pendingAlarmIntent = createPendingAlarmIntent(alarmIntent, timeTask.key.toInt())
 
             alarmManager.cancel(pendingAlarmIntent)
+            pendingAlarmIntent.cancel()
         }
 
         private fun createAlarmIntent(category: MainCategory, subCategory: SubCategory?): Intent {

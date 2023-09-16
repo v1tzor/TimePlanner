@@ -37,7 +37,6 @@ import ru.aleshin.core.utils.functional.Constants
 import ru.aleshin.features.home.api.domain.entities.schedules.DailyScheduleStatus
 import ru.aleshin.features.home.api.domain.entities.schedules.TimeTaskStatus
 import ru.aleshin.features.home.impl.presentation.models.schedules.TimeTaskUi
-import ru.aleshin.features.home.impl.presentation.models.templates.TemplateUi
 import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
 import ru.aleshin.features.home.impl.presentation.ui.home.contract.HomeViewState
 import ru.aleshin.features.home.impl.presentation.ui.home.views.*
@@ -79,7 +78,6 @@ internal fun HomeContent(
             isLoadingContent = state.isLoading,
             currentDate = state.currentDate,
             dateStatus = state.dateStatus,
-            schedulePlannedTemplates = state.schedulePlannedTemplates,
             timeTasks = state.timeTasks,
             timeTaskViewStatus = state.taskViewStatus,
             onCreateSchedule = onCreateSchedule,
@@ -155,7 +153,6 @@ internal fun HomeTimeTasksLazyColumn(
     listState: LazyListState = rememberLazyListState(),
     isLoadingContent: Boolean,
     dateStatus: DailyScheduleStatus?,
-    schedulePlannedTemplates: List<TemplateUi>,
     currentDate: Date?,
     timeTasks: List<TimeTaskUi>,
     timeTaskViewStatus: ViewToggleStatus,
@@ -224,12 +221,7 @@ internal fun HomeTimeTasksLazyColumn(
         EmptyDateView(
             modifier = Modifier.align(Alignment.Center),
             emptyTitle = HomeThemeRes.strings.emptyScheduleTitle,
-            subTitle = when (schedulePlannedTemplates.isNotEmpty()) {
-                true -> schedulePlannedTemplates.size.toString().let { count ->
-                    HomeThemeRes.strings.foundedPlannedTasksTitle.format(count)
-                }
-                false -> null
-            },
+            subTitle = null,
         ) {
             OutlinedButton(
                 onClick = onCreateSchedule,

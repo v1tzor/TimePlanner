@@ -34,9 +34,10 @@ fun TemplateDetails.mapToDomain() = Template(
     isEnableNotification = template.isEnableNotification,
     isConsiderInStatistics = template.isConsiderInStatistics,
     templateId = template.id,
-    repeatTimes = repeatTime?.let { list ->
+    repeatEnabled = template.repeatEnabled,
+    repeatTimes = repeatTime.let { list ->
         list.map { repeatTimeEntity -> repeatTimeEntity.mapToDomain() }
-    } ?: emptyList()
+    },
 )
 
 fun Template.mapToData() = TemplateCompound(
@@ -49,8 +50,9 @@ fun Template.mapToData() = TemplateCompound(
         isImportant = isImportant,
         isEnableNotification = isEnableNotification,
         isConsiderInStatistics = isConsiderInStatistics,
+        repeatEnabled = repeatEnabled,
     ),
     repeatTimes = repeatTimes.map {
         it.mapToData(templateId)
-    }
+    },
 )

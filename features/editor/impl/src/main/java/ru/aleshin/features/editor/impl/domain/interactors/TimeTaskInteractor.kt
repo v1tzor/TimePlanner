@@ -31,8 +31,8 @@ import javax.inject.Inject
  */
 internal interface TimeTaskInteractor {
 
-    suspend fun addTimeTask(timeTask: TimeTask): Either<EditorFailures, Unit>
-    suspend fun updateTimeTask(timeTask: TimeTask): Either<EditorFailures, Unit>
+    suspend fun addTimeTask(timeTask: TimeTask): Either<EditorFailures, Long>
+    suspend fun updateTimeTask(timeTask: TimeTask): Either<EditorFailures, Long>
     suspend fun deleteTimeTask(key: Long): Either<EditorFailures, Unit>
 
     class Base @Inject constructor(
@@ -43,10 +43,12 @@ internal interface TimeTaskInteractor {
 
         override suspend fun addTimeTask(timeTask: TimeTask) = eitherWrapper.wrap {
             val allTimeTask = timeTaskRepository.fetchAllTimeTaskByDate(timeTask.date)
+            val key = generateUniqueKey()
 
             checkIsOverlay(allTimeTask.map { it.timeRanges }, timeTask.timeRanges) {
-                timeTaskRepository.addTimeTasks(listOf(timeTask.copy(key = generateUniqueKey())))
+                timeTaskRepository.addTimeTasks(listOf(timeTask.copy(key = key)))
             }
+            return@wrap key
         }
 
         override suspend fun updateTimeTask(timeTask: TimeTask) = eitherWrapper.wrap {
@@ -57,6 +59,7 @@ internal interface TimeTaskInteractor {
             checkIsOverlay(allTimeTask.map { it.timeRanges }, timeTask.timeRanges) {
                 timeTaskRepository.updateTimeTask(timeTask)
             }
+            return@wrap timeTask.key
         }
 
         override suspend fun deleteTimeTask(key: Long) = eitherWrapper.wrap {

@@ -30,6 +30,7 @@ import ru.aleshin.features.editor.impl.presentation.theme.EditorThemeRes
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 internal fun EditorTopAppBar(
+    actionsEnabled: Boolean = true,
     onBackIconClick: () -> Unit,
     onDeleteActionClick: () -> Unit,
     onTemplatesActionClick: () -> Unit,
@@ -50,16 +51,20 @@ internal fun EditorTopAppBar(
             TopAppBarEmptyButton()
         },
         actions = {
-            TopAppBarButton(
-                imagePainter = painterResource(id = EditorThemeRes.icons.delete),
-                imageDescription = EditorThemeRes.strings.topAppBarDeleteTitle,
-                onButtonClick = onDeleteActionClick,
-            )
-            TopAppBarButton(
-                imagePainter = painterResource(id = EditorThemeRes.icons.templates),
-                imageDescription = EditorThemeRes.strings.topAppBarTemplatesTitle,
-                onButtonClick = onTemplatesActionClick,
-            )
+            if (actionsEnabled) {
+                TopAppBarButton(
+                    imagePainter = painterResource(id = EditorThemeRes.icons.delete),
+                    imageDescription = EditorThemeRes.strings.topAppBarDeleteTitle,
+                    onButtonClick = onDeleteActionClick,
+                )
+                TopAppBarButton(
+                    imagePainter = painterResource(id = EditorThemeRes.icons.templates),
+                    imageDescription = EditorThemeRes.strings.topAppBarTemplatesTitle,
+                    onButtonClick = onTemplatesActionClick,
+                )
+            } else {
+                TopAppBarEmptyButton()
+            }
         },
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.background,

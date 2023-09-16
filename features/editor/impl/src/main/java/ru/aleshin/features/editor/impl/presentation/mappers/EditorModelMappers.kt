@@ -33,6 +33,7 @@ internal fun EditModel.mapToUi() = EditModelUi(
     subCategory = subCategory?.mapToUi(),
     parameters = EditParameters(isImportant, isEnableNotification, isConsiderInStatistics),
     isCompleted = isCompleted,
+    repeatEnabled = repeatEnabled,
     templateId = templateId,
     repeatTimes = repeatTimes,
 )
@@ -48,6 +49,7 @@ internal fun EditModelUi.mapToDomain() = EditModel(
     isImportant = parameters.isImportant,
     isEnableNotification = parameters.isEnableNotification,
     isConsiderInStatistics = parameters.isConsiderInStatistics,
+    repeatEnabled = repeatEnabled,
     templateId = templateId,
     repeatTimes = repeatTimes,
 )

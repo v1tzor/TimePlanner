@@ -78,6 +78,15 @@ fun Date.endThisDay(): Date {
     return calendar.setEndDay().time
 }
 
+fun Calendar.setTimeWithoutDate(targetTime: Date): Calendar {
+    val timeCalendar = Calendar.getInstance().apply { time = targetTime }
+    set(Calendar.MILLISECOND, timeCalendar.get(Calendar.MILLISECOND))
+    set(Calendar.SECOND, timeCalendar.get(Calendar.SECOND))
+    set(Calendar.MINUTE, timeCalendar.get(Calendar.MINUTE))
+    set(Calendar.HOUR_OF_DAY, timeCalendar.get(Calendar.HOUR_OF_DAY))
+    return this
+}
+
 fun Calendar.setStartDay() = this.apply {
     set(Calendar.HOUR_OF_DAY, 0)
     set(Calendar.MINUTE, 0)
@@ -266,4 +275,10 @@ fun Date.fetchDayNumberByMax(dayNumber: Int): Int {
     val currentDayNumber = calendar.get(Calendar.DAY_OF_MONTH)
     val previousMonthDaysCount = calendar.setPreviousMonth().getActualMaximum(Calendar.DAY_OF_MONTH)
     return if (dayNumber > previousMonthDaysCount) currentDayNumber + dayNumber else currentDayNumber
+}
+
+fun Date.fetchDay(): Int {
+    val calendar = Calendar.getInstance().apply { time = this@fetchDay }
+    val currentDayNumber = calendar.get(Calendar.DAY_OF_MONTH)
+    return currentDayNumber
 }

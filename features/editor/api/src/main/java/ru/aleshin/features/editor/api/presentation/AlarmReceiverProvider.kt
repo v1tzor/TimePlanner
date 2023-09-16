@@ -16,10 +16,20 @@
 package ru.aleshin.features.editor.api.presentation
 
 import android.content.Intent
+import ru.aleshin.features.home.api.domain.entities.template.RepeatTime
+import java.util.Date
 
 /**
  * @author Stanislav Aleshin on 28.03.2023.
  */
 interface AlarmReceiverProvider {
-    fun provideReceiverIntent(category: String, subCategory: String, icon: Int?, appIcon: Int): Intent
+    fun provideReceiverIntent(
+        category: String,
+        subCategory: String,
+        icon: Int?,
+        appIcon: Int,
+        time: Date? = null,
+        templateId: Int? = null,
+        repeatTime: RepeatTime? = null,
+    ): Intent
 }
