@@ -44,7 +44,7 @@
     2. ETH: 0x4cAfa6De0D1968cA8C2a7aB06CE28d0A1aD2C7b9
     3. TRX: TKC3NsKSS9hJRvofeJKceT5wC2bqTkPRUE
     4. LTC: ltc1qj9fsz4pxrvr3eqyel4q8jnsnfpcfwdsj3mvpec
-    5. XEC: 0x4cAfa6De0D1968cA8C2a7aB06CE28d0A1aD2C7b9
+    5. XEC: ecash:qqc0k95nfhkseel9p4avz5jwk6s4vum7rceegten5x
 </details>
 
 <a href="https://nowpayments.io/donation?api_key=BQCNJB8-HRJ48T7-G31XH21-CFTX91M&source=lk_donation&medium=referral" target="_blank">
