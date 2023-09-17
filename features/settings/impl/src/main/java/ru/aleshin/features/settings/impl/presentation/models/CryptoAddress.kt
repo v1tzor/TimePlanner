@@ -23,5 +23,5 @@ enum class CryptoAddress(val crypto: String, val address: String) {
     ETH("ETH", "0x4cAfa6De0D1968cA8C2a7aB06CE28d0A1aD2C7b9"),
     TRX("TRX", "TKC3NsKSS9hJRvofeJKceT5wC2bqTkPRUE"),
     LTC("LTC", "ltc1qj9fsz4pxrvr3eqyel4q8jnsnfpcfwdsj3mvpec"),
-    XEC("XEC(BEP20)", "0x4cAfa6De0D1968cA8C2a7aB06CE28d0A1aD2C7b9"),
+    XEC("XEC", "ecash:qqc0k95nfhkseel9p4avz5jwk6s4vum7rceegten5x"),
 }

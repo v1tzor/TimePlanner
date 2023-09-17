@@ -20,14 +20,14 @@ import java.lang.IllegalArgumentException
 /**
  * @author Stanislav Aleshin on 03.08.2023.
  */
-enum class WeekDay(val number: Int) {
-    SUNDAY(1),
-    MONDAY(2),
-    TUESDAY(3),
-    WEDNESDAY(4),
-    THURSDAY(5),
-    FRIDAY(6),
-    SATURDAY(7);
+enum class WeekDay(val number: Int, val priority: Int) {
+    SUNDAY(1, 6),
+    MONDAY(2, 0),
+    TUESDAY(3, 1),
+    WEDNESDAY(4, 2),
+    THURSDAY(5, 3),
+    FRIDAY(6, 4),
+    SATURDAY(7, 5);
 
     companion object {
         fun fetchByWeekDayNumber(week: Int): WeekDay {

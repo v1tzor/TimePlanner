@@ -16,6 +16,7 @@
 package ru.aleshin.features.home.api.domain.entities.template
 
 import android.os.Parcelable
+import android.util.Log
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 import ru.aleshin.core.utils.extensions.fetchDay
@@ -67,7 +68,7 @@ sealed class RepeatTime : Parcelable {
         when (this) {
             is WeekDays -> {
                 calendar.time = current
-                if (current.fetchWeekDay().number >= day.number) {
+                if (current.fetchWeekDay().priority >= day.priority) {
                     calendar.add(Calendar.DAY_OF_WEEK_IN_MONTH, 1)
                 }
                 calendar.set(Calendar.DAY_OF_WEEK, day.number)
@@ -90,7 +91,7 @@ sealed class RepeatTime : Parcelable {
             }
             is WeekDayInMonth -> {
                 calendar.time = current
-                if (current.fetchWeekNumber() >= weekNumber && current.fetchWeekDay().number > day.number) {
+                if (current.fetchWeekNumber() >= weekNumber && current.fetchWeekDay().priority > day.priority) {
                     calendar.add(Calendar.MONTH, 1)
                 }
                 calendar.set(Calendar.DAY_OF_WEEK, day.number)
