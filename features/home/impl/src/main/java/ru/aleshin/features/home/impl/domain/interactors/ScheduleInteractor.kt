@@ -18,7 +18,9 @@ package ru.aleshin.features.home.impl.domain.interactors
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import ru.aleshin.core.utils.extensions.daysToMillis
 import ru.aleshin.core.utils.extensions.mapToDate
+import ru.aleshin.core.utils.functional.Constants.Date.NEXT_REPEAT_LIMIT
 import ru.aleshin.core.utils.functional.Either
 import ru.aleshin.core.utils.managers.DateManager
 import ru.aleshin.core.utils.managers.TimeOverlayManager
@@ -55,31 +57,16 @@ internal interface ScheduleInteractor {
     ) : ScheduleInteractor {
 
         override suspend fun fetchScheduleByDate(date: Long) = eitherWrapper.wrapFlow {
+            val currentDate = dateManager.fetchBeginningCurrentDay()
+            val limit = NEXT_REPEAT_LIMIT.daysToMillis()
             scheduleRepository.fetchScheduleByDate(date).map { schedule ->
-                when (schedule != null) {
-                    true -> {
-                        val sortedTasks = schedule.timeTasks.sortedBy { timeTask -> timeTask.timeRanges.to }
-                        schedule.copy(timeTasks = sortedTasks)
-                    }
-                    false -> {
-                        val templates = foundPlannedTemplates(date.mapToDate()).apply {
-                            if (this.isEmpty()) return@map null
-                        }
-                        val templatesTimeTasks = templates.map { it.convertToTimeTask(date.mapToDate()) }
-                        val correctTimeTasks = mutableListOf<TimeTask>().apply {
-                            templatesTimeTasks.sortedBy { it.timeRanges.from }.forEach { timeTask ->
-                                val allTimeRanges = map { it.timeRanges }
-                                val overlayResult = overlayManager.isOverlay(timeTask.timeRanges, allTimeRanges)
-                                if (!overlayResult.isOverlay) add(timeTask)
-                            }
-                        }
-
-                        val currentDate = dateManager.fetchBeginningCurrentDay()
-                        val status = statusChecker.fetchState(date.mapToDate(), currentDate)
-                        Schedule(date = date, status = status, timeTasks = correctTimeTasks).apply {
-                            scheduleRepository.createSchedules(listOf(this))
-                        }
-                    }
+                if (schedule != null) {
+                    val sortedTasks = schedule.timeTasks.sortedBy { timeTask -> timeTask.timeRanges.to }
+                    schedule.copy(timeTasks = sortedTasks)
+                } else if (date >= currentDate.time && date - currentDate.time <= limit) {
+                    createRecurringSchedule(date.mapToDate(), currentDate)
+                } else {
+                    null
                 }
             }
         }
@@ -94,7 +81,24 @@ internal interface ScheduleInteractor {
         override suspend fun updateSchedule(schedule: Schedule) = eitherWrapper.wrap {
             scheduleRepository.updateSchedule(schedule)
         }
-        
+
+        private suspend fun createRecurringSchedule(target: Date, current: Date): Schedule? {
+            val templates = foundPlannedTemplates(target).apply { if (this.isEmpty()) return null }
+            val templatesTimeTasks = templates.map { it.convertToTimeTask(target) }
+            val correctTimeTasks = mutableListOf<TimeTask>().apply {
+                templatesTimeTasks.sortedBy { it.timeRanges.from }.forEach { timeTask ->
+                    val allTimeRanges = map { it.timeRanges }
+                    val overlayResult = overlayManager.isOverlay(timeTask.timeRanges, allTimeRanges)
+                    if (!overlayResult.isOverlay) add(timeTask)
+                }
+            }
+
+            val status = statusChecker.fetchState(target, current)
+            return Schedule(date = target.time, status = status, timeTasks = correctTimeTasks).apply {
+                scheduleRepository.createSchedules(listOf(this))
+            }
+        }
+
         private suspend fun foundPlannedTemplates(date: Date) = mutableListOf<Template>().apply {
             templatesRepository.fetchAllTemplates().first().filter { template ->
                 template.repeatEnabled

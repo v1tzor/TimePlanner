@@ -84,6 +84,8 @@ object Constants {
         const val MINUTES_IN_HOUR = 60L
         const val HOURS_IN_DAY = 24L
 
+        const val NEXT_REPEAT_LIMIT = 100L
+
         const val minutesFormat = "%s%s"
         const val hoursFormat = "%s%s"
         const val hoursAndMinutesFormat = "%s%s %s%s"

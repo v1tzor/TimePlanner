@@ -129,7 +129,7 @@ internal interface AnalyticsInteractor {
                 analytics.add(categoriesAnalytic)
             }
 
-            timeTasks.forEach { timeTask ->
+            timeTasks.filter { it.isCompleted }.forEach { timeTask ->
                 val currentDuration = duration(timeTask.timeRanges)
                 val analyticModel = analytics.find { it.mainCategory.id == timeTask.category.id }
                 if (analyticModel != null) {

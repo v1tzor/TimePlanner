@@ -146,9 +146,9 @@ fun durationOrZero(start: Date?, end: Date?) = if (start != null && end != null)
     Constants.Date.EMPTY_DURATION
 }
 
-fun Long?.mapToDateOrDefault(defualt: Date): Date {
+fun Long?.mapToDateOrDefault(default: Date): Date {
     val calendar = Calendar.getInstance().also {
-        it.timeInMillis = this ?: defualt.time
+        it.timeInMillis = this ?: default.time
     }
     return calendar.time
 }
@@ -176,6 +176,17 @@ fun Long.toMinutesInHours(): Long {
 
 fun Long.toHorses(): Long {
     return toMinutes() / Constants.Date.MINUTES_IN_HOUR
+}
+
+fun Long.toDays(): Long {
+    return toHorses() / Constants.Date.HOURS_IN_DAY
+}
+
+fun Long.daysToMillis(): Long {
+    val hours = this * Constants.Date.HOURS_IN_DAY
+    val minutes = hours * Constants.Date.MINUTES_IN_HOUR
+    val seconds = minutes * Constants.Date.SECONDS_IN_MINUTE
+    return seconds * Constants.Date.MILLIS_IN_SECONDS
 }
 
 fun Int.minutesToMillis(): Long {
