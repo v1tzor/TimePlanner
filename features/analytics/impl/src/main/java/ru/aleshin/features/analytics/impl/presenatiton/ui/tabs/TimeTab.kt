@@ -16,13 +16,12 @@
 package ru.aleshin.features.analytics.impl.presenatiton.ui.tabs
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -128,9 +127,8 @@ internal fun CategoriesAnalyticsChart(
         )
         add(otherPieData)
     }
-    Box {
+    BoxWithConstraints(modifier = modifier.height(230.dp)) {
         PieChart(
-            modifier = modifier.height(220.dp),
             data = PieChartData(
                 entries = pieDataList,
                 legendPosition = LegendPosition.End,
@@ -140,14 +138,14 @@ internal fun CategoriesAnalyticsChart(
             sliceWidth = 24.dp,
         ) { legendEntries ->
             AnalyticsTimeLegend(
-                modifier = Modifier,
+                modifier = Modifier.height(230.dp),
                 legendEntries = legendEntries,
                 selectedItem = selectedItem,
                 onSelectedItem = onSelectItem,
             )
         }
         Text(
-            modifier = Modifier.align(Alignment.CenterStart).offset(x = 55.dp, y = (-5).dp),
+            modifier = Modifier.align(Alignment.CenterStart).offset(x = 55.dp, y = (-1).dp),
             text = analytics[selectedItem].duration.toMinutesAndHoursTitle(),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.titleMedium,

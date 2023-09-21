@@ -15,8 +15,17 @@
  */
 package ru.aleshin.features.home.impl.presentation.ui.home
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.VisibilityThreshold
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.* // ktlint-disable no-wildcard-imports
 import androidx.compose.foundation.lazy.*
 import androidx.compose.material.icons.Icons
@@ -26,6 +35,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import ru.aleshin.core.ui.theme.material.surfaceOne
 import ru.aleshin.core.ui.views.ViewToggle
@@ -147,6 +157,7 @@ internal fun HomeDataChooser(
     )
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 internal fun HomeTimeTasksLazyColumn(
     modifier: Modifier = Modifier,
@@ -179,6 +190,12 @@ internal fun HomeTimeTasksLazyColumn(
                     val nextItem = timeTasks.getOrNull(timeTaskIndex + 1)
 
                     TimeTaskViewItem(
+                        modifier = Modifier.animateItemPlacement(
+                            animationSpec = spring(
+                                stiffness = Spring.StiffnessMedium,
+                                visibilityThreshold = IntOffset.VisibilityThreshold,
+                            ),
+                        ),
                         timeTask = timeTask,
                         onEdit = onTimeTaskEdit,
                         onIncrease = onTimeTaskIncrease,
@@ -188,16 +205,23 @@ internal fun HomeTimeTasksLazyColumn(
                             nextItem.startTime,
                         ),
                     )
-                    if (nextItem != null && timeTask.endTime.isNotZeroDifference(nextItem.startTime) && !isCompactView) {
+                    AnimatedVisibility(
+                        enter = fadeIn() + slideInVertically(),
+                        exit = shrinkVertically() + fadeOut(),
+                        visible = nextItem != null && 
+                            timeTask.endTime.isNotZeroDifference(nextItem.startTime) && 
+                            !isCompactView,
+                    ) {
                         val trackColor = when (timeTask.executionStatus) {
                             TimeTaskStatus.PLANNED -> MaterialTheme.colorScheme.surfaceOne()
                             TimeTaskStatus.RUNNING -> MaterialTheme.colorScheme.primaryContainer
                             TimeTaskStatus.COMPLETED -> MaterialTheme.colorScheme.tertiaryContainer
                         }
                         AddTimeTaskViewItem(
-                            onAddClick = { onTimeTaskAdd.invoke(timeTask.endTime, nextItem.startTime) },
+                            modifier = Modifier.animateItemPlacement(),
+                            onAddClick = { onTimeTaskAdd.invoke(timeTask.endTime, nextItem!!.startTime) },
                             startTime = timeTask.endTime,
-                            endTime = nextItem.startTime,
+                            endTime = nextItem!!.startTime,
                             indicatorColor = trackColor,
                         )
                     }
@@ -209,6 +233,7 @@ internal fun HomeTimeTasksLazyColumn(
                     }
                     val endTime = startTime.endThisDay()
                     AddTimeTaskViewItem(
+                        modifier = Modifier.animateItemPlacement(),
                         onAddClick = { onTimeTaskAdd.invoke(startTime, endTime) },
                         startTime = startTime,
                         endTime = endTime,

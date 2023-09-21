@@ -24,8 +24,8 @@ object Config {
     const val targetSdkVersion = 33
     const val minSdkVersion = 24
 
-    const val versionCode = 18
-    const val versionName = "0.7.2"
+    const val versionCode = 19
+    const val versionName = "0.7.3"
 
     const val testInstrumentRunner = "androidx.test.runner.AndroidJUnitRunner"
     const val consumerProguardFiles = "consumer-rules.pro"

@@ -16,6 +16,8 @@
 package ru.aleshin.features.home.impl.presentation.ui.home.views
 
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.material3.LinearProgressIndicator
@@ -70,7 +72,7 @@ internal fun LazyItemScope.PlannedTimeTaskItem(
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             with(model) {
                 EndTaskTimeTitle(
-                    modifier = modifier.align(Alignment.Bottom),
+                    modifier = Modifier.align(Alignment.Bottom),
                     time = model.endTime,
                     isVisible = isCompactView,
                 )
@@ -118,7 +120,7 @@ internal fun LazyItemScope.CompletedTimeTaskItem(
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             with(model) {
                 EndTaskTimeTitle(
-                    modifier = modifier.align(Alignment.Bottom),
+                    modifier = Modifier.align(Alignment.Bottom),
                     isVisible = isCompactView,
                     time = model.endTime,
                 )
@@ -169,12 +171,12 @@ internal fun LazyItemScope.RunningTimeTaskItem(
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             with(model) {
                 EndTaskTimeTitle(
-                    modifier = modifier.align(Alignment.Bottom),
+                    modifier = Modifier.align(Alignment.Bottom),
                     time = model.endTime,
                     isVisible = isCompactView,
                 )
                 RunningTimeTask(
-                    modifier = Modifier.fillMaxWidth().padding(bottom = 4.dp).animateContentSize(),
+                    modifier = Modifier.fillMaxWidth().padding(bottom = 4.dp),
                     onMoreButtonClick = { onMoreButtonClick.invoke(key) },
                     onIncreaseTime = onIncreaseTime,
                     onReduceTime = onReduceTime,
@@ -240,9 +242,14 @@ fun EndTaskTimeTitle(
     isVisible: Boolean,
     time: Date,
 ) {
+    val alpha by animateFloatAsState(
+        targetValue = if (isVisible) 1f else 0f, 
+        label = "alpha",
+        animationSpec = tween(durationMillis = 220),
+    )
     val timeFormat = SimpleDateFormat.getTimeInstance(SimpleDateFormat.SHORT)
     Text(
-        modifier = modifier.defaultMinSize(minWidth = 42.dp).alpha(if (isVisible) 1f else 0f),
+        modifier = modifier.defaultMinSize(minWidth = 42.dp).alpha(alpha),
         text = timeFormat.format(time),
         color = MaterialTheme.colorScheme.onSurfaceVariant,
         style = MaterialTheme.typography.titleMedium,

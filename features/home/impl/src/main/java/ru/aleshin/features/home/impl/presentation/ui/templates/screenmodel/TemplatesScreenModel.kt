@@ -103,7 +103,6 @@ internal class TemplatesScreenModel @Inject constructor(
             templates = action.templates,
         )
         is TemplatesAction.ChangeSortedType -> currentState.copy(
-            templates = null,
             sortedType = action.type,
         )
         is TemplatesAction.UpdateCategories -> currentState.copy(

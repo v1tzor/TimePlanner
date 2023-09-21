@@ -15,6 +15,7 @@
  */
 package ru.aleshin.features.analytics.impl.presenatiton.ui.views
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -40,6 +41,7 @@ import hu.ma.charts.legend.data.LegendEntry
 import ru.aleshin.core.ui.theme.TimePlannerRes
 import kotlin.math.roundToInt
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 internal fun AnalyticsTimeLegend(
     modifier: Modifier = Modifier,
@@ -55,6 +57,7 @@ internal fun AnalyticsTimeLegend(
         items(6) { index ->
             val entry = legendEntries[index]
             AnalyticsTimeLegendItem(
+                modifier = Modifier.animateItemPlacement(),
                 isSelected = selectedItem == index,
                 categoryName = entry.text.text,
                 percent = entry.percent,
@@ -75,9 +78,10 @@ internal fun AnalyticsTimeLegendItem(
     onSelectedItem: () -> Unit,
 ) {
     Surface(
-        modifier = modifier.fillMaxWidth().clip(MaterialTheme.shapes.small).clickable() {
-            onSelectedItem()
-        },
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(MaterialTheme.shapes.small)
+            .clickable { onSelectedItem() },
         shape = MaterialTheme.shapes.small,
         color = MaterialTheme.colorScheme.surface,
         tonalElevation = when (isSelected) {
@@ -90,15 +94,13 @@ internal fun AnalyticsTimeLegendItem(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Box(
-                modifier = Modifier.size(10.dp).clip(RoundedCornerShape(100.dp)).background(color),
-            )
+            Box(modifier = Modifier.size(10.dp).clip(RoundedCornerShape(100.dp)).background(color))
             Text(
                 modifier = Modifier.weight(1f),
                 text = categoryName,
                 color = MaterialTheme.colorScheme.onBackground,
                 overflow = TextOverflow.Ellipsis,
-                maxLines = 1,
+                maxLines = if (isSelected) 2 else 1,
                 style = MaterialTheme.typography.labelLarge,
             )
             Text(

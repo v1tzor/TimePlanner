@@ -16,6 +16,7 @@
 package ru.aleshin.features.home.impl.presentation.ui.templates
 
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -90,6 +91,7 @@ internal fun TemplatesContent(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 internal fun TemplatesLazyColumn(
     modifier: Modifier = Modifier,
@@ -112,6 +114,7 @@ internal fun TemplatesLazyColumn(
                 key = { it.templateId },
             ) { template ->
                 TemplatesItem(
+                    modifier = Modifier.animateItemPlacement(),
                     model = template,
                     categories = categories,
                     onUpdate = { onUpdateTemplate(it) },
