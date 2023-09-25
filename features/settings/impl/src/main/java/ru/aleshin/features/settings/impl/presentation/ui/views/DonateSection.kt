@@ -93,7 +93,7 @@ internal fun CryptoList(
     onCopyCryptoAddress: (String) -> Unit,
 ) {
     Surface(
-        modifier = modifier.height(265.dp),
+        modifier = modifier.height(310.dp),
         shape = MaterialTheme.shapes.large,
         color = MaterialTheme.colorScheme.surfaceTwo(),
     ) {
