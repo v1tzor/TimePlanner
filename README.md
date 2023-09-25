@@ -45,6 +45,7 @@
     3. TRX: TKC3NsKSS9hJRvofeJKceT5wC2bqTkPRUE
     4. LTC: ltc1qj9fsz4pxrvr3eqyel4q8jnsnfpcfwdsj3mvpec
     5. XEC: ecash:qqc0k95nfhkseel9p4avz5jwk6s4vum7rceegten5x
+    6. BNB/BTCB: 0xbA08E4905B3d52f480419A8444C4de3E91BC98df
 </details>
 
 <a href="https://nowpayments.io/donation?api_key=BQCNJB8-HRJ48T7-G31XH21-CFTX91M&source=lk_donation&medium=referral" target="_blank">
