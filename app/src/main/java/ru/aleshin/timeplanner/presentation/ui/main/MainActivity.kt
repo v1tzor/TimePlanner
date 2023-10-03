@@ -15,14 +15,27 @@
  */
 package ru.aleshin.timeplanner.presentation.ui.main
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
+import android.util.Log
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
+import androidx.core.app.ActivityCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleCoroutineScope
+import androidx.lifecycle.lifecycleScope
 import cafe.adriel.voyager.navigator.CurrentScreen
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import ru.aleshin.core.ui.theme.TimePlannerTheme
 import ru.aleshin.core.utils.navigation.navigator.AppNavigator
 import ru.aleshin.core.utils.navigation.navigator.NavigatorManager
 import ru.aleshin.core.utils.platform.activity.BaseActivity
 import ru.aleshin.core.utils.platform.screen.ScreenContent
+import ru.aleshin.features.home.api.navigation.HomeScreens
 import ru.aleshin.timeplanner.application.fetchApp
 import ru.aleshin.timeplanner.di.annotation.GlobalNavigation
 import ru.aleshin.timeplanner.presentation.ui.main.contract.MainAction
@@ -31,6 +44,7 @@ import ru.aleshin.timeplanner.presentation.ui.main.contract.MainEvent
 import ru.aleshin.timeplanner.presentation.ui.main.contract.MainViewState
 import ru.aleshin.timeplanner.presentation.ui.main.viewmodel.MainViewModel
 import ru.aleshin.timeplanner.presentation.ui.splash.SplashScreen
+import ru.aleshin.timeplanner.presentation.ui.tabs.TabsScreen
 import javax.inject.Inject
 
 class MainActivity : BaseActivity<MainViewState, MainEvent, MainAction, MainEffect>() {
@@ -54,8 +68,32 @@ class MainActivity : BaseActivity<MainViewState, MainEvent, MainAction, MainEffe
             AppNavigator(
                 initialScreen = SplashScreen(),
                 navigatorManager = navigatorManager,
-                content = { CurrentScreen() },
+                content = {
+                    CurrentScreen()
+                    if (it.lastItem is TabsScreen) getNotificationPermission()
+                },
             )
+        }
+
+
+    }
+
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            Log.e("Notification_Permission", "Notification Permission Allowed")
+        } else {
+            Log.e("Notification_Permission", "Notification Permission Denied")
+        }
+    }
+
+
+    private fun getNotificationPermission() {
+        try {
+            if (Build.VERSION.SDK_INT > 32) requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 
