@@ -44,6 +44,7 @@ internal data class TimeTaskUi(
     val isEnableNotification: Boolean = true,
     val isConsiderInStatistics: Boolean = true,
     val isTemplate: Boolean = false,
+    val note: String? = null,
 ) : Parcelable {
     fun timeToTimeRange() = TimeRange(startTime, endTime)
 }

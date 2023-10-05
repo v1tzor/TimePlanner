@@ -28,4 +28,5 @@ internal fun TimeTask.mapToUi() = TimeTaskUi(
     isImportant = isImportant,
     isEnableNotification = isEnableNotification,
     isConsiderInStatistics = isConsiderInStatistics,
+    note = note,
 )

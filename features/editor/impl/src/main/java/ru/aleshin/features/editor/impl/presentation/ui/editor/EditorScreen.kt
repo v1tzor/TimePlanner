@@ -15,7 +15,6 @@
  */
 package ru.aleshin.features.editor.impl.presentation.ui.editor
 
-import android.util.Log
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -63,6 +62,7 @@ internal class EditorScreen @Inject constructor() : Screen {
                         state = state,
                         modifier = Modifier.padding(paddingValues),
                         onCategoriesChange = { main, sub -> dispatchEvent(EditorEvent.ChangeCategories(main, sub)) },
+                        onNoteChange = { dispatchEvent(EditorEvent.ChangeNote(it)) },
                         onAddSubCategory = { dispatchEvent(EditorEvent.AddSubCategory(it)) },
                         onTimeRangeChange = { dispatchEvent(EditorEvent.ChangeTime(it)) },
                         onChangeParameters = { dispatchEvent(EditorEvent.ChangeParameters(it)) },

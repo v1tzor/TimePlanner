@@ -49,6 +49,7 @@ internal data class HomeIcons(
     val menuNavArrow: Int,
     val stop: Int,
     val start: Int,
+    val notes: Int,
 )
 
 internal val baseHomeIcons = HomeIcons(
@@ -79,6 +80,7 @@ internal val baseHomeIcons = HomeIcons(
     menuNavArrow = R.drawable.ic_arrow_right,
     start = R.drawable.ic_play,
     stop = R.drawable.ic_stop,
+    notes = R.drawable.ic_notes,
 )
 
 internal val LocalHomeIcons = staticCompositionLocalOf<HomeIcons> {

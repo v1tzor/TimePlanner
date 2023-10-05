@@ -36,4 +36,5 @@ internal data class TimeTaskUi(
     val isImportant: Boolean = false,
     val isEnableNotification: Boolean = true,
     val isConsiderInStatistics: Boolean = true,
+    val note: String? = null,
 ) : Parcelable

@@ -36,7 +36,7 @@ import ru.aleshin.features.home.api.data.models.timetasks.TimeTaskEntity
  * @author Stanislav Aleshin on 25.02.2023.
  */
 @Database(
-    version = 6,
+    version = 7,
     entities = [
         TemplateEntity::class,
         RepeatTimeEntity::class,
@@ -49,6 +49,7 @@ import ru.aleshin.features.home.api.data.models.timetasks.TimeTaskEntity
     autoMigrations = [
         AutoMigration(from = 1, to = 2),
         AutoMigration(from = 3, to = 4),
+        AutoMigration(from = 6, to = 7),
     ],
 )
 abstract class SchedulesDataBase : RoomDatabase() {

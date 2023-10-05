@@ -76,6 +76,9 @@ internal class EditorScreenModel @Inject constructor(
         is EditorEvent.ChangeCategories -> updateEditModel {
             copy(mainCategory = event.category, subCategory = event.subCategory)
         }
+        is EditorEvent.ChangeNote -> updateEditModel {
+            copy(note = event.note)
+        }
         is EditorEvent.AddSubCategory -> {
             val mainCategory = checkNotNull(state().editModel?.mainCategory)
             editorWorkProcessor.work(EditorWorkCommand.AddSubCategory(event.name, mainCategory)).handleWork()

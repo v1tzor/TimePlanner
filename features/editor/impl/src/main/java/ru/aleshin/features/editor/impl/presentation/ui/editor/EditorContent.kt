@@ -17,18 +17,31 @@ package ru.aleshin.features.editor.impl.presentation.ui.editor
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import ru.aleshin.core.ui.theme.TimePlannerRes
+import ru.aleshin.core.ui.views.CustomLargeTextField
 import ru.aleshin.core.utils.extensions.shiftMillis
+import ru.aleshin.core.utils.functional.Constants
 import ru.aleshin.core.utils.functional.TimeRange
 import ru.aleshin.features.editor.impl.presentation.models.categories.CategoriesUi
 import ru.aleshin.features.editor.impl.presentation.models.categories.MainCategoryUi
@@ -51,6 +64,7 @@ internal fun EditorContent(
     state: EditorViewState,
     modifier: Modifier = Modifier,
     onCategoriesChange: (MainCategoryUi, SubCategoryUi?) -> Unit,
+    onNoteChange: (String?) -> Unit,
     onAddSubCategory: (String) -> Unit,
     onTimeRangeChange: (TimeRange) -> Unit,
     onChangeParameters: (EditParameters) -> Unit,
@@ -72,8 +86,10 @@ internal fun EditorContent(
                     mainCategory = state.editModel.mainCategory,
                     subCategory = state.editModel.subCategory,
                     allCategories = state.categories,
+                    note = state.editModel.note,
                     onCategoriesChange = onCategoriesChange,
                     onAddSubCategory = onAddSubCategory,
+                    onNoteChange = onNoteChange,
                 )
                 Divider(Modifier.padding(horizontal = 32.dp))
                 DateTimeSection(
@@ -111,9 +127,17 @@ internal fun CategoriesSection(
     mainCategory: MainCategoryUi?,
     subCategory: SubCategoryUi?,
     allCategories: List<CategoriesUi>,
+    note: String?,
     onCategoriesChange: (MainCategoryUi, SubCategoryUi?) -> Unit,
     onAddSubCategory: (String) -> Unit,
+    onNoteChange: (String?) -> Unit,
 ) {
+    val focusManager = LocalFocusManager.current
+    val noteInteractionSource = remember { MutableInteractionSource() }
+    var editableNote by remember {
+        mutableStateOf(TextFieldValue(text = note ?: ""))
+    }
+
     Column(
         modifier = modifier.padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -152,6 +176,33 @@ internal fun CategoriesSection(
                 if (mainCategory != null) onCategoriesChange(mainCategory, newSubCategory)
             },
         )
+        CustomLargeTextField(
+            enabled = enabled,
+            text = editableNote, 
+            onTextChange = { if (it.text.length <= Constants.Text.MAX_NOTE_LENGTH) editableNote = it },
+            label = { Text(text = EditorThemeRes.strings.noteLabel) },
+            placeholder = { Text(text = EditorThemeRes.strings.notePlaceholder) },
+            maxLines = 4,
+            trailingIcon = if (noteInteractionSource.collectIsFocusedAsState().value) { {
+                IconButton(
+                    modifier = Modifier.size(32.dp),
+                    onClick = { focusManager.clearFocus(); onNoteChange(editableNote.text.ifEmpty { null }) },
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.CheckCircle,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSurface,
+                    )
+                }
+            } } else {
+                null
+            },
+            interactionSource = noteInteractionSource,
+        )
+    }
+    
+    LaunchedEffect(key1 = note) {
+        editableNote = TextFieldValue(text = note ?: "")
     }
 }
 

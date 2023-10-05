@@ -37,6 +37,7 @@ internal fun TimeTask.convertToEditModel(template: Template?) = EditModel(
     repeatEnabled = template?.repeatEnabled ?: false,
     templateId = template?.templateId,
     repeatTimes = template?.repeatTimes ?: emptyList(),
+    note = note,
 )
 
 internal fun EditModel.convertToTimeTask() = TimeTask(
@@ -49,4 +50,5 @@ internal fun EditModel.convertToTimeTask() = TimeTask(
     isImportant = isImportant,
     isEnableNotification = isEnableNotification,
     isConsiderInStatistics = isConsiderInStatistics,
+    note = note,
 )

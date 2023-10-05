@@ -53,6 +53,7 @@ internal interface TimeTaskDomainToUiMapper : ParameterizedMapper<TimeTask, Time
             isEnableNotification = input.isEnableNotification,
             isConsiderInStatistics = input.isConsiderInStatistics,
             isTemplate = parameter,
+            note = input.note,
         )
     }
 }
@@ -67,4 +68,5 @@ internal fun TimeTaskUi.mapToDomain() = TimeTask(
     isCompleted = isCompleted,
     isEnableNotification = isEnableNotification,
     isConsiderInStatistics = isConsiderInStatistics,
+    note = note,
 )

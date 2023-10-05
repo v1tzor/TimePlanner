@@ -57,4 +57,5 @@ data class TimeTaskEntity(
     @ColumnInfo("is_important") val isImportant: Boolean,
     @ColumnInfo("is_enable_notification") val isEnableNotification: Boolean,
     @ColumnInfo("is_consider_in_statistics") val isConsiderInStatistics: Boolean,
+    @ColumnInfo("note") val note: String? = null,
 )

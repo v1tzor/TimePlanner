@@ -86,6 +86,7 @@ internal data class HomeStrings(
     val dayTitle: String,
     val weekNumberTitle: String,
     val weekDayTitle: String,
+    val notesDesk: String,
 )
 
 internal val russianHomeString = HomeStrings(
@@ -154,6 +155,7 @@ internal val russianHomeString = HomeStrings(
     dayTitle = "День",
     weekNumberTitle = "Номер недели",
     weekDayTitle = "День недели",
+    notesDesk = "Заметка",
 )
 
 internal val englishHomeString = HomeStrings(
@@ -222,6 +224,7 @@ internal val englishHomeString = HomeStrings(
     dayTitle = "Day",
     weekNumberTitle = "Week number",
     weekDayTitle = "Day of the week",
+    notesDesk = "Note",
 )
 
 internal val persianHomeString = HomeStrings(
@@ -290,6 +293,7 @@ internal val persianHomeString = HomeStrings(
     dayTitle = "روز",
     weekNumberTitle = "شماره هفته",
     weekDayTitle = "روز هفته",
+    notesDesk = "یادداشت",
 )
 
 internal val germanHomeString = HomeStrings(
@@ -358,6 +362,7 @@ internal val germanHomeString = HomeStrings(
     dayTitle = "Der Tag",
     weekNumberTitle = "Wochennummer",
     weekDayTitle = "Wochentag",
+    notesDesk = "Notiz",
 )
 
 internal val spanishHomeString = HomeStrings(
@@ -426,6 +431,7 @@ internal val spanishHomeString = HomeStrings(
     dayTitle = "Día",
     weekNumberTitle = "Número de la semana",
     weekDayTitle = "Feria",
+    notesDesk = "Nota",
 )
 
 internal val frenchHomeString = HomeStrings(
@@ -468,7 +474,7 @@ internal val frenchHomeString = HomeStrings(
     deleteCategoryTitle = "Supprimer",
     subCategoryTitle = "Sous-catégories",
     warningDeleteCategoryText = "Êtes-vous sur(e) de vouloir supprimer la catégorie principale? " +
-            "Cette action engendredra la suppression de toutes les tâches prévues.",
+        "Cette action engendredra la suppression de toutes les tâches prévues.",
     sortedTypeTitle = "Trié",
     sortedTypeDate = "Par date",
     sortedTypeCategories = "Par catégorie",
@@ -494,6 +500,7 @@ internal val frenchHomeString = HomeStrings(
     dayTitle = "Jour",
     weekNumberTitle = "Semaine n°",
     weekDayTitle = "Jour de la semaine",
+    notesDesk = "Note",
 )
 
 internal val LocalHomeStrings = staticCompositionLocalOf<HomeStrings> {

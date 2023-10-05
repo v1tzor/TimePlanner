@@ -15,6 +15,7 @@
  */
 package ru.aleshin.features.home.impl.presentation.ui.home.views
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
@@ -24,6 +25,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -32,6 +34,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import ru.aleshin.core.ui.theme.TimePlannerRes
 import ru.aleshin.core.ui.views.CategoryIconMonogram
@@ -51,7 +54,10 @@ internal fun PlannedTimeTask(
     taskDurationTitle: String,
     categoryIcon: Painter?,
     isImportant: Boolean,
+    note: String?,
 ) {
+    var expandedNote by rememberSaveable { mutableStateOf(false) }
+
     Surface(
         onClick = onViewClicked,
         modifier = modifier,
@@ -59,44 +65,60 @@ internal fun PlannedTimeTask(
         shape = MaterialTheme.shapes.medium,
         tonalElevation = TimePlannerRes.elevations.levelOne,
     ) {
-        Row(
-            modifier = Modifier.padding(16.dp).fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-        ) {
-            Box(modifier = Modifier.align(Alignment.Top)) {
-                if (categoryIcon != null) {
-                    CategoryIconMonogram(
-                        icon = categoryIcon,
-                        iconDescription = taskTitle,
-                        iconColor = MaterialTheme.colorScheme.primary,
-                        badgeEnabled = isImportant,
-                        backgroundColor = MaterialTheme.colorScheme.primaryContainer,
-                    )
-                } else {
-                    CategoryTextMonogram(
-                        text = taskTitle.first().toString(),
-                        textColor = MaterialTheme.colorScheme.primary,
-                        badgeEnabled = isImportant,
-                        backgroundColor = MaterialTheme.colorScheme.primaryContainer,
-                    )
+        Column(modifier = Modifier.animateContentSize()) {
+            Row(
+                modifier = Modifier
+                    .padding(start = 16.dp, end = 16.dp, top = 16.dp)
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+            ) {
+                Box(modifier = Modifier.align(Alignment.Top)) {
+                    if (categoryIcon != null) {
+                        CategoryIconMonogram(
+                            icon = categoryIcon,
+                            iconDescription = taskTitle,
+                            iconColor = MaterialTheme.colorScheme.primary,
+                            badgeEnabled = isImportant,
+                            backgroundColor = MaterialTheme.colorScheme.primaryContainer,
+                        )
+                    } else {
+                        CategoryTextMonogram(
+                            text = taskTitle.first().toString(),
+                            textColor = MaterialTheme.colorScheme.primary,
+                            badgeEnabled = isImportant,
+                            backgroundColor = MaterialTheme.colorScheme.primaryContainer,
+                        )
+                    }
+                }
+                TimeTaskTitles(
+                    modifier = Modifier.weight(1f),
+                    title = taskTitle,
+                    titleColor = MaterialTheme.colorScheme.onSurface,
+                    subTitle = taskSubTitle,
+                )
+                Box(
+                    modifier = Modifier.align(
+                        alignment = when (taskSubTitle == null) {
+                            true -> Alignment.CenterVertically
+                            false -> Alignment.Top
+                        },
+                    ),
+                ) {
+                    TimeTaskDurationTitle(title = taskDurationTitle)
                 }
             }
-            TimeTaskTitles(
-                modifier = Modifier.weight(1f),
-                title = taskTitle,
-                titleColor = MaterialTheme.colorScheme.onSurface,
-                subTitle = taskSubTitle,
-            )
-            Box(
-                modifier = Modifier.align(
-                    alignment = when (taskSubTitle == null) {
-                        true -> Alignment.CenterVertically
-                        false -> Alignment.Top
-                    },
-                ),
-            ) {
-                TimeTaskDurationTitle(title = taskDurationTitle)
+            if (!note.isNullOrEmpty()) {
+                TimeTaskNoteView(
+                    modifier = Modifier.padding(vertical = 8.dp, horizontal = 12.dp),
+                    onClick = { expandedNote = !expandedNote },
+                    text = note,
+                    expanded = expandedNote,
+                    container = MaterialTheme.colorScheme.surfaceVariant,
+                    content = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            } else {
+                Spacer(modifier = Modifier.padding(bottom = 16.dp))
             }
         }
     }
@@ -112,10 +134,13 @@ internal fun RunningTimeTask(
     taskSubTitle: String?,
     categoryIcon: Painter?,
     isImportant: Boolean,
+    note: String?,
 ) {
-    var expanded by rememberSaveable { mutableStateOf(false) }
+    var expandedTask by rememberSaveable { mutableStateOf(false) }
+    var expandedNote by rememberSaveable { mutableStateOf(false) }
+
     Surface(
-        onClick = { expanded = !expanded },
+        onClick = { expandedTask = !expandedTask },
         modifier = modifier,
         shape = MaterialTheme.shapes.medium,
         color = MaterialTheme.colorScheme.primaryContainer,
@@ -123,7 +148,7 @@ internal fun RunningTimeTask(
         Column(modifier = Modifier.animateContentSize()) {
             Row(
                 modifier = Modifier
-                    .padding(start = 16.dp, end = 8.dp, top = 16.dp, bottom = 16.dp)
+                    .padding(start = 16.dp, end = 8.dp, top = 16.dp)
                     .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
@@ -157,16 +182,27 @@ internal fun RunningTimeTask(
                     contentAlignment = Alignment.Center,
                 ) {
                     ExpandedIcon(
-                        isExpanded = expanded,
+                        isExpanded = expandedTask,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         description = null,
                     )
                 }
             }
-            if (expanded) {
-                Box(modifier = Modifier.padding(horizontal = 16.dp)) {
-                    Divider(modifier = Modifier.fillMaxWidth())
-                }
+            if (!note.isNullOrEmpty()) {
+                TimeTaskNoteView(
+                    modifier = Modifier.padding(vertical = 8.dp, horizontal = 12.dp),
+                    onClick = { expandedNote = !expandedNote },
+                    text = note,
+                    expanded = expandedNote,
+                )
+            } else {
+                Spacer(modifier = Modifier.padding(bottom = 16.dp))
+            }
+            if (expandedTask) {
+                Divider(
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                    color = MaterialTheme.colorScheme.primary,
+                )
                 Row(
                     modifier = Modifier.padding(start = 8.dp, end = 8.dp, bottom = 8.dp),
                     verticalAlignment = Alignment.CenterVertically,
@@ -217,6 +253,7 @@ internal fun CompletedTimeTask(
     taskSubTitle: String?,
     categoryIcon: Painter?,
     isCompleted: Boolean,
+    note: String?,
 ) {
     Surface(
         modifier = modifier,
@@ -364,6 +401,56 @@ private fun TimeTaskDurationTitle(
     maxLines = 1,
     style = MaterialTheme.typography.bodyLarge,
 )
+
+@Composable
+private fun TimeTaskNoteView(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    text: String,
+    expanded: Boolean,
+    container: Color = MaterialTheme.colorScheme.primary,
+    content: Color = MaterialTheme.colorScheme.onPrimary,
+) {
+    var isOverflow by remember { mutableStateOf(false) }
+    
+    Surface(
+        onClick = onClick,
+        modifier = modifier,
+        enabled = enabled && isOverflow || enabled && expanded,
+        shape = MaterialTheme.shapes.medium,
+        color = container,
+    ) {
+        AnimatedContent(
+            targetState = expanded,
+            label = "Note",
+        ) { isExpanded ->
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 6.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Icon(
+                    modifier = Modifier.size(18.dp),
+                    painter = painterResource(id = HomeThemeRes.icons.notes),
+                    contentDescription = HomeThemeRes.strings.notesDesk,
+                    tint = content,
+                )
+                Text(
+                    text = text,
+                    color = content,
+                    maxLines = when (isExpanded) {
+                        true -> 4
+                        false -> 1
+                    },
+                    overflow = TextOverflow.Ellipsis,
+                    onTextLayout = { result -> isOverflow = result.didOverflowHeight },
+                    style = MaterialTheme.typography.labelMedium,
+                )
+            }
+        }
+    }
+}
 
 /* ----------------------- Release Preview -----------------------
 @Preview

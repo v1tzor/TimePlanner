@@ -67,6 +67,8 @@ internal data class EditorStrings(
     val confirmNavigateTitle: String,
     val importantParameterTitle: String,
     val importantParameterDesc: String,
+    val noteLabel: String,
+    val notePlaceholder: String,
 )
 
 internal val russianHomeString = EditorStrings(
@@ -116,6 +118,8 @@ internal val russianHomeString = EditorStrings(
     confirmNavigateTitle = "Перейти",
     importantParameterTitle = "Особый приоритет",
     importantParameterDesc = "Обязательное выполнение без возможности сдвига",
+    noteLabel = "Заметка",
+    notePlaceholder = "Небольшое примечание по желанию",
 )
 
 internal val englishHomeString = EditorStrings(
@@ -165,6 +169,8 @@ internal val englishHomeString = EditorStrings(
     confirmNavigateTitle = "Go",
     importantParameterTitle = "Special priority",
     importantParameterDesc = "Mandatory execution without the possibility of shifting",
+    noteLabel = "Note",
+    notePlaceholder = "A small note is optional",
 )
 
 internal val persianHomeString = EditorStrings(
@@ -214,6 +220,8 @@ internal val persianHomeString = EditorStrings(
     confirmNavigateTitle = "برو",
     importantParameterTitle = "اولویت ویژه",
     importantParameterDesc = "اجرای اجباری بدون امکان جابجایی",
+    noteLabel = "یادداشت",
+    notePlaceholder = "یک یادداشت کوچک اختیاری است",
 )
 
 internal val germanHomeString = EditorStrings(
@@ -262,6 +270,8 @@ internal val germanHomeString = EditorStrings(
     confirmNavigateTitle = "Übergehen",
     importantParameterTitle = "Besondere Priorität",
     importantParameterDesc = "Zwingende Ausführung ohne Verschiebungsmöglichkeit",
+    noteLabel = "Notiz",
+    notePlaceholder = "Eine kleine Anmerkung optional",
 )
 
 internal val spanishHomeString = EditorStrings(
@@ -311,6 +321,8 @@ internal val spanishHomeString = EditorStrings(
     confirmNavigateTitle = "Ir",
     importantParameterTitle = "Prioridad especial",
     importantParameterDesc = "Realización obligatoria sin posibilidad de desplazamiento",
+    noteLabel = "Nota",
+    notePlaceholder = "Una pequeña nota opcional",
 )
 
 internal val frenchHomeString = EditorStrings(
@@ -360,6 +372,8 @@ internal val frenchHomeString = EditorStrings(
     confirmNavigateTitle = "Aller",
     importantParameterTitle = "Priorité spéciale",
     importantParameterDesc = "Exécution prioriaire sans la possibilité de la décaler",
+    noteLabel = "Note",
+    notePlaceholder = "Petite Note en option",
 )
 
 internal val LocalEditorStrings = staticCompositionLocalOf<EditorStrings> {

@@ -84,6 +84,7 @@ internal fun LazyItemScope.PlannedTimeTaskItem(
                     taskDurationTitle = duration.toMinutesOrHoursTitle(),
                     categoryIcon = mainCategory.defaultType?.mapToIconPainter(),
                     isImportant = isImportant,
+                    note = note,
                 )
             }
         }
@@ -132,6 +133,7 @@ internal fun LazyItemScope.CompletedTimeTaskItem(
                     taskSubTitle = subCategory?.name,
                     categoryIcon = mainCategory.defaultType?.mapToIconPainter(),
                     isCompleted = isCompleted,
+                    note = note,
                 )
             }
         }
@@ -184,6 +186,7 @@ internal fun LazyItemScope.RunningTimeTaskItem(
                     taskSubTitle = subCategory?.name,
                     categoryIcon = mainCategory.defaultType?.mapToIconPainter(),
                     isImportant = isImportant,
+                    note = note,
                 )
             }
         }

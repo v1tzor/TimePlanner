@@ -36,6 +36,7 @@ internal fun EditModel.mapToUi() = EditModelUi(
     repeatEnabled = repeatEnabled,
     templateId = templateId,
     repeatTimes = repeatTimes,
+    note = note,
 )
 
 internal fun EditModelUi.mapToDomain() = EditModel(
@@ -52,4 +53,5 @@ internal fun EditModelUi.mapToDomain() = EditModel(
     repeatEnabled = repeatEnabled,
     templateId = templateId,
     repeatTimes = repeatTimes,
+    note = note,
 )

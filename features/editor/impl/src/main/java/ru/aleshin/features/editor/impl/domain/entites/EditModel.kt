@@ -37,4 +37,5 @@ data class EditModel(
     val repeatEnabled: Boolean = false,
     val repeatTimes: List<RepeatTime> = emptyList(),
     val templateId: Int? = null,
+    val note: String? = null,
 )

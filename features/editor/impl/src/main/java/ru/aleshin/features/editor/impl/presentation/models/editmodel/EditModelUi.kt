@@ -40,6 +40,7 @@ internal data class EditModelUi(
     val repeatEnabled: Boolean = false,
     val templateId: Int? = null,
     val repeatTimes: List<RepeatTime> = emptyList(),
+    val note: String? = null,
 ) : Parcelable {
     fun checkDateIsRepeat(): Boolean {
         return repeatEnabled && repeatTimes.find { it.checkDateIsRepeat(date) } != null

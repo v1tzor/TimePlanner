@@ -47,6 +47,7 @@ internal sealed class EditorEvent : BaseEvent {
     data class ApplyTemplate(val template: TemplateUi) : EditorEvent()
     data class ChangeTime(val timeRange: TimeRange) : EditorEvent()
     data class ChangeCategories(val category: MainCategoryUi, val subCategory: SubCategoryUi?) : EditorEvent()
+    data class ChangeNote(val note: String?) : EditorEvent()
     data class ChangeParameters(val parameters: EditParameters) : EditorEvent()
     data class AddSubCategory(val name: String) : EditorEvent()
     object PressDeleteButton : EditorEvent()

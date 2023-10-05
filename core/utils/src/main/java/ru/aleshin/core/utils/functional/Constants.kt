@@ -30,6 +30,7 @@ object Constants {
     }
 
     object Text {
+        const val MAX_NOTE_LENGTH = 160
         const val MAX_LENGTH = 50
     }
 

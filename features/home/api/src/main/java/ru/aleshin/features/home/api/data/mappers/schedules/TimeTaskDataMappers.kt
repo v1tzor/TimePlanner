@@ -35,6 +35,7 @@ fun TimeTaskDetails.mapToDomain() = TimeTask(
     isImportant = timeTask.isImportant,
     isEnableNotification = timeTask.isEnableNotification,
     isConsiderInStatistics = timeTask.isConsiderInStatistics,
+    note = timeTask.note,
 )
 
 fun TimeTask.mapToData(dailyScheduleDate: Long) = TimeTaskEntity(
@@ -48,4 +49,5 @@ fun TimeTask.mapToData(dailyScheduleDate: Long) = TimeTaskEntity(
     isImportant = isImportant,
     isEnableNotification = isEnableNotification,
     isConsiderInStatistics = isConsiderInStatistics,
+    note = note,
 )

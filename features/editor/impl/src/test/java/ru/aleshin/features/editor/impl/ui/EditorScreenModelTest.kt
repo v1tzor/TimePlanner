@@ -671,6 +671,7 @@ private class FakeTemplatesInteractor : TemplatesInteractor {
 }
 
 private class FakeTimeTaskAlarmManager : TimeTaskAlarmManager {
+    // TODO: Fix unit test
 
     val notificationTasks = mutableListOf<TimeTask>()
 
@@ -684,7 +685,6 @@ private class FakeTimeTaskAlarmManager : TimeTaskAlarmManager {
     }
 
     override fun updateNotifyAlarm(timeTask: TimeTask) {
-        updateNotificationCount++
         val index = notificationTasks.indexOfFirst { it.key == timeTask.key }
         notificationTasks[index] = timeTask
     }

@@ -19,7 +19,7 @@
 object Versions {
     const val core = "1.9.0"
     const val appcompat = "1.6.1" // 1.7.0-alpha02
-    const val material = "1.1.0-rc01" // 1.1.0-alpha06
+    const val material = "1.2.0-alpha03" // 1.1.0-alpha06
     const val googleMaterial = "1.8.0"
     const val refreshLayout = "1.1.0"
     const val lifecycle = "2.5.1" // "2.6.0-beta01"
@@ -32,7 +32,7 @@ object Versions {
 
     const val compose = "1.4.3" // "1.4.0-beta02"
     const val emoji = "1.3.0-beta01"
-    const val activityCompose = "1.6.1"
+    const val activityCompose = "1.7.2"
 
     const val voyager = "1.0.0-rc03"
 
