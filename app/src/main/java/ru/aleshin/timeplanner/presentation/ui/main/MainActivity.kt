@@ -23,6 +23,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
 import cafe.adriel.voyager.navigator.CurrentScreen
 import ru.aleshin.core.ui.theme.TimePlannerTheme
+import ru.aleshin.core.utils.functional.Constants.App.PERMISSION_TAG
 import ru.aleshin.core.utils.navigation.navigator.AppNavigator
 import ru.aleshin.core.utils.navigation.navigator.NavigatorManager
 import ru.aleshin.core.utils.platform.activity.BaseActivity
@@ -47,14 +48,28 @@ class MainActivity : BaseActivity<MainViewState, MainEvent, MainAction, MainEffe
     @Inject
     lateinit var viewModelFactory: MainViewModel.Factory
 
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission(),
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            Log.i(PERMISSION_TAG, "Notification Permission Allowed")
+        } else {
+            Log.e(PERMISSION_TAG, "Notification Permission Denied")
+        }
+    }
+
     override fun initDI() = fetchApp().appComponent.inject(this)
 
     @Composable
-    override fun Content() = ScreenContent(viewModel, MainViewState()) { state ->
+    override fun Content() = ScreenContent(
+        screenModel = viewModel,
+        initialState = MainViewState(),
+    ) { state ->
         TimePlannerTheme(
-            dynamicColor = state.isEnableDynamicColors,
-            themeType = state.colors,
             languageType = state.language,
+            themeType = state.theme,
+            colors = state.colors,
+            dynamicColor = state.isEnableDynamicColors,
         ) {
             AppNavigator(
                 initialScreen = SplashScreen(),
@@ -74,16 +89,6 @@ class MainActivity : BaseActivity<MainViewState, MainEvent, MainAction, MainEffe
     override fun fetchViewModelFactory() = viewModelFactory
 
     override fun fetchViewModelClass() = MainViewModel::class.java
-
-    private val requestPermissionLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestPermission(),
-    ) { isGranted: Boolean ->
-        if (isGranted) {
-            Log.i("Notification_Permission", "Notification Permission Allowed")
-        } else {
-            Log.e("Notification_Permission", "Notification Permission Denied")
-        }
-    }
 
     private fun getNotificationPermission() {
         try {

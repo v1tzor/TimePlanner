@@ -18,7 +18,8 @@ package ru.aleshin.features.settings.api.data.repositories
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import ru.aleshin.features.settings.api.data.datasources.theme.ThemeSettingsLocalDataSource
-import ru.aleshin.features.settings.api.data.models.ThemeSettingsEntity
+import ru.aleshin.features.settings.api.data.mappers.mapToData
+import ru.aleshin.features.settings.api.data.mappers.mapToDomain
 import ru.aleshin.features.settings.api.domain.entities.ThemeSettings
 import ru.aleshin.features.settings.api.domain.repositories.ThemeSettingsRepository
 import javax.inject.Inject
@@ -31,14 +32,14 @@ class ThemeSettingsRepositoryImpl @Inject constructor(
 ) : ThemeSettingsRepository {
 
     override fun fetchSettingsFlow(): Flow<ThemeSettings> {
-        return localDataSource.fetchSettingsFlow().map { it.settings }
+        return localDataSource.fetchSettingsFlow().map { it.mapToDomain() }
     }
 
     override suspend fun fetchSettings(): ThemeSettings {
-        return localDataSource.fetchSettings().settings
+        return localDataSource.fetchSettings().mapToDomain()
     }
 
     override suspend fun updateSettings(settings: ThemeSettings) {
-        localDataSource.updateSettings(ThemeSettingsEntity(settings = settings))
+        localDataSource.updateSettings(settings.mapToData())
     }
 }

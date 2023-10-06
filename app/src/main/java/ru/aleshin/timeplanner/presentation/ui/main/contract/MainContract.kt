@@ -17,6 +17,7 @@ package ru.aleshin.timeplanner.presentation.ui.main.contract
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
+import ru.aleshin.core.ui.theme.material.ColorsUiType
 import ru.aleshin.core.ui.theme.material.ThemeUiType
 import ru.aleshin.core.ui.theme.tokens.LanguageUiType
 import ru.aleshin.core.utils.platform.screenmodel.contract.*
@@ -27,7 +28,8 @@ import ru.aleshin.core.utils.platform.screenmodel.contract.*
 @Parcelize
 data class MainViewState(
     val language: LanguageUiType = LanguageUiType.DEFAULT,
-    val colors: ThemeUiType = ThemeUiType.DEFAULT,
+    val theme: ThemeUiType = ThemeUiType.DEFAULT,
+    val colors: ColorsUiType = ColorsUiType.PINK,
     val isEnableDynamicColors: Boolean = false,
 ) : BaseViewState, Parcelable
 
@@ -41,7 +43,8 @@ sealed class MainAction : MainEffect(), BaseAction {
     object Navigate : MainAction()
     data class ChangeThemeSettings(
         val language: LanguageUiType,
-        val themeColors: ThemeUiType,
+        val theme: ThemeUiType,
+        val colors: ColorsUiType,
         val enableDynamicColors: Boolean,
     ) : MainAction()
 }

@@ -34,7 +34,7 @@ import ru.aleshin.features.settings.impl.presentation.theme.SettingsThemeRes
 @Composable
 internal fun ThemeColorsChooser(
     modifier: Modifier = Modifier,
-    currentThemeColors: ThemeUiType,
+    themeColors: ThemeUiType,
     onThemeColorUpdate: (ThemeUiType) -> Unit,
 ) {
     Surface(
@@ -54,7 +54,7 @@ internal fun ThemeColorsChooser(
             SegmentedButtons(
                 modifier = Modifier.fillMaxWidth(),
                 items = ThemeColorsTypeSegmentedItems.values(),
-                selectedItem = currentThemeColors.toSegmentedItem(),
+                selectedItem = themeColors.toSegmentedItem(),
                 onItemClick = { onThemeColorUpdate.invoke(it.toThemeColorsType()) },
             )
         }

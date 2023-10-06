@@ -15,16 +15,21 @@
  */
 package ru.aleshin.features.settings.api.data.models
 
-import androidx.room.Embedded
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import ru.aleshin.features.settings.api.domain.entities.ThemeSettings
+import ru.aleshin.features.settings.api.domain.entities.ColorsType
+import ru.aleshin.features.settings.api.domain.entities.LanguageType
+import ru.aleshin.features.settings.api.domain.entities.ThemeType
 
 /**
  * @author Stanislav Aleshin on 14.02.2023.
  */
 @Entity(tableName = "ThemeSettings")
 data class ThemeSettingsEntity(
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    @Embedded val settings: ThemeSettings,
+    @PrimaryKey(autoGenerate = false) val id: Int = 0,
+    @ColumnInfo("language") val language: LanguageType = LanguageType.DEFAULT,
+    @ColumnInfo("theme_colors") val themeColors: ThemeType = ThemeType.DEFAULT,
+    @ColumnInfo("colors_type") val colorsType: ColorsType = ColorsType.PINK,
+    @ColumnInfo("dynamic_color") val isDynamicColorEnable: Boolean = false,
 )

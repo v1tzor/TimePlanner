@@ -124,6 +124,7 @@ class DataBaseModule {
     ).createFromAsset("database/settings_prepopulated.db")
         .addMigrations(SettingsDataBase.MIGRATION_1_2)
         .addMigrations(SettingsDataBase.MIGRATION_2_3)
+        .addMigrations(SettingsDataBase.MIGRATION_3_4)
         .build()
 
     @Provides

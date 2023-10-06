@@ -29,100 +29,77 @@ import ru.aleshin.core.ui.theme.TimePlannerRes
  */
 @Parcelize
 enum class ThemeUiType : Parcelable {
-    DEFAULT, LIGHT, DARK
+    DEFAULT, LIGHT, DARK;
+
+    @Composable
+    fun isDarkTheme() = when (this) {
+        DEFAULT -> isSystemInDarkTheme()
+        LIGHT -> false
+        DARK -> true
+    }
 }
 
-private val baseLightColorScheme = lightColorScheme(
-    primary = md_theme_light_primary,
-    onPrimary = md_theme_light_onPrimary,
-    primaryContainer = md_theme_light_primaryContainer,
-    onPrimaryContainer = md_theme_light_onPrimaryContainer,
-    secondary = md_theme_light_secondary,
-    onSecondary = md_theme_light_onSecondary,
-    secondaryContainer = md_theme_light_secondaryContainer,
-    onSecondaryContainer = md_theme_light_onSecondaryContainer,
-    tertiary = md_theme_light_tertiary,
-    onTertiary = md_theme_light_onTertiary,
-    tertiaryContainer = md_theme_light_tertiaryContainer,
-    onTertiaryContainer = md_theme_light_onTertiaryContainer,
-    error = md_theme_light_error,
-    onError = md_theme_light_onError,
-    errorContainer = md_theme_light_errorContainer,
-    onErrorContainer = md_theme_light_onErrorContainer,
-    outline = md_theme_light_outline,
-    background = md_theme_light_background,
-    onBackground = md_theme_light_onBackground,
-    surface = md_theme_light_surface,
-    onSurface = md_theme_light_onSurface,
-    surfaceVariant = md_theme_light_surfaceVariant,
-    onSurfaceVariant = md_theme_light_onSurfaceVariant,
-    inverseSurface = md_theme_light_inverseSurface,
-    inverseOnSurface = md_theme_light_inverseOnSurface,
-    inversePrimary = md_theme_light_inversePrimary,
-    surfaceTint = md_theme_light_surfaceTint,
-    outlineVariant = md_theme_light_outlineVariant,
-    scrim = md_theme_light_scrim,
-)
+@Parcelize
+enum class ColorsUiType : Parcelable {
+    RED, PINK, PURPLE, BLUE;
 
-private val baseDarkColorScheme = darkColorScheme(
-    primary = md_theme_dark_primary,
-    onPrimary = md_theme_dark_onPrimary,
-    primaryContainer = md_theme_dark_primaryContainer,
-    onPrimaryContainer = md_theme_dark_onPrimaryContainer,
-    secondary = md_theme_dark_secondary,
-    onSecondary = md_theme_dark_onSecondary,
-    secondaryContainer = md_theme_dark_secondaryContainer,
-    onSecondaryContainer = md_theme_dark_onSecondaryContainer,
-    tertiary = md_theme_dark_tertiary,
-    onTertiary = md_theme_dark_onTertiary,
-    tertiaryContainer = md_theme_dark_tertiaryContainer,
-    onTertiaryContainer = md_theme_dark_onTertiaryContainer,
-    error = md_theme_dark_error,
-    onError = md_theme_dark_onError,
-    errorContainer = md_theme_dark_errorContainer,
-    onErrorContainer = md_theme_dark_onErrorContainer,
-    outline = md_theme_dark_outline,
-    background = md_theme_dark_background,
-    onBackground = md_theme_dark_onBackground,
-    surface = md_theme_dark_surface,
-    onSurface = md_theme_dark_onSurface,
-    surfaceVariant = md_theme_dark_surfaceVariant,
-    onSurfaceVariant = md_theme_dark_onSurfaceVariant,
-    inverseSurface = md_theme_dark_inverseSurface,
-    inverseOnSurface = md_theme_dark_inverseOnSurface,
-    inversePrimary = md_theme_dark_inversePrimary,
-    surfaceTint = md_theme_dark_surfaceTint,
-    outlineVariant = md_theme_dark_outlineVariant,
-    scrim = md_theme_dark_scrim,
-)
+    fun seed() = when (this) {
+        RED -> redSeed
+        PINK -> pinkSeed
+        PURPLE -> purpleSeed
+        BLUE -> blueSeed
+    }
+
+    fun onSeed() = when (this) {
+        RED -> red_theme_light_primary
+        PINK -> pink_theme_light_primary
+        PURPLE -> purple_theme_light_primary
+        BLUE -> blue_theme_light_primary
+    }
+    
+    @Composable
+    fun fetchLightColorScheme() = when (this) {
+        RED -> redLightColorScheme
+        PINK -> pinkLightColorScheme
+        PURPLE -> purpleLightColorScheme
+        BLUE -> blueLightColorScheme
+    }
+
+    @Composable
+    fun fetchDarkColorScheme() = when (this) {
+        RED -> redDarkColorScheme
+        PINK -> pinkDarkColorScheme
+        PURPLE -> purpleDarkColorScheme
+        BLUE -> blueDarkColorScheme
+    }
+
+    @Composable
+    fun fetchColorScheme(themeType: ThemeUiType) = when (themeType) {
+        ThemeUiType.DEFAULT -> if (isSystemInDarkTheme()) fetchDarkColorScheme() else fetchLightColorScheme()
+        ThemeUiType.LIGHT -> fetchLightColorScheme()
+        ThemeUiType.DARK -> fetchDarkColorScheme()
+    }
+}
 
 @Composable
 fun ThemeUiType.toColorScheme(
     dynamicColor: Boolean,
-) = if (dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+    colors: ColorsUiType,
+): ColorScheme {
     val context = LocalContext.current
-    when (this) {
-        ThemeUiType.DEFAULT -> if (isSystemInDarkTheme()) {
-            dynamicDarkColorScheme(context)
-        } else {
-            dynamicLightColorScheme(context)
+    return if (dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        when (this) {
+            ThemeUiType.DEFAULT -> if (isSystemInDarkTheme()) {
+                dynamicDarkColorScheme(context)
+            } else {
+                dynamicLightColorScheme(context)
+            }
+            ThemeUiType.LIGHT -> dynamicLightColorScheme(context)
+            ThemeUiType.DARK -> dynamicDarkColorScheme(context)
         }
-        ThemeUiType.LIGHT -> dynamicLightColorScheme(context)
-        ThemeUiType.DARK -> dynamicDarkColorScheme(context)
+    } else {
+        colors.fetchColorScheme(themeType = this)
     }
-} else {
-    when (this) {
-        ThemeUiType.DEFAULT -> if (isSystemInDarkTheme()) baseDarkColorScheme else baseLightColorScheme
-        ThemeUiType.LIGHT -> baseLightColorScheme
-        ThemeUiType.DARK -> baseDarkColorScheme
-    }
-}
-
-@Composable
-fun ThemeUiType.isDarkTheme() = when (this) {
-    ThemeUiType.DEFAULT -> isSystemInDarkTheme()
-    ThemeUiType.LIGHT -> false
-    ThemeUiType.DARK -> true
 }
 
 @Composable
@@ -136,5 +113,6 @@ fun ColorScheme.surfaceThree() = surfaceColorAtElevation(TimePlannerRes.elevatio
 
 @Composable
 fun ColorScheme.surfaceFour() = surfaceColorAtElevation(TimePlannerRes.elevations.levelFour)
+
 @Composable
 fun ColorScheme.surfaceFive() = surfaceColorAtElevation(TimePlannerRes.elevations.levelFive)

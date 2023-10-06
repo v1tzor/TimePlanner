@@ -31,8 +31,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.launch
 import ru.aleshin.core.ui.theme.TimePlannerRes
+import ru.aleshin.core.ui.theme.material.ColorsUiType
 import ru.aleshin.core.ui.theme.material.ThemeUiType
 import ru.aleshin.core.ui.theme.tokens.LanguageUiType
 import ru.aleshin.core.ui.views.WarningDeleteDialog
@@ -46,6 +46,7 @@ import ru.aleshin.features.settings.impl.presentation.ui.contract.SaveBackupCont
 import ru.aleshin.features.settings.impl.presentation.ui.contract.SettingsViewState
 import ru.aleshin.features.settings.impl.presentation.ui.contract.launch
 import ru.aleshin.features.settings.impl.presentation.ui.views.AboutAppSection
+import ru.aleshin.features.settings.impl.presentation.ui.views.ColorsTypeChooser
 import ru.aleshin.features.settings.impl.presentation.ui.views.DonateView
 import ru.aleshin.features.settings.impl.presentation.ui.views.DynamicColorChooser
 import ru.aleshin.features.settings.impl.presentation.ui.views.LanguageChooser
@@ -73,16 +74,20 @@ internal fun SettingsContent(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 MainSettingsSection(
-                    themeColors = state.themeSettings.themeColors,
                     languageType = state.themeSettings.language,
-                    dynamicColorEnabled = state.themeSettings.isDynamicColorEnable,
+                    themeColors = state.themeSettings.themeColors,
+                    colorsType = state.themeSettings.colorsType,
+                    dynamicColor = state.themeSettings.isDynamicColorEnable,
                     onThemeColorUpdate = { colorsType ->
                         onUpdateThemeSettings(state.themeSettings.copy(themeColors = colorsType))
                     },
-                    onLanguageChanged = { language ->
+                    onLanguageChange = { language ->
                         onUpdateThemeSettings(state.themeSettings.copy(language = language))
                     },
-                    onEnableDynamicColorsChanged = {
+                    onColorsTypeUpdate = { colorsType ->
+                        onUpdateThemeSettings(state.themeSettings.copy(colorsType = colorsType))
+                    },
+                    onDynamicColorsChange = {
                         onUpdateThemeSettings(state.themeSettings.copy(isDynamicColorEnable = it))
                     },
                 )
@@ -121,12 +126,14 @@ internal fun SettingsContent(
 @Composable
 internal fun MainSettingsSection(
     modifier: Modifier = Modifier,
-    themeColors: ThemeUiType,
     languageType: LanguageUiType,
-    dynamicColorEnabled: Boolean,
+    themeColors: ThemeUiType,
+    colorsType: ColorsUiType,
+    dynamicColor: Boolean,
+    onLanguageChange: (LanguageUiType) -> Unit,
     onThemeColorUpdate: (ThemeUiType) -> Unit,
-    onLanguageChanged: (LanguageUiType) -> Unit,
-    onEnableDynamicColorsChanged: (Boolean) -> Unit,
+    onColorsTypeUpdate: (ColorsUiType) -> Unit,
+    onDynamicColorsChange: (Boolean) -> Unit,
 ) {
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(16.dp)) {
         Text(
@@ -136,16 +143,20 @@ internal fun MainSettingsSection(
         )
         ThemeColorsChooser(
             modifier = Modifier.fillMaxWidth(),
-            currentThemeColors = themeColors,
+            themeColors = themeColors,
             onThemeColorUpdate = onThemeColorUpdate,
         )
+        ColorsTypeChooser(
+            colorsType = colorsType,
+            onChoose = onColorsTypeUpdate,
+        )
         DynamicColorChooser(
-            dynamicColorEnabled = dynamicColorEnabled,
-            onEnabledChanged = onEnableDynamicColorsChanged,
+            dynamicColor = dynamicColor,
+            onChange = onDynamicColorsChange,
         )
         LanguageChooser(
             language = languageType,
-            onLanguageChanged = onLanguageChanged,
+            onLanguageChanged = onLanguageChange,
         )
     }
 }

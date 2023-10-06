@@ -23,19 +23,19 @@ import ru.aleshin.core.ui.theme.tokens.*
 
 @Composable
 fun TimePlannerTheme(
-    dynamicColor: Boolean = false,
-    themeType: ThemeUiType = ThemeUiType.DEFAULT,
     languageType: LanguageUiType = LanguageUiType.DEFAULT,
+    themeType: ThemeUiType = ThemeUiType.DEFAULT,
+    colors: ColorsUiType = ColorsUiType.PINK,
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit,
 ) {
     val appLanguage = fetchAppLanguage(languageType)
     val coreStrings = fetchCoreStrings(appLanguage)
-    val colorsType = fetchAppColorsType(themeType)
+    val colorsType = fetchAppColorsType(themeType, colors)
     val appElevations = fetchAppElevations()
     val coreIcons = fetchCoreIcons() 
-
     MaterialTheme(
-        colorScheme = themeType.toColorScheme(dynamicColor),
+        colorScheme = themeType.toColorScheme(dynamicColor, colors),
         shapes = baseShapes,
         typography = baseTypography,
     ) {

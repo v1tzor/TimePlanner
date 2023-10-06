@@ -114,7 +114,7 @@ internal fun LazyItemScope.CompletedTimeTaskItem(
                 modifier = Modifier.fillMaxWidth().clip(MaterialTheme.shapes.small),
                 color = when (model.isCompleted) {
                     true -> MaterialTheme.colorScheme.tertiary
-                    false -> MaterialTheme.colorScheme.secondary
+                    false -> MaterialTheme.colorScheme.error
                 },
             )
         }

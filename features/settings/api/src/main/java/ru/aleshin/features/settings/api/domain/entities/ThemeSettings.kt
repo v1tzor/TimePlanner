@@ -21,5 +21,6 @@ package ru.aleshin.features.settings.api.domain.entities
 data class ThemeSettings(
     val language: LanguageType = LanguageType.DEFAULT,
     val themeColors: ThemeType = ThemeType.DEFAULT,
+    val colorsType: ColorsType = ColorsType.PINK,
     val isDynamicColorEnable: Boolean = false,
 )

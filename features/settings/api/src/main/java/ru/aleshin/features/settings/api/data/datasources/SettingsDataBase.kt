@@ -17,6 +17,7 @@ package ru.aleshin.features.settings.api.data.datasources
 
 import android.content.ContentValues
 import android.database.sqlite.SQLiteDatabase
+import android.util.Log
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
@@ -30,7 +31,7 @@ import ru.aleshin.features.settings.api.data.models.ThemeSettingsEntity
  * @author Stanislav Aleshin on 17.02.2023.
  */
 @Database(
-    version = 3,
+    version = 4,
     entities = [ThemeSettingsEntity::class, TasksSettingsEntity::class],
     exportSchema = true,
 )
@@ -69,6 +70,68 @@ abstract class SettingsDataBase : RoomDatabase() {
                 } finally {
                     database.endTransaction()
                 }
+            }
+        }
+
+        val MIGRATION_3_4 = object : Migration(3, 4) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.beginTransaction()
+                try {
+                    copyAndModifiedTable(database)
+                    rebaseTable(database)
+                    database.setTransactionSuccessful()
+                } finally {
+                    database.endTransaction()
+                }
+            }
+
+            private fun copyAndModifiedTable(database: SupportSQLiteDatabase) {
+                val values = ContentValues()
+                database.execSQL(
+                    "CREATE TEMPORARY TABLE IF NOT EXISTS `ThemeSettingsNew` (" +
+                        "`id` INTEGER PRIMARY KEY NOT NULL, " +
+                        "`language` TEXT NOT NULL, " +
+                        "`theme_colors` TEXT NOT NULL, " +
+                        "`colors_type` TEXT NOT NULL, " +
+                        "`dynamic_color` INTEGER NOT NULL)",
+                )
+                database.query("SELECT * FROM ThemeSettings").apply {
+                    while (moveToNext()) {
+                        values.clear()
+                        val id = getInt(getColumnIndexOrThrow("id"))
+                        val language = getString(getColumnIndexOrThrow("language"))
+                        val themeColors = getString(getColumnIndexOrThrow("themeColors"))
+                        val isDynamicColorEnable = getInt(getColumnIndexOrThrow("isDynamicColorEnable"))
+                        if (id == 0) {
+                            values.put("id", id)
+                            values.put("language", language)
+                            values.put("theme_colors", themeColors)
+                            values.put("dynamic_color", isDynamicColorEnable)
+                            values.put("colors_type", "PINK")
+                            database.insert("ThemeSettingsNew", SQLiteDatabase.CONFLICT_REPLACE, values)
+                            break
+                        }
+                    }
+                    close()
+                }
+            }
+
+            private fun rebaseTable(database: SupportSQLiteDatabase) {
+                database.execSQL("DROP TABLE ThemeSettings")
+                database.execSQL(
+                    "CREATE TABLE IF NOT EXISTS `ThemeSettings` (" +
+                        "`id` INTEGER PRIMARY KEY NOT NULL, " +
+                        "`language` TEXT NOT NULL, " +
+                        "`theme_colors` TEXT NOT NULL, " +
+                        "`colors_type` TEXT NOT NULL, " +
+                        "`dynamic_color` INTEGER NOT NULL)",
+                )
+                database.execSQL(
+                    "INSERT INTO ThemeSettings " +
+                        "SELECT id, language, theme_colors, colors_type, dynamic_color " +
+                        "FROM ThemeSettingsNew",
+                )
+                database.execSQL("DROP TABLE ThemeSettingsNew")
             }
         }
     }

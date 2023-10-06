@@ -60,6 +60,7 @@ internal data class SettingsStrings(
     val askQuestionTitle: String,
     val donateTitle: String,
     val copyTitle: String,
+    val mainSettingsColorsTitle: String,
 )
 
 internal val russianSettingsString = SettingsStrings(
@@ -101,6 +102,7 @@ internal val russianSettingsString = SettingsStrings(
     askQuestionTitle = "Задать вопрос",
     donateTitle = "Поддержать приложение",
     copyTitle = "Копировать",
+    mainSettingsColorsTitle = "Цвет",
 )
 
 internal val englishSettingsString = SettingsStrings(
@@ -142,6 +144,7 @@ internal val englishSettingsString = SettingsStrings(
     askQuestionTitle = "Ask a question",
     donateTitle = "Support the application",
     copyTitle = "Copy",
+    mainSettingsColorsTitle = "Color",
 )
 
 internal val germanSettingsString = SettingsStrings(
@@ -183,6 +186,7 @@ internal val germanSettingsString = SettingsStrings(
     askQuestionTitle = "eine Frage stellen",
     donateTitle = "App unterstützen",
     copyTitle = "kopieren",
+    mainSettingsColorsTitle = "Farbe",
 )
 
 internal val spanishSettingsString = SettingsStrings(
@@ -224,6 +228,7 @@ internal val spanishSettingsString = SettingsStrings(
     askQuestionTitle = "Preguntar",
     donateTitle = "Apoyar la aplicación",
     copyTitle = "Copiar",
+    mainSettingsColorsTitle = "Color",
 )
 
 internal val persianSettingsString = SettingsStrings(
@@ -264,7 +269,8 @@ internal val persianSettingsString = SettingsStrings(
     licenseTitle = "مجوز",
     askQuestionTitle = "سوال بپرسید",
     donateTitle = "از برنامه پشتیبانی کنید",
-    copyTitle = "کپی"
+    copyTitle = "کپی",
+    mainSettingsColorsTitle = "رنگ",
 )
 
 internal val frenchSettingsString = SettingsStrings(
@@ -306,6 +312,7 @@ internal val frenchSettingsString = SettingsStrings(
     askQuestionTitle = "Poser une question",
     donateTitle = "Soutenir l'application",
     copyTitle = "Copier",
+    mainSettingsColorsTitle = "Couleur"
 )
 
 internal val LocalSettingsStrings = staticCompositionLocalOf<SettingsStrings> {

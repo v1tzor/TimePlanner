@@ -36,8 +36,8 @@ import ru.aleshin.features.settings.impl.presentation.theme.SettingsThemeRes
 @Composable
 internal fun DynamicColorChooser(
     modifier: Modifier = Modifier,
-    dynamicColorEnabled: Boolean,
-    onEnabledChanged: (Boolean) -> Unit,
+    dynamicColor: Boolean,
+    onChange: (Boolean) -> Unit,
 ) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
         Surface(
@@ -55,7 +55,7 @@ internal fun DynamicColorChooser(
                     color = MaterialTheme.colorScheme.onSurface,
                     style = MaterialTheme.typography.titleMedium,
                 )
-                Switch(checked = dynamicColorEnabled, onCheckedChange = onEnabledChanged)
+                Switch(checked = dynamicColor, onCheckedChange = onChange)
             }
         }
     }

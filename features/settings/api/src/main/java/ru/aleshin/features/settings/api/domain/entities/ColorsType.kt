@@ -13,21 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ru.aleshin.features.settings.impl.presentation.models
-
-import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
-import ru.aleshin.core.ui.theme.material.ColorsUiType
-import ru.aleshin.core.ui.theme.material.ThemeUiType
-import ru.aleshin.core.ui.theme.tokens.LanguageUiType
+package ru.aleshin.features.settings.api.domain.entities
 
 /**
- * @author Stanislav Aleshin on 10.06.2023.
+ * @author Stanislav Aleshin on 06.10.2023.
  */
-@Parcelize
-data class ThemeSettingsUi(
-    val language: LanguageUiType = LanguageUiType.DEFAULT,
-    val themeColors: ThemeUiType = ThemeUiType.DEFAULT,
-    val colorsType: ColorsUiType = ColorsUiType.PINK,
-    val isDynamicColorEnable: Boolean = false,
-) : Parcelable
+enum class ColorsType {
+    PINK, PURPLE, RED, BLUE
+}

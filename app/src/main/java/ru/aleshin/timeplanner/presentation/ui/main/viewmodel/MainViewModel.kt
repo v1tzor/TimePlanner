@@ -69,7 +69,8 @@ class MainViewModel @Inject constructor(
         is MainAction.Navigate -> currentState
         is MainAction.ChangeThemeSettings -> currentState.copy(
             language = action.language,
-            colors = action.themeColors,
+            theme = action.theme,
+            colors = action.colors,
             isEnableDynamicColors = action.enableDynamicColors,
         )
     }

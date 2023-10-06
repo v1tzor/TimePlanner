@@ -259,10 +259,7 @@ internal fun CompletedTimeTask(
         modifier = modifier,
         onClick = onViewClicked,
         enabled = true,
-        color = when (isCompleted) {
-            true -> MaterialTheme.colorScheme.tertiaryContainer
-            false -> MaterialTheme.colorScheme.secondaryContainer
-        },
+        color = MaterialTheme.colorScheme.tertiaryContainer,
         shape = MaterialTheme.shapes.medium,
     ) {
         Row(
@@ -273,22 +270,18 @@ internal fun CompletedTimeTask(
             horizontalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             Box(modifier = Modifier.align(Alignment.Top)) {
-                val monogramBackgroundColor = when (isCompleted) {
-                    true -> MaterialTheme.colorScheme.tertiary
-                    false -> MaterialTheme.colorScheme.secondary
-                }
                 if (categoryIcon != null) {
                     CategoryIconMonogram(
                         icon = categoryIcon,
                         iconDescription = taskTitle,
                         iconColor = MaterialTheme.colorScheme.onTertiary,
-                        backgroundColor = monogramBackgroundColor,
+                        backgroundColor = MaterialTheme.colorScheme.tertiary,
                     )
                 } else {
                     CategoryTextMonogram(
                         text = taskTitle.first().toString(),
                         textColor = MaterialTheme.colorScheme.onTertiary,
-                        backgroundColor = monogramBackgroundColor,
+                        backgroundColor = MaterialTheme.colorScheme.tertiary,
                     )
                 }
             }
