@@ -83,7 +83,7 @@ val blue_theme_dark_onSurface = Color(0xFFC7C6CA)
 val blue_theme_dark_surfaceVariant = Color(0xFF43474E)
 val blue_theme_dark_onSurfaceVariant = Color(0xFFC4C6CF)
 
-val blueSeed = Color(0xFF5577AE)
+val blueSeed = Color(0xFF5D7EB4)
 
 internal val blueLightColorScheme = lightColorScheme(
     primary = blue_theme_light_primary,

@@ -83,7 +83,7 @@ val purple_theme_dark_onSurface = Color(0xFFC9C5CA)
 val purple_theme_dark_surfaceVariant = Color(0xFF47464F)
 val purple_theme_dark_onSurfaceVariant = Color(0xFFC9C5D0)
 
-val purpleSeed = Color(0xFF5E5795)
+val purpleSeed = Color(0xFF6C65A2)
 
 internal val purpleLightColorScheme = lightColorScheme(
     primary = purple_theme_light_primary,
