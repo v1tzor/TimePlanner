@@ -18,7 +18,7 @@
 - Scheduled Notifications ⏰
 - Priorities and protection from overlaying tasks 📐
 - Theme: Dark | Light 🖤🤍
-- Dynamic Color (min: Android 12) 🎨
+- Dynamic Color or 4 different color variations 🎨
 
 ## Technologies stack 🚀
 - MVI Architecture
