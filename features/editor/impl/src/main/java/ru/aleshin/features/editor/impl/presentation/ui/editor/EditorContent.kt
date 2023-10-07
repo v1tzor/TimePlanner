@@ -179,14 +179,19 @@ internal fun CategoriesSection(
         CustomLargeTextField(
             enabled = enabled,
             text = editableNote, 
-            onTextChange = { if (it.text.length <= Constants.Text.MAX_NOTE_LENGTH) editableNote = it },
+            onTextChange = { 
+                if (it.text.length <= Constants.Text.MAX_NOTE_LENGTH) {
+                    editableNote = it
+                    onNoteChange(editableNote.text.ifEmpty { null })
+                }
+            },
             label = { Text(text = EditorThemeRes.strings.noteLabel) },
             placeholder = { Text(text = EditorThemeRes.strings.notePlaceholder) },
             maxLines = 4,
             trailingIcon = if (noteInteractionSource.collectIsFocusedAsState().value) { {
                 IconButton(
                     modifier = Modifier.size(32.dp),
-                    onClick = { focusManager.clearFocus(); onNoteChange(editableNote.text.ifEmpty { null }) },
+                    onClick = { focusManager.clearFocus(); },
                 ) {
                     Icon(
                         imageVector = Icons.Outlined.CheckCircle,
@@ -199,10 +204,6 @@ internal fun CategoriesSection(
             },
             interactionSource = noteInteractionSource,
         )
-    }
-    
-    LaunchedEffect(key1 = note) {
-        editableNote = TextFieldValue(text = note ?: "")
     }
 }
 
