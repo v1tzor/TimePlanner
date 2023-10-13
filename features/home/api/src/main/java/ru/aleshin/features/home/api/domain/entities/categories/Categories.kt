@@ -20,5 +20,5 @@ package ru.aleshin.features.home.api.domain.entities.categories
  */
 data class Categories(
     val mainCategory: MainCategory,
-    val subCategories: List<SubCategory>,
+    val subCategories: List<SubCategory> = emptyList(),
 )

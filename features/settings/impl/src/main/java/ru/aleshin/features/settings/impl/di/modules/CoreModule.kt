@@ -35,6 +35,7 @@ internal class CoreModule {
     fun provideGson(): Gson {
         return GsonBuilder()
             .serializeNulls()
+            .setPrettyPrinting()
             .registerTypeAdapterFactory(
                 object : TypeAdapterFactory {
                     override fun <T : Any> create(gson: Gson, type: TypeToken<T>): TypeAdapter<T> {

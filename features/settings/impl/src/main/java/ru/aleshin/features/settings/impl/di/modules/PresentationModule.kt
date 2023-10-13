@@ -20,16 +20,19 @@ import cafe.adriel.voyager.core.screen.Screen
 import dagger.Binds
 import dagger.Module
 import ru.aleshin.core.utils.di.FeatureScope
+import ru.aleshin.core.utils.di.ScreenModelKey
 import ru.aleshin.features.settings.api.navigation.SettingsFeatureStarter
 import ru.aleshin.features.settings.impl.navigation.NavigationManager
 import ru.aleshin.features.settings.impl.navigation.SettingsFeatureStarterImpl
-import ru.aleshin.features.settings.impl.presentation.ui.SettingsScreen
-import ru.aleshin.features.settings.impl.presentation.ui.managers.BackupManager
-import ru.aleshin.features.settings.impl.presentation.ui.screensmodel.DataWorkProcessor
-import ru.aleshin.features.settings.impl.presentation.ui.screensmodel.SettingsEffectCommunicator
-import ru.aleshin.features.settings.impl.presentation.ui.screensmodel.SettingsScreenModel
-import ru.aleshin.features.settings.impl.presentation.ui.screensmodel.SettingsStateCommunicator
-import ru.aleshin.features.settings.impl.presentation.ui.screensmodel.SettingsWorkProcessor
+import ru.aleshin.features.settings.impl.presentation.ui.donate.screenmodel.DonateScreenModel
+import ru.aleshin.features.settings.impl.presentation.ui.donate.screenmodel.DonateStateCommunicator
+import ru.aleshin.features.settings.impl.presentation.ui.settings.SettingsScreen
+import ru.aleshin.features.settings.impl.presentation.ui.settings.managers.BackupManager
+import ru.aleshin.features.settings.impl.presentation.ui.settings.screensmodel.DataWorkProcessor
+import ru.aleshin.features.settings.impl.presentation.ui.settings.screensmodel.SettingsEffectCommunicator
+import ru.aleshin.features.settings.impl.presentation.ui.settings.screensmodel.SettingsScreenModel
+import ru.aleshin.features.settings.impl.presentation.ui.settings.screensmodel.SettingsStateCommunicator
+import ru.aleshin.features.settings.impl.presentation.ui.settings.screensmodel.SettingsWorkProcessor
 
 /**
  * @author Stanislav Aleshin on 17.02.2023.
@@ -49,11 +52,14 @@ internal interface PresentationModule {
     @FeatureScope
     fun bindBackupManager(manager: BackupManager.Base): BackupManager
 
+    // Settings
+
     @Binds
     @FeatureScope
     fun bindSettingsScreen(screen: SettingsScreen): Screen
 
     @Binds
+    @ScreenModelKey(SettingsScreenModel::class)
     fun bindSettingsScreenModel(screenModel: SettingsScreenModel): ScreenModel
 
     @Binds
@@ -69,4 +75,13 @@ internal interface PresentationModule {
 
     @Binds
     fun bindDataWorkProcessor(processor: DataWorkProcessor.Base): DataWorkProcessor
+
+    // Donate
+
+    @Binds
+    @ScreenModelKey(DonateScreenModel::class)
+    fun bindDonateScreenModel(screenModel: DonateScreenModel): ScreenModel
+
+    @Binds
+    fun bindDonateStateCommunicator(communicator: DonateStateCommunicator.Base): DonateStateCommunicator
 }

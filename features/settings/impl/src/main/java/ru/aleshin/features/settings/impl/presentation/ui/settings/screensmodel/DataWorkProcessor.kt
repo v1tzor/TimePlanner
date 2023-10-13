@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ru.aleshin.features.settings.impl.presentation.ui.screensmodel
+package ru.aleshin.features.settings.impl.presentation.ui.settings.screensmodel
 
 import android.net.Uri
 import kotlinx.coroutines.flow.FlowCollector
@@ -32,9 +32,9 @@ import ru.aleshin.features.settings.impl.domain.interactors.SettingsInteractor
 import ru.aleshin.features.settings.impl.domain.interactors.TemplatesInteractor
 import ru.aleshin.features.settings.impl.presentation.mappers.mapToUi
 import ru.aleshin.features.settings.impl.presentation.models.BackupModel
-import ru.aleshin.features.settings.impl.presentation.ui.contract.SettingsAction
-import ru.aleshin.features.settings.impl.presentation.ui.contract.SettingsEffect
-import ru.aleshin.features.settings.impl.presentation.ui.managers.BackupManager
+import ru.aleshin.features.settings.impl.presentation.ui.settings.contract.SettingsAction
+import ru.aleshin.features.settings.impl.presentation.ui.settings.contract.SettingsEffect
+import ru.aleshin.features.settings.impl.presentation.ui.settings.managers.BackupManager
 import javax.inject.Inject
 
 /**
@@ -81,7 +81,7 @@ internal interface DataWorkProcessor : FlowWorkProcessor<DataWorkCommand, Settin
                 val categories = categoriesInteractor.fetchAllCategories().dataOrError(this) ?: return@run
                 val templates = templatesInteractor.fetchAllTemplates().dataOrError(this) ?: return@run
                 val backupModel = BackupModel(schedules, templates, categories)
-
+                
                 backupManager.saveBackup(uri, backupModel)
             }
             emit(ActionResult(SettingsAction.ShowLoadingBackup(false)))
@@ -93,7 +93,7 @@ internal interface DataWorkProcessor : FlowWorkProcessor<DataWorkCommand, Settin
             categoriesInteractor.removeAllCategories().dataOrError(this)
             
             settingsInteractor.resetAllSettings().dataOrError(this)?.let {
-                emit(ActionResult(SettingsAction.ChangeAllSettings(it.mapToUi()))) 
+                emit(ActionResult(SettingsAction.ChangeAllSettings(it.mapToUi())))
             }
         }
 

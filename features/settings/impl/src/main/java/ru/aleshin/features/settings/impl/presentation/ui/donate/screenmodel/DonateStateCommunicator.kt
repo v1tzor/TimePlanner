@@ -13,18 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ru.aleshin.features.settings.impl.presentation.models
-
-import ru.aleshin.features.home.api.domain.entities.categories.Categories
-import ru.aleshin.features.home.api.domain.entities.categories.DefaultCategoryType
-import ru.aleshin.features.home.api.domain.entities.schedules.Schedule
-import ru.aleshin.features.home.api.domain.entities.template.Template
+package ru.aleshin.features.settings.impl.presentation.ui.donate.screenmodel
 
 /**
- * @author Stanislav Aleshin on 10.06.2023.
+ * @author Stanislav Aleshin on 13.10.2023.
  */
-internal data class BackupModel(
-    val schedules: List<Schedule>,
-    val templates: List<Template>,
-    val categories: List<Categories>,
-)
+import ru.aleshin.core.utils.platform.communications.state.StateCommunicator
+import ru.aleshin.features.settings.impl.presentation.ui.donate.contract.DonateViewState
+import javax.inject.Inject
+
+/**
+ * @author Stanislav Aleshin on 13.10.2023.
+ */
+internal interface DonateStateCommunicator : StateCommunicator<DonateViewState> {
+
+    class Base @Inject constructor() : DonateStateCommunicator,
+        StateCommunicator.Abstract<DonateViewState>(defaultState = DonateViewState.Default)
+}

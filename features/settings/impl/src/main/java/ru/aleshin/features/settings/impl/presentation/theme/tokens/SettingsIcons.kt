@@ -25,12 +25,28 @@ internal data class SettingsIcons(
     val back: Int,
     val default: Int,
     val git: Int,
+    val cryptoBitcoin: Int,
+    val cryptoBNB: Int,
+    val cryptoEthereum: Int,
+    val cryptoTron: Int,
+    val cryptoLitecoin: Int,
+    val cryptoECash: Int,
+    val copy: Int,
+    val crypto: Int,
 )
 
 internal val baseSettingIcons = SettingsIcons(
     back = R.drawable.ic_back,
     default = R.drawable.ic_restart,
     git = R.drawable.ic_github,
+    cryptoBitcoin = R.drawable.ic_bitcoin,
+    cryptoBNB = R.drawable.ic_bnb,
+    cryptoEthereum = R.drawable.ic_ethereum,
+    cryptoTron = R.drawable.ic_tron,
+    cryptoLitecoin = R.drawable.ic_litecoin,
+    cryptoECash = R.drawable.ic_ecash_xec,
+    copy = R.drawable.ic_content_copy,
+    crypto = R.drawable.ic_crypto
 )
 
 internal val LocalSettingsIcons = staticCompositionLocalOf<SettingsIcons> {

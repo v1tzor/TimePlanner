@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ru.aleshin.features.settings.impl.presentation.ui.managers
+package ru.aleshin.features.settings.impl.presentation.ui.settings.managers
 
 import android.content.Context
 import android.net.Uri
@@ -54,7 +54,7 @@ internal interface BackupManager {
                     val entry = input.nextEntry ?: break
                     when (entry.name) {
                         Constants.Backup.BACKUP_JSON_NAME -> {
-                            val jsonString = input.bufferedReader().use { it.readText() }
+                            var jsonString = input.bufferedReader().use { it.readText() }
                             // TODO: Not work with old model
                             val backup = gson.fromJson(jsonString, BackupModel::class.java) ?: throw IOException()
                             return@wrap backup.copy(

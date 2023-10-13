@@ -13,18 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ru.aleshin.features.settings.impl.presentation.models
+package ru.aleshin.features.settings.impl.presentation.ui.settings.screensmodel
 
-import ru.aleshin.features.home.api.domain.entities.categories.Categories
-import ru.aleshin.features.home.api.domain.entities.categories.DefaultCategoryType
-import ru.aleshin.features.home.api.domain.entities.schedules.Schedule
-import ru.aleshin.features.home.api.domain.entities.template.Template
+import ru.aleshin.core.utils.platform.communications.state.EffectCommunicator
+import ru.aleshin.features.settings.impl.presentation.ui.settings.contract.SettingsEffect
+import javax.inject.Inject
 
 /**
- * @author Stanislav Aleshin on 10.06.2023.
+ * @author Stanislav Aleshin on 04.04.2023.
  */
-internal data class BackupModel(
-    val schedules: List<Schedule>,
-    val templates: List<Template>,
-    val categories: List<Categories>,
-)
+internal interface SettingsEffectCommunicator : EffectCommunicator<SettingsEffect> {
+
+    class Base @Inject constructor() : SettingsEffectCommunicator,
+        EffectCommunicator.Abstract<SettingsEffect>()
+}

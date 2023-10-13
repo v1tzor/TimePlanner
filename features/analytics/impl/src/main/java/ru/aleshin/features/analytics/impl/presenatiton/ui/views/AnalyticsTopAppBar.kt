@@ -18,7 +18,9 @@ package ru.aleshin.features.analytics.impl.presenatiton.ui.views
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
@@ -54,6 +56,9 @@ internal fun AnalyticsTopAppBar(
         actions = {
             TopAppBarEmptyButton()
         },
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = MaterialTheme.colorScheme.background,
+        ),
     )
 }
 /* ----------------------- Release Preview -----------------------

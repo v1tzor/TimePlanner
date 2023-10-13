@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ru.aleshin.features.settings.impl.presentation.ui.views
+package ru.aleshin.features.settings.impl.presentation.ui.settings.views
 
 import android.os.Build
 import androidx.compose.foundation.layout.Row

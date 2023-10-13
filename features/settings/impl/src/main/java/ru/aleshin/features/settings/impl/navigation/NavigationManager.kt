@@ -16,6 +16,8 @@
 package ru.aleshin.features.settings.impl.navigation
 
 import ru.aleshin.core.utils.navigation.Router
+import ru.aleshin.features.settings.impl.presentation.ui.donate.DonateScreen
+import ru.aleshin.features.settings.impl.presentation.ui.donate.screenmodel.DonateScreenModel
 import javax.inject.Inject
 
 /**
@@ -23,11 +25,17 @@ import javax.inject.Inject
  */
 internal interface NavigationManager {
 
-    fun showPreviousFeature()
+    fun navigateToDonate()
+    fun navigateToBack()
 
     class Base @Inject constructor(private val globalRouter: Router) : NavigationManager {
 
-        override fun showPreviousFeature() {
+        override fun navigateToDonate() {
+            val screen = DonateScreen()
+            globalRouter.navigateTo(screen)
+        }
+
+        override fun navigateToBack() {
             globalRouter.navigateBack()
         }
     }

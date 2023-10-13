@@ -22,7 +22,8 @@ import ru.aleshin.features.settings.impl.di.SettingsFeatureDependencies
 import ru.aleshin.features.settings.impl.di.modules.CoreModule
 import ru.aleshin.features.settings.impl.di.modules.DomainModule
 import ru.aleshin.features.settings.impl.di.modules.PresentationModule
-import ru.aleshin.features.settings.impl.presentation.ui.screensmodel.SettingsScreenModel
+import ru.aleshin.features.settings.impl.presentation.ui.donate.screenmodel.DonateScreenModel
+import ru.aleshin.features.settings.impl.presentation.ui.settings.screensmodel.SettingsScreenModel
 
 /**
  * @author Stanislav Aleshin on 17.02.2023.
@@ -35,6 +36,7 @@ import ru.aleshin.features.settings.impl.presentation.ui.screensmodel.SettingsSc
 internal interface SettingsComponent : SettingsFeatureApi {
 
     fun fetchSettingsScreenModel(): SettingsScreenModel
+    fun fetchDonateScreenModel(): DonateScreenModel
 
     @Component.Builder
     interface Builder {
