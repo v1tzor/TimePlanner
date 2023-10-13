@@ -42,7 +42,6 @@ import ru.aleshin.features.editor.impl.presentation.models.categories.MainCatego
 import ru.aleshin.features.editor.impl.presentation.theme.EditorThemeRes
 import ru.aleshin.features.home.api.domain.entities.categories.DefaultCategoryType
 import ru.aleshin.features.home.api.presentation.mappers.mapToIconPainter
-import ru.aleshin.features.home.api.presentation.mappers.mapToName
 
 /**
  * @author Stanislav Aleshin on 25.02.2023.
@@ -58,7 +57,7 @@ internal fun MainCategoryChooser(
 ) {
     val openDialog = rememberSaveable { mutableStateOf(false) }
     val categoryIcon = currentCategory?.defaultType?.mapToIconPainter()
-    val categoryName = currentCategory.let { it?.defaultType?.mapToName() ?: it?.customName }
+    val categoryName = currentCategory?.fetchName()
     
     Surface(
         onClick = { openDialog.value = true },
@@ -168,7 +167,7 @@ internal fun MainCategoryDialogChooser(
                         MainCategoryDialogItem(
                             modifier = Modifier.fillMaxWidth(),
                             selected = selectedCategory == category,
-                            title = category.let { it.defaultType?.mapToName() ?: it.customName } ?: "*",
+                            title = category.fetchName() ?: "*",
                             icon = category.defaultType?.mapToIconPainter(),
                             onSelectedChange = { selectedCategory = category },
                         )

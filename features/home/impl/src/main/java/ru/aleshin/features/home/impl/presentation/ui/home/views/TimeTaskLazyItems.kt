@@ -37,6 +37,7 @@ import com.google.accompanist.placeholder.placeholder
 import com.google.accompanist.placeholder.shimmer
 import ru.aleshin.core.ui.views.toMinutesOrHoursTitle
 import ru.aleshin.core.utils.extensions.duration
+import ru.aleshin.core.utils.functional.Constants
 import ru.aleshin.features.home.api.presentation.mappers.mapToIconPainter
 import ru.aleshin.features.home.api.presentation.mappers.mapToName
 import ru.aleshin.features.home.impl.presentation.models.schedules.TimeTaskUi
@@ -79,7 +80,7 @@ internal fun LazyItemScope.PlannedTimeTaskItem(
                 PlannedTimeTask(
                     modifier = Modifier.fillMaxWidth().padding(bottom = 4.dp).animateContentSize(),
                     onViewClicked = { onItemClick.invoke(key) },
-                    taskTitle = mainCategory.let { it.defaultType?.mapToName() ?: it.customName } ?: "*",
+                    taskTitle = mainCategory.fetchName() ?: "*",
                     taskSubTitle = model.subCategory?.name,
                     taskDurationTitle = duration.toMinutesOrHoursTitle(),
                     categoryIcon = mainCategory.defaultType?.mapToIconPainter(),
@@ -129,7 +130,7 @@ internal fun LazyItemScope.CompletedTimeTaskItem(
                     modifier = Modifier.fillMaxWidth().padding(bottom = 4.dp).animateContentSize(),
                     onViewClicked = { onItemClick.invoke(key) },
                     onDoneChange = onDoneChange,
-                    taskTitle = mainCategory.let { it.defaultType?.mapToName() ?: it.customName } ?: "*",
+                    taskTitle = mainCategory.fetchName() ?: "*",
                     taskSubTitle = subCategory?.name,
                     categoryIcon = mainCategory.defaultType?.mapToIconPainter(),
                     isCompleted = isCompleted,
@@ -182,7 +183,7 @@ internal fun LazyItemScope.RunningTimeTaskItem(
                     onMoreButtonClick = { onMoreButtonClick.invoke(key) },
                     onIncreaseTime = onIncreaseTime,
                     onReduceTime = onReduceTime,
-                    taskTitle = mainCategory.let { it.defaultType?.mapToName() ?: it.customName } ?: "*",
+                    taskTitle = mainCategory.fetchName() ?: "*",
                     taskSubTitle = subCategory?.name,
                     categoryIcon = mainCategory.defaultType?.mapToIconPainter(),
                     isImportant = isImportant,
@@ -218,8 +219,9 @@ internal fun LazyItemScope.AddTimeTaskViewItem(
                 }
             }
             AddTimeTaskView(
-                onViewClicked = { onAddClick.invoke() },
+                onViewClicked = onAddClick,
                 remainingTimeTitle = duration(startTime, endTime).toMinutesOrHoursTitle(),
+                isFreeTime = duration(startTime, endTime) >= Constants.Date.MILLIS_IN_MINUTE,
             )
         }
     }

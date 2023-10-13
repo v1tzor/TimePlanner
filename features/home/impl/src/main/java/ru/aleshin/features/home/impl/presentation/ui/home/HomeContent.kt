@@ -234,7 +234,7 @@ internal fun HomeTimeTasksLazyColumn(
                     val endTime = startTime.endThisDay()
                     AddTimeTaskViewItem(
                         modifier = Modifier.animateItemPlacement(),
-                        onAddClick = { onTimeTaskAdd.invoke(startTime, endTime) },
+                        onAddClick = { onTimeTaskAdd(startTime, endTime) },
                         startTime = startTime,
                         endTime = endTime,
                     )

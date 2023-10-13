@@ -157,7 +157,7 @@ internal fun SubCategoryDialogChooser(
                     )
                     Text(
                         text = EditorThemeRes.strings.subCategoryDialogMainCategoryFormat.format(
-                            mainCategory?.let { it.defaultType?.mapToName() ?: it.customName } ?: EditorThemeRes.strings.categoryNotSelectedTitle,
+                            mainCategory?.fetchName() ?: EditorThemeRes.strings.categoryNotSelectedTitle,
                         ),
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         style = MaterialTheme.typography.bodyMedium,

@@ -32,7 +32,6 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import ru.aleshin.core.ui.theme.TimePlannerRes
 import ru.aleshin.core.ui.views.DialogButtons
-import ru.aleshin.features.home.api.presentation.mappers.mapToName
 import ru.aleshin.features.home.impl.presentation.models.categories.MainCategoryUi
 import ru.aleshin.features.home.impl.presentation.models.categories.SubCategoryUi
 import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
@@ -63,11 +62,11 @@ internal fun SubCategoryEditorDialog(
         ) {
             Column {
                 SubCategoryEditorDialogHeader(
-                    mainCategory = mainCategory
+                    mainCategory = mainCategory,
                 )
                 Divider(Modifier.fillMaxWidth())
                 CategoryDialogField(
-                    modifier = Modifier.fillMaxWidth().padding(top = 18.dp, bottom = 8.dp,start = 24.dp, end = 24.dp),
+                    modifier = Modifier.fillMaxWidth().padding(top = 18.dp, bottom = 8.dp, start = 24.dp, end = 24.dp),
                     categoryNameValue = subCategoryNameValue,
                     isError = isError,
                     onNameChange = { nameValue -> subCategoryNameValue = nameValue },
@@ -101,7 +100,7 @@ internal fun SubCategoryEditorDialogHeader(
         modifier = modifier.padding(top = 24.dp, bottom = 12.dp, start = 24.dp, end = 12.dp),
         verticalArrangement = Arrangement.spacedBy(2.dp),
     ) {
-        val mainCategoryName = mainCategory.let { it.defaultType?.mapToName() ?: it.customName } ?: "*"
+        val mainCategoryName = mainCategory.fetchName() ?: "*"
         Text(
             text = HomeThemeRes.strings.subCategoryChooserTitle,
             color = MaterialTheme.colorScheme.onSurface,

@@ -320,6 +320,7 @@ internal fun AddTimeTaskView(
     modifier: Modifier = Modifier,
     onViewClicked: () -> Unit,
     remainingTimeTitle: String,
+    isFreeTime: Boolean,
 ) {
     Surface(
         onClick = onViewClicked,
@@ -341,16 +342,18 @@ internal fun AddTimeTaskView(
                 tint = MaterialTheme.colorScheme.onSurface,
             )
             Text(
-                text = HomeThemeRes.strings.addTimeTaskTitle,
+                text = if (isFreeTime) HomeThemeRes.strings.addFreeTimeTaskTitle else HomeThemeRes.strings.addTimeTaskTitle,
                 style = MaterialTheme.typography.titleSmall,
                 color = MaterialTheme.colorScheme.onSurface,
             )
             Spacer(modifier = Modifier.weight(1f))
-            Text(
-                text = remainingTimeTitle,
-                style = MaterialTheme.typography.titleSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
+            if (isFreeTime) {
+                Text(
+                    text = remainingTimeTitle,
+                    style = MaterialTheme.typography.titleSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
         }
     }
 }

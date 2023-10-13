@@ -60,8 +60,8 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import ru.aleshin.core.ui.theme.TimePlannerRes
 import ru.aleshin.core.ui.views.WarningDeleteDialog
+import ru.aleshin.features.home.api.domain.entities.categories.DefaultCategoryType
 import ru.aleshin.features.home.api.presentation.mappers.mapToIconPainter
-import ru.aleshin.features.home.api.presentation.mappers.mapToName
 import ru.aleshin.features.home.impl.presentation.models.categories.MainCategoryUi
 import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
 
@@ -149,7 +149,7 @@ internal fun MainCategoryItem(
             ) {
                 MainCategoryItemLeading(
                     icon = category.defaultType?.mapToIconPainter(),
-                    name = category.let { it.defaultType?.mapToName() ?: it.customName } ?: "*",
+                    name = category.fetchName() ?: "*",
                     isSelected = isSelected,
                 )
                 Spacer(modifier = Modifier.weight(1f))
@@ -163,7 +163,7 @@ internal fun MainCategoryItem(
                         style = MaterialTheme.typography.labelMedium,
                     )
                     Text(
-                        text = category.let { it.defaultType?.mapToName() ?: it.customName } ?: "*",
+                        text = category.fetchName() ?: "*",
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         color = when (isSelected) {
@@ -189,7 +189,7 @@ internal fun MainCategoryItem(
             MainCategoriesOptionMenu(
                 modifier = Modifier.width(180.dp),
                 isExpanded = isExpanded,
-                isChangeable = category.defaultType == null,
+                isChangeable = category.defaultType != DefaultCategoryType.EMPTY,
                 onUpdateClick = {
                     isCreatorDialogOpen = true
                     isExpanded = false

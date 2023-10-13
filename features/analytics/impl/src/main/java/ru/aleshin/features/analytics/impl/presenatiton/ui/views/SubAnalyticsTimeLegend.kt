@@ -33,8 +33,6 @@ import androidx.compose.ui.unit.dp
 import ru.aleshin.core.ui.theme.TimePlannerRes
 import ru.aleshin.core.ui.views.toMinutesAndHoursTitle
 import ru.aleshin.features.analytics.impl.presenatiton.models.analytics.CategoryAnalyticUi
-import ru.aleshin.features.home.api.presentation.mappers.mapToIconPainter
-import ru.aleshin.features.home.api.presentation.mappers.mapToName
 
 @Composable
 internal fun SubAnalyticsTimeLegend(
@@ -66,7 +64,7 @@ internal fun SubAnalyticsTimeLegend(
                 val percent = analytic.duration.toFloat() / otherAnalytics.sumOf { it.duration } * 100
 
                 SubAnalyticsTimeLegendItem(
-                    name = analytic.mainCategory.let { it.defaultType?.mapToName() ?: it.customName } ?: "*",
+                    name = analytic.mainCategory.fetchName() ?: "*",
                     duration = analytic.duration,
                     percent = percent,
                 )

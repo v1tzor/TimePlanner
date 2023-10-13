@@ -68,7 +68,6 @@ import ru.aleshin.features.editor.impl.presentation.models.template.TemplateUi
 import ru.aleshin.features.editor.impl.presentation.theme.EditorThemeRes
 import ru.aleshin.features.home.api.domain.entities.template.RepeatTime
 import ru.aleshin.features.home.api.presentation.mappers.mapToIconPainter
-import ru.aleshin.features.home.api.presentation.mappers.mapToName
 import ru.aleshin.features.home.api.presentation.mappers.mapToString
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -190,7 +189,7 @@ internal fun TemplateBottomSheetItem(
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 val categoryIcon = model.category.defaultType?.mapToIconPainter()
-                val categoryName = model.category.let { it.defaultType?.mapToName() ?: it.customName } ?: "*"
+                val categoryName = model.category.fetchName() ?: "*"
                 if (categoryIcon != null) {
                     CategoryIconMonogram(
                         icon = categoryIcon,
@@ -255,7 +254,7 @@ internal fun TemplateBottomSheetItemInfo(
     val startTimeFormat = timeFormat.format(startTime)
     val endTimeFormat = timeFormat.format(endTime)
     val duration = duration(startTime, endTime).toMinutesOrHoursTitle()
-    val categoryName = mainCategory.let { it.defaultType?.mapToName() ?: it.customName } ?: "*"
+    val categoryName = mainCategory.fetchName() ?: "*"
     val subCategoryName = subCategory?.name ?: TimePlannerRes.strings.categoryEmptyTitle
     val repeatTimesTitle = when (repeatTimes.isEmpty()) {
         true -> ""

@@ -16,7 +16,6 @@
 package ru.aleshin.features.home.impl.presentation.ui.templates.views
 
 import android.text.format.DateFormat
-import android.util.Log
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
@@ -31,7 +30,6 @@ import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
@@ -68,7 +66,6 @@ import ru.aleshin.core.ui.views.TimeFormatSelector
 import ru.aleshin.core.utils.extensions.generateUniqueKey
 import ru.aleshin.core.utils.extensions.setHoursAndMinutes
 import ru.aleshin.core.utils.functional.TimeFormat
-import ru.aleshin.features.home.api.presentation.mappers.mapToName
 import ru.aleshin.features.home.impl.presentation.models.categories.CategoriesUi
 import ru.aleshin.features.home.impl.presentation.models.categories.MainCategoryUi
 import ru.aleshin.features.home.impl.presentation.models.categories.SubCategoryUi
@@ -232,7 +229,7 @@ internal fun TemplateEditorCategoryChooser(
         )
         OutlinedTextField(
             modifier = Modifier.weight(1f),
-            value = selectedCategory.let { it.defaultType?.mapToName() ?: it.customName } ?: "*",
+            value = selectedCategory.fetchName() ?: "*",
             onValueChange = {},
             readOnly = true,
             label = { Text(text = HomeThemeRes.strings.mainCategoryLabel) },
@@ -278,7 +275,7 @@ internal fun MainCategoriesChooseMenu(
                 onClick = { onChoose(category) },
                 text = {
                     Text(
-                        text = category.let { it.defaultType?.mapToName() ?: it.customName } ?: "*",
+                        text = category.fetchName() ?: "*",
                         color = MaterialTheme.colorScheme.onSurface,
                         style = MaterialTheme.typography.titleMedium,
                     )

@@ -47,7 +47,6 @@ import ru.aleshin.core.ui.views.toMinutesOrHoursTitle
 import ru.aleshin.core.utils.extensions.duration
 import ru.aleshin.features.home.api.domain.entities.template.RepeatTime
 import ru.aleshin.features.home.api.presentation.mappers.mapToIconPainter
-import ru.aleshin.features.home.api.presentation.mappers.mapToName
 import ru.aleshin.features.home.api.presentation.mappers.mapToString
 import ru.aleshin.features.home.impl.presentation.models.categories.CategoriesUi
 import ru.aleshin.features.home.impl.presentation.models.templates.TemplateUi
@@ -72,7 +71,7 @@ internal fun TemplatesItem(
 ) {
     var isShowTemplateEditor by rememberSaveable { mutableStateOf(false) }
     val categoryIcon = model.category.defaultType?.mapToIconPainter()
-    val categoryName = model.category.let { it.defaultType?.mapToName() ?: it.customName } ?: "*"
+    val categoryName = model.category.fetchName() ?: "*"
 
     Surface(
         onClick = { isShowTemplateEditor = true },
