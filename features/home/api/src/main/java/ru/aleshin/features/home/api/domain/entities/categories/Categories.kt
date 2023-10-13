@@ -15,10 +15,24 @@
  */
 package ru.aleshin.features.home.api.domain.entities.categories
 
+import kotlinx.serialization.Serializable
+
 /**
  * @author Stanislav Aleshin on 15.04.2023.
  */
+@Serializable
 data class Categories(
-    val mainCategory: MainCategory,
+    val category: MainCategory = MainCategory(),
     val subCategories: List<SubCategory> = emptyList(),
+)
+
+data class CategoriesTest(
+    val mainCategory: MainCategoryTest = MainCategoryTest(),
+    val subCategories: List<SubCategory> = emptyList(),
+)
+
+data class MainCategoryTest(
+    val id: Int = 0,
+    val customName: String? = null,
+    val defaultType: DefaultCategoryType? = DefaultCategoryType.EMPTY,
 )

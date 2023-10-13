@@ -52,7 +52,7 @@ internal interface CategoriesInteractor {
 
         override suspend fun addCategories(categories: List<Categories>) = eitherWrapper.wrap {
             val subCategories = categories.map { it.subCategories }.extractAllItem()
-            categoriesRepository.addMainCategories(categories.map { it.mainCategory })
+            categoriesRepository.addMainCategories(categories.map { it.category })
             subCategoriesRepository.addSubCategories(subCategories)
         }
     }

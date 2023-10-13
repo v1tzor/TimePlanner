@@ -67,9 +67,9 @@ interface TemplatesAlarmManager {
             templateId = template.templateId,
             repeatTime = repeatTime,
             time = template.startTime,
-            category = template.category.let { it.defaultType?.mapToString(coreString) ?: it.customName } ?: "",
+            category = template.category.let { it.default?.mapToString(coreString) ?: it.customName } ?: "",
             subCategory = template.subCategory?.name,
-            icon = template.category.defaultType?.mapToIcon(coreIcons),
+            icon = template.category.default?.mapToIcon(coreIcons),
         )
 
         override fun addRawNotifyAlarm(
@@ -99,9 +99,9 @@ interface TemplatesAlarmManager {
         override fun deleteNotifyAlarm(template: Template, repeatTime: RepeatTime) {
             val id = template.templateId + repeatTime.key
             val alarmIntent = receiverProvider.provideReceiverIntent(
-                category = template.category.let { it.defaultType?.mapToString(coreString) ?: it.customName } ?: "",
+                category = template.category.let { it.default?.mapToString(coreString) ?: it.customName } ?: "",
                 subCategory = template.subCategory?.name.orEmpty(),
-                icon = template.category.defaultType?.mapToIcon(coreIcons),
+                icon = template.category.default?.mapToIcon(coreIcons),
                 appIcon = fetchCoreIcons().calendar,
                 time = template.startTime,
                 templateId = template.templateId,

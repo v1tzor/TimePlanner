@@ -15,16 +15,17 @@
  */
 package ru.aleshin.features.settings.impl.presentation.models
 
+import kotlinx.serialization.Serializable
 import ru.aleshin.features.home.api.domain.entities.categories.Categories
-import ru.aleshin.features.home.api.domain.entities.categories.DefaultCategoryType
 import ru.aleshin.features.home.api.domain.entities.schedules.Schedule
 import ru.aleshin.features.home.api.domain.entities.template.Template
 
 /**
  * @author Stanislav Aleshin on 10.06.2023.
  */
+@Serializable
 internal data class BackupModel(
     val schedules: List<Schedule>,
     val templates: List<Template>,
-    val categories: List<Categories>,
+    val categoriesList: List<Categories>,
 )

@@ -15,12 +15,14 @@
  */
 package ru.aleshin.features.home.api.domain.entities.schedules
 
+import kotlinx.serialization.Serializable
 import ru.aleshin.core.utils.extensions.extractAllItem
 import ru.aleshin.core.utils.functional.Mapper
 
 /**
  * @author Stanislav Aleshin on 25.02.2023.
  */
+@Serializable
 data class Schedule(
     val date: Long,
     val status: DailyScheduleStatus,

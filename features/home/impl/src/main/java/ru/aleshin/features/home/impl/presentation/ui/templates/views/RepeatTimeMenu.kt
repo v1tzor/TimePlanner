@@ -48,7 +48,7 @@ internal fun RepeatTimeMenu(
     onDeleteRepeat: (RepeatTime) -> Unit,
 ) {
     var repeatCategory by remember {
-        mutableStateOf(if (selectedTimes.isEmpty()) null else selectedTimes.first().type)
+        mutableStateOf(if (selectedTimes.isEmpty()) null else selectedTimes.first().repeatType)
     }
     DropdownMenu(
         expanded = isExpanded,

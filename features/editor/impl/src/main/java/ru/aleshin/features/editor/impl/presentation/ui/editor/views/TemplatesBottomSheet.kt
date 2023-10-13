@@ -258,7 +258,7 @@ internal fun TemplateBottomSheetItemInfo(
     val subCategoryName = subCategory?.name ?: TimePlannerRes.strings.categoryEmptyTitle
     val repeatTimesTitle = when (repeatTimes.isEmpty()) {
         true -> ""
-        false -> "${repeatTimes.first().type.mapToString()} (${repeatTimes.size})"
+        false -> "${repeatTimes.first().repeatType.mapToString()} (${repeatTimes.size})"
     }
     val mainText = when (subCategory != null) {
         true -> TimePlannerRes.strings.splitFormat.format(categoryName, subCategoryName)

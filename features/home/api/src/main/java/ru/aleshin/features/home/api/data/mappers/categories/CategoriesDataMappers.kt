@@ -26,7 +26,7 @@ import ru.aleshin.features.home.api.domain.entities.categories.SubCategory
  * @author Stanislav Aleshin on 15.04.2023.
  */
 fun MainCategoryDetails.mapToDomain() = Categories(
-    mainCategory = mainCategory.mapToDomain(),
+    category = mainCategory.mapToDomain(),
     subCategories = subCategories.map { subCategory ->
         subCategory.mapToDomain(mainCategory.mapToDomain())
     },
@@ -35,13 +35,13 @@ fun MainCategoryDetails.mapToDomain() = Categories(
 fun MainCategoryEntity.mapToDomain() = MainCategory(
     id = id,
     customName = customName,
-    defaultType = defaultType,
+    default = defaultType,
 )
 
 fun MainCategory.mapToData() = MainCategoryEntity(
     id = id,
     customName = customName,
-    defaultType = defaultType,
+    defaultType = default,
 )
 
 fun SubCategoryEntity.mapToDomain(mainCategory: MainCategory) = SubCategory(

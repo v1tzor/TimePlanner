@@ -22,7 +22,6 @@ object Dependencies {
         const val core = "androidx.core:core-ktx:${Versions.core}"
 
         const val appcompat = "androidx.appcompat:appcompat:${Versions.appcompat}"
-        const val emojiHelper = "androidx.emoji2:emoji2-views-helper:${Versions.emoji}"
         const val material = "androidx.compose.material3:material3:${Versions.material}"
         const val googleMaterial = "com.google.android.material:material:${Versions.googleMaterial}"
 
@@ -30,15 +29,12 @@ object Dependencies {
         const val placeHolder = "com.google.accompanist:accompanist-placeholder-material:${Versions.accompanist}"
         const val lifecycleViewModel = "androidx.lifecycle:lifecycle-viewmodel-ktx:${Versions.lifecycle}"
         const val lifecycleRuntime = "androidx.lifecycle:lifecycle-runtime-ktx:${Versions.lifecycle}"
-    }
-
-    object Google {
-        const val gson = "com.google.code.gson:gson:${Versions.gson}"
+        const val serialization = "org.jetbrains.kotlinx:kotlinx-serialization-json:${Versions.serialization}"
     }
 
     object Charts {
-        val library = "ma.hu:compose-charts:${Versions.charts}"
-        val libraryHimanshoe = "com.himanshoe:charty:${Versions.chartsHm}"
+        const val library = "ma.hu:compose-charts:${Versions.charts}"
+        const val libraryHimanshoe = "com.himanshoe:charty:${Versions.chartsHm}"
     }
 
     object Compose {

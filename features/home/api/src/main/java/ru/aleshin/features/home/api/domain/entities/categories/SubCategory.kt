@@ -15,9 +15,12 @@
  */
 package ru.aleshin.features.home.api.domain.entities.categories
 
+import kotlinx.serialization.Serializable
+
 /**
  * @author Stanislav Aleshin on 21.02.2023.
  */
+@Serializable
 data class SubCategory(
     val id: Int = 0,
     val mainCategory: MainCategory = MainCategory(),

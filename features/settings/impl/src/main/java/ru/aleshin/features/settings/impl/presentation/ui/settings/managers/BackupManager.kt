@@ -17,7 +17,8 @@ package ru.aleshin.features.settings.impl.presentation.ui.settings.managers
 
 import android.content.Context
 import android.net.Uri
-import com.google.gson.Gson
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import ru.aleshin.core.utils.functional.Constants
 import ru.aleshin.core.utils.functional.Either
 import ru.aleshin.features.settings.impl.domain.common.SettingsEitherWrapper
@@ -43,7 +44,6 @@ internal interface BackupManager {
     class Base @Inject constructor(
         private val applicationContext: Context,
         private val eitherWrapper: SettingsEitherWrapper,
-        private val gson: Gson,
     ) : BackupManager {
 
         override suspend fun restoreBackup(uri: Uri) = eitherWrapper.wrap {
@@ -56,10 +56,10 @@ internal interface BackupManager {
                         Constants.Backup.BACKUP_JSON_NAME -> {
                             var jsonString = input.bufferedReader().use { it.readText() }
                             // TODO: Not work with old model
-                            val backup = gson.fromJson(jsonString, BackupModel::class.java) ?: throw IOException()
+                            val backup = Json.decodeFromString<BackupModel>(jsonString)
                             return@wrap backup.copy(
-                                categories = backup.categories.filter { it.mainCategory.id != 0 },
-                            ) 
+                                categoriesList = backup.categoriesList.filter { it.category.id != 0 },
+                            )
                         }
                     }
                 }
@@ -71,7 +71,7 @@ internal interface BackupManager {
             uri: Uri,
             model: BackupModel,
         ) = eitherWrapper.wrap {
-            val jsonString = gson.toJson(model)
+            val jsonString = Json.encodeToString(model)
             val contentResolver = applicationContext.contentResolver
             val outputStream = contentResolver.openOutputStream(uri)
             ZipOutputStream(BufferedOutputStream(outputStream)).use { output ->

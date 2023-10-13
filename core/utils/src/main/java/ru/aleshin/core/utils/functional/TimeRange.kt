@@ -17,10 +17,15 @@ package ru.aleshin.core.utils.functional
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Serializable
 import java.util.*
 
 /**
  * @author Stanislav Aleshin on 26.03.2023.
  */
 @Parcelize
-data class TimeRange(val from: Date, val to: Date) : Parcelable
+@Serializable
+data class TimeRange(
+    @Serializable(DateSerializer::class) val from: Date,
+    @Serializable(DateSerializer::class) val to: Date,
+) : Parcelable

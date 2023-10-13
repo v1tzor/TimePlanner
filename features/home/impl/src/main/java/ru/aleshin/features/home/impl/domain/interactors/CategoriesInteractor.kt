@@ -43,7 +43,7 @@ internal interface CategoriesInteractor {
 
         override suspend fun fetchCategories() = eitherWrapper.wrapFlow {
             categoriesRepository.fetchCategories().map { categories ->
-                categories.sortedBy { it.mainCategory.id != 0 }
+                categories.sortedBy { it.category.id != 0 }
             }
         }
 

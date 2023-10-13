@@ -185,7 +185,7 @@ internal fun TemplateItemInfo(
         if (repeatTimes.isNotEmpty()) {
             TemplateInfoIcon(
                 icon = painterResource(HomeThemeRes.icons.repeatVariant),
-                title = "${repeatTimes.first().type.mapToString()} (${repeatTimes.size})",
+                title = "${repeatTimes.first().repeatType.mapToString()} (${repeatTimes.size})",
             )
         }
     }

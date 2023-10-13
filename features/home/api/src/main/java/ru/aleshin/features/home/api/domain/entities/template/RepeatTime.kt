@@ -16,9 +16,9 @@
 package ru.aleshin.features.home.api.domain.entities.template
 
 import android.os.Parcelable
-import android.util.Log
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Serializable
 import ru.aleshin.core.utils.extensions.fetchDay
 import ru.aleshin.core.utils.extensions.fetchDayNumberByMax
 import ru.aleshin.core.utils.extensions.fetchMonth
@@ -33,26 +33,34 @@ import java.util.Date
 /**
  * @author Stanislav Aleshin on 03.08.2023.
  */
+@Serializable
 @Parcelize
 sealed class RepeatTime : Parcelable {
 
-    abstract val type: RepeatTimeType
+    abstract val repeatType: RepeatTimeType
     abstract val key: Int
 
+    @Serializable
     data class WeekDays(val day: WeekDay) : RepeatTime() {
-        @IgnoredOnParcel override val type = RepeatTimeType.WEEK_DAY
+        @IgnoredOnParcel override val repeatType = RepeatTimeType.WEEK_DAY
         @IgnoredOnParcel override val key = day.number
     }
+
+    @Serializable
     data class WeekDayInMonth(val day: WeekDay, val weekNumber: Int) : RepeatTime() {
-        @IgnoredOnParcel override val type = RepeatTimeType.WEEK_DAY_IN_MONTH
+        @IgnoredOnParcel override val repeatType = RepeatTimeType.WEEK_DAY_IN_MONTH
         @IgnoredOnParcel override val key = day.number + weekNumber
     }
+
+    @Serializable
     data class MonthDay(val dayNumber: Int) : RepeatTime() {
-        @IgnoredOnParcel override val type = RepeatTimeType.MONTH_DAY
+        @IgnoredOnParcel override val repeatType = RepeatTimeType.MONTH_DAY
         @IgnoredOnParcel override val key = dayNumber
     }
+
+    @Serializable
     data class YearDay(val month: Month, val dayNumber: Int) : RepeatTime() {
-        @IgnoredOnParcel override val type = RepeatTimeType.YEAR_DAY
+        @IgnoredOnParcel override val repeatType = RepeatTimeType.YEAR_DAY
         @IgnoredOnParcel override val key = month.number + dayNumber
     }
 

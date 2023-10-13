@@ -19,7 +19,6 @@ import dagger.Component
 import ru.aleshin.core.utils.di.FeatureScope
 import ru.aleshin.features.settings.api.di.SettingsFeatureApi
 import ru.aleshin.features.settings.impl.di.SettingsFeatureDependencies
-import ru.aleshin.features.settings.impl.di.modules.CoreModule
 import ru.aleshin.features.settings.impl.di.modules.DomainModule
 import ru.aleshin.features.settings.impl.di.modules.PresentationModule
 import ru.aleshin.features.settings.impl.presentation.ui.donate.screenmodel.DonateScreenModel
@@ -30,7 +29,7 @@ import ru.aleshin.features.settings.impl.presentation.ui.settings.screensmodel.S
  */
 @FeatureScope
 @Component(
-    modules = [DomainModule::class, PresentationModule::class, CoreModule::class],
+    modules = [DomainModule::class, PresentationModule::class],
     dependencies = [SettingsFeatureDependencies::class],
 )
 internal interface SettingsComponent : SettingsFeatureApi {
@@ -41,7 +40,6 @@ internal interface SettingsComponent : SettingsFeatureApi {
     @Component.Builder
     interface Builder {
         fun dependencies(deps: SettingsFeatureDependencies): Builder
-        fun coreModule(module: CoreModule): Builder
         fun build(): SettingsComponent
     }
 
@@ -49,7 +47,6 @@ internal interface SettingsComponent : SettingsFeatureApi {
         fun create(dependencies: SettingsFeatureDependencies): SettingsComponent {
             return DaggerSettingsComponent.builder()
                 .dependencies(dependencies)
-                .coreModule(CoreModule())
                 .build()
         }
     }

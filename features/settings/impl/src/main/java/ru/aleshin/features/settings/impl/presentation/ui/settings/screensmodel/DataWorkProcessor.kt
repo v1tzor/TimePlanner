@@ -65,7 +65,7 @@ internal interface DataWorkProcessor : FlowWorkProcessor<DataWorkCommand, Settin
                     templatesInteractor.removeAllTemplates().dataOrError(this@flow) ?: return@handle
                     categoriesInteractor.removeAllCategories().dataOrError(this@flow) ?: return@handle
                     with(backupModel) {
-                        categoriesInteractor.addCategories(categories).dataOrError(this@flow)
+                        categoriesInteractor.addCategories(categoriesList).dataOrError(this@flow)
                         templatesInteractor.addTemplates(templates).dataOrError(this@flow)
                         scheduleInteractor.addSchedules(schedules).dataOrError(this@flow)
                     }

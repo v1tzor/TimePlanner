@@ -120,10 +120,10 @@ internal interface AnalyticsInteractor {
         ) = mutableListOf<CategoryAnalytic>().let { analytics ->
             categories.onEach { categories ->
                 val subCategories = categories.subCategories.toMutableList().apply {
-                    add(SubCategory(mainCategory = categories.mainCategory))
+                    add(SubCategory(mainCategory = categories.category))
                 }
                 val categoriesAnalytic = CategoryAnalytic(
-                    mainCategory = categories.mainCategory,
+                    mainCategory = categories.category,
                     subCategoriesInfo = subCategories.map { SubCategoryAnalytic(subCategory = it) },
                 )
                 analytics.add(categoriesAnalytic)

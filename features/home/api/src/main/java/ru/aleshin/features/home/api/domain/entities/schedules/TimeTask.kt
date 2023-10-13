@@ -15,6 +15,8 @@
  */
 package ru.aleshin.features.home.api.domain.entities.schedules
 
+import kotlinx.serialization.Serializable
+import ru.aleshin.core.utils.functional.DateSerializer
 import ru.aleshin.core.utils.functional.Mapper
 import ru.aleshin.core.utils.functional.TimeRange
 import ru.aleshin.features.home.api.domain.entities.categories.MainCategory
@@ -24,8 +26,10 @@ import java.util.Date
 /**
  * @author Stanislav Aleshin on 23.02.2023.
  */
+@Serializable
 data class TimeTask(
     val key: Long = 0L,
+    @Serializable(DateSerializer::class)
     val date: Date,
     val timeRanges: TimeRange,
     val category: MainCategory,

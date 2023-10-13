@@ -26,13 +26,13 @@ import ru.aleshin.features.home.api.domain.entities.categories.SubCategory
 internal fun MainCategoryUi.mapToDomain() = MainCategory(
     id = id,
     customName = customName,
-    defaultType = defaultType,
+    default = defaultType,
 )
 
 internal fun MainCategory.mapToUi() = MainCategoryUi(
     id = id,
     customName = customName,
-    defaultType = defaultType,
+    defaultType = default,
 )
 
 internal fun SubCategoryUi.mapToDomain() = SubCategory(

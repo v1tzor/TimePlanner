@@ -45,7 +45,7 @@ class AlarmReceiverProviderImpl @Inject constructor(
         putExtra(Constants.Alarm.NOTIFICATION_ICON, icon)
         putExtra(Constants.Alarm.APP_ICON, appIcon)
         if (time != null) putExtra(Constants.Alarm.REPEAT_TIME, time.time)
-        if (repeatTime != null) putExtra(Constants.Alarm.REPEAT_TYPE, repeatTime.type.name)
+        if (repeatTime != null) putExtra(Constants.Alarm.REPEAT_TYPE, repeatTime.repeatType.name)
         if (templateId != null) putExtra(Constants.Alarm.TEMPLATE_ID, templateId)
         when (repeatTime) {
             is RepeatTime.WeekDays -> {

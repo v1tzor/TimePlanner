@@ -17,6 +17,7 @@ plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
     id("kotlin-parcelize")
+    kotlin("plugin.serialization") version "1.8.21"
     kotlin("kapt")
 }
 
@@ -76,13 +77,12 @@ dependencies {
     implementation(Dependencies.AndroidX.lifecycleRuntime)
     implementation(Dependencies.AndroidX.appcompat)
     implementation(Dependencies.AndroidX.material)
+    implementation(Dependencies.AndroidX.serialization)
 
     implementation(Dependencies.Compose.ui)
     implementation(Dependencies.Compose.activity)
 
     implementation(Dependencies.Charts.library)
-
-    implementation(Dependencies.Google.gson)
 
     implementation(Dependencies.Dagger.core)
     kapt(Dependencies.Dagger.kapt)

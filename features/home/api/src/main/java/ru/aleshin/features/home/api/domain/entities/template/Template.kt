@@ -15,7 +15,9 @@
  */
 package ru.aleshin.features.home.api.domain.entities.template
 
+import kotlinx.serialization.Serializable
 import ru.aleshin.core.utils.extensions.compareByHoursAndMinutes
+import ru.aleshin.core.utils.functional.DateSerializer
 import ru.aleshin.core.utils.functional.Mapper
 import ru.aleshin.features.home.api.domain.entities.categories.MainCategory
 import ru.aleshin.features.home.api.domain.entities.categories.SubCategory
@@ -25,9 +27,12 @@ import java.util.*
 /**
  * @author Stanislav Aleshin on 08.03.2023.
  */
+@Serializable
 data class Template(
     val templateId: Int,
+    @Serializable(DateSerializer::class)
     val startTime: Date,
+    @Serializable(DateSerializer::class)
     val endTime: Date,
     val category: MainCategory,
     val subCategory: SubCategory? = null,
