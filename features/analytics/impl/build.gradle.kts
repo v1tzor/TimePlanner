@@ -24,7 +24,6 @@ plugins {
 repositories {
     google()
     mavenCentral()
-    maven(url = "https://jitpack.i")
 }
 
 android {
