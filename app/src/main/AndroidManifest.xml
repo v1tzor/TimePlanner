@@ -14,8 +14,8 @@
   ~ limitations under the License.
   -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     package="ru.aleshin.timeplanner"
+    xmlns:tools="http://schemas.android.com/tools"
     android:versionCode="24"
     android:versionName="0.7.7">
 

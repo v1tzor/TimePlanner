@@ -33,11 +33,14 @@ android {
     compileSdk = Config.compileSdkVersion
 
     defaultConfig {
-        applicationId = Config.applicationId
+        applicationId = "ru.aleshin.timeplanner"
         minSdk = Config.minSdkVersion
         targetSdk = Config.targetSdkVersion
-        versionCode = Config.versionCode
-        versionName = Config.versionName
+        versionCode = 24
+        versionName = "0.7.7"
+
+        manifestPlaceholders["versionCode"] = Config.versionCode
+        manifestPlaceholders["versionName"] = Config.versionName
 
         testInstrumentationRunner = Config.testInstrumentRunner
         vectorDrawables {
