@@ -29,25 +29,25 @@ import javax.inject.Inject
  */
 internal interface TemplatesInteractor {
 
-    suspend fun removeAllTemplates(): UnitDomainResult<SettingsFailures>
-    suspend fun fetchAllTemplates(): DomainResult<SettingsFailures, List<Template>>
     suspend fun addTemplates(templates: List<Template>): UnitDomainResult<SettingsFailures>
+    suspend fun fetchAllTemplates(): DomainResult<SettingsFailures, List<Template>>
+    suspend fun removeAllTemplates(): DomainResult<SettingsFailures, List<Template>>
 
     class Base @Inject constructor(
         private val templatesRepository: TemplatesRepository,
         private val eitherWrapper: SettingsEitherWrapper,
     ) : TemplatesInteractor {
 
-        override suspend fun removeAllTemplates() = eitherWrapper.wrap {
-            templatesRepository.deleteAllTemplates()
+        override suspend fun addTemplates(templates: List<Template>) = eitherWrapper.wrap {
+            templatesRepository.addTemplates(templates)
         }
 
         override suspend fun fetchAllTemplates() = eitherWrapper.wrap {
             templatesRepository.fetchAllTemplates().first()
         }
 
-        override suspend fun addTemplates(templates: List<Template>) = eitherWrapper.wrap {
-            templatesRepository.addTemplates(templates)
+        override suspend fun removeAllTemplates() = eitherWrapper.wrap {
+            templatesRepository.deleteAllTemplates()
         }
     }
 }

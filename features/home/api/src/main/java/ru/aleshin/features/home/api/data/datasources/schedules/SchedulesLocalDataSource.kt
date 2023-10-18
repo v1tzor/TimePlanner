@@ -33,7 +33,7 @@ interface SchedulesLocalDataSource {
     suspend fun fetchScheduleByRange(timeRange: TimeRange?): List<ScheduleDetails>
     suspend fun updateTimeTasks(timeTasks: List<TimeTaskEntity>)
     suspend fun removeDailySchedule(schedule: DailyScheduleEntity)
-    suspend fun removeAllSchedules()
+    suspend fun removeAllSchedules(): List<ScheduleDetails>
     suspend fun removeTimeTasksByKey(keys: List<Long>)
 
     class Base @Inject constructor(
@@ -76,8 +76,11 @@ interface SchedulesLocalDataSource {
             scheduleDao.removeDailySchedule(schedule)
         }
 
-        override suspend fun removeAllSchedules() {
+        override suspend fun removeAllSchedules(): List<ScheduleDetails> {
+            val deletableSchedules = scheduleDao.fetchAllSchedules()
             scheduleDao.removeAllSchedules()
+
+            return deletableSchedules
         }
     }
 }

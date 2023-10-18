@@ -17,7 +17,9 @@ package ru.aleshin.features.settings.impl.di
 
 import android.content.Context
 import ru.aleshin.core.utils.managers.CoroutineManager
+import ru.aleshin.core.utils.managers.DateManager
 import ru.aleshin.core.utils.navigation.Router
+import ru.aleshin.features.editor.api.presentation.TemplatesAlarmManager
 import ru.aleshin.features.editor.api.presentation.TimeTaskAlarmManager
 import ru.aleshin.features.home.api.domain.repository.CategoriesRepository
 import ru.aleshin.features.home.api.domain.repository.ScheduleRepository
@@ -37,6 +39,8 @@ interface SettingsFeatureDependencies : BaseFeatureDependencies {
     val scheduleRepository: ScheduleRepository
     val coroutineManager: CoroutineManager
     val timeTaskAlarmManager: TimeTaskAlarmManager
+    val templatesAlarmManager: TemplatesAlarmManager
+    val dateManager: DateManager
     val globalRouter: Router
     val applicationContext: Context
 }

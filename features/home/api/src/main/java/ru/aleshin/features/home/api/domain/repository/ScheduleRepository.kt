@@ -27,5 +27,5 @@ interface ScheduleRepository {
     suspend fun fetchSchedulesByRange(timeRange: TimeRange?): List<Schedule>
     suspend fun fetchScheduleByDate(date: Long): Flow<Schedule?>
     suspend fun updateSchedule(schedule: Schedule)
-    suspend fun deleteAllSchedules()
+    suspend fun deleteAllSchedules(): List<Schedule>
 }

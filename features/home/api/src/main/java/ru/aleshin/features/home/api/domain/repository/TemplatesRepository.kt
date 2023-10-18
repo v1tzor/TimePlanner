@@ -28,5 +28,5 @@ interface TemplatesRepository {
     fun fetchAllTemplates(): Flow<List<Template>>
     suspend fun updateTemplate(template: Template)
     suspend fun deleteTemplateById(id: Int)
-    suspend fun deleteAllTemplates()
+    suspend fun deleteAllTemplates(): List<Template>
 }

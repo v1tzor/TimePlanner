@@ -18,13 +18,19 @@ package ru.aleshin.features.settings.impl.presentation.ui.settings.screensmodel
 import android.net.Uri
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.flow
+import ru.aleshin.core.utils.extensions.extractAllItem
 import ru.aleshin.core.utils.functional.Either
 import ru.aleshin.core.utils.functional.handle
+import ru.aleshin.core.utils.managers.DateManager
 import ru.aleshin.core.utils.platform.screenmodel.work.ActionResult
 import ru.aleshin.core.utils.platform.screenmodel.work.EffectResult
 import ru.aleshin.core.utils.platform.screenmodel.work.FlowWorkProcessor
 import ru.aleshin.core.utils.platform.screenmodel.work.WorkCommand
 import ru.aleshin.core.utils.platform.screenmodel.work.WorkResult
+import ru.aleshin.features.editor.api.presentation.TemplatesAlarmManager
+import ru.aleshin.features.editor.api.presentation.TimeTaskAlarmManager
+import ru.aleshin.features.home.api.domain.entities.schedules.TimeTask
+import ru.aleshin.features.home.api.domain.entities.template.Template
 import ru.aleshin.features.settings.impl.domain.common.SettingsFailures
 import ru.aleshin.features.settings.impl.domain.interactors.CategoriesInteractor
 import ru.aleshin.features.settings.impl.domain.interactors.ScheduleInteractor
@@ -47,6 +53,9 @@ internal interface DataWorkProcessor : FlowWorkProcessor<DataWorkCommand, Settin
         private val scheduleInteractor: ScheduleInteractor,
         private val categoriesInteractor: CategoriesInteractor,
         private val templatesInteractor: TemplatesInteractor,
+        private val timeTaskAlarmManager: TimeTaskAlarmManager,
+        private val templatesAlarmManager: TemplatesAlarmManager,
+        private val dateManager: DateManager,
         private val backupManager: BackupManager,
     ) : DataWorkProcessor {
 
@@ -57,17 +66,33 @@ internal interface DataWorkProcessor : FlowWorkProcessor<DataWorkCommand, Settin
         }
 
         private fun restoreBackupDataWork(uri: Uri) = flow {
+            val currentDate = dateManager.fetchCurrentDate()
             emit(ActionResult(SettingsAction.ShowLoadingBackup(true)))
             backupManager.restoreBackup(uri).handle(
                 onLeftAction = { emit(EffectResult(SettingsEffect.ShowError(it))) },
                 onRightAction = { backupModel ->
-                    scheduleInteractor.removeAllSchedules().dataOrError(this@flow) ?: return@handle
-                    templatesInteractor.removeAllTemplates().dataOrError(this@flow) ?: return@handle
+                    val deletedTemplates = templatesInteractor.removeAllTemplates().dataOrError(this@flow) ?: return@handle
+                    val deletableSchedules = scheduleInteractor.removeAllSchedules().dataOrError(this@flow) ?: return@handle
+                    val deletableTimeTasks = deletableSchedules.map { it.timeTasks }.extractAllItem()
                     categoriesInteractor.removeAllCategories().dataOrError(this@flow) ?: return@handle
+
+                    deleteRepeatNotifications(deletedTemplates)
+                    deleteNotifications(deletableTimeTasks, deletedTemplates)
+
                     with(backupModel) {
+                        val restoredSchedules = schedules.map { schedule ->
+                            val timeTasks = schedule.timeTasks.filter { timeTask ->
+                                val taskTemplate = templates.find { it.equalsIsTemplate(timeTask) }
+                                return@filter taskTemplate == null || !(taskTemplate.repeatEnabled && timeTask.timeRanges.from > currentDate)
+                            }
+                            schedule.copy(timeTasks = timeTasks)
+                        }
+                        val restoreTemplates = templates.map { it.copy(repeatEnabled = false) }
                         categoriesInteractor.addCategories(categoriesList).dataOrError(this@flow)
-                        templatesInteractor.addTemplates(templates).dataOrError(this@flow)
-                        scheduleInteractor.addSchedules(schedules).dataOrError(this@flow)
+                        templatesInteractor.addTemplates(restoreTemplates).dataOrError(this@flow)
+                        scheduleInteractor.addSchedules(restoredSchedules).dataOrError(this@flow).apply {
+                            addNotifications(restoredSchedules.map { it.timeTasks }.extractAllItem())
+                        }
                     }
                 },
             )
@@ -88,12 +113,43 @@ internal interface DataWorkProcessor : FlowWorkProcessor<DataWorkCommand, Settin
         }
 
         private fun clearAllDataWork() = flow {
-            scheduleInteractor.removeAllSchedules().dataOrError(this)
-            templatesInteractor.removeAllTemplates().dataOrError(this)
+            val deletedTemplates = templatesInteractor.removeAllTemplates().dataOrError(this) ?: return@flow
+            val deletedSchedules = scheduleInteractor.removeAllSchedules().dataOrError(this) ?: return@flow
+            val deletedTimeTasks = deletedSchedules.map { it.timeTasks }.extractAllItem()
             categoriesInteractor.removeAllCategories().dataOrError(this)
             
+            deleteRepeatNotifications(deletedTemplates)
+            deleteNotifications(deletedTimeTasks, deletedTemplates)
+
             settingsInteractor.resetAllSettings().dataOrError(this)?.let {
                 emit(ActionResult(SettingsAction.ChangeAllSettings(it.mapToUi())))
+            }
+        }
+
+        private fun addNotifications(timeTasks: List<TimeTask>) {
+            val currentDate = dateManager.fetchCurrentDate()
+            timeTasks.forEach { timeTask ->
+                if (timeTask.isEnableNotification && timeTask.timeRanges.from > currentDate) {
+                    timeTaskAlarmManager.addOrUpdateNotifyAlarm(timeTask)
+                }
+            }
+        }
+
+        private fun deleteNotifications(timeTasks: List<TimeTask>, templates: List<Template>) {
+            val currentDate = dateManager.fetchCurrentDate()
+            timeTasks.forEach { timeTask ->
+                val taskTemplate = templates.find { it.equalsIsTemplate(timeTask) }
+                if (timeTask.timeRanges.from > currentDate && (taskTemplate == null || !taskTemplate.repeatEnabled)) {
+                    timeTaskAlarmManager.deleteNotifyAlarm(timeTask)
+                }
+            }
+        }
+
+        private fun deleteRepeatNotifications(templates: List<Template>) {
+            templates.forEach { template ->
+                template.repeatTimes.forEach { repeatTime ->
+                    if (template.repeatEnabled) templatesAlarmManager.deleteNotifyAlarm(template, repeatTime)
+                }
             }
         }
 

@@ -57,7 +57,7 @@ class TemplatesRepositoryImpl @Inject constructor(
         localDataSource.deleteTemplateById(id)
     }
 
-    override suspend fun deleteAllTemplates() {
-        localDataSource.deleteAllTemplates()
+    override suspend fun deleteAllTemplates(): List<Template> {
+        return localDataSource.deleteAllTemplates().map { it.mapToDomain() }
     }
 }

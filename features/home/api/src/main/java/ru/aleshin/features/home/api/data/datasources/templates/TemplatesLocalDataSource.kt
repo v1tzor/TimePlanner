@@ -16,6 +16,7 @@
 package ru.aleshin.features.home.api.data.datasources.templates
 
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import ru.aleshin.features.home.api.data.models.template.TemplateCompound
 import ru.aleshin.features.home.api.data.models.template.TemplateDetails
 import javax.inject.Inject
@@ -30,7 +31,7 @@ interface TemplatesLocalDataSource {
     fun fetchAllTemplates(): Flow<List<TemplateDetails>>
     suspend fun updateTemplate(template: TemplateCompound)
     suspend fun deleteTemplateById(id: Int)
-    suspend fun deleteAllTemplates()
+    suspend fun deleteAllTemplates(): List<TemplateDetails>
 
     class Base @Inject constructor(
         private val templatesDao: TemplatesDao,
@@ -57,9 +58,12 @@ interface TemplatesLocalDataSource {
             templatesDao.deleteRepeatTimesByTemplates(listOf(id))
         }
 
-        override suspend fun deleteAllTemplates() {
+        override suspend fun deleteAllTemplates(): List<TemplateDetails> {
+            val deletableTemplates = fetchAllTemplates().first()
             templatesDao.deleteAllTemplates()
             templatesDao.deleteAllRepeatTimes()
+
+            return deletableTemplates
         }
     }
 }

@@ -28,7 +28,7 @@ import javax.inject.Inject
  */
 internal interface ScheduleInteractor {
 
-    suspend fun removeAllSchedules(): UnitDomainResult<SettingsFailures>
+    suspend fun removeAllSchedules(): DomainResult<SettingsFailures, List<Schedule>>
     suspend fun fetchAllSchedules(): DomainResult<SettingsFailures, List<Schedule>>
     suspend fun addSchedules(schedules: List<Schedule>): UnitDomainResult<SettingsFailures>
 

@@ -56,7 +56,7 @@ class ScheduleRepositoryImpl @Inject constructor(
         localDataSource.updateTimeTasks(schedule.timeTasks.map { it.mapToData(schedule.date) })
     }
 
-    override suspend fun deleteAllSchedules() {
-        localDataSource.removeAllSchedules()
+    override suspend fun deleteAllSchedules(): List<Schedule> {
+        return localDataSource.removeAllSchedules().map { mapperToDomain.map(it) }
     }
 }
