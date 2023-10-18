@@ -33,11 +33,11 @@ android {
     compileSdk = Config.compileSdkVersion
 
     defaultConfig {
-        applicationId = "ru.aleshin.timeplanner"
+        applicationId = Config.applicationId
         minSdk = Config.minSdkVersion
         targetSdk = Config.targetSdkVersion
-        versionCode = 24
-        versionName = "0.7.7"
+        versionCode = Config.versionCode
+        versionName = Config.versionName
 
         manifestPlaceholders["versionCode"] = Config.versionCode
         manifestPlaceholders["versionName"] = Config.versionName
