@@ -21,6 +21,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import ru.aleshin.core.ui.views.CalendarButtonBehavior
 import ru.aleshin.core.ui.views.TopAppBarButton
 import ru.aleshin.core.ui.views.TopAppBarTitle
 import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
@@ -31,8 +32,9 @@ import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 internal fun HomeTopAppBar(
+    calendarIconBehavior: CalendarButtonBehavior,
     onMenuIconClick: () -> Unit,
-    onCalendarIconClick: () -> Unit,
+    onOpenCalendar: () -> Unit,
     onGoToToday: () -> Unit,
 ) {
     TopAppBar(
@@ -53,8 +55,14 @@ internal fun HomeTopAppBar(
             TopAppBarButton(
                 imagePainter = painterResource(HomeThemeRes.icons.calendar),
                 imageDescription = HomeThemeRes.strings.topAppBarCalendarIconDesc,
-                onButtonClick = onGoToToday,
-                onLongButtonClick = onCalendarIconClick,
+                onButtonClick = when (calendarIconBehavior) {
+                    CalendarButtonBehavior.OPEN_CALENDAR -> onOpenCalendar
+                    CalendarButtonBehavior.SET_CURRENT_DATE -> onGoToToday
+                },
+                onLongButtonClick = when (calendarIconBehavior) {
+                    CalendarButtonBehavior.OPEN_CALENDAR -> onGoToToday
+                    CalendarButtonBehavior.SET_CURRENT_DATE -> onOpenCalendar
+                },
             )
         },
         colors = TopAppBarDefaults.topAppBarColors(

@@ -15,7 +15,6 @@
  */
 package ru.aleshin.features.home.impl.presentation.ui.home
 
-import android.util.Log
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -75,8 +74,9 @@ internal class HomeScreen : Screen {
             },
             topBar = {
                 HomeTopAppBar(
+                    calendarIconBehavior = state.calendarButtonBehavior,
                     onMenuIconClick = { scope.launch { drawerManager?.openDrawer() } },
-                    onCalendarIconClick = { isDateDialogShow = true },
+                    onOpenCalendar = { isDateDialogShow = true },
                     onGoToToday = { dispatchEvent(HomeEvent.LoadSchedule(Date().startThisDay())) },
                 )
             },

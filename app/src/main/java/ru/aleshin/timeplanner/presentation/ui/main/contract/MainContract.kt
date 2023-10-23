@@ -31,6 +31,7 @@ data class MainViewState(
     val theme: ThemeUiType = ThemeUiType.DEFAULT,
     val colors: ColorsUiType = ColorsUiType.PINK,
     val isEnableDynamicColors: Boolean = false,
+    val secureMode: Boolean = false,
 ) : BaseViewState, Parcelable
 
 sealed class MainEvent : BaseEvent {
@@ -41,10 +42,11 @@ sealed class MainEffect : EmptyUiEffect
 
 sealed class MainAction : MainEffect(), BaseAction {
     object Navigate : MainAction()
-    data class ChangeThemeSettings(
+    data class ChangeSettings(
         val language: LanguageUiType,
         val theme: ThemeUiType,
         val colors: ColorsUiType,
         val enableDynamicColors: Boolean,
+        val secureMode: Boolean,
     ) : MainAction()
 }

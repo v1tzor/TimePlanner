@@ -67,12 +67,15 @@ internal class SettingsScreen @Inject constructor() : Screen {
                         onUpdateThemeSettings = { themeSettings ->
                             dispatchEvent(SettingsEvent.ChangedThemeSettings(themeSettings))
                         },
+                        onUpdateTasksSettings = { tasksSettings ->
+                            dispatchEvent(SettingsEvent.ChangedTasksSettings(tasksSettings))
+                        },
                     )
                 },
                 topBar = {
                     SettingsTopAppBar(
-                        onResetToDefault = { dispatchEvent(SettingsEvent.PressResetButton) },
                         onMenuButtonClick = { scope.launch { drawerManager?.openDrawer() } },
+                        onResetToDefaultClick = { dispatchEvent(SettingsEvent.PressResetButton) },
                     )
                 },
                 snackbarHost = {

@@ -52,8 +52,8 @@ class MainViewModel @Inject constructor(
     ) {
         when (event) {
             is MainEvent.Init -> {
-                launchBackgroundWork(SettingsWorkCommand.LoadThemeSettings) {
-                    settingsWorkProcessor.work(SettingsWorkCommand.LoadThemeSettings).collectAndHandleWork()
+                launchBackgroundWork(SettingsWorkCommand.LoadSettings) {
+                    settingsWorkProcessor.work(SettingsWorkCommand.LoadSettings).collectAndHandleWork()
                 }
                 launchBackgroundWork(NavWorkCommand.NavigateToTab()) {
                     navigationWorkProcessor.work(NavWorkCommand.NavigateToTab())
@@ -67,11 +67,12 @@ class MainViewModel @Inject constructor(
         currentState: MainViewState,
     ) = when (action) {
         is MainAction.Navigate -> currentState
-        is MainAction.ChangeThemeSettings -> currentState.copy(
+        is MainAction.ChangeSettings -> currentState.copy(
             language = action.language,
             theme = action.theme,
             colors = action.colors,
             isEnableDynamicColors = action.enableDynamicColors,
+            secureMode = action.secureMode,
         )
     }
 

@@ -20,6 +20,7 @@ import kotlinx.parcelize.Parcelize
 import ru.aleshin.core.utils.platform.screenmodel.contract.*
 import ru.aleshin.features.settings.impl.domain.common.SettingsFailures
 import ru.aleshin.features.settings.impl.presentation.models.SettingsUi
+import ru.aleshin.features.settings.impl.presentation.models.TasksSettingsUi
 import ru.aleshin.features.settings.impl.presentation.models.ThemeSettingsUi
 
 /**
@@ -28,6 +29,7 @@ import ru.aleshin.features.settings.impl.presentation.models.ThemeSettingsUi
 @Parcelize
 internal data class SettingsViewState(
     val themeSettings: ThemeSettingsUi? = null,
+    val tasksSettings: TasksSettingsUi? = null,
     val failure: SettingsFailures? = null,
     val isBackupLoading: Boolean = false,
 ) : BaseViewState
@@ -40,6 +42,7 @@ internal sealed class SettingsEvent : BaseEvent {
     data class PressSaveBackupData(val uri: Uri) : SettingsEvent()
     data class PressRestoreBackupData(val uri: Uri) : SettingsEvent()
     data class ChangedThemeSettings(val themeSettings: ThemeSettingsUi) : SettingsEvent()
+    data class ChangedTasksSettings(val tasksSettings: TasksSettingsUi) : SettingsEvent()
 }
 
 internal sealed class SettingsEffect : BaseUiEffect {
@@ -50,4 +53,5 @@ internal sealed class SettingsAction : BaseAction {
     data class ShowLoadingBackup(val isLoading: Boolean) : SettingsAction()
     data class ChangeAllSettings(val settings: SettingsUi) : SettingsAction()
     data class ChangeThemeSettings(val settings: ThemeSettingsUi) : SettingsAction()
+    data class ChangeTasksSettings(val settings: TasksSettingsUi) : SettingsAction()
 }

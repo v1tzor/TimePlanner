@@ -120,6 +120,7 @@ internal class HomeScreenModel @Inject constructor(
         )
         is HomeAction.SetupSettings -> currentState.copy(
             taskViewStatus = action.settings.taskViewStatus,
+            calendarButtonBehavior = action.settings.calendarButtonBehavior,
         )
         is HomeAction.SetEmptySchedule -> currentState.copy(
             timeTasks = emptyList(),

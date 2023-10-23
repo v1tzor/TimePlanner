@@ -35,9 +35,11 @@ import ru.aleshin.core.ui.theme.TimePlannerRes
 import ru.aleshin.core.ui.theme.material.ColorsUiType
 import ru.aleshin.core.ui.theme.material.ThemeUiType
 import ru.aleshin.core.ui.theme.tokens.LanguageUiType
+import ru.aleshin.core.ui.views.CalendarButtonBehavior
 import ru.aleshin.core.ui.views.WarningDeleteDialog
 import ru.aleshin.core.utils.extensions.openNetworkUri
 import ru.aleshin.core.utils.functional.Constants
+import ru.aleshin.features.settings.impl.presentation.models.TasksSettingsUi
 import ru.aleshin.features.settings.impl.presentation.models.ThemeSettingsUi
 import ru.aleshin.features.settings.impl.presentation.theme.SettingsThemeRes
 import ru.aleshin.features.settings.impl.presentation.ui.settings.contract.RestoreBackupContract
@@ -45,6 +47,7 @@ import ru.aleshin.features.settings.impl.presentation.ui.settings.contract.SaveB
 import ru.aleshin.features.settings.impl.presentation.ui.settings.contract.SettingsViewState
 import ru.aleshin.features.settings.impl.presentation.ui.settings.contract.launch
 import ru.aleshin.features.settings.impl.presentation.ui.settings.views.AboutAppSection
+import ru.aleshin.features.settings.impl.presentation.ui.settings.views.CalendarButtonBehaviorChooser
 import ru.aleshin.features.settings.impl.presentation.ui.settings.views.ColorsTypeChooser
 import ru.aleshin.features.settings.impl.presentation.ui.settings.views.DonateButton
 import ru.aleshin.features.settings.impl.presentation.ui.settings.views.DynamicColorChooser
@@ -62,13 +65,14 @@ internal fun SettingsContent(
     onRestoreData: (uri: Uri) -> Unit,
     onBackupData: (uri: Uri) -> Unit,
     onUpdateThemeSettings: (ThemeSettingsUi) -> Unit,
+    onUpdateTasksSettings: (TasksSettingsUi) -> Unit,
     onDonateButtonClick: () -> Unit,
 ) {
     val scrollState = rememberScrollState()
     val context = LocalContext.current
 
     Column(modifier = modifier.fillMaxSize().verticalScroll(scrollState)) {
-        if (state.themeSettings != null) {
+        if (state.themeSettings != null && state.tasksSettings != null) {
             Column(
                 modifier = Modifier.padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -97,6 +101,30 @@ internal fun SettingsContent(
                 modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
+                InterfaceSettingsSection(
+                    calendarButtonBehavior = state.tasksSettings.calendarButtonBehavior,
+                    onUpdateCalendarBehavior = {
+                        onUpdateTasksSettings(state.tasksSettings.copy(calendarButtonBehavior = it))
+                    },
+                )
+                Divider(modifier = Modifier.padding(top = 8.dp))
+            }
+            Column(
+                modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                SecureSettingsSection(
+                    secureMode = state.tasksSettings.secureMode,
+                    onUpdateSecureMode = {
+                        onUpdateTasksSettings(state.tasksSettings.copy(secureMode = it))
+                    },
+                )
+                Divider(modifier = Modifier.padding(top = 8.dp))
+            }
+            Column(
+                modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
                 DataSettingsSection(
                     onClear = onClearData,
                     isLoading = state.isBackupLoading,
@@ -115,7 +143,7 @@ internal fun SettingsContent(
                 )
                 DonateButton(
                     modifier = Modifier.fillMaxWidth(),
-                    onClick = onDonateButtonClick
+                    onClick = onDonateButtonClick,
                 )
             }
         }
@@ -162,6 +190,58 @@ internal fun MainSettingsSection(
 }
 
 @Composable
+internal fun InterfaceSettingsSection(
+    modifier: Modifier = Modifier,
+    calendarButtonBehavior: CalendarButtonBehavior,
+    onUpdateCalendarBehavior: (CalendarButtonBehavior) -> Unit,
+) {
+    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        Text(
+            text = SettingsThemeRes.strings.interfaceSectionHeader,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.labelMedium,
+        )
+        CalendarButtonBehaviorChooser(
+            calendarButtonBehavior = calendarButtonBehavior,
+            onUpdateCalendarBehavior = onUpdateCalendarBehavior,
+        )
+    }
+}
+
+@Composable
+internal fun SecureSettingsSection(
+    modifier: Modifier = Modifier,
+    secureMode: Boolean,
+    onUpdateSecureMode: (Boolean) -> Unit,
+) {
+    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        Text(
+            text = SettingsThemeRes.strings.secureSectionHeader,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.labelMedium,
+        )
+        Surface(
+            modifier = modifier.fillMaxWidth(),
+            shape = MaterialTheme.shapes.medium,
+            tonalElevation = TimePlannerRes.elevations.levelTwo,
+        ) {
+            Row(
+                modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    modifier = Modifier.weight(1f),
+                    text = SettingsThemeRes.strings.secureModeTitle,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    style = MaterialTheme.typography.titleMedium,
+                )
+                Switch(checked = secureMode, onCheckedChange = onUpdateSecureMode)
+            }
+        }
+    }
+}
+
+@Composable
 internal fun DataSettingsSection(
     modifier: Modifier = Modifier,
     isLoading: Boolean,
@@ -171,7 +251,7 @@ internal fun DataSettingsSection(
 ) {
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(16.dp)) {
         Text(
-            text = SettingsThemeRes.strings.mainSettingsClearDataTitle,
+            text = SettingsThemeRes.strings.dataSectionHeader,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.labelMedium,
         )

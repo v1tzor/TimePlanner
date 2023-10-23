@@ -63,6 +63,9 @@ internal class SettingsScreenModel @Inject constructor(
             }
             is SettingsEvent.ChangedThemeSettings -> {
                 settingsWorkProcessor.work(SettingsWorkCommand.UpdateThemeSettings(event.themeSettings)).handleWork()
+            } 
+            is SettingsEvent.ChangedTasksSettings -> {
+                settingsWorkProcessor.work(SettingsWorkCommand.UpdateTasksSettings(event.tasksSettings)).handleWork()
             }
             is SettingsEvent.PressResetButton -> {
                 settingsWorkProcessor.work(SettingsWorkCommand.ResetSettings).handleWork()
@@ -88,11 +91,16 @@ internal class SettingsScreenModel @Inject constructor(
     ) = when (action) {
         is SettingsAction.ChangeAllSettings -> currentState.copy(
             themeSettings = action.settings.themeSettings,
+            tasksSettings = action.settings.tasksSettings,
             failure = null,
             isBackupLoading = false,
         )
         is SettingsAction.ChangeThemeSettings -> currentState.copy(
             themeSettings = action.settings,
+            failure = null,
+        )
+        is SettingsAction.ChangeTasksSettings -> currentState.copy(
+            tasksSettings = action.settings,
             failure = null,
         )
         is SettingsAction.ShowLoadingBackup -> currentState.copy(

@@ -29,7 +29,7 @@ import ru.aleshin.features.settings.impl.presentation.theme.SettingsThemeRes
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 internal fun SettingsTopAppBar(
-    onResetToDefault: () -> Unit,
+    onResetToDefaultClick: () -> Unit,
     onMenuButtonClick: () -> Unit,
 ) {
     TopAppBar(
@@ -52,7 +52,7 @@ internal fun SettingsTopAppBar(
                 moreIconDescription = SettingsThemeRes.strings.moreIconDesc,
                 onItemClick = { action ->
                     when (action) {
-                        SettingsMoreActions.RESET_TO_DEFAULT -> onResetToDefault.invoke()
+                        SettingsMoreActions.RESET_TO_DEFAULT -> onResetToDefaultClick.invoke()
                     }
                 },
             )

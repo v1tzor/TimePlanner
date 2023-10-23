@@ -17,7 +17,6 @@ package ru.aleshin.features.settings.api.data.datasources
 
 import android.content.ContentValues
 import android.database.sqlite.SQLiteDatabase
-import android.util.Log
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
@@ -31,7 +30,7 @@ import ru.aleshin.features.settings.api.data.models.ThemeSettingsEntity
  * @author Stanislav Aleshin on 17.02.2023.
  */
 @Database(
-    version = 4,
+    version = 5,
     entities = [ThemeSettingsEntity::class, TasksSettingsEntity::class],
     exportSchema = true,
 )
@@ -132,6 +131,19 @@ abstract class SettingsDataBase : RoomDatabase() {
                         "FROM ThemeSettingsNew",
                 )
                 database.execSQL("DROP TABLE ThemeSettingsNew")
+            }
+        }
+
+        val MIGRATION_4_5 = object : Migration(4, 5) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL(
+                    "ALTER TABLE TasksSettings " +
+                        "ADD COLUMN secure_mode INTEGER DEFAULT 0 NOT NULL",
+                )
+                database.execSQL(
+                    "ALTER TABLE TasksSettings " +
+                        "ADD COLUMN calendar_button_behavior TEXT NOT NULL DEFAULT 'SET_CURRENT_DATE'",
+                )
             }
         }
     }

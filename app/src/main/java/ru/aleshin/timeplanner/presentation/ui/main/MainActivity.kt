@@ -16,11 +16,12 @@
 package ru.aleshin.timeplanner.presentation.ui.main
 
 import android.Manifest
-import android.content.Intent
 import android.os.Build
 import android.util.Log
+import android.view.WindowManager.LayoutParams.FLAG_SECURE
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import cafe.adriel.voyager.navigator.CurrentScreen
 import ru.aleshin.core.ui.theme.TimePlannerTheme
 import ru.aleshin.core.utils.functional.Constants.App.PERMISSION_TAG
@@ -79,11 +80,13 @@ class MainActivity : BaseActivity<MainViewState, MainEvent, MainAction, MainEffe
                     if (it.lastItem is TabsScreen) getNotificationPermission()
                 },
             )
+            LaunchedEffect(key1 = state.secureMode) {
+                when (state.secureMode) {
+                    true -> window.setFlags(FLAG_SECURE, FLAG_SECURE)
+                    false -> window.clearFlags(FLAG_SECURE)
+                }
+            }
         }
-    }
-
-    override fun onNewIntent(intent: Intent?) {
-        super.onNewIntent(intent)
     }
 
     override fun fetchViewModelFactory() = viewModelFactory

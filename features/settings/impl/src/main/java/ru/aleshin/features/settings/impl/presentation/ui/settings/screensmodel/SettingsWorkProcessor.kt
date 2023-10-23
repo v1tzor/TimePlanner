@@ -23,6 +23,7 @@ import ru.aleshin.core.utils.platform.screenmodel.work.WorkProcessor
 import ru.aleshin.features.settings.impl.domain.interactors.SettingsInteractor
 import ru.aleshin.features.settings.impl.presentation.mappers.mapToDomain
 import ru.aleshin.features.settings.impl.presentation.mappers.mapToUi
+import ru.aleshin.features.settings.impl.presentation.models.TasksSettingsUi
 import ru.aleshin.features.settings.impl.presentation.models.ThemeSettingsUi
 import ru.aleshin.features.settings.impl.presentation.ui.settings.contract.SettingsAction
 import ru.aleshin.features.settings.impl.presentation.ui.settings.contract.SettingsEffect
@@ -38,9 +39,17 @@ internal interface SettingsWorkProcessor : WorkProcessor<SettingsWorkCommand, Se
     ) : SettingsWorkProcessor {
 
         override suspend fun work(command: SettingsWorkCommand) = when (command) {
-            is SettingsWorkCommand.UpdateThemeSettings -> updateThemeSettingsWork(command.settings)
             is SettingsWorkCommand.LoadAllSettings -> loadAllSettingsWork()
+            is SettingsWorkCommand.UpdateThemeSettings -> updateThemeSettingsWork(command.settings)
+            is SettingsWorkCommand.UpdateTasksSettings -> updateTasksSettingsWork(command.settings)
             is SettingsWorkCommand.ResetSettings -> resetSettingsWork()
+        }
+
+        private suspend fun loadAllSettingsWork(): Either<SettingsAction, SettingsEffect> {
+            return when (val settings = settingsInteractor.fetchAllSettings()) {
+                is Either.Right -> ActionResult(SettingsAction.ChangeAllSettings(settings.data.mapToUi()))
+                is Either.Left -> EffectResult(SettingsEffect.ShowError(settings.data))
+            }
         }
 
         private suspend fun updateThemeSettingsWork(settings: ThemeSettingsUi): Either<SettingsAction, SettingsEffect> {
@@ -50,10 +59,10 @@ internal interface SettingsWorkProcessor : WorkProcessor<SettingsWorkCommand, Se
             }
         }
 
-        private suspend fun loadAllSettingsWork(): Either<SettingsAction, SettingsEffect> {
-            return when (val settings = settingsInteractor.fetchAllSettings()) {
-                is Either.Right -> ActionResult(SettingsAction.ChangeAllSettings(settings.data.mapToUi()))
-                is Either.Left -> EffectResult(SettingsEffect.ShowError(settings.data))
+        private suspend fun updateTasksSettingsWork(settings: TasksSettingsUi): Either<SettingsAction, SettingsEffect> {
+            return when (val either = settingsInteractor.updateTasksSettings(settings.mapToDomain())) {
+                is Either.Right -> ActionResult(SettingsAction.ChangeTasksSettings(settings))
+                is Either.Left -> EffectResult(SettingsEffect.ShowError(either.data))
             }
         }
 
@@ -73,4 +82,5 @@ internal sealed class SettingsWorkCommand : WorkCommand {
     object LoadAllSettings : SettingsWorkCommand()
     object ResetSettings : SettingsWorkCommand()
     data class UpdateThemeSettings(val settings: ThemeSettingsUi) : SettingsWorkCommand()
+    data class UpdateTasksSettings(val settings: TasksSettingsUi) : SettingsWorkCommand()
 }

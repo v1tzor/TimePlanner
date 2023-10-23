@@ -20,7 +20,6 @@ import kotlinx.coroutines.flow.map
 import ru.aleshin.features.settings.api.data.datasources.tasks.TasksSettingsLocalDataSource
 import ru.aleshin.features.settings.api.data.mappers.mapToData
 import ru.aleshin.features.settings.api.data.mappers.mapToDomain
-import ru.aleshin.features.settings.api.data.models.TasksSettingsEntity
 import ru.aleshin.features.settings.api.domain.entities.TasksSettings
 import ru.aleshin.features.settings.api.domain.repositories.TasksSettingsRepository
 import javax.inject.Inject

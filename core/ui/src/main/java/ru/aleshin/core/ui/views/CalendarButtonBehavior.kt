@@ -13,16 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ru.aleshin.features.settings.impl.presentation.models
-
-import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
+package ru.aleshin.core.ui.views
 
 /**
- * @author Stanislav Aleshin on 30.07.2023.
+ * @author Stanislav Aleshin on 22.10.2023.
  */
-@Parcelize
-internal data class SettingsUi(
-    val themeSettings: ThemeSettingsUi,
-    val tasksSettings: TasksSettingsUi,
-) : Parcelable
+enum class CalendarButtonBehavior {
+    OPEN_CALENDAR, SET_CURRENT_DATE
+}

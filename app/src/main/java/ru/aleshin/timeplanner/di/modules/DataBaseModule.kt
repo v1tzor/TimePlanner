@@ -125,6 +125,7 @@ class DataBaseModule {
         .addMigrations(SettingsDataBase.MIGRATION_1_2)
         .addMigrations(SettingsDataBase.MIGRATION_2_3)
         .addMigrations(SettingsDataBase.MIGRATION_3_4)
+        .addMigrations(SettingsDataBase.MIGRATION_4_5)
         .build()
 
     @Provides

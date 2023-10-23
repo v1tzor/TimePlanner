@@ -36,19 +36,20 @@ interface SettingsWorkProcessor : FlowWorkProcessor<SettingsWorkCommand, MainAct
     ) : SettingsWorkProcessor {
 
         override suspend fun work(command: SettingsWorkCommand) = when (command) {
-            SettingsWorkCommand.LoadThemeSettings -> loadThemeSettingsWork()
+            SettingsWorkCommand.LoadSettings -> loadSettingsWork()
         }
 
-        private fun loadThemeSettingsWork() = flow {
-            settingsInteractor.fetchThemeSettings().collect { settingsEither ->
+        private fun loadSettingsWork() = flow {
+            settingsInteractor.fetchSettings().collect { settingsEither ->
                 settingsEither.handle(
                     onLeftAction = { error(RuntimeException("Error get ThemeSettings -> $it")) },
                     onRightAction = {
-                        val action = MainAction.ChangeThemeSettings(
-                            language = it.language.mapToUi(),
-                            theme = it.themeColors.mapToUi(),
-                            colors = it.colorsType.mapToUi(),
-                            enableDynamicColors = it.isDynamicColorEnable,
+                        val action = MainAction.ChangeSettings(
+                            language = it.themeSettings.language.mapToUi(),
+                            theme = it.themeSettings.themeColors.mapToUi(),
+                            colors = it.themeSettings.colorsType.mapToUi(),
+                            enableDynamicColors = it.themeSettings.isDynamicColorEnable,
+                            secureMode = it.tasksSettings.secureMode,
                         )
                         emit(ActionResult(action))
                     },
@@ -59,5 +60,5 @@ interface SettingsWorkProcessor : FlowWorkProcessor<SettingsWorkCommand, MainAct
 }
 
 sealed class SettingsWorkCommand : WorkCommand {
-    object LoadThemeSettings : SettingsWorkCommand()
+    object LoadSettings : SettingsWorkCommand()
 }

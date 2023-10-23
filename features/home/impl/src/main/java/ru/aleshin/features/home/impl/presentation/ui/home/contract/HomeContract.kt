@@ -16,6 +16,7 @@
 package ru.aleshin.features.home.impl.presentation.ui.home.contract
 
 import kotlinx.parcelize.Parcelize
+import ru.aleshin.core.ui.views.CalendarButtonBehavior
 import ru.aleshin.core.ui.views.ViewToggleStatus
 import ru.aleshin.core.utils.platform.screenmodel.contract.*
 import ru.aleshin.features.home.api.domain.entities.schedules.DailyScheduleStatus
@@ -34,6 +35,7 @@ internal data class HomeViewState(
     val currentDate: Date? = null,
     val dateStatus: DailyScheduleStatus? = null,
     val taskViewStatus: ViewToggleStatus = ViewToggleStatus.COMPACT,
+    val calendarButtonBehavior: CalendarButtonBehavior = CalendarButtonBehavior.SET_CURRENT_DATE,
     val timeTasks: List<TimeTaskUi> = emptyList(),
 ) : BaseViewState
 

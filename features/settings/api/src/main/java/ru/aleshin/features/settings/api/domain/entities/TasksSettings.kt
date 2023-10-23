@@ -15,11 +15,14 @@
  */
 package ru.aleshin.features.settings.api.domain.entities
 
+import ru.aleshin.core.ui.views.CalendarButtonBehavior
 import ru.aleshin.core.ui.views.ViewToggleStatus
 
 /**
  * @author Stanislav Aleshin on 15.09.2023.
  */
 data class TasksSettings(
-    val taskViewStatus: ViewToggleStatus,
+    val taskViewStatus: ViewToggleStatus = ViewToggleStatus.COMPACT,
+    val calendarButtonBehavior: CalendarButtonBehavior = CalendarButtonBehavior.SET_CURRENT_DATE,
+    val secureMode: Boolean = false,
 )

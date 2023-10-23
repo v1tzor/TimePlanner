@@ -15,18 +15,20 @@
  */
 package ru.aleshin.features.settings.impl.presentation.mappers
 
-import ru.aleshin.features.settings.api.domain.entities.Settings
-import ru.aleshin.features.settings.impl.presentation.models.SettingsUi
+import ru.aleshin.features.settings.api.domain.entities.TasksSettings
+import ru.aleshin.features.settings.impl.presentation.models.TasksSettingsUi
 
 /**
- * @author Stanislav Aleshin on 30.07.2023.
+ * @author Stanislav Aleshin on 23.10.2023.
  */
-internal fun Settings.mapToUi() = SettingsUi(
-    themeSettings = themeSettings.mapToUi(),
-    tasksSettings = tasksSettings.mapToUi(),
+internal fun TasksSettings.mapToUi() = TasksSettingsUi(
+    taskViewStatus = taskViewStatus,
+    calendarButtonBehavior = calendarButtonBehavior,
+    secureMode = secureMode,
 )
 
-internal fun SettingsUi.mapToDomain() = Settings(
-    themeSettings = themeSettings.mapToDomain(),
-    tasksSettings = tasksSettings.mapToDomain(),
+internal fun TasksSettingsUi.mapToDomain() = TasksSettings(
+    taskViewStatus = taskViewStatus,
+    calendarButtonBehavior = calendarButtonBehavior,
+    secureMode = secureMode,
 )
