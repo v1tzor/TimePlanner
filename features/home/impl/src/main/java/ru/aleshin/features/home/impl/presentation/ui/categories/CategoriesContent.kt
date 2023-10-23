@@ -18,11 +18,15 @@ package ru.aleshin.features.home.impl.presentation.ui.categories
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import ru.aleshin.features.home.impl.presentation.models.categories.MainCategoryUi
 import ru.aleshin.features.home.impl.presentation.models.categories.SubCategoryUi
@@ -46,6 +50,7 @@ internal fun CategoriesContent(
     onMainCategoryUpdate: (MainCategoryUi) -> Unit,
     onMainCategoryDelete: (MainCategoryUi) -> Unit,
     onSubCategoryDelete: (SubCategoryUi) -> Unit,
+    onRestoreDefaultCategories: () -> Unit,
 ) {
     var isMainCategoryCreatorOpen by rememberSaveable { mutableStateOf(false) }
     val scrollableState = rememberScrollState()
@@ -56,6 +61,7 @@ internal fun CategoriesContent(
 
         MainCategoriesHeader(
             modifier = Modifier.padding(top = 8.dp, bottom = 4.dp).fillMaxWidth(),
+            onRestoreDefaultCategories = onRestoreDefaultCategories,
         )
         MainCategoriesHorizontalList(
             modifier = Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 12.dp),
@@ -90,7 +96,12 @@ internal fun CategoriesContent(
 }
 
 @Composable
-internal fun MainCategoriesHeader(modifier: Modifier = Modifier) {
+internal fun MainCategoriesHeader(
+    modifier: Modifier = Modifier,
+    onRestoreDefaultCategories: () -> Unit,
+) {
+    var isOpenParametersMenu by remember { mutableStateOf(false) }
+
     Row(
         modifier = modifier.padding(start = 16.dp, end = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -101,11 +112,65 @@ internal fun MainCategoriesHeader(modifier: Modifier = Modifier) {
             color = MaterialTheme.colorScheme.onBackground,
             style = MaterialTheme.typography.titleMedium,
         )
+        Spacer(modifier = Modifier.weight(1f))
+        IconButton(
+            modifier = Modifier.size(24.dp),
+            onClick = { isOpenParametersMenu = true },
+        ) {
+            Icon(
+                modifier = Modifier.size(18.dp),
+                imageVector = Icons.Default.MoreVert,
+                contentDescription = null,
+            )
+            CategoriesParametersMenu(
+                expanded = isOpenParametersMenu,
+                onDismiss = { isOpenParametersMenu = false },
+                onRestoreDefaultCategories = {
+                    onRestoreDefaultCategories()
+                    isOpenParametersMenu = false
+                },
+            )
+        }
     }
 }
 
 @Composable
-internal fun SubCategoriesHeader(modifier: Modifier = Modifier) {
+internal fun CategoriesParametersMenu(
+    modifier: Modifier = Modifier,
+    expanded: Boolean,
+    onDismiss: () -> Unit,
+    onRestoreDefaultCategories: () -> Unit,
+) {
+    DropdownMenu(
+        expanded = expanded,
+        onDismissRequest = onDismiss,
+        modifier = modifier,
+        offset = DpOffset(0.dp, 4.dp),
+    ) {
+        DropdownMenuItem(
+            onClick = onRestoreDefaultCategories,
+            text = {
+                Text(
+                    text = HomeThemeRes.strings.restoreDefaultCategories,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    style = MaterialTheme.typography.titleMedium,
+                )
+            },
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Default.Refresh,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurface,
+                )
+            },
+        )
+    }
+}
+
+@Composable
+internal fun SubCategoriesHeader(
+    modifier: Modifier = Modifier,
+) {
     Row(
         modifier = modifier.padding(horizontal = 16.dp),
         verticalAlignment = Alignment.CenterVertically,

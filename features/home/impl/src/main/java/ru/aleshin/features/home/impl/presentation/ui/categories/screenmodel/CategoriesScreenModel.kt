@@ -84,6 +84,10 @@ internal class CategoriesScreenModel @Inject constructor(
                 val command = CategoriesWorkCommand.UpdateMainCategory(event.mainCategory)
                 categoriesWorkProcessor.work(command).collectAndHandleWork()
             }
+            is CategoriesEvent.RestoreDefaultCategories -> {
+                val command = CategoriesWorkCommand.RestoreDefaultCategories
+                categoriesWorkProcessor.work(command).collectAndHandleWork()
+            }
         }
     }
 

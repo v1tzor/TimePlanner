@@ -69,6 +69,7 @@ internal class CategoriesScreen : Screen {
                     onSubCategoryUpdate = { dispatchEvent(CategoriesEvent.UpdateSubCategory(it)) },
                     onMainCategoryDelete = { dispatchEvent(CategoriesEvent.DeleteMainCategory(it)) },
                     onSubCategoryDelete = { dispatchEvent(CategoriesEvent.DeleteSubCategory(it)) },
+                    onRestoreDefaultCategories = { dispatchEvent(CategoriesEvent.RestoreDefaultCategories) },
                 )
             },
             topBar = {

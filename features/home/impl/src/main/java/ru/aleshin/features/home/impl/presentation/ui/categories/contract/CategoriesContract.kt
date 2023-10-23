@@ -36,6 +36,7 @@ internal data class CategoriesViewState(
 
 internal sealed class CategoriesEvent : BaseEvent {
     object Init : CategoriesEvent()
+    object RestoreDefaultCategories : CategoriesEvent()
     data class AddSubCategory(val name: String, val mainCategory: MainCategoryUi) : CategoriesEvent()
     data class AddMainCategory(val name: String) : CategoriesEvent()
     data class ChangeMainCategory(val mainCategory: MainCategoryUi) : CategoriesEvent()

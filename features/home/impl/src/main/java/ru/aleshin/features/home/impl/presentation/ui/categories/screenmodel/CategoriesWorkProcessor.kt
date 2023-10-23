@@ -40,6 +40,7 @@ internal interface CategoriesWorkProcessor : FlowWorkProcessor<CategoriesWorkCom
 
         override suspend fun work(command: CategoriesWorkCommand) = when (command) {
             is CategoriesWorkCommand.LoadCategories -> loadCategoriesWork()
+            is CategoriesWorkCommand.RestoreDefaultCategories -> restoreDefaultCategories()
             is CategoriesWorkCommand.AddMainCategory -> addMainCategory(command.name)
             is CategoriesWorkCommand.AddSubCategory -> addSubCategory(command.name, command.mainCategory)
             is CategoriesWorkCommand.UpdateMainCategory -> updateMainCategory(command.mainCategory)
@@ -58,6 +59,12 @@ internal interface CategoriesWorkProcessor : FlowWorkProcessor<CategoriesWorkCom
                     },
                 )
             }
+        }
+
+        private fun restoreDefaultCategories() = flow {
+            categoriesInteractor.restoreDefaultCategories().handle(
+                onLeftAction = { emit(EffectResult(CategoriesEffect.ShowError(it))) },
+            )
         }
 
         private suspend fun addSubCategory(name: String, mainCategory: MainCategoryUi) = flow {
@@ -106,6 +113,7 @@ internal interface CategoriesWorkProcessor : FlowWorkProcessor<CategoriesWorkCom
 
 internal sealed class CategoriesWorkCommand : WorkCommand {
     object LoadCategories : CategoriesWorkCommand()
+    object RestoreDefaultCategories : CategoriesWorkCommand()
     data class AddSubCategory(val name: String, val mainCategory: MainCategoryUi) : CategoriesWorkCommand()
     data class AddMainCategory(val name: String) : CategoriesWorkCommand()
     data class UpdateSubCategory(val subCategory: SubCategoryUi) : CategoriesWorkCommand()

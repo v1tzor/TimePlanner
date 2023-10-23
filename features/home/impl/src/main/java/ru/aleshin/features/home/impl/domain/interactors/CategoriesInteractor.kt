@@ -16,6 +16,7 @@
 package ru.aleshin.features.home.impl.domain.interactors
 
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import ru.aleshin.core.utils.functional.DomainResult
 import ru.aleshin.core.utils.functional.UnitDomainResult
@@ -35,6 +36,7 @@ internal interface CategoriesInteractor {
     suspend fun addMainCategory(mainCategory: MainCategory): DomainResult<HomeFailures, Int>
     suspend fun updateMainCategory(mainCategory: MainCategory): UnitDomainResult<HomeFailures>
     suspend fun deleteMainCategory(mainCategory: MainCategory): UnitDomainResult<HomeFailures>
+    suspend fun restoreDefaultCategories(): UnitDomainResult<HomeFailures>
 
     class Base @Inject constructor(
         private val categoriesRepository: CategoriesRepository,
@@ -57,6 +59,15 @@ internal interface CategoriesInteractor {
 
         override suspend fun updateMainCategory(mainCategory: MainCategory) = eitherWrapper.wrap {
             categoriesRepository.updateMainCategory(mainCategory)
+        }
+
+        override suspend fun restoreDefaultCategories() = eitherWrapper.wrap {
+            val categories = categoriesRepository.fetchCategories().first()
+            categories.forEach {
+                if (it.category.default != null) {
+                    categoriesRepository.updateMainCategory(it.category.copy(customName = null))
+                }
+            }
         }
     }
 }

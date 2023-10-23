@@ -88,6 +88,7 @@ internal data class HomeStrings(
     val weekNumberTitle: String,
     val weekDayTitle: String,
     val notesDesk: String,
+    val restoreDefaultCategories: String,
 )
 
 internal val russianHomeString = HomeStrings(
@@ -158,6 +159,7 @@ internal val russianHomeString = HomeStrings(
     weekNumberTitle = "Номер недели",
     weekDayTitle = "День недели",
     notesDesk = "Заметка",
+    restoreDefaultCategories = "Восстановить категории по умолчанию",
 )
 
 internal val englishHomeString = HomeStrings(
@@ -228,6 +230,7 @@ internal val englishHomeString = HomeStrings(
     weekNumberTitle = "Week number",
     weekDayTitle = "Day of the week",
     notesDesk = "Note",
+    restoreDefaultCategories = "Restore default categories",
 )
 
 internal val persianHomeString = HomeStrings(
@@ -298,6 +301,7 @@ internal val persianHomeString = HomeStrings(
     weekNumberTitle = "شماره هفته",
     weekDayTitle = "روز هفته",
     notesDesk = "یادداشت",
+    restoreDefaultCategories = "بازگرداندن دسته های پیش فرض",
 )
 
 internal val germanHomeString = HomeStrings(
@@ -368,6 +372,7 @@ internal val germanHomeString = HomeStrings(
     weekNumberTitle = "Wochennummer",
     weekDayTitle = "Wochentag",
     notesDesk = "Notiz",
+    restoreDefaultCategories = "Standardkategorien wiederherstellen",
 )
 
 internal val spanishHomeString = HomeStrings(
@@ -438,6 +443,7 @@ internal val spanishHomeString = HomeStrings(
     weekNumberTitle = "Número de la semana",
     weekDayTitle = "Feria",
     notesDesk = "Nota",
+    restoreDefaultCategories = "Restaurar categorías predeterminadas",
 )
 
 internal val frenchHomeString = HomeStrings(
@@ -508,6 +514,7 @@ internal val frenchHomeString = HomeStrings(
     weekNumberTitle = "Semaine n°",
     weekDayTitle = "Jour de la semaine",
     notesDesk = "Note",
+    restoreDefaultCategories = "Restaurer les Catégories par défaut",
 )
 
 internal val LocalHomeStrings = staticCompositionLocalOf<HomeStrings> {
