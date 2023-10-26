@@ -26,7 +26,7 @@
   </br>
 </p>
 
-<h4 align="center">Mobile app for planning tasks for the day</h4>
+<h4 align="center">Convenient and fast task planning for the day</h4>
 
 <div align="center">
 </br>
