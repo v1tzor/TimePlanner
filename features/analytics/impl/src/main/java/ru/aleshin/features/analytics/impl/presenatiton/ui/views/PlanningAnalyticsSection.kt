@@ -156,7 +156,7 @@ internal fun PlanningAnalyticsMonthItem(
             style = MaterialTheme.typography.labelMedium,
         )
         LazyHorizontalGrid(
-            modifier = Modifier.width(130.dp),
+            modifier = Modifier.width(if (monthAnalytics.size > 21) 130.dp else 80.dp),
             rows = GridCells.Fixed(7),
             verticalArrangement = Arrangement.spacedBy(6.dp),
             horizontalArrangement = Arrangement.spacedBy(6.dp),

@@ -15,9 +15,7 @@
   -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="ru.aleshin.timeplanner"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:versionCode="24"
-    android:versionName="0.7.7">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.VIBRATE" />
