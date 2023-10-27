@@ -26,13 +26,18 @@
   </br>
 </p>
 
-<h4 align="center">Mobile app for planning tasks for the day</h4>
+<h4 align="center">Convenient and fast task planning for the day</h4>
 
 <div align="center">
 </br>
 <img src="https://github.com/v1tzor/TimePlanner/assets/116388544/8eeb4545-a52e-4705-9a6e-f4e603845255"/>
 
 </div>
+
+## Download 🔥
+[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" alt="Get it on F-Droid" height="80">](https://f-droid.org/en/packages/ru.aleshin.timeplanner/)
+<a href="https://apt.izzysoft.de/fdroid/index/apk/ru.aleshin.timeplanner" target="_blank">
+<img src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png" alt="Get it on IzzyOnDroid" height="80"/></a>
 
 ## Available languages 🌍
 - Russian 🇷🇺
@@ -63,10 +68,6 @@
 - Unit tests
 - [Voyager](https://github.com/adrielcafe/voyager) navigation
 - Charts: [Charty](https://github.com/hi-manshu/Charty), [Compose-Charts](https://github.com/humawork/compose-charts)
-
-## Download 🔥
-<a href="https://apt.izzysoft.de/fdroid/index/apk/ru.aleshin.timeplanner" target="_blank">
-<img src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png" alt="Get it on IzzyOnDroid" height="80"/></a>
 
 ## Donation to support application development ❤️
 <details>
