@@ -19,6 +19,7 @@ import androidx.room.*
 import ru.aleshin.features.home.api.data.models.categories.MainCategoryEntity
 import ru.aleshin.features.home.api.data.models.categories.SubCategoryEntity
 import ru.aleshin.features.home.api.data.models.schedules.DailyScheduleEntity
+import java.util.Date
 
 /**
  * @author Stanislav Aleshin on 21.02.2023.
@@ -51,6 +52,7 @@ data class TimeTaskEntity(
     @ColumnInfo("daily_schedule_date", index = true) val dailyScheduleDate: Long,
     @ColumnInfo("start_time") val startTime: Long,
     @ColumnInfo("end_time") val endTime: Long,
+    @ColumnInfo("created_at") val createdAt: Long? = null,
     @ColumnInfo("main_category_id", index = true) val mainCategoryId: Int,
     @ColumnInfo("sub_category_id", index = true) val subCategoryId: Int?,
     @ColumnInfo("is_completed", defaultValue = "1") val isCompleted: Boolean,

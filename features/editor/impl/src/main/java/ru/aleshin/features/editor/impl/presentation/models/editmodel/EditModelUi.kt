@@ -32,6 +32,7 @@ internal data class EditModelUi(
     val key: Long = 0L,
     val date: Date,
     val timeRanges: TimeRange,
+    val createdAt: Date? = null,
     val duration: Long = duration(timeRanges.from, timeRanges.to),
     val mainCategory: MainCategoryUi = MainCategoryUi(),
     val subCategory: SubCategoryUi? = null,

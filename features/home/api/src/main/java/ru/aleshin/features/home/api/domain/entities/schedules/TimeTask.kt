@@ -31,6 +31,8 @@ data class TimeTask(
     val key: Long = 0L,
     @Serializable(DateSerializer::class)
     val date: Date,
+    @Serializable(DateSerializer::class)
+    val createdAt: Date? = null,
     val timeRanges: TimeRange,
     val category: MainCategory,
     val subCategory: SubCategory? = null,

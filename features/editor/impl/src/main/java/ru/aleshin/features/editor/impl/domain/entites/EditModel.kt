@@ -28,6 +28,7 @@ data class EditModel(
     val date: Date,
     val startTime: Date,
     val endTime: Date,
+    val createdAt: Date? = null,
     val mainCategory: MainCategory = MainCategory(),
     val subCategory: SubCategory? = null,
     val isCompleted: Boolean = true,

@@ -27,6 +27,7 @@ import ru.aleshin.features.analytics.impl.presenatiton.models.timetask.TimeTaskU
 internal data class ScheduleAnalyticsUi(
     val dateWorkLoadMap: WorkLoadMapUi,
     val categoriesAnalytics: CategoriesAnalyticsUi,
+    val planningAnalytic: Map<Int, List<PlanningAnalyticUi>>,
     val totalTasksCount: Int,
     val totalTasksTime: Long,
     val averageDayLoad: Int,

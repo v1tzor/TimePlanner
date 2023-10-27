@@ -140,5 +140,6 @@ class DataBaseModule {
         .addMigrations(SchedulesDataBase.MIGRATE_2_3)
         .addMigrations(SchedulesDataBase.MIGRATE_4_5)
         .addMigrations(SchedulesDataBase.MIGRATE_5_6)
+        .addMigrations(SchedulesDataBase.MIGRATE_7_8)
         .build()
 }

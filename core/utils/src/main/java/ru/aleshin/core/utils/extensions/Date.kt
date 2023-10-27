@@ -50,11 +50,18 @@ fun Date.shiftMillis(amount: Int, locale: Locale = Locale.getDefault()): Date {
     return calendar.time
 }
 
-fun Date.isCurrentDay(date: Date): Boolean {
+fun Date.isCurrentDay(date: Date = Date()): Boolean {
     val currentDate = Calendar.getInstance().apply { time = date }.get(Calendar.DAY_OF_YEAR)
     val compareDate = Calendar.getInstance().apply { time = this@isCurrentDay }.get(Calendar.DAY_OF_YEAR)
 
     return currentDate == compareDate
+}
+
+fun Date.isCurrentMonth(date: Date = Date()): Boolean {
+    val currentMonth = Calendar.getInstance().apply { time = date }.get(Calendar.MONTH)
+    val compareMonth = Calendar.getInstance().apply { time = this@isCurrentMonth }.get(Calendar.MONTH)
+
+    return currentMonth == compareMonth
 }
 
 fun Date.compareByHoursAndMinutes(compareDate: Date): Boolean {
@@ -67,15 +74,21 @@ fun Date.compareByHoursAndMinutes(compareDate: Date): Boolean {
 }
 
 fun Date.startThisDay(): Date {
-    val calendar = Calendar.getInstance()
-    calendar.time = this
+    val calendar = Calendar.getInstance().apply { time = this@startThisDay }
     return calendar.setStartDay().time
 }
 
 fun Date.endThisDay(): Date {
-    val calendar = Calendar.getInstance()
-    calendar.time = this
+    val calendar = Calendar.getInstance().apply { time = this@endThisDay }
     return calendar.setEndDay().time
+}
+
+fun Date.endOfCurrentMonth(): Date {
+    val calendar = Calendar.getInstance().apply {
+        time = this@endOfCurrentMonth
+        set(Calendar.DAY_OF_MONTH, getActualMaximum(Calendar.DAY_OF_MONTH))
+    }
+    return calendar.time
 }
 
 fun Calendar.setTimeWithoutDate(targetTime: Date): Calendar {

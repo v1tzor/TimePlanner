@@ -27,6 +27,7 @@ internal fun Template.convertToEditModel(date: Date) = EditModel(
     date = date,
     startTime = startTime.changeDay(date),
     endTime = endTime.changeDay(date),
+    createdAt = Date(),
     mainCategory = category,
     subCategory = subCategory,
     isImportant = isImportant,

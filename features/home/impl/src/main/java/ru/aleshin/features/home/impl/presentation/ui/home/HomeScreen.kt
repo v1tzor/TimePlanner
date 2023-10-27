@@ -28,6 +28,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.core.screen.Screen
 import kotlinx.coroutines.launch
+import ru.aleshin.core.ui.views.ErrorSnackbar
 import ru.aleshin.core.utils.extensions.startThisDay
 import ru.aleshin.core.utils.managers.LocalDrawerManager
 import ru.aleshin.core.utils.platform.screen.ScreenContent
@@ -81,7 +82,9 @@ internal class HomeScreen : Screen {
                 )
             },
             snackbarHost = {
-                SnackbarHost(hostState = snackbarState)
+                SnackbarHost(hostState = snackbarState) { snackbarData ->
+                    ErrorSnackbar(snackbarData)
+                }
             },
         )
 

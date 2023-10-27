@@ -34,6 +34,7 @@ internal data class TimeTaskUi(
     val date: Date,
     val startTime: Date,
     val endTime: Date,
+    val createdAt: Date? = null,
     val duration: Long = duration(startTime, endTime),
     val leftTime: Long,
     val progress: Float,

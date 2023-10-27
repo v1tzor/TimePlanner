@@ -13,22 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ru.aleshin.features.analytics.impl.domain.entities
+package ru.aleshin.features.analytics.impl.presenatiton.models.analytics
 
-import ru.aleshin.core.utils.functional.TimeRange
-import ru.aleshin.features.home.api.domain.entities.schedules.TimeTask
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+import ru.aleshin.features.analytics.impl.presenatiton.models.timetask.TimeTaskUi
+import java.util.Date
 
 /**
- * @author Stanislav Aleshin on 30.04.2023.
+ * @author Stanislav Aleshin on 24.10.2023.
  */
-internal data class ScheduleAnalytics(
-    val dateWorkLoadMap: WorkLoadMap,
-    val categoriesAnalytics: CategoriesAnalytics,
-    val planningAnalytics: Map<Int, List<PlanningAnalytic>>,
-    val totalTasksCount: Int,
-    val totalTasksTime: Long,
-    val averageDayLoad: Int,
-    val averageTaskTime: Long,
-)
+@Parcelize
+internal data class PlanningAnalyticUi(
+    val date: Date,
+    val timeTasks: List<TimeTaskUi>,
+) : Parcelable
 
-internal typealias WorkLoadMap = Map<TimeRange, List<TimeTask>>
+internal typealias PlanningAnalyticsUi = Map<Int, List<PlanningAnalyticUi>>

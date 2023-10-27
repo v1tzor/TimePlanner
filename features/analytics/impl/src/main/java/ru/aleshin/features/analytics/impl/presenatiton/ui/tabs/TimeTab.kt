@@ -16,41 +16,22 @@
 package ru.aleshin.features.analytics.impl.presenatiton.ui.tabs
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material3.Divider
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
-import hu.ma.charts.legend.data.LegendPosition
-import hu.ma.charts.pie.PieChart
-import hu.ma.charts.pie.data.PieChartData
-import hu.ma.charts.pie.data.PieChartEntry
-import ru.aleshin.core.ui.views.toMinutesAndHoursTitle
-import ru.aleshin.core.utils.charts.fetchPieColorByTop
 import ru.aleshin.core.utils.functional.TimePeriod
-import ru.aleshin.features.analytics.impl.presenatiton.models.analytics.CategoriesAnalyticsUi
-import ru.aleshin.features.analytics.impl.presenatiton.theme.AnalyticsThemeRes
 import ru.aleshin.features.analytics.impl.presenatiton.ui.contract.AnalyticsViewState
-import ru.aleshin.features.analytics.impl.presenatiton.ui.views.AnalyticsTimeLegend
-import ru.aleshin.features.analytics.impl.presenatiton.ui.views.SubAnalyticsTimeLegend
-import ru.aleshin.features.analytics.impl.presenatiton.ui.views.TimeSelectorSection
+import ru.aleshin.features.analytics.impl.presenatiton.ui.views.CategoriesAnalyticsSection
+import ru.aleshin.features.analytics.impl.presenatiton.ui.views.PlanningAnalyticsSection
 
 /**
  * @author Stanislav Aleshin on 20.04.2023.
@@ -61,93 +42,30 @@ internal fun TimeTab(
     onTimePeriodChanged: (TimePeriod) -> Unit,
     onRefresh: () -> Unit,
 ) {
+    val analytics = state.scheduleAnalytics
+    val scrollState = rememberScrollState()
     // Pullrefresh not available for Material Design 3
     val refreshState = rememberSwipeRefreshState(
         isRefreshing = state.scheduleAnalytics?.categoriesAnalytics == null,
     )
-    SwipeRefresh(state = refreshState, onRefresh = onRefresh) {
-        Column(modifier = Modifier.fillMaxSize().padding(vertical = 12.dp)) {
-            TimeSelectorSection(
-                modifier = Modifier.padding(start = 16.dp, end = 8.dp, bottom = 16.dp),
+    SwipeRefresh(
+        state = refreshState,
+        onRefresh = onRefresh,
+    ) {
+        Column(
+            modifier = Modifier.fillMaxSize().padding(top = 24.dp).verticalScroll(scrollState),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+            PlanningAnalyticsSection(
+                modifier = Modifier.fillMaxWidth(),
+                planningAnalytics = analytics?.planningAnalytic,
+            )
+            Divider()
+            CategoriesAnalyticsSection(
                 timePeriod = state.timePeriod,
-                title = AnalyticsThemeRes.strings.categoryStatisticsTitle,
+                categoriesAnalytics = analytics?.categoriesAnalytics,
                 onTimePeriodChanged = onTimePeriodChanged,
             )
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(start = 16.dp, end = 16.dp)
-                    .verticalScroll(rememberScrollState()),
-            ) {
-                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                    val analytics = state.scheduleAnalytics?.categoriesAnalytics
-                    var selectedItem by remember { mutableIntStateOf(0) }
-                    if (analytics != null) {
-                        CategoriesAnalyticsChart(
-                            analytics = analytics,
-                            selectedItem = selectedItem,
-                            onSelectItem = { selectedItem = it },
-                        )
-                        SubAnalyticsTimeLegend(
-                            modifier = Modifier.height(400.dp).padding(top = 12.dp),
-                            analytics = analytics,
-                            selectedItem = selectedItem,
-                        )
-                    }
-                }
-            }
         }
-    }
-}
-
-@Composable
-internal fun CategoriesAnalyticsChart(
-    modifier: Modifier = Modifier,
-    analytics: CategoriesAnalyticsUi,
-    selectedItem: Int,
-    onSelectItem: (Int) -> Unit,
-) {
-    val topList = analytics.subList(fromIndex = 0, toIndex = 5)
-    val otherList = analytics.subList(5, analytics.lastIndex)
-    val pieDataList = mutableListOf<PieChartEntry>().apply {
-        topList.forEachIndexed { index, analytic ->
-            val label = analytic.mainCategory.fetchName() ?: "*"
-            val data = PieChartEntry(
-                value = analytic.duration.toFloat() + 1f,
-                label = AnnotatedString(label),
-                color = fetchPieColorByTop(index),
-            )
-            add(data)
-        }
-        val otherPieData = PieChartEntry(
-            value = otherList.sumOf { it.duration }.toFloat(),
-            label = AnnotatedString(AnalyticsThemeRes.strings.otherAnalyticsName),
-            color = fetchPieColorByTop(5),
-        )
-        add(otherPieData)
-    }
-    BoxWithConstraints(modifier = modifier.height(230.dp)) {
-        PieChart(
-            data = PieChartData(
-                entries = pieDataList,
-                legendPosition = LegendPosition.End,
-                legendShape = RoundedCornerShape(8.dp),
-            ),
-            chartSize = 160.dp,
-            sliceWidth = 24.dp,
-        ) { legendEntries ->
-            AnalyticsTimeLegend(
-                modifier = Modifier.height(230.dp),
-                legendEntries = legendEntries,
-                selectedItem = selectedItem,
-                onSelectedItem = onSelectItem,
-            )
-        }
-        Text(
-            modifier = Modifier.align(Alignment.CenterStart).offset(x = 55.dp, y = (-1).dp),
-            text = analytics[selectedItem].duration.toMinutesAndHoursTitle(),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.titleMedium,
-        )
     }
 }

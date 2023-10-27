@@ -15,20 +15,10 @@
  */
 package ru.aleshin.features.analytics.impl.domain.entities
 
-import ru.aleshin.core.utils.functional.TimeRange
 import ru.aleshin.features.home.api.domain.entities.schedules.TimeTask
+import java.util.Date
 
-/**
- * @author Stanislav Aleshin on 30.04.2023.
- */
-internal data class ScheduleAnalytics(
-    val dateWorkLoadMap: WorkLoadMap,
-    val categoriesAnalytics: CategoriesAnalytics,
-    val planningAnalytics: Map<Int, List<PlanningAnalytic>>,
-    val totalTasksCount: Int,
-    val totalTasksTime: Long,
-    val averageDayLoad: Int,
-    val averageTaskTime: Long,
+internal data class PlanningAnalytic(
+    val date: Date,
+    val timeTasks: List<TimeTask>,
 )
-
-internal typealias WorkLoadMap = Map<TimeRange, List<TimeTask>>

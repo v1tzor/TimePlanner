@@ -19,7 +19,12 @@ import kotlinx.coroutines.flow.first
 import ru.aleshin.core.utils.extensions.countMonthByDays
 import ru.aleshin.core.utils.extensions.countWeeksByDays
 import ru.aleshin.core.utils.extensions.duration
+import ru.aleshin.core.utils.extensions.endOfCurrentMonth
+import ru.aleshin.core.utils.extensions.extractAllItem
+import ru.aleshin.core.utils.extensions.fetchMonth
+import ru.aleshin.core.utils.extensions.isCurrentDay
 import ru.aleshin.core.utils.extensions.isIncludeTime
+import ru.aleshin.core.utils.extensions.mapToDate
 import ru.aleshin.core.utils.extensions.shiftDay
 import ru.aleshin.core.utils.extensions.startThisDay
 import ru.aleshin.core.utils.functional.Constants
@@ -30,13 +35,17 @@ import ru.aleshin.core.utils.managers.DateManager
 import ru.aleshin.features.analytics.impl.domain.common.AnalyticsEitherWrapper
 import ru.aleshin.features.analytics.impl.domain.entities.AnalyticsFailure
 import ru.aleshin.features.analytics.impl.domain.entities.CategoryAnalytic
+import ru.aleshin.features.analytics.impl.domain.entities.PlanningAnalytic
 import ru.aleshin.features.analytics.impl.domain.entities.ScheduleAnalytics
 import ru.aleshin.features.analytics.impl.domain.entities.SubCategoryAnalytic
+import ru.aleshin.features.analytics.impl.domain.entities.WorkLoadMap
 import ru.aleshin.features.home.api.domain.entities.categories.Categories
 import ru.aleshin.features.home.api.domain.entities.categories.SubCategory
+import ru.aleshin.features.home.api.domain.entities.schedules.Schedule
 import ru.aleshin.features.home.api.domain.entities.schedules.TimeTask
 import ru.aleshin.features.home.api.domain.repository.CategoriesRepository
 import ru.aleshin.features.home.api.domain.repository.ScheduleRepository
+import java.util.Date
 import javax.inject.Inject
 
 /**
@@ -52,22 +61,49 @@ internal interface AnalyticsInteractor {
         private val dateManager: DateManager,
         private val eitherWrapper: AnalyticsEitherWrapper,
     ) : AnalyticsInteractor {
+        
+        private val currentDate: Date
+            get() = dateManager.fetchCurrentDate()
 
         override suspend fun fetchAnalytics(period: TimePeriod) = eitherWrapper.wrap {
-            val currentDate = dateManager.fetchCurrentDate()
             val shiftAmount = period.convertToDays()
             val startDate = currentDate.startThisDay().shiftDay(-shiftAmount)
-            val globalTimeRange = TimeRange(
-                from = startDate,
-                to = currentDate,
-            )
-            val schedules = scheduleRepository.fetchSchedulesByRange(globalTimeRange)
+            val globalTimeRange = TimeRange(from = startDate, to = currentDate)
+            
+            val allSchedules = scheduleRepository.fetchSchedulesByRange(null)
+            val periodSchedules = allSchedules.filter { globalTimeRange.isIncludeTime(it.date.mapToDate()) }
             val timeTasks = mutableListOf<TimeTask>().apply {
-                schedules.forEach { schedule ->
+                periodSchedules.forEach { schedule ->
                     addAll(schedule.timeTasks.filter { it.isConsiderInStatistics })
                 }
             }
+            
+            val workLoadMap = countWorkLoad(period, timeTasks)
+            val categoriesAnalytics = countCategoriesAnalytic(
+                categories = categoriesRepository.fetchCategories().first(),
+                timeTasks = timeTasks,
+            )
+            val planningAnalytics = countPlanningAnalytics(allSchedules)
+            val totalTasksCount = timeTasks.count { it.isConsiderInStatistics }
+            val totalTasksTime = timeTasks.map { it.timeRanges }.sumOf { duration(it) }
+            val averageDayLoad = if (periodSchedules.isNotEmpty()) totalTasksCount / periodSchedules.size else 0
+            val averageTaskTime = if (totalTasksCount != 0) totalTasksTime / totalTasksCount else 0L
 
+            return@wrap ScheduleAnalytics(
+                dateWorkLoadMap = workLoadMap,
+                categoriesAnalytics = categoriesAnalytics,
+                planningAnalytics = planningAnalytics,
+                totalTasksCount = totalTasksCount,
+                totalTasksTime = totalTasksTime,
+                averageDayLoad = averageDayLoad,
+                averageTaskTime = averageTaskTime,
+            )
+        }
+
+        private fun countWorkLoad(period: TimePeriod, timeTasks: List<TimeTask>): WorkLoadMap {
+            val shiftAmount = period.convertToDays()
+            val startDate = currentDate.startThisDay().shiftDay(-shiftAmount)
+            
             val periodCount = when (period) {
                 TimePeriod.WEEK -> Constants.Date.DAY
                 TimePeriod.MONTH -> Constants.Date.DAYS_IN_WEEK
@@ -88,30 +124,14 @@ internal interface AnalyticsInteractor {
                     put(TimeRange(start, end), emptyList())
                 }
             }
+            
             timeTasks.forEach { task ->
                 workLoadPeriodMap.keys.findLast { it.isIncludeTime(task.date) }?.let {
                     val tasks = checkNotNull(workLoadPeriodMap[it]).toMutableList()
                     workLoadPeriodMap[it] = tasks.apply { add(task) }
                 }
             }
-
-            val categoriesAnalytics = countCategoriesAnalytic(
-                categories = categoriesRepository.fetchCategories().first(),
-                timeTasks = timeTasks,
-            )
-            val totalTasksCount = timeTasks.count { it.isConsiderInStatistics }
-            val totalTasksTime = timeTasks.map { it.timeRanges }.sumOf { duration(it) }
-            val averageDayLoad = if (schedules.isNotEmpty()) totalTasksCount / schedules.size else 0
-            val averageTaskTime = if (totalTasksCount != 0) totalTasksTime / totalTasksCount else 0L
-
-            return@wrap ScheduleAnalytics(
-                dateWorkLoadMap = workLoadPeriodMap,
-                categoriesAnalytics = categoriesAnalytics,
-                totalTasksCount = totalTasksCount,
-                totalTasksTime = totalTasksTime,
-                averageDayLoad = averageDayLoad,
-                averageTaskTime = averageTaskTime,
-            )
+            return workLoadPeriodMap
         }
 
         private fun countCategoriesAnalytic(
@@ -149,6 +169,21 @@ internal interface AnalyticsInteractor {
                 }
             }
             return@let analytics.sortedBy { it.duration }.reversed()
+        }
+        
+        private suspend fun countPlanningAnalytics(allSchedules: List<Schedule>): Map<Int, List<PlanningAnalytic>> {
+            val startedDay = currentDate.endOfCurrentMonth()
+            val rawAnalytics = mutableListOf<PlanningAnalytic>().apply {
+                val allTimeTasks = allSchedules.map { it.timeTasks }.extractAllItem()
+                for (day in 0..Constants.Date.DAYS_IN_HALF_YEAR) {
+                    val planningDate = startedDay.shiftDay(-day)
+                    val planningTimeTasks = allTimeTasks.filter { it.createdAt?.isCurrentDay(planningDate) ?: false }
+                    add(PlanningAnalytic(planningDate, planningTimeTasks))
+                }
+            }
+            return rawAnalytics.groupBy { it.date.fetchMonth().number }.mapValues { entry ->
+                entry.value.sortedBy { analytic -> analytic.date }
+            }
         }
     }
 }

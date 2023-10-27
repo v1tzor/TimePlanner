@@ -28,10 +28,12 @@ import java.util.Date
 internal fun Template.convertToTimeTask(
     date: Date,
     key: Long = generateUniqueKey(),
+    createdAt: Date? = Date(),
 ) = TimeTask(
     key = key,
     date = date,
     timeRanges = TimeRange(startTime.changeDay(date), endTime.changeDay(date)),
+    createdAt = createdAt,
     category = category,
     subCategory = subCategory,
     isImportant = isImportant,
