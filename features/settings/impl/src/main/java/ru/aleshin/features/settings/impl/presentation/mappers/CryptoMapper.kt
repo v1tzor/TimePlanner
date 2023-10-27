@@ -17,6 +17,7 @@ package ru.aleshin.features.settings.impl.presentation.mappers
 
 import androidx.compose.runtime.Composable
 import ru.aleshin.features.settings.impl.presentation.models.CryptoAddress
+import ru.aleshin.features.settings.impl.presentation.models.CryptoAddress.*
 import ru.aleshin.features.settings.impl.presentation.theme.SettingsThemeRes
 
 /**
@@ -24,10 +25,12 @@ import ru.aleshin.features.settings.impl.presentation.theme.SettingsThemeRes
  */
 @Composable
 internal fun CryptoAddress.mapToIcon() = when (this) {
-    CryptoAddress.BTC -> SettingsThemeRes.icons.cryptoBitcoin
-    CryptoAddress.BNB -> SettingsThemeRes.icons.cryptoBNB
-    CryptoAddress.ETH -> SettingsThemeRes.icons.cryptoEthereum
-    CryptoAddress.TRX -> SettingsThemeRes.icons.cryptoTron
-    CryptoAddress.LTC -> SettingsThemeRes.icons.cryptoLitecoin
-    CryptoAddress.XEC -> SettingsThemeRes.icons.cryptoECash
+    BTC -> SettingsThemeRes.icons.cryptoBitcoin
+    BNB -> SettingsThemeRes.icons.cryptoBNB
+    ETH -> SettingsThemeRes.icons.cryptoEthereum
+    TRX -> SettingsThemeRes.icons.cryptoTron
+    LTC -> SettingsThemeRes.icons.cryptoLitecoin
+    XEC -> SettingsThemeRes.icons.cryptoECash
+    AVAX -> SettingsThemeRes.icons.cryptoAvax
+    FTM -> SettingsThemeRes.icons.cryptoFtm
 }

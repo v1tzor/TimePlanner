@@ -1,22 +1,13 @@
-Time planner is an application for convenient planning and tracking of your schedule.
-The application contains templates that allow you to quickly make a schedule, you can also enable auto-repeat of the template and no longer worry about manually adding it.
-Each task in the schedule has its own category and subcategory for structuring your actions.
-According to the mimio of this, there is analytics in the application that will help you make your plans for the day more effectively
+Time Planner is an application for convenient scheduling and tracking of daily tasks.
 
-Available languages 🌍
-- Russian 🇷🇺
-- English 🇬🇧
-- German 🇩🇪
-- Spanish 🇪🇸
-- French 🇫🇷
-- Persian 🇮🇷 (beta)
-
-Support 📱
-- Local time and task analytics 📊
-- Templates for everyday tasks 🏃‍♂️
-- Recurring tasks by templates 🔁
-- Data Backup & Recovery 💾
-- Scheduled Notifications ⏰
-- Priorities and protection from overlaying tasks 📐
-- Theme: Dark | Light 🖤🤍
-- Dynamic Color or 4 different color variations 🎨
+📱The application supports:
+- Convenient division of tasks by priority, categories and subcategories 🔥
+- Scheduled alerts about the start of events ⏰
+- Built-in notes for tasks 📌
+- Templates for everyday tasks 🏃
+- Automatic repetition of template tasks 🔁
+- Protection against erroneous task overlap 📐
+- Maintaining analytics and statistics 📊
+- Backup and transfer of data 💾
+- More than 10 different color themes 🎨
+- 6 languages 🌍

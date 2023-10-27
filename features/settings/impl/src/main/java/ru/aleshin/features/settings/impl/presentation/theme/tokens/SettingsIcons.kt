@@ -32,6 +32,8 @@ internal data class SettingsIcons(
     val cryptoECash: Int,
     val copy: Int,
     val crypto: Int,
+    val cryptoAvax: Int,
+    val cryptoFtm: Int,
 )
 
 internal val baseSettingIcons = SettingsIcons(
@@ -43,6 +45,8 @@ internal val baseSettingIcons = SettingsIcons(
     cryptoTron = R.drawable.ic_tron,
     cryptoLitecoin = R.drawable.ic_litecoin,
     cryptoECash = R.drawable.ic_ecash_xec,
+    cryptoAvax = R.drawable.ic_avax,
+    cryptoFtm = R.drawable.ic_fantom,
     copy = R.drawable.ic_content_copy,
     crypto = R.drawable.ic_crypto,
 )

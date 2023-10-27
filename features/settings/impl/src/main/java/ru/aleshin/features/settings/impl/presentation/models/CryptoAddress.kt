@@ -25,4 +25,6 @@ enum class CryptoAddress(val cryptoName: String, val address: String) {
     TRX("TRON", "TKC3NsKSS9hJRvofeJKceT5wC2bqTkPRUE"),
     LTC("LITECOIN", "ltc1qj9fsz4pxrvr3eqyel4q8jnsnfpcfwdsj3mvpec"),
     XEC("ECASH(XEC)", "ecash:qqc0k95nfhkseel9p4avz5jwk6s4vum7rceegten5x"),
+    AVAX("AVALANCHE", "0xbA08E4905B3d52f480419A8444C4de3E91BC98df"),
+    FTM("FANTOM", "0xbA08E4905B3d52f480419A8444C4de3E91BC98df"),
 }
