@@ -58,6 +58,7 @@
 - Dynamic Color or 4 different color variations 🎨
 
 ## Technologies stack 🚀
+- Single Activity
 - MVI Architecture
 - Clean Architecture
 - Multimodularity (by features)
