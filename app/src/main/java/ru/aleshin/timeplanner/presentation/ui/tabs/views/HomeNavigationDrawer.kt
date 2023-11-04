@@ -51,7 +51,7 @@ fun HomeNavigationDrawer(
 
     ModalNavigationDrawer(
         drawerState = drawerState,
-        gesturesEnabled = drawerState.isOpen,
+        gesturesEnabled = true,
         drawerContent = {
             ModalDrawerSheet {
                 DrawerLogoSection(
@@ -82,6 +82,10 @@ enum class HomeDrawerItems : DrawerItem {
     MAIN {
         override val icon: Int @Composable get() = TimePlannerRes.icons.schedulerIcon
         override val title: String @Composable get() = TimePlannerRes.strings.mainDrawerTitle
+    },
+    OVERVIEW {
+        override val icon: Int @Composable get() = TimePlannerRes.icons.overview
+        override val title: String @Composable get() = TimePlannerRes.strings.overviewDrawerTitle
     },
     TEMPLATES {
         override val icon: Int @Composable get() = TimePlannerRes.icons.template
