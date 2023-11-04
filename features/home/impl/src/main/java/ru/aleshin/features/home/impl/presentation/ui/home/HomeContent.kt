@@ -211,13 +211,15 @@ internal fun TimeTasksSection(
                             TimeTaskStatus.RUNNING -> MaterialTheme.colorScheme.primaryContainer
                             TimeTaskStatus.COMPLETED -> MaterialTheme.colorScheme.tertiaryContainer
                         }
-                        AddTimeTaskViewItem(
-                            modifier = Modifier.animateItemPlacement(),
-                            onAddClick = { onTimeTaskAdd.invoke(timeTask.endTime, nextItem!!.startTime) },
-                            startTime = timeTask.endTime,
-                            endTime = nextItem!!.startTime,
-                            indicatorColor = trackColor,
-                        )
+                        if (nextItem != null) {
+                            AddTimeTaskViewItem(
+                                modifier = Modifier.animateItemPlacement(),
+                                onAddClick = { onTimeTaskAdd.invoke(timeTask.endTime, nextItem.startTime) },
+                                startTime = timeTask.endTime,
+                                endTime = nextItem.startTime,
+                                indicatorColor = trackColor,
+                            )
+                        }
                     }
                 }
                 item {
