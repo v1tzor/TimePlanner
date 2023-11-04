@@ -43,7 +43,6 @@ import ru.aleshin.core.ui.views.ViewToggleStatus
 import ru.aleshin.core.utils.extensions.endThisDay
 import ru.aleshin.core.utils.extensions.isNotZeroDifference
 import ru.aleshin.core.utils.extensions.shiftDay
-import ru.aleshin.core.utils.functional.Constants
 import ru.aleshin.features.home.api.domain.entities.schedules.DailyScheduleStatus
 import ru.aleshin.features.home.api.domain.entities.schedules.TimeTaskStatus
 import ru.aleshin.features.home.impl.presentation.models.schedules.TimeTaskUi
@@ -53,7 +52,6 @@ import ru.aleshin.features.home.impl.presentation.ui.home.views.*
 import ru.aleshin.features.home.impl.presentation.ui.home.views.CompletedTimeTaskItem
 import ru.aleshin.features.home.impl.presentation.ui.home.views.DateChooser
 import ru.aleshin.features.home.impl.presentation.ui.home.views.PlannedTimeTaskItem
-import ru.aleshin.features.home.impl.presentation.ui.home.views.TimeTaskPlaceHolderItem
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -74,17 +72,15 @@ internal fun HomeContent(
     onChangeToggleStatus: (ViewToggleStatus) -> Unit,
 ) {
     Column(modifier = modifier.fillMaxSize()) {
-        HorizontalProgressBar(
-            isLoading = state.isLoading,
-        )
-        HomeFiltersHeader(
+        HorizontalProgressBar(isLoading = state.isLoading)
+        DateChooserSection(
             isEnabled = !state.isLoading,
             currentDate = state.currentDate,
             toggleState = state.taskViewStatus,
             onChangeDate = onChangeDate,
             onChangeToggleStatus = onChangeToggleStatus,
         )
-        HomeTimeTasksLazyColumn(
+        TimeTasksSection(
             isLoadingContent = state.isLoading,
             currentDate = state.currentDate,
             dateStatus = state.dateStatus,
@@ -101,7 +97,7 @@ internal fun HomeContent(
 }
 
 @Composable
-internal fun HomeFiltersHeader(
+internal fun DateChooserSection(
     modifier: Modifier = Modifier,
     isEnabled: Boolean,
     currentDate: Date?,
@@ -114,7 +110,7 @@ internal fun HomeFiltersHeader(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(24.dp),
     ) {
-        HomeDataChooser(
+        HomeDateChooser(
             modifier = Modifier.width(202.dp),
             isEnabled = isEnabled,
             currentDate = currentDate,
@@ -129,13 +125,13 @@ internal fun HomeFiltersHeader(
 }
 
 @Composable
-internal fun HomeDataChooser(
+internal fun HomeDateChooser(
     modifier: Modifier = Modifier,
     isEnabled: Boolean,
     currentDate: Date?,
     onChangeDate: (Date) -> Unit,
 ) {
-    val dateFormat = SimpleDateFormat.getDateInstance()
+    val dateFormat = SimpleDateFormat("EEE, MMM d", Locale.getDefault())
     val isDateDialogShow = rememberSaveable { mutableStateOf(false) }
 
     DateChooser(
@@ -159,7 +155,7 @@ internal fun HomeDataChooser(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-internal fun HomeTimeTasksLazyColumn(
+internal fun TimeTasksSection(
     modifier: Modifier = Modifier,
     listState: LazyListState = rememberLazyListState(),
     isLoadingContent: Boolean,
@@ -181,9 +177,7 @@ internal fun HomeTimeTasksLazyColumn(
             verticalArrangement = Arrangement.spacedBy(4.dp),
             userScrollEnabled = !isLoadingContent,
         ) {
-            if (isLoadingContent) {
-                items(Constants.Placeholder.items) { TimeTaskPlaceHolderItem() }
-            } else {
+            if (!isLoadingContent) {
                 items(timeTasks, key = { it.key }) { timeTask ->
                     val isCompactView = timeTaskViewStatus == ViewToggleStatus.COMPACT
                     val timeTaskIndex = timeTasks.indexOf(timeTask)
