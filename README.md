@@ -15,6 +15,7 @@
   </br>
   </br>
   <a href="https://github.com/v1tzor/TimePlanner/actions">
+  <a href=""><img src="https://tokei.rs/b1/github/v1tzor/timeplanner?category=code&color=purple&include_prereleases&logo=github&style=for-the-badge"/></a>
   <a href=""><img src="https://img.shields.io/github/v/release/v1tzor/timeplanner?color=purple&include_prereleases&logo=github&style=for-the-badge"/></a>
   <a href="https://github.com/v1tzor/TimePlanner/stargazers"><img src="https://img.shields.io/github/stars/v1tzor/timeplanner?color=ffff00&style=for-the-badge"/></a>
   <a href=""><img src="https://img.shields.io/github/forks/v1tzor/TimePlanner?style=for-the-badge"/></a>
@@ -58,6 +59,7 @@
 - Dynamic Color or 4 different color variations 🎨
 
 ## Technologies stack 🚀
+- Single Activity
 - MVI Architecture
 - Clean Architecture
 - Multimodularity (by features)
