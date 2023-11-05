@@ -88,8 +88,9 @@ fun TimePickerDialog(
                     onDismissClick = onDismissRequest,
                     onCurrentTimeChoose = {
                         val currentTime = Calendar.getInstance()
+                        currentTime.add(Calendar.MINUTE, 1)
                         hours = currentTime.get(Calendar.HOUR_OF_DAY)
-                        minutes = currentTime.get(Calendar.MINUTE) + 1
+                        minutes = currentTime.get(Calendar.MINUTE)
                         if (!is24Format && (hours!! > 12 || hours == 0)) format = TimeFormat.PM
                     },
                     onConfirmClick = {
