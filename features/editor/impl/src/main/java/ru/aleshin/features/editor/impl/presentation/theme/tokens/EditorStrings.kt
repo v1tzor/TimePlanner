@@ -376,6 +376,57 @@ internal val frenchHomeString = EditorStrings(
     notePlaceholder = "Petite Note en option",
 )
 
+internal val brazilianPortugueseHomeString = EditorStrings(
+    topAppBarEditorTitle = "Editor",
+    topAppBarBackIconDesc = "Voltar",
+    topAppBarMoreIconDesc = "Mais",
+    topAppBarTemplatesTitle = "Templates",
+    mainCategoryChooserTitle = "Categorias",
+    mainCategoryChooserExpandedIconDesc = "Selecione uma categoria",
+    subCategoryChooserTitle = "Subcategoria",
+    categoryNotSelectedTitle = "Nenhum",
+    subCategoryDialogAddedTitle = "Adicionar",
+    subCategoryDialogMainCategoryFormat = "Categoria: %s",
+    timeFieldStartLabel = "Iniciar",
+    timeFieldEndLabel = "Terminar",
+    parameterChooserSwitchIconDesc = "Definir parâmetro",
+    timePickerHeader = "Adicione o tempo",
+    timePickerSeparator = ":",
+    notifyParameterTitle = "Notificação",
+    notifyParameterDesc = "Enviar uma notificação quando terminar essa tarefa",
+    statisticsParameterTitle = "Estatísticas",
+    statisticsParameterDesc = "Incluir tarefa nas estatísticas",
+    saveTaskButtonTitle = "Salvar",
+    cancelButtonTitle = "Cancelar",
+    templateIconDesc = "Adicionar aos Templates",
+    topAppBarDeleteTitle = "Deletar",
+    categoryValidateError = "* Selecionar uma categoria",
+    otherError = "Erro! Contate o desenvolvedor.",
+    startOverlayError = "Conflito! Início da tarefa em sobreposição.",
+    endOverlayError = "Conflito! Fim da tarefa em sobreposição.",
+    fullOverlayError = "Conflito! Tarefas sobrepostas.",
+    correctOverlayTitle = "Consertar",
+    durationPickerTitle = "Duração",
+    templatesSheetTitle = "Templates",
+    controlTitle = "Administrar",
+    applyTitle = "Aplicar",
+    timeRangeFormat = "Tempo: from %S to %s",
+    durationFormat = "Duração: %s",
+    notificationEnabledTitle = "Notificação: ativada",
+    notificationDisabledTitle = "Notificação: desativada",
+    emptyTemplatesTitle = "Lista está vazia",
+    saveTemplateWarningTitle = "Você deseja aplicar as mudanças ao template atual?",
+    saveTemplateWarningConfirm = "Sim",
+    saveTemplateWarningUnsave = "Não",
+    categoriesManageWarningTitle = "Você tem certeza que deseja ir para a tela de administrar as categorias? " +
+        "Os parâmetros atuais continuarão sem ser salvos.",
+    confirmNavigateTitle = "Ir",
+    importantParameterTitle = "Prioridade especial",
+    importantParameterDesc = "Execução obrigatória, sem possibilidade de pular",
+    noteLabel = "Nota",
+    notePlaceholder = "Uma nota é opcional",
+)
+
 internal val LocalEditorStrings = staticCompositionLocalOf<EditorStrings> {
     error("Home Strings is not provided")
 }
@@ -387,4 +438,5 @@ internal fun fetchEditorStrings(language: TimePlannerLanguage) = when (language)
     TimePlannerLanguage.ES -> spanishHomeString
     TimePlannerLanguage.FA -> persianHomeString
     TimePlannerLanguage.FR -> frenchHomeString
+    TimePlannerLanguage.PT -> brazilianPortugueseHomeString
 }
