@@ -196,6 +196,31 @@ internal val frenchAnalyticsStrings = AnalyticsStrings(
     executedStatisticsTitle = "Statistiques d'exécution",
 )
 
+internal val brazilianPortugueseAnalyticsStrings = AnalyticsStrings(
+    topAppBarTitle = "Análises",
+    menuIconDesc = "Menu",
+    timeTabTitle = "Horário",
+    workLoadTabTitle = "Carga de trabalho",
+    intelligenceTabTitle = "Informação",
+    weekTimePeriod = "Semana",
+    monthTimePeriod = "Mês",
+    yearTimePeriod = "Ano",
+    timeSelectorTitle = "Período de tempo:",
+    refreshAnalyticIconDesc = "Atualizar análises",
+    otherAnalyticsName = "Outras",
+    allTimeTitle = "Total:",
+    totalCountTaskTitle = "Número\ndas tarefas",
+    averageCountTaskTitle = "Número\ndas tarefas por dia",
+    totalTimeTaskTitle = "Tempo total\ndas tarefas",
+    averageTimeTaskTitle = "Tempo médio\ndas tarefas",
+    workLoadAnalyticsTitle = "Estatísticas da carga de trabalho",
+    planningAnalyticsTitle = "Estatísticas do planejamento",
+    otherError = "Erro! Contate o desenvolvedor.",
+    halfYearTimePeriod = "Metade do ano",
+    categoryStatisticsTitle = "Estatísticas da categoria",
+    executedStatisticsTitle = "Estatísticas de execução",
+)
+
 internal val LocalAnalyticsStrings = staticCompositionLocalOf<AnalyticsStrings> {
     error("Analytics Strings is not provided")
 }
@@ -207,4 +232,5 @@ internal fun fetchAnalyticsStrings(language: TimePlannerLanguage) = when (langua
     TimePlannerLanguage.ES -> spanishAnalyticsStrings
     TimePlannerLanguage.FA -> persianAnalyticsStrings
     TimePlannerLanguage.FR -> frenchAnalyticsStrings
+    TimePlannerLanguage.PT -> brazilianPortugueseAnalyticsStrings
 }
