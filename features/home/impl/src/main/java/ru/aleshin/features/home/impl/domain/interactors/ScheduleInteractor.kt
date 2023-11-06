@@ -15,13 +15,17 @@
  */
 package ru.aleshin.features.home.impl.domain.interactors
 
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import ru.aleshin.core.utils.extensions.daysToMillis
 import ru.aleshin.core.utils.extensions.mapToDate
+import ru.aleshin.core.utils.extensions.shiftDay
 import ru.aleshin.core.utils.functional.Constants.Date.NEXT_REPEAT_LIMIT
-import ru.aleshin.core.utils.functional.Either
+import ru.aleshin.core.utils.functional.Constants.Date.OVERVIEW_NEXT_DAYS
+import ru.aleshin.core.utils.functional.Constants.Date.OVERVIEW_PREVIOUS_DAYS
+import ru.aleshin.core.utils.functional.DomainResult
+import ru.aleshin.core.utils.functional.FlowDomainResult
 import ru.aleshin.core.utils.managers.DateManager
 import ru.aleshin.core.utils.managers.TimeOverlayManager
 import ru.aleshin.features.home.api.domain.common.ScheduleStatusChecker
@@ -33,6 +37,7 @@ import ru.aleshin.features.home.api.domain.repository.TemplatesRepository
 import ru.aleshin.features.home.impl.domain.common.HomeEitherWrapper
 import ru.aleshin.features.home.impl.domain.common.convertToTimeTask
 import ru.aleshin.features.home.impl.domain.entities.HomeFailures
+import ru.aleshin.features.home.impl.domain.repositories.FeatureScheduleRepository
 import java.util.*
 import javax.inject.Inject
 
@@ -41,20 +46,38 @@ import javax.inject.Inject
  */
 internal interface ScheduleInteractor {
 
-    suspend fun fetchScheduleByDate(date: Long): Flow<Either<HomeFailures, Schedule?>>
-
-    suspend fun createSchedule(requiredDay: Date): Either<HomeFailures, Unit>
-
-    suspend fun updateSchedule(schedule: Schedule): Either<HomeFailures, Unit>
+    suspend fun fetchOverviewSchedules(): DomainResult<HomeFailures, List<Schedule>>
+    suspend fun fetchScheduleByDate(date: Long): FlowDomainResult<HomeFailures, Schedule?>
+    suspend fun createSchedule(requiredDay: Date): DomainResult<HomeFailures, Unit>
+    suspend fun updateSchedule(schedule: Schedule): DomainResult<HomeFailures, Unit>
+    suspend fun fetchFeatureScheduleDate(): Date?
+    fun setFeatureScheduleDate(date: Date?)
 
     class Base @Inject constructor(
         private val scheduleRepository: ScheduleRepository,
+        private val featureScheduleRepository: FeatureScheduleRepository,
         private val templatesRepository: TemplatesRepository,
         private val statusChecker: ScheduleStatusChecker,
         private val dateManager: DateManager,
         private val overlayManager: TimeOverlayManager,
         private val eitherWrapper: HomeEitherWrapper,
     ) : ScheduleInteractor {
+
+        override suspend fun fetchOverviewSchedules() = eitherWrapper.wrap {
+            val currentDate = dateManager.fetchBeginningCurrentDay()
+            val startDate = currentDate.shiftDay(-OVERVIEW_PREVIOUS_DAYS)
+            return@wrap mutableListOf<Schedule>().apply {
+                for (shiftAmount in 0..OVERVIEW_NEXT_DAYS + OVERVIEW_PREVIOUS_DAYS) {
+                    val date = startDate.shiftDay(shiftAmount).time
+                    val schedule = scheduleRepository.fetchScheduleByDate(date).firstOrNull() ?: if (date >= currentDate.time) {
+                        createRecurringSchedule(date.mapToDate(), currentDate)
+                    } else {
+                        null
+                    }
+                    add(schedule ?: Schedule(date = date, status = statusChecker.fetchState(date.mapToDate(), currentDate)))
+                }
+            }
+        }
 
         override suspend fun fetchScheduleByDate(date: Long) = eitherWrapper.wrapFlow {
             val currentDate = dateManager.fetchBeginningCurrentDay()
@@ -82,9 +105,19 @@ internal interface ScheduleInteractor {
             scheduleRepository.updateSchedule(schedule)
         }
 
+        override suspend fun fetchFeatureScheduleDate(): Date? {
+            return featureScheduleRepository.fetchScheduleDate().apply {
+                featureScheduleRepository.setScheduleDate(null)
+            }
+        }
+
+        override fun setFeatureScheduleDate(date: Date?) {
+            featureScheduleRepository.setScheduleDate(date)
+        }
+
         private suspend fun createRecurringSchedule(target: Date, current: Date): Schedule? {
             val templates = foundPlannedTemplates(target).apply { if (this.isEmpty()) return null }
-            val templatesTimeTasks = templates.map { it.convertToTimeTask(target) }
+            val templatesTimeTasks = templates.map { it.convertToTimeTask(date = target, createdAt = target) }
             val correctTimeTasks = mutableListOf<TimeTask>().apply {
                 templatesTimeTasks.sortedBy { it.timeRanges.from }.forEach { timeTask ->
                     val allTimeRanges = map { it.timeRanges }

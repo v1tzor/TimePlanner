@@ -15,6 +15,7 @@
  */
 package ru.aleshin.features.home.impl.domain.interactors
 
+import kotlinx.coroutines.flow.first
 import ru.aleshin.core.utils.extensions.generateUniqueKey
 import ru.aleshin.core.utils.extensions.mapToDate
 import ru.aleshin.core.utils.extensions.startThisDay
@@ -38,7 +39,10 @@ import javax.inject.Inject
  */
 internal interface RepeatTaskInteractor {
 
-    suspend fun updateRepeatTemplate(oldTemplate: Template, template: Template): Either<HomeFailures, List<TimeTask>>
+    suspend fun updateRepeatTemplate(
+        oldTemplate: Template,
+        template: Template,
+    ): Either<HomeFailures, List<TimeTask>>
     suspend fun addRepeatsTemplate(
         template: Template, 
         repeatTimes: List<RepeatTime>,
@@ -103,7 +107,7 @@ internal interface RepeatTaskInteractor {
         
         private suspend fun filteredSchedules(): List<Schedule> {
             val currentDate = dateManager.fetchBeginningCurrentDay()
-            return scheduleRepository.fetchSchedulesByRange(null).filter { schedule ->
+            return scheduleRepository.fetchSchedulesByRange(null).first().filter { schedule ->
                 schedule.date > currentDate.time 
             }
         }
@@ -136,7 +140,7 @@ internal interface RepeatTaskInteractor {
                         true -> existedTimeTask.key
                         false -> generateUniqueKey()
                     }
-                    val repeatTimeTask = template.convertToTimeTask(scheduleDate, timeTaskKey)
+                    val repeatTimeTask = template.convertToTimeTask(scheduleDate, timeTaskKey, scheduleDate)
                     val scheduleTimeRanges = scheduleTimeTasks.filter { !keyList.contains(it.key) }.map { it.timeRanges }
                     overlayManager.isOverlay(repeatTimeTask.timeRanges, scheduleTimeRanges).let { overlayResult ->
                         if (!overlayResult.isOverlay) add(repeatTimeTask)

@@ -27,7 +27,7 @@ import ru.aleshin.features.editor.impl.presentation.models.editmodel.EditParamet
 internal fun EditModel.mapToUi() = EditModelUi(
     key = key,
     date = date,
-    timeRanges = TimeRange(startTime, endTime),
+    timeRange = TimeRange(startTime, endTime),
     createdAt = createdAt,
     duration = duration(startTime, endTime),
     mainCategory = mainCategory.mapToUi(),
@@ -36,6 +36,7 @@ internal fun EditModel.mapToUi() = EditModelUi(
     isCompleted = isCompleted,
     repeatEnabled = repeatEnabled,
     templateId = templateId,
+    undefinedTaskId = undefinedTaskId,
     repeatTimes = repeatTimes,
     note = note,
 )
@@ -43,8 +44,8 @@ internal fun EditModel.mapToUi() = EditModelUi(
 internal fun EditModelUi.mapToDomain() = EditModel(
     key = key,
     date = date,
-    startTime = timeRanges.from,
-    endTime = timeRanges.to,
+    startTime = timeRange.from,
+    endTime = timeRange.to,
     createdAt = createdAt,
     mainCategory = mainCategory.mapToDomain(),
     subCategory = subCategory?.mapToDomain(),
@@ -54,6 +55,7 @@ internal fun EditModelUi.mapToDomain() = EditModel(
     isConsiderInStatistics = parameters.isConsiderInStatistics,
     repeatEnabled = repeatEnabled,
     templateId = templateId,
+    undefinedTaskId = undefinedTaskId,
     repeatTimes = repeatTimes,
     note = note,
 )

@@ -27,7 +27,9 @@ import ru.aleshin.core.utils.navigation.navigator.rememberNavigatorManager
 import ru.aleshin.features.home.impl.di.holder.HomeComponentHolder
 import ru.aleshin.features.home.impl.presentation.theme.HomeTheme
 import ru.aleshin.features.home.impl.presentation.ui.categories.CategoriesScreen
+import ru.aleshin.features.home.impl.presentation.ui.details.DetailsScreen
 import ru.aleshin.features.home.impl.presentation.ui.home.HomeScreen
+import ru.aleshin.features.home.impl.presentation.ui.overview.OverviewScreen
 import ru.aleshin.features.home.impl.presentation.ui.templates.TemplatesScreen
 import javax.inject.Inject
 
@@ -61,7 +63,9 @@ internal class NavScreen @Inject constructor() : Screen {
 
 internal fun fetchFeatureScreenIndex(screen: Screen) = when (screen) {
     is HomeScreen -> 0
-    is TemplatesScreen -> 1
-    is CategoriesScreen -> 2
+    is OverviewScreen -> 1
+    is DetailsScreen -> 1
+    is TemplatesScreen -> 2
+    is CategoriesScreen -> 3
     else -> 0
 }

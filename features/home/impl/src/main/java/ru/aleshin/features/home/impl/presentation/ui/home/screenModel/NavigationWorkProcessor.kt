@@ -24,6 +24,7 @@ import ru.aleshin.core.utils.platform.screenmodel.work.WorkResult
 import ru.aleshin.features.editor.api.navigations.EditorScreens
 import ru.aleshin.features.home.api.domain.entities.categories.MainCategory
 import ru.aleshin.features.home.api.domain.entities.schedules.TimeTask
+import ru.aleshin.features.home.api.navigation.HomeScreens
 import ru.aleshin.features.home.impl.domain.interactors.TemplatesInteractor
 import ru.aleshin.features.home.impl.navigation.NavigationManager
 import ru.aleshin.features.home.impl.presentation.mapppers.schedules.mapToDomain
@@ -44,8 +45,16 @@ internal interface NavigationWorkProcessor : WorkProcessor<NavigationWorkCommand
     ) : NavigationWorkProcessor {
 
         override suspend fun work(command: NavigationWorkCommand) = when (command) {
+            is NavigationWorkCommand.NavigateToOverview -> navigateToOverviewWork()
             is NavigationWorkCommand.NavigateToEditorCreator -> navigateToEditorCreator(command.currentDate, command.timeRange)
             is NavigationWorkCommand.NavigateToEditor -> navigateToEditor(command.timeTask)
+        }
+
+        private fun navigateToOverviewWork(): WorkResult<HomeAction, HomeEffect> {
+            val screen = HomeScreens.Overview
+            return navigationManager.navigateToLocal(screen, false).let {
+                ActionResult(HomeAction.Navigate)
+            }
         }
 
         private suspend fun navigateToEditor(timeTask: TimeTaskUi): WorkResult<HomeAction, HomeEffect> {
@@ -67,6 +76,7 @@ internal interface NavigationWorkProcessor : WorkProcessor<NavigationWorkCommand
 }
 
 internal sealed class NavigationWorkCommand : WorkCommand {
+    object NavigateToOverview : NavigationWorkCommand()
     data class NavigateToEditor(val timeTask: TimeTaskUi) : NavigationWorkCommand()
     data class NavigateToEditorCreator(val currentDate: Date, val timeRange: TimeRange) : NavigationWorkCommand()
 }

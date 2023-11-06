@@ -20,7 +20,7 @@ import androidx.room.*
 import kotlinx.coroutines.flow.Flow
 import ru.aleshin.features.home.api.data.models.schedules.DailyScheduleEntity
 import ru.aleshin.features.home.api.data.models.schedules.ScheduleDetails
-import ru.aleshin.features.home.api.data.models.timetasks.TimeTaskEntity
+import ru.aleshin.features.home.api.data.models.tasks.TimeTaskEntity
 
 /**
  * @author Stanislav Aleshin on 21.02.2023.
@@ -30,11 +30,11 @@ interface SchedulesDao {
 
     @Transaction
     @Query("SELECT * FROM dailySchedules WHERE date > :start AND date < :end")
-    suspend fun fetchDailySchedulesByRange(start: Long, end: Long): List<ScheduleDetails>
+    fun fetchDailySchedulesByRange(start: Long, end: Long): Flow<List<ScheduleDetails>>
 
     @Transaction
     @Query("SELECT * FROM dailySchedules")
-    suspend fun fetchAllSchedules(): List<ScheduleDetails>
+    fun fetchAllSchedules(): Flow<List<ScheduleDetails>>
 
     @Transaction
     @Query("SELECT * FROM dailySchedules WHERE date = :date")

@@ -27,7 +27,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -95,7 +94,7 @@ internal fun EditorContent(
                 DateTimeSection(
                     enabled = !state.editModel.checkDateIsRepeat(),
                     isTimeValidError = state.timeRangeValid is TimeRangeError.DurationError,
-                    timeRanges = state.editModel.timeRanges,
+                    timeRanges = state.editModel.timeRange,
                     duration = state.editModel.duration,
                     onTimeRangeChange = onTimeRangeChange,
                 )

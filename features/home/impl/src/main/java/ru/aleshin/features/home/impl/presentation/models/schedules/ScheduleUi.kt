@@ -28,4 +28,5 @@ internal data class ScheduleUi(
     val date: Date,
     val dateStatus: DailyScheduleStatus,
     val timeTasks: List<TimeTaskUi>,
+    val progress: Float,
 ) : Parcelable

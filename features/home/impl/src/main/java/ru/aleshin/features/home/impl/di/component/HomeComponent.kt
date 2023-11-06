@@ -20,11 +20,14 @@ import ru.aleshin.core.utils.di.FeatureScope
 import ru.aleshin.core.utils.navigation.navigator.NavigatorManager
 import ru.aleshin.features.home.api.di.HomeFeatureApi
 import ru.aleshin.features.home.impl.di.HomeFeatureDependencies
+import ru.aleshin.features.home.impl.di.modules.DataModule
 import ru.aleshin.features.home.impl.di.modules.DomainModule
 import ru.aleshin.features.home.impl.di.modules.LocalNavigationModule
 import ru.aleshin.features.home.impl.di.modules.PresentationModule
 import ru.aleshin.features.home.impl.presentation.ui.categories.screenmodel.CategoriesScreenModel
+import ru.aleshin.features.home.impl.presentation.ui.details.screenmodel.DetailsScreenModel
 import ru.aleshin.features.home.impl.presentation.ui.home.screenModel.HomeScreenModel
+import ru.aleshin.features.home.impl.presentation.ui.overview.screenmodel.OverviewScreenModel
 import ru.aleshin.features.home.impl.presentation.ui.templates.screenmodel.TemplatesScreenModel
 
 /**
@@ -32,12 +35,14 @@ import ru.aleshin.features.home.impl.presentation.ui.templates.screenmodel.Templ
  */
 @FeatureScope
 @Component(
-    modules = [DomainModule::class, LocalNavigationModule::class, PresentationModule::class],
+    modules = [DataModule::class, DomainModule::class, LocalNavigationModule::class, PresentationModule::class],
     dependencies = [HomeFeatureDependencies::class],
 )
 internal interface HomeComponent : HomeFeatureApi {
 
     fun fetchLocalNavigatorManager(): NavigatorManager
+    fun fetchOverviewScreenModel(): OverviewScreenModel
+    fun fetchDetailsScreenModel(): DetailsScreenModel
     fun fetchHomeScreenModel(): HomeScreenModel
     fun fetchTemplatesScreenModel(): TemplatesScreenModel
     fun fetchCategoriesScreenModel(): CategoriesScreenModel

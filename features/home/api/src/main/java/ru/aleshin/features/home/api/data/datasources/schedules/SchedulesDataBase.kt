@@ -25,23 +25,27 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import ru.aleshin.features.home.api.data.datasources.categories.MainCategoriesDao
 import ru.aleshin.features.home.api.data.datasources.subcategories.SubCategoriesDao
 import ru.aleshin.features.home.api.data.datasources.templates.TemplatesDao
+import ru.aleshin.features.home.api.data.datasources.undefinedtasks.UndefinedTasksDao
 import ru.aleshin.features.home.api.data.models.categories.MainCategoryEntity
 import ru.aleshin.features.home.api.data.models.categories.SubCategoryEntity
 import ru.aleshin.features.home.api.data.models.schedules.DailyScheduleEntity
+import ru.aleshin.features.home.api.data.models.tasks.TimeTaskEntity
+import ru.aleshin.features.home.api.data.models.tasks.UndefinedTaskEntity
 import ru.aleshin.features.home.api.data.models.template.RepeatTimeEntity
 import ru.aleshin.features.home.api.data.models.template.TemplateEntity
-import ru.aleshin.features.home.api.data.models.timetasks.TimeTaskEntity
+import ru.aleshin.features.home.api.domain.entities.schedules.UndefinedTask
 
 /**
  * @author Stanislav Aleshin on 25.02.2023.
  */
 @Database(
-    version = 8,
+    version = 9,
     entities = [
         TemplateEntity::class,
         RepeatTimeEntity::class,
         DailyScheduleEntity::class,
         TimeTaskEntity::class,
+        UndefinedTaskEntity::class,
         MainCategoryEntity::class,
         SubCategoryEntity::class,
     ],
@@ -50,6 +54,7 @@ import ru.aleshin.features.home.api.data.models.timetasks.TimeTaskEntity
         AutoMigration(from = 1, to = 2),
         AutoMigration(from = 3, to = 4),
         AutoMigration(from = 6, to = 7),
+        AutoMigration(from = 8, to = 9),
     ],
 )
 abstract class SchedulesDataBase : RoomDatabase() {
@@ -58,6 +63,7 @@ abstract class SchedulesDataBase : RoomDatabase() {
     abstract fun fetchMainCategoriesDao(): MainCategoriesDao
     abstract fun fetchSubCategoriesDao(): SubCategoriesDao
     abstract fun fetchTemplatesDao(): TemplatesDao
+    abstract fun fetchUndefinedTasksDao(): UndefinedTasksDao
 
     companion object {
         const val NAME = "SchedulesDataBase.db"

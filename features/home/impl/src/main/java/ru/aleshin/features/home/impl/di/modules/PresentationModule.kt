@@ -20,6 +20,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import dagger.Binds
 import dagger.Module
 import ru.aleshin.core.utils.di.FeatureScope
+import ru.aleshin.core.utils.di.ScreenModelKey
 import ru.aleshin.features.home.api.navigation.HomeFeatureStarter
 import ru.aleshin.features.home.impl.navigation.HomeFeatureStarterImpl
 import ru.aleshin.features.home.impl.navigation.NavigationManager
@@ -30,12 +31,20 @@ import ru.aleshin.features.home.impl.presentation.ui.categories.screenmodel.Cate
 import ru.aleshin.features.home.impl.presentation.ui.categories.screenmodel.CategoriesScreenModel
 import ru.aleshin.features.home.impl.presentation.ui.categories.screenmodel.CategoriesStateCommunicator
 import ru.aleshin.features.home.impl.presentation.ui.categories.screenmodel.CategoriesWorkProcessor
+import ru.aleshin.features.home.impl.presentation.ui.details.screenmodel.DetailsEffectCommunicator
+import ru.aleshin.features.home.impl.presentation.ui.details.screenmodel.DetailsScreenModel
+import ru.aleshin.features.home.impl.presentation.ui.details.screenmodel.DetailsStateCommunicator
+import ru.aleshin.features.home.impl.presentation.ui.details.screenmodel.DetailsWorkProcessor
 import ru.aleshin.features.home.impl.presentation.ui.home.screenModel.HomeEffectCommunicator
 import ru.aleshin.features.home.impl.presentation.ui.home.screenModel.HomeScreenModel
 import ru.aleshin.features.home.impl.presentation.ui.home.screenModel.HomeStateCommunicator
 import ru.aleshin.features.home.impl.presentation.ui.home.screenModel.NavigationWorkProcessor
 import ru.aleshin.features.home.impl.presentation.ui.home.screenModel.ScheduleWorkProcessor
 import ru.aleshin.features.home.impl.presentation.ui.nav.NavScreen
+import ru.aleshin.features.home.impl.presentation.ui.overview.screenmodel.OverviewEffectCommunicator
+import ru.aleshin.features.home.impl.presentation.ui.overview.screenmodel.OverviewScreenModel
+import ru.aleshin.features.home.impl.presentation.ui.overview.screenmodel.OverviewStateCommunicator
+import ru.aleshin.features.home.impl.presentation.ui.overview.screenmodel.OverviewWorkProcessor
 import ru.aleshin.features.home.impl.presentation.ui.templates.screenmodel.TemplatesEffectCommunicator
 import ru.aleshin.features.home.impl.presentation.ui.templates.screenmodel.TemplatesScreenModel
 import ru.aleshin.features.home.impl.presentation.ui.templates.screenmodel.TemplatesStateCommunicator
@@ -65,9 +74,40 @@ internal interface PresentationModule {
     @FeatureScope
     fun bindNavScreen(screen: NavScreen): Screen
 
+    // Overview
+
+    @Binds
+    @ScreenModelKey(OverviewScreenModel::class)
+    fun bindOverviewScreenModel(screenModel: OverviewScreenModel): ScreenModel
+
+    @Binds
+    fun bindOverviewStateCommunicator(communicator: OverviewStateCommunicator.Base): OverviewStateCommunicator
+
+    @Binds
+    fun bindOverviewEffectCommunicator(communicator: OverviewEffectCommunicator.Base): OverviewEffectCommunicator
+
+    @Binds
+    fun bindOverviewWorkProcessor(processor: OverviewWorkProcessor.Base): OverviewWorkProcessor 
+    
+    // Details
+
+    @Binds
+    @ScreenModelKey(DetailsScreenModel::class)
+    fun bindDetailsScreenModel(screenModel: DetailsScreenModel): ScreenModel
+
+    @Binds
+    fun bindDetailsStateCommunicator(communicator: DetailsStateCommunicator.Base): DetailsStateCommunicator
+
+    @Binds
+    fun bindDetailsEffectCommunicator(communicator: DetailsEffectCommunicator.Base): DetailsEffectCommunicator
+
+    @Binds
+    fun binDetailsWorkProcessor(processor: DetailsWorkProcessor.Base): DetailsWorkProcessor
+
     // Home ScreenModel
 
     @Binds
+    @ScreenModelKey(HomeScreenModel::class)
     fun bindHomeScreenModel(screenModel: HomeScreenModel): ScreenModel
 
     @Binds
@@ -93,6 +133,7 @@ internal interface PresentationModule {
     // Templates
 
     @Binds
+    @ScreenModelKey(TemplatesScreenModel::class)
     fun bindTemplatesScreenModel(screenModel: TemplatesScreenModel): ScreenModel
 
     @Binds
@@ -109,6 +150,7 @@ internal interface PresentationModule {
     // Categories
 
     @Binds
+    @ScreenModelKey(CategoriesScreenModel::class)
     fun bindCategoriesScreenModel(screenModel: CategoriesScreenModel): ScreenModel
 
     @Binds

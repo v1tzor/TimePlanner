@@ -18,8 +18,8 @@ package ru.aleshin.features.home.api.data.models.schedules
 import androidx.room.Embedded
 import androidx.room.Relation
 import ru.aleshin.core.utils.functional.Mapper
-import ru.aleshin.features.home.api.data.models.timetasks.TimeTaskDetails
-import ru.aleshin.features.home.api.data.models.timetasks.TimeTaskEntity
+import ru.aleshin.features.home.api.data.models.tasks.TimeTaskDetails
+import ru.aleshin.features.home.api.data.models.tasks.TimeTaskEntity
 
 /**
  * @author Stanislav Aleshin on 21.02.2023.

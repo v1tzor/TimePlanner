@@ -100,7 +100,7 @@ internal fun TemplatesBottomSheet(
                 templateCount = templates?.size,
                 onControlClick = onControlClick,
             )
-            Divider(Modifier.padding(horizontal = 16.dp, vertical = 16.dp))
+            Divider(modifier = Modifier.padding(vertical = 12.dp))
             LazyColumn(
                 modifier = Modifier.padding(horizontal = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(10.dp),
@@ -135,7 +135,7 @@ internal fun TemplatesBottomSheet(
             }
         }
     }
-    TemplatesBottomSheetSystemUi(
+    BottomSheetSystemUi(
         isShow = isShow,
         containerColor = containerColor,
     )
@@ -294,20 +294,5 @@ internal fun TemplateBottomSheetItemInfo(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.bodyMedium,
         )
-    }
-}
-
-@Composable
-private fun TemplatesBottomSheetSystemUi(
-    isShow: Boolean,
-    containerColor: Color = MaterialTheme.colorScheme.surfaceThree(),
-    backgroundColor: Color = MaterialTheme.colorScheme.background,
-) {
-    val systemUiController = rememberSystemUiController()
-
-    DisposableEffect(key1 = isShow) {
-        val color = if (isShow) containerColor else backgroundColor
-        systemUiController.setNavigationBarColor(color = color)
-        onDispose { systemUiController.setNavigationBarColor(color = backgroundColor) }
     }
 }

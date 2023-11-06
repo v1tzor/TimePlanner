@@ -46,7 +46,7 @@ fun DefaultCategoryType.mapToIcon(icons: TimePlannerIcons): Int = when (this) {
 fun DefaultCategoryType.mapToString(strings: TimePlannerStrings): String = when (this) {
     DefaultCategoryType.WORK -> strings.categoryWorkTitle
     DefaultCategoryType.REST -> strings.categoryRestTitle
-    DefaultCategoryType.AFFAIRS -> strings.categoryAffairsTitle
+    DefaultCategoryType.AFFAIRS -> strings.categoryChoresTitle
     DefaultCategoryType.TRANSPORT -> strings.categoryTransportTitle
     DefaultCategoryType.STUDY -> strings.categoryStudyTitle
     DefaultCategoryType.EAT -> strings.categoryEatTitle

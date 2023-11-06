@@ -22,5 +22,5 @@ import ru.aleshin.features.home.api.domain.entities.template.Template
  * @author Stanislav Aleshin on 29.07.2023.
  */
 sealed class EditorScreens {
-    data class Editor(val timeTask: TimeTask, val template: Template?) : EditorScreens()
+    data class Editor(val timeTask: TimeTask, val template: Template?, val undefinedTaskId: Long? = null) : EditorScreens()
 }

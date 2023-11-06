@@ -36,7 +36,8 @@ data class EditModel(
     val isEnableNotification: Boolean = true,
     val isConsiderInStatistics: Boolean = true,
     val repeatEnabled: Boolean = false,
-    val repeatTimes: List<RepeatTime> = emptyList(),
     val templateId: Int? = null,
+    val undefinedTaskId: Long? = null,
+    val repeatTimes: List<RepeatTime> = emptyList(),
     val note: String? = null,
 )

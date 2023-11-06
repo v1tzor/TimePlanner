@@ -15,7 +15,6 @@
  */
 package ru.aleshin.features.home.impl.presentation.ui.home.screenModel
 
-import android.util.Log
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.first
@@ -61,7 +60,7 @@ internal interface ScheduleWorkProcessor : FlowWorkProcessor<ScheduleWorkCommand
     ) : ScheduleWorkProcessor {
 
         override suspend fun work(command: ScheduleWorkCommand) = when (command) {
-            is ScheduleWorkCommand.SetupSettings -> setupSettingsWork()
+            is ScheduleWorkCommand.SetupSettings -> setupSettings()
             is ScheduleWorkCommand.LoadScheduleByDate -> loadScheduleByDateWork(command.date)
             is ScheduleWorkCommand.ChangeTaskDoneState -> changeTaskDoneStateWork(command.date, command.key)
             is ScheduleWorkCommand.ChangeTaskViewStatus -> changeTaskViewStatus(command.status)
@@ -70,21 +69,23 @@ internal interface ScheduleWorkProcessor : FlowWorkProcessor<ScheduleWorkCommand
             is ScheduleWorkCommand.TimeTaskShiftUp -> shiftUpTimeWork(command.timeTask)
         }
 
-        private fun setupSettingsWork() = flow {
+        private fun setupSettings() = flow {
             settingsInteractor.fetchTasksSettings().collectAndHandle(
                 onLeftAction = { emit(EffectResult(HomeEffect.ShowError(it))) },
                 onRightAction = { emit(ActionResult(HomeAction.SetupSettings(it))) },
             )
         }
 
-        private suspend fun loadScheduleByDateWork(date: Date) = flow {
-            scheduleInteractor.fetchScheduleByDate(date.time).collectAndHandle(
+        private suspend fun loadScheduleByDateWork(date: Date?) = flow {
+            val sendDate = scheduleInteractor.fetchFeatureScheduleDate()
+            val scheduleDate = sendDate ?: date ?: dateManager.fetchBeginningCurrentDay()
+            scheduleInteractor.fetchScheduleByDate(scheduleDate.time).collectAndHandle(
                 onLeftAction = { error -> emit(EffectResult(HomeEffect.ShowError(error))) },
                 onRightAction = { schedule ->
                     if (schedule != null) {
                         refreshScheduleState(schedule.map(mapperToUi))
                     } else {
-                        emit(ActionResult(HomeAction.SetEmptySchedule(date, null)))
+                        emit(ActionResult(HomeAction.SetEmptySchedule(scheduleDate, null)))
                     }
                 },
             )
@@ -174,7 +175,7 @@ internal interface ScheduleWorkProcessor : FlowWorkProcessor<ScheduleWorkCommand
 
 internal sealed class ScheduleWorkCommand : WorkCommand {
     object SetupSettings : ScheduleWorkCommand()
-    data class LoadScheduleByDate(val date: Date) : ScheduleWorkCommand()
+    data class LoadScheduleByDate(val date: Date?) : ScheduleWorkCommand()
     data class CreateSchedule(val date: Date) : ScheduleWorkCommand()
     data class ChangeTaskDoneState(val date: Date, val key: Long) : ScheduleWorkCommand()
     data class ChangeTaskViewStatus(val status: ViewToggleStatus) : ScheduleWorkCommand()

@@ -42,6 +42,7 @@ internal data class HomeViewState(
 internal sealed class HomeEvent : BaseEvent {
     object Init : HomeEvent()
     object CreateSchedule : HomeEvent()
+    object PressOverviewButton : HomeEvent()
     data class LoadSchedule(val date: Date?) : HomeEvent()
     data class PressAddTimeTaskButton(val startTime: Date, val endTime: Date) : HomeEvent()
     data class PressEditTimeTaskButton(val timeTask: TimeTaskUi) : HomeEvent()
@@ -57,8 +58,8 @@ internal sealed class HomeEffect : BaseUiEffect {
 
 internal sealed class HomeAction : BaseAction {
     object Navigate : HomeAction()
-    object ShowContentLoading : HomeAction()
     data class SetupSettings(val settings: TasksSettings) : HomeAction()
+    data class UpdateDate(val date: Date) : HomeAction()
     data class UpdateSchedule(val schedule: ScheduleUi) : HomeAction()
     data class SetEmptySchedule(val date: Date, val status: DailyScheduleStatus?) : HomeAction()
 }

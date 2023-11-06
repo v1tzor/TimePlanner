@@ -15,11 +15,15 @@
  */
 package ru.aleshin.features.home.api.navigation
 
+import java.util.Date
+
 /**
  * @author Stanislav Aleshin on 29.07.2023.
  */
 sealed class HomeScreens {
-    object Home : HomeScreens()
+    object Overview : HomeScreens()
+    data class Home(val scheduleDate: Date? = null) : HomeScreens()
+    object Details : HomeScreens()
     object Templates : HomeScreens()
     object Categories : HomeScreens()
 }

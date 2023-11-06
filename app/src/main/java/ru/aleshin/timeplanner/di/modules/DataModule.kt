@@ -23,11 +23,13 @@ import ru.aleshin.features.home.api.data.repository.ScheduleRepositoryImpl
 import ru.aleshin.features.home.api.data.repository.SubCategoriesRepositoryImpl
 import ru.aleshin.features.home.api.data.repository.TemplatesRepositoryImpl
 import ru.aleshin.features.home.api.data.repository.TimeTaskRepositoryImpl
+import ru.aleshin.features.home.api.data.repository.UndefinedTasksRepositoryImpl
 import ru.aleshin.features.home.api.domain.repository.CategoriesRepository
 import ru.aleshin.features.home.api.domain.repository.ScheduleRepository
 import ru.aleshin.features.home.api.domain.repository.SubCategoriesRepository
 import ru.aleshin.features.home.api.domain.repository.TemplatesRepository
 import ru.aleshin.features.home.api.domain.repository.TimeTaskRepository
+import ru.aleshin.features.home.api.domain.repository.UndefinedTasksRepository
 import ru.aleshin.features.settings.api.data.repositories.TasksSettingsRepositoryImpl
 import ru.aleshin.features.settings.api.data.repositories.ThemeSettingsRepositoryImpl
 import ru.aleshin.features.settings.api.domain.repositories.TasksSettingsRepository
@@ -45,6 +47,10 @@ interface DataModule {
     @Singleton
     @Binds
     fun bindTemplatesRepository(repository: TemplatesRepositoryImpl): TemplatesRepository
+
+    @Singleton
+    @Binds
+    fun bindUndefinedTasksRepository(repository: UndefinedTasksRepositoryImpl): UndefinedTasksRepository
 
     @Binds
     @Singleton

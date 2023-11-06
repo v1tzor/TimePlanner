@@ -28,6 +28,8 @@ import ru.aleshin.features.home.api.data.datasources.subcategories.SubCategories
 import ru.aleshin.features.home.api.data.datasources.subcategories.SubCategoriesLocalDataSource
 import ru.aleshin.features.home.api.data.datasources.templates.TemplatesDao
 import ru.aleshin.features.home.api.data.datasources.templates.TemplatesLocalDataSource
+import ru.aleshin.features.home.api.data.datasources.undefinedtasks.UndefinedTasksDao
+import ru.aleshin.features.home.api.data.datasources.undefinedtasks.UndefinedTasksLocalDataSource
 import ru.aleshin.features.settings.api.data.datasources.SettingsDataBase
 import ru.aleshin.features.settings.api.data.datasources.tasks.TasksSettingsDao
 import ru.aleshin.features.settings.api.data.datasources.tasks.TasksSettingsLocalDataSource
@@ -42,6 +44,12 @@ import javax.inject.Singleton
 class DataBaseModule {
 
     // LocalDataSources
+
+    @Provides
+    @Singleton
+    fun provideUndefinedTasksLocalDataSource(
+        undefinedTasksDao: UndefinedTasksDao,
+    ): UndefinedTasksLocalDataSource = UndefinedTasksLocalDataSource.Base(undefinedTasksDao)
 
     @Provides
     @Singleton
@@ -110,6 +118,11 @@ class DataBaseModule {
     @Singleton
     fun provideScheduleDao(dataBase: SchedulesDataBase): SchedulesDao =
         dataBase.fetchSchedulesDao()
+
+    @Provides
+    @Singleton
+    fun provideUndefinedTasksDao(dataBase: SchedulesDataBase): UndefinedTasksDao =
+        dataBase.fetchUndefinedTasksDao()
 
     // DataBases
 

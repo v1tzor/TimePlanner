@@ -33,6 +33,8 @@ sealed class Either<out L, out R> {
 
 typealias DomainResult<L, R> = Either<L, R>
 
+typealias FlowDomainResult<L, R> = Flow<Either<L, R>>
+
 typealias UnitDomainResult<L> = Either<L, Unit>
 
 fun <L, R> Either<L, R>.rightOrElse(elseValue: R): R = when (this) {

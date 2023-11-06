@@ -22,10 +22,13 @@ import ru.aleshin.core.utils.navigation.Router
 import ru.aleshin.core.utils.navigation.TabRouter
 import ru.aleshin.features.editor.api.presentation.TimeTaskAlarmManager
 import ru.aleshin.features.home.api.data.datasources.schedules.SchedulesLocalDataSource
+import ru.aleshin.features.home.api.domain.common.ScheduleStatusChecker
 import ru.aleshin.features.home.api.domain.repository.CategoriesRepository
+import ru.aleshin.features.home.api.domain.repository.ScheduleRepository
 import ru.aleshin.features.home.api.domain.repository.SubCategoriesRepository
 import ru.aleshin.features.home.api.domain.repository.TemplatesRepository
 import ru.aleshin.features.home.api.domain.repository.TimeTaskRepository
+import ru.aleshin.features.home.api.domain.repository.UndefinedTasksRepository
 import ru.aleshin.features.home.api.navigation.HomeFeatureStarter
 import ru.aleshin.module_injector.BaseFeatureDependencies
 
@@ -37,10 +40,13 @@ interface EditorFeatureDependencies : BaseFeatureDependencies {
     val tabRouter: TabRouter
     val homeFeatureStarter: HomeFeatureStarter
     val categoriesRepository: CategoriesRepository
-    val schedulesLocalDataSource: SchedulesLocalDataSource
     val timeTaskRepository: TimeTaskRepository
+    val scheduleRepository: ScheduleRepository
     val templatesRepository: TemplatesRepository
+    val undefinedTasksRepository: UndefinedTasksRepository
     val subCategoriesRepository: SubCategoriesRepository
+    val schedulesLocalDataSource: SchedulesLocalDataSource
+    val scheduleStatusChecker: ScheduleStatusChecker
     val coroutineManager: CoroutineManager
     val timeOverlayManager: TimeOverlayManager
     val timeTaskAlarmManager: TimeTaskAlarmManager

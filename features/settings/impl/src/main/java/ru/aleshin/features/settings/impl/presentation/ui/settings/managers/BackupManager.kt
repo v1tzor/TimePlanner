@@ -58,7 +58,7 @@ internal interface BackupManager {
                             // TODO: Not work with old model
                             val backup = Json.decodeFromString<BackupModel>(jsonString)
                             return@wrap backup.copy(
-                                categoriesList = backup.categoriesList.filter { it.category.id != 0 },
+                                categories = backup.categories.filter { it.category.id != 0 },
                             )
                         }
                     }

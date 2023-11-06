@@ -99,7 +99,7 @@ fun DrawerLogoSection(
     modifier: Modifier = Modifier,
     logoIcon: Painter,
     description: String,
-    color: Color = MaterialTheme.colorScheme.onSurface
+    color: Color = MaterialTheme.colorScheme.onSurface,
 ) {
     Row(
         modifier = modifier.padding(start = 16.dp, end = 16.dp, top = 12.dp, bottom = 12.dp),

@@ -15,12 +15,16 @@
  */
 package ru.aleshin.features.home.impl.presentation.ui.home.views
 
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import ru.aleshin.core.ui.theme.TimePlannerRes
 import ru.aleshin.core.ui.views.CalendarButtonBehavior
 import ru.aleshin.core.ui.views.TopAppBarButton
 import ru.aleshin.core.ui.views.TopAppBarTitle
@@ -34,6 +38,7 @@ import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
 internal fun HomeTopAppBar(
     calendarIconBehavior: CalendarButtonBehavior,
     onMenuIconClick: () -> Unit,
+    onOverviewIconClick: () -> Unit,
     onOpenCalendar: () -> Unit,
     onGoToToday: () -> Unit,
 ) {
@@ -46,6 +51,7 @@ internal fun HomeTopAppBar(
         },
         navigationIcon = {
             TopAppBarButton(
+                modifier = Modifier.padding(end = 48.dp),
                 imageVector = Icons.Default.Menu,
                 imageDescription = HomeThemeRes.strings.topAppBarMenuIconDesc,
                 onButtonClick = onMenuIconClick,
@@ -63,6 +69,11 @@ internal fun HomeTopAppBar(
                     CalendarButtonBehavior.OPEN_CALENDAR -> onGoToToday
                     CalendarButtonBehavior.SET_CURRENT_DATE -> onOpenCalendar
                 },
+            )
+            TopAppBarButton(
+                imagePainter = painterResource(TimePlannerRes.icons.overview),
+                imageDescription = HomeThemeRes.strings.topAppBarOverviewTitle,
+                onButtonClick = onOverviewIconClick,
             )
         },
         colors = TopAppBarDefaults.topAppBarColors(

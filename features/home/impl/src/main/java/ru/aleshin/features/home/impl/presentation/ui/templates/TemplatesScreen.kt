@@ -109,7 +109,7 @@ internal class TemplatesScreen : Screen {
         if (isShowTemplateCreator) {
             TemplateEditorDialog(
                 categories = state.categories,
-                editTemplateModel = null,
+                model = null,
                 onDismiss = { isShowTemplateCreator = false },
                 onConfirm = { template ->
                     dispatchEvent(TemplatesEvent.AddTemplate(template))

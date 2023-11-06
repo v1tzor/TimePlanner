@@ -20,8 +20,11 @@ import ru.aleshin.features.editor.api.navigations.EditorFeatureStarter
 import ru.aleshin.features.editor.api.navigations.EditorScreens
 import ru.aleshin.features.home.api.navigation.HomeScreens
 import ru.aleshin.features.home.impl.di.annontation.LocalRouter
+import ru.aleshin.features.home.impl.domain.interactors.ScheduleInteractor
 import ru.aleshin.features.home.impl.presentation.ui.categories.CategoriesScreen
+import ru.aleshin.features.home.impl.presentation.ui.details.DetailsScreen
 import ru.aleshin.features.home.impl.presentation.ui.home.HomeScreen
+import ru.aleshin.features.home.impl.presentation.ui.overview.OverviewScreen
 import ru.aleshin.features.home.impl.presentation.ui.templates.TemplatesScreen
 import javax.inject.Inject
 import javax.inject.Provider
@@ -36,6 +39,7 @@ internal interface NavigationManager {
     fun navigateToLocalBack()
 
     class Base @Inject constructor(
+        private val scheduleInteractor: ScheduleInteractor,
         @LocalRouter private val localRouter: Router,
         private val globalRouter: Router,
         private val editorFeatureStarter: Provider<EditorFeatureStarter>,
@@ -43,9 +47,13 @@ internal interface NavigationManager {
 
         override fun navigateToLocal(screen: HomeScreens?, isRoot: Boolean) = with(localRouter) {
             val screenInstance = when (screen) {
-                HomeScreens.Home -> HomeScreen()
-                HomeScreens.Templates -> TemplatesScreen()
-                HomeScreens.Categories -> CategoriesScreen()
+                is HomeScreens.Overview -> OverviewScreen()
+                is HomeScreens.Home -> HomeScreen().apply {
+                    scheduleInteractor.setFeatureScheduleDate(screen.scheduleDate)
+                }
+                is HomeScreens.Details -> DetailsScreen()
+                is HomeScreens.Templates -> TemplatesScreen()
+                is HomeScreens.Categories -> CategoriesScreen()
                 else -> return@with
             }
             if (isRoot) replaceTo(screenInstance, true) else navigateTo(screenInstance)

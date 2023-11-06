@@ -76,8 +76,8 @@ dependencies {
     implementation(Dependencies.AndroidX.core)
     implementation(Dependencies.AndroidX.appcompat)
     implementation(Dependencies.AndroidX.material)
-
     implementation(Dependencies.AndroidX.systemUiController)
+    implementation(Dependencies.AndroidX.placeHolder)
 
     implementation(Dependencies.Voyager.navigator)
 

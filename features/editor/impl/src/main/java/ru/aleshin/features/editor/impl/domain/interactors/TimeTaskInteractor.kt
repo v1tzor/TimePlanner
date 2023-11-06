@@ -15,14 +15,19 @@
  */
 package ru.aleshin.features.editor.impl.domain.interactors
 
+import kotlinx.coroutines.flow.first
 import ru.aleshin.core.utils.extensions.generateUniqueKey
 import ru.aleshin.core.utils.functional.Either
 import ru.aleshin.core.utils.functional.TimeRange
+import ru.aleshin.core.utils.managers.DateManager
 import ru.aleshin.core.utils.managers.TimeOverlayException
 import ru.aleshin.core.utils.managers.TimeOverlayManager
 import ru.aleshin.features.editor.impl.domain.common.EditorEitherWrapper
 import ru.aleshin.features.editor.impl.domain.entites.EditorFailures
+import ru.aleshin.features.home.api.domain.common.ScheduleStatusChecker
+import ru.aleshin.features.home.api.domain.entities.schedules.Schedule
 import ru.aleshin.features.home.api.domain.entities.schedules.TimeTask
+import ru.aleshin.features.home.api.domain.repository.ScheduleRepository
 import ru.aleshin.features.home.api.domain.repository.TimeTaskRepository
 import javax.inject.Inject
 
@@ -36,13 +41,22 @@ internal interface TimeTaskInteractor {
     suspend fun deleteTimeTask(key: Long): Either<EditorFailures, Unit>
 
     class Base @Inject constructor(
+        private val scheduleRepository: ScheduleRepository,
         private val timeTaskRepository: TimeTaskRepository,
-        private val eitherWrapper: EditorEitherWrapper,
+        private val statusChecker: ScheduleStatusChecker,
         private val overlayManager: TimeOverlayManager,
+        private val dateManager: DateManager,
+        private val eitherWrapper: EditorEitherWrapper,
     ) : TimeTaskInteractor {
 
         override suspend fun addTimeTask(timeTask: TimeTask) = eitherWrapper.wrap {
-            val allTimeTask = timeTaskRepository.fetchAllTimeTaskByDate(timeTask.date)
+            val schedule = scheduleRepository.fetchScheduleByDate(timeTask.date.time).first() ?: Schedule(
+                date = timeTask.date.time,
+                status = statusChecker.fetchState(timeTask.date, dateManager.fetchBeginningCurrentDay()),
+            ).apply {
+                scheduleRepository.createSchedules(listOf(this))
+            }
+            val allTimeTask = schedule.timeTasks
             val key = generateUniqueKey()
 
             checkIsOverlay(allTimeTask.map { it.timeRanges }, timeTask.timeRanges) {

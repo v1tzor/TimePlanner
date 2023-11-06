@@ -19,6 +19,7 @@ import ru.aleshin.core.utils.functional.Constants
 import ru.aleshin.core.utils.functional.Month
 import ru.aleshin.core.utils.functional.TimeRange
 import ru.aleshin.core.utils.functional.WeekDay
+import java.math.RoundingMode
 import java.util.*
 import kotlin.math.ceil
 
@@ -240,6 +241,13 @@ fun Long.toMinutesAndHoursString(minutesSymbol: String, hoursSymbol: String): St
         (minutes - hours * Constants.Date.MINUTES_IN_HOUR).toString(),
         minutesSymbol,
     )
+}
+
+fun Long.toDaysString(dayTitle: String): String {
+    val horses = this.toHorses()
+    val rawDays = horses / Constants.Date.HOURS_IN_DAY.toFloat()
+    val days = rawDays.toBigDecimal().setScale(0, RoundingMode.UP).toInt()
+    return if (days > 0) "< $days $dayTitle" else "$days $dayTitle"
 }
 
 fun Date.setZeroSecond(): Date {

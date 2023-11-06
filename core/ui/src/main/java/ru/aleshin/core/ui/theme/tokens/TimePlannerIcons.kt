@@ -54,6 +54,8 @@ data class TimePlannerIcons(
     val categoryHygiene: Int,
     val time: Int,
     val reset: Int,
+    val overview: Int,
+    val plannedTask: Int,
 )
 
 internal val baseTimePlannerIcons = TimePlannerIcons(
@@ -89,6 +91,8 @@ internal val baseTimePlannerIcons = TimePlannerIcons(
     categoryHygiene = R.drawable.ic_face_retouching,
     time = R.drawable.ic_time,
     reset = R.drawable.ic_reset,
+    overview = R.drawable.ic_dashboard,
+    plannedTask = R.drawable.ic_planned_task,
 )
 
 val LocalTimePlannerIcons = staticCompositionLocalOf<TimePlannerIcons> {

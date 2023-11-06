@@ -16,10 +16,11 @@
 package ru.aleshin.features.home.api.data.datasources.schedules
 
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import ru.aleshin.core.utils.functional.TimeRange
 import ru.aleshin.features.home.api.data.models.schedules.DailyScheduleEntity
 import ru.aleshin.features.home.api.data.models.schedules.ScheduleDetails
-import ru.aleshin.features.home.api.data.models.timetasks.TimeTaskEntity
+import ru.aleshin.features.home.api.data.models.tasks.TimeTaskEntity
 import javax.inject.Inject
 
 /**
@@ -30,7 +31,7 @@ interface SchedulesLocalDataSource {
     suspend fun addSchedules(schedules: List<DailyScheduleEntity>, timeTasks: List<TimeTaskEntity>)
     suspend fun addTimeTasks(tasks: List<TimeTaskEntity>)
     fun fetchScheduleByDate(date: Long): Flow<ScheduleDetails?>
-    suspend fun fetchScheduleByRange(timeRange: TimeRange?): List<ScheduleDetails>
+    suspend fun fetchScheduleByRange(timeRange: TimeRange?): Flow<List<ScheduleDetails>>
     suspend fun updateTimeTasks(timeTasks: List<TimeTaskEntity>)
     suspend fun removeDailySchedule(schedule: DailyScheduleEntity)
     suspend fun removeAllSchedules(): List<ScheduleDetails>
@@ -56,7 +57,7 @@ interface SchedulesLocalDataSource {
             return scheduleDao.fetchDailyScheduleByDate(date)
         }
 
-        override suspend fun fetchScheduleByRange(timeRange: TimeRange?): List<ScheduleDetails> {
+        override suspend fun fetchScheduleByRange(timeRange: TimeRange?): Flow<List<ScheduleDetails>> {
             return if (timeRange != null) {
                 scheduleDao.fetchDailySchedulesByRange(timeRange.from.time, timeRange.to.time)
             } else {
@@ -77,7 +78,7 @@ interface SchedulesLocalDataSource {
         }
 
         override suspend fun removeAllSchedules(): List<ScheduleDetails> {
-            val deletableSchedules = scheduleDao.fetchAllSchedules()
+            val deletableSchedules = scheduleDao.fetchAllSchedules().first()
             scheduleDao.removeAllSchedules()
 
             return deletableSchedules

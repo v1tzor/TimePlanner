@@ -70,7 +70,7 @@ internal interface AnalyticsInteractor {
             val startDate = currentDate.startThisDay().shiftDay(-shiftAmount)
             val globalTimeRange = TimeRange(from = startDate, to = currentDate)
             
-            val allSchedules = scheduleRepository.fetchSchedulesByRange(null)
+            val allSchedules = scheduleRepository.fetchSchedulesByRange(null).first()
             val periodSchedules = allSchedules.filter { globalTimeRange.isIncludeTime(it.date.mapToDate()) }
             val timeTasks = mutableListOf<TimeTask>().apply {
                 periodSchedules.forEach { schedule ->
@@ -171,13 +171,17 @@ internal interface AnalyticsInteractor {
             return@let analytics.sortedBy { it.duration }.reversed()
         }
         
-        private suspend fun countPlanningAnalytics(allSchedules: List<Schedule>): Map<Int, List<PlanningAnalytic>> {
+        private fun countPlanningAnalytics(allSchedules: List<Schedule>): Map<Int, List<PlanningAnalytic>> {
+            val currentDate = dateManager.fetchCurrentDate()
             val startedDay = currentDate.endOfCurrentMonth()
             val rawAnalytics = mutableListOf<PlanningAnalytic>().apply {
                 val allTimeTasks = allSchedules.map { it.timeTasks }.extractAllItem()
                 for (day in 0..Constants.Date.DAYS_IN_HALF_YEAR) {
                     val planningDate = startedDay.shiftDay(-day)
-                    val planningTimeTasks = allTimeTasks.filter { it.createdAt?.isCurrentDay(planningDate) ?: false }
+                    val planningTimeTasks = allTimeTasks.filter {
+                        val createdAt = it.createdAt ?: return@filter false
+                        createdAt.isCurrentDay(planningDate) && createdAt.time <= currentDate.time
+                    }
                     add(PlanningAnalytic(planningDate, planningTimeTasks))
                 }
             }

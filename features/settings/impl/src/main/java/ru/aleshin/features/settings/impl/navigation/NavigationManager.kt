@@ -17,7 +17,6 @@ package ru.aleshin.features.settings.impl.navigation
 
 import ru.aleshin.core.utils.navigation.Router
 import ru.aleshin.features.settings.impl.presentation.ui.donate.DonateScreen
-import ru.aleshin.features.settings.impl.presentation.ui.donate.screenmodel.DonateScreenModel
 import javax.inject.Inject
 
 /**

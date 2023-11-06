@@ -29,7 +29,7 @@ internal interface NavigationManager {
 
     fun navigateToHomeScreen()
     fun navigateToTemplatesScreen()
-    fun navigateToPreviousFeature()
+    fun navigateToBack()
 
     class Base @Inject constructor(
         private val tabRouter: TabRouter,
@@ -47,7 +47,7 @@ internal interface NavigationManager {
             globalRouter.navigateBack()
         }
 
-        override fun navigateToPreviousFeature() {
+        override fun navigateToBack() {
             globalRouter.navigateBack()
         }
     }

@@ -17,6 +17,7 @@ package ru.aleshin.core.ui.views
 
 import androidx.compose.runtime.Composable
 import ru.aleshin.core.ui.theme.TimePlannerRes
+import ru.aleshin.core.utils.extensions.toDaysString
 import ru.aleshin.core.utils.extensions.toMinutesAndHoursString
 import ru.aleshin.core.utils.extensions.toMinutesOrHoursString
 
@@ -37,4 +38,11 @@ fun Long.toMinutesAndHoursTitle(): String {
     val hoursSymbols = TimePlannerRes.strings.hoursSymbol
 
     return this.toMinutesAndHoursString(minutesSymbols, hoursSymbols)
+}
+
+@Composable
+fun Long.toDaysTitle(): String {
+    val dayTitle = TimePlannerRes.strings.dayTitle
+
+    return this.toDaysString(dayTitle)
 }

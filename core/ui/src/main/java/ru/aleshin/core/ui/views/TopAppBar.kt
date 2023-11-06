@@ -100,7 +100,7 @@ fun TopAppBarButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     imagePainter: Painter,
-    imageDescription: String,
+    imageDescription: String?,
     onButtonClick: () -> Unit,
     onDoubleButtonClick: (() -> Unit)? = null,
     onLongButtonClick: (() -> Unit)? = null,
@@ -127,7 +127,7 @@ fun <T : TopAppBarAction> TopAppBarMoreActions(
     modifier: Modifier = Modifier,
     items: Array<T>,
     onItemClick: (T) -> Unit,
-    moreIconDescription: String,
+    moreIconDescription: String?,
 ) {
     val expanded = rememberSaveable { mutableStateOf(false) }
     Box(

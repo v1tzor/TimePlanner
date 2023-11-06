@@ -30,6 +30,7 @@ data class TabsViewState(
 sealed class TabsEvent : BaseEvent {
     object Init : TabsEvent()
     object SelectedHomeTab : TabsEvent()
+    object SelectedOverviewScreen : TabsEvent()
     object SelectedMainScreen : TabsEvent()
     object SelectedTemplateScreen : TabsEvent()
     object SelectedCategoriesScreen : TabsEvent()

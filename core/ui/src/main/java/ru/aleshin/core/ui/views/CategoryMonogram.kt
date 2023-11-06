@@ -60,13 +60,9 @@ fun CategoryIconMonogram(
         )
     }
     if (badgeEnabled) {
-        Box(
-            modifier = Modifier
-                .padding(vertical = 4.dp, horizontal = 2.dp)
-                .align(Alignment.TopEnd)
-                .size(7.dp)
-                .clip(RoundedCornerShape(100.dp))
-                .background(badge),
+        ImportanceBadge(
+            modifier = Modifier.align(Alignment.TopEnd),
+            color = badge,
         )
     }
 }
@@ -95,13 +91,23 @@ fun CategoryTextMonogram(
         )
     }
     if (badgeEnabled) {
-        Box(
-            modifier = Modifier
-                .padding(vertical = 4.dp, horizontal = 2.dp)
-                .align(Alignment.TopEnd)
-                .size(7.dp)
-                .clip(RoundedCornerShape(100.dp))
-                .background(badge),
+        ImportanceBadge(
+            modifier = Modifier.align(Alignment.TopEnd),
+            color = badge,
         )
     }
+}
+
+@Composable
+fun ImportanceBadge(
+    modifier: Modifier = Modifier,
+    color: Color = badge,
+) {
+    Box(
+        modifier = modifier
+            .padding(vertical = 4.dp, horizontal = 2.dp)
+            .size(7.dp)
+            .clip(RoundedCornerShape(100.dp))
+            .background(color),
+    )
 }

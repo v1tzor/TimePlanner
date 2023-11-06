@@ -58,6 +58,7 @@ class TabsScreen : Screen {
                 onItemSelected = { item ->
                     val event = when (item) {
                         HomeDrawerItems.MAIN -> TabsEvent.SelectedMainScreen
+                        HomeDrawerItems.OVERVIEW -> TabsEvent.SelectedOverviewScreen
                         HomeDrawerItems.TEMPLATES -> TabsEvent.SelectedTemplateScreen
                         HomeDrawerItems.CATEGORIES -> TabsEvent.SelectedCategoriesScreen
                     }

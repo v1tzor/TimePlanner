@@ -23,6 +23,7 @@ import ru.aleshin.features.editor.impl.domain.interactors.CategoriesInteractor
 import ru.aleshin.features.editor.impl.domain.interactors.EditorInteractor
 import ru.aleshin.features.editor.impl.domain.interactors.TemplatesInteractor
 import ru.aleshin.features.editor.impl.domain.interactors.TimeTaskInteractor
+import ru.aleshin.features.editor.impl.domain.interactors.UndefinedTasksInteractor
 
 /**
  * @author Stanislav Aleshin on 08.03.2023.
@@ -38,6 +39,9 @@ internal interface DomainModule {
 
     @Binds
     fun bindTemplatesInteractor(interactor: TemplatesInteractor.Base): TemplatesInteractor
+
+    @Binds
+    fun bindUndefinedTasksInteractor(interactor: UndefinedTasksInteractor.Base): UndefinedTasksInteractor
 
     @Binds
     fun bindCategoriesInteractor(interactor: CategoriesInteractor.Base): CategoriesInteractor

@@ -61,7 +61,7 @@ object Constants {
     }
 
     object Placeholder {
-        const val items = 6
+        const val ITEMS = 6
     }
 
     object Delay {
@@ -87,6 +87,9 @@ object Constants {
         const val HOURS_IN_DAY = 24L
 
         const val NEXT_REPEAT_LIMIT = 100L
+
+        const val OVERVIEW_NEXT_DAYS = 15
+        const val OVERVIEW_PREVIOUS_DAYS = 14
 
         const val minutesFormat = "%s%s"
         const val hoursFormat = "%s%s"

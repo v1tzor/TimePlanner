@@ -17,6 +17,7 @@ package ru.aleshin.features.home.impl.presentation.mapppers.schedules
 
 import ru.aleshin.core.utils.extensions.mapToDate
 import ru.aleshin.core.utils.functional.Mapper
+import ru.aleshin.core.utils.managers.DateManager
 import ru.aleshin.features.home.api.domain.entities.schedules.Schedule
 import ru.aleshin.features.home.impl.presentation.models.schedules.ScheduleUi
 import javax.inject.Inject
@@ -28,11 +29,17 @@ internal interface ScheduleDomainToUiMapper : Mapper<Schedule, ScheduleUi> {
 
     class Base @Inject constructor(
         private val timeTaskMapperToUi: TimeTaskDomainToUiMapper,
+        private val dateManager: DateManager,
     ) : ScheduleDomainToUiMapper {
         override fun map(input: Schedule) = ScheduleUi(
             date = input.date.mapToDate(),
             dateStatus = input.status,
             timeTasks = input.timeTasks.map { timeTaskMapperToUi.map(it, false) },
+            progress = when (input.timeTasks.isEmpty()) {
+                true -> 0f
+                false -> input.timeTasks.count { dateManager.fetchCurrentDate().time > it.timeRanges.to.time && it.isCompleted } /
+                    input.timeTasks.size.toFloat()
+            },
         )
     }
 }

@@ -18,6 +18,7 @@ package ru.aleshin.features.settings.impl.presentation.models
 import kotlinx.serialization.Serializable
 import ru.aleshin.features.home.api.domain.entities.categories.Categories
 import ru.aleshin.features.home.api.domain.entities.schedules.Schedule
+import ru.aleshin.features.home.api.domain.entities.schedules.UndefinedTask
 import ru.aleshin.features.home.api.domain.entities.template.Template
 
 /**
@@ -27,5 +28,6 @@ import ru.aleshin.features.home.api.domain.entities.template.Template
 internal data class BackupModel(
     val schedules: List<Schedule>,
     val templates: List<Template>,
-    val categoriesList: List<Categories>,
+    val categories: List<Categories>,
+    val undefinedTasks: List<UndefinedTask>,
 )

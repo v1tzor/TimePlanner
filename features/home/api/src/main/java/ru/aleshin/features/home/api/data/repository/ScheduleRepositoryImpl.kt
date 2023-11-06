@@ -21,7 +21,7 @@ import ru.aleshin.core.utils.functional.TimeRange
 import ru.aleshin.features.home.api.data.datasources.schedules.SchedulesLocalDataSource
 import ru.aleshin.features.home.api.data.mappers.schedules.ScheduleDataToDomainMapper
 import ru.aleshin.features.home.api.data.mappers.schedules.mapToData
-import ru.aleshin.features.home.api.data.models.timetasks.TimeTaskEntity
+import ru.aleshin.features.home.api.data.models.tasks.TimeTaskEntity
 import ru.aleshin.features.home.api.domain.entities.schedules.Schedule
 import ru.aleshin.features.home.api.domain.repository.ScheduleRepository
 import javax.inject.Inject
@@ -34,8 +34,10 @@ class ScheduleRepositoryImpl @Inject constructor(
     private val mapperToDomain: ScheduleDataToDomainMapper,
 ) : ScheduleRepository {
 
-    override suspend fun fetchSchedulesByRange(timeRange: TimeRange?): List<Schedule> {
-        return localDataSource.fetchScheduleByRange(timeRange).map { mapperToDomain.map(it) }
+    override suspend fun fetchSchedulesByRange(timeRange: TimeRange?): Flow<List<Schedule>> {
+        return localDataSource.fetchScheduleByRange(timeRange).map { schedules ->
+            schedules.map { mapperToDomain.map(it) }
+        }
     }
 
     override suspend fun fetchScheduleByDate(date: Long): Flow<Schedule?> {

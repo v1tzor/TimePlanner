@@ -133,7 +133,7 @@ internal fun TemplatesItem(
     if (isShowTemplateEditor) {
         TemplateEditorDialog(
             categories = categories,
-            editTemplateModel = model,
+            model = model,
             onDismiss = { isShowTemplateEditor = false },
             onConfirm = { template ->
                 onUpdate(template)

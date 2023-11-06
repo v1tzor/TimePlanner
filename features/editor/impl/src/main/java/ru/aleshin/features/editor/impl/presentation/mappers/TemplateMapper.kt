@@ -31,10 +31,10 @@ internal fun TemplateUi.mapToDomain() = Template(
     isEnableNotification = isEnableNotification,
     isConsiderInStatistics = isConsiderInStatistics,
     repeatEnabled = repeatEnabled,
-    repeatTimes = repeatTimes
+    repeatTimes = repeatTimes,
 )
 
-internal fun Template.mapToDomain() = TemplateUi(
+internal fun Template.mapToUi() = TemplateUi(
     templateId = templateId,
     startTime = startTime,
     endTime = endTime,

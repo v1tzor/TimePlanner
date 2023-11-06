@@ -342,7 +342,7 @@ internal fun AddTimeTaskView(
                 tint = MaterialTheme.colorScheme.onSurface,
             )
             Text(
-                text = if (isFreeTime) HomeThemeRes.strings.addFreeTimeTaskTitle else HomeThemeRes.strings.addTimeTaskTitle,
+                text = if (isFreeTime) HomeThemeRes.strings.addFreeTimeTaskTitle else HomeThemeRes.strings.addTaskTitle,
                 style = MaterialTheme.typography.titleSmall,
                 color = MaterialTheme.colorScheme.onSurface,
             )
@@ -359,7 +359,7 @@ internal fun AddTimeTaskView(
 }
 
 @Composable
-private fun TimeTaskTitles(
+internal fun TimeTaskTitles(
     modifier: Modifier = Modifier,
     title: String,
     titleColor: Color,
@@ -429,7 +429,7 @@ private fun TimeTaskNoteView(
                 Icon(
                     modifier = Modifier.size(18.dp),
                     painter = painterResource(id = HomeThemeRes.icons.notes),
-                    contentDescription = HomeThemeRes.strings.notesDesk,
+                    contentDescription = HomeThemeRes.strings.noteTitle,
                     tint = content,
                 )
                 Text(

@@ -29,6 +29,7 @@ import ru.aleshin.features.home.api.domain.repository.ScheduleRepository
 import ru.aleshin.features.home.api.domain.repository.SubCategoriesRepository
 import ru.aleshin.features.home.api.domain.repository.TemplatesRepository
 import ru.aleshin.features.home.api.domain.repository.TimeTaskRepository
+import ru.aleshin.features.home.api.domain.repository.UndefinedTasksRepository
 import ru.aleshin.features.settings.api.domain.repositories.TasksSettingsRepository
 import ru.aleshin.module_injector.BaseFeatureDependencies
 
@@ -40,6 +41,7 @@ interface HomeFeatureDependencies : BaseFeatureDependencies {
     val editorFeatureStarter: EditorFeatureStarter
     val schedulesRepository: ScheduleRepository
     val timeTaskRepository: TimeTaskRepository
+    val undefinedTasksRepository: UndefinedTasksRepository
     val templatesRepository: TemplatesRepository
     val categoriesRepository: CategoriesRepository
     val subCategoriesRepository: SubCategoriesRepository

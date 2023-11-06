@@ -18,8 +18,8 @@ package ru.aleshin.features.home.api.data.mappers.schedules
 import ru.aleshin.core.utils.extensions.mapToDate
 import ru.aleshin.core.utils.functional.TimeRange
 import ru.aleshin.features.home.api.data.mappers.categories.mapToDomain
-import ru.aleshin.features.home.api.data.models.timetasks.TimeTaskDetails
-import ru.aleshin.features.home.api.data.models.timetasks.TimeTaskEntity
+import ru.aleshin.features.home.api.data.models.tasks.TimeTaskDetails
+import ru.aleshin.features.home.api.data.models.tasks.TimeTaskEntity
 import ru.aleshin.features.home.api.domain.entities.schedules.TimeTask
 
 /**

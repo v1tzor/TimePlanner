@@ -31,15 +31,16 @@ import java.util.Date
 internal data class EditModelUi(
     val key: Long = 0L,
     val date: Date,
-    val timeRanges: TimeRange,
+    val timeRange: TimeRange,
     val createdAt: Date? = null,
-    val duration: Long = duration(timeRanges.from, timeRanges.to),
+    val duration: Long = duration(timeRange.from, timeRange.to),
     val mainCategory: MainCategoryUi = MainCategoryUi(),
     val subCategory: SubCategoryUi? = null,
     val isCompleted: Boolean = true,
     val parameters: EditParameters = EditParameters(),
     val repeatEnabled: Boolean = false,
     val templateId: Int? = null,
+    val undefinedTaskId: Long? = null,
     val repeatTimes: List<RepeatTime> = emptyList(),
     val note: String? = null,
 ) : Parcelable {

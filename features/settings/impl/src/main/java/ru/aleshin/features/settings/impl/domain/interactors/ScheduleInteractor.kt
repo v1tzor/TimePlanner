@@ -15,6 +15,7 @@
  */
 package ru.aleshin.features.settings.impl.domain.interactors
 
+import kotlinx.coroutines.flow.first
 import ru.aleshin.core.utils.functional.DomainResult
 import ru.aleshin.core.utils.functional.UnitDomainResult
 import ru.aleshin.features.home.api.domain.entities.schedules.Schedule
@@ -42,7 +43,7 @@ internal interface ScheduleInteractor {
         }
 
         override suspend fun fetchAllSchedules() = eitherWrapper.wrap {
-            scheduleRepository.fetchSchedulesByRange(null)
+            scheduleRepository.fetchSchedulesByRange(null).first()
         }
 
         override suspend fun addSchedules(schedules: List<Schedule>) = eitherWrapper.wrap {

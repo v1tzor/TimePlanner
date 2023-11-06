@@ -54,13 +54,16 @@ class TabScreenModel @Inject constructor(
         event: TabsEvent,
     ) = when (event) {
         TabsEvent.Init -> navigate(TabsBottomBarItems.HOME) {
-            showHomeFeature(HomeScreens.Home, isRoot = true)
+            showHomeFeature(HomeScreens.Home(), isRoot = true)
         }
         TabsEvent.SelectedHomeTab -> navigate(TabsBottomBarItems.HOME) {
             showHomeFeature(null)
         }
+        TabsEvent.SelectedOverviewScreen -> navigate(TabsBottomBarItems.HOME) {
+            showHomeFeature(HomeScreens.Overview)
+        }
         TabsEvent.SelectedMainScreen -> navigate(TabsBottomBarItems.HOME) {
-            showHomeFeature(HomeScreens.Home)
+            showHomeFeature(HomeScreens.Home())
         }
         TabsEvent.SelectedTemplateScreen -> navigate(TabsBottomBarItems.HOME) {
             showHomeFeature(HomeScreens.Templates)

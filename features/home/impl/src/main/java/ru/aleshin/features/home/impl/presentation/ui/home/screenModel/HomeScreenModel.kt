@@ -65,8 +65,7 @@ internal class HomeScreenModel @Inject constructor(
                 scheduleWorkProcessor.work(setupCommand).collectAndHandleWork()
             }
             is HomeEvent.LoadSchedule -> {
-                val date = event.date ?: dateManager.fetchBeginningCurrentDay()
-                loadSchedule(date)
+                loadSchedule(event.date)
             }
             is HomeEvent.CreateSchedule -> {
                 val currentDate = checkNotNull(state().currentDate)
@@ -82,6 +81,10 @@ internal class HomeScreenModel @Inject constructor(
                     currentDate = checkNotNull(state().currentDate),
                     timeRange = TimeRange(event.startTime, event.endTime),
                 )
+                navigationWorkProcessor.work(navCommand).handleWork()
+            }
+            is HomeEvent.PressOverviewButton -> {
+                val navCommand = NavigationWorkCommand.NavigateToOverview
                 navigationWorkProcessor.work(navCommand).handleWork()
             }
             is HomeEvent.TimeTaskShiftUp -> {
@@ -115,12 +118,13 @@ internal class HomeScreenModel @Inject constructor(
         action: HomeAction,
         currentState: HomeViewState,
     ) = when (action) {
-        is HomeAction.ShowContentLoading -> currentState.copy(
-            isLoading = true,
-        )
+        is HomeAction.Navigate -> currentState.copy()
         is HomeAction.SetupSettings -> currentState.copy(
             taskViewStatus = action.settings.taskViewStatus,
             calendarButtonBehavior = action.settings.calendarButtonBehavior,
+        )
+        is HomeAction.UpdateDate -> currentState.copy(
+            currentDate = action.date,
         )
         is HomeAction.SetEmptySchedule -> currentState.copy(
             timeTasks = emptyList(),
@@ -134,7 +138,6 @@ internal class HomeScreenModel @Inject constructor(
             dateStatus = action.schedule.dateStatus,
             isLoading = false,
         )
-        is HomeAction.Navigate -> currentState.copy()
     }
 
     override fun onDispose() {
@@ -142,7 +145,7 @@ internal class HomeScreenModel @Inject constructor(
         HomeComponentHolder.clear()
     }
 
-    private suspend fun WorkScope<HomeViewState, HomeAction, HomeEffect>.loadSchedule(date: Date) {
+    private suspend fun WorkScope<HomeViewState, HomeAction, HomeEffect>.loadSchedule(date: Date?) {
         val loadCommand = ScheduleWorkCommand.LoadScheduleByDate(date)
         launchBackgroundWork(HomeWorkKey.SUBSCRIBE_SCHEDULE) {
             scheduleWorkProcessor.work(loadCommand).collectAndHandleWork()

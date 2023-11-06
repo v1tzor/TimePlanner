@@ -77,6 +77,7 @@ internal class HomeScreen : Screen {
                 HomeTopAppBar(
                     calendarIconBehavior = state.calendarButtonBehavior,
                     onMenuIconClick = { scope.launch { drawerManager?.openDrawer() } },
+                    onOverviewIconClick = { dispatchEvent(HomeEvent.PressOverviewButton) },
                     onOpenCalendar = { isDateDialogShow = true },
                     onGoToToday = { dispatchEvent(HomeEvent.LoadSchedule(Date().startThisDay())) },
                 )

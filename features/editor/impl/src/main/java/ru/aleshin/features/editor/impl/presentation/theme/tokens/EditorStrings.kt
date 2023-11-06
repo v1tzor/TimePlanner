@@ -69,6 +69,7 @@ internal data class EditorStrings(
     val importantParameterDesc: String,
     val noteLabel: String,
     val notePlaceholder: String,
+    val undefinedTasksSheetTitle: String,
 )
 
 internal val russianHomeString = EditorStrings(
@@ -120,6 +121,7 @@ internal val russianHomeString = EditorStrings(
     importantParameterDesc = "Обязательное выполнение без возможности сдвига",
     noteLabel = "Заметка",
     notePlaceholder = "Небольшое примечание по желанию",
+    undefinedTasksSheetTitle = "Не распределённые задачи",
 )
 
 internal val englishHomeString = EditorStrings(
@@ -171,6 +173,7 @@ internal val englishHomeString = EditorStrings(
     importantParameterDesc = "Mandatory execution without the possibility of shifting",
     noteLabel = "Note",
     notePlaceholder = "A small note is optional",
+    undefinedTasksSheetTitle = "Non-distributed tasks",
 )
 
 internal val persianHomeString = EditorStrings(
@@ -222,6 +225,7 @@ internal val persianHomeString = EditorStrings(
     importantParameterDesc = "اجرای اجباری بدون امکان جابجایی",
     noteLabel = "یادداشت",
     notePlaceholder = "یک یادداشت کوچک اختیاری است",
+    undefinedTasksSheetTitle = "وظایف غیر توزیع شده",
 )
 
 internal val germanHomeString = EditorStrings(
@@ -272,6 +276,7 @@ internal val germanHomeString = EditorStrings(
     importantParameterDesc = "Zwingende Ausführung ohne Verschiebungsmöglichkeit",
     noteLabel = "Notiz",
     notePlaceholder = "Eine kleine Anmerkung optional",
+    undefinedTasksSheetTitle = "Nicht verteilte Aufgaben",
 )
 
 internal val spanishHomeString = EditorStrings(
@@ -323,6 +328,7 @@ internal val spanishHomeString = EditorStrings(
     importantParameterDesc = "Realización obligatoria sin posibilidad de desplazamiento",
     noteLabel = "Nota",
     notePlaceholder = "Una pequeña nota opcional",
+    undefinedTasksSheetTitle = "Tareas no distribuidas",
 )
 
 internal val frenchHomeString = EditorStrings(
@@ -374,6 +380,7 @@ internal val frenchHomeString = EditorStrings(
     importantParameterDesc = "Exécution prioriaire sans la possibilité de la décaler",
     noteLabel = "Note",
     notePlaceholder = "Petite Note en option",
+    undefinedTasksSheetTitle = "Tâches non distribuées",
 )
 
 internal val LocalEditorStrings = staticCompositionLocalOf<EditorStrings> {

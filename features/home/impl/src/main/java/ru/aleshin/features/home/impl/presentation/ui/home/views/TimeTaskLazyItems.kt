@@ -29,17 +29,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.google.accompanist.placeholder.PlaceholderHighlight
-import com.google.accompanist.placeholder.placeholder
-import com.google.accompanist.placeholder.shimmer
 import ru.aleshin.core.ui.views.toMinutesOrHoursTitle
 import ru.aleshin.core.utils.extensions.duration
 import ru.aleshin.core.utils.functional.Constants
 import ru.aleshin.features.home.api.presentation.mappers.mapToIconPainter
-import ru.aleshin.features.home.api.presentation.mappers.mapToName
 import ru.aleshin.features.home.impl.presentation.models.schedules.TimeTaskUi
 import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
 import java.text.SimpleDateFormat
@@ -80,7 +75,7 @@ internal fun LazyItemScope.PlannedTimeTaskItem(
                 PlannedTimeTask(
                     modifier = Modifier.fillMaxWidth().padding(bottom = 4.dp).animateContentSize(),
                     onViewClicked = { onItemClick.invoke(key) },
-                    taskTitle = mainCategory.fetchName() ?: "*",
+                    taskTitle = mainCategory.fetchName() ?: HomeThemeRes.strings.noneTitle,
                     taskSubTitle = model.subCategory?.name,
                     taskDurationTitle = duration.toMinutesOrHoursTitle(),
                     categoryIcon = mainCategory.defaultType?.mapToIconPainter(),
@@ -130,7 +125,7 @@ internal fun LazyItemScope.CompletedTimeTaskItem(
                     modifier = Modifier.fillMaxWidth().padding(bottom = 4.dp).animateContentSize(),
                     onViewClicked = { onItemClick.invoke(key) },
                     onDoneChange = onDoneChange,
-                    taskTitle = mainCategory.fetchName() ?: "*",
+                    taskTitle = mainCategory.fetchName() ?: HomeThemeRes.strings.noneTitle,
                     taskSubTitle = subCategory?.name,
                     categoryIcon = mainCategory.defaultType?.mapToIconPainter(),
                     isCompleted = isCompleted,
@@ -183,7 +178,7 @@ internal fun LazyItemScope.RunningTimeTaskItem(
                     onMoreButtonClick = { onMoreButtonClick.invoke(key) },
                     onIncreaseTime = onIncreaseTime,
                     onReduceTime = onReduceTime,
-                    taskTitle = mainCategory.fetchName() ?: "*",
+                    taskTitle = mainCategory.fetchName() ?: HomeThemeRes.strings.noneTitle,
                     taskSubTitle = subCategory?.name,
                     categoryIcon = mainCategory.defaultType?.mapToIconPainter(),
                     isImportant = isImportant,
@@ -265,30 +260,3 @@ fun EndTaskTimeTitle(
 internal fun LazyItemScope.EmptyItem(height: Dp = 50.dp) {
     Spacer(modifier = Modifier.height(height).fillMaxWidth())
 }
-
-@Composable
-internal fun LazyItemScope.TimeTaskPlaceHolderItem() {
-    Row(
-        modifier = Modifier.padding(),
-        horizontalArrangement = Arrangement.spacedBy(10.dp),
-    ) {
-        Text(
-            text = HomeThemeRes.strings.startTimeTaskTitlePlaceHolder,
-            modifier = Modifier.height(24.dp).homePlaceHolder(),
-        )
-        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Box(modifier = Modifier.fillMaxWidth().height(24.dp).homePlaceHolder())
-            Box(modifier = Modifier.fillMaxWidth().height(80.dp).homePlaceHolder())
-        }
-    }
-}
-
-@Composable
-internal fun Modifier.homePlaceHolder(
-    shape: Shape = MaterialTheme.shapes.medium,
-) = placeholder(
-    visible = true,
-    color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
-    shape = shape,
-    highlight = PlaceholderHighlight.shimmer(highlightColor = MaterialTheme.colorScheme.surfaceVariant),
-)

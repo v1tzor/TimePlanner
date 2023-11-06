@@ -23,7 +23,7 @@ import ru.aleshin.features.home.api.domain.entities.template.Template
 /**
  * @author Stanislav Aleshin on 17.05.2023.
  */
-internal fun TimeTask.convertToEditModel(template: Template?) = EditModel(
+internal fun TimeTask.convertToEditModel(template: Template?, undefinedTaskId: Long?) = EditModel(
     key = key,
     date = date,
     startTime = timeRanges.from,
@@ -37,6 +37,7 @@ internal fun TimeTask.convertToEditModel(template: Template?) = EditModel(
     isConsiderInStatistics = isConsiderInStatistics,
     repeatEnabled = template?.repeatEnabled ?: false,
     templateId = template?.templateId,
+    undefinedTaskId = undefinedTaskId,
     repeatTimes = template?.repeatTimes ?: emptyList(),
     note = note,
 )

@@ -29,6 +29,7 @@ interface DateManager {
     fun fetchEndCurrentDay(): Date
     fun calculateLeftTime(endTime: Date): Long
     fun calculateProgress(startTime: Date, endTime: Date): Float
+    fun setCurrentHMS(date: Date): Date
 
     class Base @Inject constructor() : DateManager {
 
@@ -56,6 +57,18 @@ interface DateManager {
             val progress = pastTime / duration
 
             return if (progress < 0f) 0f else if (progress > 1f) 1f else progress
+        }
+
+        override fun setCurrentHMS(date: Date): Date {
+            val currentCalendar = Calendar.getInstance()
+            val targetCalendar = Calendar.getInstance().apply {
+                time = date
+                set(Calendar.HOUR_OF_DAY, currentCalendar.get(Calendar.HOUR_OF_DAY))
+                set(Calendar.MINUTE, currentCalendar.get(Calendar.MINUTE))
+                set(Calendar.SECOND, currentCalendar.get(Calendar.SECOND))
+                set(Calendar.MILLISECOND, currentCalendar.get(Calendar.MILLISECOND))
+            }
+            return targetCalendar.time
         }
     }
 }

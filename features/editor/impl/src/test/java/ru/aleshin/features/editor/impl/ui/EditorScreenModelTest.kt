@@ -42,7 +42,6 @@ import ru.aleshin.features.editor.impl.domain.interactors.TemplatesInteractor
 import ru.aleshin.features.editor.impl.domain.interactors.TimeTaskInteractor
 import ru.aleshin.features.editor.impl.navigation.NavigationManager
 import ru.aleshin.features.editor.impl.presentation.mappers.mapToDomain
-import ru.aleshin.features.editor.impl.presentation.mappers.mapToUi
 import ru.aleshin.features.editor.impl.presentation.models.editmodel.EditModelUi
 import ru.aleshin.features.editor.impl.presentation.models.editmodel.EditParameters
 import ru.aleshin.features.editor.impl.presentation.ui.editor.contract.EditorEffect
@@ -149,7 +148,7 @@ internal class EditorScreenModelTest {
         )
         assertEquals(
             EditorViewState(
-                editModel = fakeEditModel.mapToUi(),
+                editModel = fakeEditModel.mapToDomain(),
                 categories = listOf(fakeCategories),
             ),
             stateCommunicator.changedStateList[1],
@@ -205,7 +204,7 @@ internal class EditorScreenModelTest {
         val fakeEditModel = EditModelUi(
             key = 100L,
             date = date,
-            timeRanges = TimeRange(from = date.shiftMinutes(20), to = date.endThisDay()),
+            timeRange = TimeRange(from = date.shiftMinutes(20), to = date.endThisDay()),
             duration = duration(date.shiftMinutes(20), date.endThisDay()),
             mainCategory = fakeMainCategory,
         )
@@ -224,14 +223,14 @@ internal class EditorScreenModelTest {
         assertEquals(1, timeTaskAlarmManager.updateNotificationCount)
         assertEquals(1, timeTaskAlarmManager.notificationTasks.size)
         assertEquals(
-            fakeEditModel.mapToDomain().convertToTimeTask(),
+            fakeEditModel.mapToUi().convertToTimeTask(),
             timeTaskAlarmManager.notificationTasks[0],
         )
 
         assertEquals(1, timeTaskInteractor.updateTaskCount)
         assertEquals(1, timeTaskInteractor.timeTasksList.size)
         assertEquals(
-            fakeEditModel.mapToDomain().convertToTimeTask(),
+            fakeEditModel.mapToUi().convertToTimeTask(),
             timeTaskInteractor.timeTasksList[0],
         )
 
@@ -262,7 +261,7 @@ internal class EditorScreenModelTest {
         val fakeEditModel = EditModelUi(
             key = 0L,
             date = date,
-            timeRanges = TimeRange(from = date.shiftMinutes(20), to = date.endThisDay()),
+            timeRange = TimeRange(from = date.shiftMinutes(20), to = date.endThisDay()),
             duration = duration(date.shiftMinutes(20), date.endThisDay()),
             mainCategory = fakeMainCategory,
         )
@@ -279,14 +278,14 @@ internal class EditorScreenModelTest {
         assertEquals(1, timeTaskAlarmManager.addedNotificationCount)
         assertEquals(1, timeTaskAlarmManager.notificationTasks.size)
         assertEquals(
-            fakeEditModel.mapToDomain().convertToTimeTask(),
+            fakeEditModel.mapToUi().convertToTimeTask(),
             timeTaskAlarmManager.notificationTasks[0],
         )
 
         assertEquals(1, timeTaskInteractor.addedTaskCount)
         assertEquals(1, timeTaskInteractor.timeTasksList.size)
         assertEquals(
-            fakeEditModel.mapToDomain().convertToTimeTask(),
+            fakeEditModel.mapToUi().convertToTimeTask(),
             timeTaskInteractor.timeTasksList[0],
         )
 
@@ -316,7 +315,7 @@ internal class EditorScreenModelTest {
         val fakeEditModel = EditModelUi(
             key = 100L,
             date = date,
-            timeRanges = TimeRange(from = date.startThisDay(), to = date.endThisDay()),
+            timeRange = TimeRange(from = date.startThisDay(), to = date.endThisDay()),
         )
         val fakeCategories = Categories(
             MainCategory.absent(),
@@ -349,7 +348,7 @@ internal class EditorScreenModelTest {
         assertEquals(
             EditorViewState(
                 editModel = fakeEditModel.copy(
-                    timeRanges = TimeRange(date.shiftMinutes(10), date.shiftMinutes(20)),
+                    timeRange = TimeRange(date.shiftMinutes(10), date.shiftMinutes(20)),
                     duration = duration(date.shiftMinutes(10), date.shiftMinutes(20)),
                 ),
                 categories = listOf(fakeCategories),
@@ -364,7 +363,7 @@ internal class EditorScreenModelTest {
         val fakeEditModel = EditModelUi(
             key = 100L,
             date = date,
-            timeRanges = TimeRange(from = date.startThisDay(), to = date.endThisDay()),
+            timeRange = TimeRange(from = date.startThisDay(), to = date.endThisDay()),
         )
         val fakeCategories = Categories(
             MainCategory.absent(),
@@ -415,7 +414,7 @@ internal class EditorScreenModelTest {
         val fakeEditModel = EditModelUi(
             key = 100L,
             date = date,
-            timeRanges = TimeRange(from = date.startThisDay(), to = date.endThisDay()),
+            timeRange = TimeRange(from = date.startThisDay(), to = date.endThisDay()),
             templateId = 0,
         )
         val fakeCategories = Categories(
@@ -470,7 +469,7 @@ internal class EditorScreenModelTest {
         val fakeEditModel = EditModelUi(
             key = 100L,
             date = date,
-            timeRanges = TimeRange(from = date.startThisDay(), to = date.endThisDay()),
+            timeRange = TimeRange(from = date.startThisDay(), to = date.endThisDay()),
             mainCategory = MainCategory.absent(),
             subCategory = SubCategory.absentSubCategory(MainCategory.absent()),
             parameters = EditParameters(isEnableNotification = false),
@@ -715,7 +714,7 @@ private class FakeNavigationManager : NavigationManager {
         isNavigateToCategories = true
     }
 
-    override fun navigateToPreviousFeature() {
+    override fun navigateToBack() {
         isNavigateToPrevious = true
     }
 }
