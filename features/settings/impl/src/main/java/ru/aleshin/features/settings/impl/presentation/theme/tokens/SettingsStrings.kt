@@ -364,6 +364,55 @@ internal val frenchSettingsString = SettingsStrings(
     selectDayCalendarBehavior = "Choix du jour",
 )
 
+internal val brazilianPortugueseSettingsString = SettingsStrings(
+    settingsTitle = "Configurações",
+    mainSettingsTitle = "Configurações gerais",
+    mainSettingsThemeTitle = "Tema:",
+    darkThemeTitle = "Escuro",
+    lightThemeTitle = "Claro",
+    systemThemeTitle = "Sistema",
+    mainSettingsLanguageTitle = "Idioma do aplicativo",
+    rusLanguageTitle = "Russo",
+    engLanguageTitle = "Inglês",
+    gerLanguageTitle = "Alemão",
+    spaLanguageTitle = "Espanhol",
+    perLanguageTitle = "Persa(b)",
+    freLanguageTitle = "Francês",
+    defaultLanguageTitle = "Padrão",
+    backIconDesc = "Navegar para cima",
+    moreIconDesc = "Mais",
+    resetToDefaultTitle = "Resetar para padrão",
+    menuIconDesc = "Menu",
+    dataSectionHeader = "Dado",
+    clearDataTitle = "Apagar todos os dados",
+    clearDataButtonTitle = "Limpar",
+    clearDataWarning = "Esta ação irá limpar todos os dados da aplicação!",
+    backupDataTitle = "Backup",
+    backupDataButtonTitle = "Salvar",
+    restoreDataButtonTitle = "Restaurar",
+    errorBackupMessage = "Erro de backup",
+    errorBackupFileMessage = "Erro durante o uso do arquivo",
+    otherError = "Erro! Contate o desenvolvedor.",
+    mainSettingsDynamicColorTitle = "Cores dinâmicas",
+    aboutAppHeader = "Sobre o aplicativo",
+    versionCodeTitle = "Número de construção",
+    versionNameTitle = "Versão",
+    developerTitle = "Desenvolvedor",
+    licenseTitle = "Licença",
+    githubTitle = "Github",
+    askQuestionTitle = "Faça uma pergunta",
+    donateTitle = "Suportar a aplicação",
+    copyTitle = "Copiar",
+    mainSettingsColorsTitle = "Cor",
+    donateHeader = "Doar",
+    secureSectionHeader = "Segurança",
+    secureModeTitle = "Modo seguro",
+    interfaceSectionHeader = "Interface",
+    calendarButtonBehaviorTitle = "Comportamento do botão do calendário",
+    currentDayCalendarBehavior = "Dia atual",
+    selectDayCalendarBehavior = "Escolhendo o dia",
+)
+
 internal val LocalSettingsStrings = staticCompositionLocalOf<SettingsStrings> {
     error("Settings Strings is not provided")
 }
@@ -375,4 +424,5 @@ internal fun fetchSettingsStrings(language: TimePlannerLanguage) = when (languag
     TimePlannerLanguage.ES -> spanishSettingsString
     TimePlannerLanguage.FA -> persianSettingsString
     TimePlannerLanguage.FR -> frenchSettingsString
+    TimePlannerLanguage.PT -> brazilianPortugueseSettingsString
 }
