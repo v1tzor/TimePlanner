@@ -36,17 +36,17 @@ internal interface TimeTaskDomainToUiMapper : ParameterizedMapper<TimeTask, Time
     ) : TimeTaskDomainToUiMapper {
         override fun map(input: TimeTask, parameter: Boolean) = TimeTaskUi(
             executionStatus = statusManager.fetchStatus(
-                input.timeRanges,
+                input.timeRange,
                 dateManager.fetchCurrentDate(),
             ),
             key = input.key,
             date = input.date,
-            startTime = input.timeRanges.from,
-            endTime = input.timeRanges.to,
+            startTime = input.timeRange.from,
+            endTime = input.timeRange.to,
             createdAt = input.createdAt,
-            duration = duration(input.timeRanges),
-            leftTime = dateManager.calculateLeftTime(input.timeRanges.to),
-            progress = dateManager.calculateProgress(input.timeRanges.from, input.timeRanges.to),
+            duration = duration(input.timeRange),
+            leftTime = dateManager.calculateLeftTime(input.timeRange.to),
+            progress = dateManager.calculateProgress(input.timeRange.from, input.timeRange.to),
             mainCategory = input.category.mapToUi(),
             subCategory = input.subCategory?.mapToUi(),
             isCompleted = input.isCompleted,
@@ -62,7 +62,7 @@ internal interface TimeTaskDomainToUiMapper : ParameterizedMapper<TimeTask, Time
 internal fun TimeTaskUi.mapToDomain() = TimeTask(
     key = key,
     date = date,
-    timeRanges = TimeRange(startTime, endTime),
+    timeRange = TimeRange(startTime, endTime),
     createdAt = createdAt,
     category = mainCategory.mapToDomain(),
     subCategory = subCategory?.mapToDomain(),

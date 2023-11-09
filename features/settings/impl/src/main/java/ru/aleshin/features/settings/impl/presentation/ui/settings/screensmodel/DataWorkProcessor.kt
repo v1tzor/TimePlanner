@@ -86,7 +86,7 @@ internal interface DataWorkProcessor : FlowWorkProcessor<DataWorkCommand, Settin
                         val restoredSchedules = schedules.map { schedule ->
                             val timeTasks = schedule.timeTasks.filter { timeTask ->
                                 val taskTemplate = templates.find { it.equalsIsTemplate(timeTask) }
-                                return@filter taskTemplate == null || !(taskTemplate.repeatEnabled && timeTask.timeRanges.from > currentDate)
+                                return@filter taskTemplate == null || !(taskTemplate.repeatEnabled && timeTask.timeRange.from > currentDate)
                             }
                             schedule.copy(timeTasks = timeTasks)
                         }
@@ -135,7 +135,7 @@ internal interface DataWorkProcessor : FlowWorkProcessor<DataWorkCommand, Settin
         private fun addNotifications(timeTasks: List<TimeTask>) {
             val currentDate = dateManager.fetchCurrentDate()
             timeTasks.forEach { timeTask ->
-                if (timeTask.isEnableNotification && timeTask.timeRanges.from > currentDate) {
+                if (timeTask.isEnableNotification && timeTask.timeRange.from > currentDate) {
                     timeTaskAlarmManager.addOrUpdateNotifyAlarm(timeTask)
                 }
             }
@@ -145,7 +145,7 @@ internal interface DataWorkProcessor : FlowWorkProcessor<DataWorkCommand, Settin
             val currentDate = dateManager.fetchCurrentDate()
             timeTasks.forEach { timeTask ->
                 val taskTemplate = templates.find { it.equalsIsTemplate(timeTask) }
-                if (timeTask.timeRanges.from > currentDate && (taskTemplate == null || !taskTemplate.repeatEnabled)) {
+                if (timeTask.timeRange.from > currentDate && (taskTemplate == null || !taskTemplate.repeatEnabled)) {
                     timeTaskAlarmManager.deleteNotifyAlarm(timeTask)
                 }
             }

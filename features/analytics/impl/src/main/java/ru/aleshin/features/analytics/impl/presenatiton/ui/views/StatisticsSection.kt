@@ -47,21 +47,23 @@ import ru.aleshin.features.analytics.impl.presenatiton.theme.AnalyticsThemeRes
 @Composable
 internal fun StatisticsSection(
     modifier: Modifier = Modifier,
+    isLoading: Boolean,
     schedulesAnalytics: ScheduleAnalyticsUi?,
 ) {
     AnimatedContent(
-        targetState = schedulesAnalytics,
+        modifier = modifier.padding(top = 8.dp),
+        targetState = isLoading,
         label = "Executed analytics",
         transitionSpec = {
             fadeIn(animationSpec = tween(220, delayMillis = 90)).togetherWith(
                 fadeOut(animationSpec = tween(90)),
             )
         },
-    ) { analytics ->
-        if (analytics != null) {
+    ) { loading ->
+        if (!loading && schedulesAnalytics != null) {
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),
-                modifier = modifier.fillMaxWidth().padding(horizontal = 12.dp).height(320.dp),
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp).height(320.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
@@ -69,28 +71,28 @@ internal fun StatisticsSection(
                     StatisticInfoView(
                         icon = AnalyticsThemeRes.icons.numberedList,
                         name = AnalyticsThemeRes.strings.totalCountTaskTitle,
-                        value = analytics.totalTasksCount.toString(),
+                        value = schedulesAnalytics.totalTasksCount.toString(),
                     )
                 }
                 item {
                     StatisticInfoView(
                         icon = AnalyticsThemeRes.icons.numericOneCircle,
                         name = AnalyticsThemeRes.strings.averageCountTaskTitle,
-                        value = "~ ${analytics.averageDayLoad}",
+                        value = "~ ${schedulesAnalytics.averageDayLoad}",
                     )
                 }
                 item {
                     StatisticInfoView(
                         icon = AnalyticsThemeRes.icons.timeComplete,
                         name = AnalyticsThemeRes.strings.totalTimeTaskTitle,
-                        value = analytics.totalTasksTime.toMinutesAndHoursTitle(),
+                        value = schedulesAnalytics.totalTasksTime.toMinutesAndHoursTitle(),
                     )
                 }
                 item {
                     StatisticInfoView(
                         icon = AnalyticsThemeRes.icons.timeCheck,
                         name = AnalyticsThemeRes.strings.averageTimeTaskTitle,
-                        value = analytics.averageTaskTime.toMinutesAndHoursTitle(),
+                        value = schedulesAnalytics.averageTaskTime.toMinutesAndHoursTitle(),
                     )
                 }
             }

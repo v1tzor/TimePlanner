@@ -55,19 +55,21 @@ internal fun WorkLoadTab(
         ) {
             val analytics = state.scheduleAnalytics
             WorkLoadSection(
+                isLoading = state.isLoading,
                 timePeriod = state.timePeriod,
-                dateWorkLoadMap = analytics?.dateWorkLoadMap,
+                workLoadMap = analytics?.dateWorkLoadMap,
                 onTimePeriodChanged = onTimePeriodChanged,
             )
             Divider()
             ExecutedAnalyticsSection(
+                isLoading = state.isLoading,
                 timePeriod = state.timePeriod,
-                dateWorkLoadMap = analytics?.dateWorkLoadMap,
+                workLoadMap = analytics?.dateWorkLoadMap,
                 onTimePeriodChanged = onTimePeriodChanged,
             )
             Divider()
             StatisticsSection(
-                modifier = Modifier.padding(top = 8.dp),
+                isLoading = state.isLoading,
                 schedulesAnalytics = analytics,
             )
         }

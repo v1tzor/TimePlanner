@@ -26,8 +26,8 @@ import ru.aleshin.features.home.api.domain.entities.template.Template
 internal fun TimeTask.convertToEditModel(template: Template?, undefinedTaskId: Long?) = EditModel(
     key = key,
     date = date,
-    startTime = timeRanges.from,
-    endTime = timeRanges.to,
+    startTime = timeRange.from,
+    endTime = timeRange.to,
     createdAt = createdAt,
     mainCategory = category,
     subCategory = subCategory,
@@ -45,7 +45,7 @@ internal fun TimeTask.convertToEditModel(template: Template?, undefinedTaskId: L
 internal fun EditModel.convertToTimeTask() = TimeTask(
     key = key,
     date = date,
-    timeRanges = TimeRange(startTime, endTime),
+    timeRange = TimeRange(startTime, endTime),
     createdAt = createdAt,
     category = mainCategory,
     subCategory = subCategory,

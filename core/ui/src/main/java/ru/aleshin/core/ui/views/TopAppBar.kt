@@ -101,24 +101,30 @@ fun TopAppBarButton(
     enabled: Boolean = true,
     imagePainter: Painter,
     imageDescription: String?,
+    badge: (@Composable () -> Unit)? = null,
     onButtonClick: () -> Unit,
     onDoubleButtonClick: (() -> Unit)? = null,
     onLongButtonClick: (() -> Unit)? = null,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
 ) {
-    ExtendedIconButton(
-        modifier = modifier.size(48.dp),
-        enabled = enabled,
-        onClick = onButtonClick,
-        onDoubleClick = onDoubleButtonClick,
-        onLongClick = onLongButtonClick,
-        interactionSource = interactionSource,
-    ) {
-        Icon(
-            painter = imagePainter,
-            contentDescription = imageDescription,
-            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
+    Box {
+        if (badge != null) {
+            Box(modifier = Modifier.padding(top = 4.dp, end = 2.dp).align(Alignment.TopEnd)) { badge() }
+        }
+        ExtendedIconButton(
+            modifier = modifier.size(48.dp),
+            enabled = enabled,
+            onClick = onButtonClick,
+            onDoubleClick = onDoubleButtonClick,
+            onLongClick = onLongButtonClick,
+            interactionSource = interactionSource,
+        ) {
+            Icon(
+                painter = imagePainter,
+                contentDescription = imageDescription,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
     }
 }
 

@@ -49,8 +49,8 @@ data class Template(
     }
 
     fun equalsIsTemplate(timeTask: TimeTask) =
-        startTime.compareByHoursAndMinutes(timeTask.timeRanges.from) &&
-        endTime.compareByHoursAndMinutes(timeTask.timeRanges.to) &&
+        startTime.compareByHoursAndMinutes(timeTask.timeRange.from) &&
+        endTime.compareByHoursAndMinutes(timeTask.timeRange.to) &&
         category.id == timeTask.category.id &&
         subCategory == timeTask.subCategory &&
         isImportant == timeTask.isImportant &&

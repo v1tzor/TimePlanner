@@ -66,7 +66,7 @@ internal interface NavigationWorkProcessor : WorkProcessor<NavigationWorkCommand
         }
 
         private fun navigateToEditorCreator(date: Date, timeRange: TimeRange): WorkResult<HomeAction, HomeEffect> {
-            val timeTask = TimeTask(date = date, category = MainCategory(), createdAt = Date(), timeRanges = timeRange)
+            val timeTask = TimeTask(date = date, category = MainCategory(), createdAt = Date(), timeRange = timeRange)
             val screen = EditorScreens.Editor(timeTask, null)
             return navigationManager.navigateToEditorFeature(screen).let {
                 ActionResult(HomeAction.Navigate)

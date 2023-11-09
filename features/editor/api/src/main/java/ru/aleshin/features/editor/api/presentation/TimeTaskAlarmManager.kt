@@ -50,7 +50,7 @@ interface TimeTaskAlarmManager {
         override fun addOrUpdateNotifyAlarm(timeTask: TimeTask) {
             val alarmIntent = createAlarmIntent(timeTask.category, timeTask.subCategory)
             val pendingAlarmIntent = createPendingAlarmIntent(alarmIntent, timeTask.key.toInt())
-            val triggerTime = timeTask.timeRanges.from.time
+            val triggerTime = timeTask.timeRange.from.time
 
             alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerTime, pendingAlarmIntent)
         }

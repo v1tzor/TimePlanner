@@ -72,7 +72,7 @@ internal class TimeTaskInteractorTest {
         val fakeTask = TimeTask(
             key = 0L,
             date = fakeTime,
-            timeRanges = TimeRange(fakeTime.startThisDay(), fakeTime.endThisDay()),
+            timeRange = TimeRange(fakeTime.startThisDay(), fakeTime.endThisDay()),
             category = MainCategory.absent(),
         )
 
@@ -101,7 +101,7 @@ internal class TimeTaskInteractorTest {
         val fakeTask = TimeTask(
             key = 0L,
             date = fakeTime,
-            timeRanges = TimeRange(fakeTime.startThisDay(), fakeTime.endThisDay()),
+            timeRange = TimeRange(fakeTime.startThisDay(), fakeTime.endThisDay()),
             category = MainCategory.absent(),
         )
 
@@ -124,7 +124,7 @@ internal class TimeTaskInteractorTest {
             TimeTask(
                 key = 100L,
                 date = fakeTime,
-                timeRanges = TimeRange(from = fakeTime, to = fakeTime.shiftMinutes(10)),
+                timeRange = TimeRange(from = fakeTime, to = fakeTime.shiftMinutes(10)),
                 category = MainCategory.absent(),
             ),
         )
@@ -133,7 +133,7 @@ internal class TimeTaskInteractorTest {
         val fakeTask = TimeTask(
             key = 0L,
             date = fakeTime,
-            timeRanges = TimeRange(from = fakeTime.shiftMinutes(8), to = fakeTime.endThisDay()),
+            timeRange = TimeRange(from = fakeTime.shiftMinutes(8), to = fakeTime.endThisDay()),
             category = MainCategory.absent(),
         )
 
@@ -161,7 +161,7 @@ internal class TimeTaskInteractorTest {
             TimeTask(
                 key = 100L,
                 date = fakeTime,
-                timeRanges = TimeRange(from = fakeTime.shiftMinutes(10), to = fakeTime.endThisDay()),
+                timeRange = TimeRange(from = fakeTime.shiftMinutes(10), to = fakeTime.endThisDay()),
                 category = MainCategory.absent(),
             ),
         )
@@ -170,7 +170,7 @@ internal class TimeTaskInteractorTest {
         val fakeTask = TimeTask(
             key = 0L,
             date = fakeTime,
-            timeRanges = TimeRange(from = fakeTime, to = fakeTime.shiftMinutes(12)),
+            timeRange = TimeRange(from = fakeTime, to = fakeTime.shiftMinutes(12)),
             category = MainCategory.absent(),
         )
 
@@ -198,7 +198,7 @@ internal class TimeTaskInteractorTest {
             TimeTask(
                 key = 100L,
                 date = fakeTime,
-                timeRanges = TimeRange(from = fakeTime, to = fakeTime.shiftMinutes(10)),
+                timeRange = TimeRange(from = fakeTime, to = fakeTime.shiftMinutes(10)),
                 category = MainCategory.absent(),
             ),
         )
@@ -207,7 +207,7 @@ internal class TimeTaskInteractorTest {
             TimeTask(
                 key = 200L,
                 date = fakeTime,
-                timeRanges = TimeRange(from = fakeTime.shiftMinutes(20), to = fakeTime.endThisDay()),
+                timeRange = TimeRange(from = fakeTime.shiftMinutes(20), to = fakeTime.endThisDay()),
                 category = MainCategory.absent(),
             ),
         )
@@ -216,7 +216,7 @@ internal class TimeTaskInteractorTest {
         val fakeTask = TimeTask(
             key = 0L,
             date = fakeTime,
-            timeRanges = TimeRange(from = fakeTime, to = fakeTime.shiftMinutes(30)),
+            timeRange = TimeRange(from = fakeTime, to = fakeTime.shiftMinutes(30)),
             category = MainCategory.absent(),
         )
 
@@ -244,7 +244,7 @@ internal class TimeTaskInteractorTest {
             TimeTask(
                 key = 100L,
                 date = fakeTime,
-                timeRanges = TimeRange(from = fakeTime, to = fakeTime.shiftMinutes(10)),
+                timeRange = TimeRange(from = fakeTime, to = fakeTime.shiftMinutes(10)),
                 category = MainCategory.absent(),
             ),
         )
@@ -253,7 +253,7 @@ internal class TimeTaskInteractorTest {
             TimeTask(
                 key = 200L,
                 date = fakeTime,
-                timeRanges = TimeRange(from = fakeTime.shiftMinutes(10), to = fakeTime.shiftMinutes(20)),
+                timeRange = TimeRange(from = fakeTime.shiftMinutes(10), to = fakeTime.shiftMinutes(20)),
                 category = MainCategory.absent(),
             ),
         )
@@ -262,7 +262,7 @@ internal class TimeTaskInteractorTest {
         val fakeTask = TimeTask(
             key = 200L,
             date = fakeTime,
-            timeRanges = TimeRange(from = fakeTime.shiftMinutes(20), to = fakeTime.shiftMinutes(30)),
+            timeRange = TimeRange(from = fakeTime.shiftMinutes(20), to = fakeTime.shiftMinutes(30)),
             category = MainCategory.absent(),
         )
 
@@ -286,7 +286,7 @@ internal class TimeTaskInteractorTest {
             TimeTask(
                 key = 100L,
                 date = fakeTime,
-                timeRanges = TimeRange(from = fakeTime, to = fakeTime.shiftMinutes(10)),
+                timeRange = TimeRange(from = fakeTime, to = fakeTime.shiftMinutes(10)),
                 category = MainCategory.absent(),
             ),
         )
@@ -295,7 +295,7 @@ internal class TimeTaskInteractorTest {
             TimeTask(
                 key = 200L,
                 date = fakeTime,
-                timeRanges = TimeRange(from = fakeTime.shiftMinutes(20), to = fakeTime.endThisDay()),
+                timeRange = TimeRange(from = fakeTime.shiftMinutes(20), to = fakeTime.endThisDay()),
                 category = MainCategory.absent(),
             ),
         )
@@ -304,7 +304,7 @@ internal class TimeTaskInteractorTest {
             TimeTask(
                 key = 300L,
                 date = fakeTime,
-                timeRanges = TimeRange(from = fakeTime.shiftMinutes(10), to = fakeTime.shiftMinutes(20)),
+                timeRange = TimeRange(from = fakeTime.shiftMinutes(10), to = fakeTime.shiftMinutes(20)),
                 category = MainCategory.absent(),
             ),
         )
@@ -313,7 +313,7 @@ internal class TimeTaskInteractorTest {
         val fakeTask = TimeTask(
             key = 300L,
             date = fakeTime,
-            timeRanges = TimeRange(from = fakeTime, to = fakeTime.shiftMinutes(30)),
+            timeRange = TimeRange(from = fakeTime, to = fakeTime.shiftMinutes(30)),
             category = MainCategory.absent(),
         )
 
@@ -340,7 +340,7 @@ internal class TimeTaskInteractorTest {
             TimeTask(
                 key = 100L,
                 date = fakeTime,
-                timeRanges = TimeRange(from = fakeTime, to = fakeTime.endThisDay()),
+                timeRange = TimeRange(from = fakeTime, to = fakeTime.endThisDay()),
                 category = MainCategory.absent(),
             ),
         )

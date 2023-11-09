@@ -29,11 +29,13 @@ import ru.aleshin.features.analytics.impl.presenatiton.models.analytics.Schedule
  */
 @Parcelize
 internal data class AnalyticsViewState(
+    val isLoading: Boolean = true,
     val timePeriod: TimePeriod? = null,
     val scheduleAnalytics: ScheduleAnalyticsUi? = null,
 ) : BaseViewState
 
 internal sealed class AnalyticsEvent : BaseEvent {
+    object Init : AnalyticsEvent()
     data class ChangeTimePeriod(val period: TimePeriod) : AnalyticsEvent()
     object PressRefreshAnalytics : AnalyticsEvent()
 }
@@ -43,7 +45,7 @@ internal sealed class AnalyticsEffect : BaseUiEffect {
 }
 
 internal sealed class AnalyticsAction : BaseAction {
-    data class LoadScheduleAnalytics(val analytics: ScheduleAnalyticsUi) : AnalyticsAction()
+    data class UpdateAnalytics(val analytics: ScheduleAnalyticsUi) : AnalyticsAction()
     data class UpdateTimePeriod(val period: TimePeriod) : AnalyticsAction()
-    object RefreshAnalytics : AnalyticsAction()
+    data class UpdateLoading(val isLoading: Boolean) : AnalyticsAction()
 }

@@ -82,6 +82,7 @@ import java.util.Locale
 @OptIn(ExperimentalFoundationApi::class)
 internal fun PlanningAnalyticsSection(
     modifier: Modifier = Modifier,
+    isLoading: Boolean,
     planningAnalytics: PlanningAnalyticsUi?,
 ) {
     val listState = rememberLazyListState()
@@ -103,19 +104,19 @@ internal fun PlanningAnalyticsSection(
             color = MaterialTheme.colorScheme.surfaceOne(),
         ) {
             AnimatedContent(
-                targetState = planningAnalytics,
+                targetState = isLoading,
                 label = "Planning analytics",
                 transitionSpec = {
                     fadeIn(animationSpec = tween(220, delayMillis = 90)).togetherWith(
                         fadeOut(animationSpec = tween(90)),
                     )
                 },
-            ) { analytics ->
+            ) { loading ->
                 Row(
                     modifier = Modifier.padding(start = 8.dp, end = 16.dp).height(220.dp).fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
-                    if (analytics != null) {
+                    if (!loading && planningAnalytics != null) {
                         WeekDaysColumn(modifier = Modifier.padding(top = 62.dp))
                         LazyRow(
                             contentPadding = PaddingValues(vertical = 8.dp),
@@ -124,7 +125,7 @@ internal fun PlanningAnalyticsSection(
                             flingBehavior = flingBehavior,
                             horizontalArrangement = Arrangement.spacedBy(12.dp),
                         ) {
-                            items(analytics.values.toList()) { analytic ->
+                            items(planningAnalytics.values.toList()) { analytic ->
                                 PlanningAnalyticsMonthItem(monthAnalytics = analytic)
                             }
                         }

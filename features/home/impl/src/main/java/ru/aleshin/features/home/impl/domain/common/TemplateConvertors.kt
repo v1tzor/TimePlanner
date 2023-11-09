@@ -32,7 +32,7 @@ internal fun Template.convertToTimeTask(
 ) = TimeTask(
     key = key,
     date = date,
-    timeRanges = TimeRange(startTime.changeDay(date), endTime.changeDay(date)),
+    timeRange = TimeRange(startTime.changeDay(date), endTime.changeDay(date)),
     createdAt = createdAt,
     category = category,
     subCategory = subCategory,

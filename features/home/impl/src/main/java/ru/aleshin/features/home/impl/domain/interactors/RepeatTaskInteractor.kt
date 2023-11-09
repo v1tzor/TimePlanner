@@ -141,8 +141,8 @@ internal interface RepeatTaskInteractor {
                         false -> generateUniqueKey()
                     }
                     val repeatTimeTask = template.convertToTimeTask(scheduleDate, timeTaskKey, scheduleDate)
-                    val scheduleTimeRanges = scheduleTimeTasks.filter { !keyList.contains(it.key) }.map { it.timeRanges }
-                    overlayManager.isOverlay(repeatTimeTask.timeRanges, scheduleTimeRanges).let { overlayResult ->
+                    val scheduleTimeRanges = scheduleTimeTasks.filter { !keyList.contains(it.key) }.map { it.timeRange }
+                    overlayManager.isOverlay(repeatTimeTask.timeRange, scheduleTimeRanges).let { overlayResult ->
                         if (!overlayResult.isOverlay) add(repeatTimeTask)
                     }
                 }

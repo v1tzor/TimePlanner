@@ -84,7 +84,7 @@ internal interface ScheduleInteractor {
             val limit = NEXT_REPEAT_LIMIT.daysToMillis()
             scheduleRepository.fetchScheduleByDate(date).map { schedule ->
                 if (schedule != null) {
-                    val sortedTasks = schedule.timeTasks.sortedBy { timeTask -> timeTask.timeRanges.to }
+                    val sortedTasks = schedule.timeTasks.sortedBy { timeTask -> timeTask.timeRange.to }
                     schedule.copy(timeTasks = sortedTasks)
                 } else if (date >= currentDate.time && date - currentDate.time <= limit) {
                     createRecurringSchedule(date.mapToDate(), currentDate)
@@ -119,9 +119,9 @@ internal interface ScheduleInteractor {
             val templates = foundPlannedTemplates(target).apply { if (this.isEmpty()) return null }
             val templatesTimeTasks = templates.map { it.convertToTimeTask(date = target, createdAt = target) }
             val correctTimeTasks = mutableListOf<TimeTask>().apply {
-                templatesTimeTasks.sortedBy { it.timeRanges.from }.forEach { timeTask ->
-                    val allTimeRanges = map { it.timeRanges }
-                    val overlayResult = overlayManager.isOverlay(timeTask.timeRanges, allTimeRanges)
+                templatesTimeTasks.sortedBy { it.timeRange.from }.forEach { timeTask ->
+                    val allTimeRanges = map { it.timeRange }
+                    val overlayResult = overlayManager.isOverlay(timeTask.timeRange, allTimeRanges)
                     if (!overlayResult.isOverlay) add(timeTask)
                 }
             }

@@ -26,6 +26,7 @@ import ru.aleshin.core.utils.functional.collectAndHandle
 import ru.aleshin.core.utils.functional.handle
 import ru.aleshin.core.utils.functional.handleAndGet
 import ru.aleshin.core.utils.functional.rightOrElse
+import ru.aleshin.core.utils.functional.rightOrError
 import ru.aleshin.core.utils.managers.DateManager
 import ru.aleshin.core.utils.platform.screenmodel.work.*
 import ru.aleshin.features.editor.api.presentation.TimeTaskAlarmManager
@@ -128,10 +129,7 @@ internal interface ScheduleWorkProcessor : FlowWorkProcessor<ScheduleWorkCommand
         }
 
         private fun changeTaskViewStatus(status: ViewToggleStatus) = flow {
-            val oldSettings = settingsInteractor.fetchTasksSettings().first().handleAndGet(
-                onLeftAction = { error("Error get tasks settings!") },
-                onRightAction = { it },
-            )
+            val oldSettings = settingsInteractor.fetchTasksSettings().first().rightOrError("Error get tasks settings!")
             val newSettings = oldSettings.copy(taskViewStatus = status)
             settingsInteractor.updateTasksSettings(newSettings).handle(
                 onLeftAction = { emit(EffectResult(HomeEffect.ShowError(it))) },
@@ -164,7 +162,7 @@ internal interface ScheduleWorkProcessor : FlowWorkProcessor<ScheduleWorkCommand
         private fun notifyUpdate(timeTask: TimeTask) {
             if (timeTask.isEnableNotification) {
                 val currentTime = dateManager.fetchCurrentDate()
-                if (timeTask.timeRanges.from > currentTime) {
+                if (timeTask.timeRange.from > currentTime) {
                     timeTaskAlarmManager.deleteNotifyAlarm(timeTask)
                     timeTaskAlarmManager.addOrUpdateNotifyAlarm(timeTask)
                 }

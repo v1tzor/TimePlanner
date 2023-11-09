@@ -77,6 +77,7 @@ internal class EditorScreen @Inject constructor() : Screen {
                 topBar = {
                     EditorTopAppBar(
                         actionsEnabled = !(state.editModel?.checkDateIsRepeat() ?: false),
+                        countUndefinedTasks = state.undefinedTasks?.size ?: 0,
                         onBackIconClick = { dispatchEvent(EditorEvent.PressBackButton) },
                         onDeleteActionClick = { dispatchEvent(EditorEvent.PressDeleteButton) },
                         onOpenUndefinedTasks = {

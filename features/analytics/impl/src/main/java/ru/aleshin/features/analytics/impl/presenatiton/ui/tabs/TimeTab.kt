@@ -58,10 +58,12 @@ internal fun TimeTab(
         ) {
             PlanningAnalyticsSection(
                 modifier = Modifier.fillMaxWidth(),
+                isLoading = state.isLoading,
                 planningAnalytics = analytics?.planningAnalytic,
             )
             Divider()
             CategoriesAnalyticsSection(
+                isLoading = state.isLoading,
                 timePeriod = state.timePeriod,
                 categoriesAnalytics = analytics?.categoriesAnalytics,
                 onTimePeriodChanged = onTimePeriodChanged,

@@ -50,19 +50,19 @@ internal interface TimeShiftInteractor {
             shiftValue: Int,
         ) = eitherWrapper.wrap {
             val allTimeTasks = timeTaskRepository.fetchAllTimeTaskByDate(task.date).sortedBy {
-                it.timeRanges.from
+                it.timeRange.from
             }
-            val nextTimeTask = allTimeTasks.firstOrNull { it.timeRanges.from >= task.timeRanges.to }
+            val nextTimeTask = allTimeTasks.firstOrNull { it.timeRange.from >= task.timeRange.to }
             val nextTimeTaskTemplate = templatesRepository.fetchAllTemplates().first().find { template ->
                 nextTimeTask?.let { template.equalsIsTemplate(it) } ?: false
             }
-            val nextTime = nextTimeTask?.timeRanges
-            val shiftTime = task.timeRanges.to.shiftMinutes(shiftValue)
+            val nextTime = nextTimeTask?.timeRange
+            val shiftTime = task.timeRange.to.shiftMinutes(shiftValue)
 
             return@wrap if (nextTime == null || nextTime.from.time - shiftTime.time >= shiftValue) {
-                when (shiftTime.isCurrentDay(task.timeRanges.to)) {
+                when (shiftTime.isCurrentDay(task.timeRange.to)) {
                     true -> null.apply {
-                        val shiftTask = task.copy(timeRanges = task.timeRanges.copy(to = shiftTime))
+                        val shiftTask = task.copy(timeRange = task.timeRange.copy(to = shiftTime))
                         timeTaskRepository.updateTimeTask(timeTask = shiftTask)
                     }
                     false -> throw TimeShiftException()
@@ -73,8 +73,8 @@ internal interface TimeShiftInteractor {
                         if (nextTimeTask.isImportant || nextTimeTaskTemplate?.checkDateIsRepeat(Date()) == true) {
                             throw TimeTaskImportanceException()
                         }
-                        val shiftTask = task.copy(timeRanges = task.timeRanges.copy(to = shiftTime))
-                        val nextShiftTask = nextTimeTask.copy(timeRanges = nextTimeTask.timeRanges.copy(from = shiftTime))
+                        val shiftTask = task.copy(timeRange = task.timeRange.copy(to = shiftTime))
+                        val nextShiftTask = nextTimeTask.copy(timeRange = nextTimeTask.timeRange.copy(from = shiftTime))
                         timeTaskRepository.updateTimeTaskList(listOf(shiftTask, nextShiftTask))
                         return@wrap nextShiftTask
                     }
@@ -87,10 +87,10 @@ internal interface TimeShiftInteractor {
             task: TimeTask,
             shiftValue: Int,
         ) = eitherWrapper.wrap {
-            val shiftTime = task.timeRanges.to.shiftMinutes(-shiftValue)
-            if (shiftTime.time - task.timeRanges.from.time > 0) {
-                val timeRanges = task.timeRanges.copy(to = shiftTime)
-                timeTaskRepository.updateTimeTask(task.copy(timeRanges = timeRanges))
+            val shiftTime = task.timeRange.to.shiftMinutes(-shiftValue)
+            if (shiftTime.time - task.timeRange.from.time > 0) {
+                val timeRanges = task.timeRange.copy(to = shiftTime)
+                timeTaskRepository.updateTimeTask(task.copy(timeRange = timeRanges))
             } else {
                 throw TimeShiftException()
             }

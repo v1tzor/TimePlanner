@@ -101,7 +101,7 @@ internal interface TimeTaskWorkProcessor : WorkProcessor<TimeTaskWorkCommand, Ed
         private fun notifyUpdateOrAdd(timeTask: TimeTask) {
             if (timeTask.isEnableNotification) {
                 val currentTime = dateManager.fetchCurrentDate()
-                if (timeTask.timeRanges.from > currentTime) {
+                if (timeTask.timeRange.from > currentTime) {
                     timeTaskAlarmManager.deleteNotifyAlarm(timeTask)
                     timeTaskAlarmManager.addOrUpdateNotifyAlarm(timeTask)
                 }

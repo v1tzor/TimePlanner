@@ -20,6 +20,7 @@ import dagger.Module
 import ru.aleshin.features.analytics.impl.domain.common.AnalyticsEitherWrapper
 import ru.aleshin.features.analytics.impl.domain.common.AnalyticsErrorHandler
 import ru.aleshin.features.analytics.impl.domain.interactors.AnalyticsInteractor
+import ru.aleshin.features.analytics.impl.domain.interactors.SettingsInteractor
 
 /**
  * @author Stanislav Aleshin on 22.04.2023.
@@ -29,6 +30,9 @@ internal interface DomainModule {
 
     @Binds
     fun bindAnalyticsInteractor(interactor: AnalyticsInteractor.Base): AnalyticsInteractor
+
+    @Binds
+    fun bindSettingsInteractor(interactor: SettingsInteractor.Base): SettingsInteractor
 
     @Binds
     fun bindAnalyticsEitherWrapper(wrapper: AnalyticsEitherWrapper.Base): AnalyticsEitherWrapper

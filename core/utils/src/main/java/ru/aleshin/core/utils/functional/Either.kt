@@ -63,6 +63,11 @@ suspend fun <L, R, T> Either<L, R>.handleAndGet(
     is Either.Right -> onRightAction(this.data)
 }
 
+suspend fun <L, R> Either<L, R>.rightOrError(message: String) = handleAndGet(
+    onLeftAction = { error(message) },
+    onRightAction = { it },
+)
+
 suspend fun <L, R> Flow<Either<L, R>>.collectAndHandle(
     onLeftAction: suspend (L) -> Unit = {},
     onRightAction: suspend (R) -> Unit = {},

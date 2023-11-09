@@ -78,6 +78,7 @@ dependencies {
     implementation(project(":core:utils"))
     implementation(project(":core:ui"))
     implementation(project(":features:home:api"))
+    implementation(project(":features:settings:api"))
     implementation(project(":features:analytics:api"))
 
     implementation(Dependencies.AndroidX.core)

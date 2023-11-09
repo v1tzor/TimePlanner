@@ -21,7 +21,7 @@ import ru.aleshin.features.home.api.domain.entities.schedules.TimeTask
 internal fun TimeTask.mapToUi() = TimeTaskUi(
     key = key,
     date = date,
-    timeRanges = timeRanges,
+    timeRanges = timeRange,
     category = category.mapToUi(),
     subCategory = subCategory?.mapToUi(),
     isCompleted = isCompleted,

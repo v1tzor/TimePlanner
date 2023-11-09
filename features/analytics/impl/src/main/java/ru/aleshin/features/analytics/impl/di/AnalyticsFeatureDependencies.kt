@@ -19,6 +19,7 @@ import ru.aleshin.core.utils.managers.CoroutineManager
 import ru.aleshin.core.utils.managers.DateManager
 import ru.aleshin.features.home.api.domain.repository.CategoriesRepository
 import ru.aleshin.features.home.api.domain.repository.ScheduleRepository
+import ru.aleshin.features.settings.api.domain.repositories.TasksSettingsRepository
 import ru.aleshin.module_injector.BaseFeatureDependencies
 
 /**
@@ -26,6 +27,7 @@ import ru.aleshin.module_injector.BaseFeatureDependencies
  */
 interface AnalyticsFeatureDependencies : BaseFeatureDependencies {
     val scheduleRepository: ScheduleRepository
+    val tasksSettingsRepository: TasksSettingsRepository
     val categoriesRepository: CategoriesRepository
     val coroutineManager: CoroutineManager
     val dateManager: DateManager

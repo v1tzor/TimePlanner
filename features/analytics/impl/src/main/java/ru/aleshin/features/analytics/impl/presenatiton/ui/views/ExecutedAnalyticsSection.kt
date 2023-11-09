@@ -48,8 +48,9 @@ import java.math.RoundingMode
 @Composable
 internal fun ExecutedAnalyticsSection(
     modifier: Modifier = Modifier,
+    isLoading: Boolean,
     timePeriod: TimePeriod?,
-    dateWorkLoadMap: WorkLoadMapUi?,
+    workLoadMap: WorkLoadMapUi?,
     onTimePeriodChanged: (TimePeriod) -> Unit,
 ) {
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(4.dp)) {
@@ -60,15 +61,15 @@ internal fun ExecutedAnalyticsSection(
             onTimePeriodChanged = onTimePeriodChanged,
         )
         AnimatedContent(
-            targetState = dateWorkLoadMap,
+            targetState = isLoading,
             label = "Executed analytics",
             transitionSpec = {
                 fadeIn(animationSpec = tween(220, delayMillis = 90)).togetherWith(
                     fadeOut(animationSpec = tween(90)),
                 )
             },
-        ) { workLoadMap ->
-            if (workLoadMap != null && timePeriod != null) {
+        ) { loading ->
+            if (!loading && workLoadMap != null && timePeriod != null) {
                 ExecutedAnalyticsChart(
                     workLoadMap = workLoadMap,
                     period = timePeriod,

@@ -32,6 +32,7 @@ import ru.aleshin.features.editor.impl.presentation.theme.EditorThemeRes
 @OptIn(ExperimentalMaterial3Api::class)
 internal fun EditorTopAppBar(
     actionsEnabled: Boolean = true,
+    countUndefinedTasks: Int,
     onBackIconClick: () -> Unit,
     onOpenUndefinedTasks: () -> Unit,
     onDeleteActionClick: () -> Unit,
@@ -58,6 +59,11 @@ internal fun EditorTopAppBar(
                     imagePainter = painterResource(id = TimePlannerRes.icons.plannedTask),
                     imageDescription = null,
                     onButtonClick = onOpenUndefinedTasks,
+                    badge = if (countUndefinedTasks > 0) {{
+                        Badge { Text(text = countUndefinedTasks.toString()) }
+                    }} else {
+                        null
+                    },
                 )
                 TopAppBarButton(
                     imagePainter = painterResource(id = EditorThemeRes.icons.templates),

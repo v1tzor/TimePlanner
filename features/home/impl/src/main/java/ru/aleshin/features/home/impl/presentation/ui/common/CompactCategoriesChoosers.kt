@@ -20,6 +20,7 @@ import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.material3.DropdownMenu
@@ -72,7 +73,7 @@ internal fun CompactCategoryChooser(
             tint = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         OutlinedTextField(
-            modifier = Modifier.weight(1f),
+            modifier = Modifier.fillMaxWidth(),
             value = selectedCategory.fetchName() ?: "*",
             onValueChange = {},
             readOnly = true,
@@ -169,7 +170,7 @@ internal fun CompactSubCategoryChooser(
             tint = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         OutlinedTextField(
-            modifier = Modifier.weight(1f),
+            modifier = Modifier.fillMaxWidth(),
             value = selectedSubCategory?.name ?: HomeThemeRes.strings.subCategoryEmptyTitle,
             onValueChange = {},
             readOnly = true,

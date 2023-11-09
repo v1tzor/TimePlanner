@@ -59,7 +59,7 @@ internal interface TimeTaskInteractor {
             val allTimeTask = schedule.timeTasks
             val key = generateUniqueKey()
 
-            checkIsOverlay(allTimeTask.map { it.timeRanges }, timeTask.timeRanges) {
+            checkIsOverlay(allTimeTask.map { it.timeRange }, timeTask.timeRange) {
                 timeTaskRepository.addTimeTasks(listOf(timeTask.copy(key = key)))
             }
             return@wrap key
@@ -70,7 +70,7 @@ internal interface TimeTaskInteractor {
                 removeAll { it.key == timeTask.key }
             }
 
-            checkIsOverlay(allTimeTask.map { it.timeRanges }, timeTask.timeRanges) {
+            checkIsOverlay(allTimeTask.map { it.timeRange }, timeTask.timeRange) {
                 timeTaskRepository.updateTimeTask(timeTask)
             }
             return@wrap timeTask.key

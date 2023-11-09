@@ -37,7 +37,7 @@ internal interface ScheduleDomainToUiMapper : Mapper<Schedule, ScheduleUi> {
             timeTasks = input.timeTasks.map { timeTaskMapperToUi.map(it, false) },
             progress = when (input.timeTasks.isEmpty()) {
                 true -> 0f
-                false -> input.timeTasks.count { dateManager.fetchCurrentDate().time > it.timeRanges.to.time && it.isCompleted } /
+                false -> input.timeTasks.count { dateManager.fetchCurrentDate().time > it.timeRange.to.time && it.isCompleted } /
                     input.timeTasks.size.toFloat()
             },
         )

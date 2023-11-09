@@ -39,7 +39,6 @@ import javax.inject.Inject
 internal class HomeScreenModel @Inject constructor(
     private val scheduleWorkProcessor: ScheduleWorkProcessor,
     private val navigationWorkProcessor: NavigationWorkProcessor,
-    private val dateManager: DateManager,
     stateCommunicator: HomeStateCommunicator,
     effectCommunicator: HomeEffectCommunicator,
     coroutineManager: CoroutineManager,

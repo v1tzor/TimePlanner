@@ -64,6 +64,7 @@ import ru.aleshin.features.analytics.impl.presenatiton.theme.AnalyticsThemeRes
 @Composable
 internal fun CategoriesAnalyticsSection(
     modifier: Modifier = Modifier,
+    isLoading: Boolean,
     categoriesAnalytics: CategoriesAnalyticsUi?,
     timePeriod: TimePeriod?,
     onTimePeriodChanged: (TimePeriod) -> Unit,
@@ -76,28 +77,28 @@ internal fun CategoriesAnalyticsSection(
             onTimePeriodChanged = onTimePeriodChanged,
         )
         AnimatedContent(
-            targetState = categoriesAnalytics,
+            targetState = isLoading,
             label = "Categories analytics",
             transitionSpec = {
                 fadeIn(animationSpec = tween(220, delayMillis = 90)).togetherWith(
                     fadeOut(animationSpec = tween(90)),
                 )
             },
-        ) { analytics ->
+        ) { loading ->
             Column(
                 modifier = Modifier.padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(4.dp),
             ) {
                 var selectedItem by remember { mutableIntStateOf(0) }
-                if (analytics != null) {
+                if (!loading && categoriesAnalytics != null) {
                     CategoriesAnalyticsChart(
-                        analytics = analytics,
+                        analytics = categoriesAnalytics,
                         selectedItem = selectedItem,
                         onSelectItem = { selectedItem = it },
                     )
                     SubAnalyticsTimeLegend(
                         modifier = Modifier.height(400.dp).padding(top = 12.dp),
-                        analytics = analytics,
+                        analytics = categoriesAnalytics,
                         selectedItem = selectedItem,
                     )
                 } else {

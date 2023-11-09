@@ -30,7 +30,7 @@ import ru.aleshin.features.settings.api.data.models.ThemeSettingsEntity
  * @author Stanislav Aleshin on 17.02.2023.
  */
 @Database(
-    version = 5,
+    version = 6,
     entities = [ThemeSettingsEntity::class, TasksSettingsEntity::class],
     exportSchema = true,
 )
@@ -143,6 +143,15 @@ abstract class SettingsDataBase : RoomDatabase() {
                 database.execSQL(
                     "ALTER TABLE TasksSettings " +
                         "ADD COLUMN calendar_button_behavior TEXT NOT NULL DEFAULT 'SET_CURRENT_DATE'",
+                )
+            }
+        }
+
+        val MIGRATION_5_6 = object : Migration(5, 6) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL(
+                    "ALTER TABLE TasksSettings " +
+                        "ADD COLUMN task_analytics_range TEXT NOT NULL DEFAULT 'WEEK'",
                 )
             }
         }

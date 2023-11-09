@@ -157,7 +157,7 @@ internal fun CurrentTimeTaskView(
                         tooltipState = tooltipState,
                     ) {
                         IconButton(
-                            modifier = Modifier.size(24.dp),
+                            modifier = Modifier.size(32.dp),
                             onClick = {
                                 scope.launch {
                                     if (!tooltipState.isVisible) tooltipState.show() else tooltipState.dismiss()
