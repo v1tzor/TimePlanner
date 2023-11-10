@@ -61,9 +61,9 @@ internal fun BaseTimeField(
         tonalElevation = TimePlannerRes.elevations.levelOne,
     ) {
         Row(
-            modifier = Modifier.padding(horizontal = 8.dp),
+            modifier = Modifier.padding(horizontal = 12.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             Icon(
                 modifier = Modifier.size(24.dp),

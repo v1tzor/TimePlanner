@@ -20,6 +20,7 @@ import android.content.Intent
 import ru.aleshin.core.utils.functional.Constants
 import ru.aleshin.features.editor.api.presentation.AlarmReceiverProvider
 import ru.aleshin.features.home.api.domain.entities.template.RepeatTime
+import ru.aleshin.features.home.api.presentation.models.NotificationTimeType
 import java.util.Date
 import javax.inject.Inject
 
@@ -38,8 +39,10 @@ class AlarmReceiverProviderImpl @Inject constructor(
         time: Date?,
         templateId: Int?,
         repeatTime: RepeatTime?,
+        timeType: NotificationTimeType,
     ) = Intent(context, TimeTaskAlarmReceiver::class.java).apply {
         action = Constants.Alarm.ALARM_NOTIFICATION_ACTION
+        putExtra(Constants.Alarm.NOTIFICATION_TIME_TYPE, timeType.toString())
         putExtra(Constants.Alarm.NOTIFICATION_CATEGORY, category)
         putExtra(Constants.Alarm.NOTIFICATION_SUBCATEGORY, subCategory)
         putExtra(Constants.Alarm.NOTIFICATION_ICON, icon)

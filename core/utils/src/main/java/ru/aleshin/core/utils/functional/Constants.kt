@@ -49,6 +49,7 @@ object Constants {
 
     object Alarm {
         const val ALARM_NOTIFICATION_ACTION = "ru.aleshin.ALARM_NOTIFICATION_ACTION"
+        const val NOTIFICATION_TIME_TYPE = "ALARM_DATA_TIME_TYPE"
         const val NOTIFICATION_CATEGORY = "ALARM_DATA_CATEGORY"
         const val NOTIFICATION_SUBCATEGORY = "ALARM_DATA_SUBCATEGORY"
         const val NOTIFICATION_ICON = "ALARM_DATA_ICON"
@@ -95,9 +96,9 @@ object Constants {
         const val OVERVIEW_NEXT_DAYS = 15
         const val OVERVIEW_PREVIOUS_DAYS = 14
 
-        const val minutesFormat = "%s%s"
-        const val hoursFormat = "%s%s"
-        const val hoursAndMinutesFormat = "%s%s %s%s"
+        const val MINUTES_FORMAT = "%s%s"
+        const val HOURS_FORMAT = "%s%s"
+        const val HOURS_AND_MINUTES_FORMAT = "%s%s %s%s"
 
         const val SHIFT_MINUTE_VALUE = 5
     }

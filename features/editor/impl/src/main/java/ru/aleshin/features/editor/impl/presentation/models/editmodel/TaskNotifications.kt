@@ -19,12 +19,12 @@ import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
 /**
- * @author Stanislav Aleshin on 16.05.2023.
+ * @author Stanislav Aleshin on 10.11.2023.
  */
 @Parcelize
-internal data class EditParameters(
-    val isImportant: Boolean = false,
-    val isEnableNotification: Boolean = true,
-    val taskNotifications: TaskNotificationsUi = TaskNotificationsUi(),
-    val isConsiderInStatistics: Boolean = true,
+internal data class TaskNotificationsUi(
+    val oneDayBefore: Boolean = false,
+    val threeHourBefore: Boolean = false,
+    val oneHourBefore: Boolean = false,
+    val beforeEnd: Boolean = false,
 ) : Parcelable

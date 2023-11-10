@@ -35,6 +35,14 @@ fun Date.shiftDay(amount: Int, locale: Locale = Locale.getDefault()): Date {
     return calendar.time
 }
 
+fun Date.shiftHours(amount: Int, locale: Locale = Locale.getDefault()): Date {
+    val calendar = Calendar.getInstance(locale).also {
+        it.time = this@shiftHours
+        it.add(Calendar.HOUR_OF_DAY, amount)
+    }
+    return calendar.time
+}
+
 fun Date.shiftMinutes(amount: Int, locale: Locale = Locale.getDefault()): Date {
     val calendar = Calendar.getInstance(locale).also {
         it.time = this@shiftMinutes
@@ -216,18 +224,18 @@ fun Long.toMinutesOrHoursString(minutesSymbol: String, hoursSymbol: String): Str
     val hours = this.toHorses()
 
     return if (minutes == 0L) {
-        Constants.Date.minutesFormat.format("1", minutesSymbol)
+        Constants.Date.MINUTES_FORMAT.format("1", minutesSymbol)
     } else if (minutes in 1L..59L) {
-        Constants.Date.minutesFormat.format(minutes.toString(), minutesSymbol)
+        Constants.Date.MINUTES_FORMAT.format(minutes.toString(), minutesSymbol)
     } else if (minutes > 59L && (minutes % 60L) != 0L) {
-        Constants.Date.hoursAndMinutesFormat.format(
+        Constants.Date.HOURS_AND_MINUTES_FORMAT.format(
             hours.toString(),
             hoursSymbol,
             toMinutesInHours().toString(),
             minutesSymbol,
         )
     } else {
-        Constants.Date.hoursFormat.format(hours.toString(), hoursSymbol)
+        Constants.Date.HOURS_FORMAT.format(hours.toString(), hoursSymbol)
     }
 }
 
@@ -235,7 +243,7 @@ fun Long.toMinutesAndHoursString(minutesSymbol: String, hoursSymbol: String): St
     val minutes = this.toMinutes()
     val hours = this.toHorses()
 
-    return Constants.Date.hoursAndMinutesFormat.format(
+    return Constants.Date.HOURS_AND_MINUTES_FORMAT.format(
         hours.toString(),
         hoursSymbol,
         (minutes - hours * Constants.Date.MINUTES_IN_HOUR).toString(),

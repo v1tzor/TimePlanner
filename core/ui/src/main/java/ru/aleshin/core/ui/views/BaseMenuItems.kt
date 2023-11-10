@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ru.aleshin.features.home.impl.presentation.ui.common
+package ru.aleshin.core.ui.views
 
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
@@ -28,24 +28,26 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
+import ru.aleshin.core.ui.theme.TimePlannerRes
 
 /**
  * @author Stanislav Aleshin on 04.08.2023.
  */
 @Composable
-internal fun CheckedMenuItem(
+fun CheckedMenuItem(
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     text: String,
     check: Boolean,
     onCheckedChange: (Boolean) -> Unit,
 ) = DropdownMenuItem(
-    modifier = modifier,
-    onClick = {},
-    enabled = false,
+    modifier = modifier.alpha(if (enabled) 1f else 0.6f),
+    onClick = { onCheckedChange(!check) },
+    enabled = enabled,
     leadingIcon = {
         Checkbox(
             modifier = Modifier.size(32.dp),
+            enabled = enabled,
             checked = check,
             onCheckedChange = onCheckedChange,
         )
@@ -60,9 +62,10 @@ internal fun CheckedMenuItem(
 )
 
 @Composable
-internal fun BackMenuItem(
+fun BackMenuItem(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
+    title: String,
     onClick: () -> Unit,
 ) = DropdownMenuItem(
     modifier = modifier.alpha(if (enabled) 1f else 0.6f),
@@ -71,13 +74,13 @@ internal fun BackMenuItem(
     leadingIcon = {
         Icon(
             imageVector = Icons.Default.ArrowBack,
-            contentDescription = HomeThemeRes.strings.navToBackTitle,
+            contentDescription = title,
             tint = MaterialTheme.colorScheme.onSurfaceVariant,
         )
     },
     text = {
         Text(
-            text = HomeThemeRes.strings.navToBackTitle,
+            text = title,
             color = MaterialTheme.colorScheme.onSurface,
             style = MaterialTheme.typography.titleMedium,
         )
@@ -85,7 +88,7 @@ internal fun BackMenuItem(
 )
 
 @Composable
-internal fun NavMenuItem(
+fun NavMenuItem(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     text: String,
@@ -96,7 +99,7 @@ internal fun NavMenuItem(
     onClick = onClick,
     trailingIcon = {
         Icon(
-            painter = painterResource(HomeThemeRes.icons.menuNavArrow),
+            painter = painterResource(TimePlannerRes.icons.menuNavArrow),
             contentDescription = null,
             tint = MaterialTheme.colorScheme.onSurfaceVariant,
         )

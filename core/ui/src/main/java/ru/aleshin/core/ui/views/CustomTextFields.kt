@@ -279,8 +279,8 @@ fun CustomLargeTextField(
                 modifier = Modifier.padding(
                     top = 8.dp,
                     bottom = 8.dp,
-                    start = if (leadingIcon != null) 8.dp else 16.dp,
-                    end = if (trailingIcon != null) 8.dp else 16.dp,
+                    start = if (leadingIcon == null) 8.dp else 16.dp,
+                    end = if (trailingIcon == null) 8.dp else 16.dp,
                 ),
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
                 verticalAlignment = Alignment.CenterVertically,

@@ -48,7 +48,6 @@ import ru.aleshin.core.ui.views.DialogButtons
 import ru.aleshin.features.editor.impl.presentation.models.categories.MainCategoryUi
 import ru.aleshin.features.editor.impl.presentation.models.categories.SubCategoryUi
 import ru.aleshin.features.editor.impl.presentation.theme.EditorThemeRes
-import ru.aleshin.features.home.api.presentation.mappers.mapToName
 
 /**
  * @author Stanislav Aleshin on 26.02.2023.
@@ -76,6 +75,11 @@ internal fun SubCategoryChooser(
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
+            Icon(
+                painter = painterResource(id = EditorThemeRes.icons.subCategory),
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurface,
+            )
             Column(modifier = Modifier.weight(1f).animateContentSize()) {
                 val mainTitle = if (mainCategory != null) currentSubCategory?.name else ""
                 Text(

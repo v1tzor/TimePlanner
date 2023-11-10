@@ -24,11 +24,16 @@ import ru.aleshin.core.ui.theme.tokens.fetchCoreLanguage
 import ru.aleshin.core.ui.theme.tokens.fetchCoreStrings
 import ru.aleshin.core.utils.extensions.fetchCurrentLanguage
 import ru.aleshin.core.utils.functional.Constants.App
+import ru.aleshin.core.utils.managers.DateManager
 import ru.aleshin.features.home.api.domain.entities.categories.MainCategory
 import ru.aleshin.features.home.api.domain.entities.categories.SubCategory
+import ru.aleshin.features.home.api.domain.entities.schedules.TaskNotificationType
 import ru.aleshin.features.home.api.domain.entities.schedules.TimeTask
 import ru.aleshin.features.home.api.presentation.mappers.mapToIcon
 import ru.aleshin.features.home.api.presentation.mappers.mapToString
+import ru.aleshin.features.home.api.presentation.models.NotificationTimeType
+import ru.aleshin.features.home.api.presentation.models.toTimeType
+import java.util.Date
 import javax.inject.Inject
 
 /**
@@ -42,28 +47,42 @@ interface TimeTaskAlarmManager {
     class Base @Inject constructor(
         private val context: Context,
         private val receiverProvider: AlarmReceiverProvider,
+        private val dateManager: DateManager,
     ) : TimeTaskAlarmManager {
 
         private val alarmManager: AlarmManager
             get() = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
-        override fun addOrUpdateNotifyAlarm(timeTask: TimeTask) {
-            val alarmIntent = createAlarmIntent(timeTask.category, timeTask.subCategory)
-            val pendingAlarmIntent = createPendingAlarmIntent(alarmIntent, timeTask.key.toInt())
-            val triggerTime = timeTask.timeRange.from.time
+        private val currentTime: Date
+            get() = dateManager.fetchCurrentDate()
 
-            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerTime, pendingAlarmIntent)
+        override fun addOrUpdateNotifyAlarm(timeTask: TimeTask) {
+            timeTask.taskNotifications.toTypes(timeTask.isEnableNotification).forEach { type ->
+                val alarmIntent = createAlarmIntent(timeTask.category, timeTask.subCategory, type.toTimeType())
+                val id = timeTask.key + type.idAmount
+                val pendingAlarmIntent = createPendingAlarmIntent(alarmIntent, id.toInt())
+                val triggerTime = type.fetchNotifyTrigger(timeTask.timeRange).time
+                if (triggerTime > currentTime.time) {
+                    alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerTime, pendingAlarmIntent)
+                }
+            }
         }
 
         override fun deleteNotifyAlarm(timeTask: TimeTask) {
-            val alarmIntent = createAlarmIntent(timeTask.category, timeTask.subCategory)
-            val pendingAlarmIntent = createPendingAlarmIntent(alarmIntent, timeTask.key.toInt())
-
-            alarmManager.cancel(pendingAlarmIntent)
-            pendingAlarmIntent.cancel()
+            TaskNotificationType.values().forEach { type ->
+                val alarmIntent = createAlarmIntent(timeTask.category, timeTask.subCategory, type.toTimeType())
+                val id = timeTask.key + type.idAmount
+                val pendingAlarmIntent = createPendingAlarmIntent(alarmIntent, id.toInt())
+                alarmManager.cancel(pendingAlarmIntent)
+                pendingAlarmIntent.cancel()
+            }
         }
 
-        private fun createAlarmIntent(category: MainCategory, subCategory: SubCategory?): Intent {
+        private fun createAlarmIntent(
+            category: MainCategory,
+            subCategory: SubCategory?,
+            timeType: NotificationTimeType = NotificationTimeType.START_TASK,
+        ): Intent {
             val language = fetchCoreLanguage(context.fetchCurrentLanguage())
             val categoryName = category.let { it.default?.mapToString(fetchCoreStrings(language)) ?: it.customName }
             val subCategoryName = subCategory?.name ?: ""
@@ -75,6 +94,7 @@ interface TimeTaskAlarmManager {
                 subCategory = subCategoryName,
                 icon = categoryIcon,
                 appIcon = appIcon,
+                timeType = timeType,
             )
         }
 

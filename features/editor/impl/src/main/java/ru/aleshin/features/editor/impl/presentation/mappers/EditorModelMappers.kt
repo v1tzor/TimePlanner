@@ -20,6 +20,8 @@ import ru.aleshin.core.utils.functional.TimeRange
 import ru.aleshin.features.editor.impl.domain.entites.EditModel
 import ru.aleshin.features.editor.impl.presentation.models.editmodel.EditModelUi
 import ru.aleshin.features.editor.impl.presentation.models.editmodel.EditParameters
+import ru.aleshin.features.editor.impl.presentation.models.editmodel.TaskNotificationsUi
+import ru.aleshin.features.home.api.domain.entities.schedules.TaskNotifications
 
 /**
  * @author Stanislav Aleshin on 16.05.2023.
@@ -32,13 +34,25 @@ internal fun EditModel.mapToUi() = EditModelUi(
     duration = duration(startTime, endTime),
     mainCategory = mainCategory.mapToUi(),
     subCategory = subCategory?.mapToUi(),
-    parameters = EditParameters(isImportant, isEnableNotification, isConsiderInStatistics),
+    parameters = EditParameters(
+        isImportant = isImportant,
+        isEnableNotification = isEnableNotification,
+        taskNotifications = taskNotifications.mapToUi(),
+        isConsiderInStatistics = isConsiderInStatistics,
+    ),
     isCompleted = isCompleted,
     repeatEnabled = repeatEnabled,
     templateId = templateId,
     undefinedTaskId = undefinedTaskId,
     repeatTimes = repeatTimes,
     note = note,
+)
+
+internal fun TaskNotifications.mapToUi() = TaskNotificationsUi(
+    oneDayBefore = oneDayBefore,
+    threeHourBefore = threeHourBefore,
+    oneHourBefore = oneHourBefore,
+    beforeEnd = beforeEnd,
 )
 
 internal fun EditModelUi.mapToDomain() = EditModel(
@@ -52,10 +66,18 @@ internal fun EditModelUi.mapToDomain() = EditModel(
     isCompleted = isCompleted,
     isImportant = parameters.isImportant,
     isEnableNotification = parameters.isEnableNotification,
+    taskNotifications = parameters.taskNotifications.mapToDomain(),
     isConsiderInStatistics = parameters.isConsiderInStatistics,
     repeatEnabled = repeatEnabled,
     templateId = templateId,
     undefinedTaskId = undefinedTaskId,
     repeatTimes = repeatTimes,
     note = note,
+)
+
+internal fun TaskNotificationsUi.mapToDomain() = TaskNotifications(
+    oneDayBefore = oneDayBefore,
+    threeHourBefore = threeHourBefore,
+    oneHourBefore = oneHourBefore,
+    beforeEnd = beforeEnd,
 )

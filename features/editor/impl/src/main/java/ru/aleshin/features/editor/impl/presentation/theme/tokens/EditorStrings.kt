@@ -70,6 +70,10 @@ internal data class EditorStrings(
     val noteLabel: String,
     val notePlaceholder: String,
     val undefinedTasksSheetTitle: String,
+    val oneHourBeforeTitle: String,
+    val threeHourBeforeTitle: String,
+    val oneDayBeforeTitle: String,
+    val beforeEndTitle: String,
 )
 
 internal val russianHomeString = EditorStrings(
@@ -122,6 +126,10 @@ internal val russianHomeString = EditorStrings(
     noteLabel = "Заметка",
     notePlaceholder = "Небольшое примечание по желанию",
     undefinedTasksSheetTitle = "Не распределённые задачи",
+    oneHourBeforeTitle = "За час до начала",
+    threeHourBeforeTitle = "За два часа до начала",
+    oneDayBeforeTitle = "За день до начала",
+    beforeEndTitle = "Перед окончанием",
 )
 
 internal val englishHomeString = EditorStrings(
@@ -130,8 +138,8 @@ internal val englishHomeString = EditorStrings(
     topAppBarMoreIconDesc = "More",
     topAppBarTemplatesTitle = "Templates",
     mainCategoryChooserTitle = "Category",
-    mainCategoryChooserExpandedIconDesc = "Select category",
     subCategoryChooserTitle = "Subcategory",
+    mainCategoryChooserExpandedIconDesc = "Select category",
     categoryNotSelectedTitle = "Absent",
     subCategoryDialogAddedTitle = "Add",
     subCategoryDialogMainCategoryFormat = "Category: %s",
@@ -174,6 +182,10 @@ internal val englishHomeString = EditorStrings(
     noteLabel = "Note",
     notePlaceholder = "A small note is optional",
     undefinedTasksSheetTitle = "Non-distributed tasks",
+    oneHourBeforeTitle = "An hour before the start",
+    threeHourBeforeTitle = "Two hours before the start",
+    oneDayBeforeTitle = "The day before the start",
+    beforeEndTitle = "Before the end",
 )
 
 internal val persianHomeString = EditorStrings(
@@ -182,8 +194,8 @@ internal val persianHomeString = EditorStrings(
     topAppBarMoreIconDesc = "بیشتر",
     topAppBarTemplatesTitle = "قالب ها",
     mainCategoryChooserTitle = "دسته بندی",
-    mainCategoryChooserExpandedIconDesc = "انتخاب دسته بندی",
     subCategoryChooserTitle = "زیرمجموعه",
+    mainCategoryChooserExpandedIconDesc = "انتخاب دسته بندی",
     categoryNotSelectedTitle = "خالی",
     subCategoryDialogAddedTitle = "افزودن",
     subCategoryDialogMainCategoryFormat = "دسته بندی: %s",
@@ -226,6 +238,10 @@ internal val persianHomeString = EditorStrings(
     noteLabel = "یادداشت",
     notePlaceholder = "یک یادداشت کوچک اختیاری است",
     undefinedTasksSheetTitle = "وظایف غیر توزیع شده",
+    oneHourBeforeTitle = "یک ساعت قبل از شروع",
+    threeHourBeforeTitle = "دو ساعت قبل از شروع",
+    oneDayBeforeTitle = "روز قبل از شروع",
+    beforeEndTitle = "قبل از پایان",
 )
 
 internal val germanHomeString = EditorStrings(
@@ -277,6 +293,10 @@ internal val germanHomeString = EditorStrings(
     noteLabel = "Notiz",
     notePlaceholder = "Eine kleine Anmerkung optional",
     undefinedTasksSheetTitle = "Nicht verteilte Aufgaben",
+    oneHourBeforeTitle = "Eine Stunde vor Beginn",
+    threeHourBeforeTitle = "Zwei Stunden vor dem Start",
+    oneDayBeforeTitle = "Einen Tag vor dem Start",
+    beforeEndTitle = "Vor dem Ende",
 )
 
 internal val spanishHomeString = EditorStrings(
@@ -285,8 +305,8 @@ internal val spanishHomeString = EditorStrings(
     topAppBarMoreIconDesc = "Más",
     topAppBarTemplatesTitle = "Plantillas",
     mainCategoryChooserTitle = "Categoría",
-    mainCategoryChooserExpandedIconDesc = "Selecciona categoría",
     subCategoryChooserTitle = "Subcategoría",
+    mainCategoryChooserExpandedIconDesc = "Selecciona categoría",
     categoryNotSelectedTitle = "Ninguna",
     subCategoryDialogAddedTitle = "Añadir",
     subCategoryDialogMainCategoryFormat = "Categoría: %s",
@@ -329,6 +349,10 @@ internal val spanishHomeString = EditorStrings(
     noteLabel = "Nota",
     notePlaceholder = "Una pequeña nota opcional",
     undefinedTasksSheetTitle = "Tareas no distribuidas",
+    oneHourBeforeTitle = "Una hora antes del Inicio",
+    threeHourBeforeTitle = "Dos horas antes del Inicio",
+    oneDayBeforeTitle = "Un día antes del Inicio",
+    beforeEndTitle = "Antes de terminar",
 )
 
 internal val frenchHomeString = EditorStrings(
@@ -337,8 +361,8 @@ internal val frenchHomeString = EditorStrings(
     topAppBarMoreIconDesc = "Plus",
     topAppBarTemplatesTitle = "Modèles",
     mainCategoryChooserTitle = "Catégorie",
-    mainCategoryChooserExpandedIconDesc = "Sélectionner la catégorie",
     subCategoryChooserTitle = "Sous-catégorie",
+    mainCategoryChooserExpandedIconDesc = "Sélectionner la catégorie",
     categoryNotSelectedTitle = "Absent",
     subCategoryDialogAddedTitle = "Ajouter",
     subCategoryDialogMainCategoryFormat = "Catégorie: %s",
@@ -381,6 +405,10 @@ internal val frenchHomeString = EditorStrings(
     noteLabel = "Note",
     notePlaceholder = "Petite Note en option",
     undefinedTasksSheetTitle = "Tâches non distribuées",
+    oneHourBeforeTitle = "Une heure avant le début",
+    threeHourBeforeTitle = "Deux heures avant le début",
+    oneDayBeforeTitle = "La veille du début",
+    beforeEndTitle = "Avant la fin",
 )
 
 internal val brazilianPortugueseHomeString = EditorStrings(
@@ -389,8 +417,8 @@ internal val brazilianPortugueseHomeString = EditorStrings(
     topAppBarMoreIconDesc = "Mais",
     topAppBarTemplatesTitle = "Templates",
     mainCategoryChooserTitle = "Categorias",
-    mainCategoryChooserExpandedIconDesc = "Selecione uma categoria",
     subCategoryChooserTitle = "Subcategoria",
+    mainCategoryChooserExpandedIconDesc = "Selecione uma categoria",
     categoryNotSelectedTitle = "Nenhum",
     subCategoryDialogAddedTitle = "Adicionar",
     subCategoryDialogMainCategoryFormat = "Categoria: %s",
@@ -433,6 +461,10 @@ internal val brazilianPortugueseHomeString = EditorStrings(
     noteLabel = "Nota",
     notePlaceholder = "Uma nota é opcional",
     undefinedTasksSheetTitle = "Tarefas não distribuídas",
+    oneHourBeforeTitle = "Uma hora antes do início",
+    threeHourBeforeTitle = "Duas horas antes do início",
+    oneDayBeforeTitle = "No dia anterior ao início",
+    beforeEndTitle = "Antes do fim",
 )
 
 internal val LocalEditorStrings = staticCompositionLocalOf<EditorStrings> {

@@ -15,7 +15,9 @@
  */
 package ru.aleshin.features.analytics.impl.presenatiton.mappers
 
+import ru.aleshin.features.analytics.impl.presenatiton.models.timetask.TaskNotificationsUi
 import ru.aleshin.features.analytics.impl.presenatiton.models.timetask.TimeTaskUi
+import ru.aleshin.features.home.api.domain.entities.schedules.TaskNotifications
 import ru.aleshin.features.home.api.domain.entities.schedules.TimeTask
 
 internal fun TimeTask.mapToUi() = TimeTaskUi(
@@ -27,6 +29,14 @@ internal fun TimeTask.mapToUi() = TimeTaskUi(
     isCompleted = isCompleted,
     isImportant = isImportant,
     isEnableNotification = isEnableNotification,
+    taskNotifications = taskNotifications.mapToUi(),
     isConsiderInStatistics = isConsiderInStatistics,
     note = note,
+)
+
+internal fun TaskNotifications.mapToUi() = TaskNotificationsUi(
+    oneDayBefore = oneDayBefore,
+    threeHourBefore = threeHourBefore,
+    oneHourBefore = oneHourBefore,
+    beforeEnd = beforeEnd,
 )

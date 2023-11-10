@@ -24,6 +24,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -186,6 +187,13 @@ internal fun CategoriesSection(
             },
             label = { Text(text = EditorThemeRes.strings.noteLabel) },
             placeholder = { Text(text = EditorThemeRes.strings.notePlaceholder) },
+            leadingIcon = {
+                Icon(
+                    painter = painterResource(id = EditorThemeRes.icons.notesField),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurface,
+                )
+            },
             maxLines = 4,
             trailingIcon = if (noteInteractionSource.collectIsFocusedAsState().value) { {
                 IconButton(
@@ -253,14 +261,15 @@ internal fun ParametersSection(
     parameters: EditParameters,
     onChangeParameters: (EditParameters) -> Unit,
 ) {
+    var openTaskNotificationMenu by remember { mutableStateOf(false) }
     Column(
         modifier = modifier.padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         ParameterChooser(
             enabled = enabled,
-            modifier = Modifier,
             selected = parameters.isConsiderInStatistics,
+            leadingIcon = painterResource(id = EditorThemeRes.icons.statistics),
             title = EditorThemeRes.strings.statisticsParameterTitle,
             description = EditorThemeRes.strings.statisticsParameterDesc,
             onChangeSelected = { isConsider ->
@@ -269,18 +278,40 @@ internal fun ParametersSection(
         )
         ParameterChooser(
             enabled = enabled,
-            modifier = Modifier,
             selected = parameters.isEnableNotification,
+            leadingIcon = painterResource(id = EditorThemeRes.icons.notifications),
             title = EditorThemeRes.strings.notifyParameterTitle,
             description = EditorThemeRes.strings.notifyParameterDesc,
+            optionsButton = if (parameters.isEnableNotification) {{
+                Box {
+                    IconButton(
+                        modifier = Modifier.size(32.dp),
+                        onClick = { openTaskNotificationMenu = true },
+                        colors = IconButtonDefaults.iconButtonColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                            contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                        ),
+                    ) {
+                        Icon(imageVector = Icons.Default.Settings, contentDescription = null)
+                    }
+                    TaskNotificationsMenu(
+                        isExpanded = openTaskNotificationMenu,
+                        taskNotification = parameters.taskNotifications,
+                        onDismiss = { openTaskNotificationMenu = false },
+                        onUpdate = { onChangeParameters(parameters.copy(taskNotifications = it)) },
+                    )
+                }
+            }} else {
+                null
+            },
             onChangeSelected = { notification ->
                 onChangeParameters(parameters.copy(isEnableNotification = notification))
             },
         )
         ParameterChooser(
             enabled = enabled,
-            modifier = Modifier,
             selected = parameters.isImportant,
+            leadingIcon = painterResource(id = EditorThemeRes.icons.priority),
             title = EditorThemeRes.strings.importantParameterTitle,
             description = EditorThemeRes.strings.importantParameterDesc,
             onChangeSelected = { isImportant ->

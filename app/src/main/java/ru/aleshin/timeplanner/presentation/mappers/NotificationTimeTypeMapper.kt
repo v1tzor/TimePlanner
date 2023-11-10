@@ -13,18 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ru.aleshin.features.editor.impl.presentation.models.editmodel
+package ru.aleshin.timeplanner.presentation.mappers
 
-import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
+import ru.aleshin.core.ui.theme.tokens.TimePlannerStrings
+import ru.aleshin.features.home.api.presentation.models.NotificationTimeType
 
 /**
- * @author Stanislav Aleshin on 16.05.2023.
+ * @author Stanislav Aleshin on 10.11.2023.
  */
-@Parcelize
-internal data class EditParameters(
-    val isImportant: Boolean = false,
-    val isEnableNotification: Boolean = true,
-    val taskNotifications: TaskNotificationsUi = TaskNotificationsUi(),
-    val isConsiderInStatistics: Boolean = true,
-) : Parcelable
+fun NotificationTimeType.mapToString(strings: TimePlannerStrings) = when (this) {
+    NotificationTimeType.BEFORE_TASK -> strings.beforeTaskNotifyText
+    NotificationTimeType.START_TASK -> strings.startTaskNotifyText
+    NotificationTimeType.AFTER_TASK -> strings.afterTaskNotifyText
+}

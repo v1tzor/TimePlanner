@@ -26,14 +26,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import ru.aleshin.core.ui.mappers.mapToString
+import ru.aleshin.core.ui.views.BackMenuItem
+import ru.aleshin.core.ui.views.CheckedMenuItem
+import ru.aleshin.core.ui.views.NavMenuItem
 import ru.aleshin.core.utils.functional.Month
 import ru.aleshin.core.utils.functional.WeekDay
 import ru.aleshin.features.home.api.domain.entities.template.RepeatTime
 import ru.aleshin.features.home.api.domain.entities.template.RepeatTimeType
 import ru.aleshin.features.home.api.presentation.mappers.mapToString
-import ru.aleshin.features.home.impl.presentation.ui.common.BackMenuItem
-import ru.aleshin.features.home.impl.presentation.ui.common.CheckedMenuItem
-import ru.aleshin.features.home.impl.presentation.ui.common.NavMenuItem
+import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
 
 /**
  * @author Stanislav Aleshin on 08.05.2023.
@@ -95,7 +96,11 @@ internal fun WeekDayMenuItems(
     onAddRepeat: (RepeatTime) -> Unit,
     onDeleteRepeat: (RepeatTime) -> Unit,
 ) {
-    BackMenuItem(enabled = selectedTimes.isEmpty(), onClick = onBackClick)
+    BackMenuItem(
+        enabled = selectedTimes.isEmpty(),
+        onClick = onBackClick,
+        title = HomeThemeRes.strings.navToBackTitle,
+    )
     WeekDay.values().forEach { day ->
         CheckedMenuItem(
             text = day.mapToString(),
@@ -115,7 +120,11 @@ internal fun MonthDayMenuItems(
     onAddRepeat: (RepeatTime) -> Unit,
     onDeleteRepeat: (RepeatTime) -> Unit,
 ) {
-    BackMenuItem(enabled = selectedTimes.isEmpty(), onClick = onBackClick)
+    BackMenuItem(
+        enabled = selectedTimes.isEmpty(),
+        onClick = onBackClick,
+        title = HomeThemeRes.strings.navToBackTitle,
+    )
     for (dayNumber in 1..31) {
         CheckedMenuItem(
             text = dayNumber.toString(),
@@ -139,7 +148,10 @@ internal fun WeekDayInMonthMenuItems(
     var isOpenSubMenu by remember { mutableStateOf(false) }
 
     if (isOpenSubMenu) {
-        BackMenuItem(onClick = { isOpenSubMenu = false; selectedWeekNumber = null })
+        BackMenuItem(
+            onClick = { isOpenSubMenu = false; selectedWeekNumber = null },
+            title = HomeThemeRes.strings.navToBackTitle,
+        )
         WeekDay.values().forEach { day ->
             CheckedMenuItem(
                 text = day.mapToString(),
@@ -151,7 +163,11 @@ internal fun WeekDayInMonthMenuItems(
             )
         }
     } else {
-        BackMenuItem(enabled = selectedTimes.isEmpty(), onClick = onBackClick)
+        BackMenuItem(
+            enabled = selectedTimes.isEmpty(),
+            onClick = onBackClick,
+            title = HomeThemeRes.strings.navToBackTitle,
+        )
         for (weekNumber in 1..5) {
             NavMenuItem(
                 text = weekNumber.toString(),
@@ -175,7 +191,10 @@ internal fun YearDayMenuItems(
     var isOpenSubMenu by remember { mutableStateOf(false) }
 
     if (isOpenSubMenu) {
-        BackMenuItem(onClick = { isOpenSubMenu = false; selectedMonth = null })
+        BackMenuItem(
+            onClick = { isOpenSubMenu = false; selectedMonth = null },
+            title = HomeThemeRes.strings.navToBackTitle,
+        )
         for (day in 1..31) {
             CheckedMenuItem(
                 text = day.toString(),
@@ -187,7 +206,11 @@ internal fun YearDayMenuItems(
             )
         }
     } else {
-        BackMenuItem(enabled = selectedTimes.isEmpty(), onClick = onBackClick)
+        BackMenuItem(
+            enabled = selectedTimes.isEmpty(),
+            onClick = onBackClick,
+            title = HomeThemeRes.strings.navToBackTitle,
+        )
         Month.values().forEach { month ->
             NavMenuItem(
                 text = month.mapToString(),

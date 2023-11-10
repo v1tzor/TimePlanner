@@ -16,7 +16,6 @@
 package ru.aleshin.features.editor.impl.presentation.ui.editor.processors
 
 import ru.aleshin.core.utils.functional.Either
-import ru.aleshin.core.utils.managers.DateManager
 import ru.aleshin.core.utils.platform.screenmodel.work.*
 import ru.aleshin.features.editor.api.presentation.TimeTaskAlarmManager
 import ru.aleshin.features.editor.impl.domain.common.convertToTimeTask
@@ -42,7 +41,6 @@ internal interface TimeTaskWorkProcessor : WorkProcessor<TimeTaskWorkCommand, Ed
         private val undefinedTasksInteractor: UndefinedTasksInteractor,
         private val timeTaskAlarmManager: TimeTaskAlarmManager,
         private val navigationManager: NavigationManager,
-        private val dateManager: DateManager,
     ) : TimeTaskWorkProcessor {
 
         override suspend fun work(command: TimeTaskWorkCommand) = when (command) {
@@ -98,14 +96,11 @@ internal interface TimeTaskWorkProcessor : WorkProcessor<TimeTaskWorkCommand, Ed
             }
         }
 
-        private fun notifyUpdateOrAdd(timeTask: TimeTask) {
-            if (timeTask.isEnableNotification) {
-                val currentTime = dateManager.fetchCurrentDate()
-                if (timeTask.timeRange.from > currentTime) {
-                    timeTaskAlarmManager.deleteNotifyAlarm(timeTask)
-                    timeTaskAlarmManager.addOrUpdateNotifyAlarm(timeTask)
-                }
-            }
+        private fun notifyUpdateOrAdd(timeTask: TimeTask) = if (timeTask.isEnableNotification) {
+            timeTaskAlarmManager.deleteNotifyAlarm(timeTask)
+            timeTaskAlarmManager.addOrUpdateNotifyAlarm(timeTask)
+        } else {
+            timeTaskAlarmManager.deleteNotifyAlarm(timeTask) 
         }
     }
 }

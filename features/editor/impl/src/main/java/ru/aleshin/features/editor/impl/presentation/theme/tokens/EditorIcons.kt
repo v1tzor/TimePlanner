@@ -35,6 +35,11 @@ internal data class EditorIcons(
     val repeat: Int,
     val notes: Int,
     val deadline: Int,
+    val subCategory: Int,
+    val notesField: Int,
+    val statistics: Int,
+    val notifications: Int,
+    val priority: Int,
 )
 
 internal val baseHomeIcons = EditorIcons(
@@ -51,6 +56,11 @@ internal val baseHomeIcons = EditorIcons(
     repeat = R.drawable.ic_repeat,
     notes = R.drawable.ic_notes,
     deadline = R.drawable.ic_timer,
+    subCategory = R.drawable.ic_sub_category,
+    notesField = R.drawable.ic_note_outline,
+    statistics = R.drawable.ic_chart_check,
+    notifications = R.drawable.ic_notifications_outline,
+    priority = R.drawable.ic_priority_high,
 )
 
 internal val LocalEditorIcons = staticCompositionLocalOf<EditorIcons> {

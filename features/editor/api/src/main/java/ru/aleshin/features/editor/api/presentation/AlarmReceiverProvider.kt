@@ -17,6 +17,7 @@ package ru.aleshin.features.editor.api.presentation
 
 import android.content.Intent
 import ru.aleshin.features.home.api.domain.entities.template.RepeatTime
+import ru.aleshin.features.home.api.presentation.models.NotificationTimeType
 import java.util.Date
 
 /**
@@ -31,5 +32,6 @@ interface AlarmReceiverProvider {
         time: Date? = null,
         templateId: Int? = null,
         repeatTime: RepeatTime? = null,
+        timeType: NotificationTimeType,
     ): Intent
 }

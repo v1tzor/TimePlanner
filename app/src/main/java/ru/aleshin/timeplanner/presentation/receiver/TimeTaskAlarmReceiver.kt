@@ -20,12 +20,8 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
-import android.graphics.ColorFilter
 import android.graphics.LightingColorFilter
-import android.graphics.drawable.ColorDrawable
-import androidx.appcompat.graphics.drawable.DrawableWrapperCompat
 import androidx.core.content.ContextCompat
-import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.graphics.drawable.toBitmap
 import ru.aleshin.core.ui.theme.tokens.fetchCoreLanguage
 import ru.aleshin.core.ui.theme.tokens.fetchCoreStrings
@@ -40,7 +36,9 @@ import ru.aleshin.core.utils.notifications.parameters.NotificationPriority
 import ru.aleshin.features.editor.api.presentation.TemplatesAlarmManager
 import ru.aleshin.features.home.api.domain.entities.template.RepeatTime
 import ru.aleshin.features.home.api.domain.entities.template.RepeatTimeType
+import ru.aleshin.features.home.api.presentation.models.NotificationTimeType
 import ru.aleshin.timeplanner.R
+import ru.aleshin.timeplanner.presentation.mappers.mapToString
 import ru.aleshin.timeplanner.presentation.ui.main.MainActivity
 
 /**
@@ -60,6 +58,9 @@ class TimeTaskAlarmReceiver : BroadcastReceiver() {
         val notificationCreator = NotificationCreator.Base(context)
         val coreStrings = fetchCoreStrings(fetchCoreLanguage(context.fetchLocale().language))
 
+        val timeType = intent.getStringExtra(Constants.Alarm.NOTIFICATION_TIME_TYPE)?.let { type ->
+            NotificationTimeType.valueOf(type)
+        } ?: NotificationTimeType.START_TASK
         val repeatTypeName = intent.getStringExtra(Constants.Alarm.REPEAT_TYPE)
         val repeatTime = repeatTypeName?.let { RepeatTimeType.valueOf(it) }
         val category = checkNotNull(intent.getStringExtra(Constants.Alarm.NOTIFICATION_CATEGORY))
@@ -74,7 +75,7 @@ class TimeTaskAlarmReceiver : BroadcastReceiver() {
         val notification = notificationCreator.createNotify(
             channelId = Constants.Notification.CHANNEL_ID_NEW,
             title = if (subCategory.isNotEmpty()) "$category, $subCategory" else category,
-            text = coreStrings.startTaskNotifyText,
+            text = timeType.mapToString(coreStrings),
             smallIcon = appIcon,
             largeIcon = icon?.let { largeIcon ->
                 val drawable = ContextCompat.getDrawable(context, largeIcon)
@@ -90,13 +91,14 @@ class TimeTaskAlarmReceiver : BroadcastReceiver() {
         notificationCreator.showNotify(notification, 0)
 
         if (repeatTime != null) {
-            scheduleNextNotify(context, intent, repeatTime, category, subCategory, icon)
+            scheduleNextNotify(context, intent, timeType, repeatTime, category, subCategory, icon)
         }
     }
     
     private fun scheduleNextNotify(
         context: Context,
         intent: Intent,
+        timeType: NotificationTimeType,
         repeatType: RepeatTimeType,
         category: String,
         subCategory: String?,
@@ -129,6 +131,6 @@ class TimeTaskAlarmReceiver : BroadcastReceiver() {
             )
         }
         val targetDay = repeatTime.nextDate(time.mapToDate())
-        templatesAlarmManager.addRawNotifyAlarm(id, repeatTime, targetDay, category, subCategory, icon)
+        templatesAlarmManager.addRawNotifyAlarm(id, timeType, repeatTime, targetDay, category, subCategory, icon)
     }
 }

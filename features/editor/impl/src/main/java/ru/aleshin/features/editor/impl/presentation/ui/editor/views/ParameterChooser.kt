@@ -23,6 +23,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.dp
 import ru.aleshin.core.ui.theme.TimePlannerRes
 import ru.aleshin.features.editor.impl.presentation.theme.EditorThemeRes
@@ -35,20 +36,30 @@ internal fun ParameterChooser(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     selected: Boolean,
+    leadingIcon: Painter? = null,
     title: String,
+    optionsButton: (@Composable () -> Unit)? = null,
     description: String,
+
     onChangeSelected: (Boolean) -> Unit,
 ) {
     Surface(
-        modifier = modifier,
+        modifier = modifier.fillMaxWidth(),
         shape = MaterialTheme.shapes.medium,
         tonalElevation = TimePlannerRes.elevations.levelOne,
     ) {
         Row(
             modifier = Modifier.padding(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
+            if (leadingIcon != null) {
+                Icon(
+                    painter = leadingIcon,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurface,
+                )
+            }
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = title,
@@ -61,19 +72,25 @@ internal fun ParameterChooser(
                     style = MaterialTheme.typography.bodyMedium,
                 )
             }
-            Switch(
-                enabled = enabled,
-                modifier = Modifier.align(Alignment.Top),
-                checked = selected,
-                onCheckedChange = onChangeSelected,
-                thumbContent = {
-                    Icon(
-                        modifier = Modifier.size(SwitchDefaults.IconSize),
-                        imageVector = if (selected) Icons.Default.Check else Icons.Default.Close,
-                        contentDescription = EditorThemeRes.strings.parameterChooserSwitchIconDesc,
-                    )
-                },
-            )
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                if (optionsButton != null) optionsButton()
+                Switch(
+                    enabled = enabled,
+                    modifier = Modifier.align(Alignment.Top),
+                    checked = selected,
+                    onCheckedChange = onChangeSelected,
+                    thumbContent = {
+                        Icon(
+                            modifier = Modifier.size(SwitchDefaults.IconSize),
+                            imageVector = if (selected) Icons.Default.Check else Icons.Default.Close,
+                            contentDescription = EditorThemeRes.strings.parameterChooserSwitchIconDesc,
+                        )
+                    },
+                )
+            }
         }
     }
 }

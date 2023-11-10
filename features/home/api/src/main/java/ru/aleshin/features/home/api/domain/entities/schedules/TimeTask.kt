@@ -39,6 +39,7 @@ data class TimeTask(
     val isCompleted: Boolean = true,
     val isImportant: Boolean = false,
     val isEnableNotification: Boolean = true,
+    val taskNotifications: TaskNotifications = TaskNotifications(),
     val isConsiderInStatistics: Boolean = true,
     val note: String? = null,
 ) {
