@@ -68,7 +68,7 @@ interface TimeTaskAlarmManager {
             val categoryName = category.let { it.default?.mapToString(fetchCoreStrings(language)) ?: it.customName }
             val subCategoryName = subCategory?.name ?: ""
             val categoryIcon = category.default?.mapToIcon(fetchCoreIcons())
-            val appIcon = fetchCoreIcons().calendar
+            val appIcon = fetchCoreIcons().logo
 
             return receiverProvider.provideReceiverIntent(
                 category = categoryName ?: App.NAME,

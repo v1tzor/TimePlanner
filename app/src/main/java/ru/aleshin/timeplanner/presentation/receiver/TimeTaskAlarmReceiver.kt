@@ -19,7 +19,13 @@ import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.ColorFilter
+import android.graphics.LightingColorFilter
+import android.graphics.drawable.ColorDrawable
+import androidx.appcompat.graphics.drawable.DrawableWrapperCompat
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.graphics.drawable.toBitmap
 import ru.aleshin.core.ui.theme.tokens.fetchCoreLanguage
 import ru.aleshin.core.ui.theme.tokens.fetchCoreStrings
@@ -66,11 +72,15 @@ class TimeTaskAlarmReceiver : BroadcastReceiver() {
         val contentIntent = PendingIntent.getActivity(context, 0, activityIntent, PendingIntent.FLAG_IMMUTABLE)
         
         val notification = notificationCreator.createNotify(
-            channelId = Constants.Notification.CHANNEL_ID,
+            channelId = Constants.Notification.CHANNEL_ID_NEW,
             title = if (subCategory.isNotEmpty()) "$category, $subCategory" else category,
             text = coreStrings.startTaskNotifyText,
             smallIcon = appIcon,
-            largeIcon = icon?.let { ContextCompat.getDrawable(context, it)?.toBitmap() },
+            largeIcon = icon?.let { largeIcon ->
+                val drawable = ContextCompat.getDrawable(context, largeIcon)
+                drawable?.colorFilter = LightingColorFilter(Color.DKGRAY, Color.DKGRAY)
+                return@let drawable?.toBitmap()
+            },
             autoCancel = true,
             priority = NotificationPriority.MAX,
             contentIntent = contentIntent,

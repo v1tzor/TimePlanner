@@ -37,6 +37,7 @@ object Constants {
 
     object Notification {
         const val CHANNEL_ID = "timeTaskAlarmChannel"
+        const val CHANNEL_ID_NEW = "timeTaskNewAlarmChannel"
     }
 
     object Backup {

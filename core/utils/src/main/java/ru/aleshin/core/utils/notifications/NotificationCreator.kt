@@ -53,6 +53,8 @@ interface NotificationCreator {
         progress: NotificationProgress? = null,
     ): Notification
 
+    fun showNotify(notification: Notification, notifyId: Int)
+
     @RequiresApi(Build.VERSION_CODES.O)
     fun createNotifyChannel(
         channelId: String,
@@ -61,7 +63,8 @@ interface NotificationCreator {
         defaults: NotificationDefaults,
     )
 
-    fun showNotify(notification: Notification, notifyId: Int)
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun deleteNotifyChannel(channelId: String)
 
     class Base @Inject constructor(
         private val context: Context,
@@ -107,12 +110,6 @@ interface NotificationCreator {
                 if (notificationDefaults.isVibrate) setDefaults(NotificationCompat.DEFAULT_VIBRATE)
                 if (notificationDefaults.isSound) {
                     setDefaults(NotificationCompat.DEFAULT_SOUND)
-                    try {
-                        val soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-                        RingtoneManager.getRingtone(context, soundUri).play()
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                    }
                 }
                 if (notificationDefaults.isLights) setDefaults(NotificationCompat.DEFAULT_LIGHTS)
                 if (progress != null) with(progress) { setProgress(max, value, isIndeterminate) }
@@ -139,6 +136,12 @@ interface NotificationCreator {
                 vibrationPattern = longArrayOf(500, 500, 500)
             }
             notificationManager.createNotificationChannel(channel)
+        }
+
+        @RequiresApi(Build.VERSION_CODES.O)
+        override fun deleteNotifyChannel(channelId: String) {
+            val channel = notificationManager.getNotificationChannel(channelId)
+            if (channel != null) notificationManager.deleteNotificationChannel(channelId)
         }
     }
 }

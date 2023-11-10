@@ -15,15 +15,15 @@
  */
 package ru.aleshin.core.utils.notifications.parameters
 
-import androidx.core.app.NotificationCompat
+import android.app.NotificationManager
 
 /**
  * @author Stanislav Aleshin on 28.03.2023.
  */
 enum class NotificationPriority(val importance: Int) {
-    DEFAULT(NotificationCompat.PRIORITY_DEFAULT),
-    MIN(NotificationCompat.PRIORITY_MIN),
-    LOW(NotificationCompat.PRIORITY_LOW),
-    HIGH(NotificationCompat.PRIORITY_HIGH),
-    MAX(NotificationCompat.PRIORITY_MAX),
+    DEFAULT(NotificationManager.IMPORTANCE_DEFAULT),
+    MIN(NotificationManager.IMPORTANCE_MIN),
+    LOW(NotificationManager.IMPORTANCE_LOW),
+    HIGH(NotificationManager.IMPORTANCE_HIGH),
+    MAX(NotificationManager.IMPORTANCE_MAX),
 }

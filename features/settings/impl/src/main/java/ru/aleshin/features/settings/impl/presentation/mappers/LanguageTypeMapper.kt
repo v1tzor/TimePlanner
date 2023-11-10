@@ -17,7 +17,6 @@ package ru.aleshin.features.settings.impl.presentation.mappers
 
 import androidx.compose.runtime.Composable
 import ru.aleshin.core.ui.theme.tokens.LanguageUiType
-import ru.aleshin.features.settings.api.domain.entities.LanguageType
 import ru.aleshin.features.settings.impl.presentation.theme.SettingsThemeRes
 
 /**
@@ -32,4 +31,5 @@ fun LanguageUiType.toLanguageName(): String = when (this) {
     LanguageUiType.ES -> SettingsThemeRes.strings.spaLanguageTitle
     LanguageUiType.FA -> SettingsThemeRes.strings.perLanguageTitle
     LanguageUiType.FR -> SettingsThemeRes.strings.freLanguageTitle
+    LanguageUiType.PT -> SettingsThemeRes.strings.ptLanguageTitle
 }

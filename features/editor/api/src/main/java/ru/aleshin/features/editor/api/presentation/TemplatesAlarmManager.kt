@@ -102,7 +102,7 @@ interface TemplatesAlarmManager {
                 category = template.category.let { it.default?.mapToString(coreString) ?: it.customName } ?: "",
                 subCategory = template.subCategory?.name.orEmpty(),
                 icon = template.category.default?.mapToIcon(coreIcons),
-                appIcon = fetchCoreIcons().calendar,
+                appIcon = fetchCoreIcons().logo,
                 time = template.startTime,
                 templateId = template.templateId,
                 repeatTime = repeatTime,

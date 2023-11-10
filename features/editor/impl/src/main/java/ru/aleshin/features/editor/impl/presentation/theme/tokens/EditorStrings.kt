@@ -432,6 +432,7 @@ internal val brazilianPortugueseHomeString = EditorStrings(
     importantParameterDesc = "Execução obrigatória, sem possibilidade de pular",
     noteLabel = "Nota",
     notePlaceholder = "Uma nota é opcional",
+    undefinedTasksSheetTitle = "Tarefas não distribuídas",
 )
 
 internal val LocalEditorStrings = staticCompositionLocalOf<EditorStrings> {

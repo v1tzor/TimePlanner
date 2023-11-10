@@ -49,16 +49,22 @@ class TimePlannerApp : Application() {
     override fun onCreate() {
         super.onCreate()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            deleteOldChannel()
             createTimeTaskNotifyChannel()
         }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun createTimeTaskNotifyChannel() = notificationCreator.createNotifyChannel(
-        channelId = Constants.Notification.CHANNEL_ID,
+        channelId = Constants.Notification.CHANNEL_ID_NEW,
         channelName = coreStrings.timeTaskChannelName,
         priority = NotificationPriority.MAX,
         defaults = NotificationDefaults(true, true, true),
+    )
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun deleteOldChannel() = notificationCreator.deleteNotifyChannel(
+        channelId = Constants.Notification.CHANNEL_ID,
     )
 }
 
