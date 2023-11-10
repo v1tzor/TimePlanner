@@ -21,6 +21,7 @@ package ru.aleshin.core.utils.functional
 object Constants {
 
     object App {
+        const val SPLASH_NAME = "TIME\nPLANNER"
         const val NAME = "TimePlanner"
         const val DEVELOPER = "Stanislav Aleshin"
         const val LICENCE = "Apache Licence v2.0"
@@ -67,7 +68,9 @@ object Constants {
 
     object Delay {
         const val LOAD_ANIMATION = 400L
-        const val SPLASH = 1500L
+        const val SPLASH_NAV = 1800L
+        const val SPLASH_LOGO = 300L
+        const val SPLASH_TEXT = 600L
         const val CHECK_STATUS = 5000L
     }
 

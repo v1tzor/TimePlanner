@@ -23,7 +23,7 @@ import ru.aleshin.core.ui.R
  */
 data class TimePlannerIcons(
     val logo: Int,
-    val calendar: Int,
+    val splashIcon: Int,
     val categoryWorkIcon: Int,
     val categoryRestIcon: Int,
     val categorySportIcon: Int,
@@ -60,7 +60,7 @@ data class TimePlannerIcons(
 
 internal val baseTimePlannerIcons = TimePlannerIcons(
     logo = R.drawable.ic_time_planner,
-    calendar = R.drawable.ic_calendar,
+    splashIcon = R.drawable.ic_splash,
     categoryWorkIcon = R.drawable.ic_work,
     categoryRestIcon = R.drawable.ic_rest,
     categorySportIcon = R.drawable.ic_sport,

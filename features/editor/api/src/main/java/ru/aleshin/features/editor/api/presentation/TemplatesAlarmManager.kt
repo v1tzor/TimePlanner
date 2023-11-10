@@ -85,7 +85,7 @@ interface TemplatesAlarmManager {
                 category = category,
                 subCategory = subCategory.orEmpty(),
                 icon = icon,
-                appIcon = fetchCoreIcons().calendar,
+                appIcon = fetchCoreIcons().logo,
                 time = time,
                 templateId = templateId,
                 repeatTime = repeatTime,

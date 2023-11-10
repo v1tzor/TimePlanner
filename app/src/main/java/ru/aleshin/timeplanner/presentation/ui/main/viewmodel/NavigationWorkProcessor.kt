@@ -40,7 +40,7 @@ interface NavigationWorkProcessor : WorkProcessor<NavWorkCommand, MainAction, Ma
         }
 
         private suspend fun navigateToTabWork(initDelay: Boolean): WorkResult<MainAction, MainEffect> {
-            if (initDelay) delay(Constants.Delay.SPLASH)
+            if (initDelay) delay(Constants.Delay.SPLASH_NAV)
             return globalNavManager.showTabScreen().let {
                 ActionResult(MainAction.Navigate)
             }
