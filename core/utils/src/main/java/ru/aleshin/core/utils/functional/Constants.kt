@@ -65,6 +65,7 @@ object Constants {
 
     object Placeholder {
         const val ITEMS = 6
+        const val MANY_ITEMS = 15
     }
 
     object Delay {

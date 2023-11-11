@@ -15,7 +15,10 @@
  */
 package ru.aleshin.features.editor.impl.presentation.ui.editor
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
@@ -74,47 +77,53 @@ internal fun EditorContent(
     onCancelClick: () -> Unit,
 ) {
     val scrollState = rememberScrollState()
-    Column(modifier = modifier.fillMaxSize().animateContentSize()) {
-        if (state.editModel != null) {
-            Column(
-                modifier = Modifier.weight(1f).verticalScroll(scrollState).padding(top = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-            ) {
-                CategoriesSection(
-                    enabled = !state.editModel.checkDateIsRepeat(),
-                    isMainCategoryValidError = state.categoryValid is CategoryValidateError.EmptyCategoryError,
-                    mainCategory = state.editModel.mainCategory,
-                    subCategory = state.editModel.subCategory,
-                    allCategories = state.categories,
-                    note = state.editModel.note,
-                    onCategoriesChange = onCategoriesChange,
-                    onAddSubCategory = onAddSubCategory,
-                    onNoteChange = onNoteChange,
-                )
-                Divider(Modifier.padding(horizontal = 32.dp))
-                DateTimeSection(
-                    enabled = !state.editModel.checkDateIsRepeat(),
-                    isTimeValidError = state.timeRangeValid is TimeRangeError.DurationError,
-                    timeRanges = state.editModel.timeRange,
-                    duration = state.editModel.duration,
-                    onTimeRangeChange = onTimeRangeChange,
-                )
-                Divider(Modifier.padding(horizontal = 32.dp))
-                ParametersSection(
-                    enabled = !state.editModel.checkDateIsRepeat(),
-                    parameters = state.editModel.parameters,
-                    onChangeParameters = onChangeParameters,
+    AnimatedVisibility(
+        visible = state.editModel != null,
+        enter = fadeIn(),
+        exit = fadeOut(),
+    ) {
+        Column(modifier = modifier.fillMaxSize().animateContentSize()) {
+            if (state.editModel != null) {
+                Column(
+                    modifier = Modifier.weight(1f).verticalScroll(scrollState).padding(top = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                ) {
+                    CategoriesSection(
+                        enabled = !state.editModel.checkDateIsRepeat(),
+                        isMainCategoryValidError = state.categoryValid is CategoryValidateError.EmptyCategoryError,
+                        mainCategory = state.editModel.mainCategory,
+                        subCategory = state.editModel.subCategory,
+                        allCategories = state.categories,
+                        note = state.editModel.note,
+                        onCategoriesChange = onCategoriesChange,
+                        onAddSubCategory = onAddSubCategory,
+                        onNoteChange = onNoteChange,
+                    )
+                    Divider(Modifier.padding(horizontal = 32.dp))
+                    DateTimeSection(
+                        enabled = !state.editModel.checkDateIsRepeat(),
+                        isTimeValidError = state.timeRangeValid is TimeRangeError.DurationError,
+                        timeRanges = state.editModel.timeRange,
+                        duration = state.editModel.duration,
+                        onTimeRangeChange = onTimeRangeChange,
+                    )
+                    Divider(Modifier.padding(horizontal = 32.dp))
+                    ParametersSection(
+                        enabled = !state.editModel.checkDateIsRepeat(),
+                        parameters = state.editModel.parameters,
+                        onChangeParameters = onChangeParameters,
+                    )
+                }
+                ActionButtonsSection(
+                    enableTemplateSelector = state.editModel.key != 0L,
+                    isRepeatTemplate = state.editModel.checkDateIsRepeat(),
+                    isTemplateSelect = state.editModel.templateId != null,
+                    onCancelClick = onCancelClick,
+                    onControl = onControlTemplate,
+                    onCreateTemplate = onCreateTemplate,
+                    onSaveClick = onSaveClick,
                 )
             }
-            ActionButtonsSection(
-                enableTemplateSelector = state.editModel.key != 0L,
-                isRepeatTemplate = state.editModel.checkDateIsRepeat(),
-                isTemplateSelect = state.editModel.templateId != null,
-                onCancelClick = onCancelClick,
-                onControl = onControlTemplate,
-                onCreateTemplate = onCreateTemplate,
-                onSaveClick = onSaveClick,
-            )
         }
     }
 }
@@ -282,7 +291,7 @@ internal fun ParametersSection(
             leadingIcon = painterResource(id = EditorThemeRes.icons.notifications),
             title = EditorThemeRes.strings.notifyParameterTitle,
             description = EditorThemeRes.strings.notifyParameterDesc,
-            optionsButton = if (parameters.isEnableNotification) {{
+            optionsButton = if (parameters.isEnableNotification) { {
                 Box {
                     IconButton(
                         modifier = Modifier.size(32.dp),
@@ -301,7 +310,7 @@ internal fun ParametersSection(
                         onUpdate = { onChangeParameters(parameters.copy(taskNotifications = it)) },
                     )
                 }
-            }} else {
+            } } else {
                 null
             },
             onChangeSelected = { notification ->

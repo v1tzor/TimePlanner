@@ -23,7 +23,9 @@ import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.navigator.CurrentScreen
+import cafe.adriel.voyager.transitions.FadeTransition
+import ru.aleshin.core.ui.theme.TimePlannerRes
+import ru.aleshin.core.ui.views.SystemBarsColor
 import ru.aleshin.core.utils.managers.rememberDrawerManager
 import ru.aleshin.core.utils.navigation.navigator.TabNavigator
 import ru.aleshin.core.utils.navigation.navigator.rememberNavigatorManager
@@ -68,7 +70,7 @@ class TabsScreen : Screen {
                 Scaffold(
                     content = { paddingValues ->
                         Box(modifier = Modifier.padding(paddingValues)) {
-                            CurrentScreen()
+                            FadeTransition(navigator = it)
                         }
                     },
                     bottomBar = {
@@ -87,5 +89,6 @@ class TabsScreen : Screen {
                 )
             }
         }
+        SystemBarsColor(isDarkIcons = TimePlannerRes.colorsType.isDark)
     }
 }

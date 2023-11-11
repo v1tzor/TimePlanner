@@ -16,12 +16,12 @@
 package ru.aleshin.features.home.impl.presentation.ui.home
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.VisibilityThreshold
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.BorderStroke
@@ -72,16 +72,14 @@ internal fun HomeContent(
     onChangeToggleStatus: (ViewToggleStatus) -> Unit,
 ) {
     Column(modifier = modifier.fillMaxSize()) {
-        HorizontalProgressBar(isLoading = state.isLoading)
         DateChooserSection(
-            isEnabled = !state.isLoading,
+            visible = state.currentDate != null,
             currentDate = state.currentDate,
             toggleState = state.taskViewStatus,
             onChangeDate = onChangeDate,
             onChangeToggleStatus = onChangeToggleStatus,
         )
         TimeTasksSection(
-            isLoadingContent = state.isLoading,
             currentDate = state.currentDate,
             dateStatus = state.dateStatus,
             timeTasks = state.timeTasks,
@@ -99,35 +97,40 @@ internal fun HomeContent(
 @Composable
 internal fun DateChooserSection(
     modifier: Modifier = Modifier,
-    isEnabled: Boolean,
+    visible: Boolean = true,
     currentDate: Date?,
     toggleState: ViewToggleStatus,
     onChangeDate: (Date) -> Unit,
     onChangeToggleStatus: (ViewToggleStatus) -> Unit,
 ) {
-    Row(
-        modifier = modifier.fillMaxWidth().padding(start = 16.dp, end = 8.dp, top = 8.dp, bottom = 8.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(24.dp),
+    AnimatedVisibility(
+        visible = visible,
+        enter = fadeIn() + slideInVertically(),
+        exit = fadeOut(),
     ) {
-        HomeDateChooser(
-            modifier = Modifier.width(202.dp),
-            isEnabled = isEnabled,
-            currentDate = currentDate,
-            onChangeDate = onChangeDate,
-        )
-        Spacer(modifier = Modifier.weight(1f))
-        ViewToggle(
-            status = toggleState, 
-            onStatusChange = onChangeToggleStatus,
-        )
+        Row(
+            modifier = modifier.padding(start = 16.dp, end = 8.dp, top = 8.dp, bottom = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(24.dp),
+        ) {
+            HomeDateChooser(
+                modifier = Modifier.width(202.dp),
+                currentDate = currentDate,
+                onChangeDate = onChangeDate,
+            )
+            Spacer(modifier = Modifier.weight(1f))
+            ViewToggle(
+                status = toggleState,
+                onStatusChange = onChangeToggleStatus,
+            )
+        }
     }
 }
 
 @Composable
 internal fun HomeDateChooser(
     modifier: Modifier = Modifier,
-    isEnabled: Boolean,
+    enabled: Boolean = true,
     currentDate: Date?,
     onChangeDate: (Date) -> Unit,
 ) {
@@ -136,7 +139,7 @@ internal fun HomeDateChooser(
 
     DateChooser(
         modifier = modifier,
-        enabled = isEnabled,
+        enabled = enabled,
         dateTitle = currentDate?.let { dateFormat.format(it) } ?: "",
         onNext = { currentDate?.let { onChangeDate.invoke(it.shiftDay(amount = 1)) } },
         onPrevious = { currentDate?.let { onChangeDate.invoke(it.shiftDay(amount = -1)) } },
@@ -153,12 +156,11 @@ internal fun HomeDateChooser(
     )
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
+@OptIn(ExperimentalFoundationApi::class)
 internal fun TimeTasksSection(
     modifier: Modifier = Modifier,
     listState: LazyListState = rememberLazyListState(),
-    isLoadingContent: Boolean,
     dateStatus: DailyScheduleStatus?,
     currentDate: Date?,
     timeTasks: List<TimeTaskUi>,
@@ -169,15 +171,18 @@ internal fun TimeTasksSection(
     onTimeTaskAdd: (startTime: Date, endTime: Date) -> Unit,
     onTimeTaskIncrease: (TimeTaskUi) -> Unit,
     onTimeTaskReduce: (TimeTaskUi) -> Unit,
-) = Box(modifier = modifier.fillMaxSize()) {
-    if (dateStatus != null) {
-        LazyColumn(
-            state = listState,
-            contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
-            verticalArrangement = Arrangement.spacedBy(4.dp),
-            userScrollEnabled = !isLoadingContent,
-        ) {
-            if (!isLoadingContent) {
+) = AnimatedVisibility(
+    visible = currentDate != null,
+    enter = fadeIn() + scaleIn(initialScale = 0.9f),
+    exit = fadeOut(),
+) {
+    Box(modifier = modifier.fillMaxSize()) {
+        if (dateStatus != null) {
+            LazyColumn(
+                state = listState,
+                contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+            ) {
                 items(timeTasks, key = { it.key }) { timeTask ->
                     val isCompactView = timeTaskViewStatus == ViewToggleStatus.COMPACT
                     val timeTaskIndex = timeTasks.indexOf(timeTask)
@@ -202,8 +207,8 @@ internal fun TimeTasksSection(
                     AnimatedVisibility(
                         enter = fadeIn() + slideInVertically(),
                         exit = shrinkVertically() + fadeOut(),
-                        visible = nextItem != null && 
-                            timeTask.endTime.isNotZeroDifference(nextItem.startTime) && 
+                        visible = nextItem != null &&
+                            timeTask.endTime.isNotZeroDifference(nextItem.startTime) &&
                             !isCompactView,
                     ) {
                         val trackColor = when (timeTask.executionStatus) {
@@ -213,7 +218,12 @@ internal fun TimeTasksSection(
                         }
                         if (nextItem != null) {
                             AddTimeTaskViewItem(
-                                modifier = Modifier.animateItemPlacement(),
+                                modifier = Modifier.animateItemPlacement(
+                                    animationSpec = spring(
+                                        stiffness = Spring.StiffnessMedium,
+                                        visibilityThreshold = IntOffset.VisibilityThreshold,
+                                    ),
+                                ),
                                 onAddClick = { onTimeTaskAdd.invoke(timeTask.endTime, nextItem.startTime) },
                                 startTime = timeTask.endTime,
                                 endTime = nextItem.startTime,
@@ -229,7 +239,12 @@ internal fun TimeTasksSection(
                     }
                     val endTime = startTime.endThisDay()
                     AddTimeTaskViewItem(
-                        modifier = Modifier.animateItemPlacement(),
+                        modifier = Modifier.animateItemPlacement(
+                            animationSpec = spring(
+                                stiffness = Spring.StiffnessMedium,
+                                visibilityThreshold = IntOffset.VisibilityThreshold,
+                            ),
+                        ),
                         onAddClick = { onTimeTaskAdd(startTime, endTime) },
                         startTime = startTime,
                         endTime = endTime,
@@ -237,34 +252,34 @@ internal fun TimeTasksSection(
                 }
                 item { EmptyItem() }
             }
-        }
-    } else if (!isLoadingContent) {
-        EmptyDateView(
-            modifier = Modifier.align(Alignment.Center),
-            emptyTitle = HomeThemeRes.strings.emptyScheduleTitle,
-            subTitle = null,
-        ) {
-            OutlinedButton(
-                onClick = onCreateSchedule,
-                modifier = Modifier.width(185.dp),
-                colors = ButtonDefaults.outlinedButtonColors(
-                    contentColor = MaterialTheme.colorScheme.secondary,
-                ),
-                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
-                contentPadding = PaddingValues(horizontal = 4.dp),
+        } else if (currentDate != null) {
+            EmptyDateView(
+                modifier = Modifier.align(Alignment.Center),
+                emptyTitle = HomeThemeRes.strings.emptyScheduleTitle,
+                subTitle = null,
             ) {
-                Icon(
-                    modifier = Modifier.size(18.dp).align(Alignment.CenterVertically),
-                    imageVector = Icons.Default.Add,
-                    contentDescription = HomeThemeRes.strings.createScheduleDesc,
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-                Text(
-                    modifier = Modifier.padding(start = 4.dp).align(Alignment.CenterVertically),
-                    text = HomeThemeRes.strings.createScheduleTitle,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodyMedium,
-                )
+                OutlinedButton(
+                    onClick = onCreateSchedule,
+                    modifier = Modifier.width(185.dp),
+                    colors = ButtonDefaults.outlinedButtonColors(
+                        contentColor = MaterialTheme.colorScheme.secondary,
+                    ),
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+                    contentPadding = PaddingValues(horizontal = 4.dp),
+                ) {
+                    Icon(
+                        modifier = Modifier.size(18.dp).align(Alignment.CenterVertically),
+                        imageVector = Icons.Default.Add,
+                        contentDescription = HomeThemeRes.strings.createScheduleDesc,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                    Text(
+                        modifier = Modifier.padding(start = 4.dp).align(Alignment.CenterVertically),
+                        text = HomeThemeRes.strings.createScheduleTitle,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+                }
             }
         }
     }
@@ -310,42 +325,3 @@ internal fun LazyItemScope.TimeTaskViewItem(
         }
     }
 }
-
-@Composable
-internal fun HorizontalProgressBar(
-    modifier: Modifier = Modifier,
-    isLoading: Boolean,
-) = Box(
-    modifier = modifier.animateContentSize().padding(vertical = 4.dp),
-) {
-    if (isLoading) {
-        LinearProgressIndicator(modifier = modifier.fillMaxWidth())
-    }
-}
-
-/* ----------------------- Release Preview -----------------------
-@Preview(showSystemUi = true, showBackground = true)
-@Composable
-private fun HomeContent_Preview() {
-    TimePlannerTheme(
-        dynamicColor = false,
-        themeColorsType = ThemeColorsUiType.LIGHT,
-        language = LanguageUiType.RU,
-    ) {
-        HomeTheme {
-            Box(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
-                HomeContent(
-                    state = HomeViewState(dateStatus = null),
-                    onChangeDate = {},
-                    onTimeTaskEdit = {},
-                    onTimeTaskAdd = {},
-                    onTimeTaskIncrease = {},
-                    onCreateSchedule = {},
-                    onTimeTaskReduce = {},
-                    onChangeViewStatus = {},
-                )
-            }
-        }
-    }
-}
-*/

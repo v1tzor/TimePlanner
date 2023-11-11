@@ -89,9 +89,10 @@ internal fun SchedulesSection(
                         onScheduleClick = onOpenSchedule,
                     )
                     Button(
-                        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                        modifier = Modifier.fillMaxWidth().height(40.dp).padding(horizontal = 16.dp),
                         onClick = onOpenAllSchedules,
                         shape = MaterialTheme.shapes.large,
+                        contentPadding = PaddingValues(),
                         content = { Text(text = HomeThemeRes.strings.showAllSchedulesTitle) },
                     )
                 } else {

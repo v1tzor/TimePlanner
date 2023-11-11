@@ -20,7 +20,6 @@ import ru.aleshin.core.utils.extensions.isCurrentDay
 import ru.aleshin.core.utils.extensions.shiftMinutes
 import ru.aleshin.core.utils.functional.DomainResult
 import ru.aleshin.core.utils.functional.TimeShiftException
-import ru.aleshin.core.utils.functional.UnitDomainResult
 import ru.aleshin.features.home.api.domain.entities.schedules.TimeTask
 import ru.aleshin.features.home.api.domain.repository.TemplatesRepository
 import ru.aleshin.features.home.api.domain.repository.TimeTaskRepository
@@ -35,9 +34,9 @@ import javax.inject.Inject
  */
 internal interface TimeShiftInteractor {
 
-    suspend fun shiftUpTimeTask(task: TimeTask, shiftValue: Int): DomainResult<HomeFailures, TimeTask?>
+    suspend fun shiftUpTimeTask(task: TimeTask, shiftValue: Int): DomainResult<HomeFailures, List<TimeTask>>
 
-    suspend fun shiftDownTimeTask(task: TimeTask, shiftValue: Int): UnitDomainResult<HomeFailures>
+    suspend fun shiftDownTimeTask(task: TimeTask, shiftValue: Int): DomainResult<HomeFailures, TimeTask>
 
     class Base @Inject constructor(
         private val timeTaskRepository: TimeTaskRepository,
@@ -61,9 +60,8 @@ internal interface TimeShiftInteractor {
 
             return@wrap if (nextTime == null || nextTime.from.time - shiftTime.time >= shiftValue) {
                 when (shiftTime.isCurrentDay(task.timeRange.to)) {
-                    true -> null.apply {
-                        val shiftTask = task.copy(timeRange = task.timeRange.copy(to = shiftTime))
-                        timeTaskRepository.updateTimeTask(timeTask = shiftTask)
+                    true -> listOf(task.copy(timeRange = task.timeRange.copy(to = shiftTime))).apply {
+                        timeTaskRepository.updateTimeTaskList(this)
                     }
                     false -> throw TimeShiftException()
                 }
@@ -75,8 +73,9 @@ internal interface TimeShiftInteractor {
                         }
                         val shiftTask = task.copy(timeRange = task.timeRange.copy(to = shiftTime))
                         val nextShiftTask = nextTimeTask.copy(timeRange = nextTimeTask.timeRange.copy(from = shiftTime))
-                        timeTaskRepository.updateTimeTaskList(listOf(shiftTask, nextShiftTask))
-                        return@wrap nextShiftTask
+                        val updatedTasks = listOf(shiftTask, nextShiftTask)
+                        timeTaskRepository.updateTimeTaskList(updatedTasks)
+                        return@wrap updatedTasks
                     }
                     false -> throw TimeShiftException()
                 }
@@ -90,7 +89,9 @@ internal interface TimeShiftInteractor {
             val shiftTime = task.timeRange.to.shiftMinutes(-shiftValue)
             if (shiftTime.time - task.timeRange.from.time > 0) {
                 val timeRanges = task.timeRange.copy(to = shiftTime)
-                timeTaskRepository.updateTimeTask(task.copy(timeRange = timeRanges))
+                val shiftTask = task.copy(timeRange = timeRanges)
+                timeTaskRepository.updateTimeTask(shiftTask)
+                return@wrap shiftTask
             } else {
                 throw TimeShiftException()
             }

@@ -56,7 +56,7 @@ internal fun BaseTimeField(
     Surface(
         enabled = enabled,
         onClick = { openDialog = true },
-        modifier = modifier.height(56.dp),
+        modifier = modifier.height(56.dp).widthIn(min = 120.dp),
         shape = MaterialTheme.shapes.medium,
         tonalElevation = TimePlannerRes.elevations.levelOne,
     ) {
@@ -74,7 +74,7 @@ internal fun BaseTimeField(
                     false -> MaterialTheme.colorScheme.onSurfaceVariant
                 },
             )
-            Column(modifier = Modifier.requiredWidthIn(max = 74.dp).fillMaxWidth()) {
+            Column {
                 val textColor = when (isError) {
                     true -> MaterialTheme.colorScheme.error
                     false -> MaterialTheme.colorScheme.onSurface

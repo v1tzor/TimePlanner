@@ -15,7 +15,6 @@
  */
 package ru.aleshin.features.home.impl.presentation.ui.home.views
 
-import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -114,7 +113,7 @@ internal fun DateChooserContent(
         contentAlignment = Alignment.Center,
     ) {
         Text(
-            modifier = Modifier.animateContentSize().padding(horizontal = 12.dp).graphicsLayer(
+            modifier = Modifier.padding(horizontal = 12.dp).graphicsLayer(
                 alpha = if (enabled) 1f else 0.5f,
             ),
             text = dateTitle,

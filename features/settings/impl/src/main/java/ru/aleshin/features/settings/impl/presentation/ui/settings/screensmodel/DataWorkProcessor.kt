@@ -135,7 +135,7 @@ internal interface DataWorkProcessor : FlowWorkProcessor<DataWorkCommand, Settin
         private fun addNotifications(timeTasks: List<TimeTask>) {
             val currentDate = dateManager.fetchCurrentDate()
             timeTasks.forEach { timeTask ->
-                if (timeTask.isEnableNotification && timeTask.timeRange.from > currentDate) {
+                if (timeTask.isEnableNotification && timeTask.timeRange.to > currentDate) {
                     timeTaskAlarmManager.addOrUpdateNotifyAlarm(timeTask)
                 }
             }
@@ -145,7 +145,7 @@ internal interface DataWorkProcessor : FlowWorkProcessor<DataWorkCommand, Settin
             val currentDate = dateManager.fetchCurrentDate()
             timeTasks.forEach { timeTask ->
                 val taskTemplate = templates.find { it.equalsIsTemplate(timeTask) }
-                if (timeTask.timeRange.from > currentDate && (taskTemplate == null || !taskTemplate.repeatEnabled)) {
+                if (timeTask.timeRange.to > currentDate && (taskTemplate == null || !taskTemplate.repeatEnabled)) {
                     timeTaskAlarmManager.deleteNotifyAlarm(timeTask)
                 }
             }

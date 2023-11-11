@@ -31,7 +31,6 @@ import java.util.*
  */
 @Parcelize
 internal data class HomeViewState(
-    val isLoading: Boolean = true,
     val currentDate: Date? = null,
     val dateStatus: DailyScheduleStatus? = null,
     val taskViewStatus: ViewToggleStatus = ViewToggleStatus.COMPACT,
@@ -59,7 +58,6 @@ internal sealed class HomeEffect : BaseUiEffect {
 internal sealed class HomeAction : BaseAction {
     object Navigate : HomeAction()
     data class SetupSettings(val settings: TasksSettings) : HomeAction()
-    data class UpdateDate(val date: Date) : HomeAction()
     data class UpdateSchedule(val schedule: ScheduleUi) : HomeAction()
     data class SetEmptySchedule(val date: Date, val status: DailyScheduleStatus?) : HomeAction()
 }

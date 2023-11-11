@@ -85,7 +85,7 @@ internal interface AnalyticsInteractor {
             )
             val planningAnalytics = countPlanningAnalytics(allSchedules)
             val totalTasksCount = timeTasks.count { it.isConsiderInStatistics }
-            val totalTasksTime = timeTasks.map { it.timeRanges }.sumOf { duration(it) }
+            val totalTasksTime = timeTasks.map { it.timeRange }.sumOf { duration(it) }
             val averageDayLoad = if (periodSchedules.isNotEmpty()) totalTasksCount / periodSchedules.size else 0
             val averageTaskTime = if (totalTasksCount != 0) totalTasksTime / totalTasksCount else 0L
 
@@ -150,7 +150,7 @@ internal interface AnalyticsInteractor {
             }
 
             timeTasks.filter { it.isCompleted }.forEach { timeTask ->
-                val currentDuration = duration(timeTask.timeRanges)
+                val currentDuration = duration(timeTask.timeRange)
                 val analyticModel = analytics.find { it.mainCategory.id == timeTask.category.id }
                 if (analyticModel != null) {
                     val index = analytics.indexOf(analyticModel)

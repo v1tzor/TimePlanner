@@ -318,9 +318,10 @@ internal fun CompletedTimeTask(
 @Composable
 internal fun AddTimeTaskView(
     modifier: Modifier = Modifier,
-    onViewClicked: () -> Unit,
-    remainingTimeTitle: String,
+    showAddIconForFreeTime: Boolean = true,
     isFreeTime: Boolean,
+    remainingTimeTitle: String,
+    onViewClicked: () -> Unit,
 ) {
     Surface(
         onClick = onViewClicked,
@@ -335,12 +336,14 @@ internal fun AddTimeTaskView(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Icon(
-                modifier = Modifier.size(18.dp),
-                imageVector = Icons.Filled.Add,
-                contentDescription = HomeThemeRes.strings.timeTaskIncreaseTimeTitle,
-                tint = MaterialTheme.colorScheme.onSurface,
-            )
+            if (showAddIconForFreeTime) {
+                Icon(
+                    modifier = Modifier.size(18.dp),
+                    imageVector = Icons.Filled.Add,
+                    contentDescription = HomeThemeRes.strings.timeTaskIncreaseTimeTitle,
+                    tint = MaterialTheme.colorScheme.onSurface,
+                )
+            }
             Text(
                 text = if (isFreeTime) HomeThemeRes.strings.addFreeTimeTaskTitle else HomeThemeRes.strings.addTaskTitle,
                 style = MaterialTheme.typography.titleSmall,

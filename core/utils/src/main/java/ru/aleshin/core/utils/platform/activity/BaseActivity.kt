@@ -34,9 +34,12 @@ abstract class BaseActivity<S : BaseViewState, E : BaseEvent, A : BaseAction, F 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         initDI()
+        setTheme()
         super.onCreate(savedInstanceState)
         setContent { Content() }
     }
+
+    open fun setTheme() {}
 
     open fun initDI() {}
 

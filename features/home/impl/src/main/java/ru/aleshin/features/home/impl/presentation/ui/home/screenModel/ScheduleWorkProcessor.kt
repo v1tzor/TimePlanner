@@ -24,7 +24,6 @@ import ru.aleshin.core.ui.views.ViewToggleStatus
 import ru.aleshin.core.utils.functional.Constants
 import ru.aleshin.core.utils.functional.collectAndHandle
 import ru.aleshin.core.utils.functional.handle
-import ru.aleshin.core.utils.functional.handleAndGet
 import ru.aleshin.core.utils.functional.rightOrElse
 import ru.aleshin.core.utils.functional.rightOrError
 import ru.aleshin.core.utils.managers.DateManager
@@ -146,9 +145,7 @@ internal interface ScheduleWorkProcessor : FlowWorkProcessor<ScheduleWorkCommand
             val shiftValue = Constants.Date.SHIFT_MINUTE_VALUE
             timeShiftInteractor.shiftUpTimeTask(timeTask.mapToDomain(), shiftValue).handle(
                 onLeftAction = { emit(EffectResult(HomeEffect.ShowError(it))) },
-                onRightAction = { nextShiftTask ->
-                    if (nextShiftTask != null) notifyUpdate(nextShiftTask)
-                },
+                onRightAction = { updatedTasks -> updatedTasks.forEach { notifyUpdate(it) } },
             )
         }
 
@@ -156,16 +153,14 @@ internal interface ScheduleWorkProcessor : FlowWorkProcessor<ScheduleWorkCommand
             val shiftValue = Constants.Date.SHIFT_MINUTE_VALUE
             timeShiftInteractor.shiftDownTimeTask(timeTask.mapToDomain(), shiftValue).handle(
                 onLeftAction = { emit(EffectResult(HomeEffect.ShowError(it))) },
+                onRightAction = { notifyUpdate(it) },
             )
         }
 
         private fun notifyUpdate(timeTask: TimeTask) {
             if (timeTask.isEnableNotification) {
-                val currentTime = dateManager.fetchCurrentDate()
-                if (timeTask.timeRange.from > currentTime) {
-                    timeTaskAlarmManager.deleteNotifyAlarm(timeTask)
-                    timeTaskAlarmManager.addOrUpdateNotifyAlarm(timeTask)
-                }
+                timeTaskAlarmManager.deleteNotifyAlarm(timeTask)
+                timeTaskAlarmManager.addOrUpdateNotifyAlarm(timeTask)
             }
         }
     }

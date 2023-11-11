@@ -35,7 +35,7 @@ fun AppNavigator(
     content: NavigatorContent = { CurrentScreen() },
 ) {
     Navigator(
-        initialScreen,
+        screen = initialScreen,
         onBackPressed = onBackPressed,
         disposeBehavior = NavigatorDisposeBehavior(disposeNestedNavigators = false),
     ) { navigator ->

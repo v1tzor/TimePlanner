@@ -35,7 +35,7 @@ object Versions {
     const val emoji = "1.3.0-beta01"
     const val activityCompose = "1.7.2"
 
-    const val voyager = "1.0.0-rc03"
+    const val voyager = "1.0.0-rc10"
 
     const val dagger = "2.44.2"
 

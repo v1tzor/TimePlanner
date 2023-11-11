@@ -136,7 +136,7 @@ internal fun SchedulesSectionGridViewPlaceholder(
         verticalArrangement = Arrangement.spacedBy(12.dp),
         userScrollEnabled = false,
     ) {
-        items(Constants.Placeholder.ITEMS) {
+        items(Constants.Placeholder.MANY_ITEMS) {
             PlaceholderBox(
                 modifier = Modifier.height(125.dp),
                 shape = MaterialTheme.shapes.large,

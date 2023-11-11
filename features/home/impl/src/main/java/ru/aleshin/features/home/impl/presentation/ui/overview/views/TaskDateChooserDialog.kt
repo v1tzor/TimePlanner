@@ -76,7 +76,7 @@ internal fun TaskDateChooserDialog(
 
     AlertDialog(onDismissRequest = onDismiss) {
         Surface(
-            modifier = modifier.width(328.dp).wrapContentHeight(),
+            modifier = modifier.width(290.dp).wrapContentHeight(),
             shape = MaterialTheme.shapes.extraLarge,
             tonalElevation = TimePlannerRes.elevations.levelThree,
         ) {

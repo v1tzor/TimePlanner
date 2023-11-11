@@ -15,14 +15,21 @@
  */
 package ru.aleshin.timeplanner.presentation.ui.main
 
+/**
+ * @author Stanislav Aleshin on 27.02.2023.
+ */
 import android.Manifest
 import android.os.Build
 import android.util.Log
 import android.view.WindowManager.LayoutParams.FLAG_SECURE
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import cafe.adriel.voyager.navigator.CurrentScreen
+import cafe.adriel.voyager.transitions.FadeTransition
 import ru.aleshin.core.ui.theme.TimePlannerTheme
 import ru.aleshin.core.utils.functional.Constants.App.PERMISSION_TAG
 import ru.aleshin.core.utils.navigation.navigator.AppNavigator
@@ -75,9 +82,13 @@ class MainActivity : BaseActivity<MainViewState, MainEvent, MainAction, MainEffe
             AppNavigator(
                 initialScreen = SplashScreen(),
                 navigatorManager = navigatorManager,
-                content = {
+                content = { navigator ->
                     CurrentScreen()
-                    if (it.lastItem is TabsScreen) getNotificationPermission()
+//                    FadeTransition(
+//                        navigator = navigator,
+//                        animationSpec = spring(stiffness = Spring.StiffnessMedium),
+//                    )
+                    if (navigator.lastItem is TabsScreen) getNotificationPermission()
                 },
             )
             LaunchedEffect(key1 = state.secureMode) {

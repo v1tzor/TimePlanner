@@ -18,7 +18,6 @@ package ru.aleshin.features.settings.impl.presentation.theme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import ru.aleshin.core.ui.theme.TimePlannerRes
-import ru.aleshin.core.ui.views.SystemBarsColor
 import ru.aleshin.features.settings.impl.presentation.theme.tokens.LocalSettingsIcons
 import ru.aleshin.features.settings.impl.presentation.theme.tokens.LocalSettingsStrings
 import ru.aleshin.features.settings.impl.presentation.theme.tokens.fetchSettingsIcons
@@ -37,5 +36,4 @@ internal fun SettingsTheme(content: @Composable () -> Unit) {
         LocalSettingsIcons provides icons,
         content = content,
     )
-    SystemBarsColor(isDarkIcons = TimePlannerRes.colorsType.isDark)
 }

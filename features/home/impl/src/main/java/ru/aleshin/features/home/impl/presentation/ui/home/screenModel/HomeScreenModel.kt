@@ -21,7 +21,6 @@ import cafe.adriel.voyager.core.screen.Screen
 import ru.aleshin.core.ui.views.ViewToggleStatus
 import ru.aleshin.core.utils.functional.TimeRange
 import ru.aleshin.core.utils.managers.CoroutineManager
-import ru.aleshin.core.utils.managers.DateManager
 import ru.aleshin.core.utils.platform.screenmodel.BaseScreenModel
 import ru.aleshin.core.utils.platform.screenmodel.work.BackgroundWorkKey
 import ru.aleshin.core.utils.platform.screenmodel.work.WorkScope
@@ -63,9 +62,7 @@ internal class HomeScreenModel @Inject constructor(
                 val setupCommand = ScheduleWorkCommand.SetupSettings
                 scheduleWorkProcessor.work(setupCommand).collectAndHandleWork()
             }
-            is HomeEvent.LoadSchedule -> {
-                loadSchedule(event.date)
-            }
+            is HomeEvent.LoadSchedule -> loadSchedule(event.date)
             is HomeEvent.CreateSchedule -> {
                 val currentDate = checkNotNull(state().currentDate)
                 val createCommand = ScheduleWorkCommand.CreateSchedule(currentDate)
@@ -122,20 +119,15 @@ internal class HomeScreenModel @Inject constructor(
             taskViewStatus = action.settings.taskViewStatus,
             calendarButtonBehavior = action.settings.calendarButtonBehavior,
         )
-        is HomeAction.UpdateDate -> currentState.copy(
-            currentDate = action.date,
-        )
         is HomeAction.SetEmptySchedule -> currentState.copy(
             timeTasks = emptyList(),
             currentDate = action.date,
             dateStatus = action.status,
-            isLoading = false,
         )
         is HomeAction.UpdateSchedule -> currentState.copy(
             timeTasks = action.schedule.timeTasks,
             currentDate = action.schedule.date,
             dateStatus = action.schedule.dateStatus,
-            isLoading = false,
         )
     }
 

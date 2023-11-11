@@ -14,5 +14,8 @@
   ~ limitations under the License.
   -->
 <resources>
-    <style name="Theme.TimePlanner" parent="Theme.Material3.Light.NoActionBar" />
+    <style name="Theme.TimePlanner" parent="Theme.Material3.Light.NoActionBar">
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+    </style>
 </resources>

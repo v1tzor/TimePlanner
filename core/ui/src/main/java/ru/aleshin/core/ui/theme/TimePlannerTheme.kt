@@ -21,6 +21,9 @@ import androidx.compose.runtime.CompositionLocalProvider
 import ru.aleshin.core.ui.theme.material.*
 import ru.aleshin.core.ui.theme.tokens.*
 
+/**
+ * @author Stanislav Aleshin on 27.02.2023.
+ */
 @Composable
 fun TimePlannerTheme(
     languageType: LanguageUiType = LanguageUiType.DEFAULT,
@@ -33,7 +36,8 @@ fun TimePlannerTheme(
     val coreStrings = fetchCoreStrings(appLanguage)
     val colorsType = fetchAppColorsType(themeType, colors)
     val appElevations = fetchAppElevations()
-    val coreIcons = fetchCoreIcons() 
+    val coreIcons = fetchCoreIcons()
+
     MaterialTheme(
         colorScheme = themeType.toColorScheme(dynamicColor, colors),
         shapes = baseShapes,
