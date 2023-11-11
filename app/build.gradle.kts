@@ -55,6 +55,10 @@ android {
             storePassword = localProperties.getProperty("storePassword")
             keyAlias = localProperties.getProperty("keyAlias")
             keyPassword = localProperties.getProperty("keyPassword")
+            enableV1Signing = true
+            enableV2Signing = true
+            enableV3Signing = true
+            enableV4Signing = true
         }
         getByName("debug") {
             storeFile = file(localProperties.getProperty("storeFile"))

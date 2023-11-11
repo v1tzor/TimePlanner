@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -55,7 +56,7 @@ internal fun OverviewScheduleItem(
     model: ScheduleUi,
     onClick: () -> Unit,
 ) {
-    val dateFormat = SimpleDateFormat("EEE, MMM d", Locale.getDefault())
+    val dateFormat = SimpleDateFormat("EEE, d MMM", Locale.getDefault())
     Surface(
         onClick = onClick,
         modifier = modifier.height(125.dp),
@@ -67,9 +68,12 @@ internal fun OverviewScheduleItem(
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 8.dp, vertical = 12.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(2.dp),
         ) {
-            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
                 CircularProgressIndicator(
                     progress = when (model.dateStatus) {
                         DailyScheduleStatus.REALIZED -> model.progress
@@ -104,7 +108,6 @@ internal fun OverviewScheduleItem(
                     )
                 }
             }
-            Spacer(modifier = Modifier.weight(1f))
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 ShortInfoView(
                     modifier = Modifier.weight(1f),
@@ -145,7 +148,7 @@ internal fun ShortInfoView(
     color: Color = MaterialTheme.colorScheme.onSurfaceVariant,
 ) {
     Row(
-        modifier = modifier.alpha(if (enabled) 1f else 0.6f),
+        modifier = modifier.width(32.dp).alpha(if (enabled) 1f else 0.6f),
         horizontalArrangement = Arrangement.spacedBy(6.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -159,7 +162,6 @@ internal fun ShortInfoView(
             text = text,
             color = color,
             maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
             style = MaterialTheme.typography.labelMedium,
         )
     }

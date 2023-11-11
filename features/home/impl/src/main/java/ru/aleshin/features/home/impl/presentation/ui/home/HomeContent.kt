@@ -134,7 +134,7 @@ internal fun HomeDateChooser(
     currentDate: Date?,
     onChangeDate: (Date) -> Unit,
 ) {
-    val dateFormat = SimpleDateFormat("EEE, MMM d", Locale.getDefault())
+    val dateFormat = SimpleDateFormat("EEE, d MMM", Locale.getDefault())
     val isDateDialogShow = rememberSaveable { mutableStateOf(false) }
 
     DateChooser(
