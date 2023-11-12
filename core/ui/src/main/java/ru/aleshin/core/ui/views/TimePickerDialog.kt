@@ -79,7 +79,7 @@ fun TimePickerDialog(
                     onHoursChanges = { value -> hours = value },
                     onMinutesChanges = { value -> minutes = value },
                     onChangeFormat = {
-                        hours = null
+                        hours = if (format == TimeFormat.PM) hours?.minus(12) else hours?.plus(12)
                         format = it
                     },
                 )
