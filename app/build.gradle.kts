@@ -70,6 +70,7 @@ android {
 
     buildTypes {
         getByName("release") {
+            isCrunchPngs = false
             isDebuggable = false
             isMinifyEnabled = true
             isShrinkResources = true
