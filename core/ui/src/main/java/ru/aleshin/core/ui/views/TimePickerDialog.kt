@@ -79,7 +79,7 @@ fun TimePickerDialog(
                     onHoursChanges = { value -> hours = value },
                     onMinutesChanges = { value -> minutes = value },
                     onChangeFormat = {
-                        hours = null
+                        hours = if (format == TimeFormat.PM) hours?.minus(12) else hours?.plus(12)
                         format = it
                     },
                 )
@@ -91,7 +91,9 @@ fun TimePickerDialog(
                         currentTime.add(Calendar.MINUTE, 1)
                         hours = currentTime.get(Calendar.HOUR_OF_DAY)
                         minutes = currentTime.get(Calendar.MINUTE)
-                        if (!is24Format && (hours!! > 12 || hours == 0)) format = TimeFormat.PM
+                        if (!is24Format) {
+                            format = if (hours in 0..11) TimeFormat.AM else TimeFormat.PM
+                        }
                     },
                     onConfirmClick = {
                         val time = calendar.apply {
