@@ -1,0 +1,37 @@
+{
+  "version": 3,
+  "artifactType": {
+    "type": "APK",
+    "kind": "Directory"
+  },
+  "applicationId": "ru.aleshin.timeplanner",
+  "variantName": "release",
+  "elements": [
+    {
+      "type": "SINGLE",
+      "filters": [],
+      "attributes": [],
+      "versionCode": 27,
+      "versionName": "0.8.0",
+      "outputFile": "app-release.apk"
+    }
+  ],
+  "elementType": "File",
+  "baselineProfiles": [
+    {
+      "minApi": 28,
+      "maxApi": 30,
+      "baselineProfiles": [
+        "baselineProfiles/1/app-release.dm"
+      ]
+    },
+    {
+      "minApi": 31,
+      "maxApi": 34,
+      "baselineProfiles": [
+        "baselineProfiles/0/app-release.dm"
+      ]
+    }
+  ],
+  "minSdkVersionForDexing": 24
+}
