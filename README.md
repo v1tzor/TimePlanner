@@ -38,7 +38,6 @@
 ## Download 🔥
 [<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" alt="Get it on F-Droid" height="80">](https://f-droid.org/en/packages/ru.aleshin.timeplanner/)
 <a href="https://apt.izzysoft.de/fdroid/index/apk/ru.aleshin.timeplanner" target="_blank">
-<img src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png" alt="Get it on IzzyOnDroid" height="80"/></a>
 
 ## Available languages 🌍
 - Russian 🇷🇺
