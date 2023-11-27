@@ -245,7 +245,7 @@ internal val persianHomeString = EditorStrings(
 )
 
 internal val germanHomeString = EditorStrings(
-    topAppBarEditorTitle = "Redakteur",
+    topAppBarEditorTitle = "Bearbeiten",
     topAppBarBackIconDesc = "Zurück",
     topAppBarMoreIconDesc = "Zusätzlich",
     topAppBarTemplatesTitle = "Muster",
@@ -256,7 +256,7 @@ internal val germanHomeString = EditorStrings(
     subCategoryDialogAddedTitle = "Hinzufügen",
     subCategoryDialogMainCategoryFormat = "Kategorie: %s",
     timeFieldStartLabel = "Start",
-    timeFieldEndLabel = "Das Ende",
+    timeFieldEndLabel = "Ende",
     parameterChooserSwitchIconDesc = "Parameter festlegen",
     timePickerHeader = "Zeit wählen",
     timePickerSeparator = ":",
@@ -265,7 +265,7 @@ internal val germanHomeString = EditorStrings(
     statisticsParameterTitle = "Statistik",
     statisticsParameterDesc = "Daten in Statistiken berücksichtigen",
     saveTaskButtonTitle = "Speichern",
-    cancelButtonTitle = "Abschaffen",
+    cancelButtonTitle = "Abbrechen",
     templateIconDesc = "Zu Vorlagen hinzufügen",
     topAppBarDeleteTitle = "Entfernen",
     categoryValidateError = "* Wählen Sie eine Kategorie aus",
@@ -294,8 +294,8 @@ internal val germanHomeString = EditorStrings(
     notePlaceholder = "Eine kleine Anmerkung optional",
     undefinedTasksSheetTitle = "Nicht verteilte Aufgaben",
     oneHourBeforeTitle = "Eine Stunde vor Beginn",
-    threeHourBeforeTitle = "Zwei Stunden vor dem Start",
-    oneDayBeforeTitle = "Einen Tag vor dem Start",
+    threeHourBeforeTitle = "Zwei Stunden vor Beginn",
+    oneDayBeforeTitle = "Einen Tag vor Beginn",
     beforeEndTitle = "Vor dem Ende",
 )
 
