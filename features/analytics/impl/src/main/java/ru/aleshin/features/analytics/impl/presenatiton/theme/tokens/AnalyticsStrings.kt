@@ -122,12 +122,12 @@ internal val persianAnalyticsStrings = AnalyticsStrings(
 )
 
 internal val germanAnalyticsStrings = AnalyticsStrings(
-    topAppBarTitle = "Analytik",
-    menuIconDesc = "Das Menü",
+    topAppBarTitle = "Analyse",
+    menuIconDesc = "Menü",
     timeTabTitle = "Zeit",
     workLoadTabTitle = "Auslastung",
     intelligenceTabTitle = "Daten",
-    weekTimePeriod = "Die Woche",
+    weekTimePeriod = "Woche",
     monthTimePeriod = "Monat",
     yearTimePeriod = "Jahr",
     timeSelectorTitle = "Zeitspanne:",
@@ -137,7 +137,7 @@ internal val germanAnalyticsStrings = AnalyticsStrings(
     totalCountTaskTitle = "Anzahl\nder Aufgaben",
     averageCountTaskTitle = "Anzahl\nder Aufgaben am Tag",
     totalTimeTaskTitle = "Gesamtzeit\nAufgaben",
-    averageTimeTaskTitle = "Durchschnittliche Zeit\ndie Aufgaben",
+    averageTimeTaskTitle = "Durchschnittliche Zeit\nAufgaben",
     workLoadAnalyticsTitle = "Workload Statistiken",
     planningAnalyticsTitle = "Planungsstatistik",
     otherError = "Fehler! Wenden Sie sich an den Entwickler.",
