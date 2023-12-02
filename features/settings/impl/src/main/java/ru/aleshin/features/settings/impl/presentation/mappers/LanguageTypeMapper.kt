@@ -32,4 +32,5 @@ fun LanguageUiType.toLanguageName(): String = when (this) {
     LanguageUiType.FA -> SettingsThemeRes.strings.perLanguageTitle
     LanguageUiType.FR -> SettingsThemeRes.strings.freLanguageTitle
     LanguageUiType.PT -> SettingsThemeRes.strings.ptLanguageTitle
+    LanguageUiType.TR -> SettingsThemeRes.strings.trLanguageTitle
 }

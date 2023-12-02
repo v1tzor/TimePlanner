@@ -69,6 +69,7 @@ internal data class SettingsStrings(
     val currentDayCalendarBehavior: String,
     val selectDayCalendarBehavior: String,
     val ptLanguageTitle: String,
+    val trLanguageTitle: String,
 )
 
 internal val russianSettingsString = SettingsStrings(
@@ -86,6 +87,7 @@ internal val russianSettingsString = SettingsStrings(
     perLanguageTitle = "Персидский(b)",
     freLanguageTitle = "Французкий",
     ptLanguageTitle = "Португальский",
+    trLanguageTitle = "Türkçe",
     defaultLanguageTitle = "По умолчанию",
     backIconDesc = "Назад",
     moreIconDesc = "Дополнительно",
@@ -136,6 +138,7 @@ internal val englishSettingsString = SettingsStrings(
     perLanguageTitle = "Persian(b)",
     freLanguageTitle = "French",
     ptLanguageTitle = "Portuguese",
+    trLanguageTitle = "Türkçe",
     defaultLanguageTitle = "Default",
     backIconDesc = "Navigate up",
     moreIconDesc = "More",
@@ -186,6 +189,7 @@ internal val germanSettingsString = SettingsStrings(
     perLanguageTitle = "Persisch(b)",
     freLanguageTitle = "Französisch",
     ptLanguageTitle = "Portugiesisch",
+    trLanguageTitle = "Türkçe",
     defaultLanguageTitle = "Standard",
     backIconDesc = "Zurück",
     moreIconDesc = "Mehr",
@@ -235,6 +239,7 @@ internal val spanishSettingsString = SettingsStrings(
     spaLanguageTitle = "Español",
     perLanguageTitle = "Persa(b)",
     freLanguageTitle = "Francés",
+    trLanguageTitle = "Türkçe",
     ptLanguageTitle = "Portugués",
     defaultLanguageTitle = "Por defecto",
     backIconDesc = "Volver arriba",
@@ -286,6 +291,7 @@ internal val persianSettingsString = SettingsStrings(
     perLanguageTitle = "فارسی (بیتا)",
     freLanguageTitle = "فرانسوی",
     ptLanguageTitle = "پرتغالی",
+    trLanguageTitle = "Türkçe",
     defaultLanguageTitle = "پیش فرض",
     backIconDesc = "پیمایش به بالا",
     moreIconDesc = "بیشتر",
@@ -336,6 +342,7 @@ internal val frenchSettingsString = SettingsStrings(
     perLanguageTitle = "Perse(b)",
     freLanguageTitle = "Français",
     ptLanguageTitle = "Portugais",
+    trLanguageTitle = "Türkçe",
     defaultLanguageTitle = "Défaut",
     backIconDesc = "Naviguer vers le haut",
     moreIconDesc = "Plus",
@@ -386,6 +393,7 @@ internal val brazilianPortugueseSettingsString = SettingsStrings(
     perLanguageTitle = "Persa(b)",
     freLanguageTitle = "Francês",
     ptLanguageTitle = "Português",
+    trLanguageTitle = "Türkçe",
     defaultLanguageTitle = "Padrão",
     backIconDesc = "Navegar para cima",
     moreIconDesc = "Mais",
@@ -421,6 +429,57 @@ internal val brazilianPortugueseSettingsString = SettingsStrings(
     selectDayCalendarBehavior = "Escolhendo o dia",
 )
 
+internal val turkishSettingsString = SettingsStrings(
+    settingsTitle = "Ayarlar",
+    mainSettingsTitle = "Genel ayarlar",
+    mainSettingsThemeTitle = "Tema:",
+    darkThemeTitle = "Koyu",
+    lightThemeTitle = "Açık",
+    systemThemeTitle = "Sistem",
+    mainSettingsLanguageTitle = "Uygulama dili",
+    rusLanguageTitle = "Rusça",
+    engLanguageTitle = "İngilizce",
+    gerLanguageTitle = "Almanca",
+    spaLanguageTitle = "İspanyolca",
+    perLanguageTitle = "Farsça",
+    freLanguageTitle = "Fransızca",
+    ptLanguageTitle = "Portekizce",
+    trLanguageTitle = "Türkçe",
+    defaultLanguageTitle = "Varsayılan",
+    backIconDesc = "Geri git",
+    moreIconDesc = "Daha Fazla",
+    resetToDefaultTitle = "Varsayılana sıfırla",
+    menuIconDesc = "Menü",
+    dataSectionHeader = "Veri",
+    clearDataTitle = "Tüm verileri sil",
+    clearDataButtonTitle = "Temizle",
+    clearDataWarning = "Bu işlem uygulama verilerinin tamamen silinmesine yol açacak!",
+    backupDataTitle = "Yedek",
+    backupDataButtonTitle = "Kaydet",
+    restoreDataButtonTitle = "Geri yükle",
+    errorBackupMessage = "Yedekleme Hatası",
+    errorBackupFileMessage = "Dosya ile çalışırken hata oluştu",
+    otherError = "Hata! Geliştirici ile iletişime geçin.",
+    mainSettingsDynamicColorTitle = "Dinamik renkler",
+    aboutAppHeader = "Uygulama Hakkında",
+    versionCodeTitle = "Sürüm Numarası",
+    versionNameTitle = "Versiyon",
+    developerTitle = "Geliştirici",
+    licenseTitle = "Lisans",
+    githubTitle = "Github",
+    askQuestionTitle = "Soru Sor",
+    donateTitle = "Uygulamayı Destekle",
+    copyTitle = "Kopyala",
+    mainSettingsColorsTitle = "Renk",
+    donateHeader = "Bağış Yap",
+    secureSectionHeader = "Güvenlik",
+    secureModeTitle = "Güvenli ekran",
+    interfaceSectionHeader = "Arayüz",
+    calendarButtonBehaviorTitle = "Takvim düğme davranışı",
+    currentDayCalendarBehavior = "Mevcut gün",
+    selectDayCalendarBehavior = "Gün seçimi",
+)
+
 internal val LocalSettingsStrings = staticCompositionLocalOf<SettingsStrings> {
     error("Settings Strings is not provided")
 }
@@ -433,4 +492,5 @@ internal fun fetchSettingsStrings(language: TimePlannerLanguage) = when (languag
     TimePlannerLanguage.FA -> persianSettingsString
     TimePlannerLanguage.FR -> frenchSettingsString
     TimePlannerLanguage.PT -> brazilianPortugueseSettingsString
+    TimePlannerLanguage.TR -> turkishSettingsString
 }

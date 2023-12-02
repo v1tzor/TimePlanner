@@ -467,6 +467,62 @@ internal val brazilianPortugueseHomeString = EditorStrings(
     beforeEndTitle = "Antes do fim",
 )
 
+internal val turkishHomeString = EditorStrings(
+    topAppBarEditorTitle = "Editör",
+    topAppBarBackIconDesc = "Geri",
+    topAppBarMoreIconDesc = "Daha Fazla",
+    topAppBarTemplatesTitle = "Şablonlar",
+    mainCategoryChooserTitle = "Kategori",
+    subCategoryChooserTitle = "Alt Kategori",
+    mainCategoryChooserExpandedIconDesc = "Kategori Seçin",
+    categoryNotSelectedTitle = "Yok",
+    subCategoryDialogAddedTitle = "Ekle",
+    subCategoryDialogMainCategoryFormat = "Kategori: %s",
+    timeFieldStartLabel = "Başlangıç",
+    timeFieldEndLabel = "Bitiş",
+    parameterChooserSwitchIconDesc = "Parametre Belirle",
+    timePickerHeader = "Zamanı Girin",
+    timePickerSeparator = ":",
+    notifyParameterTitle = "Bildirimler",
+    notifyParameterDesc = "Bu görev tamamlandığında bildirim gönder",
+    statisticsParameterTitle = "İstatistikler",
+    statisticsParameterDesc = "Görevi istatistiklere dahil et",
+    saveTaskButtonTitle = "Kaydet",
+    cancelButtonTitle = "İptal",
+    templateIconDesc = "Şablonlara Ekle",
+    topAppBarDeleteTitle = "Sil",
+    categoryValidateError = "* Bir kategori seçin",
+    otherError = "Hata! Geliştirici ile iletişime geçin.",
+    startOverlayError = "Çakışma! Görev başlangıcı üst üste.",
+    endOverlayError = "Çakışma! Görev bitişi üst üste.",
+    fullOverlayError = "Çakışma! Örtüşen görevler.",
+    correctOverlayTitle = "Düzelt",
+    durationPickerTitle = "Süre",
+    templatesSheetTitle = "Şablonlar",
+    controlTitle = "Yönet",
+    applyTitle = "Uygula",
+    timeRangeFormat = "Zaman: %S ile %s arasında",
+    durationFormat = "Süre: %s",
+    notificationEnabledTitle = "Bildirim: etkin",
+    notificationDisabledTitle = "Bildirim: devre dışı",
+    emptyTemplatesTitle = "Liste boş",
+    saveTemplateWarningTitle = "Değişiklikleri mevcut şablona uygulamak istiyor musunuz?",
+    saveTemplateWarningConfirm = "Evet",
+    saveTemplateWarningUnsave = "Hayır",
+    categoriesManageWarningTitle = "Kategori yönetim ekranına gitmek istediğinizden emin misiniz? " +
+        "Mevcut parametreler kaydedilmeyecek.",
+    confirmNavigateTitle = "Git",
+    importantParameterTitle = "Özel Öncelik",
+    importantParameterDesc = "Kaydırma olmadan zorunlu yürütme",
+    noteLabel = "Not",
+    notePlaceholder = "Küçük bir not (isteğe bağlı)",
+    undefinedTasksSheetTitle = "Dağıtılmamış Görevler",
+    oneHourBeforeTitle = "Başlangıçtan bir saat önce",
+    threeHourBeforeTitle = "Başlangıçtan iki saat önce",
+    oneDayBeforeTitle = "Başlangıçtan bir gün önce",
+    beforeEndTitle = "Bitişten önce",
+)
+
 internal val LocalEditorStrings = staticCompositionLocalOf<EditorStrings> {
     error("Home Strings is not provided")
 }
@@ -479,4 +535,5 @@ internal fun fetchEditorStrings(language: TimePlannerLanguage) = when (language)
     TimePlannerLanguage.FA -> persianHomeString
     TimePlannerLanguage.FR -> frenchHomeString
     TimePlannerLanguage.PT -> brazilianPortugueseHomeString
+    TimePlannerLanguage.TR -> turkishHomeString
 }
