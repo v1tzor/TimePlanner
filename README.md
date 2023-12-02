@@ -45,6 +45,7 @@
 - German 🇩🇪
 - Spanish 🇪🇸
 - French 🇫🇷
+- Turkish 🇹🇷
 - Persian 🇮🇷 (beta)
 
 ## Support 📱
