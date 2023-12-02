@@ -63,9 +63,11 @@ internal interface TimeTaskDomainToUiMapper : ParameterizedMapper<TimeTask, Time
 }
 
 internal fun TaskNotifications.mapToUi() = TaskNotificationsUi(
-    oneDayBefore = oneDayBefore,
-    threeHourBefore = threeHourBefore,
+    fifteenMinutesBefore = fifteenMinutesBefore,
     oneHourBefore = oneHourBefore,
+    threeHourBefore = threeHourBefore,
+    oneDayBefore = oneDayBefore,
+    oneWeekBefore = oneWeekBefore,
     beforeEnd = beforeEnd,
 )
 
@@ -85,8 +87,10 @@ internal fun TimeTaskUi.mapToDomain() = TimeTask(
 )
 
 internal fun TaskNotificationsUi.mapToDomain() = TaskNotifications(
-    oneDayBefore = oneDayBefore,
-    threeHourBefore = threeHourBefore,
+    fifteenMinutesBefore = fifteenMinutesBefore,
     oneHourBefore = oneHourBefore,
+    threeHourBefore = threeHourBefore,
+    oneDayBefore = oneDayBefore,
+    oneWeekBefore = oneWeekBefore,
     beforeEnd = beforeEnd,
 )

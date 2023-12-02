@@ -52,6 +52,7 @@ internal data class HomeIcons(
     val schedule: Int,
     val completedTask: Int,
     val unexecutedTask: Int,
+    val offNotifications: Int,
 )
 
 internal val baseHomeIcons = HomeIcons(
@@ -85,6 +86,7 @@ internal val baseHomeIcons = HomeIcons(
     schedule = R.drawable.ic_schedule,
     completedTask = R.drawable.ic_complete_task,
     unexecutedTask = R.drawable.ic_not_complete_task,
+    offNotifications = R.drawable.ic_bell_off,
 )
 
 internal val LocalHomeIcons = staticCompositionLocalOf<HomeIcons> {

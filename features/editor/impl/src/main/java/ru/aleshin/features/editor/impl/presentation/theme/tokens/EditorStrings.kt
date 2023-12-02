@@ -70,9 +70,11 @@ internal data class EditorStrings(
     val noteLabel: String,
     val notePlaceholder: String,
     val undefinedTasksSheetTitle: String,
+    val fifteenMinutesBeforeTitle: String,
     val oneHourBeforeTitle: String,
     val threeHourBeforeTitle: String,
     val oneDayBeforeTitle: String,
+    val oneWeekBeforeTitle: String,
     val beforeEndTitle: String,
 )
 
@@ -126,9 +128,11 @@ internal val russianHomeString = EditorStrings(
     noteLabel = "Заметка",
     notePlaceholder = "Небольшое примечание по желанию",
     undefinedTasksSheetTitle = "Не распределённые задачи",
+    fifteenMinutesBeforeTitle = "За 15 мин. до начала",
     oneHourBeforeTitle = "За час до начала",
     threeHourBeforeTitle = "За два часа до начала",
     oneDayBeforeTitle = "За день до начала",
+    oneWeekBeforeTitle = "За неделю до начала",
     beforeEndTitle = "Перед окончанием",
 )
 
@@ -182,9 +186,11 @@ internal val englishHomeString = EditorStrings(
     noteLabel = "Note",
     notePlaceholder = "A small note is optional",
     undefinedTasksSheetTitle = "Non-distributed tasks",
+    fifteenMinutesBeforeTitle = "15 min. before the start",
     oneHourBeforeTitle = "An hour before the start",
     threeHourBeforeTitle = "Two hours before the start",
     oneDayBeforeTitle = "The day before the start",
+    oneWeekBeforeTitle = "A week before the start",
     beforeEndTitle = "Before the end",
 )
 
@@ -238,9 +244,11 @@ internal val persianHomeString = EditorStrings(
     noteLabel = "یادداشت",
     notePlaceholder = "یک یادداشت کوچک اختیاری است",
     undefinedTasksSheetTitle = "وظایف غیر توزیع شده",
+    fifteenMinutesBeforeTitle = "15دقیقه قبل از شروع",
     oneHourBeforeTitle = "یک ساعت قبل از شروع",
     threeHourBeforeTitle = "دو ساعت قبل از شروع",
     oneDayBeforeTitle = "روز قبل از شروع",
+    oneWeekBeforeTitle = "یک هفته قبل از شروع",
     beforeEndTitle = "قبل از پایان",
 )
 
@@ -293,9 +301,11 @@ internal val germanHomeString = EditorStrings(
     noteLabel = "Notiz",
     notePlaceholder = "Eine kleine Anmerkung optional",
     undefinedTasksSheetTitle = "Nicht verteilte Aufgaben",
+    fifteenMinutesBeforeTitle = "15 Minuten vor dem Start",
     oneHourBeforeTitle = "Eine Stunde vor Beginn",
     threeHourBeforeTitle = "Zwei Stunden vor Beginn",
     oneDayBeforeTitle = "Einen Tag vor Beginn",
+    oneWeekBeforeTitle = "Eine Woche vor dem Start",
     beforeEndTitle = "Vor dem Ende",
 )
 
@@ -349,9 +359,11 @@ internal val spanishHomeString = EditorStrings(
     noteLabel = "Nota",
     notePlaceholder = "Una pequeña nota opcional",
     undefinedTasksSheetTitle = "Tareas no distribuidas",
+    fifteenMinutesBeforeTitle = "15 minutos antes del Inicio",
     oneHourBeforeTitle = "Una hora antes del Inicio",
     threeHourBeforeTitle = "Dos horas antes del Inicio",
     oneDayBeforeTitle = "Un día antes del Inicio",
+    oneWeekBeforeTitle = "Una semana antes del Inicio",
     beforeEndTitle = "Antes de terminar",
 )
 
@@ -405,9 +417,11 @@ internal val frenchHomeString = EditorStrings(
     noteLabel = "Note",
     notePlaceholder = "Petite Note en option",
     undefinedTasksSheetTitle = "Tâches non distribuées",
+    fifteenMinutesBeforeTitle = "15 minutes avant le début",
     oneHourBeforeTitle = "Une heure avant le début",
     threeHourBeforeTitle = "Deux heures avant le début",
     oneDayBeforeTitle = "La veille du début",
+    oneWeekBeforeTitle = "Une semaine avant le début",
     beforeEndTitle = "Avant la fin",
 )
 
@@ -461,9 +475,11 @@ internal val brazilianPortugueseHomeString = EditorStrings(
     noteLabel = "Nota",
     notePlaceholder = "Uma nota é opcional",
     undefinedTasksSheetTitle = "Tarefas não distribuídas",
+    fifteenMinutesBeforeTitle = "15 minutos antes do início",
     oneHourBeforeTitle = "Uma hora antes do início",
     threeHourBeforeTitle = "Duas horas antes do início",
     oneDayBeforeTitle = "No dia anterior ao início",
+    oneWeekBeforeTitle = "Uma semana antes do início",
     beforeEndTitle = "Antes do fim",
 )
 
@@ -517,9 +533,11 @@ internal val turkishHomeString = EditorStrings(
     noteLabel = "Not",
     notePlaceholder = "Küçük bir not (isteğe bağlı)",
     undefinedTasksSheetTitle = "Dağıtılmamış Görevler",
+    fifteenMinutesBeforeTitle = "Başlamadan 15 dakika önce",
     oneHourBeforeTitle = "Başlangıçtan bir saat önce",
     threeHourBeforeTitle = "Başlangıçtan iki saat önce",
     oneDayBeforeTitle = "Başlangıçtan bir gün önce",
+    oneWeekBeforeTitle = "Başlamadan bir hafta önce",
     beforeEndTitle = "Bitişten önce",
 )
 

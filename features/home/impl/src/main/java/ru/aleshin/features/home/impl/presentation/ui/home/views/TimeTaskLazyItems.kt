@@ -80,6 +80,7 @@ internal fun LazyItemScope.PlannedTimeTaskItem(
                     taskDurationTitle = duration.toMinutesOrHoursTitle(),
                     categoryIcon = mainCategory.defaultType?.mapToIconPainter(),
                     isImportant = isImportant,
+                    enabledNotifications = isEnableNotification,
                     note = note,
                 )
             }

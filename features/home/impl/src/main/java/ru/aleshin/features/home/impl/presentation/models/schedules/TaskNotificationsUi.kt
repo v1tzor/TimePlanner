@@ -23,8 +23,10 @@ import kotlinx.parcelize.Parcelize
  */
 @Parcelize
 internal data class TaskNotificationsUi(
-    val oneDayBefore: Boolean = false,
-    val threeHourBefore: Boolean = false,
+    val fifteenMinutesBefore: Boolean = false,
     val oneHourBefore: Boolean = false,
+    val threeHourBefore: Boolean = false,
+    val oneDayBefore: Boolean = false,
+    val oneWeekBefore: Boolean = false,
     val beforeEnd: Boolean = false,
 ) : Parcelable

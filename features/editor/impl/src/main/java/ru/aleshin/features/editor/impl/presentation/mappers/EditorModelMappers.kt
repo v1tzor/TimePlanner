@@ -49,9 +49,11 @@ internal fun EditModel.mapToUi() = EditModelUi(
 )
 
 internal fun TaskNotifications.mapToUi() = TaskNotificationsUi(
-    oneDayBefore = oneDayBefore,
-    threeHourBefore = threeHourBefore,
+    fifteenMinutesBefore = fifteenMinutesBefore,
     oneHourBefore = oneHourBefore,
+    threeHourBefore = threeHourBefore,
+    oneDayBefore = oneDayBefore,
+    oneWeekBefore = oneWeekBefore,
     beforeEnd = beforeEnd,
 )
 
@@ -76,8 +78,10 @@ internal fun EditModelUi.mapToDomain() = EditModel(
 )
 
 internal fun TaskNotificationsUi.mapToDomain() = TaskNotifications(
-    oneDayBefore = oneDayBefore,
-    threeHourBefore = threeHourBefore,
+    fifteenMinutesBefore = fifteenMinutesBefore,
     oneHourBefore = oneHourBefore,
+    threeHourBefore = threeHourBefore,
+    oneDayBefore = oneDayBefore,
+    oneWeekBefore = oneWeekBefore,
     beforeEnd = beforeEnd,
 )

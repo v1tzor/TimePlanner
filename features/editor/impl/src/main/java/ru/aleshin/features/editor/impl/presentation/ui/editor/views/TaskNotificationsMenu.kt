@@ -43,6 +43,11 @@ internal fun TaskNotificationsMenu(
         offset = DpOffset(0.dp, 6.dp),
     ) {
         CheckedMenuItem(
+            text = EditorThemeRes.strings.fifteenMinutesBeforeTitle,
+            check = taskNotification.fifteenMinutesBefore,
+            onCheckedChange = { onUpdate(taskNotification.copy(fifteenMinutesBefore = it)) },
+        )
+        CheckedMenuItem(
             text = EditorThemeRes.strings.oneHourBeforeTitle,
             check = taskNotification.oneHourBefore,
             onCheckedChange = { onUpdate(taskNotification.copy(oneHourBefore = it)) },
@@ -56,6 +61,11 @@ internal fun TaskNotificationsMenu(
             text = EditorThemeRes.strings.oneDayBeforeTitle,
             check = taskNotification.oneDayBefore,
             onCheckedChange = { onUpdate(taskNotification.copy(oneDayBefore = it)) },
+        )
+        CheckedMenuItem(
+            text = EditorThemeRes.strings.oneWeekBeforeTitle,
+            check = taskNotification.oneWeekBefore,
+            onCheckedChange = { onUpdate(taskNotification.copy(oneWeekBefore = it)) },
         )
         CheckedMenuItem(
             text = EditorThemeRes.strings.beforeEndTitle,

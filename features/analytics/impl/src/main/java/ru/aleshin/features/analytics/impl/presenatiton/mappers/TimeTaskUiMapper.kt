@@ -35,8 +35,10 @@ internal fun TimeTask.mapToUi() = TimeTaskUi(
 )
 
 internal fun TaskNotifications.mapToUi() = TaskNotificationsUi(
-    oneDayBefore = oneDayBefore,
-    threeHourBefore = threeHourBefore,
+    fifteenMinutesBefore = fifteenMinutesBefore,
     oneHourBefore = oneHourBefore,
+    threeHourBefore = threeHourBefore,
+    oneDayBefore = oneDayBefore,
+    oneWeekBefore = oneWeekBefore,
     beforeEnd = beforeEnd,
 )

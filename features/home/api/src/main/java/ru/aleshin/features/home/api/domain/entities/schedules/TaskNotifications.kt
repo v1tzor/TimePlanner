@@ -19,6 +19,7 @@ import kotlinx.serialization.Serializable
 import ru.aleshin.core.utils.extensions.shiftDay
 import ru.aleshin.core.utils.extensions.shiftHours
 import ru.aleshin.core.utils.extensions.shiftMillis
+import ru.aleshin.core.utils.extensions.shiftMinutes
 import ru.aleshin.core.utils.functional.TimeRange
 
 /**
@@ -26,17 +27,21 @@ import ru.aleshin.core.utils.functional.TimeRange
  */
 @Serializable
 data class TaskNotifications(
-    val oneDayBefore: Boolean = false,
-    val threeHourBefore: Boolean = false,
+    val fifteenMinutesBefore: Boolean = false,
     val oneHourBefore: Boolean = false,
+    val threeHourBefore: Boolean = false,
+    val oneDayBefore: Boolean = false,
+    val oneWeekBefore: Boolean = false,
     val beforeEnd: Boolean = false,
 ) {
     fun toTypes(enabledNotifications: Boolean) = mutableListOf<TaskNotificationType>().apply {
         if (enabledNotifications) {
             add(TaskNotificationType.START)
-            if (oneDayBefore) add(TaskNotificationType.ONE_DAY_BEFORE)
-            if (threeHourBefore) add(TaskNotificationType.THREE_HOUR_BEFORE)
+            if (fifteenMinutesBefore) add(TaskNotificationType.FIFTEEN_MINUTES_BEFORE)
             if (oneHourBefore) add(TaskNotificationType.ONE_HOUR_BEFORE)
+            if (threeHourBefore) add(TaskNotificationType.THREE_HOUR_BEFORE)
+            if (oneDayBefore) add(TaskNotificationType.ONE_DAY_BEFORE)
+            if (oneWeekBefore) add(TaskNotificationType.ONE_WEEK_BEFORE)
             if (beforeEnd) add(TaskNotificationType.AFTER_START_BEFORE_END)
         }
     }.toList()
@@ -44,16 +49,20 @@ data class TaskNotifications(
 
 enum class TaskNotificationType(val idAmount: Long) {
     START(0),
+    FIFTEEN_MINUTES_BEFORE(60L),
     ONE_HOUR_BEFORE(10L),
     THREE_HOUR_BEFORE(20L),
     ONE_DAY_BEFORE(30L),
+    ONE_WEEK_BEFORE(50L),
     AFTER_START_BEFORE_END(40L);
 
     fun fetchNotifyTrigger(timeRange: TimeRange) = when (this) {
         START -> timeRange.from
+        FIFTEEN_MINUTES_BEFORE -> timeRange.from.shiftMinutes(-15)
         ONE_HOUR_BEFORE -> timeRange.from.shiftHours(-1)
         THREE_HOUR_BEFORE -> timeRange.from.shiftHours(-3)
         ONE_DAY_BEFORE -> timeRange.from.shiftDay(-1)
+        ONE_WEEK_BEFORE -> timeRange.from.shiftDay(-7)
         AFTER_START_BEFORE_END -> timeRange.to.shiftMillis(-10000)
     }
 }

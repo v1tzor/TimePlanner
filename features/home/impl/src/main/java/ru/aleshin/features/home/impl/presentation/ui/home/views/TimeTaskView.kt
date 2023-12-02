@@ -54,6 +54,7 @@ internal fun PlannedTimeTask(
     taskDurationTitle: String,
     categoryIcon: Painter?,
     isImportant: Boolean,
+    enabledNotifications: Boolean,
     note: String?,
 ) {
     var expandedNote by rememberSaveable { mutableStateOf(false) }
@@ -105,7 +106,10 @@ internal fun PlannedTimeTask(
                         },
                     ),
                 ) {
-                    TimeTaskDurationTitle(title = taskDurationTitle)
+                    TimeTaskDurationTitle(
+                        title = taskDurationTitle,
+                        enabledNotifications = enabledNotifications,
+                    )
                 }
             }
             if (!note.isNullOrEmpty()) {
@@ -392,14 +396,30 @@ internal fun TimeTaskTitles(
 private fun TimeTaskDurationTitle(
     modifier: Modifier = Modifier,
     title: String,
-) = Text(
-    modifier = modifier,
-    text = title,
-    color = MaterialTheme.colorScheme.onSurfaceVariant,
-    textAlign = TextAlign.End,
-    maxLines = 1,
-    style = MaterialTheme.typography.bodyLarge,
-)
+    enabledNotifications: Boolean,
+) {
+    Row(
+        modifier = modifier, 
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            text = title,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            textAlign = TextAlign.End,
+            maxLines = 1,
+            style = MaterialTheme.typography.bodyLarge,
+        )
+        if (!enabledNotifications) {
+            Icon(
+                modifier = Modifier.size(18.dp),
+                painter = painterResource(id = HomeThemeRes.icons.offNotifications),
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.error,
+            )
+        }
+    }
+}
 
 @Composable
 private fun TimeTaskNoteView(
