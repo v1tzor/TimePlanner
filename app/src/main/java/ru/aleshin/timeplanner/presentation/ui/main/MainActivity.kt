@@ -20,18 +20,12 @@ package ru.aleshin.timeplanner.presentation.ui.main
  */
 import android.Manifest
 import android.os.Build
-import android.util.Log
 import android.view.WindowManager.LayoutParams.FLAG_SECURE
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.spring
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import cafe.adriel.voyager.navigator.CurrentScreen
-import cafe.adriel.voyager.transitions.FadeTransition
 import ru.aleshin.core.ui.theme.TimePlannerTheme
-import ru.aleshin.core.utils.functional.Constants.App.PERMISSION_TAG
 import ru.aleshin.core.utils.navigation.navigator.AppNavigator
 import ru.aleshin.core.utils.navigation.navigator.NavigatorManager
 import ru.aleshin.core.utils.platform.activity.BaseActivity
@@ -57,14 +51,8 @@ class MainActivity : BaseActivity<MainViewState, MainEvent, MainAction, MainEffe
     lateinit var viewModelFactory: MainViewModel.Factory
 
     private val requestPermissionLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestPermission(),
-    ) { isGranted: Boolean ->
-        if (isGranted) {
-            Log.i(PERMISSION_TAG, "Notification Permission Allowed")
-        } else {
-            Log.e(PERMISSION_TAG, "Notification Permission Denied")
-        }
-    }
+        ActivityResultContracts.RequestMultiplePermissions(),
+    ) { _ -> }
 
     override fun initDI() = fetchApp().appComponent.inject(this)
 
@@ -84,10 +72,6 @@ class MainActivity : BaseActivity<MainViewState, MainEvent, MainAction, MainEffe
                 navigatorManager = navigatorManager,
                 content = { navigator ->
                     CurrentScreen()
-//                    FadeTransition(
-//                        navigator = navigator,
-//                        animationSpec = spring(stiffness = Spring.StiffnessMedium),
-//                    )
                     if (navigator.lastItem is TabsScreen) getNotificationPermission()
                 },
             )
@@ -107,7 +91,9 @@ class MainActivity : BaseActivity<MainViewState, MainEvent, MainAction, MainEffe
     private fun getNotificationPermission() {
         try {
             if (Build.VERSION.SDK_INT > Build.VERSION_CODES.S_V2) {
-                requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                requestPermissionLauncher.launch(
+                    arrayOf(Manifest.permission.POST_NOTIFICATIONS, Manifest.permission.SCHEDULE_EXACT_ALARM),
+                )
             }
         } catch (e: Exception) {
             e.printStackTrace()
