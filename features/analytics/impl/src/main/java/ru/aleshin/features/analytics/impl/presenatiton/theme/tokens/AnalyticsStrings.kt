@@ -246,6 +246,31 @@ internal val turkishAnalyticsStrings = AnalyticsStrings(
     executedStatisticsTitle = "Yürütme istatistikleri",
 )
 
+internal val vietnameseAnalyticsStrings = AnalyticsStrings(
+    topAppBarTitle = "Phân tích",
+    menuIconDesc = "Thực đơn",
+    timeTabTitle = "Thời gian",
+    workLoadTabTitle = "Khối lượng công việc",
+    intelligenceTabTitle = "Thông tin",
+    weekTimePeriod = "Tuần",
+    monthTimePeriod = "Tháng",
+    yearTimePeriod = "Năm",
+    timeSelectorTitle = "Khoảng thời gian:",
+    refreshAnalyticIconDesc = "Làm mới phân tích",
+    otherAnalyticsName = "Khác",
+    allTimeTitle = "Tổng cộng:",
+    totalCountTaskTitle = "Số\ncủa nhiệm vụ",
+    averageCountTaskTitle = "Số\ncủa nhiệm vụ mỗi ngày",
+    totalTimeTaskTitle = "Tổng thời gian\ncủa nhiệm vụ",
+    averageTimeTaskTitle =	"Thời gian trung bình\ncủa nhiệm vụ",
+    workLoadAnalyticsTitle = "Thống kê khối lượng công việc",
+    planningAnalyticsTitle = "Thống kê kế hoạch",
+    otherError = "Lỗi! Hãy liên hệ với nhà phát triển.",
+    halfYearTimePeriod = "Nửa năm",
+    categoryStatisticsTitle = "Thống kê danh mục",
+    executedStatisticsTitle = "Thống kê sự tuân thủ",
+)
+
 internal val LocalAnalyticsStrings = staticCompositionLocalOf<AnalyticsStrings> {
     error("Analytics Strings is not provided")
 }
@@ -259,4 +284,5 @@ internal fun fetchAnalyticsStrings(language: TimePlannerLanguage) = when (langua
     TimePlannerLanguage.FR -> frenchAnalyticsStrings
     TimePlannerLanguage.PT -> brazilianPortugueseAnalyticsStrings
     TimePlannerLanguage.TR -> turkishAnalyticsStrings
+    TimePlannerLanguage.VN -> vietnameseAnalyticsStrings
 }

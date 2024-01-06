@@ -541,6 +541,64 @@ internal val turkishHomeString = EditorStrings(
     beforeEndTitle = "Bitişten önce",
 )
 
+internal val vietnameseEditorStrings = EditorStrings(
+    topAppBarEditorTitle = "Trình biên tập",
+    topAppBarBackIconDesc = "Quay lại",
+    topAppBarMoreIconDesc = "Thêm",
+    topAppBarTemplatesTitle = "Mẫu",
+    mainCategoryChooserTitle = "Danh mục",
+    subCategoryChooserTitle = "Danh mục con",
+    mainCategoryChooserExpandedIconDesc = "Chọn danh mục",
+    categoryNotSelectedTitle = "Vắng mặt",
+    subCategoryDialogAddedTitle = "Thêm",
+    subCategoryDialogMainCategoryFormat = "Danh mục: %s",
+    timeFieldStartLabel = "Bắt đầu",
+    timeFieldEndLabel = "Kết thúc",
+    parameterChooserSwitchIconDesc = "Đặt tham số",
+    timePickerHeader = "Nhập thời gian",
+    timePickerSeparator = ":",
+    notifyParameterTitle = "Thông báo",
+    notifyParameterDesc = "Gửi thông báo khi hoàn thành nhiệm vụ này",
+    statisticsParameterTitle = "Thống kê",
+    statisticsParameterDesc = "Đưa nhiệm vụ vào thống kê",
+    saveTaskButtonTitle = "Lưu",
+    cancelButtonTitle = "Hủy",
+    templateIconDesc = "Thêm vào mẫu",
+    topAppBarDeleteTitle = "Xóa",
+    categoryValidateError = "* Chọn một danh mục",
+    otherError = "Lỗi! Hãy liên hệ với nhà phát triển.",
+    startOverlayError = "Xung đột! Lớp phủ bắt đầu nhiệm vụ.",
+    endOverlayError = "Xung đột! Lớp phủ kết thúc nhiệm vụ.",
+    fullOverlayError = "Xung đột! Nhiệm vụ chồng chéo.",
+    correctOverlayTitle = "Sửa",
+    durationPickerTitle = "Thời lượng",
+    templatesSheetTitle = "Mẫu",
+    controlTitle = "Quản lý",
+    applyTitle = "Áp dụng",
+    timeRangeFormat = "Thời gian: từ %S đến %s",
+    durationFormat = "Thời lượng: %s",
+    notificationEnabledTitle = "Thông báo: đã bật",
+    notificationDisabledTitle = "Thông báo: đã tắt",
+    emptyTemplatesTitle = "Danh sách trống",
+    saveTemplateWarningTitle = "Bạn có muốn áp dụng các thay đổi cho mẫu hiện tại không?",
+    saveTemplateWarningConfirm = "Có",
+    saveTemplateWarningUnsave = "Không",
+    categoriesManageWarningTitle = "Bạn có chắc chắn muốn vào màn hình quản lý danh mục không?" +
+        "Các thông số hiện tại sẽ vẫn chưa được lưu",
+    confirmNavigateTitle =	"Đi",
+    importantParameterTitle = "Ưu tiên đặc biệt",
+    importantParameterDesc = "Thực hiện bắt buộc mà không có khả năng chuyển đổi",
+    noteLabel = "Ghi chú",
+    notePlaceholder = "Một ghi chú nhỏ là không bắt buộc",
+    undefinedTasksSheetTitle = "Nhiệm vụ không được phân phối",
+    fifteenMinutesBeforeTitle = "15 phút trước khi bắt đầu",
+    oneHourBeforeTitle = "Một giờ trước khi bắt đầu",
+    threeHourBeforeTitle = "Hai giờ trước khi bắt đầu",
+    oneDayBeforeTitle = "Ngày trước khi bắt đầu",
+    oneWeekBeforeTitle = "Một tuần trước khi bắt đầu",
+    beforeEndTitle = "Trước khi kết thúc",
+)
+
 internal val LocalEditorStrings = staticCompositionLocalOf<EditorStrings> {
     error("Home Strings is not provided")
 }
@@ -554,4 +612,5 @@ internal fun fetchEditorStrings(language: TimePlannerLanguage) = when (language)
     TimePlannerLanguage.FR -> frenchHomeString
     TimePlannerLanguage.PT -> brazilianPortugueseHomeString
     TimePlannerLanguage.TR -> turkishHomeString
+    TimePlannerLanguage.VN -> vietnameseEditorStrings
 }

@@ -480,6 +480,57 @@ internal val turkishSettingsString = SettingsStrings(
     selectDayCalendarBehavior = "Gün seçimi",
 )
 
+internal val vietnameseSettingsString = SettingsStrings(
+    settingsTitle = "Thiết đặt",
+    mainSettingsTitle = "Thiết đặt chung",
+    mainSettingsThemeTitle = "Chủ đề:",
+    darkThemeTitle = "Tối",
+    lightThemeTitle = "Sáng",
+    systemThemeTitle = "Hệ thống",
+    mainSettingsLanguageTitle = "Ngôn ngữ ứng dụng",
+    rusLanguageTitle = "Tiếng Nga",
+    engLanguageTitle = "Tiếng Anh",
+    gerLanguageTitle = "Tiếng Đức",
+    spaLanguageTitle = "Tiếng Tây Ban Nha",
+    perLanguageTitle = "Tiếng Ba Tư(b)",
+    freLanguageTitle = "Tiếng Pháp",
+    ptLanguageTitle = "Tiếng Bồ Đào Nha",
+    trLanguageTitle = "Tiếng Thổ Nhĩ Kỳ",
+    defaultLanguageTitle = "Mặc định",
+    backIconDesc =	"Điều hướng lên",
+    moreIconDesc = "Thêm",
+    resetToDefaultTitle = "Đặt lại về mặc định",
+    menuIconDesc = "Thực đơn",
+    dataSectionHeader = "Dữ liệu",
+    clearDataTitle = "Xóa tất cả dữ liệu",
+    clearDataButtonTitle = "Sạch",
+    clearDataWarning = "Hành động này sẽ dẫn đến việc xóa hoàn toàn dữ liệu ứng dụng!",
+    backupDataTitle = "Hỗ trợ",
+    backupDataButtonTitle = "Lưu",
+    restoreDataButtonTitle = "Khôi phục",
+    errorBackupMessage = "Lỗi sao lưu",
+    errorBackupFileMessage = "Lỗi khi làm việc với tệp",
+    otherError = "Lỗi! Hãy liên hệ với nhà phát triển.",
+    mainSettingsDynamicColorTitle = "Màu sắc năng động",
+    aboutAppHeader =	"Giới thiệu về ứng dụng",
+    versionCodeTitle = "Số bản dựng",
+    versionNameTitle = "Phiên bản",
+    developerTitle = "Nhà phát triển",
+    licenseTitle = "Giấy phép",
+    githubTitle = "Github",
+    askQuestionTitle = "Đặt một câu hỏi",
+    donateTitle = "Hỗ trợ ứng dụng",
+    copyTitle = "Sao chép",
+    mainSettingsColorsTitle = "Màu sắc",
+    donateHeader = "Quyên tặng",
+    secureSectionHeader = "Bảo vệ",
+    secureModeTitle = "Màn hình an toàn",
+    interfaceSectionHeader = "Giao diện",
+    calendarButtonBehaviorTitle = "Hành vi của nút Lịch",
+    currentDayCalendarBehavior = "Ngày hiện tại",
+    selectDayCalendarBehavior = "Chọn ngày",
+)
+
 internal val LocalSettingsStrings = staticCompositionLocalOf<SettingsStrings> {
     error("Settings Strings is not provided")
 }
@@ -493,4 +544,5 @@ internal fun fetchSettingsStrings(language: TimePlannerLanguage) = when (languag
     TimePlannerLanguage.FR -> frenchSettingsString
     TimePlannerLanguage.PT -> brazilianPortugueseSettingsString
     TimePlannerLanguage.TR -> turkishSettingsString
+    TimePlannerLanguage.VN -> vietnameseSettingsString
 }
