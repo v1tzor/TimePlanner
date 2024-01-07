@@ -56,7 +56,7 @@ fun DefaultCategoryType.mapToString(strings: TimePlannerStrings): String = when 
     DefaultCategoryType.CULTURE -> strings.categoryCultureTitle
     DefaultCategoryType.OTHER -> strings.categoryOtherTitle
     DefaultCategoryType.EMPTY -> strings.categoryEmptyTitle
-    DefaultCategoryType.HYGIENE -> strings.categoryHugieneTitle
+    DefaultCategoryType.HYGIENE -> strings.categoryHygieneTitle
     DefaultCategoryType.HEALTH -> strings.categoryHealthTitle
     DefaultCategoryType.SHOPPING -> strings.categoryShoppingTitle
 }
