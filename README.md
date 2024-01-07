@@ -63,7 +63,7 @@
 - Single Activity
 - MVI Architecture
 - Clean Architecture
-- Multimodularity (by features)
+- Multi-modularity (by features)
 - Compose UI (Material Design 3)
 - Kotlin Coroutines & Flow
 - Room Database
