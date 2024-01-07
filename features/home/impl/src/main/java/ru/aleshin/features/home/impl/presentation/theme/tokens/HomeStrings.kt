@@ -890,7 +890,7 @@ internal fun fetchHomeStrings(language: TimePlannerLanguage) = when (language) {
     TimePlannerLanguage.ES -> spanishHomeString
     TimePlannerLanguage.FA -> persianHomeString
     TimePlannerLanguage.FR -> frenchHomeString
-    TimePlannerLanguage.PT -> brazilianPortugueseHomeString
+    TimePlannerLanguage.PT_BR -> brazilianPortugueseHomeString
     TimePlannerLanguage.TR -> turkishHomeString
     TimePlannerLanguage.VN -> vietnameseHomeString
 }
