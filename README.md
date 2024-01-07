@@ -47,6 +47,7 @@
 - French 🇫🇷
 - Turkish 🇹🇷
 - Persian 🇮🇷 (beta)
+- Vietnamese 🇻🇳
 
 ## Support 📱
 - Local time and task analytics 📊
