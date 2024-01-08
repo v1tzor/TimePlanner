@@ -599,6 +599,64 @@ internal val vietnameseEditorString = EditorStrings(
     beforeEndTitle = "Trước khi kết thúc",
 )
 
+internal val polishEditorString = EditorStrings(
+    topAppBarEditorTitle = "Edytor",
+    topAppBarBackIconDesc = "Wróć",
+    topAppBarMoreIconDesc = "Więcej",
+    topAppBarTemplatesTitle = "Szablony",
+    mainCategoryChooserTitle = "Kategoria",
+    mainCategoryChooserExpandedIconDesc = "Wybierz kategorię",
+    subCategoryChooserTitle = "Podkategoria",
+    categoryNotSelectedTitle = "Brak",
+    subCategoryDialogAddedTitle = "Dodaj",
+    subCategoryDialogMainCategoryFormat = "Kategoria: %s",
+    timeFieldStartLabel = "Początek",
+    timeFieldEndLabel = "Koniec",
+    parameterChooserSwitchIconDesc = "Ustaw parametr",
+    timePickerHeader = "Wprowadź czas",
+    timePickerSeparator = ":",
+    notifyParameterTitle = "Powiadomienia",
+    notifyParameterDesc = "Ustaw przypomnienie o rozpoczęciu zadania",
+    statisticsParameterTitle = "Statystyki",
+    statisticsParameterDesc = "Uwzględnij w analizach",
+    saveTaskButtonTitle = "Zapisz",
+    cancelButtonTitle = "Anuluj",
+    templateIconDesc = "Zapisz jako szablon",
+    topAppBarDeleteTitle = "Usuń",
+    categoryValidateError = "* Wybierz kategorię",
+    otherError = "Coś poszło nie tak. Skontaktuj się z twórcą aplikacji by otrzymać pomoc.",
+    startOverlayError = "Konflikt! Nakładające się czasy rozpoczęcia",
+    endOverlayError = "Konflikt! Nakładające się czasy zakończenia",
+    fullOverlayError = "Konflikt! Nakładające się zadania",
+    correctOverlayTitle = "Napraw",
+    durationPickerTitle = "Czas trwania",
+    templatesSheetTitle = "Szablony",
+    controlTitle = "Zarządzaj",
+    applyTitle = "Zastosuj",
+    timeRangeFormat = "Czas: od %s do %s",
+    durationFormat = "Czas trwania: %s",
+    notificationEnabledTitle = "Powiadomienie: włączone",
+    notificationDisabledTitle = "Powiadomienie: wyłączone",
+    emptyTemplatesTitle = "Lista jest pusta",
+    saveTemplateWarningTitle = "Zastosować zmiany do bieżącego szablonu?",
+    saveTemplateWarningConfirm = "Tak",
+    saveTemplateWarningUnsave = "Nie",
+    categoriesManageWarningTitle = "Przejść do ekranu zarządzania kategoriami? " +
+            "Zmiany bieżących parametrów nie zostaną zapisane",
+    confirmNavigateTitle = "Przejdź",
+    importantParameterTitle = "Najwyższy priorytet",
+    importantParameterDesc = "Aktywuj dla zadań, które muszą być wykonane w określonym czasie. Zmiana planu nie jest dozwolona.",
+    noteLabel = "Notatka",
+    notePlaceholder = "Opcjonalnie...",
+    undefinedTasksSheetTitle = "Zadania nierozmieszczone",
+    fifteenMinutesBeforeTitle = "15 minut przed",
+    oneHourBeforeTitle = "Godzina przed",
+    threeHourBeforeTitle = "Dwie godziny przed",
+    oneDayBeforeTitle = "Dzień przed",
+    oneWeekBeforeTitle = "Tydzień przed",
+    beforeEndTitle = "Przed zakończeniem",
+)
+
 internal val LocalEditorStrings = staticCompositionLocalOf<EditorStrings> {
     error("Home Strings is not provided")
 }
@@ -613,4 +671,5 @@ internal fun fetchEditorStrings(language: TimePlannerLanguage) = when (language)
     TimePlannerLanguage.PT_BR -> brazilianPortugueseEditorString
     TimePlannerLanguage.TR -> turkishEditorString
     TimePlannerLanguage.VN -> vietnameseEditorString
+    TimePlannerLanguage.PL -> polishEditorString
 }
