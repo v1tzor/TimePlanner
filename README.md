@@ -48,7 +48,7 @@
 - Turkish 🇹🇷
 - Persian 🇮🇷 (beta)
 - Vietnamese 🇻🇳
-- Polski 🇵🇱
+- Polish 🇵🇱
 
 ## Support 📱
 - Local time and task analytics 📊
