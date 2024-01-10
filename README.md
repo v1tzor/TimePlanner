@@ -10,7 +10,7 @@
 <p align="center">
   <img alt="Kotlin" src="https://img.shields.io/badge/Kotlin-a503fc?logo=kotlin&logoColor=white&style=for-the-badge"/></a>
   <img alt="API" src="https://img.shields.io/badge/Api%2024+-50f270?logo=android&logoColor=black&style=for-the-badge"/></a>
-  <img alt="Jetpack Compose" src="https://img.shields.io/static/v1?style=for-the-badge&message=Jetpack+Compose&color=4285F4&logo=Jetpack+Compose&logoColor=FFFFFF&label="/></a> 
+  <img alt="Jetpack Compose" src="https://img.shields.io/static/v1?style=for-the-badge&message=Jetpack+Compose&color=4285F4&logo=Jetpack+Compose&logoColor=FFFFFF&label="/></a>
   <img alt="material" src="https://custom-icon-badges.demolab.com/badge/material%20you-lightblue?style=for-the-badge&logoColor=333&logo=material-you"/></a>
   </br>
   </br>
@@ -47,6 +47,8 @@
 - French 🇫🇷
 - Turkish 🇹🇷
 - Persian 🇮🇷 (beta)
+- Vietnamese 🇻🇳
+- Polish 🇵🇱
 
 ## Support 📱
 - Local time and task analytics 📊
@@ -62,7 +64,7 @@
 - Single Activity
 - MVI Architecture
 - Clean Architecture
-- Multimodularity (by features)
+- Multi-modularity (by features)
 - Compose UI (Material Design 3)
 - Kotlin Coroutines & Flow
 - Room Database
@@ -74,7 +76,7 @@
 ## Donation to support application development ❤️
 <details>
   <summary>Main direct addresses</summary>
-  
+
     1. BTC: bc1qu0a5ujldf8rpc8yz8atlgphrj9wutgfxw82dql
     2. ETH: 0x4cAfa6De0D1968cA8C2a7aB06CE28d0A1aD2C7b9
     3. TRX: TKC3NsKSS9hJRvofeJKceT5wC2bqTkPRUE
@@ -107,7 +109,7 @@
     <td valign="top"><img src="https://github.com/v1tzor/TimePlanner/assets/116388544/b074abc2-47d0-472c-b655-b08c49c41a5a" align="right" width="350dp"></td>
   </tr>
  </table>
- 
+
 ## Project structure ⚙️
 <p>
 <img src="https://i.imgur.com/OzVrH0D.png" width="100%"></img>
@@ -117,7 +119,7 @@
 <p>
 <img src="https://i.imgur.com/zXWMQI4.png" width="100%"></img>
 </p>
- 
+
 ## MVI 🔨
 <p>
 <img src="https://i.imgur.com/52HH2rO.png"></img>

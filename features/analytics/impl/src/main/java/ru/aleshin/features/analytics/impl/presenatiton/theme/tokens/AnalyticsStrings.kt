@@ -46,7 +46,7 @@ internal data class AnalyticsStrings(
     val otherError: String,
 )
 
-internal val russianAnalyticsStrings = AnalyticsStrings(
+internal val russianAnalyticsString = AnalyticsStrings(
     topAppBarTitle = "Аналитика",
     menuIconDesc = "Меню",
     timeTabTitle = "Время",
@@ -71,7 +71,7 @@ internal val russianAnalyticsStrings = AnalyticsStrings(
     executedStatisticsTitle = "Статистика выполнения",
 )
 
-internal val englishAnalyticsStrings = AnalyticsStrings(
+internal val englishAnalyticsString = AnalyticsStrings(
     topAppBarTitle = "Analytics",
     menuIconDesc = "Menu",
     timeTabTitle = "Time",
@@ -96,7 +96,7 @@ internal val englishAnalyticsStrings = AnalyticsStrings(
     executedStatisticsTitle = "Execution stats",
 )
 
-internal val persianAnalyticsStrings = AnalyticsStrings(
+internal val persianAnalyticsString = AnalyticsStrings(
     topAppBarTitle = "تحلیل ها",
     menuIconDesc = "منو",
     timeTabTitle = "زمان",
@@ -121,7 +121,7 @@ internal val persianAnalyticsStrings = AnalyticsStrings(
     executedStatisticsTitle = "آمار اجرایی",
 )
 
-internal val germanAnalyticsStrings = AnalyticsStrings(
+internal val germanAnalyticsString = AnalyticsStrings(
     topAppBarTitle = "Analyse",
     menuIconDesc = "Menü",
     timeTabTitle = "Zeit",
@@ -146,7 +146,7 @@ internal val germanAnalyticsStrings = AnalyticsStrings(
     executedStatisticsTitle = "Ausführungsstatistiken",
 )
 
-internal val spanishAnalyticsStrings = AnalyticsStrings(
+internal val spanishAnalyticsString = AnalyticsStrings(
     topAppBarTitle = "Estadísticas",
     menuIconDesc = "Menú",
     timeTabTitle = "Tiempo",
@@ -171,7 +171,7 @@ internal val spanishAnalyticsStrings = AnalyticsStrings(
     executedStatisticsTitle = "Estadísticas realizadas",
 )
 
-internal val frenchAnalyticsStrings = AnalyticsStrings(
+internal val frenchAnalyticsString = AnalyticsStrings(
     topAppBarTitle = "Statistiques",
     menuIconDesc = "Menu",
     timeTabTitle = "Temps",
@@ -196,7 +196,7 @@ internal val frenchAnalyticsStrings = AnalyticsStrings(
     executedStatisticsTitle = "Statistiques d'exécution",
 )
 
-internal val brazilianPortugueseAnalyticsStrings = AnalyticsStrings(
+internal val brazilianPortugueseAnalyticsString = AnalyticsStrings(
     topAppBarTitle = "Análises",
     menuIconDesc = "Menu",
     timeTabTitle = "Horário",
@@ -221,7 +221,7 @@ internal val brazilianPortugueseAnalyticsStrings = AnalyticsStrings(
     executedStatisticsTitle = "Estatísticas de execução",
 )
 
-internal val turkishAnalyticsStrings = AnalyticsStrings(
+internal val turkishAnalyticsString = AnalyticsStrings(
     topAppBarTitle = "Analiz",
     menuIconDesc = "Menü",
     timeTabTitle = "Zaman",
@@ -246,7 +246,7 @@ internal val turkishAnalyticsStrings = AnalyticsStrings(
     executedStatisticsTitle = "Yürütme istatistikleri",
 )
 
-internal val vietnameseAnalyticsStrings = AnalyticsStrings(
+internal val vietnameseAnalyticsString = AnalyticsStrings(
     topAppBarTitle = "Phân tích",
     menuIconDesc = "Thực đơn",
     timeTabTitle = "Thời gian",
@@ -271,18 +271,44 @@ internal val vietnameseAnalyticsStrings = AnalyticsStrings(
     executedStatisticsTitle = "Thống kê sự tuân thủ",
 )
 
+internal val polishAnalyticsString = AnalyticsStrings(
+    topAppBarTitle = "Analizy",
+    menuIconDesc = "Menu",
+    timeTabTitle = "Czas",
+    workLoadTabTitle = "Obciążenie",
+    intelligenceTabTitle = "Informacje",
+    weekTimePeriod = "Tydzień",
+    monthTimePeriod = "Miesiąc",
+    yearTimePeriod = "Rok",
+    timeSelectorTitle = "Okres czasu:",
+    refreshAnalyticIconDesc = "Odśwież analizy",
+    otherAnalyticsName = "Inne",
+    allTimeTitle = "Wszystkie:",
+    totalCountTaskTitle = "Zadań ogółem",
+    averageCountTaskTitle = "Zadań dziennie",
+    totalTimeTaskTitle = "Czas spędzony na zadaniach",
+    averageTimeTaskTitle = "Średni czas na jedno zadanie",
+    workLoadAnalyticsTitle = "Statystyki obciążenia",
+    planningAnalyticsTitle = "Statystyki planowania",
+    otherError = "Coś poszło nie tak. Skontaktuj się z twórcą aplikacji by otrzymać pomoc.",
+    halfYearTimePeriod = "Pół roku",
+    categoryStatisticsTitle = "Statystyki kategorii",
+    executedStatisticsTitle = "Statystyki wykonania",
+)
+
 internal val LocalAnalyticsStrings = staticCompositionLocalOf<AnalyticsStrings> {
     error("Analytics Strings is not provided")
 }
 
 internal fun fetchAnalyticsStrings(language: TimePlannerLanguage) = when (language) {
-    TimePlannerLanguage.EN -> englishAnalyticsStrings
-    TimePlannerLanguage.RU -> russianAnalyticsStrings
-    TimePlannerLanguage.DE -> germanAnalyticsStrings
-    TimePlannerLanguage.ES -> spanishAnalyticsStrings
-    TimePlannerLanguage.FA -> persianAnalyticsStrings
-    TimePlannerLanguage.FR -> frenchAnalyticsStrings
-    TimePlannerLanguage.PT -> brazilianPortugueseAnalyticsStrings
-    TimePlannerLanguage.TR -> turkishAnalyticsStrings
-    TimePlannerLanguage.VN -> vietnameseAnalyticsStrings
+    TimePlannerLanguage.EN -> englishAnalyticsString
+    TimePlannerLanguage.RU -> russianAnalyticsString
+    TimePlannerLanguage.DE -> germanAnalyticsString
+    TimePlannerLanguage.ES -> spanishAnalyticsString
+    TimePlannerLanguage.FA -> persianAnalyticsString
+    TimePlannerLanguage.FR -> frenchAnalyticsString
+    TimePlannerLanguage.PT_BR -> brazilianPortugueseAnalyticsString
+    TimePlannerLanguage.TR -> turkishAnalyticsString
+    TimePlannerLanguage.VN -> vietnameseAnalyticsString
+    TimePlannerLanguage.PL -> polishAnalyticsString
 }
