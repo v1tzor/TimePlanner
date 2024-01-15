@@ -33,6 +33,12 @@ data class ScheduleDetails(
         entity = TimeTaskEntity::class,
     )
     val timeTasks: List<TimeTaskDetails>,
+    @Relation(
+        parentColumn = "date",
+        entityColumn = "next_schedule_date",
+        entity = TimeTaskEntity::class,
+    )
+    val overlayTimeTasks: List<TimeTaskDetails>,
 ) {
     fun <T> map(mapper: Mapper<ScheduleDetails, T>) = mapper.map(this)
 }

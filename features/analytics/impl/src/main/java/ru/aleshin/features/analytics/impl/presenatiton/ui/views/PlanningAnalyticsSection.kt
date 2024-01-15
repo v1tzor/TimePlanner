@@ -232,7 +232,16 @@ internal fun PlanningAnalyticsDayItem(
                     Modifier
                 },
             ),
-    )
+        contentAlignment = Alignment.Center,
+    ) {
+        if (analytic.timeTasks.isNotEmpty()) {
+            Text(
+                text = analytic.timeTasks.size.toString(),
+                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                style = MaterialTheme.typography.labelSmall,
+            )
+        }
+    }
 }
 
 @Composable

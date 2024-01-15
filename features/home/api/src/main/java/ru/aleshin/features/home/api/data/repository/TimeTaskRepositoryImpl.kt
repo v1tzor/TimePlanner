@@ -32,20 +32,21 @@ class TimeTaskRepositoryImpl @Inject constructor(
 ) : TimeTaskRepository {
 
     override suspend fun addTimeTasks(timeTasks: List<TimeTask>) {
-        localDataSource.addTimeTasks(timeTasks.map { it.mapToData(it.date.time) })
+        localDataSource.addTimeTasks(timeTasks.map { it.mapToData() })
     }
 
     override suspend fun fetchAllTimeTaskByDate(date: Date): List<TimeTask> {
-        val schedules = localDataSource.fetchScheduleByDate(date.time).first()
-        return schedules?.timeTasks?.map { timeTaskDetails -> timeTaskDetails.mapToDomain() } ?: emptyList()
+        val schedules = localDataSource.fetchScheduleByDate(date.time).first() ?: return emptyList()
+        val timeTasks = schedules.overlayTimeTasks + schedules.timeTasks
+        return timeTasks.map { timeTaskDetails -> timeTaskDetails.mapToDomain() }
     }
 
     override suspend fun updateTimeTaskList(timeTaskList: List<TimeTask>) {
-        localDataSource.updateTimeTasks(timeTaskList.map { it.mapToData(it.date.time) })
+        localDataSource.updateTimeTasks(timeTaskList.map { it.mapToData() })
     }
 
     override suspend fun updateTimeTask(timeTask: TimeTask) {
-        localDataSource.updateTimeTasks(listOf(timeTask.mapToData(timeTask.date.time)))
+        localDataSource.updateTimeTasks(listOf(timeTask.mapToData()))
     }
 
     override suspend fun deleteTimeTasks(keys: List<Long>) {

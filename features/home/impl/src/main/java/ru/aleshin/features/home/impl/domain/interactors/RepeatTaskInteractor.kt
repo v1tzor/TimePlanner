@@ -131,7 +131,8 @@ internal interface RepeatTaskInteractor {
             keyList: List<Long> = emptyList(),
         ) = mutableListOf<TimeTask>().apply {
             schedules.forEach { schedule ->
-                val scheduleTimeTasks = schedule.timeTasks
+                val nextSchedule = schedules.getOrNull(schedules.indexOf(schedule) + 1)
+                val scheduleTimeTasks = schedule.timeTasks + (nextSchedule?.timeTasks ?: emptyList())
                 val scheduleDate = schedule.date.mapToDate().startThisDay()
 
                 if (repeatTime.checkDateIsRepeat(scheduleDate)) {

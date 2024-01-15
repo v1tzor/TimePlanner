@@ -27,8 +27,9 @@ data class Schedule(
     val date: Long,
     val status: DailyScheduleStatus,
     val timeTasks: List<TimeTask> = emptyList(),
+    val overlayTimeTasks: List<TimeTask> = emptyList(),
 ) {
     fun <T> map(mapper: Mapper<Schedule, T>) = mapper.map(this)
 }
 
-fun List<Schedule>.fetchAllTimeTasks() = map { it.timeTasks }.extractAllItem()
+fun List<Schedule>.fetchAllTimeTasks() = map { it.overlayTimeTasks + it.timeTasks }.extractAllItem()

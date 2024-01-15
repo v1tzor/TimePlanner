@@ -16,7 +16,9 @@
 package ru.aleshin.features.editor.impl.domain.interactors
 
 import kotlinx.coroutines.flow.first
+import ru.aleshin.core.utils.extensions.extractAllItem
 import ru.aleshin.core.utils.extensions.generateUniqueKey
+import ru.aleshin.core.utils.extensions.shiftDay
 import ru.aleshin.core.utils.functional.Either
 import ru.aleshin.core.utils.functional.TimeRange
 import ru.aleshin.core.utils.managers.DateManager
@@ -50,13 +52,19 @@ internal interface TimeTaskInteractor {
     ) : TimeTaskInteractor {
 
         override suspend fun addTimeTask(timeTask: TimeTask) = eitherWrapper.wrap {
-            val schedule = scheduleRepository.fetchScheduleByDate(timeTask.date.time).first() ?: Schedule(
-                date = timeTask.date.time,
-                status = statusChecker.fetchState(timeTask.date, dateManager.fetchBeginningCurrentDay()),
-            ).apply {
-                scheduleRepository.createSchedules(listOf(this))
+            val timeRange = TimeRange(timeTask.date.shiftDay(-1), timeTask.date.shiftDay(1))
+            val schedules = scheduleRepository.fetchSchedulesByRange(timeRange).first().let {
+                it.ifEmpty {
+                    val createdSchedule = Schedule(
+                        date = timeTask.date.time,
+                        status = statusChecker.fetchState(timeTask.date, dateManager.fetchBeginningCurrentDay()),
+                    ).apply {
+                        scheduleRepository.createSchedules(listOf(this))
+                    }
+                    listOf(createdSchedule)
+                }
             }
-            val allTimeTask = schedule.timeTasks
+            val allTimeTask = schedules.map { it.timeTasks }.extractAllItem()
             val key = generateUniqueKey()
 
             checkIsOverlay(allTimeTask.map { it.timeRange }, timeTask.timeRange) {
@@ -66,7 +74,9 @@ internal interface TimeTaskInteractor {
         }
 
         override suspend fun updateTimeTask(timeTask: TimeTask) = eitherWrapper.wrap {
-            val allTimeTask = timeTaskRepository.fetchAllTimeTaskByDate(timeTask.date).toMutableList().apply {
+            val timeRange = TimeRange(timeTask.date.shiftDay(-1), timeTask.date.shiftDay(1))
+            val schedules = scheduleRepository.fetchSchedulesByRange(timeRange).first()
+            val allTimeTask = schedules.map { it.timeTasks }.extractAllItem().toMutableList().apply {
                 removeAll { it.key == timeTask.key }
             }
 

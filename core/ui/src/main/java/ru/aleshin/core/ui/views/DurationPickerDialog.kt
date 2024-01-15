@@ -69,10 +69,8 @@ fun DurationPickerDialog(
     onSelectedTime: (Long) -> Unit,
 ) {
     val startTimeCalendar = Calendar.getInstance().apply { time = startTime }
-    val maxHours =
-        Constants.Date.HOURS_IN_DAY.toInt() - startTimeCalendar.get(Calendar.HOUR_OF_DAY) - 1
-    val maxMinutes =
-        Constants.Date.MINUTES_IN_HOUR.toInt() - startTimeCalendar.get(Calendar.MINUTE) - 1
+    val maxHours = Constants.Date.HOURS_IN_DAY.toInt() - startTimeCalendar.get(Calendar.HOUR_OF_DAY) - 1
+    val maxMinutes = Constants.Date.MINUTES_IN_HOUR.toInt() - startTimeCalendar.get(Calendar.MINUTE) - 1
 
     var hours by rememberSaveable { mutableStateOf<Int?>(duration.toHorses().toInt()) }
     var minutes by rememberSaveable { mutableStateOf<Int?>(duration.toMinutesInHours().toInt()) }
@@ -133,7 +131,7 @@ fun DurationPickerDialog(
                     }
                 }
                 TimePickerActions(
-                    enabledConfirm = hours != null && minutes != null && (hours!! * 60 + minutes!!) <= (maxHours * 60 + maxMinutes),
+                    enabledConfirm = hours != null && minutes != null && hours!! < 24,
                     onDismissClick = onDismissRequest,
                     onCurrentTimeChoose = {
                         hours = maxHours

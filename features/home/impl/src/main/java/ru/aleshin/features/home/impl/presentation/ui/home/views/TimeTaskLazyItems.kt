@@ -193,12 +193,16 @@ internal fun LazyItemScope.RunningTimeTaskItem(
 @Composable
 internal fun LazyItemScope.AddTimeTaskViewItem(
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     onAddClick: () -> Unit,
     startTime: Date,
     endTime: Date,
     indicatorColor: Color = MaterialTheme.colorScheme.surfaceVariant,
 ) {
-    Row(modifier = modifier, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+    Row(
+        modifier = modifier.alpha(if (enabled) 1f else 0.6f),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
         StartTaskTimeTitle(time = startTime)
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
             Row(
@@ -214,12 +218,14 @@ internal fun LazyItemScope.AddTimeTaskViewItem(
                     )
                 }
             }
-            AddTimeTaskView(
-                showAddIconForFreeTime = startTime >= Date(),
-                isFreeTime = duration(startTime, endTime) >= Constants.Date.MILLIS_IN_MINUTE,
-                remainingTimeTitle = duration(startTime, endTime).toMinutesOrHoursTitle(),
-                onViewClicked = onAddClick,
-            )
+            if (enabled) {
+                AddTimeTaskView(
+                    showAddIconForFreeTime = startTime >= Date(),
+                    isFreeTime = duration(startTime, endTime) >= Constants.Date.MILLIS_IN_MINUTE,
+                    remainingTimeTitle = duration(startTime, endTime).toMinutesOrHoursTitle(),
+                    onViewClicked = onAddClick,
+                )
+            }
         }
     }
 }
@@ -228,13 +234,14 @@ internal fun LazyItemScope.AddTimeTaskViewItem(
 fun StartTaskTimeTitle(
     modifier: Modifier = Modifier,
     time: Date,
+    color: Color = MaterialTheme.colorScheme.onSurfaceVariant
 ) {
     val timeFormat = SimpleDateFormat.getTimeInstance(SimpleDateFormat.SHORT)
     Text(
         modifier = modifier.defaultMinSize(minWidth = 42.dp),
         text = timeFormat.format(time),
         style = MaterialTheme.typography.titleMedium,
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        color = color,
     )
 }
 

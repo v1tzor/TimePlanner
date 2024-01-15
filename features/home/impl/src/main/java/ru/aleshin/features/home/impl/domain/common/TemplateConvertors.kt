@@ -17,6 +17,8 @@ package ru.aleshin.features.home.impl.domain.common
 
 import ru.aleshin.core.utils.extensions.changeDay
 import ru.aleshin.core.utils.extensions.generateUniqueKey
+import ru.aleshin.core.utils.extensions.isCurrentDay
+import ru.aleshin.core.utils.extensions.shiftDay
 import ru.aleshin.core.utils.functional.TimeRange
 import ru.aleshin.features.home.api.domain.entities.schedules.TimeTask
 import ru.aleshin.features.home.api.domain.entities.template.Template
@@ -32,7 +34,10 @@ internal fun Template.convertToTimeTask(
 ) = TimeTask(
     key = key,
     date = date,
-    timeRange = TimeRange(startTime.changeDay(date), endTime.changeDay(date)),
+    timeRange = TimeRange(
+        from = startTime.changeDay(date), 
+        to = if (endTime.isCurrentDay(startTime)) endTime.changeDay(date) else endTime.changeDay(date.shiftDay(1)),
+    ),
     createdAt = createdAt,
     category = category,
     subCategory = subCategory,

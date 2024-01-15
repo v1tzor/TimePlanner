@@ -84,7 +84,8 @@ internal interface ScheduleInteractor {
             val limit = NEXT_REPEAT_LIMIT.daysToMillis()
             scheduleRepository.fetchScheduleByDate(date).map { schedule ->
                 if (schedule != null) {
-                    val sortedTasks = schedule.timeTasks.sortedBy { timeTask -> timeTask.timeRange.to }
+                    val timeTasks = schedule.overlayTimeTasks + schedule.timeTasks
+                    val sortedTasks = timeTasks.sortedBy { timeTask -> timeTask.timeRange.to }
                     schedule.copy(timeTasks = sortedTasks)
                 } else if (date >= currentDate.time && date - currentDate.time <= limit) {
                     createRecurringSchedule(date.mapToDate(), currentDate)

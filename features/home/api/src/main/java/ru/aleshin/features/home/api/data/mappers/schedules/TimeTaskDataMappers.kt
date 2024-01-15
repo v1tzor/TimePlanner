@@ -15,7 +15,9 @@
  */
 package ru.aleshin.features.home.api.data.mappers.schedules
 
+import ru.aleshin.core.utils.extensions.isCurrentDay
 import ru.aleshin.core.utils.extensions.mapToDate
+import ru.aleshin.core.utils.extensions.shiftDay
 import ru.aleshin.core.utils.functional.TimeRange
 import ru.aleshin.features.home.api.data.mappers.categories.mapToDomain
 import ru.aleshin.features.home.api.data.models.tasks.TimeTaskDetails
@@ -48,9 +50,10 @@ fun TimeTaskDetails.mapToDomain() = TimeTask(
     note = timeTask.note,
 )
 
-fun TimeTask.mapToData(dailyScheduleDate: Long) = TimeTaskEntity(
+fun TimeTask.mapToData() = TimeTaskEntity(
     key = key,
-    dailyScheduleDate = dailyScheduleDate,
+    dailyScheduleDate = date.time,
+    nextScheduleDate = if (timeRange.to.isCurrentDay(date)) null else date.shiftDay(1).time,
     startTime = timeRange.from.time,
     endTime = timeRange.to.time,
     createdAt = createdAt?.time,

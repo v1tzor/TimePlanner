@@ -29,7 +29,7 @@ import ru.aleshin.features.home.api.data.models.tasks.TimeTaskEntity
 interface SchedulesDao {
 
     @Transaction
-    @Query("SELECT * FROM dailySchedules WHERE date > :start AND date < :end")
+    @Query("SELECT * FROM dailySchedules WHERE date >= :start AND date <= :end")
     fun fetchDailySchedulesByRange(start: Long, end: Long): Flow<List<ScheduleDetails>>
 
     @Transaction

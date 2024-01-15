@@ -21,6 +21,7 @@ import ru.aleshin.core.utils.functional.TimeRange
 import ru.aleshin.core.utils.functional.WeekDay
 import java.math.RoundingMode
 import java.util.*
+import kotlin.math.abs
 import kotlin.math.ceil
 
 /**
@@ -151,7 +152,7 @@ fun Date.changeDay(date: Date): Date {
 }
 
 fun duration(start: Date, end: Date): Long {
-    return end.time - start.time
+    return abs(end.time - start.time)
 }
 
 fun Date.isNotZeroDifference(end: Date): Boolean {
@@ -159,7 +160,7 @@ fun Date.isNotZeroDifference(end: Date): Boolean {
 }
 
 fun duration(timeRange: TimeRange): Long {
-    return timeRange.to.time - timeRange.from.time
+    return abs(timeRange.to.time - timeRange.from.time)
 }
 
 fun durationOrZero(start: Date?, end: Date?) = if (start != null && end != null) {

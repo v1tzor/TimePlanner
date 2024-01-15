@@ -43,6 +43,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import ru.aleshin.core.ui.theme.TimePlannerRes
 import ru.aleshin.core.ui.views.CustomLargeTextField
+import ru.aleshin.core.utils.extensions.shiftDay
 import ru.aleshin.core.utils.extensions.shiftMillis
 import ru.aleshin.core.utils.functional.Constants
 import ru.aleshin.core.utils.functional.TimeRange
@@ -249,7 +250,10 @@ internal fun DateTimeSection(
             modifier = Modifier.weight(1f),
             currentTime = timeRanges.to,
             isError = isTimeValidError,
-            onChangeTime = { newEndTime -> onTimeRangeChange(timeRanges.copy(to = newEndTime)) },
+            onChangeTime = { newEndTime ->
+                val newTime = if (newEndTime > timeRanges.from) newEndTime else newEndTime.shiftDay(1)
+                onTimeRangeChange(timeRanges.copy(to = newTime))
+            },
         )
         DurationTitle(
             enabled = enabled,

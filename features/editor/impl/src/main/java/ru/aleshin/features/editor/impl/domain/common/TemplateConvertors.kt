@@ -16,6 +16,8 @@
 package ru.aleshin.features.editor.impl.domain.common
 
 import ru.aleshin.core.utils.extensions.changeDay
+import ru.aleshin.core.utils.extensions.isCurrentDay
+import ru.aleshin.core.utils.extensions.shiftDay
 import ru.aleshin.features.editor.impl.domain.entites.EditModel
 import ru.aleshin.features.home.api.domain.entities.template.Template
 import java.util.Date
@@ -26,7 +28,7 @@ import java.util.Date
 internal fun Template.convertToEditModel(date: Date) = EditModel(
     date = date,
     startTime = startTime.changeDay(date),
-    endTime = endTime.changeDay(date),
+    endTime = if (endTime.isCurrentDay(startTime)) endTime.changeDay(date) else endTime.changeDay(date.shiftDay(1)),
     createdAt = Date(),
     mainCategory = category,
     subCategory = subCategory,

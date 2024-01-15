@@ -40,6 +40,9 @@ interface ScheduleDataToDomainMapper : Mapper<ScheduleDetails, Schedule> {
             timeTasks = input.timeTasks.map { timeTaskDetails ->
                 timeTaskDetails.mapToDomain()
             },
+            overlayTimeTasks = input.overlayTimeTasks.map { timeTaskDetails ->
+                timeTaskDetails.mapToDomain()
+            },
         )
     }
 }

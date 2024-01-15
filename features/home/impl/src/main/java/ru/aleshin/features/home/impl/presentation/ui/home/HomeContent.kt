@@ -41,6 +41,7 @@ import ru.aleshin.core.ui.theme.material.surfaceOne
 import ru.aleshin.core.ui.views.ViewToggle
 import ru.aleshin.core.ui.views.ViewToggleStatus
 import ru.aleshin.core.utils.extensions.endThisDay
+import ru.aleshin.core.utils.extensions.isCurrentDay
 import ru.aleshin.core.utils.extensions.isNotZeroDifference
 import ru.aleshin.core.utils.extensions.shiftDay
 import ru.aleshin.features.home.api.domain.entities.schedules.DailyScheduleStatus
@@ -176,6 +177,7 @@ internal fun TimeTasksSection(
     enter = fadeIn() + scaleIn(initialScale = 0.9f),
     exit = fadeOut(),
 ) {
+    val isCompactView = timeTaskViewStatus == ViewToggleStatus.COMPACT
     Box(modifier = modifier.fillMaxSize()) {
         if (dateStatus != null) {
             LazyColumn(
@@ -183,8 +185,24 @@ internal fun TimeTasksSection(
                 contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
                 verticalArrangement = Arrangement.spacedBy(4.dp),
             ) {
+                if (timeTasks.isNotEmpty() && timeTasks.first().startTime > currentDate && !isCompactView) {
+                    item {
+                        val startTime = checkNotNull(currentDate)
+                        val endTime = timeTasks[0].startTime
+                        AddTimeTaskViewItem(
+                            modifier = Modifier.animateItemPlacement(
+                                animationSpec = spring(
+                                    stiffness = Spring.StiffnessMedium,
+                                    visibilityThreshold = IntOffset.VisibilityThreshold,
+                                ),
+                            ),
+                            onAddClick = { onTimeTaskAdd(startTime, endTime) },
+                            startTime = startTime,
+                            endTime = endTime,
+                        )
+                    }
+                }
                 items(timeTasks, key = { it.key }) { timeTask ->
-                    val isCompactView = timeTaskViewStatus == ViewToggleStatus.COMPACT
                     val timeTaskIndex = timeTasks.indexOf(timeTask)
                     val nextItem = timeTasks.getOrNull(timeTaskIndex + 1)
 
@@ -245,6 +263,7 @@ internal fun TimeTasksSection(
                                 visibilityThreshold = IntOffset.VisibilityThreshold,
                             ),
                         ),
+                        enabled = timeTasks.isEmpty() || timeTasks.last().endTime.isCurrentDay(currentDate!!),
                         onAddClick = { onTimeTaskAdd(startTime, endTime) },
                         startTime = startTime,
                         endTime = endTime,

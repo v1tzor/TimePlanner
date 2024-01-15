@@ -48,14 +48,14 @@ class ScheduleRepositoryImpl @Inject constructor(
         val dailySchedules = schedules.map { it.mapToData() }
         val timeTasks = mutableListOf<TimeTaskEntity>().apply {
             schedules.forEach { schedule ->
-                addAll(schedule.timeTasks.map { it.mapToData(schedule.date) })
+                addAll(schedule.timeTasks.map { it.mapToData() })
             }
         }
         localDataSource.addSchedules(dailySchedules, timeTasks)
     }
 
     override suspend fun updateSchedule(schedule: Schedule) {
-        localDataSource.updateTimeTasks(schedule.timeTasks.map { it.mapToData(schedule.date) })
+        localDataSource.updateTimeTasks(schedule.timeTasks.map { it.mapToData() })
     }
 
     override suspend fun deleteAllSchedules(): List<Schedule> {

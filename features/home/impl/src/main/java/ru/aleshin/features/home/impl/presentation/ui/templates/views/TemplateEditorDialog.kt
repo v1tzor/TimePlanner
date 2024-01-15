@@ -56,6 +56,7 @@ import ru.aleshin.core.ui.views.DialogButtons
 import ru.aleshin.core.ui.views.TimeFormatSelector
 import ru.aleshin.core.utils.extensions.generateUniqueKey
 import ru.aleshin.core.utils.extensions.setHoursAndMinutes
+import ru.aleshin.core.utils.extensions.shiftDay
 import ru.aleshin.core.utils.functional.TimeFormat
 import ru.aleshin.features.home.impl.presentation.models.categories.CategoriesUi
 import ru.aleshin.features.home.impl.presentation.models.categories.MainCategoryUi
@@ -146,16 +147,8 @@ internal fun TemplateEditorDialog(
                     )
                 }
 
-                val isEnabled = if (
-                    timeStartHours != null && timeStartMinutes != null &&
+                val isEnabled = timeStartHours != null && timeStartMinutes != null && 
                     timeEndHours != null && timeEndMinutes != null
-                ) {
-                    val startTimeInMinutes = timeStartHours!! * 60 + timeStartMinutes!!
-                    val endTimeInMinutes = timeEndHours!! * 60 + timeEndMinutes!!
-                    endTimeInMinutes - startTimeInMinutes > 0
-                } else {
-                    false
-                }
                 DialogButtons(
                     isConfirmEnabled = isEnabled,
                     confirmTitle = when (model != null) {
@@ -165,16 +158,14 @@ internal fun TemplateEditorDialog(
                     onConfirmClick = {
                         if (isEnabled) {
                             val calendar = Calendar.getInstance()
+                            val startTime = calendar.setHoursAndMinutes(timeStartHours!!, timeStartMinutes!!).time
+                            val endTime = calendar.setHoursAndMinutes(timeEndHours!!, timeEndMinutes!!).time.let { endTime ->
+                                if (endTime > startTime) endTime else endTime.shiftDay(1)
+                            }
                             val template = TemplateUi(
                                 templateId = model?.templateId ?: generateUniqueKey().toInt(),
-                                startTime = calendar.setHoursAndMinutes(
-                                    hours = timeStartHours!!,
-                                    minutes = timeStartMinutes!!,
-                                ).time,
-                                endTime = calendar.setHoursAndMinutes(
-                                    hours = timeEndHours!!,
-                                    minutes = timeEndMinutes!!,
-                                ).time,
+                                startTime = startTime,
+                                endTime = endTime,
                                 category = mainCategory,
                                 subCategory = subCategory,
                                 isEnableNotification = isEnableNotification,

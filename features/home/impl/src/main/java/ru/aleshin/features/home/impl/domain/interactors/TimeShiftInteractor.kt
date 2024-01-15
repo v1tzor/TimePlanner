@@ -16,11 +16,15 @@
 package ru.aleshin.features.home.impl.domain.interactors
 
 import kotlinx.coroutines.flow.first
+import ru.aleshin.core.utils.extensions.extractAllItem
 import ru.aleshin.core.utils.extensions.isCurrentDay
+import ru.aleshin.core.utils.extensions.shiftDay
 import ru.aleshin.core.utils.extensions.shiftMinutes
 import ru.aleshin.core.utils.functional.DomainResult
+import ru.aleshin.core.utils.functional.TimeRange
 import ru.aleshin.core.utils.functional.TimeShiftException
 import ru.aleshin.features.home.api.domain.entities.schedules.TimeTask
+import ru.aleshin.features.home.api.domain.repository.ScheduleRepository
 import ru.aleshin.features.home.api.domain.repository.TemplatesRepository
 import ru.aleshin.features.home.api.domain.repository.TimeTaskRepository
 import ru.aleshin.features.home.impl.domain.common.HomeEitherWrapper
@@ -39,6 +43,7 @@ internal interface TimeShiftInteractor {
     suspend fun shiftDownTimeTask(task: TimeTask, shiftValue: Int): DomainResult<HomeFailures, TimeTask>
 
     class Base @Inject constructor(
+        private val scheduleRepository: ScheduleRepository,
         private val timeTaskRepository: TimeTaskRepository,
         private val templatesRepository: TemplatesRepository,
         private val eitherWrapper: HomeEitherWrapper,
@@ -48,13 +53,15 @@ internal interface TimeShiftInteractor {
             task: TimeTask,
             shiftValue: Int,
         ) = eitherWrapper.wrap {
-            val allTimeTasks = timeTaskRepository.fetchAllTimeTaskByDate(task.date).sortedBy {
-                it.timeRange.from
-            }
+            val timeRange = TimeRange(task.date.shiftDay(-1), task.date.shiftDay(1))
+            val schedules = scheduleRepository.fetchSchedulesByRange(timeRange).first()
+            val allTimeTasks = schedules.map { it.timeTasks }.extractAllItem().sortedBy { it.timeRange.from }
+
             val nextTimeTask = allTimeTasks.firstOrNull { it.timeRange.from >= task.timeRange.to }
             val nextTimeTaskTemplate = templatesRepository.fetchAllTemplates().first().find { template ->
                 nextTimeTask?.let { template.equalsIsTemplate(it) } ?: false
             }
+
             val nextTime = nextTimeTask?.timeRange
             val shiftTime = task.timeRange.to.shiftMinutes(shiftValue)
 

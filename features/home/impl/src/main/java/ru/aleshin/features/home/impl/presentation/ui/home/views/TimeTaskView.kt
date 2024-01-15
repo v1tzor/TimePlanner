@@ -330,7 +330,6 @@ internal fun AddTimeTaskView(
     Surface(
         onClick = onViewClicked,
         modifier = modifier.height(46.dp),
-        enabled = true,
         shape = MaterialTheme.shapes.small,
         color = MaterialTheme.colorScheme.background,
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.surfaceVariant),

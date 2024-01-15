@@ -49,6 +49,7 @@ import ru.aleshin.features.home.api.data.models.schedules.DailyScheduleEntity
 data class TimeTaskEntity(
     @PrimaryKey(autoGenerate = false) val key: Long,
     @ColumnInfo("daily_schedule_date", index = true) val dailyScheduleDate: Long,
+    @ColumnInfo("next_schedule_date", index = true, defaultValue = "null") val nextScheduleDate: Long?,
     @ColumnInfo("start_time") val startTime: Long,
     @ColumnInfo("end_time") val endTime: Long,
     @ColumnInfo("created_at") val createdAt: Long? = null,
