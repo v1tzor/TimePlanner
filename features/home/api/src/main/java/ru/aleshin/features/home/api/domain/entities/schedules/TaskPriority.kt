@@ -16,21 +16,13 @@
 package ru.aleshin.features.home.api.domain.entities.schedules
 
 import kotlinx.serialization.Serializable
-import ru.aleshin.core.utils.functional.DateSerializer
-import ru.aleshin.features.home.api.domain.entities.categories.MainCategory
-import ru.aleshin.features.home.api.domain.entities.categories.SubCategory
-import java.util.Date
 
 /**
- * @author Stanislav Aleshin on 02.11.2023.
+ * @author Stanislav Aleshin on 16.01.2024.
  */
 @Serializable
-data class UndefinedTask(
-    val id: Long = 0L,
-    @Serializable(DateSerializer::class) val createdAt: Date? = null,
-    @Serializable(DateSerializer::class) val deadline: Date? = null,
-    val mainCategory: MainCategory,
-    val subCategory: SubCategory? = null,
-    val priority: TaskPriority = TaskPriority.STANDARD,
-    val note: String? = null,
-)
+enum class TaskPriority {
+    STANDARD, MEDIUM, MAX;
+
+    fun isImportant() = this != STANDARD
+}

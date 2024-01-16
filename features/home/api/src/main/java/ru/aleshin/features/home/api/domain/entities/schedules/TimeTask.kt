@@ -37,7 +37,7 @@ data class TimeTask(
     val category: MainCategory,
     val subCategory: SubCategory? = null,
     val isCompleted: Boolean = true,
-    val isImportant: Boolean = false,
+    val priority: TaskPriority = TaskPriority.STANDARD,
     val isEnableNotification: Boolean = true,
     val taskNotifications: TaskNotifications = TaskNotifications(),
     val isConsiderInStatistics: Boolean = true,

@@ -58,12 +58,13 @@ import ru.aleshin.core.utils.extensions.generateUniqueKey
 import ru.aleshin.core.utils.extensions.setHoursAndMinutes
 import ru.aleshin.core.utils.extensions.shiftDay
 import ru.aleshin.core.utils.functional.TimeFormat
+import ru.aleshin.features.home.api.domain.entities.schedules.TaskPriority
 import ru.aleshin.features.home.impl.presentation.models.categories.CategoriesUi
 import ru.aleshin.features.home.impl.presentation.models.categories.MainCategoryUi
 import ru.aleshin.features.home.impl.presentation.models.templates.TemplateUi
 import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
 import ru.aleshin.features.home.impl.presentation.ui.common.CompactCategoryChooser
-import ru.aleshin.features.home.impl.presentation.ui.common.CompactImportanceChooser
+import ru.aleshin.features.home.impl.presentation.ui.common.PriorityChooser
 import ru.aleshin.features.home.impl.presentation.ui.common.CompactSubCategoryChooser
 import java.util.Calendar
 
@@ -88,7 +89,7 @@ internal fun TemplateEditorDialog(
     var timeStartMinutes by remember { mutableStateOf(model?.startTime?.minutes) }
     var timeEndHours by remember { mutableStateOf(model?.endTime?.hours) }
     var timeEndMinutes by remember { mutableStateOf(model?.endTime?.minutes) }
-    var isImportance by remember { mutableStateOf(model?.isImportant ?: false) }
+    var priority by remember { mutableStateOf(model?.priority ?: TaskPriority.STANDARD) }
 
     AlertDialog(onDismissRequest = onDismiss) {
         Surface(
@@ -141,9 +142,9 @@ internal fun TemplateEditorDialog(
                         isConsiderInStatistics = isConsiderInStatistics,
                         onStatisticsConsiderChange = { isConsiderInStatistics = it },
                     )
-                    CompactImportanceChooser(
-                        isImportance = isImportance,
-                        onImportanceChange = { isImportance = it },
+                    PriorityChooser(
+                        priority = priority,
+                        onPriorityChange = { priority = it },
                     )
                 }
 
@@ -170,7 +171,7 @@ internal fun TemplateEditorDialog(
                                 subCategory = subCategory,
                                 isEnableNotification = isEnableNotification,
                                 isConsiderInStatistics = isConsiderInStatistics,
-                                isImportant = isImportance,
+                                priority = priority,
                                 repeatEnabled = model?.repeatEnabled ?: false,
                                 repeatTimes = model?.repeatTimes ?: emptyList(),
                             )

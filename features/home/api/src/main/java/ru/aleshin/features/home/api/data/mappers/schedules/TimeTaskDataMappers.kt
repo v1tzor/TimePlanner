@@ -23,6 +23,7 @@ import ru.aleshin.features.home.api.data.mappers.categories.mapToDomain
 import ru.aleshin.features.home.api.data.models.tasks.TimeTaskDetails
 import ru.aleshin.features.home.api.data.models.tasks.TimeTaskEntity
 import ru.aleshin.features.home.api.domain.entities.schedules.TaskNotifications
+import ru.aleshin.features.home.api.domain.entities.schedules.TaskPriority
 import ru.aleshin.features.home.api.domain.entities.schedules.TimeTask
 
 /**
@@ -36,7 +37,11 @@ fun TimeTaskDetails.mapToDomain() = TimeTask(
     category = mainCategory.mainCategory.mapToDomain(),
     subCategory = subCategory?.mapToDomain(mainCategory.mainCategory.mapToDomain()),
     isCompleted = timeTask.isCompleted,
-    isImportant = timeTask.isImportant,
+    priority = when {
+        timeTask.isImportantMax -> TaskPriority.MAX
+        timeTask.isImportantMedium -> TaskPriority.MEDIUM
+        else -> TaskPriority.STANDARD
+    },
     isEnableNotification = timeTask.isEnableNotification,
     taskNotifications = TaskNotifications(
         fifteenMinutesBefore = timeTask.fifteenMinutesBeforeNotify,
@@ -60,7 +65,8 @@ fun TimeTask.mapToData() = TimeTaskEntity(
     mainCategoryId = category.id,
     subCategoryId = subCategory?.id,
     isCompleted = isCompleted,
-    isImportant = isImportant,
+    isImportantMedium = priority == TaskPriority.MEDIUM,
+    isImportantMax = priority == TaskPriority.MAX,
     isEnableNotification = isEnableNotification,
     fifteenMinutesBeforeNotify = taskNotifications.fifteenMinutesBefore,
     oneHourBeforeNotify = taskNotifications.oneHourBefore,

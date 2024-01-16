@@ -69,8 +69,8 @@ internal fun LazyItemScope.PlannedTimeTaskItem(
             with(model) {
                 EndTaskTimeTitle(
                     modifier = Modifier.align(Alignment.Bottom),
-                    time = model.endTime,
                     isVisible = isCompactView,
+                    time = model.endTime,
                 )
                 PlannedTimeTask(
                     modifier = Modifier.fillMaxWidth().padding(bottom = 4.dp).animateContentSize(),
@@ -79,7 +79,7 @@ internal fun LazyItemScope.PlannedTimeTaskItem(
                     taskSubTitle = model.subCategory?.name,
                     taskDurationTitle = duration.toMinutesOrHoursTitle(),
                     categoryIcon = mainCategory.defaultType?.mapToIconPainter(),
-                    isImportant = isImportant,
+                    priority = priority,
                     enabledNotifications = isEnableNotification,
                     note = note,
                 )
@@ -182,7 +182,7 @@ internal fun LazyItemScope.RunningTimeTaskItem(
                     taskTitle = mainCategory.fetchName() ?: HomeThemeRes.strings.noneTitle,
                     taskSubTitle = subCategory?.name,
                     categoryIcon = mainCategory.defaultType?.mapToIconPainter(),
-                    isImportant = isImportant,
+                    priority = priority,
                     note = note,
                 )
             }
@@ -201,7 +201,7 @@ internal fun LazyItemScope.AddTimeTaskViewItem(
 ) {
     Row(
         modifier = modifier.alpha(if (enabled) 1f else 0.6f),
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         StartTaskTimeTitle(time = startTime)
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
@@ -234,7 +234,7 @@ internal fun LazyItemScope.AddTimeTaskViewItem(
 fun StartTaskTimeTitle(
     modifier: Modifier = Modifier,
     time: Date,
-    color: Color = MaterialTheme.colorScheme.onSurfaceVariant
+    color: Color = MaterialTheme.colorScheme.onSurfaceVariant,
 ) {
     val timeFormat = SimpleDateFormat.getTimeInstance(SimpleDateFormat.SHORT)
     Text(
@@ -251,12 +251,12 @@ fun EndTaskTimeTitle(
     isVisible: Boolean,
     time: Date,
 ) {
+    val timeFormat = SimpleDateFormat.getTimeInstance(SimpleDateFormat.SHORT)
     val alpha by animateFloatAsState(
         targetValue = if (isVisible) 1f else 0f, 
         label = "alpha",
         animationSpec = tween(durationMillis = 220),
     )
-    val timeFormat = SimpleDateFormat.getTimeInstance(SimpleDateFormat.SHORT)
     Text(
         modifier = modifier.defaultMinSize(minWidth = 42.dp).alpha(alpha),
         text = timeFormat.format(time),

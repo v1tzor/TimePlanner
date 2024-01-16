@@ -62,6 +62,7 @@ import ru.aleshin.core.ui.views.toDaysTitle
 import ru.aleshin.features.editor.impl.presentation.models.tasks.UndefinedTaskUi
 import ru.aleshin.features.editor.impl.presentation.theme.EditorThemeRes
 import ru.aleshin.features.home.api.presentation.mappers.mapToIconPainter
+import ru.aleshin.features.home.api.presentation.mappers.mapToUi
 import java.util.Date
 
 /**
@@ -174,14 +175,14 @@ internal fun UndefinedTaskBottomSheetItem(
                             icon = categoryIcon,
                             iconDescription = null,
                             iconColor = MaterialTheme.colorScheme.primary,
-                            badgeEnabled = model.isImportant,
+                            priority = model.priority.mapToUi(),
                             backgroundColor = MaterialTheme.colorScheme.primaryContainer,
                         )
                     } else {
                         CategoryTextMonogram(
                             text = model.mainCategory.customName?.first().toString(),
                             textColor = MaterialTheme.colorScheme.primary,
-                            badgeEnabled = model.isImportant,
+                            priority = model.priority.mapToUi(),
                             backgroundColor = MaterialTheme.colorScheme.primaryContainer,
                         )
                     }

@@ -41,7 +41,7 @@ internal fun Template.convertToTimeTask(
     createdAt = createdAt,
     category = category,
     subCategory = subCategory,
-    isImportant = isImportant,
+    priority = priority,
     isEnableNotification = isEnableNotification,
     isConsiderInStatistics = isConsiderInStatistics,
 )

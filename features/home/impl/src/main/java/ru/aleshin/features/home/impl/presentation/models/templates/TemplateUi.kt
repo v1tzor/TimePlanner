@@ -17,6 +17,7 @@ package ru.aleshin.features.home.impl.presentation.models.templates
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
+import ru.aleshin.features.home.api.domain.entities.schedules.TaskPriority
 import ru.aleshin.features.home.api.domain.entities.template.RepeatTime
 import ru.aleshin.features.home.impl.presentation.models.categories.MainCategoryUi
 import ru.aleshin.features.home.impl.presentation.models.categories.SubCategoryUi
@@ -32,7 +33,7 @@ internal data class TemplateUi(
     val endTime: Date,
     val category: MainCategoryUi,
     val subCategory: SubCategoryUi? = null,
-    val isImportant: Boolean = false,
+    val priority: TaskPriority = TaskPriority.STANDARD,
     val isEnableNotification: Boolean = true,
     val isConsiderInStatistics: Boolean = true,
     val repeatEnabled: Boolean = false,

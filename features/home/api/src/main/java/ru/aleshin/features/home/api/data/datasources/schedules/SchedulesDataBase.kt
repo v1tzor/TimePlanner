@@ -38,7 +38,7 @@ import ru.aleshin.features.home.api.data.models.template.TemplateEntity
  * @author Stanislav Aleshin on 25.02.2023.
  */
 @Database(
-    version = 12,
+    version = 13,
     entities = [
         TemplateEntity::class,
         RepeatTimeEntity::class,
@@ -57,6 +57,7 @@ import ru.aleshin.features.home.api.data.models.template.TemplateEntity
         AutoMigration(from = 9, to = 10),
         AutoMigration(from = 10, to = 11),
         AutoMigration(from = 11, to = 12),
+        AutoMigration(from = 12, to = 13),
     ],
 )
 abstract class SchedulesDataBase : RoomDatabase() {

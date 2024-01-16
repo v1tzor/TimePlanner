@@ -19,6 +19,7 @@ import ru.aleshin.core.utils.extensions.mapToDate
 import ru.aleshin.features.home.api.data.mappers.categories.mapToDomain
 import ru.aleshin.features.home.api.data.models.tasks.UndefinedTaskDetails
 import ru.aleshin.features.home.api.data.models.tasks.UndefinedTaskEntity
+import ru.aleshin.features.home.api.domain.entities.schedules.TaskPriority
 import ru.aleshin.features.home.api.domain.entities.schedules.UndefinedTask
 
 /**
@@ -30,7 +31,11 @@ fun UndefinedTaskDetails.mapToDomain() = UndefinedTask(
     deadline = task.deadline?.mapToDate(),
     mainCategory = mainCategory.mapToDomain(),
     subCategory = subCategory?.mapToDomain(mainCategory.mapToDomain()),
-    isImportant = task.isImportant,
+    priority = when {
+        task.isImportantMax -> TaskPriority.MAX
+        task.isImportantMedium -> TaskPriority.MEDIUM
+        else -> TaskPriority.STANDARD
+    },
     note = task.note,
 )
 
@@ -40,6 +45,7 @@ fun UndefinedTask.mapToData() = UndefinedTaskEntity(
     deadline = deadline?.time,
     mainCategoryId = mainCategory.id,
     subCategoryId = subCategory?.id,
-    isImportant = isImportant,
+    isImportantMedium = priority == TaskPriority.MEDIUM,
+    isImportantMax = priority == TaskPriority.MAX,
     note = note,
 )

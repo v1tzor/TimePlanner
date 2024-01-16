@@ -47,6 +47,9 @@ import ru.aleshin.core.utils.extensions.shiftDay
 import ru.aleshin.core.utils.extensions.shiftMillis
 import ru.aleshin.core.utils.functional.Constants
 import ru.aleshin.core.utils.functional.TimeRange
+import ru.aleshin.features.editor.impl.presentation.mappers.convertToModel
+import ru.aleshin.features.editor.impl.presentation.mappers.convertToParameter
+import ru.aleshin.features.editor.impl.presentation.models.PriorityParameters
 import ru.aleshin.features.editor.impl.presentation.models.categories.CategoriesUi
 import ru.aleshin.features.editor.impl.presentation.models.categories.MainCategoryUi
 import ru.aleshin.features.editor.impl.presentation.models.categories.SubCategoryUi
@@ -321,14 +324,14 @@ internal fun ParametersSection(
                 onChangeParameters(parameters.copy(isEnableNotification = notification))
             },
         )
-        ParameterChooser(
+        SegmentedParametersChooser(
             enabled = enabled,
-            selected = parameters.isImportant,
+            parameters = PriorityParameters.values(),
+            selected = parameters.priority.convertToParameter(),
             leadingIcon = painterResource(id = EditorThemeRes.icons.priority),
-            title = EditorThemeRes.strings.importantParameterTitle,
-            description = EditorThemeRes.strings.importantParameterDesc,
-            onChangeSelected = { isImportant ->
-                onChangeParameters(parameters.copy(isImportant = isImportant))
+            title = EditorThemeRes.strings.priorityParameterTitle,
+            onChangeSelected = { priority ->
+                onChangeParameters(parameters.copy(priority = priority.convertToModel()))
             },
         )
     }

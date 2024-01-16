@@ -42,6 +42,7 @@ interface SegmentedButtonItem {
 @Composable
 fun <Item : SegmentedButtonItem> SegmentedButtons(
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     items: Array<Item>,
     selectedItem: Item,
     onItemClick: (Item) -> Unit,
@@ -51,6 +52,7 @@ fun <Item : SegmentedButtonItem> SegmentedButtons(
             if (index == 0) {
                 SegmentedButton(
                     modifier = Modifier.weight(1f),
+                    enabled = enabled,
                     title = item.title,
                     isSelected = item == selectedItem,
                     shape = SegmentedButtonDefaults.firstButtonShape(),
@@ -59,6 +61,7 @@ fun <Item : SegmentedButtonItem> SegmentedButtons(
             } else if (items.lastIndex == index) {
                 SegmentedButton(
                     modifier = Modifier.weight(1f),
+                    enabled = enabled,
                     title = item.title,
                     isSelected = item == selectedItem,
                     shape = SegmentedButtonDefaults.lastButtonShape(),
@@ -67,6 +70,7 @@ fun <Item : SegmentedButtonItem> SegmentedButtons(
             } else {
                 SegmentedButton(
                     modifier = Modifier.weight(1f),
+                    enabled = enabled,
                     title = item.title,
                     isSelected = item == selectedItem,
                     shape = SegmentedButtonDefaults.centerButtonShape(),
@@ -81,6 +85,7 @@ fun <Item : SegmentedButtonItem> SegmentedButtons(
 fun SegmentedButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     title: String,
     shape: Shape,
     isSelected: Boolean,
@@ -88,6 +93,7 @@ fun SegmentedButton(
     OutlinedButton(
         onClick = onClick,
         modifier = modifier.height(SegmentedButtonDefaults.height),
+        enabled = enabled,
         contentPadding = SegmentedButtonDefaults.contentPadding(),
         colors = SegmentedButtonDefaults.buttonColors(isSelected = isSelected),
         shape = shape,

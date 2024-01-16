@@ -18,6 +18,7 @@ package ru.aleshin.features.home.impl.presentation.models.schedules
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 import ru.aleshin.core.utils.functional.TimeRange
+import ru.aleshin.features.home.api.domain.entities.schedules.TaskPriority
 import ru.aleshin.features.home.api.domain.entities.schedules.TimeTaskStatus
 import ru.aleshin.features.home.impl.presentation.models.categories.MainCategoryUi
 import ru.aleshin.features.home.impl.presentation.models.categories.SubCategoryUi
@@ -33,7 +34,7 @@ internal data class UndefinedTaskUi(
     val deadline: Date? = null,
     val mainCategory: MainCategoryUi,
     val subCategory: SubCategoryUi? = null,
-    val isImportant: Boolean = false,
+    val priority: TaskPriority = TaskPriority.STANDARD,
     val note: String? = null,
 ) : Parcelable
 
@@ -48,6 +49,6 @@ internal fun UndefinedTaskUi.convertToTimeTask(
     createdAt = createdAt,
     mainCategory = mainCategory,
     subCategory = subCategory,
-    isImportant = isImportant,
+    priority = priority,
     note = note,
 )

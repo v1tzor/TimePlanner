@@ -40,6 +40,8 @@ import ru.aleshin.core.ui.theme.TimePlannerRes
 import ru.aleshin.core.ui.views.CategoryIconMonogram
 import ru.aleshin.core.ui.views.CategoryTextMonogram
 import ru.aleshin.core.ui.views.ExpandedIcon
+import ru.aleshin.features.home.api.domain.entities.schedules.TaskPriority
+import ru.aleshin.features.home.api.presentation.mappers.mapToUi
 import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
 
 /**
@@ -53,7 +55,7 @@ internal fun PlannedTimeTask(
     taskSubTitle: String?,
     taskDurationTitle: String,
     categoryIcon: Painter?,
-    isImportant: Boolean,
+    priority: TaskPriority,
     enabledNotifications: Boolean,
     note: String?,
 ) {
@@ -63,7 +65,7 @@ internal fun PlannedTimeTask(
         onClick = onViewClicked,
         modifier = modifier,
         enabled = true,
-        shape = MaterialTheme.shapes.medium,
+        shape = MaterialTheme.shapes.large,
         tonalElevation = TimePlannerRes.elevations.levelOne,
     ) {
         Column(modifier = Modifier.animateContentSize()) {
@@ -80,14 +82,14 @@ internal fun PlannedTimeTask(
                             icon = categoryIcon,
                             iconDescription = taskTitle,
                             iconColor = MaterialTheme.colorScheme.primary,
-                            badgeEnabled = isImportant,
+                            priority = priority.mapToUi(),
                             backgroundColor = MaterialTheme.colorScheme.primaryContainer,
                         )
                     } else {
                         CategoryTextMonogram(
                             text = taskTitle.first().toString(),
                             textColor = MaterialTheme.colorScheme.primary,
-                            badgeEnabled = isImportant,
+                            priority = priority.mapToUi(),
                             backgroundColor = MaterialTheme.colorScheme.primaryContainer,
                         )
                     }
@@ -137,7 +139,7 @@ internal fun RunningTimeTask(
     taskTitle: String,
     taskSubTitle: String?,
     categoryIcon: Painter?,
-    isImportant: Boolean,
+    priority: TaskPriority,
     note: String?,
 ) {
     var expandedTask by rememberSaveable { mutableStateOf(false) }
@@ -146,8 +148,9 @@ internal fun RunningTimeTask(
     Surface(
         onClick = { expandedTask = !expandedTask },
         modifier = modifier,
-        shape = MaterialTheme.shapes.medium,
+        shape = MaterialTheme.shapes.large,
         color = MaterialTheme.colorScheme.primaryContainer,
+
     ) {
         Column(modifier = Modifier.animateContentSize()) {
             Row(
@@ -163,7 +166,7 @@ internal fun RunningTimeTask(
                             icon = categoryIcon,
                             iconDescription = taskTitle,
                             iconColor = MaterialTheme.colorScheme.onPrimary,
-                            badgeEnabled = isImportant,
+                            priority = priority.mapToUi(),
                             backgroundColor = MaterialTheme.colorScheme.primary,
                         )
                     } else {
@@ -171,7 +174,7 @@ internal fun RunningTimeTask(
                             text = taskTitle.first().toString(),
                             textColor = MaterialTheme.colorScheme.onPrimary,
                             backgroundColor = MaterialTheme.colorScheme.primary,
-                            badgeEnabled = isImportant,
+                            priority = priority.mapToUi(),
                         )
                     }
                 }
@@ -264,7 +267,7 @@ internal fun CompletedTimeTask(
         onClick = onViewClicked,
         enabled = true,
         color = MaterialTheme.colorScheme.tertiaryContainer,
-        shape = MaterialTheme.shapes.medium,
+        shape = MaterialTheme.shapes.large,
     ) {
         Row(
             modifier = Modifier
@@ -330,7 +333,7 @@ internal fun AddTimeTaskView(
     Surface(
         onClick = onViewClicked,
         modifier = modifier.height(46.dp),
-        shape = MaterialTheme.shapes.small,
+        shape = MaterialTheme.shapes.medium,
         color = MaterialTheme.colorScheme.background,
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.surfaceVariant),
     ) {

@@ -22,6 +22,7 @@ import ru.aleshin.features.editor.impl.presentation.models.categories.MainCatego
 import ru.aleshin.features.editor.impl.presentation.models.categories.SubCategoryUi
 import ru.aleshin.features.editor.impl.presentation.models.editmodel.EditModelUi
 import ru.aleshin.features.editor.impl.presentation.models.editmodel.EditParameters
+import ru.aleshin.features.home.api.domain.entities.schedules.TaskPriority
 import java.util.Date
 
 /**
@@ -34,7 +35,7 @@ internal data class UndefinedTaskUi(
     val deadline: Date? = null,
     val mainCategory: MainCategoryUi,
     val subCategory: SubCategoryUi? = null,
-    val isImportant: Boolean = false,
+    val priority: TaskPriority = TaskPriority.STANDARD,
     val note: String? = null,
 ) : Parcelable
 
@@ -48,7 +49,7 @@ internal fun UndefinedTaskUi.convertToEditModel(
     mainCategory = mainCategory,
     subCategory = subCategory,
     parameters = EditParameters(
-        isImportant = isImportant,
+        priority = priority,
     ),
     undefinedTaskId = id,
     note = note,

@@ -26,6 +26,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.dp
 import ru.aleshin.core.ui.theme.TimePlannerRes
+import ru.aleshin.core.ui.views.SegmentedButtonItem
+import ru.aleshin.core.ui.views.SegmentedButtons
 import ru.aleshin.features.editor.impl.presentation.theme.EditorThemeRes
 
 /**
@@ -91,6 +93,52 @@ internal fun ParameterChooser(
                     },
                 )
             }
+        }
+    }
+}
+
+@Composable
+internal fun <Item : SegmentedButtonItem> SegmentedParametersChooser(
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    parameters: Array<Item>,
+    selected: Item,
+    leadingIcon: Painter? = null,
+    title: String,
+    onChangeSelected: (Item) -> Unit,
+) {
+    Surface(
+        modifier = modifier.fillMaxWidth(),
+        shape = MaterialTheme.shapes.medium,
+        tonalElevation = TimePlannerRes.elevations.levelOne,
+    ) {
+        Column(
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+            ) {
+                if (leadingIcon != null) {
+                    Icon(
+                        painter = leadingIcon,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSurface,
+                    )
+                }
+                Text(
+                    text = title,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    style = MaterialTheme.typography.titleMedium,
+                )
+            }
+            SegmentedButtons(
+                enabled = enabled,
+                items = parameters,
+                selectedItem = selected,
+                onItemClick = onChangeSelected,
+            )
         }
     }
 }

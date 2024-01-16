@@ -18,6 +18,7 @@ package ru.aleshin.features.editor.impl.domain.entites
 import ru.aleshin.features.home.api.domain.entities.categories.MainCategory
 import ru.aleshin.features.home.api.domain.entities.categories.SubCategory
 import ru.aleshin.features.home.api.domain.entities.schedules.TaskNotifications
+import ru.aleshin.features.home.api.domain.entities.schedules.TaskPriority
 import ru.aleshin.features.home.api.domain.entities.template.RepeatTime
 import java.util.*
 
@@ -33,7 +34,7 @@ data class EditModel(
     val mainCategory: MainCategory = MainCategory(),
     val subCategory: SubCategory? = null,
     val isCompleted: Boolean = true,
-    val isImportant: Boolean = false,
+    val priority: TaskPriority = TaskPriority.STANDARD,
     val isEnableNotification: Boolean = true,
     val isConsiderInStatistics: Boolean = true,
     val taskNotifications: TaskNotifications = TaskNotifications(),

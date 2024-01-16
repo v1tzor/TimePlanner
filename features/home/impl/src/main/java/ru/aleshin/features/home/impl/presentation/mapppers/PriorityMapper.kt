@@ -13,19 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ru.aleshin.features.editor.impl.presentation.models.editmodel
+package ru.aleshin.features.home.impl.presentation.mapppers
 
-import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
+import androidx.compose.runtime.Composable
+import ru.aleshin.core.ui.theme.TimePlannerRes
 import ru.aleshin.features.home.api.domain.entities.schedules.TaskPriority
 
 /**
- * @author Stanislav Aleshin on 16.05.2023.
+ * @author Stanislav Aleshin on 16.01.2024.
  */
-@Parcelize
-internal data class EditParameters(
-    val priority: TaskPriority = TaskPriority.STANDARD,
-    val isEnableNotification: Boolean = true,
-    val taskNotifications: TaskNotificationsUi = TaskNotificationsUi(),
-    val isConsiderInStatistics: Boolean = true,
-) : Parcelable
+@Composable
+internal fun TaskPriority.mapToString() = when (this) {
+    TaskPriority.STANDARD -> TimePlannerRes.strings.priorityStandard
+    TaskPriority.MEDIUM -> TimePlannerRes.strings.priorityMedium
+    TaskPriority.MAX -> TimePlannerRes.strings.priorityMax
+}

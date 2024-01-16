@@ -13,19 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ru.aleshin.features.editor.impl.presentation.models.editmodel
+package ru.aleshin.features.home.api.presentation.mappers
 
-import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
+import ru.aleshin.core.ui.views.MonogramPriority
 import ru.aleshin.features.home.api.domain.entities.schedules.TaskPriority
 
 /**
- * @author Stanislav Aleshin on 16.05.2023.
+ * @author Stanislav Aleshin on 16.01.2024.
  */
-@Parcelize
-internal data class EditParameters(
-    val priority: TaskPriority = TaskPriority.STANDARD,
-    val isEnableNotification: Boolean = true,
-    val taskNotifications: TaskNotificationsUi = TaskNotificationsUi(),
-    val isConsiderInStatistics: Boolean = true,
-) : Parcelable
+fun TaskPriority.mapToUi() = when (this) {
+    TaskPriority.STANDARD -> MonogramPriority.STANDARD
+    TaskPriority.MEDIUM -> MonogramPriority.MEDIUM
+    TaskPriority.MAX -> MonogramPriority.MAX
+}

@@ -34,7 +34,8 @@ import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.toUpperCase
 import androidx.compose.ui.unit.dp
-import ru.aleshin.core.ui.theme.material.badge
+import ru.aleshin.core.ui.theme.material.badgePriorityMax
+import ru.aleshin.core.ui.theme.material.badgePriorityMedium
 
 @Composable
 fun CategoryIconMonogram(
@@ -42,7 +43,7 @@ fun CategoryIconMonogram(
     icon: Painter,
     iconDescription: String?,
     iconColor: Color,
-    badgeEnabled: Boolean = false,
+    priority: MonogramPriority = MonogramPriority.STANDARD,
     backgroundColor: Color,
 ) = Box(
     modifier = modifier.size(40.dp),
@@ -59,10 +60,10 @@ fun CategoryIconMonogram(
             tint = iconColor,
         )
     }
-    if (badgeEnabled) {
-        ImportanceBadge(
+    if (priority != MonogramPriority.STANDARD) {
+        MonogramBadge(
             modifier = Modifier.align(Alignment.TopEnd),
-            color = badge,
+            color = if (priority == MonogramPriority.MEDIUM) badgePriorityMedium else badgePriorityMax,
         )
     }
 }
@@ -73,7 +74,7 @@ fun CategoryTextMonogram(
     text: String,
     textColor: Color,
     backgroundColor: Color,
-    badgeEnabled: Boolean = false,
+    priority: MonogramPriority = MonogramPriority.STANDARD,
 ) = Box(
     modifier = modifier.size(40.dp),
     contentAlignment = Alignment.Center,
@@ -90,24 +91,28 @@ fun CategoryTextMonogram(
             style = MaterialTheme.typography.titleMedium,
         )
     }
-    if (badgeEnabled) {
-        ImportanceBadge(
+    if (priority != MonogramPriority.STANDARD) {
+        MonogramBadge(
             modifier = Modifier.align(Alignment.TopEnd),
-            color = badge,
+            color = if (priority == MonogramPriority.MEDIUM) badgePriorityMedium else badgePriorityMax,
         )
     }
 }
 
 @Composable
-fun ImportanceBadge(
+fun MonogramBadge(
     modifier: Modifier = Modifier,
-    color: Color = badge,
+    color: Color = badgePriorityMax,
 ) {
     Box(
         modifier = modifier
-            .padding(vertical = 4.dp, horizontal = 2.dp)
-            .size(7.dp)
+            .padding(vertical = 4.dp, horizontal = 0.dp)
+            .size(8.dp)
             .clip(RoundedCornerShape(100.dp))
             .background(color),
     )
+}
+
+enum class MonogramPriority {
+    STANDARD, MEDIUM, MAX
 }

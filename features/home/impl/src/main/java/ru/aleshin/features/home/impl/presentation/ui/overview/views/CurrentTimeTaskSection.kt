@@ -53,6 +53,7 @@ import ru.aleshin.core.ui.views.CategoryIconMonogram
 import ru.aleshin.core.ui.views.CategoryTextMonogram
 import ru.aleshin.core.ui.views.PlaceholderBox
 import ru.aleshin.features.home.api.presentation.mappers.mapToIconPainter
+import ru.aleshin.features.home.api.presentation.mappers.mapToUi
 import ru.aleshin.features.home.impl.presentation.models.schedules.TimeTaskUi
 import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
 import ru.aleshin.features.home.impl.presentation.ui.home.views.TimeTaskTitles
@@ -132,7 +133,7 @@ internal fun CurrentTimeTaskView(
                             icon = categoryIcon,
                             iconDescription = null,
                             iconColor = MaterialTheme.colorScheme.onPrimary,
-                            badgeEnabled = model.isImportant,
+                            priority = model.priority.mapToUi(),
                             backgroundColor = MaterialTheme.colorScheme.primary,
                         )
                     } else {
@@ -140,7 +141,7 @@ internal fun CurrentTimeTaskView(
                             text = model.mainCategory.fetchName()?.first().toString(),
                             textColor = MaterialTheme.colorScheme.onPrimary,
                             backgroundColor = MaterialTheme.colorScheme.primary,
-                            badgeEnabled = model.isImportant,
+                            priority = model.priority.mapToUi(),
                         )
                     }
                 }

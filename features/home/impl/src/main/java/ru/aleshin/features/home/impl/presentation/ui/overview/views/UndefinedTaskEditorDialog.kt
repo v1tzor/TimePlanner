@@ -54,12 +54,13 @@ import ru.aleshin.core.ui.theme.TimePlannerRes
 import ru.aleshin.core.ui.views.DialogButtons
 import ru.aleshin.core.utils.extensions.generateUniqueKey
 import ru.aleshin.core.utils.functional.Constants
+import ru.aleshin.features.home.api.domain.entities.schedules.TaskPriority
 import ru.aleshin.features.home.impl.presentation.models.categories.CategoriesUi
 import ru.aleshin.features.home.impl.presentation.models.categories.MainCategoryUi
 import ru.aleshin.features.home.impl.presentation.models.schedules.UndefinedTaskUi
 import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
 import ru.aleshin.features.home.impl.presentation.ui.common.CompactCategoryChooser
-import ru.aleshin.features.home.impl.presentation.ui.common.CompactImportanceChooser
+import ru.aleshin.features.home.impl.presentation.ui.common.PriorityChooser
 import ru.aleshin.features.home.impl.presentation.ui.common.CompactSubCategoryChooser
 import java.util.Date
 
@@ -80,7 +81,7 @@ internal fun UndefinedTaskEditorDialog(
     var subCategory by remember { mutableStateOf(model?.subCategory) }
     var note by remember { mutableStateOf(model?.note) }
     var deadline by remember { mutableStateOf(model?.deadline) }
-    var isImportance by remember { mutableStateOf(model?.isImportant ?: false) }
+    var priority by remember { mutableStateOf(model?.priority ?: TaskPriority.STANDARD) }
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -119,9 +120,9 @@ internal fun UndefinedTaskEditorDialog(
                         deadline = deadline,
                         onChooseDeadline = { deadline = it },
                     )
-                    CompactImportanceChooser(
-                        isImportance = isImportance,
-                        onImportanceChange = { isImportance = it },
+                    PriorityChooser(
+                        priority = priority,
+                        onPriorityChange = { priority = it },
                     )
                 }
 
@@ -139,7 +140,7 @@ internal fun UndefinedTaskEditorDialog(
                                 createdAt = Date(),
                                 mainCategory = mainCategory,
                                 subCategory = subCategory,
-                                isImportant = isImportance,
+                                priority = priority,
                                 deadline = deadline,
                                 note = note,
                             )

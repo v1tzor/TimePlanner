@@ -84,7 +84,10 @@ val pink_theme_dark_outlineVariant = Color(0xFF514346)
 val pink_theme_dark_scrim = Color(0xFF000000)
 
 val pinkSeed = Color(0xFF9D51A2)
+
 val badge = Color(0xFFDB1C11)
+val badgePriorityMax = Color(0xFFDB1C11)
+val badgePriorityMedium = Color(0xFFFF9800)
 
 val splashGradientColors = listOf(Color(0xFFF857A6), Color(0xFFFF5858))
 val onSplashGradient = Color(0xFFFFFFFF)

@@ -68,13 +68,17 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
+import ru.aleshin.core.ui.theme.material.badgePriorityMax
+import ru.aleshin.core.ui.theme.material.badgePriorityMedium
 import ru.aleshin.core.ui.theme.material.surfaceOne
 import ru.aleshin.core.ui.theme.material.surfaceThree
 import ru.aleshin.core.ui.theme.material.surfaceTwo
-import ru.aleshin.core.ui.views.ImportanceBadge
+import ru.aleshin.core.ui.views.MonogramBadge
+import ru.aleshin.core.ui.views.MonogramPriority
 import ru.aleshin.core.ui.views.PlaceholderBox
 import ru.aleshin.core.ui.views.toDaysTitle
 import ru.aleshin.core.utils.functional.Constants
+import ru.aleshin.features.home.api.domain.entities.schedules.TaskPriority
 import ru.aleshin.features.home.api.presentation.mappers.mapToIconPainter
 import ru.aleshin.features.home.impl.presentation.models.categories.CategoriesUi
 import ru.aleshin.features.home.impl.presentation.models.schedules.UndefinedTaskUi
@@ -300,8 +304,13 @@ internal fun UndefinedTaskItem(
                         overflow = TextOverflow.Ellipsis,
                         style = MaterialTheme.typography.titleMedium,
                     )
-                    if (model.isImportant) {
-                        ImportanceBadge()
+                    if (model.priority.isImportant()) {
+                        MonogramBadge(
+                            color = when (model.priority == TaskPriority.MEDIUM) {
+                                true -> badgePriorityMedium
+                                false -> badgePriorityMax
+                            }
+                        )
                     }
                 }
                 Text(

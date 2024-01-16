@@ -19,6 +19,7 @@ import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 import ru.aleshin.core.utils.extensions.duration
 import ru.aleshin.core.utils.functional.TimeRange
+import ru.aleshin.features.home.api.domain.entities.schedules.TaskPriority
 import ru.aleshin.features.home.api.domain.entities.schedules.TimeTaskStatus
 import ru.aleshin.features.home.impl.presentation.models.categories.MainCategoryUi
 import ru.aleshin.features.home.impl.presentation.models.categories.SubCategoryUi
@@ -41,7 +42,7 @@ internal data class TimeTaskUi(
     val mainCategory: MainCategoryUi,
     val subCategory: SubCategoryUi? = null,
     val isCompleted: Boolean = true,
-    val isImportant: Boolean = false,
+    val priority: TaskPriority = TaskPriority.STANDARD,
     val isEnableNotification: Boolean = true,
     val taskNotifications: TaskNotificationsUi = TaskNotificationsUi(),
     val isConsiderInStatistics: Boolean = true,

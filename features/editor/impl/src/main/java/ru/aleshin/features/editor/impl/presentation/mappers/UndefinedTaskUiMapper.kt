@@ -27,7 +27,7 @@ internal fun UndefinedTaskUi.mapToDomain() = UndefinedTask(
     deadline = deadline,
     mainCategory = mainCategory.mapToDomain(),
     subCategory = subCategory?.mapToDomain(),
-    isImportant = isImportant,
+    priority = priority,
     note = note,
 )
 
@@ -37,6 +37,6 @@ internal fun UndefinedTask.mapToUi() = UndefinedTaskUi(
     deadline = deadline,
     mainCategory = mainCategory.mapToUi(),
     subCategory = subCategory?.mapToUi(),
-    isImportant = isImportant,
+    priority = priority,
     note = note,
 )

@@ -20,6 +20,7 @@ import ru.aleshin.features.home.api.data.mappers.categories.mapToDomain
 import ru.aleshin.features.home.api.data.models.template.TemplateCompound
 import ru.aleshin.features.home.api.data.models.template.TemplateDetails
 import ru.aleshin.features.home.api.data.models.template.TemplateEntity
+import ru.aleshin.features.home.api.domain.entities.schedules.TaskPriority
 import ru.aleshin.features.home.api.domain.entities.template.Template
 
 /**
@@ -30,7 +31,11 @@ fun TemplateDetails.mapToDomain() = Template(
     endTime = template.endTime.mapToDate(),
     category = mainCategory.mapToDomain(),
     subCategory = subCategory?.mapToDomain(mainCategory.mapToDomain()),
-    isImportant = template.isImportant,
+    priority = when {
+        template.isImportantMax -> TaskPriority.MAX
+        template.isImportantMedium -> TaskPriority.MEDIUM
+        else -> TaskPriority.STANDARD
+    },
     isEnableNotification = template.isEnableNotification,
     isConsiderInStatistics = template.isConsiderInStatistics,
     templateId = template.id,
@@ -47,7 +52,8 @@ fun Template.mapToData() = TemplateCompound(
         endTime = endTime.time,
         categoryId = category.id,
         subCategoryId = subCategory?.id,
-        isImportant = isImportant,
+        isImportantMedium = priority == TaskPriority.MEDIUM,
+        isImportantMax = priority == TaskPriority.MAX,
         isEnableNotification = isEnableNotification,
         isConsiderInStatistics = isConsiderInStatistics,
         repeatEnabled = repeatEnabled,

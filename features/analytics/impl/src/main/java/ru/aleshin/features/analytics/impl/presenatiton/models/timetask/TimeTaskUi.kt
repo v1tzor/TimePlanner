@@ -20,6 +20,7 @@ import kotlinx.parcelize.Parcelize
 import ru.aleshin.core.utils.functional.TimeRange
 import ru.aleshin.features.analytics.impl.presenatiton.models.categories.MainCategoryUi
 import ru.aleshin.features.analytics.impl.presenatiton.models.categories.SubCategoryUi
+import ru.aleshin.features.home.api.domain.entities.schedules.TaskPriority
 import java.util.Date
 
 /**
@@ -33,7 +34,7 @@ internal data class TimeTaskUi(
     val category: MainCategoryUi,
     val subCategory: SubCategoryUi? = null,
     val isCompleted: Boolean = true,
-    val isImportant: Boolean = false,
+    val priority: TaskPriority = TaskPriority.STANDARD,
     val isEnableNotification: Boolean = true,
     val taskNotifications: TaskNotificationsUi = TaskNotificationsUi(),
     val isConsiderInStatistics: Boolean = true,

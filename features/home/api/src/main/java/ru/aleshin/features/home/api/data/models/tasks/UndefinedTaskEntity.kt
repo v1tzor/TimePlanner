@@ -48,6 +48,7 @@ data class UndefinedTaskEntity(
     @ColumnInfo("deadline") val deadline: Long? = null,
     @ColumnInfo("main_category_id", index = true) val mainCategoryId: Int,
     @ColumnInfo("sub_category_id", index = true) val subCategoryId: Int?,
-    @ColumnInfo("is_important") val isImportant: Boolean,
+    @ColumnInfo("is_important") val isImportantMax: Boolean,
+    @ColumnInfo("is_medium_important", defaultValue = "0") val isImportantMedium: Boolean,
     @ColumnInfo("note") val note: String? = null,
 )

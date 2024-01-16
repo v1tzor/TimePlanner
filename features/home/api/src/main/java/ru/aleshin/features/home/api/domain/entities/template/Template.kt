@@ -21,6 +21,7 @@ import ru.aleshin.core.utils.functional.DateSerializer
 import ru.aleshin.core.utils.functional.Mapper
 import ru.aleshin.features.home.api.domain.entities.categories.MainCategory
 import ru.aleshin.features.home.api.domain.entities.categories.SubCategory
+import ru.aleshin.features.home.api.domain.entities.schedules.TaskPriority
 import ru.aleshin.features.home.api.domain.entities.schedules.TimeTask
 import java.util.*
 
@@ -36,7 +37,7 @@ data class Template(
     val endTime: Date,
     val category: MainCategory,
     val subCategory: SubCategory? = null,
-    val isImportant: Boolean = false,
+    val priority: TaskPriority = TaskPriority.STANDARD,
     val isEnableNotification: Boolean = true,
     val isConsiderInStatistics: Boolean = true,
     val repeatEnabled: Boolean = false,
@@ -53,7 +54,7 @@ data class Template(
         endTime.compareByHoursAndMinutes(timeTask.timeRange.to) &&
         category.id == timeTask.category.id &&
         subCategory == timeTask.subCategory &&
-        isImportant == timeTask.isImportant &&
+        priority == timeTask.priority &&
         isEnableNotification == timeTask.isEnableNotification &&
         isConsiderInStatistics == timeTask.isConsiderInStatistics
 }

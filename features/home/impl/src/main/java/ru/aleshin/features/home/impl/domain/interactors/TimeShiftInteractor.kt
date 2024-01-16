@@ -75,7 +75,7 @@ internal interface TimeShiftInteractor {
             } else {
                 when (nextTime.to.time - shiftTime.time > 0) {
                     true -> {
-                        if (nextTimeTask.isImportant || nextTimeTaskTemplate?.checkDateIsRepeat(Date()) == true) {
+                        if (nextTimeTask.priority.isImportant() || nextTimeTaskTemplate?.checkDateIsRepeat(Date()) == true) {
                             throw TimeTaskImportanceException()
                         }
                         val shiftTask = task.copy(timeRange = task.timeRange.copy(to = shiftTime))

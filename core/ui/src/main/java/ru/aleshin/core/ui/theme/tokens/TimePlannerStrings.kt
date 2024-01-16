@@ -89,6 +89,9 @@ data class TimePlannerStrings(
     val decemberTitle: String,
     val beforeTaskNotifyText: String,
     val afterTaskNotifyText: String,
+    val priorityStandard: String,
+    val priorityMedium: String,
+    val priorityMax: String,
 )
 
 internal val russianTimePlannerString = TimePlannerStrings(
@@ -160,6 +163,9 @@ internal val russianTimePlannerString = TimePlannerStrings(
     decemberTitle = "Декабрь",
     beforeTaskNotifyText = "Напоминание о приближающемся событии",
     afterTaskNotifyText = "Конец события",
+    priorityStandard = "Обычный",
+    priorityMedium = "Средний",
+    priorityMax = "Макс.",
 )
 
 internal val englishTimePlannerString = TimePlannerStrings(
@@ -231,6 +237,9 @@ internal val englishTimePlannerString = TimePlannerStrings(
     decemberTitle = "December",
     beforeTaskNotifyText = "Reminder of an upcoming event",
     afterTaskNotifyText = "End of the event",
+    priorityStandard = "Standard",
+    priorityMedium = "Medium",
+    priorityMax = "Max",
 )
 
 internal val germanTimePlannerString = TimePlannerStrings(
@@ -302,6 +311,9 @@ internal val germanTimePlannerString = TimePlannerStrings(
     decemberTitle = "Dezember",
     beforeTaskNotifyText = "Erinnerung an ein nahendes Ereignis",
     afterTaskNotifyText = "Ende des Ereignisses",
+    priorityStandard = "Gewöhnlich",
+    priorityMedium = "Mittel",
+    priorityMax = "Max.",
 )
 
 internal val spanishTimePlannerString = TimePlannerStrings(
@@ -373,6 +385,9 @@ internal val spanishTimePlannerString = TimePlannerStrings(
     decemberTitle = "Diciembre",
     beforeTaskNotifyText = "Recordatorio de un evento inminente",
     afterTaskNotifyText = "Fin del evento",
+    priorityStandard = "Normal",
+    priorityMedium = "Promedio",
+    priorityMax = "Máximo",
 )
 
 internal val persianTimePlannerString = TimePlannerStrings(
@@ -444,6 +459,9 @@ internal val persianTimePlannerString = TimePlannerStrings(
     decemberTitle = "دسامبر",
     beforeTaskNotifyText = "یادآوری یک رویداد آینده",
     afterTaskNotifyText = "پایان رویداد",
+    priorityStandard = "استاندارد",
+    priorityMedium = "میانگین",
+    priorityMax = "حداکثر",
 )
 
 internal val frenchTimePlannerString = TimePlannerStrings(
@@ -515,6 +533,9 @@ internal val frenchTimePlannerString = TimePlannerStrings(
     decemberTitle = "Décembre",
     beforeTaskNotifyText = "Rappel de l'événement qui approche",
     afterTaskNotifyText = "Fin de l'événement",
+    priorityStandard = "Ordinaire",
+    priorityMedium = "Moyen",
+    priorityMax = "Max.",
 )
 
 internal val brazilianPortugueseTimePlannerString = TimePlannerStrings(
@@ -586,6 +607,9 @@ internal val brazilianPortugueseTimePlannerString = TimePlannerStrings(
     decemberTitle = "Dezembro",
     beforeTaskNotifyText = "Lembrete de um próximo evento",
     afterTaskNotifyText = "Fim do evento",
+    priorityStandard = "Usual",
+    priorityMedium = "Média",
+    priorityMax = "Máximo",
 )
 
 internal val turkishTimePlannerString = TimePlannerStrings(
@@ -657,6 +681,9 @@ internal val turkishTimePlannerString = TimePlannerStrings(
     decemberTitle = "Aralık",
     beforeTaskNotifyText = "Yaklaşan bir etkinlik hatırlatması",
     afterTaskNotifyText = "Etkinliğin sonu",
+    priorityStandard = "Normal",
+    priorityMedium = "Orta",
+    priorityMax = "Azami",
 )
 
 internal val vietnameseTimePlannerString = TimePlannerStrings(
@@ -692,7 +719,7 @@ internal val vietnameseTimePlannerString = TimePlannerStrings(
     hoursTitle = "Giờ",
     minutesTitle = "Phút",
     dayTitle = "d.",
-    homeTabTitle =	"Trang chủ",
+    homeTabTitle = "Trang chủ",
     analyticsTabTitle = "Phân tích",
     settingsTabTitle = "Thiết đặt",
     mainDrawerTitle = "Chủ yếu",
@@ -709,7 +736,7 @@ internal val vietnameseTimePlannerString = TimePlannerStrings(
     repeatTimeDayInYearTitle = "Mỗi năm",
     sundayTitle = "Chủ nhật",
     mondayTitle = "Thứ hai",
-    tuesdayTitle =	"Thứ ba",
+    tuesdayTitle = "Thứ ba",
     wednesdayTitle = "Thứ Tư",
     thursdayTitle = "Thứ năm",
     fridayTitle = "Thứ sáu",
@@ -728,6 +755,9 @@ internal val vietnameseTimePlannerString = TimePlannerStrings(
     decemberTitle = "Tháng mười hai",
     beforeTaskNotifyText = "Lời nhắc về sự kiện sắp tới",
     afterTaskNotifyText = "Kết thúc sự kiện",
+    priorityStandard = "Thông thường",
+    priorityMedium = "Trung bình",
+    priorityMax = "Tối đa",
 )
 
 internal val polishTimePlannerString = TimePlannerStrings(
@@ -799,6 +829,9 @@ internal val polishTimePlannerString = TimePlannerStrings(
     decemberTitle = "Grudzień",
     beforeTaskNotifyText = "Przypomnienie o nadchodzącym wydarzeniu",
     afterTaskNotifyText = "Koniec wydarzenia",
+    priorityStandard = "Zwykły",
+    priorityMedium = "Średni",
+    priorityMax = "Max.",
 )
 
 val LocalTimePlannerStrings = staticCompositionLocalOf<TimePlannerStrings> {
