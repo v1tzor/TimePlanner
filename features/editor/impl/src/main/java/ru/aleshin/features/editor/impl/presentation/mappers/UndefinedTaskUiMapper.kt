@@ -15,8 +15,8 @@
  */
 package ru.aleshin.features.editor.impl.presentation.mappers
 
+import ru.aleshin.core.domain.entities.schedules.UndefinedTask
 import ru.aleshin.features.editor.impl.presentation.models.tasks.UndefinedTaskUi
-import ru.aleshin.features.home.api.domain.entities.schedules.UndefinedTask
 
 /**
  * @author Stanislav Aleshin on 02.11.2023.

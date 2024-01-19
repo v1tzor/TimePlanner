@@ -58,10 +58,10 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import ru.aleshin.core.domain.entities.categories.DefaultCategoryType
+import ru.aleshin.core.ui.mappers.mapToIconPainter
 import ru.aleshin.core.ui.theme.TimePlannerRes
 import ru.aleshin.core.ui.views.WarningDeleteDialog
-import ru.aleshin.features.home.api.domain.entities.categories.DefaultCategoryType
-import ru.aleshin.features.home.api.presentation.mappers.mapToIconPainter
 import ru.aleshin.features.home.impl.presentation.models.categories.MainCategoryUi
 import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
 

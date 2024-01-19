@@ -17,9 +17,9 @@ package ru.aleshin.features.home.impl.presentation.models.schedules
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
+import ru.aleshin.core.domain.entities.schedules.TaskPriority
+import ru.aleshin.core.domain.entities.schedules.TimeTaskStatus
 import ru.aleshin.core.utils.functional.TimeRange
-import ru.aleshin.features.home.api.domain.entities.schedules.TaskPriority
-import ru.aleshin.features.home.api.domain.entities.schedules.TimeTaskStatus
 import ru.aleshin.features.home.impl.presentation.models.categories.MainCategoryUi
 import ru.aleshin.features.home.impl.presentation.models.categories.SubCategoryUi
 import java.util.Date

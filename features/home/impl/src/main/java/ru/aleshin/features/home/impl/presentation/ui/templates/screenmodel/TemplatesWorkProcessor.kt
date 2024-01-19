@@ -17,6 +17,10 @@ package ru.aleshin.features.home.impl.presentation.ui.templates.screenmodel
 
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
+import ru.aleshin.core.domain.entities.template.RepeatTime
+import ru.aleshin.core.domain.entities.template.Template
+import ru.aleshin.core.ui.notifications.TemplatesAlarmManager
+import ru.aleshin.core.ui.notifications.TimeTaskAlarmManager
 import ru.aleshin.core.utils.extensions.duration
 import ru.aleshin.core.utils.functional.Either
 import ru.aleshin.core.utils.functional.collectAndHandle
@@ -25,10 +29,6 @@ import ru.aleshin.core.utils.platform.screenmodel.work.ActionResult
 import ru.aleshin.core.utils.platform.screenmodel.work.EffectResult
 import ru.aleshin.core.utils.platform.screenmodel.work.FlowWorkProcessor
 import ru.aleshin.core.utils.platform.screenmodel.work.WorkCommand
-import ru.aleshin.features.editor.api.presentation.TemplatesAlarmManager
-import ru.aleshin.features.editor.api.presentation.TimeTaskAlarmManager
-import ru.aleshin.features.home.api.domain.entities.template.RepeatTime
-import ru.aleshin.features.home.api.domain.entities.template.Template
 import ru.aleshin.features.home.impl.domain.interactors.CategoriesInteractor
 import ru.aleshin.features.home.impl.domain.interactors.RepeatTaskInteractor
 import ru.aleshin.features.home.impl.domain.interactors.TemplatesInteractor

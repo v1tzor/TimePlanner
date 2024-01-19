@@ -35,7 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import ru.aleshin.features.home.api.domain.entities.schedules.TaskPriority
+import ru.aleshin.core.domain.entities.schedules.TaskPriority
 import ru.aleshin.features.home.impl.presentation.mapppers.mapToString
 import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
 

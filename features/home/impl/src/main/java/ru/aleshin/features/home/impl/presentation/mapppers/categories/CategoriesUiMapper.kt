@@ -15,9 +15,9 @@
  */
 package ru.aleshin.features.home.impl.presentation.mapppers.categories
 
-import ru.aleshin.features.home.api.domain.entities.categories.Categories
-import ru.aleshin.features.home.api.domain.entities.categories.MainCategory
-import ru.aleshin.features.home.api.domain.entities.categories.SubCategory
+import ru.aleshin.core.domain.entities.categories.Categories
+import ru.aleshin.core.domain.entities.categories.MainCategory
+import ru.aleshin.core.domain.entities.categories.SubCategory
 import ru.aleshin.features.home.impl.presentation.models.categories.CategoriesUi
 import ru.aleshin.features.home.impl.presentation.models.categories.MainCategoryUi
 import ru.aleshin.features.home.impl.presentation.models.categories.SubCategoryUi

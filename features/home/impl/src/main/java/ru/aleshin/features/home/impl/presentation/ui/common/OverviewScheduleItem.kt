@@ -37,11 +37,11 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import ru.aleshin.core.domain.entities.schedules.DailyScheduleStatus
 import ru.aleshin.core.ui.theme.TimePlannerRes
 import ru.aleshin.core.ui.theme.material.surfaceThree
 import ru.aleshin.core.ui.theme.material.surfaceTwo
 import ru.aleshin.core.utils.extensions.isCurrentDay
-import ru.aleshin.features.home.api.domain.entities.schedules.DailyScheduleStatus
 import ru.aleshin.features.home.impl.presentation.models.schedules.ScheduleUi
 import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
 import java.text.SimpleDateFormat

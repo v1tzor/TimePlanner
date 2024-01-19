@@ -17,11 +17,11 @@ package ru.aleshin.features.editor.impl.presentation.models.editmodel
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
+import ru.aleshin.core.domain.entities.template.RepeatTime
 import ru.aleshin.core.utils.extensions.duration
 import ru.aleshin.core.utils.functional.TimeRange
 import ru.aleshin.features.editor.impl.presentation.models.categories.MainCategoryUi
 import ru.aleshin.features.editor.impl.presentation.models.categories.SubCategoryUi
-import ru.aleshin.features.home.api.domain.entities.template.RepeatTime
 import java.util.Date
 
 /**

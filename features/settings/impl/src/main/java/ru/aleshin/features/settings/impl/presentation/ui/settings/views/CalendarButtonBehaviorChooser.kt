@@ -25,9 +25,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import ru.aleshin.core.domain.entities.settings.CalendarButtonBehavior
+import ru.aleshin.core.domain.entities.settings.CalendarButtonBehavior.*
 import ru.aleshin.core.ui.theme.TimePlannerRes
-import ru.aleshin.core.ui.views.CalendarButtonBehavior
-import ru.aleshin.core.ui.views.CalendarButtonBehavior.*
 import ru.aleshin.core.ui.views.SegmentedButtonItem
 import ru.aleshin.core.ui.views.SegmentedButtons
 import ru.aleshin.features.settings.impl.presentation.theme.SettingsThemeRes

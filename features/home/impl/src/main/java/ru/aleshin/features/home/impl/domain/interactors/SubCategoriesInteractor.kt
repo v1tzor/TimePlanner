@@ -15,9 +15,9 @@
  */
 package ru.aleshin.features.home.impl.domain.interactors
 
+import ru.aleshin.core.domain.entities.categories.SubCategory
+import ru.aleshin.core.domain.repository.SubCategoriesRepository
 import ru.aleshin.core.utils.functional.UnitDomainResult
-import ru.aleshin.features.home.api.domain.entities.categories.SubCategory
-import ru.aleshin.features.home.api.domain.repository.SubCategoriesRepository
 import ru.aleshin.features.home.impl.domain.common.HomeEitherWrapper
 import ru.aleshin.features.home.impl.domain.entities.HomeFailures
 import javax.inject.Inject

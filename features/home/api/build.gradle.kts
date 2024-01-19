@@ -16,9 +16,6 @@
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
-    id("kotlin-parcelize")
-    kotlin("plugin.serialization") version "1.8.21"
-    kotlin("kapt")
 }
 
 repositories {
@@ -70,12 +67,6 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
-
-    kapt {
-        arguments {
-            arg("room.schemaLocation", "$projectDir/schemas")
-        }
-    }
 }
 
 dependencies {
@@ -83,22 +74,15 @@ dependencies {
     implementation(project(":module-injector"))
     implementation(project(":core:utils"))
     implementation(project(":core:ui"))
+    implementation(project(":core:domain"))
 
     implementation(Dependencies.Voyager.navigator)
 
     implementation(Dependencies.AndroidX.core)
     implementation(Dependencies.AndroidX.appcompat)
     implementation(Dependencies.AndroidX.material)
-    implementation(Dependencies.AndroidX.serialization)
-
-    implementation(Dependencies.Compose.ui)
-    implementation(Dependencies.Compose.activity)
 
     implementation(Dependencies.Dagger.core)
-
-    implementation(Dependencies.Room.core)
-    implementation(Dependencies.Room.ktx)
-    kapt(Dependencies.Room.kapt)
 
     testImplementation(Dependencies.Test.jUnit)
     androidTestImplementation(Dependencies.Test.jUnitExt)

@@ -62,6 +62,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
+import ru.aleshin.core.ui.mappers.mapToIconPainter
 import ru.aleshin.core.ui.theme.TimePlannerRes
 import ru.aleshin.core.ui.theme.material.surfaceOne
 import ru.aleshin.core.utils.extensions.isCurrentDay
@@ -70,7 +71,6 @@ import ru.aleshin.features.analytics.impl.presenatiton.models.analytics.Planning
 import ru.aleshin.features.analytics.impl.presenatiton.models.analytics.PlanningAnalyticsUi
 import ru.aleshin.features.analytics.impl.presenatiton.models.timetask.TimeTaskUi
 import ru.aleshin.features.analytics.impl.presenatiton.theme.AnalyticsThemeRes
-import ru.aleshin.features.home.api.presentation.mappers.mapToIconPainter
 import java.text.SimpleDateFormat
 import java.text.SimpleDateFormat.SHORT
 import java.util.Locale

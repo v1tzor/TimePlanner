@@ -18,6 +18,10 @@ package ru.aleshin.features.settings.impl.presentation.ui.settings.screensmodel
 import android.net.Uri
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.flow
+import ru.aleshin.core.domain.entities.schedules.TimeTask
+import ru.aleshin.core.domain.entities.template.Template
+import ru.aleshin.core.ui.notifications.TemplatesAlarmManager
+import ru.aleshin.core.ui.notifications.TimeTaskAlarmManager
 import ru.aleshin.core.utils.extensions.extractAllItem
 import ru.aleshin.core.utils.functional.Either
 import ru.aleshin.core.utils.functional.handle
@@ -27,10 +31,6 @@ import ru.aleshin.core.utils.platform.screenmodel.work.EffectResult
 import ru.aleshin.core.utils.platform.screenmodel.work.FlowWorkProcessor
 import ru.aleshin.core.utils.platform.screenmodel.work.WorkCommand
 import ru.aleshin.core.utils.platform.screenmodel.work.WorkResult
-import ru.aleshin.features.editor.api.presentation.TemplatesAlarmManager
-import ru.aleshin.features.editor.api.presentation.TimeTaskAlarmManager
-import ru.aleshin.features.home.api.domain.entities.schedules.TimeTask
-import ru.aleshin.features.home.api.domain.entities.template.Template
 import ru.aleshin.features.settings.impl.domain.common.SettingsFailures
 import ru.aleshin.features.settings.impl.domain.interactors.CategoriesInteractor
 import ru.aleshin.features.settings.impl.domain.interactors.ScheduleInteractor

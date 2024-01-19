@@ -41,7 +41,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import ru.aleshin.core.ui.views.PlaceholderBox
 import ru.aleshin.core.utils.functional.Constants
-import ru.aleshin.features.home.api.domain.entities.schedules.DailyScheduleStatus.*
 import ru.aleshin.features.home.impl.presentation.models.schedules.ScheduleUi
 import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
 import ru.aleshin.features.home.impl.presentation.ui.common.OverviewScheduleItem

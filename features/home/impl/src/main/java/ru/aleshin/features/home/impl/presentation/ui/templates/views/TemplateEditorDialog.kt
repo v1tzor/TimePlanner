@@ -51,6 +51,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import ru.aleshin.core.domain.entities.schedules.TaskPriority
 import ru.aleshin.core.ui.theme.TimePlannerRes
 import ru.aleshin.core.ui.views.DialogButtons
 import ru.aleshin.core.ui.views.TimeFormatSelector
@@ -58,14 +59,13 @@ import ru.aleshin.core.utils.extensions.generateUniqueKey
 import ru.aleshin.core.utils.extensions.setHoursAndMinutes
 import ru.aleshin.core.utils.extensions.shiftDay
 import ru.aleshin.core.utils.functional.TimeFormat
-import ru.aleshin.features.home.api.domain.entities.schedules.TaskPriority
 import ru.aleshin.features.home.impl.presentation.models.categories.CategoriesUi
 import ru.aleshin.features.home.impl.presentation.models.categories.MainCategoryUi
 import ru.aleshin.features.home.impl.presentation.models.templates.TemplateUi
 import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
 import ru.aleshin.features.home.impl.presentation.ui.common.CompactCategoryChooser
-import ru.aleshin.features.home.impl.presentation.ui.common.PriorityChooser
 import ru.aleshin.features.home.impl.presentation.ui.common.CompactSubCategoryChooser
+import ru.aleshin.features.home.impl.presentation.ui.common.PriorityChooser
 import java.util.Calendar
 
 /**

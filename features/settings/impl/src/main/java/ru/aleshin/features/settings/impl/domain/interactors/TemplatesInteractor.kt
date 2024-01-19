@@ -16,10 +16,10 @@
 package ru.aleshin.features.settings.impl.domain.interactors
 
 import kotlinx.coroutines.flow.first
+import ru.aleshin.core.domain.entities.template.Template
+import ru.aleshin.core.domain.repository.TemplatesRepository
 import ru.aleshin.core.utils.functional.DomainResult
 import ru.aleshin.core.utils.functional.UnitDomainResult
-import ru.aleshin.features.home.api.domain.entities.template.Template
-import ru.aleshin.features.home.api.domain.repository.TemplatesRepository
 import ru.aleshin.features.settings.impl.domain.common.SettingsEitherWrapper
 import ru.aleshin.features.settings.impl.domain.common.SettingsFailures
 import javax.inject.Inject

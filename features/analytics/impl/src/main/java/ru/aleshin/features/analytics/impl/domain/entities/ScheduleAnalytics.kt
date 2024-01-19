@@ -15,8 +15,8 @@
  */
 package ru.aleshin.features.analytics.impl.domain.entities
 
+import ru.aleshin.core.domain.entities.schedules.TimeTask
 import ru.aleshin.core.utils.functional.TimeRange
-import ru.aleshin.features.home.api.domain.entities.schedules.TimeTask
 
 /**
  * @author Stanislav Aleshin on 30.04.2023.

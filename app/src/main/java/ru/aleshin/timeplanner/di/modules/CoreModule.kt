@@ -17,15 +17,15 @@ package ru.aleshin.timeplanner.di.modules
 
 import dagger.Binds
 import dagger.Module
+import ru.aleshin.core.domain.common.ScheduleStatusChecker
+import ru.aleshin.core.domain.common.TimeTaskStatusChecker
 import ru.aleshin.core.utils.managers.CoroutineManager
 import ru.aleshin.core.utils.managers.DateManager
 import ru.aleshin.core.utils.managers.TimeOverlayManager
 import ru.aleshin.core.utils.notifications.NotificationCreator
-import ru.aleshin.features.editor.api.presentation.AlarmReceiverProvider
-import ru.aleshin.features.editor.api.presentation.TemplatesAlarmManager
-import ru.aleshin.features.editor.api.presentation.TimeTaskAlarmManager
-import ru.aleshin.features.home.api.domain.common.ScheduleStatusChecker
-import ru.aleshin.features.home.api.domain.common.TimeTaskStatusChecker
+import ru.aleshin.core.ui.notifications.AlarmReceiverProvider
+import ru.aleshin.core.ui.notifications.TemplatesAlarmManager
+import ru.aleshin.core.ui.notifications.TimeTaskAlarmManager
 import ru.aleshin.timeplanner.navigation.GlobalNavigationManager
 import ru.aleshin.timeplanner.navigation.TabNavigationManager
 import ru.aleshin.timeplanner.presentation.receiver.AlarmReceiverProviderImpl

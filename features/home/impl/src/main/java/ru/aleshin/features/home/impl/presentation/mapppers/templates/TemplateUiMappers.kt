@@ -15,7 +15,7 @@
  */
 package ru.aleshin.features.home.impl.presentation.mapppers.templates
 
-import ru.aleshin.features.home.api.domain.entities.template.Template
+import ru.aleshin.core.domain.entities.template.Template
 import ru.aleshin.features.home.impl.presentation.mapppers.categories.mapToDomain
 import ru.aleshin.features.home.impl.presentation.mapppers.categories.mapToUi
 import ru.aleshin.features.home.impl.presentation.models.templates.TemplateUi

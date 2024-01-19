@@ -16,7 +16,6 @@
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
-    id("kotlin-parcelize")
 }
 
 repositories {
@@ -69,6 +68,7 @@ dependencies {
 
     implementation(project(":module-injector"))
     implementation(project(":core:utils"))
+    implementation(project(":core:domain"))
     implementation(project(":core:ui"))
     implementation(project(":features:home:api"))
 

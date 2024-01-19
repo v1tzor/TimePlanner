@@ -20,7 +20,10 @@ import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
-import ru.aleshin.core.ui.views.ViewToggleStatus
+import ru.aleshin.core.domain.entities.schedules.TimeTask
+import ru.aleshin.core.domain.entities.schedules.TimeTaskStatus
+import ru.aleshin.core.domain.entities.settings.ViewToggleStatus
+import ru.aleshin.core.ui.notifications.TimeTaskAlarmManager
 import ru.aleshin.core.utils.functional.Constants
 import ru.aleshin.core.utils.functional.collectAndHandle
 import ru.aleshin.core.utils.functional.handle
@@ -28,9 +31,6 @@ import ru.aleshin.core.utils.functional.rightOrElse
 import ru.aleshin.core.utils.functional.rightOrError
 import ru.aleshin.core.utils.managers.DateManager
 import ru.aleshin.core.utils.platform.screenmodel.work.*
-import ru.aleshin.features.editor.api.presentation.TimeTaskAlarmManager
-import ru.aleshin.features.home.api.domain.entities.schedules.TimeTask
-import ru.aleshin.features.home.api.domain.entities.schedules.TimeTaskStatus
 import ru.aleshin.features.home.impl.domain.interactors.ScheduleInteractor
 import ru.aleshin.features.home.impl.domain.interactors.SettingsInteractor
 import ru.aleshin.features.home.impl.domain.interactors.TimeShiftInteractor

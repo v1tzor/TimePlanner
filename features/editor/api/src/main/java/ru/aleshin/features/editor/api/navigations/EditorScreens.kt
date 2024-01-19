@@ -15,12 +15,16 @@
  */
 package ru.aleshin.features.editor.api.navigations
 
-import ru.aleshin.features.home.api.domain.entities.schedules.TimeTask
-import ru.aleshin.features.home.api.domain.entities.template.Template
+import ru.aleshin.core.domain.entities.schedules.TimeTask
+import ru.aleshin.core.domain.entities.template.Template
 
 /**
  * @author Stanislav Aleshin on 29.07.2023.
  */
 sealed class EditorScreens {
-    data class Editor(val timeTask: TimeTask, val template: Template?, val undefinedTaskId: Long? = null) : EditorScreens()
+    data class Editor(
+        val timeTask: TimeTask,
+        val template: Template?,
+        val undefinedTaskId: Long? = null,
+    ) : EditorScreens()
 }

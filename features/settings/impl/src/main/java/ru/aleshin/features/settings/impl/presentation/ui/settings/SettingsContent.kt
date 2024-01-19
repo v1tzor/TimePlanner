@@ -31,11 +31,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import ru.aleshin.core.domain.entities.settings.CalendarButtonBehavior
 import ru.aleshin.core.ui.theme.TimePlannerRes
 import ru.aleshin.core.ui.theme.material.ColorsUiType
 import ru.aleshin.core.ui.theme.material.ThemeUiType
 import ru.aleshin.core.ui.theme.tokens.LanguageUiType
-import ru.aleshin.core.ui.views.CalendarButtonBehavior
 import ru.aleshin.core.ui.views.WarningDeleteDialog
 import ru.aleshin.core.utils.extensions.openNetworkUri
 import ru.aleshin.core.utils.functional.Constants

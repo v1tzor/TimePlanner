@@ -17,8 +17,8 @@ package ru.aleshin.features.settings.impl.presentation.models
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
-import ru.aleshin.core.ui.views.CalendarButtonBehavior
-import ru.aleshin.core.ui.views.ViewToggleStatus
+import ru.aleshin.core.domain.entities.settings.CalendarButtonBehavior
+import ru.aleshin.core.domain.entities.settings.ViewToggleStatus
 
 /**
  * @author Stanislav Aleshin on 15.09.2023.

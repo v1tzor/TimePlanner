@@ -18,11 +18,11 @@ package ru.aleshin.features.home.impl.domain.interactors
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import ru.aleshin.core.domain.entities.categories.Categories
+import ru.aleshin.core.domain.entities.categories.MainCategory
+import ru.aleshin.core.domain.repository.CategoriesRepository
 import ru.aleshin.core.utils.functional.DomainResult
 import ru.aleshin.core.utils.functional.UnitDomainResult
-import ru.aleshin.features.home.api.domain.entities.categories.Categories
-import ru.aleshin.features.home.api.domain.entities.categories.MainCategory
-import ru.aleshin.features.home.api.domain.repository.CategoriesRepository
 import ru.aleshin.features.home.impl.domain.common.HomeEitherWrapper
 import ru.aleshin.features.home.impl.domain.entities.HomeFailures
 import javax.inject.Inject

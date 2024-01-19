@@ -16,6 +16,12 @@
 package ru.aleshin.features.analytics.impl.domain.interactors
 
 import kotlinx.coroutines.flow.first
+import ru.aleshin.core.domain.entities.categories.Categories
+import ru.aleshin.core.domain.entities.categories.SubCategory
+import ru.aleshin.core.domain.entities.schedules.Schedule
+import ru.aleshin.core.domain.entities.schedules.TimeTask
+import ru.aleshin.core.domain.repository.CategoriesRepository
+import ru.aleshin.core.domain.repository.ScheduleRepository
 import ru.aleshin.core.utils.extensions.countMonthByDays
 import ru.aleshin.core.utils.extensions.countWeeksByDays
 import ru.aleshin.core.utils.extensions.duration
@@ -39,12 +45,6 @@ import ru.aleshin.features.analytics.impl.domain.entities.PlanningAnalytic
 import ru.aleshin.features.analytics.impl.domain.entities.ScheduleAnalytics
 import ru.aleshin.features.analytics.impl.domain.entities.SubCategoryAnalytic
 import ru.aleshin.features.analytics.impl.domain.entities.WorkLoadMap
-import ru.aleshin.features.home.api.domain.entities.categories.Categories
-import ru.aleshin.features.home.api.domain.entities.categories.SubCategory
-import ru.aleshin.features.home.api.domain.entities.schedules.Schedule
-import ru.aleshin.features.home.api.domain.entities.schedules.TimeTask
-import ru.aleshin.features.home.api.domain.repository.CategoriesRepository
-import ru.aleshin.features.home.api.domain.repository.ScheduleRepository
 import java.util.Date
 import javax.inject.Inject
 

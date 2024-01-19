@@ -17,12 +17,12 @@ package ru.aleshin.features.editor.impl.presentation.models.tasks
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
+import ru.aleshin.core.domain.entities.schedules.TaskPriority
 import ru.aleshin.core.utils.functional.TimeRange
 import ru.aleshin.features.editor.impl.presentation.models.categories.MainCategoryUi
 import ru.aleshin.features.editor.impl.presentation.models.categories.SubCategoryUi
 import ru.aleshin.features.editor.impl.presentation.models.editmodel.EditModelUi
 import ru.aleshin.features.editor.impl.presentation.models.editmodel.EditParameters
-import ru.aleshin.features.home.api.domain.entities.schedules.TaskPriority
 import java.util.Date
 
 /**

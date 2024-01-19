@@ -15,13 +15,13 @@
  */
 package ru.aleshin.features.editor.impl.presentation.mappers
 
+import ru.aleshin.core.domain.entities.schedules.TaskNotifications
 import ru.aleshin.core.utils.extensions.duration
 import ru.aleshin.core.utils.functional.TimeRange
 import ru.aleshin.features.editor.impl.domain.entites.EditModel
 import ru.aleshin.features.editor.impl.presentation.models.editmodel.EditModelUi
 import ru.aleshin.features.editor.impl.presentation.models.editmodel.EditParameters
 import ru.aleshin.features.editor.impl.presentation.models.editmodel.TaskNotificationsUi
-import ru.aleshin.features.home.api.domain.entities.schedules.TaskNotifications
 
 /**
  * @author Stanislav Aleshin on 16.05.2023.

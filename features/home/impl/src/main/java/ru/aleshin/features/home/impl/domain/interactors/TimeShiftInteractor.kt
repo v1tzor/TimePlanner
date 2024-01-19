@@ -16,6 +16,10 @@
 package ru.aleshin.features.home.impl.domain.interactors
 
 import kotlinx.coroutines.flow.first
+import ru.aleshin.core.domain.entities.schedules.TimeTask
+import ru.aleshin.core.domain.repository.ScheduleRepository
+import ru.aleshin.core.domain.repository.TemplatesRepository
+import ru.aleshin.core.domain.repository.TimeTaskRepository
 import ru.aleshin.core.utils.extensions.extractAllItem
 import ru.aleshin.core.utils.extensions.isCurrentDay
 import ru.aleshin.core.utils.extensions.shiftDay
@@ -23,10 +27,6 @@ import ru.aleshin.core.utils.extensions.shiftMinutes
 import ru.aleshin.core.utils.functional.DomainResult
 import ru.aleshin.core.utils.functional.TimeRange
 import ru.aleshin.core.utils.functional.TimeShiftException
-import ru.aleshin.features.home.api.domain.entities.schedules.TimeTask
-import ru.aleshin.features.home.api.domain.repository.ScheduleRepository
-import ru.aleshin.features.home.api.domain.repository.TemplatesRepository
-import ru.aleshin.features.home.api.domain.repository.TimeTaskRepository
 import ru.aleshin.features.home.impl.domain.common.HomeEitherWrapper
 import ru.aleshin.features.home.impl.domain.entities.HomeFailures
 import ru.aleshin.features.home.impl.domain.entities.TimeTaskImportanceException

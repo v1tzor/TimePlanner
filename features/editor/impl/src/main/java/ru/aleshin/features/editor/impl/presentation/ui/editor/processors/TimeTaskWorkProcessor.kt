@@ -15,9 +15,10 @@
  */
 package ru.aleshin.features.editor.impl.presentation.ui.editor.processors
 
+import ru.aleshin.core.domain.entities.schedules.TimeTask
+import ru.aleshin.core.ui.notifications.TimeTaskAlarmManager
 import ru.aleshin.core.utils.functional.Either
 import ru.aleshin.core.utils.platform.screenmodel.work.*
-import ru.aleshin.features.editor.api.presentation.TimeTaskAlarmManager
 import ru.aleshin.features.editor.impl.domain.common.convertToTimeTask
 import ru.aleshin.features.editor.impl.domain.entites.EditorFailures
 import ru.aleshin.features.editor.impl.domain.interactors.TimeTaskInteractor
@@ -28,7 +29,6 @@ import ru.aleshin.features.editor.impl.presentation.mappers.mapToUi
 import ru.aleshin.features.editor.impl.presentation.models.editmodel.EditModelUi
 import ru.aleshin.features.editor.impl.presentation.ui.editor.contract.EditorAction
 import ru.aleshin.features.editor.impl.presentation.ui.editor.contract.EditorEffect
-import ru.aleshin.features.home.api.domain.entities.schedules.TimeTask
 import javax.inject.Inject
 
 /**

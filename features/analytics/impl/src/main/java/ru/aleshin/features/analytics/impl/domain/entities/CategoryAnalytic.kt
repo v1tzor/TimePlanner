@@ -15,7 +15,7 @@
  */
 package ru.aleshin.features.analytics.impl.domain.entities
 
-import ru.aleshin.features.home.api.domain.entities.categories.MainCategory
+import ru.aleshin.core.domain.entities.categories.MainCategory
 
 /**
  * @author Stanislav Aleshin on 22.04.2023.

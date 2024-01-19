@@ -16,8 +16,8 @@
 package ru.aleshin.features.home.impl.presentation.mapppers
 
 import androidx.compose.runtime.Composable
+import ru.aleshin.core.domain.entities.schedules.TaskPriority
 import ru.aleshin.core.ui.theme.TimePlannerRes
-import ru.aleshin.features.home.api.domain.entities.schedules.TaskPriority
 
 /**
  * @author Stanislav Aleshin on 16.01.2024.

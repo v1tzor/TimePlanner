@@ -24,8 +24,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import ru.aleshin.core.domain.entities.settings.CalendarButtonBehavior
 import ru.aleshin.core.ui.theme.TimePlannerRes
-import ru.aleshin.core.ui.views.CalendarButtonBehavior
 import ru.aleshin.core.ui.views.TopAppBarButton
 import ru.aleshin.core.ui.views.TopAppBarTitle
 import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes

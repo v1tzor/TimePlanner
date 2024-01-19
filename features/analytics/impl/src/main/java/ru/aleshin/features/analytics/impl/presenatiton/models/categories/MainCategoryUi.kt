@@ -18,8 +18,8 @@ package ru.aleshin.features.analytics.impl.presenatiton.models.categories
 import android.os.Parcelable
 import androidx.compose.runtime.Composable
 import kotlinx.parcelize.Parcelize
-import ru.aleshin.features.home.api.domain.entities.categories.DefaultCategoryType
-import ru.aleshin.features.home.api.presentation.mappers.mapToName
+import ru.aleshin.core.domain.entities.categories.DefaultCategoryType
+import ru.aleshin.core.ui.mappers.mapToName
 
 /**
  * @author Stanislav Aleshin on 30.07.2023.

@@ -16,19 +16,19 @@
 package ru.aleshin.features.home.impl.domain.interactors
 
 import kotlinx.coroutines.flow.first
+import ru.aleshin.core.domain.entities.schedules.Schedule
+import ru.aleshin.core.domain.entities.schedules.TimeTask
+import ru.aleshin.core.domain.entities.schedules.fetchAllTimeTasks
+import ru.aleshin.core.domain.entities.template.RepeatTime
+import ru.aleshin.core.domain.entities.template.Template
+import ru.aleshin.core.domain.repository.ScheduleRepository
+import ru.aleshin.core.domain.repository.TimeTaskRepository
 import ru.aleshin.core.utils.extensions.generateUniqueKey
 import ru.aleshin.core.utils.extensions.mapToDate
 import ru.aleshin.core.utils.extensions.startThisDay
 import ru.aleshin.core.utils.functional.Either
 import ru.aleshin.core.utils.managers.DateManager
 import ru.aleshin.core.utils.managers.TimeOverlayManager
-import ru.aleshin.features.home.api.domain.entities.schedules.Schedule
-import ru.aleshin.features.home.api.domain.entities.schedules.TimeTask
-import ru.aleshin.features.home.api.domain.entities.schedules.fetchAllTimeTasks
-import ru.aleshin.features.home.api.domain.entities.template.RepeatTime
-import ru.aleshin.features.home.api.domain.entities.template.Template
-import ru.aleshin.features.home.api.domain.repository.ScheduleRepository
-import ru.aleshin.features.home.api.domain.repository.TimeTaskRepository
 import ru.aleshin.features.home.impl.domain.common.HomeEitherWrapper
 import ru.aleshin.features.home.impl.domain.common.convertToTimeTask
 import ru.aleshin.features.home.impl.domain.entities.HomeFailures
@@ -44,7 +44,7 @@ internal interface RepeatTaskInteractor {
         template: Template,
     ): Either<HomeFailures, List<TimeTask>>
     suspend fun addRepeatsTemplate(
-        template: Template, 
+        template: Template,
         repeatTimes: List<RepeatTime>,
     ): Either<HomeFailures, List<TimeTask>>
     suspend fun deleteRepeatsTemplates(

@@ -17,23 +17,23 @@ package ru.aleshin.timeplanner.di.modules
 
 import dagger.Binds
 import dagger.Module
-import ru.aleshin.features.home.api.data.mappers.schedules.*
-import ru.aleshin.features.home.api.data.repository.CategoriesRepositoryImpl
-import ru.aleshin.features.home.api.data.repository.ScheduleRepositoryImpl
-import ru.aleshin.features.home.api.data.repository.SubCategoriesRepositoryImpl
-import ru.aleshin.features.home.api.data.repository.TemplatesRepositoryImpl
-import ru.aleshin.features.home.api.data.repository.TimeTaskRepositoryImpl
-import ru.aleshin.features.home.api.data.repository.UndefinedTasksRepositoryImpl
-import ru.aleshin.features.home.api.domain.repository.CategoriesRepository
-import ru.aleshin.features.home.api.domain.repository.ScheduleRepository
-import ru.aleshin.features.home.api.domain.repository.SubCategoriesRepository
-import ru.aleshin.features.home.api.domain.repository.TemplatesRepository
-import ru.aleshin.features.home.api.domain.repository.TimeTaskRepository
-import ru.aleshin.features.home.api.domain.repository.UndefinedTasksRepository
-import ru.aleshin.features.settings.api.data.repositories.TasksSettingsRepositoryImpl
-import ru.aleshin.features.settings.api.data.repositories.ThemeSettingsRepositoryImpl
-import ru.aleshin.features.settings.api.domain.repositories.TasksSettingsRepository
-import ru.aleshin.features.settings.api.domain.repositories.ThemeSettingsRepository
+import ru.aleshin.core.data.mappers.schedules.ScheduleDataToDomainMapper
+import ru.aleshin.core.data.repository.CategoriesRepositoryImpl
+import ru.aleshin.core.data.repository.ScheduleRepositoryImpl
+import ru.aleshin.core.data.repository.SubCategoriesRepositoryImpl
+import ru.aleshin.core.data.repository.TasksSettingsRepositoryImpl
+import ru.aleshin.core.data.repository.TemplatesRepositoryImpl
+import ru.aleshin.core.data.repository.ThemeSettingsRepositoryImpl
+import ru.aleshin.core.data.repository.TimeTaskRepositoryImpl
+import ru.aleshin.core.data.repository.UndefinedTasksRepositoryImpl
+import ru.aleshin.core.domain.repository.CategoriesRepository
+import ru.aleshin.core.domain.repository.ScheduleRepository
+import ru.aleshin.core.domain.repository.SubCategoriesRepository
+import ru.aleshin.core.domain.repository.TasksSettingsRepository
+import ru.aleshin.core.domain.repository.TemplatesRepository
+import ru.aleshin.core.domain.repository.ThemeSettingsRepository
+import ru.aleshin.core.domain.repository.TimeTaskRepository
+import ru.aleshin.core.domain.repository.UndefinedTasksRepository
 import javax.inject.Singleton
 
 /**

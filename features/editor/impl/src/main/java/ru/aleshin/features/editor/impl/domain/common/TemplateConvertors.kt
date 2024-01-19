@@ -15,11 +15,11 @@
  */
 package ru.aleshin.features.editor.impl.domain.common
 
+import ru.aleshin.core.domain.entities.template.Template
 import ru.aleshin.core.utils.extensions.changeDay
 import ru.aleshin.core.utils.extensions.isCurrentDay
 import ru.aleshin.core.utils.extensions.shiftDay
 import ru.aleshin.features.editor.impl.domain.entites.EditModel
-import ru.aleshin.features.home.api.domain.entities.template.Template
 import java.util.Date
 
 /**

@@ -15,7 +15,7 @@
  */
 package ru.aleshin.features.home.impl.presentation.mapppers.schedules
 
-import ru.aleshin.features.home.api.domain.entities.schedules.UndefinedTask
+import ru.aleshin.core.domain.entities.schedules.UndefinedTask
 import ru.aleshin.features.home.impl.presentation.mapppers.categories.mapToDomain
 import ru.aleshin.features.home.impl.presentation.mapppers.categories.mapToUi
 import ru.aleshin.features.home.impl.presentation.models.schedules.UndefinedTaskUi

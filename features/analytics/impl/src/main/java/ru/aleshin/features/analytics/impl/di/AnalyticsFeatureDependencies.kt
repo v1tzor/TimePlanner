@@ -15,11 +15,11 @@
  */
 package ru.aleshin.features.analytics.impl.di
 
+import ru.aleshin.core.domain.repository.CategoriesRepository
+import ru.aleshin.core.domain.repository.ScheduleRepository
+import ru.aleshin.core.domain.repository.TasksSettingsRepository
 import ru.aleshin.core.utils.managers.CoroutineManager
 import ru.aleshin.core.utils.managers.DateManager
-import ru.aleshin.features.home.api.domain.repository.CategoriesRepository
-import ru.aleshin.features.home.api.domain.repository.ScheduleRepository
-import ru.aleshin.features.settings.api.domain.repositories.TasksSettingsRepository
 import ru.aleshin.module_injector.BaseFeatureDependencies
 
 /**

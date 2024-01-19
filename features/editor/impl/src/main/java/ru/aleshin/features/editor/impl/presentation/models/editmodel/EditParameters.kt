@@ -17,7 +17,7 @@ package ru.aleshin.features.editor.impl.presentation.models.editmodel
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
-import ru.aleshin.features.home.api.domain.entities.schedules.TaskPriority
+import ru.aleshin.core.domain.entities.schedules.TaskPriority
 
 /**
  * @author Stanislav Aleshin on 16.05.2023.

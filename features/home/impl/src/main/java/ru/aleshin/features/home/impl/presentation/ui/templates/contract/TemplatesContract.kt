@@ -16,11 +16,11 @@
 package ru.aleshin.features.home.impl.presentation.ui.templates.contract
 
 import kotlinx.parcelize.Parcelize
+import ru.aleshin.core.domain.entities.template.RepeatTime
 import ru.aleshin.core.utils.platform.screenmodel.contract.BaseAction
 import ru.aleshin.core.utils.platform.screenmodel.contract.BaseEvent
 import ru.aleshin.core.utils.platform.screenmodel.contract.BaseUiEffect
 import ru.aleshin.core.utils.platform.screenmodel.contract.BaseViewState
-import ru.aleshin.features.home.api.domain.entities.template.RepeatTime
 import ru.aleshin.features.home.impl.domain.entities.HomeFailures
 import ru.aleshin.features.home.impl.presentation.models.categories.CategoriesUi
 import ru.aleshin.features.home.impl.presentation.models.templates.TemplateUi

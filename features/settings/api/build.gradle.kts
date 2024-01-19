@@ -15,8 +15,6 @@
  */
 plugins {
     id("com.android.library")
-    id("kotlin-parcelize")
-    kotlin("kapt")
     id("org.jetbrains.kotlin.android")
 }
 
@@ -58,12 +56,6 @@ android {
     buildFeatures {
         buildConfig = true
     }
-
-    kapt {
-        arguments {
-            arg("room.schemaLocation", "$projectDir/schemas")
-        }
-    }
 }
 
 dependencies {
@@ -79,10 +71,6 @@ dependencies {
     implementation(Dependencies.AndroidX.material)
 
     implementation(Dependencies.Dagger.core)
-
-    implementation(Dependencies.Room.core)
-    implementation(Dependencies.Room.ktx)
-    kapt(Dependencies.Room.kapt)
 
     testImplementation(Dependencies.Test.jUnit)
     androidTestImplementation(Dependencies.Test.jUnitExt)

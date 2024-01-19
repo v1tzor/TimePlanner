@@ -15,9 +15,9 @@
  */
 package ru.aleshin.features.home.impl.presentation.common
 
+import ru.aleshin.core.domain.common.TimeTaskStatusChecker
+import ru.aleshin.core.domain.entities.schedules.TimeTaskStatus
 import ru.aleshin.core.utils.managers.DateManager
-import ru.aleshin.features.home.api.domain.common.TimeTaskStatusChecker
-import ru.aleshin.features.home.api.domain.entities.schedules.TimeTaskStatus
 import ru.aleshin.features.home.impl.presentation.models.schedules.TimeTaskUi
 import javax.inject.Inject
 

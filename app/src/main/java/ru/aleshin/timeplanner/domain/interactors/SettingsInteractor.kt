@@ -19,10 +19,10 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
+import ru.aleshin.core.domain.entities.settings.Settings
+import ru.aleshin.core.domain.repository.TasksSettingsRepository
+import ru.aleshin.core.domain.repository.ThemeSettingsRepository
 import ru.aleshin.core.utils.functional.Either
-import ru.aleshin.features.settings.api.domain.entities.Settings
-import ru.aleshin.features.settings.api.domain.repositories.TasksSettingsRepository
-import ru.aleshin.features.settings.api.domain.repositories.ThemeSettingsRepository
 import ru.aleshin.timeplanner.domain.common.MainEitherWrapper
 import ru.aleshin.timeplanner.domain.common.MainFailures
 import javax.inject.Inject

@@ -34,14 +34,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import ru.aleshin.core.domain.entities.categories.DefaultCategoryType
+import ru.aleshin.core.ui.mappers.mapToIconPainter
 import ru.aleshin.core.ui.theme.TimePlannerRes
 import ru.aleshin.core.ui.views.CategoryIconMonogram
 import ru.aleshin.core.ui.views.CategoryTextMonogram
 import ru.aleshin.core.ui.views.DialogButtons
 import ru.aleshin.features.editor.impl.presentation.models.categories.MainCategoryUi
 import ru.aleshin.features.editor.impl.presentation.theme.EditorThemeRes
-import ru.aleshin.features.home.api.domain.entities.categories.DefaultCategoryType
-import ru.aleshin.features.home.api.presentation.mappers.mapToIconPainter
 
 /**
  * @author Stanislav Aleshin on 25.02.2023.

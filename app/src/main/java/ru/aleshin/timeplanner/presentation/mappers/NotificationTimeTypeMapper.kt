@@ -15,8 +15,8 @@
  */
 package ru.aleshin.timeplanner.presentation.mappers
 
+import ru.aleshin.core.ui.models.NotificationTimeType
 import ru.aleshin.core.ui.theme.tokens.TimePlannerStrings
-import ru.aleshin.features.home.api.presentation.models.NotificationTimeType
 
 /**
  * @author Stanislav Aleshin on 10.11.2023.

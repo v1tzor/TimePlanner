@@ -17,10 +17,10 @@ package ru.aleshin.features.analytics.impl.presenatiton.models.timetask
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
+import ru.aleshin.core.domain.entities.schedules.TaskPriority
 import ru.aleshin.core.utils.functional.TimeRange
 import ru.aleshin.features.analytics.impl.presenatiton.models.categories.MainCategoryUi
 import ru.aleshin.features.analytics.impl.presenatiton.models.categories.SubCategoryUi
-import ru.aleshin.features.home.api.domain.entities.schedules.TaskPriority
 import java.util.Date
 
 /**

@@ -16,11 +16,11 @@
 package ru.aleshin.features.editor.impl.domain.interactors
 
 import kotlinx.coroutines.flow.first
+import ru.aleshin.core.domain.entities.template.Template
+import ru.aleshin.core.domain.repository.TemplatesRepository
 import ru.aleshin.core.utils.functional.DomainResult
 import ru.aleshin.features.editor.impl.domain.common.EditorEitherWrapper
 import ru.aleshin.features.editor.impl.domain.entites.EditorFailures
-import ru.aleshin.features.home.api.domain.entities.template.Template
-import ru.aleshin.features.home.api.domain.repository.TemplatesRepository
 import javax.inject.Inject
 
 /**

@@ -15,12 +15,12 @@
  */
 package ru.aleshin.features.editor.impl.presentation.mappers
 
+import ru.aleshin.core.domain.entities.categories.Categories
+import ru.aleshin.core.domain.entities.categories.MainCategory
+import ru.aleshin.core.domain.entities.categories.SubCategory
 import ru.aleshin.features.editor.impl.presentation.models.categories.CategoriesUi
 import ru.aleshin.features.editor.impl.presentation.models.categories.MainCategoryUi
 import ru.aleshin.features.editor.impl.presentation.models.categories.SubCategoryUi
-import ru.aleshin.features.home.api.domain.entities.categories.Categories
-import ru.aleshin.features.home.api.domain.entities.categories.MainCategory
-import ru.aleshin.features.home.api.domain.entities.categories.SubCategory
 
 /**
  * @author Stanislav Aleshin on 30.07.2023.

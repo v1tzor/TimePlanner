@@ -26,6 +26,8 @@ rootProject.name = "TimePlanner"
 include(":app")
 include(":core:utils")
 include(":core:ui")
+include(":core:domain")
+include(":core:data")
 include(":module-injector")
 include(":features:home:api")
 include(":features:home:impl")

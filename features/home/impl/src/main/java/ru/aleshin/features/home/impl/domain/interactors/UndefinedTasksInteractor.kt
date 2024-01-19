@@ -15,10 +15,10 @@
  */
 package ru.aleshin.features.home.impl.domain.interactors
 
+import ru.aleshin.core.domain.entities.schedules.UndefinedTask
+import ru.aleshin.core.domain.repository.UndefinedTasksRepository
 import ru.aleshin.core.utils.functional.FlowDomainResult
 import ru.aleshin.core.utils.functional.UnitDomainResult
-import ru.aleshin.features.home.api.domain.entities.schedules.UndefinedTask
-import ru.aleshin.features.home.api.domain.repository.UndefinedTasksRepository
 import ru.aleshin.features.home.impl.domain.common.HomeEitherWrapper
 import ru.aleshin.features.home.impl.domain.entities.HomeFailures
 import javax.inject.Inject

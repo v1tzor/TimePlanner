@@ -15,7 +15,7 @@
  */
 package ru.aleshin.features.settings.impl.presentation.mappers
 
-import ru.aleshin.features.settings.api.domain.entities.TasksSettings
+import ru.aleshin.core.domain.entities.settings.TasksSettings
 import ru.aleshin.features.settings.impl.presentation.models.TasksSettingsUi
 
 /**

@@ -53,6 +53,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import ru.aleshin.core.ui.mappers.mapToIconPainter
+import ru.aleshin.core.ui.mappers.mapToUi
 import ru.aleshin.core.ui.theme.TimePlannerRes
 import ru.aleshin.core.ui.theme.material.surfaceThree
 import ru.aleshin.core.ui.theme.material.surfaceTwo
@@ -61,8 +63,6 @@ import ru.aleshin.core.ui.views.CategoryTextMonogram
 import ru.aleshin.core.ui.views.toDaysTitle
 import ru.aleshin.features.editor.impl.presentation.models.tasks.UndefinedTaskUi
 import ru.aleshin.features.editor.impl.presentation.theme.EditorThemeRes
-import ru.aleshin.features.home.api.presentation.mappers.mapToIconPainter
-import ru.aleshin.features.home.api.presentation.mappers.mapToUi
 import java.util.Date
 
 /**

@@ -15,11 +15,11 @@
  */
 package ru.aleshin.features.editor.impl.domain.entites
 
-import ru.aleshin.features.home.api.domain.entities.categories.MainCategory
-import ru.aleshin.features.home.api.domain.entities.categories.SubCategory
-import ru.aleshin.features.home.api.domain.entities.schedules.TaskNotifications
-import ru.aleshin.features.home.api.domain.entities.schedules.TaskPriority
-import ru.aleshin.features.home.api.domain.entities.template.RepeatTime
+import ru.aleshin.core.domain.entities.categories.MainCategory
+import ru.aleshin.core.domain.entities.categories.SubCategory
+import ru.aleshin.core.domain.entities.schedules.TaskNotifications
+import ru.aleshin.core.domain.entities.schedules.TaskPriority
+import ru.aleshin.core.domain.entities.template.RepeatTime
 import java.util.*
 
 /**

@@ -76,9 +76,10 @@ dependencies {
 
     implementation(project(":module-injector"))
     implementation(project(":core:utils"))
+    implementation(project(":core:data"))
+    implementation(project(":core:domain"))
     implementation(project(":core:ui"))
-    implementation(project(":features:home:api"))
-    implementation(project(":features:settings:api"))
+
     implementation(project(":features:analytics:api"))
 
     implementation(Dependencies.AndroidX.core)

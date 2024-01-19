@@ -15,13 +15,13 @@
  */
 package ru.aleshin.features.home.impl.domain.common
 
+import ru.aleshin.core.domain.entities.schedules.TimeTask
+import ru.aleshin.core.domain.entities.template.Template
 import ru.aleshin.core.utils.extensions.changeDay
 import ru.aleshin.core.utils.extensions.generateUniqueKey
 import ru.aleshin.core.utils.extensions.isCurrentDay
 import ru.aleshin.core.utils.extensions.shiftDay
 import ru.aleshin.core.utils.functional.TimeRange
-import ru.aleshin.features.home.api.domain.entities.schedules.TimeTask
-import ru.aleshin.features.home.api.domain.entities.template.Template
 import java.util.Date
 
 /**

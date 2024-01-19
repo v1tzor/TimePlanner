@@ -16,13 +16,13 @@
 package ru.aleshin.features.editor.impl.domain.interactors
 
 import kotlinx.coroutines.flow.first
+import ru.aleshin.core.domain.entities.categories.Categories
+import ru.aleshin.core.domain.entities.categories.SubCategory
+import ru.aleshin.core.domain.repository.CategoriesRepository
+import ru.aleshin.core.domain.repository.SubCategoriesRepository
 import ru.aleshin.core.utils.functional.DomainResult
 import ru.aleshin.features.editor.impl.domain.common.EditorEitherWrapper
 import ru.aleshin.features.editor.impl.domain.entites.EditorFailures
-import ru.aleshin.features.home.api.domain.entities.categories.Categories
-import ru.aleshin.features.home.api.domain.entities.categories.SubCategory
-import ru.aleshin.features.home.api.domain.repository.CategoriesRepository
-import ru.aleshin.features.home.api.domain.repository.SubCategoriesRepository
 import javax.inject.Inject
 
 /**

@@ -73,6 +73,8 @@ android {
 
 dependencies {
     implementation(project(":core:utils"))
+    implementation(project(":core:domain"))
+
     implementation(Dependencies.AndroidX.core)
     implementation(Dependencies.AndroidX.appcompat)
     implementation(Dependencies.AndroidX.material)

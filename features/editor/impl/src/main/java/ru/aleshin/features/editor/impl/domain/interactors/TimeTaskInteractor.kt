@@ -16,6 +16,11 @@
 package ru.aleshin.features.editor.impl.domain.interactors
 
 import kotlinx.coroutines.flow.first
+import ru.aleshin.core.domain.common.ScheduleStatusChecker
+import ru.aleshin.core.domain.entities.schedules.Schedule
+import ru.aleshin.core.domain.entities.schedules.TimeTask
+import ru.aleshin.core.domain.repository.ScheduleRepository
+import ru.aleshin.core.domain.repository.TimeTaskRepository
 import ru.aleshin.core.utils.extensions.extractAllItem
 import ru.aleshin.core.utils.extensions.generateUniqueKey
 import ru.aleshin.core.utils.extensions.shiftDay
@@ -26,11 +31,6 @@ import ru.aleshin.core.utils.managers.TimeOverlayException
 import ru.aleshin.core.utils.managers.TimeOverlayManager
 import ru.aleshin.features.editor.impl.domain.common.EditorEitherWrapper
 import ru.aleshin.features.editor.impl.domain.entites.EditorFailures
-import ru.aleshin.features.home.api.domain.common.ScheduleStatusChecker
-import ru.aleshin.features.home.api.domain.entities.schedules.Schedule
-import ru.aleshin.features.home.api.domain.entities.schedules.TimeTask
-import ru.aleshin.features.home.api.domain.repository.ScheduleRepository
-import ru.aleshin.features.home.api.domain.repository.TimeTaskRepository
 import javax.inject.Inject
 
 /**

@@ -16,14 +16,14 @@
 package ru.aleshin.features.home.impl.presentation.ui.home.contract
 
 import kotlinx.parcelize.Parcelize
-import ru.aleshin.core.ui.views.CalendarButtonBehavior
-import ru.aleshin.core.ui.views.ViewToggleStatus
+import ru.aleshin.core.domain.entities.schedules.DailyScheduleStatus
+import ru.aleshin.core.domain.entities.settings.CalendarButtonBehavior
+import ru.aleshin.core.domain.entities.settings.TasksSettings
+import ru.aleshin.core.domain.entities.settings.ViewToggleStatus
 import ru.aleshin.core.utils.platform.screenmodel.contract.*
-import ru.aleshin.features.home.api.domain.entities.schedules.DailyScheduleStatus
 import ru.aleshin.features.home.impl.domain.entities.HomeFailures
 import ru.aleshin.features.home.impl.presentation.models.schedules.ScheduleUi
 import ru.aleshin.features.home.impl.presentation.models.schedules.TimeTaskUi
-import ru.aleshin.features.settings.api.domain.entities.TasksSettings
 import java.util.*
 
 /**

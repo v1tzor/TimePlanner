@@ -15,13 +15,13 @@
  */
 package ru.aleshin.features.home.impl.presentation.mapppers.schedules
 
+import ru.aleshin.core.domain.common.TimeTaskStatusChecker
+import ru.aleshin.core.domain.entities.schedules.TaskNotifications
+import ru.aleshin.core.domain.entities.schedules.TimeTask
 import ru.aleshin.core.utils.extensions.duration
 import ru.aleshin.core.utils.functional.ParameterizedMapper
 import ru.aleshin.core.utils.functional.TimeRange
 import ru.aleshin.core.utils.managers.DateManager
-import ru.aleshin.features.home.api.domain.common.TimeTaskStatusChecker
-import ru.aleshin.features.home.api.domain.entities.schedules.TaskNotifications
-import ru.aleshin.features.home.api.domain.entities.schedules.TimeTask
 import ru.aleshin.features.home.impl.presentation.mapppers.categories.mapToDomain
 import ru.aleshin.features.home.impl.presentation.mapppers.categories.mapToUi
 import ru.aleshin.features.home.impl.presentation.models.schedules.TaskNotificationsUi

@@ -40,14 +40,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import ru.aleshin.core.domain.entities.template.RepeatTime
+import ru.aleshin.core.ui.mappers.mapToIconPainter
+import ru.aleshin.core.ui.mappers.mapToString
 import ru.aleshin.core.ui.theme.TimePlannerRes
 import ru.aleshin.core.ui.views.CategoryIconMonogram
 import ru.aleshin.core.ui.views.CategoryTextMonogram
 import ru.aleshin.core.ui.views.toMinutesOrHoursTitle
 import ru.aleshin.core.utils.extensions.duration
-import ru.aleshin.features.home.api.domain.entities.template.RepeatTime
-import ru.aleshin.features.home.api.presentation.mappers.mapToIconPainter
-import ru.aleshin.features.home.api.presentation.mappers.mapToString
 import ru.aleshin.features.home.impl.presentation.models.categories.CategoriesUi
 import ru.aleshin.features.home.impl.presentation.models.templates.TemplateUi
 import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes

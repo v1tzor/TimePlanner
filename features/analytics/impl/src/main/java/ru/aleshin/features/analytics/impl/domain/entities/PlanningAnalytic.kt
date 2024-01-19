@@ -15,7 +15,7 @@
  */
 package ru.aleshin.features.analytics.impl.domain.entities
 
-import ru.aleshin.features.home.api.domain.entities.schedules.TimeTask
+import ru.aleshin.core.domain.entities.schedules.TimeTask
 import java.util.Date
 
 internal data class PlanningAnalytic(

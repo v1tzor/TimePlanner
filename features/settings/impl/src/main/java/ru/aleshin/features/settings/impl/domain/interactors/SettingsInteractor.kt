@@ -16,15 +16,15 @@
 package ru.aleshin.features.settings.impl.domain.interactors
 
 import kotlinx.coroutines.flow.first
+import ru.aleshin.core.domain.entities.settings.Settings
+import ru.aleshin.core.domain.entities.settings.TasksSettings
+import ru.aleshin.core.domain.entities.settings.ThemeSettings
+import ru.aleshin.core.domain.repository.TasksSettingsRepository
+import ru.aleshin.core.domain.repository.ThemeSettingsRepository
 import ru.aleshin.core.utils.functional.DomainResult
 import ru.aleshin.core.utils.functional.UnitDomainResult
-import ru.aleshin.features.settings.api.domain.entities.TasksSettings
-import ru.aleshin.features.settings.api.domain.entities.ThemeSettings
-import ru.aleshin.features.settings.api.domain.repositories.TasksSettingsRepository
-import ru.aleshin.features.settings.api.domain.repositories.ThemeSettingsRepository
 import ru.aleshin.features.settings.impl.domain.common.SettingsEitherWrapper
 import ru.aleshin.features.settings.impl.domain.common.SettingsFailures
-import ru.aleshin.features.settings.api.domain.entities.Settings
 import javax.inject.Inject
 
 /**
@@ -55,7 +55,10 @@ internal interface SettingsInteractor {
             val themeSettings = themeSettingsRepository.fetchSettings()
             val tasksSettings = tasksSettingsRepository.fetchSettings().first()
 
-            return@wrap Settings(themeSettings = themeSettings, tasksSettings = tasksSettings)
+            return@wrap Settings(
+                themeSettings = themeSettings,
+                tasksSettings = tasksSettings,
+            )
         }
 
         override suspend fun resetAllSettings() = eitherWrapper.wrap {

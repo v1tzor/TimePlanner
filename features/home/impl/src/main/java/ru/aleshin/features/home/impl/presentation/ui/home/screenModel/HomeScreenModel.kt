@@ -18,7 +18,7 @@ package ru.aleshin.features.home.impl.presentation.ui.home.screenModel
 import androidx.compose.runtime.Composable
 import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
-import ru.aleshin.core.ui.views.ViewToggleStatus
+import ru.aleshin.core.domain.entities.settings.ViewToggleStatus
 import ru.aleshin.core.utils.functional.TimeRange
 import ru.aleshin.core.utils.managers.CoroutineManager
 import ru.aleshin.core.utils.platform.screenmodel.BaseScreenModel

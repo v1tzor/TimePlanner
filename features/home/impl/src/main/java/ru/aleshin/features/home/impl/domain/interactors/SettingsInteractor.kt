@@ -16,12 +16,12 @@
 package ru.aleshin.features.home.impl.domain.interactors
 
 import kotlinx.coroutines.flow.Flow
+import ru.aleshin.core.domain.entities.settings.TasksSettings
+import ru.aleshin.core.domain.repository.TasksSettingsRepository
 import ru.aleshin.core.utils.functional.DomainResult
 import ru.aleshin.core.utils.functional.UnitDomainResult
 import ru.aleshin.features.home.impl.domain.common.HomeEitherWrapper
 import ru.aleshin.features.home.impl.domain.entities.HomeFailures
-import ru.aleshin.features.settings.api.domain.entities.TasksSettings
-import ru.aleshin.features.settings.api.domain.repositories.TasksSettingsRepository
 import javax.inject.Inject
 
 /**

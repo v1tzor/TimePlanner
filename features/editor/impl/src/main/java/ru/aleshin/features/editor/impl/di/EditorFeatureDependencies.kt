@@ -15,20 +15,20 @@
  */
 package ru.aleshin.features.editor.impl.di
 
+import ru.aleshin.core.data.datasources.schedules.SchedulesLocalDataSource
+import ru.aleshin.core.domain.common.ScheduleStatusChecker
+import ru.aleshin.core.domain.repository.CategoriesRepository
+import ru.aleshin.core.domain.repository.ScheduleRepository
+import ru.aleshin.core.domain.repository.SubCategoriesRepository
+import ru.aleshin.core.domain.repository.TemplatesRepository
+import ru.aleshin.core.domain.repository.TimeTaskRepository
+import ru.aleshin.core.domain.repository.UndefinedTasksRepository
+import ru.aleshin.core.ui.notifications.TimeTaskAlarmManager
 import ru.aleshin.core.utils.managers.CoroutineManager
 import ru.aleshin.core.utils.managers.DateManager
 import ru.aleshin.core.utils.managers.TimeOverlayManager
 import ru.aleshin.core.utils.navigation.Router
 import ru.aleshin.core.utils.navigation.TabRouter
-import ru.aleshin.features.editor.api.presentation.TimeTaskAlarmManager
-import ru.aleshin.features.home.api.data.datasources.schedules.SchedulesLocalDataSource
-import ru.aleshin.features.home.api.domain.common.ScheduleStatusChecker
-import ru.aleshin.features.home.api.domain.repository.CategoriesRepository
-import ru.aleshin.features.home.api.domain.repository.ScheduleRepository
-import ru.aleshin.features.home.api.domain.repository.SubCategoriesRepository
-import ru.aleshin.features.home.api.domain.repository.TemplatesRepository
-import ru.aleshin.features.home.api.domain.repository.TimeTaskRepository
-import ru.aleshin.features.home.api.domain.repository.UndefinedTasksRepository
 import ru.aleshin.features.home.api.navigation.HomeFeatureStarter
 import ru.aleshin.module_injector.BaseFeatureDependencies
 

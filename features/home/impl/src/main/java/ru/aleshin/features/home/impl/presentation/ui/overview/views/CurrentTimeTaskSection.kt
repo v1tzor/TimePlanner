@@ -48,12 +48,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
+import ru.aleshin.core.ui.mappers.mapToIconPainter
+import ru.aleshin.core.ui.mappers.mapToUi
 import ru.aleshin.core.ui.theme.material.surfaceTwo
 import ru.aleshin.core.ui.views.CategoryIconMonogram
 import ru.aleshin.core.ui.views.CategoryTextMonogram
 import ru.aleshin.core.ui.views.PlaceholderBox
-import ru.aleshin.features.home.api.presentation.mappers.mapToIconPainter
-import ru.aleshin.features.home.api.presentation.mappers.mapToUi
 import ru.aleshin.features.home.impl.presentation.models.schedules.TimeTaskUi
 import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
 import ru.aleshin.features.home.impl.presentation.ui.home.views.TimeTaskTitles

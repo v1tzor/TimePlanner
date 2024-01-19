@@ -18,6 +18,12 @@ package ru.aleshin.features.home.impl.domain.interactors
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
+import ru.aleshin.core.domain.common.ScheduleStatusChecker
+import ru.aleshin.core.domain.entities.schedules.Schedule
+import ru.aleshin.core.domain.entities.schedules.TimeTask
+import ru.aleshin.core.domain.entities.template.Template
+import ru.aleshin.core.domain.repository.ScheduleRepository
+import ru.aleshin.core.domain.repository.TemplatesRepository
 import ru.aleshin.core.utils.extensions.daysToMillis
 import ru.aleshin.core.utils.extensions.mapToDate
 import ru.aleshin.core.utils.extensions.shiftDay
@@ -28,12 +34,6 @@ import ru.aleshin.core.utils.functional.DomainResult
 import ru.aleshin.core.utils.functional.FlowDomainResult
 import ru.aleshin.core.utils.managers.DateManager
 import ru.aleshin.core.utils.managers.TimeOverlayManager
-import ru.aleshin.features.home.api.domain.common.ScheduleStatusChecker
-import ru.aleshin.features.home.api.domain.entities.schedules.Schedule
-import ru.aleshin.features.home.api.domain.entities.schedules.TimeTask
-import ru.aleshin.features.home.api.domain.entities.template.Template
-import ru.aleshin.features.home.api.domain.repository.ScheduleRepository
-import ru.aleshin.features.home.api.domain.repository.TemplatesRepository
 import ru.aleshin.features.home.impl.domain.common.HomeEitherWrapper
 import ru.aleshin.features.home.impl.domain.common.convertToTimeTask
 import ru.aleshin.features.home.impl.domain.entities.HomeFailures

@@ -17,7 +17,7 @@ package ru.aleshin.features.home.impl.presentation.models.schedules
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
-import ru.aleshin.features.home.api.domain.entities.schedules.DailyScheduleStatus
+import ru.aleshin.core.domain.entities.schedules.DailyScheduleStatus
 import java.util.Date
 
 /**

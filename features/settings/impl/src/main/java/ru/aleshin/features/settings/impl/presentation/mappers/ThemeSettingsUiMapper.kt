@@ -15,13 +15,13 @@
  */
 package ru.aleshin.features.settings.impl.presentation.mappers
 
+import ru.aleshin.core.domain.entities.settings.ColorsType
+import ru.aleshin.core.domain.entities.settings.LanguageType
+import ru.aleshin.core.domain.entities.settings.ThemeSettings
+import ru.aleshin.core.domain.entities.settings.ThemeType
 import ru.aleshin.core.ui.theme.material.ColorsUiType
 import ru.aleshin.core.ui.theme.material.ThemeUiType
 import ru.aleshin.core.ui.theme.tokens.LanguageUiType
-import ru.aleshin.features.settings.api.domain.entities.ColorsType
-import ru.aleshin.features.settings.api.domain.entities.LanguageType
-import ru.aleshin.features.settings.api.domain.entities.ThemeSettings
-import ru.aleshin.features.settings.api.domain.entities.ThemeType
 import ru.aleshin.features.settings.impl.presentation.models.ThemeSettingsUi
 
 /**

@@ -15,10 +15,10 @@
  */
 package ru.aleshin.features.editor.impl.domain.common
 
+import ru.aleshin.core.domain.entities.schedules.TimeTask
+import ru.aleshin.core.domain.entities.template.Template
 import ru.aleshin.core.utils.functional.TimeRange
 import ru.aleshin.features.editor.impl.domain.entites.EditModel
-import ru.aleshin.features.home.api.domain.entities.schedules.TimeTask
-import ru.aleshin.features.home.api.domain.entities.template.Template
 
 /**
  * @author Stanislav Aleshin on 17.05.2023.

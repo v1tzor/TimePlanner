@@ -15,8 +15,8 @@
  */
 package ru.aleshin.features.editor.impl.presentation.mappers
 
+import ru.aleshin.core.domain.entities.template.Template
 import ru.aleshin.features.editor.impl.presentation.models.template.TemplateUi
-import ru.aleshin.features.home.api.domain.entities.template.Template
 
 /**
  * @author Stanislav Aleshin on 30.07.2023.

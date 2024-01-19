@@ -15,6 +15,8 @@
  */
 package ru.aleshin.features.home.impl.presentation.ui.home.screenModel
 
+import ru.aleshin.core.domain.entities.categories.MainCategory
+import ru.aleshin.core.domain.entities.schedules.TimeTask
 import ru.aleshin.core.utils.functional.TimeRange
 import ru.aleshin.core.utils.functional.rightOrElse
 import ru.aleshin.core.utils.platform.screenmodel.work.ActionResult
@@ -22,8 +24,6 @@ import ru.aleshin.core.utils.platform.screenmodel.work.WorkCommand
 import ru.aleshin.core.utils.platform.screenmodel.work.WorkProcessor
 import ru.aleshin.core.utils.platform.screenmodel.work.WorkResult
 import ru.aleshin.features.editor.api.navigations.EditorScreens
-import ru.aleshin.features.home.api.domain.entities.categories.MainCategory
-import ru.aleshin.features.home.api.domain.entities.schedules.TimeTask
 import ru.aleshin.features.home.api.navigation.HomeScreens
 import ru.aleshin.features.home.impl.domain.interactors.TemplatesInteractor
 import ru.aleshin.features.home.impl.navigation.NavigationManager

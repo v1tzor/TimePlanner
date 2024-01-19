@@ -15,10 +15,10 @@
  */
 package ru.aleshin.features.home.impl.presentation.mapppers.schedules
 
+import ru.aleshin.core.domain.entities.schedules.Schedule
 import ru.aleshin.core.utils.extensions.mapToDate
 import ru.aleshin.core.utils.functional.Mapper
 import ru.aleshin.core.utils.managers.DateManager
-import ru.aleshin.features.home.api.domain.entities.schedules.Schedule
 import ru.aleshin.features.home.impl.presentation.models.schedules.ScheduleUi
 import javax.inject.Inject
 

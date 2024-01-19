@@ -31,10 +31,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import ru.aleshin.core.ui.mappers.mapToIconPainter
 import ru.aleshin.core.ui.views.toMinutesOrHoursTitle
 import ru.aleshin.core.utils.extensions.duration
 import ru.aleshin.core.utils.functional.Constants
-import ru.aleshin.features.home.api.presentation.mappers.mapToIconPainter
 import ru.aleshin.features.home.impl.presentation.models.schedules.TimeTaskUi
 import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
 import java.text.SimpleDateFormat

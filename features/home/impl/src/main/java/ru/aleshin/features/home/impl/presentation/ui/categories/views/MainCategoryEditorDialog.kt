@@ -44,7 +44,7 @@ import ru.aleshin.core.ui.views.CategoryIconMonogram
 import ru.aleshin.core.ui.views.CategoryTextMonogram
 import ru.aleshin.core.ui.views.DialogButtons
 import ru.aleshin.core.utils.functional.Constants
-import ru.aleshin.features.home.api.presentation.mappers.mapToIconPainter
+import ru.aleshin.core.ui.mappers.mapToIconPainter
 import ru.aleshin.features.home.impl.presentation.models.categories.MainCategoryUi
 import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
 

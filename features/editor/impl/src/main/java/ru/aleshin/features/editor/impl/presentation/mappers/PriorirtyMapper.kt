@@ -15,8 +15,8 @@
  */
 package ru.aleshin.features.editor.impl.presentation.mappers
 
+import ru.aleshin.core.domain.entities.schedules.TaskPriority
 import ru.aleshin.features.editor.impl.presentation.models.PriorityParameters
-import ru.aleshin.features.home.api.domain.entities.schedules.TaskPriority
 
 /**
  * @author Stanislav Aleshin on 16.01.2024.

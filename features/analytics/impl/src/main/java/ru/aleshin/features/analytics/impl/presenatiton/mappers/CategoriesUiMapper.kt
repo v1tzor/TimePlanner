@@ -15,10 +15,10 @@
  */
 package ru.aleshin.features.analytics.impl.presenatiton.mappers
 
+import ru.aleshin.core.domain.entities.categories.MainCategory
+import ru.aleshin.core.domain.entities.categories.SubCategory
 import ru.aleshin.features.analytics.impl.presenatiton.models.categories.MainCategoryUi
 import ru.aleshin.features.analytics.impl.presenatiton.models.categories.SubCategoryUi
-import ru.aleshin.features.home.api.domain.entities.categories.MainCategory
-import ru.aleshin.features.home.api.domain.entities.categories.SubCategory
 
 /**
  * @author Stanislav Aleshin on 30.07.2023.

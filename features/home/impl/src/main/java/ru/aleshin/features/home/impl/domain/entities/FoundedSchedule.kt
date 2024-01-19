@@ -15,9 +15,9 @@
  */
 package ru.aleshin.features.home.impl.domain.entities
 
+import ru.aleshin.core.domain.entities.schedules.Schedule
+import ru.aleshin.core.domain.entities.template.Template
 import ru.aleshin.core.utils.functional.Either
-import ru.aleshin.features.home.api.domain.entities.schedules.Schedule
-import ru.aleshin.features.home.api.domain.entities.template.Template
 
 /**
  * @author Stanislav Aleshin on 04.08.2023.

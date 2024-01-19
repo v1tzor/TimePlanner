@@ -32,7 +32,7 @@ import ru.aleshin.core.utils.functional.Either
 import ru.aleshin.core.utils.functional.TimeRange
 import ru.aleshin.core.utils.managers.CoroutineManager
 import ru.aleshin.core.utils.managers.DateManager
-import ru.aleshin.features.editor.api.presentation.TimeTaskAlarmManager
+import ru.aleshin.core.ui.notifications.TimeTaskAlarmManager
 import ru.aleshin.features.editor.impl.domain.common.convertToTimeTask
 import ru.aleshin.features.editor.impl.domain.entites.EditModel
 import ru.aleshin.features.editor.impl.domain.entites.EditorFailures

@@ -16,10 +16,10 @@
 package ru.aleshin.features.settings.impl.domain.interactors
 
 import kotlinx.coroutines.flow.first
+import ru.aleshin.core.domain.entities.schedules.UndefinedTask
+import ru.aleshin.core.domain.repository.UndefinedTasksRepository
 import ru.aleshin.core.utils.functional.DomainResult
 import ru.aleshin.core.utils.functional.UnitDomainResult
-import ru.aleshin.features.home.api.domain.entities.schedules.UndefinedTask
-import ru.aleshin.features.home.api.domain.repository.UndefinedTasksRepository
 import ru.aleshin.features.settings.impl.domain.common.SettingsEitherWrapper
 import ru.aleshin.features.settings.impl.domain.common.SettingsFailures
 import javax.inject.Inject

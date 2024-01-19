@@ -15,10 +15,10 @@
  */
 package ru.aleshin.features.analytics.impl.presenatiton.mappers
 
+import ru.aleshin.core.domain.entities.schedules.TaskNotifications
+import ru.aleshin.core.domain.entities.schedules.TimeTask
 import ru.aleshin.features.analytics.impl.presenatiton.models.timetask.TaskNotificationsUi
 import ru.aleshin.features.analytics.impl.presenatiton.models.timetask.TimeTaskUi
-import ru.aleshin.features.home.api.domain.entities.schedules.TaskNotifications
-import ru.aleshin.features.home.api.domain.entities.schedules.TimeTask
 
 internal fun TimeTask.mapToUi() = TimeTaskUi(
     key = key,

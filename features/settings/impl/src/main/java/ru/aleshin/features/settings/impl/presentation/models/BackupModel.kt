@@ -16,10 +16,10 @@
 package ru.aleshin.features.settings.impl.presentation.models
 
 import kotlinx.serialization.Serializable
-import ru.aleshin.features.home.api.domain.entities.categories.Categories
-import ru.aleshin.features.home.api.domain.entities.schedules.Schedule
-import ru.aleshin.features.home.api.domain.entities.schedules.UndefinedTask
-import ru.aleshin.features.home.api.domain.entities.template.Template
+import ru.aleshin.core.domain.entities.categories.Categories
+import ru.aleshin.core.domain.entities.schedules.Schedule
+import ru.aleshin.core.domain.entities.schedules.UndefinedTask
+import ru.aleshin.core.domain.entities.template.Template
 
 /**
  * @author Stanislav Aleshin on 10.06.2023.
