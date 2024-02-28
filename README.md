@@ -35,6 +35,10 @@
 
 </div>
 
+<div align="center">
+<img alt="Repository Stats" src="https://repobeats.axiom.co/api/embed/5a3dfa1ba49b87660dec72cecd036756c12719d9.svg">
+</div>
+
 ## Download 🔥
 [<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" alt="Get it on F-Droid" height="80">](https://f-droid.org/en/packages/ru.aleshin.timeplanner/)
 <a href="https://apt.izzysoft.de/fdroid/index/apk/ru.aleshin.timeplanner" target="_blank">
