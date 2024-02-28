@@ -22,6 +22,12 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.TestCoroutineDispatcher
 import org.junit.Before
 import org.junit.Test
+import ru.aleshin.core.domain.entities.categories.Categories
+import ru.aleshin.core.domain.entities.categories.MainCategory
+import ru.aleshin.core.domain.entities.categories.SubCategory
+import ru.aleshin.core.domain.entities.schedules.TimeTask
+import ru.aleshin.core.domain.entities.schedules.UndefinedTask
+import ru.aleshin.core.domain.entities.template.Template
 import ru.aleshin.core.utils.extensions.duration
 import ru.aleshin.core.utils.extensions.endThisDay
 import ru.aleshin.core.utils.extensions.shiftMinutes
@@ -33,6 +39,7 @@ import ru.aleshin.core.utils.functional.TimeRange
 import ru.aleshin.core.utils.managers.CoroutineManager
 import ru.aleshin.core.utils.managers.DateManager
 import ru.aleshin.core.ui.notifications.TimeTaskAlarmManager
+import ru.aleshin.core.utils.functional.UnitDomainResult
 import ru.aleshin.features.editor.impl.domain.common.convertToTimeTask
 import ru.aleshin.features.editor.impl.domain.entites.EditModel
 import ru.aleshin.features.editor.impl.domain.entites.EditorFailures
@@ -40,8 +47,13 @@ import ru.aleshin.features.editor.impl.domain.interactors.CategoriesInteractor
 import ru.aleshin.features.editor.impl.domain.interactors.EditorInteractor
 import ru.aleshin.features.editor.impl.domain.interactors.TemplatesInteractor
 import ru.aleshin.features.editor.impl.domain.interactors.TimeTaskInteractor
+import ru.aleshin.features.editor.impl.domain.interactors.UndefinedTasksInteractor
 import ru.aleshin.features.editor.impl.navigation.NavigationManager
 import ru.aleshin.features.editor.impl.presentation.mappers.mapToDomain
+import ru.aleshin.features.editor.impl.presentation.mappers.mapToUi
+import ru.aleshin.features.editor.impl.presentation.models.categories.CategoriesUi
+import ru.aleshin.features.editor.impl.presentation.models.categories.MainCategoryUi
+import ru.aleshin.features.editor.impl.presentation.models.categories.SubCategoryUi
 import ru.aleshin.features.editor.impl.presentation.models.editmodel.EditModelUi
 import ru.aleshin.features.editor.impl.presentation.models.editmodel.EditParameters
 import ru.aleshin.features.editor.impl.presentation.ui.editor.contract.EditorEffect
@@ -54,11 +66,6 @@ import ru.aleshin.features.editor.impl.presentation.ui.editor.screenmodel.Editor
 import ru.aleshin.features.editor.impl.presentation.ui.editor.screenmodel.EditorScreenModel
 import ru.aleshin.features.editor.impl.presentation.ui.editor.screenmodel.EditorStateCommunicator
 import ru.aleshin.features.editor.impl.presentation.ui.editor.screenmodel.TimeRangeValidator
-import ru.aleshin.features.home.api.domain.entities.categories.Categories
-import ru.aleshin.features.home.api.domain.entities.categories.MainCategory
-import ru.aleshin.features.home.api.domain.entities.categories.SubCategory
-import ru.aleshin.features.home.api.domain.entities.schedules.TimeTask
-import ru.aleshin.features.home.api.domain.entities.template.Template
 import java.lang.NullPointerException
 import java.util.Calendar
 import java.util.Date
@@ -72,6 +79,7 @@ internal class EditorScreenModelTest {
     private lateinit var editorInteractor: FakeEditorInteractor
     private lateinit var categoriesInteractor: FakeCategoriesInteractor
     private lateinit var templatesInteractor: FakeTemplatesInteractor
+    private lateinit var undefinedTasksInteractor: UndefinedTasksInteractor
     private lateinit var timeTaskAlarmManager: FakeTimeTaskAlarmManager
     private lateinit var navigationManager: FakeNavigationManager
     private lateinit var dateManager: FakeDateManager
@@ -83,17 +91,16 @@ internal class EditorScreenModelTest {
         EditorScreenModel(
             timeTaskWorkProcessor = TimeTaskWorkProcessor.Base(
                 timeTaskInteractor = timeTaskInteractor,
-                templatesInteractor = templatesInteractor,
+                undefinedTasksInteractor = undefinedTasksInteractor,
                 timeTaskAlarmManager = timeTaskAlarmManager,
                 navigationManager = navigationManager,
-                dateManager = dateManager,
             ),
             editorWorkProcessor = EditorWorkProcessor.Base(
                 editorInteractor = editorInteractor,
                 categoriesInteractor = categoriesInteractor,
                 templatesInteractor = templatesInteractor,
-                navigationManager = navigationManager,
             ),
+            navigationManager = navigationManager,
             categoryValidator = CategoryValidator.Base(),
             timeRangeValidator = TimeRangeValidator.Base(),
             stateCommunicator = stateCommunicator,
@@ -108,6 +115,7 @@ internal class EditorScreenModelTest {
         editorInteractor = FakeEditorInteractor()
         categoriesInteractor = FakeCategoriesInteractor()
         templatesInteractor = FakeTemplatesInteractor()
+        undefinedTasksInteractor = FakeUndefinedTaskInteractor()
         timeTaskAlarmManager = FakeTimeTaskAlarmManager()
         navigationManager = FakeNavigationManager()
         dateManager = FakeDateManager()
@@ -125,10 +133,7 @@ internal class EditorScreenModelTest {
             startTime = date.startThisDay(),
             endTime = date.endThisDay(),
         )
-        val fakeCategories = Categories(
-            MainCategory.absent(),
-            listOf(SubCategory.absentSubCategory(MainCategory.absent())),
-        )
+        val fakeCategories = Categories(MainCategory(), listOf(SubCategory()))
         editorInteractor.editModel = fakeEditModel
         categoriesInteractor.categoriesList.add(fakeCategories)
 
@@ -148,8 +153,8 @@ internal class EditorScreenModelTest {
         )
         assertEquals(
             EditorViewState(
-                editModel = fakeEditModel.mapToDomain(),
-                categories = listOf(fakeCategories),
+                editModel = fakeEditModel.mapToUi(),
+                categories = listOf(fakeCategories).map { it.mapToUi() },
             ),
             stateCommunicator.changedStateList[1],
         )
@@ -164,10 +169,7 @@ internal class EditorScreenModelTest {
             startTime = date.startThisDay(),
             endTime = date.endThisDay(),
         )
-        val fakeCategories = Categories(
-            MainCategory.absent(),
-            listOf(SubCategory.absentSubCategory(MainCategory.absent())),
-        )
+        val fakeCategories = Categories(MainCategory(), listOf(SubCategory()))
         editorInteractor.editModel = fakeEditModel
         categoriesInteractor.categoriesList.add(fakeCategories)
 
@@ -193,22 +195,21 @@ internal class EditorScreenModelTest {
     @Test
     fun test_save_edit_model_success() {
         val date = Calendar.getInstance().time
-        val fakeMainCategory = MainCategory(id = 1, customName = "Work")
         val initEditModel = EditModel(
             key = 100L,
             date = date,
             startTime = date.shiftMinutes(10),
             endTime = date.shiftMinutes(20),
-            mainCategory = fakeMainCategory,
+            mainCategory = MainCategory(id = 1, customName = "Work"),
         )
         val fakeEditModel = EditModelUi(
             key = 100L,
             date = date,
             timeRange = TimeRange(from = date.shiftMinutes(20), to = date.endThisDay()),
             duration = duration(date.shiftMinutes(20), date.endThisDay()),
-            mainCategory = fakeMainCategory,
+            mainCategory = MainCategoryUi(id = 1, customName = "Work"),
         )
-        val fakeCategories = Categories(fakeMainCategory, listOf())
+        val fakeCategories = CategoriesUi(MainCategoryUi(id = 1, customName = "Work"), listOf())
         dateManager.currentDate = date.startThisDay()
         timeTaskInteractor.timeTasksList.add(initEditModel.convertToTimeTask())
         timeTaskAlarmManager.notificationTasks.add(initEditModel.convertToTimeTask())
@@ -216,21 +217,21 @@ internal class EditorScreenModelTest {
             EditorViewState(editModel = fakeEditModel, categories = listOf(fakeCategories)),
         )
 
-        screenModel.dispatchEvent(EditorEvent.PressSaveButton(false))
+        screenModel.dispatchEvent(EditorEvent.PressSaveButton)
 
         assertEquals(true, navigationManager.isNavigateToHome)
 
-        assertEquals(1, timeTaskAlarmManager.updateNotificationCount)
+        assertEquals(1, timeTaskAlarmManager.addedOrUpdatedNotificationCount)
         assertEquals(1, timeTaskAlarmManager.notificationTasks.size)
         assertEquals(
-            fakeEditModel.mapToUi().convertToTimeTask(),
+            fakeEditModel.mapToDomain().convertToTimeTask(),
             timeTaskAlarmManager.notificationTasks[0],
         )
 
         assertEquals(1, timeTaskInteractor.updateTaskCount)
         assertEquals(1, timeTaskInteractor.timeTasksList.size)
         assertEquals(
-            fakeEditModel.mapToUi().convertToTimeTask(),
+            fakeEditModel.mapToDomain().convertToTimeTask(),
             timeTaskInteractor.timeTasksList[0],
         )
 
@@ -257,35 +258,34 @@ internal class EditorScreenModelTest {
     @Test
     fun test_add_edit_model() {
         val date = Calendar.getInstance().time
-        val fakeMainCategory = MainCategory(id = 1, customName = "Work")
         val fakeEditModel = EditModelUi(
             key = 0L,
             date = date,
             timeRange = TimeRange(from = date.shiftMinutes(20), to = date.endThisDay()),
             duration = duration(date.shiftMinutes(20), date.endThisDay()),
-            mainCategory = fakeMainCategory,
+            mainCategory = MainCategoryUi(id = 1, customName = "Work"),
         )
-        val fakeCategories = Categories(fakeMainCategory, listOf())
+        val fakeCategories = CategoriesUi(MainCategoryUi(id = 1, customName = "Work"), listOf())
         dateManager.currentDate = date.startThisDay()
         stateCommunicator.changedStateList.add(
             EditorViewState(editModel = fakeEditModel, categories = listOf(fakeCategories)),
         )
 
-        screenModel.dispatchEvent(EditorEvent.PressSaveButton(false))
+        screenModel.dispatchEvent(EditorEvent.PressSaveButton)
 
         assertEquals(true, navigationManager.isNavigateToHome)
 
-        assertEquals(1, timeTaskAlarmManager.addedNotificationCount)
+        assertEquals(1, timeTaskAlarmManager.addedOrUpdatedNotificationCount)
         assertEquals(1, timeTaskAlarmManager.notificationTasks.size)
         assertEquals(
-            fakeEditModel.mapToUi().convertToTimeTask(),
+            fakeEditModel.mapToDomain().convertToTimeTask(),
             timeTaskAlarmManager.notificationTasks[0],
         )
 
         assertEquals(1, timeTaskInteractor.addedTaskCount)
         assertEquals(1, timeTaskInteractor.timeTasksList.size)
         assertEquals(
-            fakeEditModel.mapToUi().convertToTimeTask(),
+            fakeEditModel.mapToDomain().convertToTimeTask(),
             timeTaskInteractor.timeTasksList[0],
         )
 
@@ -317,10 +317,7 @@ internal class EditorScreenModelTest {
             date = date,
             timeRange = TimeRange(from = date.startThisDay(), to = date.endThisDay()),
         )
-        val fakeCategories = Categories(
-            MainCategory.absent(),
-            listOf(SubCategory.absentSubCategory(MainCategory.absent())),
-        )
+        val fakeCategories = CategoriesUi(MainCategoryUi(), listOf(SubCategoryUi()))
         stateCommunicator.changedStateList.add(
             EditorViewState(editModel = fakeEditModel, categories = listOf(fakeCategories)),
         )
@@ -365,10 +362,7 @@ internal class EditorScreenModelTest {
             date = date,
             timeRange = TimeRange(from = date.startThisDay(), to = date.endThisDay()),
         )
-        val fakeCategories = Categories(
-            MainCategory.absent(),
-            listOf(SubCategory.absentSubCategory(MainCategory.absent())),
-        )
+        val fakeCategories = CategoriesUi(MainCategoryUi(), listOf(SubCategoryUi()))
         stateCommunicator.changedStateList.add(
             EditorViewState(editModel = fakeEditModel, categories = listOf(fakeCategories)),
         )
@@ -403,75 +397,19 @@ internal class EditorScreenModelTest {
     }
 
     @Test
-    fun test_delete_template() {
-        val date = Calendar.getInstance().time
-        val fakeTemplate = Template(
-            templateId = 0,
-            startTime = date.startThisDay(),
-            endTime = date.endThisDay(),
-            category = MainCategory.absent(),
-        )
-        val fakeEditModel = EditModelUi(
-            key = 100L,
-            date = date,
-            timeRange = TimeRange(from = date.startThisDay(), to = date.endThisDay()),
-            templateId = 0,
-        )
-        val fakeCategories = Categories(
-            MainCategory.absent(),
-            listOf(SubCategory.absentSubCategory(MainCategory.absent())),
-        )
-        stateCommunicator.changedStateList.add(
-            EditorViewState(editModel = fakeEditModel, categories = listOf(fakeCategories)),
-        )
-        templatesInteractor.templatesList.add(fakeTemplate)
-
-        screenModel.dispatchEvent(EditorEvent.CreateTemplate)
-
-        assertEquals(1, templatesInteractor.deleteTemplatesCount)
-
-        assertEquals(0, effectCommunicator.pushEffectList.size)
-        assertEquals(0, effectCommunicator.updateEffectCount)
-
-        assertEquals(1, stateCommunicator.updateStateCount)
-        assertEquals(3, stateCommunicator.changedStateList.size)
-        assertEquals(
-            EditorViewState(editModel = null, categories = listOf()),
-            stateCommunicator.changedStateList[0],
-        )
-        assertEquals(
-            EditorViewState(
-                editModel = fakeEditModel.copy(templateId = 0),
-                categories = listOf(fakeCategories),
-            ),
-            stateCommunicator.changedStateList[1],
-        )
-        assertEquals(
-            EditorViewState(
-                editModel = fakeEditModel.copy(templateId = null),
-                categories = listOf(fakeCategories),
-            ),
-            stateCommunicator.changedStateList[2],
-        )
-    }
-
-    @Test
     fun test_change_parameters_and_categories() {
         val date = Calendar.getInstance().time
-        val fakeMainCategory = MainCategory(id = 1, customName = "Work")
+        val fakeMainCategory = MainCategoryUi(id = 1, customName = "Work")
         val fakeCategories = listOf(
-            Categories(
-                MainCategory.absent(),
-                listOf(SubCategory.absentSubCategory(MainCategory.absent())),
-            ),
-            Categories(fakeMainCategory, listOf()),
+            CategoriesUi(MainCategoryUi(), listOf(SubCategoryUi())),
+            CategoriesUi(fakeMainCategory, listOf()),
         )
         val fakeEditModel = EditModelUi(
             key = 100L,
             date = date,
             timeRange = TimeRange(from = date.startThisDay(), to = date.endThisDay()),
-            mainCategory = MainCategory.absent(),
-            subCategory = SubCategory.absentSubCategory(MainCategory.absent()),
+            mainCategory = MainCategoryUi(),
+            subCategory = SubCategoryUi(),
             parameters = EditParameters(isEnableNotification = false),
         )
         stateCommunicator.changedStateList.add(
@@ -521,7 +459,7 @@ internal class EditorScreenModelTest {
     }
 
     @Test
-    fun test_press_back_button_event() = runBlocking {
+    fun test_press_back_button_event() {
         screenModel.dispatchEvent(EditorEvent.PressBackButton)
 
         assertEquals(true, navigationManager.isNavigateToPrevious)
@@ -530,8 +468,8 @@ internal class EditorScreenModelTest {
         assertEquals(0, categoriesInteractor.fetchedCategoriesCount)
         assertEquals(0, timeTaskInteractor.updateTaskCount)
 
-        assertEquals(2, stateCommunicator.changedStateList.size)
-        assertEquals(1, stateCommunicator.updateStateCount)
+        assertEquals(1, stateCommunicator.changedStateList.size)
+        assertEquals(0, stateCommunicator.updateStateCount)
 
         assertEquals(0, effectCommunicator.pushEffectList.size)
         assertEquals(0, effectCommunicator.updateEffectCount)
@@ -548,22 +486,22 @@ private class FakeTimeTaskInteractor : TimeTaskInteractor {
 
     var errorWhileAction = false
 
-    override suspend fun addTimeTask(timeTask: TimeTask): Either<EditorFailures, Unit> {
+    override suspend fun addTimeTask(timeTask: TimeTask): Either<EditorFailures, Long> {
         addedTaskCount++
         return if (!errorWhileAction) {
             timeTasksList.add(timeTask)
-            Either.Right(Unit)
+            Either.Right(timeTask.key)
         } else {
             Either.Left(EditorFailures.OtherError(SQLiteException()))
         }
     }
 
-    override suspend fun updateTimeTask(timeTask: TimeTask): Either<EditorFailures, Unit> {
+    override suspend fun updateTimeTask(timeTask: TimeTask): Either<EditorFailures, Long> {
         updateTaskCount++
         return if (!errorWhileAction) {
             val index = timeTasksList.indexOfFirst { it.key == timeTask.key }
             timeTasksList[index] = timeTask
-            Either.Right(Unit)
+            Either.Right(timeTask.key)
         } else {
             Either.Left(EditorFailures.TimeOverlayError(null, null))
         }
@@ -603,6 +541,7 @@ private class FakeCategoriesInteractor : CategoriesInteractor {
     val categoriesList = mutableListOf<Categories>()
 
     var fetchedCategoriesCount = 0
+    var addedCategoriesCount = 0
 
     var errorWhileAction = false
 
@@ -610,6 +549,23 @@ private class FakeCategoriesInteractor : CategoriesInteractor {
         fetchedCategoriesCount++
         return if (!errorWhileAction) {
             Either.Right(categoriesList)
+        } else {
+            Either.Left(EditorFailures.OtherError(SQLiteException()))
+        }
+    }
+
+    override suspend fun addSubCategory(subCategory: SubCategory): DomainResult<EditorFailures, Unit> {
+        addedCategoriesCount++
+        return if (!errorWhileAction) {
+            val model = categoriesList.find { it.category == subCategory.mainCategory }
+            if (model != null) {
+                categoriesList[categoriesList.indexOf(model)] = model.copy(
+                    subCategories = model.subCategories.toMutableList().apply { add(subCategory) }
+                )
+            } else {
+                categoriesList.add(Categories(subCategory.mainCategory, listOf(subCategory)))
+            }
+            Either.Right(Unit)
         } else {
             Either.Left(EditorFailures.OtherError(SQLiteException()))
         }
@@ -669,28 +625,50 @@ private class FakeTemplatesInteractor : TemplatesInteractor {
     }
 }
 
+private class FakeUndefinedTaskInteractor : UndefinedTasksInteractor {
+
+    private val undefinedTasksList = mutableListOf<UndefinedTask>()
+
+    var fetchedTasksCount = 0
+    var deletedTasksCount = 0
+
+    var errorWhileAction = false
+    override suspend fun fetchAllUndefinedTasks(): DomainResult<EditorFailures, List<UndefinedTask>> {
+        fetchedTasksCount++
+        return if (!errorWhileAction) {
+            Either.Right(undefinedTasksList)
+        } else {
+            Either.Left(EditorFailures.OtherError(SQLiteException()))
+        }
+    }
+
+    override suspend fun deleteUndefinedTask(taskId: Long): UnitDomainResult<EditorFailures> {
+        deletedTasksCount++
+        return if (!errorWhileAction) {
+            undefinedTasksList.removeAt(undefinedTasksList.indexOfFirst { it.id == taskId })
+            Either.Right(Unit)
+        } else {
+            Either.Left(EditorFailures.OtherError(SQLiteException()))
+        }
+    }
+}
+
 private class FakeTimeTaskAlarmManager : TimeTaskAlarmManager {
-    // TODO: Fix unit test
 
     val notificationTasks = mutableListOf<TimeTask>()
 
-    var addedNotificationCount = 0
-    var updateNotificationCount = 0
+    var addedOrUpdatedNotificationCount = 0
     var deleteNotificationCount = 0
 
-    override fun addNotifyAlarm(timeTask: TimeTask) {
-        addedNotificationCount++
-        notificationTasks.add(timeTask)
-    }
-
-    override fun updateNotifyAlarm(timeTask: TimeTask) {
+    override fun addOrUpdateNotifyAlarm(timeTask: TimeTask) {
         val index = notificationTasks.indexOfFirst { it.key == timeTask.key }
-        notificationTasks[index] = timeTask
+        if (index != -1) notificationTasks[index] = timeTask else notificationTasks.add(timeTask)
+        addedOrUpdatedNotificationCount++
     }
 
     override fun deleteNotifyAlarm(timeTask: TimeTask) {
         deleteNotificationCount++
-        val index = notificationTasks.indexOfFirst { it.key == timeTask.key }
+        val index = notificationTasks.indexOfFirst { it.key == timeTask.key }.takeIf { it != -1 } ?: return
         notificationTasks.removeAt(index)
     }
 }
@@ -699,7 +677,6 @@ private class FakeNavigationManager : NavigationManager {
 
     var isNavigateToHome = false
     var isNavigateToTemplates = false
-    var isNavigateToCategories = false
     var isNavigateToPrevious = false
 
     override fun navigateToHomeScreen() {
@@ -708,10 +685,6 @@ private class FakeNavigationManager : NavigationManager {
 
     override fun navigateToTemplatesScreen() {
         isNavigateToTemplates = true
-    }
-
-    override fun navigateToCategoriesScreen() {
-        isNavigateToCategories = true
     }
 
     override fun navigateToBack() {
@@ -738,6 +711,20 @@ private class FakeDateManager : DateManager {
         val progress = pastTime / duration
 
         return if (progress < 0f) 0f else if (progress > 1f) 1f else progress
+    }
+
+    override fun setCurrentHMS(date: Date): Date {
+        val currentCalendar = Calendar.getInstance().apply {
+            time = currentDate
+        }
+        val targetCalendar = Calendar.getInstance().apply {
+            time = date
+            set(Calendar.HOUR_OF_DAY, currentCalendar.get(Calendar.HOUR_OF_DAY))
+            set(Calendar.MINUTE, currentCalendar.get(Calendar.MINUTE))
+            set(Calendar.SECOND, currentCalendar.get(Calendar.SECOND))
+            set(Calendar.MILLISECOND, currentCalendar.get(Calendar.MILLISECOND))
+        }
+        return targetCalendar.time
     }
 }
 

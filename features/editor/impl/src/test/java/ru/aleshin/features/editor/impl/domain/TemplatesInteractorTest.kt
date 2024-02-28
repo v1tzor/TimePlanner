@@ -22,6 +22,9 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
+import ru.aleshin.core.domain.entities.categories.MainCategory
+import ru.aleshin.core.domain.entities.template.Template
+import ru.aleshin.core.domain.repository.TemplatesRepository
 import ru.aleshin.core.utils.extensions.endThisDay
 import ru.aleshin.core.utils.extensions.setStartDay
 import ru.aleshin.core.utils.extensions.shiftMinutes
@@ -31,9 +34,6 @@ import ru.aleshin.features.editor.impl.domain.common.EditorEitherWrapper
 import ru.aleshin.features.editor.impl.domain.common.EditorErrorHandler
 import ru.aleshin.features.editor.impl.domain.entites.EditorFailures
 import ru.aleshin.features.editor.impl.domain.interactors.TemplatesInteractor
-import ru.aleshin.features.home.api.domain.entities.categories.MainCategory
-import ru.aleshin.features.home.api.domain.entities.template.Template
-import ru.aleshin.features.home.api.domain.repository.TemplatesRepository
 import java.util.Calendar
 import kotlin.NullPointerException
 
@@ -315,6 +315,15 @@ private class FakeTemplatesRepository : TemplatesRepository {
         }
     }
 
+    override suspend fun fetchTemplatesById(templateId: Int): Template? {
+        fetchTemplatesCount++
+        return if (!errorWhileAction) {
+            templatesList[templateId]
+        } else {
+            throw NullPointerException()
+        }
+    }
+
     override suspend fun updateTemplate(template: Template) {
         updateTemplatesCount++
         if (!errorWhileAction) {
@@ -334,10 +343,10 @@ private class FakeTemplatesRepository : TemplatesRepository {
         }
     }
 
-    override suspend fun deleteAllTemplates() {
+    override suspend fun deleteAllTemplates(): List<Template> {
         deleteTemplatesCount++
         if (!errorWhileAction) {
-            templatesList.clear()
+            return templatesList.apply { templatesList.clear() }
         } else {
             throw SQLiteException()
         }
