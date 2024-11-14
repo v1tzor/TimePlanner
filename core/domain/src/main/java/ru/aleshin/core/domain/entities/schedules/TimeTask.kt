@@ -34,7 +34,7 @@ data class TimeTask(
     @Serializable(DateSerializer::class)
     val createdAt: Date? = null,
     val timeRange: TimeRange,
-    val category: MainCategory,
+    val category: MainCategory = MainCategory(),
     val subCategory: SubCategory? = null,
     val isCompleted: Boolean = true,
     val priority: TaskPriority = TaskPriority.STANDARD,

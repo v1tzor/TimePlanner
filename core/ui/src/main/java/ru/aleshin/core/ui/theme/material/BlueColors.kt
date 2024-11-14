@@ -85,7 +85,7 @@ val blue_theme_dark_onSurfaceVariant = Color(0xFFC4C6CF)
 
 val blueSeed = Color(0xFF5D7EB4)
 
-internal val blueLightColorScheme = lightColorScheme(
+val blueLightColorScheme = lightColorScheme(
     primary = blue_theme_light_primary,
     onPrimary = blue_theme_light_onPrimary,
     primaryContainer = blue_theme_light_primaryContainer,
@@ -117,7 +117,7 @@ internal val blueLightColorScheme = lightColorScheme(
     scrim = blue_theme_light_scrim,
 )
 
-internal val blueDarkColorScheme = darkColorScheme(
+val blueDarkColorScheme = darkColorScheme(
     primary = blue_theme_dark_primary,
     onPrimary = blue_theme_dark_onPrimary,
     primaryContainer = blue_theme_dark_primaryContainer,

@@ -21,12 +21,15 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.graphics.Bitmap
-import android.media.RingtoneManager
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
-import ru.aleshin.core.utils.notifications.parameters.*
-import java.lang.Exception
+import ru.aleshin.core.utils.notifications.parameters.NotificationDefaults
+import ru.aleshin.core.utils.notifications.parameters.NotificationImportance
+import ru.aleshin.core.utils.notifications.parameters.NotificationPriority
+import ru.aleshin.core.utils.notifications.parameters.NotificationProgress
+import ru.aleshin.core.utils.notifications.parameters.NotificationStyles
+import ru.aleshin.core.utils.notifications.parameters.NotificationVisibility
 import javax.inject.Inject
 
 /**
@@ -59,7 +62,7 @@ interface NotificationCreator {
     fun createNotifyChannel(
         channelId: String,
         channelName: String,
-        priority: NotificationPriority,
+        importance: NotificationImportance,
         defaults: NotificationDefaults,
     )
 
@@ -127,10 +130,10 @@ interface NotificationCreator {
         override fun createNotifyChannel(
             channelId: String,
             channelName: String,
-            priority: NotificationPriority,
+            importance: NotificationImportance,
             defaults: NotificationDefaults,
         ) {
-            val channel = NotificationChannel(channelId, channelName, priority.importance).apply {
+            val channel = NotificationChannel(channelId, channelName, importance.importance).apply {
                 enableLights(defaults.isLights)
                 enableVibration(defaults.isVibrate)
                 vibrationPattern = longArrayOf(500, 500, 500)

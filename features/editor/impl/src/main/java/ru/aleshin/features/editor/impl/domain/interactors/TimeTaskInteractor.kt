@@ -24,6 +24,7 @@ import ru.aleshin.core.domain.repository.TimeTaskRepository
 import ru.aleshin.core.utils.extensions.extractAllItem
 import ru.aleshin.core.utils.extensions.generateUniqueKey
 import ru.aleshin.core.utils.extensions.shiftDay
+import ru.aleshin.core.utils.functional.DomainResult
 import ru.aleshin.core.utils.functional.Either
 import ru.aleshin.core.utils.functional.TimeRange
 import ru.aleshin.core.utils.managers.DateManager
@@ -38,9 +39,9 @@ import javax.inject.Inject
  */
 internal interface TimeTaskInteractor {
 
-    suspend fun addTimeTask(timeTask: TimeTask): Either<EditorFailures, Long>
-    suspend fun updateTimeTask(timeTask: TimeTask): Either<EditorFailures, Long>
-    suspend fun deleteTimeTask(key: Long): Either<EditorFailures, Unit>
+    suspend fun addTimeTask(timeTask: TimeTask): DomainResult<EditorFailures, Long>
+    suspend fun updateTimeTask(timeTask: TimeTask): DomainResult<EditorFailures, Long>
+    suspend fun deleteTimeTask(key: Long): DomainResult<EditorFailures, Unit>
 
     class Base @Inject constructor(
         private val scheduleRepository: ScheduleRepository,

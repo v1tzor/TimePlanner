@@ -85,7 +85,7 @@ val purple_theme_dark_onSurfaceVariant = Color(0xFFC9C5D0)
 
 val purpleSeed = Color(0xFF6C65A2)
 
-internal val purpleLightColorScheme = lightColorScheme(
+val purpleLightColorScheme = lightColorScheme(
     primary = purple_theme_light_primary,
     onPrimary = purple_theme_light_onPrimary,
     primaryContainer = purple_theme_light_primaryContainer,
@@ -117,7 +117,7 @@ internal val purpleLightColorScheme = lightColorScheme(
     scrim = purple_theme_light_scrim,
 )
 
-internal val purpleDarkColorScheme = darkColorScheme(
+val purpleDarkColorScheme = darkColorScheme(
     primary = purple_theme_dark_primary,
     onPrimary = purple_theme_dark_onPrimary,
     primaryContainer = purple_theme_dark_primaryContainer,

@@ -30,9 +30,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -77,7 +77,7 @@ internal fun TemplatesContent(
             sortedType = state.sortedType,
             onChangeSortedType = onChangeSortedType,
         )
-        Divider()
+        HorizontalDivider()
         TemplatesLazyColumn(
             templates = state.templates,
             categories = state.categories,

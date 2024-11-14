@@ -25,7 +25,7 @@ import ru.aleshin.core.utils.functional.TimeRange
 interface ScheduleRepository {
     suspend fun createSchedules(schedules: List<Schedule>)
     suspend fun fetchSchedulesByRange(timeRange: TimeRange?): Flow<List<Schedule>>
-    suspend fun fetchScheduleByDate(date: Long): Flow<Schedule?>
+    fun fetchScheduleByDate(date: Long): Flow<Schedule?>
     suspend fun updateSchedule(schedule: Schedule)
     suspend fun deleteAllSchedules(): List<Schedule>
 }

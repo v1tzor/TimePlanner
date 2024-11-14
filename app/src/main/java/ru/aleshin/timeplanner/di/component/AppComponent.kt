@@ -19,13 +19,22 @@ import android.content.Context
 import dagger.BindsInstance
 import dagger.Component
 import ru.aleshin.core.utils.navigation.navigator.NavigatorManager
-import ru.aleshin.core.utils.notifications.NotificationCreator
 import ru.aleshin.features.analytics.impl.di.AnalyticsFeatureDependencies
 import ru.aleshin.features.editor.impl.di.EditorFeatureDependencies
 import ru.aleshin.features.home.impl.di.HomeFeatureDependencies
 import ru.aleshin.features.settings.impl.di.SettingsFeatureDependencies
+import ru.aleshin.timeplanner.application.TimePlannerApp
 import ru.aleshin.timeplanner.di.annotation.TabNavigation
-import ru.aleshin.timeplanner.di.modules.*
+import ru.aleshin.timeplanner.di.modules.CoreModule
+import ru.aleshin.timeplanner.di.modules.DataBaseModule
+import ru.aleshin.timeplanner.di.modules.DataModule
+import ru.aleshin.timeplanner.di.modules.DependenciesModule
+import ru.aleshin.timeplanner.di.modules.DomainModules
+import ru.aleshin.timeplanner.di.modules.FeatureModule
+import ru.aleshin.timeplanner.di.modules.NavigationModule
+import ru.aleshin.timeplanner.di.modules.PresentationModule
+import ru.aleshin.timeplanner.domain.interactors.SettingsInteractor
+import ru.aleshin.timeplanner.domain.interactors.TimeTaskInteractor
 import ru.aleshin.timeplanner.presentation.ui.main.MainActivity
 import ru.aleshin.timeplanner.presentation.ui.tabs.screenmodel.TabScreenModel
 import javax.inject.Singleton
@@ -55,8 +64,10 @@ interface AppComponent :
     @TabNavigation
     fun fetchTabNavigatorManager(): NavigatorManager
     fun fetchTabScreenModel(): TabScreenModel
-    fun fetchNotificationCreator(): NotificationCreator
+    fun fetchTimeTaskInteractor(): TimeTaskInteractor
+    fun fetchSettingsInteractor(): SettingsInteractor
     fun inject(activity: MainActivity)
+    fun inject(application: TimePlannerApp)
 
     @Component.Builder
     interface Builder {

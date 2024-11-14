@@ -65,7 +65,7 @@ internal class AnalyticsScreen @Inject constructor() : Screen {
                 content = { paddingValues ->
                     HorizontalTabsPager(
                         modifier = Modifier.padding(paddingValues),
-                        tabs = AnalyticsTabItem.values().toList(),
+                        tabs = AnalyticsTabItem.entries,
                     ) { tab ->
                         when (tab) {
                             AnalyticsTabItem.TIME -> TimeTab(

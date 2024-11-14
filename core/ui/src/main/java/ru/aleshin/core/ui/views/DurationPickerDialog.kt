@@ -15,6 +15,7 @@
  */
 package ru.aleshin.core.ui.views
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -26,9 +27,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AssistChip
-import androidx.compose.material3.AssistChipDefaults
+import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -75,7 +75,7 @@ fun DurationPickerDialog(
     var hours by rememberSaveable { mutableStateOf<Int?>(duration.toHorses().toInt()) }
     var minutes by rememberSaveable { mutableStateOf<Int?>(duration.toMinutesInHours().toInt()) }
 
-    AlertDialog(onDismissRequest = onDismissRequest) {
+    BasicAlertDialog(onDismissRequest = onDismissRequest) {
         Surface(
             modifier = modifier.width(243.dp),
             tonalElevation = TimePlannerRes.elevations.levelThree,
@@ -112,7 +112,7 @@ fun DurationPickerDialog(
                         contentPadding = PaddingValues(horizontal = 24.dp),
                         horizontalArrangement = Arrangement.spacedBy(10.dp),
                     ) {
-                        items(DurationTemplate.values()) {
+                        items(DurationTemplate.entries.toTypedArray()) {
                             AssistChip(
                                 onClick = {
                                     hours = it.hours
@@ -123,8 +123,9 @@ fun DurationPickerDialog(
                                         it.hours.hoursToMillis() + it.minutes.minutesToMillis()
                                     Text(text = millis.toMinutesOrHoursTitle())
                                 },
-                                border = AssistChipDefaults.assistChipBorder(
-                                    borderColor = MaterialTheme.colorScheme.outlineVariant,
+                                border = BorderStroke(
+                                    1.dp,
+                                    color = MaterialTheme.colorScheme.outlineVariant,
                                 ),
                             )
                         }

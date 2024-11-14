@@ -19,6 +19,8 @@ package ru.aleshin.timeplanner.presentation.ui.main
  * @author Stanislav Aleshin on 27.02.2023.
  */
 import android.Manifest
+import android.content.Intent
+import android.content.Intent.ACTION_VIEW
 import android.os.Build
 import android.view.WindowManager.LayoutParams.FLAG_SECURE
 import androidx.activity.result.contract.ActivityResultContracts
@@ -26,6 +28,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import cafe.adriel.voyager.navigator.CurrentScreen
 import ru.aleshin.core.ui.theme.TimePlannerTheme
+import ru.aleshin.core.utils.functional.Constants.App.EDITOR_DEEP_LINK
 import ru.aleshin.core.utils.navigation.navigator.AppNavigator
 import ru.aleshin.core.utils.navigation.navigator.NavigatorManager
 import ru.aleshin.core.utils.platform.activity.BaseActivity
@@ -39,6 +42,7 @@ import ru.aleshin.timeplanner.presentation.ui.main.contract.MainViewState
 import ru.aleshin.timeplanner.presentation.ui.main.viewmodel.MainViewModel
 import ru.aleshin.timeplanner.presentation.ui.splash.SplashScreen
 import ru.aleshin.timeplanner.presentation.ui.tabs.TabsScreen
+import ru.aleshin.timeplanner.presentation.widgets.main.MainWidgetReceiver
 import javax.inject.Inject
 
 class MainActivity : BaseActivity<MainViewState, MainEvent, MainAction, MainEffect>() {
@@ -82,6 +86,31 @@ class MainActivity : BaseActivity<MainViewState, MainEvent, MainAction, MainEffe
                 }
             }
         }
+    }
+
+    override fun onCreateSetup() {
+        super.onCreateSetup()
+        if (intent.action == ACTION_VIEW && intent.dataString == EDITOR_DEEP_LINK) {
+            viewModel.dispatchEvent(MainEvent.NavigateToEditor(true))
+        } else {
+            viewModel.dispatchEvent(MainEvent.NavigateToTabs)
+        }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        if (intent.action == ACTION_VIEW && intent.dataString == EDITOR_DEEP_LINK) {
+            viewModel.dispatchEvent(MainEvent.NavigateToEditor(false))
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        val intent = Intent(application, MainWidgetReceiver::class.java).apply {
+            action = "${application.packageName}.tick"
+        }
+        sendBroadcast(intent)
     }
 
     override fun fetchViewModelFactory() = viewModelFactory

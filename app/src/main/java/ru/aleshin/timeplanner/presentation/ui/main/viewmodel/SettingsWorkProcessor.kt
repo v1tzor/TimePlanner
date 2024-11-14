@@ -60,5 +60,5 @@ interface SettingsWorkProcessor : FlowWorkProcessor<SettingsWorkCommand, MainAct
 }
 
 sealed class SettingsWorkCommand : WorkCommand {
-    object LoadSettings : SettingsWorkCommand()
+    data object LoadSettings : SettingsWorkCommand()
 }

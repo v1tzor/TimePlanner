@@ -28,7 +28,7 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PageSize
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LeadingIconTab
 import androidx.compose.material3.MaterialTheme
@@ -114,7 +114,7 @@ fun <T : TabItem> TabList(
             )
         },
         divider = {
-            Divider(color = MaterialTheme.colorScheme.surfaceTwo())
+            HorizontalDivider(color = MaterialTheme.colorScheme.surfaceTwo())
         },
     ) {
         tabs.forEachIndexed { index, tab ->

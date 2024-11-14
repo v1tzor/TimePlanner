@@ -92,7 +92,7 @@ val badgePriorityMedium = Color(0xFFFF9800)
 val splashGradientColors = listOf(Color(0xFFF857A6), Color(0xFFFF5858))
 val onSplashGradient = Color(0xFFFFFFFF)
 
-internal val pinkLightColorScheme = lightColorScheme(
+val pinkLightColorScheme = lightColorScheme(
     primary = pink_theme_light_primary,
     onPrimary = pink_theme_light_onPrimary,
     primaryContainer = pink_theme_light_primaryContainer,
@@ -124,7 +124,7 @@ internal val pinkLightColorScheme = lightColorScheme(
     scrim = pink_theme_light_scrim,
 )
 
-internal val pinkDarkColorScheme = darkColorScheme(
+val pinkDarkColorScheme = darkColorScheme(
     primary = pink_theme_dark_primary,
     onPrimary = pink_theme_dark_onPrimary,
     primaryContainer = pink_theme_dark_primaryContainer,

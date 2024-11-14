@@ -36,15 +36,18 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.RichTooltipBox
+import androidx.compose.material3.RichTooltip
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberRichTooltipState
+import androidx.compose.material3.TooltipBox
+import androidx.compose.material3.TooltipDefaults
+import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
@@ -112,7 +115,7 @@ internal fun CurrentTimeTaskView(
     onClick: () -> Unit,
 ) {
     val scope = rememberCoroutineScope()
-    val tooltipState = rememberRichTooltipState(isPersistent = true)
+    val tooltipState = rememberTooltipState(isPersistent = true)
 
     Surface(
         onClick = onClick,
@@ -152,10 +155,15 @@ internal fun CurrentTimeTaskView(
                     subTitle = model.subCategory?.name,
                 )
                 if (model.note != null) {
-                    RichTooltipBox(
-                        title = { Text(text = HomeThemeRes.strings.noteTitle) },
-                        text = { Text(text = model.note) },
-                        tooltipState = tooltipState,
+                    TooltipBox(
+                        positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+                        state = tooltipState,
+                        tooltip = {
+                            RichTooltip(
+                                title = { Text(text = HomeThemeRes.strings.noteTitle) },
+                                text = { Text(text = model.note) },
+                            )
+                        }
                     ) {
                         IconButton(
                             modifier = Modifier.size(32.dp),
@@ -193,10 +201,13 @@ internal fun CurrentTimeTaskView(
                     )
                 }
                 LinearProgressIndicator(
+                    progress = { model.progress },
                     modifier = Modifier.fillMaxWidth().height(10.dp).clip(RoundedCornerShape(100.dp)),
-                    progress = model.progress,
                     color = MaterialTheme.colorScheme.primary,
                     trackColor = MaterialTheme.colorScheme.surfaceVariant,
+                    strokeCap = StrokeCap.Square,
+                    gapSize = 0.dp,
+                    drawStopIndicator = {},
                 )
             }
         }

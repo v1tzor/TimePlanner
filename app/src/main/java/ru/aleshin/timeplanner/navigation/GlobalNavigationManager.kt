@@ -16,8 +16,11 @@
 package ru.aleshin.timeplanner.navigation
 
 import ru.aleshin.core.utils.navigation.Router
+import ru.aleshin.features.editor.api.navigations.EditorFeatureStarter
+import ru.aleshin.features.editor.api.navigations.EditorScreens
 import ru.aleshin.timeplanner.presentation.ui.tabs.TabsScreen
 import javax.inject.Inject
+import javax.inject.Provider
 
 /**
  * @author Stanislav Aleshin on 14.02.2023.
@@ -26,10 +29,20 @@ interface GlobalNavigationManager {
 
     fun showTabScreen()
 
-    class Base @Inject constructor(private val router: Router) : GlobalNavigationManager {
+    fun navigateToEditorFeature(screen: EditorScreens)
+
+    class Base @Inject constructor(
+        private val globalRouter: Router,
+        private val editorFeatureStarter: Provider<EditorFeatureStarter>,
+    ) : GlobalNavigationManager {
 
         override fun showTabScreen() {
-            router.replaceTo(TabsScreen())
+            globalRouter.replaceTo(TabsScreen())
+        }
+
+        override fun navigateToEditorFeature(screen: EditorScreens) {
+            val editorNavScreen = editorFeatureStarter.get().provideEditorScreen(screen)
+            globalRouter.navigateTo(editorNavScreen)
         }
     }
 }

@@ -16,7 +16,6 @@
 package ru.aleshin.timeplanner.di.modules
 
 import android.content.Context
-import androidx.room.Room
 import dagger.Module
 import dagger.Provides
 import ru.aleshin.core.data.datasources.categories.CategoriesLocalDataSource
@@ -128,32 +127,14 @@ class DataBaseModule {
 
     @Provides
     @Singleton
-    fun provideSettingsDataBase(
-        context: Context,
-    ): SettingsDataBase = Room.databaseBuilder(
-        context = context,
-        klass = SettingsDataBase::class.java,
-        name = SettingsDataBase.NAME,
-    ).createFromAsset("database/settings_prepopulated.db")
-        .addMigrations(SettingsDataBase.MIGRATION_1_2)
-        .addMigrations(SettingsDataBase.MIGRATION_2_3)
-        .addMigrations(SettingsDataBase.MIGRATION_3_4)
-        .addMigrations(SettingsDataBase.MIGRATION_4_5)
-        .addMigrations(SettingsDataBase.MIGRATION_5_6)
-        .build()
+    fun provideSettingsDataBase(context: Context): SettingsDataBase = SettingsDataBase.create(context)
 
     @Provides
     @Singleton
-    fun provideSchedulesDataBase(
-        context: Context,
-    ) = Room.databaseBuilder(
-        context = context,
-        klass = SchedulesDataBase::class.java,
-        name = SchedulesDataBase.NAME,
-    ).createFromAsset("database/categories_prepopulate.db")
-        .addMigrations(SchedulesDataBase.MIGRATE_2_3)
-        .addMigrations(SchedulesDataBase.MIGRATE_4_5)
-        .addMigrations(SchedulesDataBase.MIGRATE_5_6)
-        .addMigrations(SchedulesDataBase.MIGRATE_7_8)
-        .build()
+    fun provideSchedulesDataBase(context: Context): SchedulesDataBase = SchedulesDataBase.create(context)
+
+    // WorkManager
+
+//    @Provides
+//    fun provideWorkManager(context: Context): WorkManager = WorkManager.getInstance(context)
 }

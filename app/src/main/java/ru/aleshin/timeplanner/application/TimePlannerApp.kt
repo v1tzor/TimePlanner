@@ -26,9 +26,11 @@ import ru.aleshin.core.ui.theme.tokens.fetchCoreLanguage
 import ru.aleshin.core.ui.theme.tokens.fetchCoreStrings
 import ru.aleshin.core.utils.extensions.fetchLocale
 import ru.aleshin.core.utils.functional.Constants
+import ru.aleshin.core.utils.notifications.NotificationCreator
 import ru.aleshin.core.utils.notifications.parameters.NotificationDefaults
-import ru.aleshin.core.utils.notifications.parameters.NotificationPriority
+import ru.aleshin.core.utils.notifications.parameters.NotificationImportance
 import ru.aleshin.timeplanner.di.component.AppComponent
+import javax.inject.Inject
 
 /**
  * @author Stanislav Aleshin on 14.02.2023.
@@ -39,15 +41,15 @@ class TimePlannerApp : Application() {
         AppComponent.create(applicationContext)
     }
 
-    private val notificationCreator by lazy {
-        appComponent.fetchNotificationCreator()
-    }
+    @Inject
+    lateinit var notificationCreator: NotificationCreator
 
     private val coreStrings: TimePlannerStrings
         get() = fetchCoreStrings(fetchCoreLanguage(fetchLocale().language))
 
     override fun onCreate() {
         super.onCreate()
+        appComponent.inject(this)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             deleteOldChannel()
             createTimeTaskNotifyChannel()
@@ -58,8 +60,8 @@ class TimePlannerApp : Application() {
     private fun createTimeTaskNotifyChannel() = notificationCreator.createNotifyChannel(
         channelId = Constants.Notification.CHANNEL_ID_NEW,
         channelName = coreStrings.timeTaskChannelName,
-        priority = NotificationPriority.MAX,
-        defaults = NotificationDefaults(true, true, true),
+        importance = NotificationImportance.MAX,
+        defaults = NotificationDefaults(isSound = true, isVibrate = true, isLights = true),
     )
 
     @RequiresApi(Build.VERSION_CODES.O)

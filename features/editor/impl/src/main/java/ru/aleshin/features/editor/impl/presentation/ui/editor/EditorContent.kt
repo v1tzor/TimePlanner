@@ -22,14 +22,30 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.CheckCircle
-import androidx.compose.material3.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -58,10 +74,14 @@ import ru.aleshin.features.editor.impl.presentation.theme.EditorThemeRes
 import ru.aleshin.features.editor.impl.presentation.ui.editor.contract.EditorViewState
 import ru.aleshin.features.editor.impl.presentation.ui.editor.screenmodel.CategoryValidateError
 import ru.aleshin.features.editor.impl.presentation.ui.editor.screenmodel.TimeRangeError
-import ru.aleshin.features.editor.impl.presentation.ui.editor.views.*
+import ru.aleshin.features.editor.impl.presentation.ui.editor.views.DurationTitle
 import ru.aleshin.features.editor.impl.presentation.ui.editor.views.EndTimeField
+import ru.aleshin.features.editor.impl.presentation.ui.editor.views.MainCategoryChooser
+import ru.aleshin.features.editor.impl.presentation.ui.editor.views.ParameterChooser
+import ru.aleshin.features.editor.impl.presentation.ui.editor.views.SegmentedParametersChooser
 import ru.aleshin.features.editor.impl.presentation.ui.editor.views.StartTimeField
 import ru.aleshin.features.editor.impl.presentation.ui.editor.views.SubCategoryChooser
+import ru.aleshin.features.editor.impl.presentation.ui.editor.views.TaskNotificationsMenu
 
 /**
  * @author Stanislav Aleshin on 25.02.2023.
@@ -103,7 +123,7 @@ internal fun EditorContent(
                         onAddSubCategory = onAddSubCategory,
                         onNoteChange = onNoteChange,
                     )
-                    Divider(Modifier.padding(horizontal = 32.dp))
+                    HorizontalDivider(Modifier.padding(horizontal = 32.dp))
                     DateTimeSection(
                         enabled = !state.editModel.checkDateIsRepeat(),
                         isTimeValidError = state.timeRangeValid is TimeRangeError.DurationError,
@@ -111,7 +131,7 @@ internal fun EditorContent(
                         duration = state.editModel.duration,
                         onTimeRangeChange = onTimeRangeChange,
                     )
-                    Divider(Modifier.padding(horizontal = 32.dp))
+                    HorizontalDivider(Modifier.padding(horizontal = 32.dp))
                     ParametersSection(
                         enabled = !state.editModel.checkDateIsRepeat(),
                         parameters = state.editModel.parameters,

@@ -20,11 +20,9 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.snapping.SnapLayoutInfoProvider
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -46,10 +44,12 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.RichTooltipBox
+import androidx.compose.material3.RichTooltip
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberRichTooltipState
+import androidx.compose.material3.TooltipBox
+import androidx.compose.material3.TooltipDefaults
+import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -79,18 +79,12 @@ import java.util.Locale
  * @author Stanislav Aleshin on 24.10.2023.
  */
 @Composable
-@OptIn(ExperimentalFoundationApi::class)
 internal fun PlanningAnalyticsSection(
     modifier: Modifier = Modifier,
     isLoading: Boolean,
     planningAnalytics: PlanningAnalyticsUi?,
 ) {
     val listState = rememberLazyListState()
-    val snappingLayout = remember(listState) {
-        SnapLayoutInfoProvider(listState) { _, itemSize, _ -> itemSize + 24 }
-    }
-    val flingBehavior = rememberSnapFlingBehavior(snappingLayout)
-
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(16.dp)) {
         Text(
             modifier = Modifier.padding(horizontal = 16.dp),
@@ -113,7 +107,10 @@ internal fun PlanningAnalyticsSection(
                 },
             ) { loading ->
                 Row(
-                    modifier = Modifier.padding(start = 8.dp, end = 16.dp).height(220.dp).fillMaxWidth(),
+                    modifier = Modifier
+                        .padding(start = 8.dp, end = 16.dp)
+                        .height(220.dp)
+                        .fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     if (!loading && planningAnalytics != null) {
@@ -122,7 +119,7 @@ internal fun PlanningAnalyticsSection(
                             contentPadding = PaddingValues(vertical = 8.dp),
                             state = listState,
                             reverseLayout = true,
-                            flingBehavior = flingBehavior,
+                            flingBehavior = rememberSnapFlingBehavior(listState),
                             horizontalArrangement = Arrangement.spacedBy(12.dp),
                         ) {
                             items(planningAnalytics.values.toList()) { analytic ->
@@ -163,31 +160,35 @@ internal fun PlanningAnalyticsMonthItem(
             horizontalArrangement = Arrangement.spacedBy(6.dp),
         ) {
             items(monthAnalytics) { analytic ->
-                val tooltipState = rememberRichTooltipState(isPersistent = true)
-                RichTooltipBox(
-                    text = {
-                        val createdTimeTasks = selectedAnalyticItem?.timeTasks
-                        if (createdTimeTasks != null) {
-                            LazyColumn(
-                                modifier = Modifier.size(200.dp, 160.dp),
-                                verticalArrangement = Arrangement.spacedBy(12.dp),
-                            ) {
-                                item {
-                                    Text(
-                                        modifier = Modifier.padding(top = 8.dp),
-                                        text = dateFormat.format(analytic.date),
-                                        style = MaterialTheme.typography.labelMedium,
-                                        color = MaterialTheme.colorScheme.primary,
-                                    )
+                val tooltipState = rememberTooltipState(isPersistent = true)
+                TooltipBox(
+                    positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+                    state = tooltipState,
+                    tooltip = {
+                        RichTooltip(
+                            text = {
+                                val createdTimeTasks = selectedAnalyticItem?.timeTasks
+                                if (createdTimeTasks != null) {
+                                    LazyColumn(
+                                        modifier = Modifier.size(200.dp, 160.dp),
+                                        verticalArrangement = Arrangement.spacedBy(12.dp),
+                                    ) {
+                                        item {
+                                            Text(
+                                                modifier = Modifier.padding(top = 8.dp),
+                                                text = dateFormat.format(analytic.date),
+                                                style = MaterialTheme.typography.labelMedium,
+                                                color = MaterialTheme.colorScheme.primary,
+                                            )
+                                        }
+                                        items(createdTimeTasks) { timeTask ->
+                                            TooltipTimeTaskItem(model = timeTask)
+                                        }
+                                    }
                                 }
-                                items(createdTimeTasks) { timeTask ->
-                                    TooltipTimeTaskItem(model = timeTask)
-                                }
-                            }
-                        }
+                            },
+                        )
                     },
-                    focusable = true,
-                    tooltipState = tooltipState,
                 ) {
                     PlanningAnalyticsDayItem(
                         enabled = analytic.timeTasks.isNotEmpty(),
@@ -227,7 +228,11 @@ internal fun PlanningAnalyticsDayItem(
             .clickable(enabled = enabled, onClick = onClick)
             .then(
                 other = if (analytic.date.isCurrentDay()) {
-                    Modifier.border(1.dp, MaterialTheme.colorScheme.outline, MaterialTheme.shapes.extraSmall)
+                    Modifier.border(
+                        1.dp,
+                        MaterialTheme.colorScheme.outline,
+                        MaterialTheme.shapes.extraSmall
+                    )
                 } else {
                     Modifier
                 },

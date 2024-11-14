@@ -20,6 +20,8 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("kotlin-parcelize")
+    id("org.jetbrains.kotlin.plugin.compose") version "2.0.20"
+    kotlin("plugin.serialization") version "1.8.21"
     kotlin("kapt")
 }
 
@@ -132,6 +134,9 @@ dependencies {
     implementation(Dependencies.AndroidX.material)
     implementation(Dependencies.AndroidX.googleMaterial)
     implementation(Dependencies.AndroidX.lifecycleRuntime)
+    implementation(Dependencies.AndroidX.serialization)
+    implementation(Dependencies.AndroidX.glance)
+    implementation(Dependencies.AndroidX.glanceMaterial)
 
     implementation(Dependencies.Compose.ui)
     implementation(Dependencies.Compose.activity)

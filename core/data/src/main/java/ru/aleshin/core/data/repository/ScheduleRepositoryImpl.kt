@@ -40,7 +40,7 @@ class ScheduleRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun fetchScheduleByDate(date: Long): Flow<Schedule?> {
+    override fun fetchScheduleByDate(date: Long): Flow<Schedule?> {
         return localDataSource.fetchScheduleByDate(date).map { it?.map(mapperToDomain) }
     }
 

@@ -1,0 +1,24 @@
+naming:
+  FunctionNaming:
+    ignoreAnnotated: ['Composable']
+  MatchingDeclarationName:
+    mustBeFirst: false
+complexity:
+  LongMethod:
+    threshold: 100
+  LongParameterList:
+    functionThreshold: 25
+    constructorThreshold: 15
+  TooManyFunctions:
+    ignoreAnnotatedFunctions: ['Preview']
+formatting:
+  FinalNewline:
+    insertFinalNewLine: false
+style:
+  MagicNumber:
+    ignorePropertyDeclaration: true
+    ignoreCompanionObjectPropertyDeclaration: true
+  UnusedPrivateMember:
+    ignoreAnnotated: ['Preview']
+  NewLineAtEndOfFile:
+    active: false

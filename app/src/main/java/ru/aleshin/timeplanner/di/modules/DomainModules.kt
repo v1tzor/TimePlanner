@@ -20,6 +20,7 @@ import dagger.Module
 import ru.aleshin.timeplanner.domain.common.MainEitherWrapper
 import ru.aleshin.timeplanner.domain.common.MainErrorHandler
 import ru.aleshin.timeplanner.domain.interactors.SettingsInteractor
+import ru.aleshin.timeplanner.domain.interactors.TimeTaskInteractor
 import javax.inject.Singleton
 
 /**
@@ -37,4 +38,8 @@ interface DomainModules {
 
     @Binds
     fun bindMainErrorHandler(handler: MainErrorHandler.Base): MainErrorHandler
+
+    @Binds
+    @Singleton
+    fun bindTimeTaskInteractor(interactor: TimeTaskInteractor.Base): TimeTaskInteractor
 }

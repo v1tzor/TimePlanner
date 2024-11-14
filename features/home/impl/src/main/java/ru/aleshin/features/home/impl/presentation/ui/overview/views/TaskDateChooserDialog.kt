@@ -26,11 +26,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Divider
+import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
@@ -56,7 +56,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-/**
+ /**
  * @author Stanislav Aleshin on 04.11.2023.
  */
 @Composable
@@ -74,34 +74,34 @@ internal fun TaskDateChooserDialog(
         }
     }
 
-    AlertDialog(onDismissRequest = onDismiss) {
-        Surface(
-            modifier = modifier.width(290.dp).wrapContentHeight(),
-            shape = MaterialTheme.shapes.extraLarge,
-            tonalElevation = TimePlannerRes.elevations.levelThree,
-        ) {
-            Column {
-                TaskDateChooserDialogHeader()
-                Divider(Modifier.fillMaxWidth())
-                Column(
-                    modifier = Modifier.height(160.dp).padding(start = 16.dp, end = 16.dp, top = 16.dp),
-                ) {
-                    DayChooser(
-                        days = dateList,
-                        selected = selectedDate,
-                        onSelected = { selectedDate = it },
-                    )
-                    DialogButtons(
-                        isConfirmEnabled = selectedDate != null,
-                        confirmTitle = TimePlannerRes.strings.alertDialogOkConfirmTitle,
-                        onConfirmClick = { selectedDate?.let { onConfirm(it) } },
-                        onCancelClick = onDismiss,
-                    )
-                }
-            }
-        }
-    }
-}
+     BasicAlertDialog(onDismissRequest = onDismiss) {
+         Surface(
+             modifier = modifier.width(290.dp).wrapContentHeight(),
+             shape = MaterialTheme.shapes.extraLarge,
+             tonalElevation = TimePlannerRes.elevations.levelThree,
+         ) {
+             Column {
+                 TaskDateChooserDialogHeader()
+                 HorizontalDivider(Modifier.fillMaxWidth())
+                 Column(
+                     modifier = Modifier.height(160.dp).padding(start = 16.dp, end = 16.dp, top = 16.dp),
+                 ) {
+                     DayChooser(
+                         days = dateList,
+                         selected = selectedDate,
+                         onSelected = { selectedDate = it },
+                     )
+                     DialogButtons(
+                         isConfirmEnabled = selectedDate != null,
+                         confirmTitle = TimePlannerRes.strings.alertDialogOkConfirmTitle,
+                         onConfirmClick = { selectedDate?.let { onConfirm(it) } },
+                         onCancelClick = onDismiss,
+                     )
+                 }
+             }
+         }
+     }
+ }
 
 @Composable
 internal fun TaskDateChooserDialogHeader(

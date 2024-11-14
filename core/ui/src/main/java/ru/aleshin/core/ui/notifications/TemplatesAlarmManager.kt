@@ -98,7 +98,7 @@ interface TemplatesAlarmManager {
             val pendingAlarmIntent = createPendingAlarmIntent(alarmIntent, id)
             val triggerTime = repeatTime.nextDate(time)
 
-            alarmManager.setExact(AlarmManager.RTC_WAKEUP, triggerTime.time, pendingAlarmIntent)
+            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerTime.time, pendingAlarmIntent)
         }
 
         override fun deleteNotifyAlarm(template: Template, repeatTime: RepeatTime) {

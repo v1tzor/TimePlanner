@@ -16,11 +16,15 @@
 package ru.aleshin.timeplanner.presentation.ui.main.viewmodel
 
 import kotlinx.coroutines.delay
+import ru.aleshin.core.domain.entities.schedules.TimeTask
 import ru.aleshin.core.utils.functional.Constants
+import ru.aleshin.core.utils.functional.TimeRange
+import ru.aleshin.core.utils.managers.DateManager
 import ru.aleshin.core.utils.platform.screenmodel.work.ActionResult
 import ru.aleshin.core.utils.platform.screenmodel.work.WorkCommand
 import ru.aleshin.core.utils.platform.screenmodel.work.WorkProcessor
 import ru.aleshin.core.utils.platform.screenmodel.work.WorkResult
+import ru.aleshin.features.editor.api.navigations.EditorScreens
 import ru.aleshin.timeplanner.navigation.GlobalNavigationManager
 import ru.aleshin.timeplanner.presentation.ui.main.contract.MainAction
 import ru.aleshin.timeplanner.presentation.ui.main.contract.MainEffect
@@ -33,10 +37,12 @@ interface NavigationWorkProcessor : WorkProcessor<NavWorkCommand, MainAction, Ma
 
     class Base @Inject constructor(
         private val globalNavManager: GlobalNavigationManager,
+        private val dateManager: DateManager,
     ) : NavigationWorkProcessor {
 
         override suspend fun work(command: NavWorkCommand) = when (command) {
             is NavWorkCommand.NavigateToTab -> navigateToTabWork(command.initDelay)
+            is NavWorkCommand.NavigateToEditor -> navigateToEditor()
         }
 
         private suspend fun navigateToTabWork(initDelay: Boolean): WorkResult<MainAction, MainEffect> {
@@ -45,9 +51,21 @@ interface NavigationWorkProcessor : WorkProcessor<NavWorkCommand, MainAction, Ma
                 ActionResult(MainAction.Navigate)
             }
         }
+
+        private fun navigateToEditor(): WorkResult<MainAction, MainEffect> {
+            val currentTime = dateManager.fetchCurrentDate()
+            val currentDate = dateManager.fetchBeginningCurrentDay()
+            val timeRange = TimeRange(currentTime, currentTime)
+            val timeTask = TimeTask(date = currentDate, createdAt = currentTime, timeRange = timeRange)
+            val screen = EditorScreens.Editor(timeTask, null)
+            return globalNavManager.navigateToEditorFeature(screen).let {
+                ActionResult(MainAction.Navigate)
+            }
+        }
     }
 }
 
 sealed class NavWorkCommand : WorkCommand {
     data class NavigateToTab(val initDelay: Boolean = true) : NavWorkCommand()
+    data object NavigateToEditor : NavWorkCommand()
 }

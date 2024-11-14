@@ -27,7 +27,10 @@ import ru.aleshin.core.utils.platform.screenmodel.Actor
 import ru.aleshin.core.utils.platform.screenmodel.Reducer
 import ru.aleshin.core.utils.platform.screenmodel.StateProvider
 import ru.aleshin.core.utils.platform.screenmodel.UiEffectProvider
-import ru.aleshin.core.utils.platform.screenmodel.contract.*
+import ru.aleshin.core.utils.platform.screenmodel.contract.BaseAction
+import ru.aleshin.core.utils.platform.screenmodel.contract.BaseEvent
+import ru.aleshin.core.utils.platform.screenmodel.contract.BaseUiEffect
+import ru.aleshin.core.utils.platform.screenmodel.contract.BaseViewState
 import ru.aleshin.core.utils.platform.screenmodel.withReentrantLock
 import ru.aleshin.core.utils.platform.screenmodel.work.WorkScope
 
@@ -56,7 +59,7 @@ interface BaseStore<S : BaseViewState, E : BaseEvent, A : BaseAction, F : BaseUi
         private val eventChannel = Channel<E>(Channel.UNLIMITED, BufferOverflow.SUSPEND)
 
         fun start(scope: CoroutineScope) = coroutineManager.runOnBackground(scope) {
-            val workScope = WorkScope.Base(this@Abstract, scope)
+            val workScope = WorkScope.Base(this@Abstract, this)
             while (isActive) {
                 actor.apply { workScope.handleEvent(eventChannel.receive()) }
             }

@@ -15,8 +15,20 @@
  */
 package ru.aleshin.features.home.impl.presentation.ui.categories.views
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.material3.BasicAlertDialog
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -54,7 +66,7 @@ internal fun SubCategoryEditorDialog(
     var subCategoryNameValue by remember {
         mutableStateOf(TextFieldValue(text = subCategoryName ?: "", selection = textRange))
     }
-    AlertDialog(onDismissRequest = onDismiss) {
+    BasicAlertDialog(onDismissRequest = onDismiss) {
         Surface(
             modifier = modifier.width(328.dp).wrapContentHeight(),
             shape = MaterialTheme.shapes.extraLarge,
@@ -64,9 +76,10 @@ internal fun SubCategoryEditorDialog(
                 SubCategoryEditorDialogHeader(
                     mainCategory = mainCategory,
                 )
-                Divider(Modifier.fillMaxWidth())
+                HorizontalDivider()
                 CategoryDialogField(
-                    modifier = Modifier.fillMaxWidth().padding(top = 18.dp, bottom = 8.dp, start = 24.dp, end = 24.dp),
+                    modifier = Modifier.fillMaxWidth()
+                        .padding(top = 18.dp, bottom = 8.dp, start = 24.dp, end = 24.dp),
                     categoryNameValue = subCategoryNameValue,
                     isError = isError,
                     onNameChange = { nameValue -> subCategoryNameValue = nameValue },

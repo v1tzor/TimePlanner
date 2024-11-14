@@ -50,10 +50,12 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.RichTooltipBox
+import androidx.compose.material3.RichTooltip
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberRichTooltipState
+import androidx.compose.material3.TooltipBox
+import androidx.compose.material3.TooltipDefaults
+import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -236,7 +238,7 @@ internal fun UndefinedTaskItem(
         color = MaterialTheme.colorScheme.surfaceOne(),
     ) {
         val scope = rememberCoroutineScope()
-        val tooltipState = rememberRichTooltipState(isPersistent = true)
+        val tooltipState = rememberTooltipState(isPersistent = true)
 
         Column(
             modifier = Modifier.padding(start = 12.dp, end = 8.dp, top = 12.dp, bottom = 12.dp),
@@ -265,10 +267,15 @@ internal fun UndefinedTaskItem(
                     DeadlineView(deadline = model.deadline)
                 }
                 if (model.note != null) {
-                    RichTooltipBox(
-                        title = { Text(text = HomeThemeRes.strings.noteTitle) },
-                        text = { Text(text = model.note) },
-                        tooltipState = tooltipState,
+                    TooltipBox(
+                        positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+                        state = tooltipState,
+                        tooltip = {
+                            RichTooltip(
+                                title = { Text(text = HomeThemeRes.strings.noteTitle) },
+                                text = { Text(text = model.note) },
+                            )
+                        },
                     ) {
                         Box(
                             modifier = Modifier

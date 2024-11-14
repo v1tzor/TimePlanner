@@ -22,7 +22,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -45,9 +45,9 @@ fun WarningDeleteDialog(
     onDismiss: () -> Unit,
     onAction: () -> Unit,
 ) {
-    AlertDialog(
-        modifier = modifier.width(328.dp),
+    BasicAlertDialog(
         onDismissRequest = onDismiss,
+        modifier = modifier.width(328.dp)
     ) {
         Surface(
             shape = MaterialTheme.shapes.extraLarge,

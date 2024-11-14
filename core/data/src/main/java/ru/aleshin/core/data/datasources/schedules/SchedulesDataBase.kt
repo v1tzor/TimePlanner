@@ -16,9 +16,11 @@
 package ru.aleshin.core.data.datasources.schedules
 
 import android.content.ContentValues
+import android.content.Context
 import android.database.sqlite.SQLiteDatabase.CONFLICT_REPLACE
 import androidx.room.AutoMigration
 import androidx.room.Database
+import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
@@ -69,6 +71,7 @@ abstract class SchedulesDataBase : RoomDatabase() {
     abstract fun fetchUndefinedTasksDao(): UndefinedTasksDao
 
     companion object {
+
         const val NAME = "SchedulesDataBase.db"
 
         val MIGRATE_2_3 = object : Migration(2, 3) {
@@ -87,16 +90,18 @@ abstract class SchedulesDataBase : RoomDatabase() {
                 val values = ContentValues()
                 database.execSQL(
                     "CREATE TEMPORARY TABLE IF NOT EXISTS `mainCategories_new` (" +
-                        "`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
-                        "`custom_name` TEXT, " +
-                        "`default_category_type` TEXT)",
+                            "`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                            "`custom_name` TEXT, " +
+                            "`default_category_type` TEXT)",
                 )
                 database.query("SELECT * FROM mainCategories").apply {
                     while (moveToNext()) {
                         values.clear()
                         val id = getInt(getColumnIndexOrThrow("id"))
-                        val nameCategoryName = getString(getColumnIndexOrThrow("main_category_name"))
-                        val engCategoryName = getString(getColumnIndexOrThrow("main_category_name_eng"))
+                        val nameCategoryName =
+                            getString(getColumnIndexOrThrow("main_category_name"))
+                        val engCategoryName =
+                            getString(getColumnIndexOrThrow("main_category_name_eng"))
                         val type = getString(getColumnIndexOrThrow("main_icon"))
                         values.put("id", id)
                         values.put("custom_name", nameCategoryName ?: engCategoryName ?: null)
@@ -111,14 +116,14 @@ abstract class SchedulesDataBase : RoomDatabase() {
                 database.execSQL("DROP TABLE mainCategories")
                 database.execSQL(
                     "CREATE TABLE IF NOT EXISTS `mainCategories` (" +
-                        "`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
-                        "`custom_name` TEXT, " +
-                        "`default_category_type` TEXT)",
+                            "`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                            "`custom_name` TEXT, " +
+                            "`default_category_type` TEXT)",
                 )
                 database.execSQL(
                     "INSERT INTO mainCategories " +
-                        "SELECT id, custom_name, default_category_type " +
-                        "FROM mainCategories_new",
+                            "SELECT id, custom_name, default_category_type " +
+                            "FROM mainCategories_new",
                 )
                 database.execSQL("DROP TABLE mainCategories_new")
             }
@@ -151,7 +156,7 @@ abstract class SchedulesDataBase : RoomDatabase() {
                 try {
                     database.execSQL(
                         "ALTER TABLE timeTaskTemplates " +
-                            "ADD COLUMN repeat_enabled INTEGER NOT NULL DEFAULT 0",
+                                "ADD COLUMN repeat_enabled INTEGER NOT NULL DEFAULT 0",
                     )
                     database.setTransactionSuccessful()
                 } finally {
@@ -170,5 +175,16 @@ abstract class SchedulesDataBase : RoomDatabase() {
                 }
             }
         }
+
+        fun create(context: Context) = Room.databaseBuilder(
+            context = context,
+            klass = SchedulesDataBase::class.java,
+            name = NAME,
+        ).createFromAsset("database/categories_prepopulate.db")
+            .addMigrations(MIGRATE_2_3)
+            .addMigrations(MIGRATE_4_5)
+            .addMigrations(MIGRATE_5_6)
+            .addMigrations(MIGRATE_7_8)
+            .build()
     }
 }

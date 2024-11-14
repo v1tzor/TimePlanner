@@ -30,6 +30,9 @@ object Dependencies {
         const val lifecycleViewModel = "androidx.lifecycle:lifecycle-viewmodel-ktx:${Versions.lifecycle}"
         const val lifecycleRuntime = "androidx.lifecycle:lifecycle-runtime-ktx:${Versions.lifecycle}"
         const val serialization = "org.jetbrains.kotlinx:kotlinx-serialization-json:${Versions.serialization}"
+
+        const val glance = "androidx.glance:glance-appwidget:${Versions.glance}"
+        const val glanceMaterial = "androidx.glance:glance-material3:${Versions.glance}"
     }
 
     object Charts {
@@ -51,7 +54,7 @@ object Dependencies {
     object Voyager {
         const val navigator = "cafe.adriel.voyager:voyager-navigator:${Versions.voyager}"
         const val transitions = "cafe.adriel.voyager:voyager-transitions:${Versions.voyager}"
-        const val screenModel = "cafe.adriel.voyager:voyager-androidx:${Versions.voyager}"
+        const val screenModel = "cafe.adriel.voyager:voyager-screenmodel:${Versions.voyager}"
     }
 
     object Leakcanary {

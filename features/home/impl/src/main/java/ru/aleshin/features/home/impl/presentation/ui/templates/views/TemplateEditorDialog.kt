@@ -19,7 +19,6 @@ import android.text.format.DateFormat
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -28,9 +27,9 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Divider
+import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -91,7 +90,7 @@ internal fun TemplateEditorDialog(
     var timeEndMinutes by remember { mutableStateOf(model?.endTime?.minutes) }
     var priority by remember { mutableStateOf(model?.priority ?: TaskPriority.STANDARD) }
 
-    AlertDialog(onDismissRequest = onDismiss) {
+    BasicAlertDialog(onDismissRequest = onDismiss) {
         Surface(
             modifier = modifier.width(328.dp).wrapContentHeight(),
             shape = MaterialTheme.shapes.extraLarge,
@@ -99,7 +98,7 @@ internal fun TemplateEditorDialog(
         ) {
             Column {
                 TemplateEditorDialogHeader()
-                Divider(Modifier.fillMaxWidth())
+                HorizontalDivider()
                 Column(
                     modifier = Modifier
                         .height(400.dp)
@@ -148,8 +147,8 @@ internal fun TemplateEditorDialog(
                     )
                 }
 
-                val isEnabled = timeStartHours != null && timeStartMinutes != null && 
-                    timeEndHours != null && timeEndMinutes != null
+                val isEnabled = timeStartHours != null && timeStartMinutes != null &&
+                        timeEndHours != null && timeEndMinutes != null
                 DialogButtons(
                     isConfirmEnabled = isEnabled,
                     confirmTitle = when (model != null) {
@@ -159,8 +158,14 @@ internal fun TemplateEditorDialog(
                     onConfirmClick = {
                         if (isEnabled) {
                             val calendar = Calendar.getInstance()
-                            val startTime = calendar.setHoursAndMinutes(timeStartHours!!, timeStartMinutes!!).time
-                            val endTime = calendar.setHoursAndMinutes(timeEndHours!!, timeEndMinutes!!).time.let { endTime ->
+                            val startTime = calendar.setHoursAndMinutes(
+                                timeStartHours!!,
+                                timeStartMinutes!!
+                            ).time
+                            val endTime = calendar.setHoursAndMinutes(
+                                timeEndHours!!,
+                                timeEndMinutes!!
+                            ).time.let { endTime ->
                                 if (endTime > startTime) endTime else endTime.shiftDay(1)
                             }
                             val template = TemplateUi(

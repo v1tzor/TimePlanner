@@ -20,7 +20,10 @@ import kotlinx.parcelize.Parcelize
 import ru.aleshin.core.ui.theme.material.ColorsUiType
 import ru.aleshin.core.ui.theme.material.ThemeUiType
 import ru.aleshin.core.ui.theme.tokens.LanguageUiType
-import ru.aleshin.core.utils.platform.screenmodel.contract.*
+import ru.aleshin.core.utils.platform.screenmodel.contract.BaseAction
+import ru.aleshin.core.utils.platform.screenmodel.contract.BaseEvent
+import ru.aleshin.core.utils.platform.screenmodel.contract.BaseViewState
+import ru.aleshin.core.utils.platform.screenmodel.contract.EmptyUiEffect
 
 /**
  * @author Stanislav Aleshin on 14.02.2023.
@@ -35,7 +38,9 @@ data class MainViewState(
 ) : BaseViewState, Parcelable
 
 sealed class MainEvent : BaseEvent {
-    object Init : MainEvent()
+    data object Init : MainEvent()
+    data object NavigateToTabs : MainEvent()
+    data class NavigateToEditor(val isStartScreen: Boolean) : MainEvent()
 }
 
 sealed class MainEffect : EmptyUiEffect

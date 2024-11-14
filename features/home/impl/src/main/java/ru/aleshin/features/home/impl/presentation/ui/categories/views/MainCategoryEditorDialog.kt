@@ -22,9 +22,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Divider
+import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -39,20 +39,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import ru.aleshin.core.ui.mappers.mapToIconPainter
 import ru.aleshin.core.ui.theme.TimePlannerRes
 import ru.aleshin.core.ui.views.CategoryIconMonogram
 import ru.aleshin.core.ui.views.CategoryTextMonogram
 import ru.aleshin.core.ui.views.DialogButtons
 import ru.aleshin.core.utils.functional.Constants
-import ru.aleshin.core.ui.mappers.mapToIconPainter
 import ru.aleshin.features.home.impl.presentation.models.categories.MainCategoryUi
 import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
 
 /**
  * @author Stanislav Aleshin on 16.04.2023.
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
+@OptIn(ExperimentalMaterial3Api::class)
 internal fun MainCategoryEditorDialog(
     modifier: Modifier = Modifier,
     editCategory: MainCategoryUi? = null,
@@ -65,7 +65,7 @@ internal fun MainCategoryEditorDialog(
     var mainCategoryNameValue by remember {
         mutableStateOf(TextFieldValue(text = categoryName ?: "", selection = textRange))
     }
-    AlertDialog(onDismissRequest = onDismiss) {
+    BasicAlertDialog(onDismissRequest = onDismiss) {
         Surface(
             modifier = modifier.width(328.dp).wrapContentHeight(),
             shape = MaterialTheme.shapes.extraLarge,
@@ -73,7 +73,7 @@ internal fun MainCategoryEditorDialog(
         ) {
             Column {
                 MainCategoryEditorDialogHeader()
-                Divider(Modifier.fillMaxWidth())
+                HorizontalDivider()
                 Row(
                     modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 0.dp),
                     verticalAlignment = Alignment.CenterVertically,

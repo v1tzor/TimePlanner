@@ -18,17 +18,28 @@ package ru.aleshin.features.home.impl.presentation.ui.home.views
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import ru.aleshin.core.ui.mappers.mapToIconPainter
@@ -38,7 +49,7 @@ import ru.aleshin.core.utils.functional.Constants
 import ru.aleshin.features.home.impl.presentation.models.schedules.TimeTaskUi
 import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
 
 /**
  * @author Stanislav Aleshin on 24.02.2023.
@@ -61,8 +72,12 @@ internal fun LazyItemScope.PlannedTimeTaskItem(
         ) {
             StartTaskTimeTitle(time = model.startTime)
             LinearProgressIndicator(
-                progress = 0f,
+                progress = { 0f },
                 modifier = Modifier.fillMaxWidth().clip(MaterialTheme.shapes.small),
+                trackColor = MaterialTheme.colorScheme.surfaceVariant,
+                strokeCap = StrokeCap.Square,
+                gapSize = 0.dp,
+                drawStopIndicator = {},
             )
         }
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -107,12 +122,16 @@ internal fun LazyItemScope.CompletedTimeTaskItem(
         ) {
             StartTaskTimeTitle(time = model.startTime)
             LinearProgressIndicator(
-                progress = 1f,
+                progress = { 1f },
                 modifier = Modifier.fillMaxWidth().clip(MaterialTheme.shapes.small),
                 color = when (model.isCompleted) {
                     true -> MaterialTheme.colorScheme.tertiary
                     false -> MaterialTheme.colorScheme.error
                 },
+                trackColor = MaterialTheme.colorScheme.surfaceVariant,
+                strokeCap = StrokeCap.Square,
+                gapSize = 0.dp,
+                drawStopIndicator = {},
             )
         }
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -158,8 +177,12 @@ internal fun LazyItemScope.RunningTimeTaskItem(
             StartTaskTimeTitle(time = model.startTime)
             Box(modifier = Modifier.padding(vertical = 8.dp).weight(1f)) {
                 LinearProgressIndicator(
-                    progress = model.progress,
+                    progress = { model.progress },
                     modifier = Modifier.clip(MaterialTheme.shapes.small).fillMaxWidth().animateContentSize(),
+                    trackColor = MaterialTheme.colorScheme.surfaceVariant,
+                    strokeCap = StrokeCap.Square,
+                    gapSize = 0.dp,
+                    drawStopIndicator = {},
                 )
             }
             Text(
@@ -212,9 +235,12 @@ internal fun LazyItemScope.AddTimeTaskViewItem(
             ) {
                 Box(modifier = Modifier.padding(vertical = 8.dp).weight(1f)) {
                     LinearProgressIndicator(
+                        progress = { 0f },
                         modifier = Modifier.height(4.dp).clip(MaterialTheme.shapes.small).fillMaxWidth(),
-                        progress = 0f,
                         trackColor = indicatorColor,
+                        strokeCap = StrokeCap.Square,
+                        gapSize = 0.dp,
+                        drawStopIndicator = {},
                     )
                 }
             }

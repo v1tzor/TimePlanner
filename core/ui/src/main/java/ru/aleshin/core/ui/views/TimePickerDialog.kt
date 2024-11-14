@@ -16,10 +16,27 @@
 package ru.aleshin.core.ui.views
 
 import android.text.format.DateFormat
-import androidx.compose.foundation.interaction.*
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.*
+import androidx.compose.material3.BasicAlertDialog
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -37,7 +54,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import ru.aleshin.core.ui.theme.TimePlannerRes
 import ru.aleshin.core.utils.functional.TimeFormat
-import java.util.*
+import java.util.Calendar
+import java.util.Date
 
 /**
  * @author Stanislav Aleshin on 03.03.2023.
@@ -59,7 +77,7 @@ fun TimePickerDialog(
         mutableStateOf(if (hours != null && hours!! > 11) TimeFormat.PM else TimeFormat.AM)
     }
 
-    AlertDialog(onDismissRequest = onDismissRequest) {
+    BasicAlertDialog(onDismissRequest = onDismissRequest) {
         Surface(
             modifier = modifier.width(if (is24Format) 243.dp else 348.dp),
             tonalElevation = TimePlannerRes.elevations.levelThree,

@@ -16,7 +16,7 @@
 package ru.aleshin.core.utils.platform.screenmodel
 
 import cafe.adriel.voyager.core.model.ScreenModel
-import cafe.adriel.voyager.core.model.coroutineScope
+import cafe.adriel.voyager.core.model.screenModelScope
 import kotlinx.coroutines.flow.FlowCollector
 import ru.aleshin.core.utils.managers.CoroutineManager
 import ru.aleshin.core.utils.platform.communications.state.EffectCommunicator
@@ -37,7 +37,7 @@ abstract class BaseScreenModel<S : BaseViewState, E : BaseEvent, A : BaseAction,
     coroutineManager: CoroutineManager,
 ) : ScreenModel, Reducer<S, A>, Actor<S, E, A, F>, ContractProvider<S, E, F> {
 
-    private val scope get() = coroutineScope
+    private val scope get() = screenModelScope
 
     protected var isInitialize = AtomicBoolean(false)
 

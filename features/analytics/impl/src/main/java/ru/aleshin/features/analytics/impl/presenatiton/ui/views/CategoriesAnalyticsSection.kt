@@ -22,7 +22,6 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -155,13 +154,15 @@ internal fun CategoriesAnalyticsChart(
         )
         add(otherPieData)
     }
-    BoxWithConstraints(modifier = modifier.height(230.dp)) {
+    Box(modifier = modifier.height(230.dp)) {
         PieChart(
-            data = PieChartData(
-                entries = pieDataList,
-                legendPosition = LegendPosition.End,
-                legendShape = RoundedCornerShape(8.dp),
-            ),
+            data = remember(pieDataList) {
+                PieChartData(
+                    entries = pieDataList,
+                    legendPosition = LegendPosition.End,
+                    legendShape = RoundedCornerShape(8.dp),
+                )
+            },
             chartSize = 160.dp,
             sliceWidth = 24.dp,
         ) { legendEntries ->

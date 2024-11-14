@@ -20,7 +20,6 @@ import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -30,9 +29,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.CheckCircle
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Divider
+import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -83,9 +82,7 @@ internal fun UndefinedTaskEditorDialog(
     var deadline by remember { mutableStateOf(model?.deadline) }
     var priority by remember { mutableStateOf(model?.priority ?: TaskPriority.STANDARD) }
 
-    AlertDialog(
-        onDismissRequest = onDismiss,
-    ) {
+    BasicAlertDialog(onDismissRequest = onDismiss) {
         Surface(
             modifier = modifier.width(328.dp).wrapContentHeight(),
             shape = MaterialTheme.shapes.extraLarge,
@@ -93,7 +90,7 @@ internal fun UndefinedTaskEditorDialog(
         ) {
             Column {
                 UndefinedTaskEditorDialogHeader()
-                Divider(Modifier.fillMaxWidth())
+                HorizontalDivider()
                 Column(
                     modifier = Modifier
                         .height(360.dp)

@@ -17,6 +17,7 @@ plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
     id("kotlin-parcelize")
+    id("org.jetbrains.kotlin.plugin.compose") version "2.0.20"
     kotlin("plugin.serialization") version "1.8.21"
     kotlin("kapt")
 }

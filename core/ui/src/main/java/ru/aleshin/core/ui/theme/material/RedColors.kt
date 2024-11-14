@@ -85,7 +85,7 @@ val red_theme_dark_onSurfaceVariant = Color(0xFFD6C2C5)
 
 val redSeed = Color(0xFFB35C76)
 
-internal val redLightColorScheme = lightColorScheme(
+val redLightColorScheme = lightColorScheme(
     primary = red_theme_light_primary,
     onPrimary = red_theme_light_onPrimary,
     primaryContainer = red_theme_light_primaryContainer,
@@ -117,7 +117,7 @@ internal val redLightColorScheme = lightColorScheme(
     scrim = red_theme_light_scrim,
 )
 
-internal val redDarkColorScheme = darkColorScheme(
+val redDarkColorScheme = darkColorScheme(
     primary = red_theme_dark_primary,
     onPrimary = red_theme_dark_onPrimary,
     primaryContainer = red_theme_dark_primaryContainer,

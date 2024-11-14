@@ -21,7 +21,10 @@ import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.ViewModelProvider
 import ru.aleshin.core.utils.platform.screenmodel.BaseViewModel
-import ru.aleshin.core.utils.platform.screenmodel.contract.*
+import ru.aleshin.core.utils.platform.screenmodel.contract.BaseAction
+import ru.aleshin.core.utils.platform.screenmodel.contract.BaseEvent
+import ru.aleshin.core.utils.platform.screenmodel.contract.BaseUiEffect
+import ru.aleshin.core.utils.platform.screenmodel.contract.BaseViewState
 
 /**
  * @author Stanislav Aleshin on 19.02.2023.
@@ -34,12 +37,12 @@ abstract class BaseActivity<S : BaseViewState, E : BaseEvent, A : BaseAction, F 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         initDI()
-        setTheme()
         super.onCreate(savedInstanceState)
+        onCreateSetup()
         setContent { Content() }
     }
 
-    open fun setTheme() {}
+    open fun onCreateSetup() {}
 
     open fun initDI() {}
 

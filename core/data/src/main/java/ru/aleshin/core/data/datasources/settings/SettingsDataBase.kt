@@ -16,8 +16,10 @@
 package ru.aleshin.core.data.datasources.settings
 
 import android.content.ContentValues
+import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import androidx.room.Database
+import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
@@ -153,5 +155,17 @@ abstract class SettingsDataBase : RoomDatabase() {
                 )
             }
         }
+
+        fun create(context: Context) = Room.databaseBuilder(
+            context = context,
+            klass = SettingsDataBase::class.java,
+            name = NAME,
+        ).createFromAsset("database/settings_prepopulated.db")
+            .addMigrations(MIGRATION_1_2)
+            .addMigrations(MIGRATION_2_3)
+            .addMigrations(MIGRATION_3_4)
+            .addMigrations(MIGRATION_4_5)
+            .addMigrations(MIGRATION_5_6)
+            .build()
     }
 }
