@@ -106,8 +106,8 @@ class MainActivity : BaseActivity<MainViewState, MainEvent, MainAction, MainEffe
         }
     }
 
-    override fun onStop() {
-        super.onStop()
+    override fun onPause() {
+        super.onPause()
         sendBroadcast(MainWidgetReceiver.intent(this))
     }
 

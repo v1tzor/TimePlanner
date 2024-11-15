@@ -49,8 +49,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.IntOffset
@@ -201,6 +204,9 @@ internal fun TimeTasksSection(
     exit = fadeOut(),
 ) {
     val isCompactView = timeTaskViewStatus == ViewToggleStatus.COMPACT
+    var isScrolled by rememberSaveable { mutableStateOf(false) }
+    val visibleFirstAdd = timeTasks.isNotEmpty() && timeTasks.first().startTime > currentDate && !isCompactView
+
     Box(modifier = modifier.fillMaxSize()) {
         if (dateStatus != null) {
             LazyColumn(
@@ -208,7 +214,7 @@ internal fun TimeTasksSection(
                 contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
                 verticalArrangement = Arrangement.spacedBy(4.dp),
             ) {
-                if (timeTasks.isNotEmpty() && timeTasks.first().startTime > currentDate && !isCompactView) {
+                if (visibleFirstAdd) {
                     item {
                         val startTime = checkNotNull(currentDate)
                         val endTime = timeTasks[0].startTime
@@ -294,6 +300,14 @@ internal fun TimeTasksSection(
                 }
                 item { EmptyItem() }
             }
+            LaunchedEffect(Unit) {
+                val runningTask = timeTasks.find { it.executionStatus == TimeTaskStatus.RUNNING }
+                if (runningTask != null && !isScrolled) {
+                    val index = timeTasks.indexOf(runningTask) + if (visibleFirstAdd) 1 else 0
+                    listState.animateScrollToItem(index)
+                    isScrolled = true
+                }
+            }
         } else if (currentDate != null) {
             EmptyDateView(
                 modifier = Modifier.align(Alignment.Center),
@@ -310,13 +324,17 @@ internal fun TimeTasksSection(
                     contentPadding = PaddingValues(horizontal = 4.dp),
                 ) {
                     Icon(
-                        modifier = Modifier.size(18.dp).align(Alignment.CenterVertically),
+                        modifier = Modifier
+                            .size(18.dp)
+                            .align(Alignment.CenterVertically),
                         imageVector = Icons.Default.Add,
                         contentDescription = HomeThemeRes.strings.createScheduleDesc,
                         tint = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                     Text(
-                        modifier = Modifier.padding(start = 4.dp).align(Alignment.CenterVertically),
+                        modifier = Modifier
+                            .padding(start = 4.dp)
+                            .align(Alignment.CenterVertically),
                         text = HomeThemeRes.strings.createScheduleTitle,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         style = MaterialTheme.typography.bodyMedium,
