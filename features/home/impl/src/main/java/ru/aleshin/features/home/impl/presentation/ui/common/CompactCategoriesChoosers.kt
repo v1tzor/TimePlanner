@@ -79,6 +79,7 @@ internal fun CompactCategoryChooser(
             readOnly = true,
             label = { Text(text = HomeThemeRes.strings.mainCategoryLabel) },
             trailingIcon = { ExpandedIcon(isExpanded = isCategoryMenuOpen) },
+            shape = MaterialTheme.shapes.large,
             interactionSource = interactionSource,
         )
         Box(contentAlignment = Alignment.TopEnd) {
@@ -113,6 +114,7 @@ internal fun MainCategoriesChooseMenu(
         expanded = isExpanded,
         onDismissRequest = onDismiss,
         modifier = modifier.sizeIn(maxHeight = 200.dp),
+        shape = MaterialTheme.shapes.large,
         offset = DpOffset(0.dp, 6.dp),
     ) {
         mainCategories.forEach { category ->
@@ -176,6 +178,7 @@ internal fun CompactSubCategoryChooser(
             readOnly = true,
             label = { Text(text = HomeThemeRes.strings.subCategoryLabel) },
             trailingIcon = { ExpandedIcon(isExpanded = isSubCategoryMenuOpen) },
+            shape = MaterialTheme.shapes.large,
             interactionSource = interactionSource,
         )
         Box(contentAlignment = Alignment.TopEnd) {
@@ -210,6 +213,7 @@ internal fun SubCategoriesChooseMenu(
         expanded = isExpanded,
         onDismissRequest = onDismiss,
         modifier = modifier.sizeIn(maxHeight = 200.dp),
+        shape = MaterialTheme.shapes.large,
         offset = DpOffset(0.dp, 6.dp),
     ) {
         subCategories.forEach { subCategory ->

@@ -36,7 +36,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import ru.aleshin.core.ui.theme.TimePlannerRes
 import ru.aleshin.core.ui.views.toMinutesAndHoursTitle
 import ru.aleshin.features.analytics.impl.presenatiton.models.analytics.ScheduleAnalyticsUi
 import ru.aleshin.features.analytics.impl.presenatiton.theme.AnalyticsThemeRes
@@ -110,8 +109,7 @@ internal fun StatisticInfoView(
     Surface(
         modifier = modifier,
         shape = MaterialTheme.shapes.large,
-        color = MaterialTheme.colorScheme.surface,
-        tonalElevation = TimePlannerRes.elevations.levelOne,
+        color = MaterialTheme.colorScheme.surfaceContainerLow,
     ) {
         Column(
             modifier = Modifier.padding(16.dp),

@@ -18,7 +18,8 @@ package ru.aleshin.timeplanner.presentation.ui.main
 /**
  * @author Stanislav Aleshin on 27.02.2023.
  */
-import android.Manifest
+import android.Manifest.permission.POST_NOTIFICATIONS
+import android.Manifest.permission.SCHEDULE_EXACT_ALARM
 import android.content.Intent
 import android.content.Intent.ACTION_VIEW
 import android.os.Build
@@ -107,10 +108,7 @@ class MainActivity : BaseActivity<MainViewState, MainEvent, MainAction, MainEffe
 
     override fun onStop() {
         super.onStop()
-        val intent = Intent(application, MainWidgetReceiver::class.java).apply {
-            action = "${application.packageName}.tick"
-        }
-        sendBroadcast(intent)
+        sendBroadcast(MainWidgetReceiver.intent(this))
     }
 
     override fun fetchViewModelFactory() = viewModelFactory
@@ -120,9 +118,7 @@ class MainActivity : BaseActivity<MainViewState, MainEvent, MainAction, MainEffe
     private fun getNotificationPermission() {
         try {
             if (Build.VERSION.SDK_INT > Build.VERSION_CODES.S_V2) {
-                requestPermissionLauncher.launch(
-                    arrayOf(Manifest.permission.POST_NOTIFICATIONS, Manifest.permission.SCHEDULE_EXACT_ALARM),
-                )
+                requestPermissionLauncher.launch(arrayOf(POST_NOTIFICATIONS, SCHEDULE_EXACT_ALARM))
             }
         } catch (e: Exception) {
             e.printStackTrace()

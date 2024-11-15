@@ -74,9 +74,6 @@ import ru.aleshin.core.domain.entities.schedules.TaskPriority
 import ru.aleshin.core.ui.mappers.mapToIconPainter
 import ru.aleshin.core.ui.theme.material.badgePriorityMax
 import ru.aleshin.core.ui.theme.material.badgePriorityMedium
-import ru.aleshin.core.ui.theme.material.surfaceOne
-import ru.aleshin.core.ui.theme.material.surfaceThree
-import ru.aleshin.core.ui.theme.material.surfaceTwo
 import ru.aleshin.core.ui.views.MonogramBadge
 import ru.aleshin.core.ui.views.PlaceholderBox
 import ru.aleshin.core.ui.views.toDaysTitle
@@ -235,7 +232,7 @@ internal fun UndefinedTaskItem(
         modifier = modifier.size(175.dp, 175.dp),
         enabled = enabled,
         shape = MaterialTheme.shapes.large,
-        color = MaterialTheme.colorScheme.surfaceOne(),
+        color = MaterialTheme.colorScheme.surfaceContainerLow,
     ) {
         val scope = rememberCoroutineScope()
         val tooltipState = rememberTooltipState(isPersistent = true)
@@ -281,7 +278,7 @@ internal fun UndefinedTaskItem(
                             modifier = Modifier
                                 .size(32.dp)
                                 .clip(MaterialTheme.shapes.small)
-                                .background(MaterialTheme.colorScheme.surfaceThree())
+                                .background(MaterialTheme.colorScheme.surfaceContainerHigh)
                                 .clickable {
                                     scope.launch {
                                         if (tooltipState.isVisible) tooltipState.dismiss() else tooltipState.show()
@@ -366,7 +363,7 @@ internal fun DeadlineView(
     Surface(
         modifier = modifier,
         shape = MaterialTheme.shapes.small,
-        color = MaterialTheme.colorScheme.surfaceTwo(),
+        color = MaterialTheme.colorScheme.surfaceContainerHigh,
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 4.dp, vertical = 6.dp),
@@ -400,7 +397,7 @@ internal fun AddUndefinedTaskItem(
         modifier = modifier.height(170.dp).width(if (isCompact) 48.dp else 165.dp).animateContentSize(),
         enabled = enabled,
         shape = MaterialTheme.shapes.large,
-        color = MaterialTheme.colorScheme.surfaceOne(),
+        color = MaterialTheme.colorScheme.surfaceContainerLow,
     ) {
         Box(
             modifier = Modifier.fillMaxSize(),

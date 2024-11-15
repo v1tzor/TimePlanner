@@ -86,7 +86,7 @@ internal fun UndefinedTaskEditorDialog(
         Surface(
             modifier = modifier.width(328.dp).wrapContentHeight(),
             shape = MaterialTheme.shapes.extraLarge,
-            tonalElevation = TimePlannerRes.elevations.levelThree,
+            color = MaterialTheme.colorScheme.surfaceContainer,
         ) {
             Column {
                 UndefinedTaskEditorDialogHeader()
@@ -125,9 +125,9 @@ internal fun UndefinedTaskEditorDialog(
 
                 val isEnabled = mainCategory.id != 0
                 DialogButtons(
-                    isConfirmEnabled = isEnabled,
+                    enabledConfirm = isEnabled,
                     confirmTitle = when (model != null) {
-                        true -> TimePlannerRes.strings.alertDialogOkConfirmTitle
+                        true -> TimePlannerRes.strings.okConfirmTitle
                         false -> HomeThemeRes.strings.dialogCreateTitle
                     },
                     onConfirmClick = {
@@ -208,6 +208,7 @@ internal fun NoteCompactTextField(
                 null
             },
             interactionSource = interactionSource,
+            shape = MaterialTheme.shapes.large,
             colors = OutlinedTextFieldDefaults.colors(
                 cursorColor = MaterialTheme.colorScheme.onSurface,
             ),

@@ -15,17 +15,26 @@
  */
 package ru.aleshin.features.editor.impl.presentation.ui.editor.views
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.*
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.dp
-import ru.aleshin.core.ui.theme.TimePlannerRes
 import ru.aleshin.core.ui.views.SegmentedButtonItem
 import ru.aleshin.core.ui.views.SegmentedButtons
 import ru.aleshin.features.editor.impl.presentation.theme.EditorThemeRes
@@ -48,7 +57,8 @@ internal fun ParameterChooser(
     Surface(
         modifier = modifier.fillMaxWidth(),
         shape = MaterialTheme.shapes.medium,
-        tonalElevation = TimePlannerRes.elevations.levelOne,
+        color = MaterialTheme.colorScheme.surfaceContainerLow,
+        // tonalElevation = TimePlannerRes.elevations.levelOne,
     ) {
         Row(
             modifier = Modifier.padding(16.dp),
@@ -110,7 +120,8 @@ internal fun <Item : SegmentedButtonItem> SegmentedParametersChooser(
     Surface(
         modifier = modifier.fillMaxWidth(),
         shape = MaterialTheme.shapes.medium,
-        tonalElevation = TimePlannerRes.elevations.levelOne,
+        color = MaterialTheme.colorScheme.surfaceContainerLow,
+        // tonalElevation = TimePlannerRes.elevations.levelOne,
     ) {
         Column(
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),

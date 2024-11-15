@@ -17,11 +17,15 @@ package ru.aleshin.features.home.impl.presentation.ui.categories.screenmodel
 
 import kotlinx.coroutines.flow.flow
 import ru.aleshin.core.utils.functional.handle
-import ru.aleshin.core.utils.platform.screenmodel.work.*
+import ru.aleshin.core.utils.platform.screenmodel.work.ActionResult
+import ru.aleshin.core.utils.platform.screenmodel.work.EffectResult
+import ru.aleshin.core.utils.platform.screenmodel.work.FlowWorkProcessor
+import ru.aleshin.core.utils.platform.screenmodel.work.WorkCommand
 import ru.aleshin.features.home.impl.domain.interactors.CategoriesInteractor
 import ru.aleshin.features.home.impl.domain.interactors.SubCategoriesInteractor
 import ru.aleshin.features.home.impl.presentation.mapppers.categories.mapToDomain
 import ru.aleshin.features.home.impl.presentation.mapppers.categories.mapToUi
+import ru.aleshin.features.home.impl.presentation.models.categories.CategoriesUi
 import ru.aleshin.features.home.impl.presentation.models.categories.MainCategoryUi
 import ru.aleshin.features.home.impl.presentation.models.categories.SubCategoryUi
 import ru.aleshin.features.home.impl.presentation.ui.categories.contract.CategoriesAction
@@ -40,6 +44,7 @@ internal interface CategoriesWorkProcessor : FlowWorkProcessor<CategoriesWorkCom
 
         override suspend fun work(command: CategoriesWorkCommand) = when (command) {
             is CategoriesWorkCommand.LoadCategories -> loadCategoriesWork()
+            is CategoriesWorkCommand.CheckSelectedCategory -> checkSelectedCategoryWork(command.categories)
             is CategoriesWorkCommand.RestoreDefaultCategories -> restoreDefaultCategories()
             is CategoriesWorkCommand.AddMainCategory -> addMainCategory(command.name)
             is CategoriesWorkCommand.AddSubCategory -> addSubCategory(command.name, command.mainCategory)
@@ -50,14 +55,27 @@ internal interface CategoriesWorkProcessor : FlowWorkProcessor<CategoriesWorkCom
         }
 
         private suspend fun loadCategoriesWork() = flow {
+            val selectedCategoryId = categoriesInteractor.fetchFeatureMainCategory()
             categoriesInteractor.fetchCategories().collect { categoryEither ->
                 categoryEither.handle(
                     onLeftAction = { emit(EffectResult(CategoriesEffect.ShowError(it))) },
                     onRightAction = { domainCategories ->
                         val categories = domainCategories.map { it.mapToUi() }
-                        emit(ActionResult(CategoriesAction.SetUp(categories = categories)))
+                        val emptyCategory = categories.find { it.mainCategory.id == 0 }
+                        val selectedCategories = categories.find { it.mainCategory.id == selectedCategoryId }
+                        val selectedCategory = selectedCategories?.mainCategory ?: emptyCategory?.mainCategory
+                        emit(ActionResult(CategoriesAction.SetUp(categories = categories, selected = selectedCategory)))
                     },
                 )
+            }
+        }
+
+        private fun checkSelectedCategoryWork(categories: List<CategoriesUi>) = flow {
+            val selectedCategoryId = categoriesInteractor.fetchFeatureMainCategory()
+            val selectedCategories = categories.find { it.mainCategory.id == selectedCategoryId }
+            val selectedCategory = selectedCategories?.mainCategory
+            if (selectedCategory != null) {
+                emit(ActionResult(CategoriesAction.ChangeMainCategory(selectedCategory)))
             }
         }
 
@@ -112,8 +130,9 @@ internal interface CategoriesWorkProcessor : FlowWorkProcessor<CategoriesWorkCom
 }
 
 internal sealed class CategoriesWorkCommand : WorkCommand {
-    object LoadCategories : CategoriesWorkCommand()
-    object RestoreDefaultCategories : CategoriesWorkCommand()
+    data object LoadCategories : CategoriesWorkCommand()
+    data class CheckSelectedCategory(val categories: List<CategoriesUi>) : CategoriesWorkCommand()
+    data object RestoreDefaultCategories : CategoriesWorkCommand()
     data class AddSubCategory(val name: String, val mainCategory: MainCategoryUi) : CategoriesWorkCommand()
     data class AddMainCategory(val name: String) : CategoriesWorkCommand()
     data class UpdateSubCategory(val subCategory: SubCategoryUi) : CategoriesWorkCommand()

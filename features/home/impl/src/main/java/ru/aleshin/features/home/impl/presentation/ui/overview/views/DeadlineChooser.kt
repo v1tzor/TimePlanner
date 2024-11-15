@@ -160,12 +160,12 @@ internal fun DeadlineDatePicker(
                     },
                     enabled = confirmEnabled,
                 ) {
-                    Text(text = TimePlannerRes.strings.alertDialogSelectConfirmTitle)
+                    Text(text = TimePlannerRes.strings.confirmTitle)
                 }
             },
             dismissButton = {
                 TextButton(onClick = onDismiss) {
-                    Text(text = TimePlannerRes.strings.alertDialogDismissTitle)
+                    Text(text = TimePlannerRes.strings.cancelTitle)
                 }
             },
         ) {

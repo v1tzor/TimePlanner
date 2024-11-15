@@ -94,7 +94,7 @@ internal fun TemplateEditorDialog(
         Surface(
             modifier = modifier.width(328.dp).wrapContentHeight(),
             shape = MaterialTheme.shapes.extraLarge,
-            tonalElevation = TimePlannerRes.elevations.levelThree,
+            color = MaterialTheme.colorScheme.surfaceContainer,
         ) {
             Column {
                 TemplateEditorDialogHeader()
@@ -150,9 +150,9 @@ internal fun TemplateEditorDialog(
                 val isEnabled = timeStartHours != null && timeStartMinutes != null &&
                         timeEndHours != null && timeEndMinutes != null
                 DialogButtons(
-                    isConfirmEnabled = isEnabled,
+                    enabledConfirm = isEnabled,
                     confirmTitle = when (model != null) {
-                        true -> TimePlannerRes.strings.alertDialogOkConfirmTitle
+                        true -> TimePlannerRes.strings.okConfirmTitle
                         false -> HomeThemeRes.strings.dialogCreateTitle
                     },
                     onConfirmClick = {
@@ -253,6 +253,7 @@ internal fun TemplateEditorStartTimeChooser(
                     }
                 },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                shape = MaterialTheme.shapes.large,
                 label = { Text(text = HomeThemeRes.strings.startTimeLabel) },
             )
             Text(
@@ -271,6 +272,7 @@ internal fun TemplateEditorStartTimeChooser(
                         onTimeChange(hours, null)
                     }
                 },
+                shape = MaterialTheme.shapes.large,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             )
         }
@@ -353,6 +355,7 @@ internal fun TemplateEditorEndTimeChooser(
                     }
                 },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                shape = MaterialTheme.shapes.large,
                 label = { Text(text = HomeThemeRes.strings.endTimeLabel) },
             )
             Text(
@@ -369,6 +372,7 @@ internal fun TemplateEditorEndTimeChooser(
                         onTimeChange(hours, time)
                     } else if (it.isBlank()) onTimeChange(hours, null)
                 },
+                shape = MaterialTheme.shapes.large,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             )
         }

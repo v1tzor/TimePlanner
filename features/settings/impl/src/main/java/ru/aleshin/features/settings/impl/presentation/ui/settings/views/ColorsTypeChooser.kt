@@ -35,7 +35,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import ru.aleshin.core.ui.theme.TimePlannerRes
 import ru.aleshin.core.ui.theme.material.ColorsUiType
 import ru.aleshin.features.settings.impl.presentation.theme.SettingsThemeRes
 
@@ -51,7 +50,7 @@ internal fun ColorsTypeChooser(
     Surface(
         modifier = modifier,
         shape = MaterialTheme.shapes.medium,
-        tonalElevation = TimePlannerRes.elevations.levelTwo,
+        color = MaterialTheme.colorScheme.surfaceContainer,
     ) {
         Column(
             modifier = Modifier.padding(vertical = 12.dp, horizontal = 16.dp),
@@ -66,7 +65,7 @@ internal fun ColorsTypeChooser(
                 modifier = Modifier.fillMaxWidth().height(48.dp),
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
             ) {
-                for (color in ColorsUiType.values()) {
+                for (color in ColorsUiType.entries) {
                     ColorTypeItem(
                         modifier = Modifier.weight(1f),
                         model = color,

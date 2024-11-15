@@ -15,47 +15,56 @@
  */
 package ru.aleshin.features.editor.impl.presentation.ui.editor.views
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.requiredHeight
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.BasicAlertDialog
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.RadioButton
+import androidx.compose.material3.SearchBar
+import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Surface
+import androidx.compose.material3.SwipeToDismissBoxState
+import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import ru.aleshin.core.domain.entities.categories.DefaultCategoryType
 import ru.aleshin.core.ui.mappers.mapToIconPainter
 import ru.aleshin.core.ui.theme.TimePlannerRes
+import ru.aleshin.core.ui.views.BaseSelectorBottomSheet
 import ru.aleshin.core.ui.views.CategoryIconMonogram
 import ru.aleshin.core.ui.views.CategoryTextMonogram
-import ru.aleshin.core.ui.views.DialogButtons
+import ru.aleshin.core.ui.views.SelectorSwipeItemView
+import ru.aleshin.core.ui.views.SwipeToDismissBackground
 import ru.aleshin.features.editor.impl.presentation.models.categories.MainCategoryUi
 import ru.aleshin.features.editor.impl.presentation.theme.EditorThemeRes
 
@@ -64,27 +73,32 @@ import ru.aleshin.features.editor.impl.presentation.theme.EditorThemeRes
  */
 @Composable
 internal fun MainCategoryChooser(
-    enabled: Boolean = true,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     isError: Boolean = false,
     allCategories: List<MainCategoryUi>,
     currentCategory: MainCategoryUi?,
-    onChange: (MainCategoryUi) -> Unit,
+    onEditCategory: (MainCategoryUi) -> Unit,
+    onChangeCategory: (MainCategoryUi) -> Unit,
 ) {
-    val openDialog = rememberSaveable { mutableStateOf(false) }
+    var openSubCategorySelectorSheet by rememberSaveable { mutableStateOf(false) }
     val categoryIcon = currentCategory?.defaultType?.mapToIconPainter()
     val categoryName = currentCategory?.fetchName()
     
     Surface(
-        onClick = { openDialog.value = true },
+        onClick = { openSubCategorySelectorSheet = true },
         modifier = modifier.height(68.dp),
         enabled = currentCategory != null && enabled,
         shape = MaterialTheme.shapes.medium,
+//        color = when (isError) {
+//            true -> MaterialTheme.colorScheme.errorContainer
+//            false -> MaterialTheme.colorScheme.surface
+//        },
         color = when (isError) {
             true -> MaterialTheme.colorScheme.errorContainer
-            false -> MaterialTheme.colorScheme.surface
+            false -> MaterialTheme.colorScheme.surfaceContainerLow
         },
-        tonalElevation = if (!isError) TimePlannerRes.elevations.levelOne else 0.dp,
+        // tonalElevation = if (!isError) TimePlannerRes.elevations.levelOne else 0.dp,
         border = when (isError) {
             true -> BorderStroke(1.5.dp, MaterialTheme.colorScheme.error)
             false -> null
@@ -133,19 +147,20 @@ internal fun MainCategoryChooser(
             }
             Icon(
                 painter = painterResource(EditorThemeRes.icons.showDialog),
-                contentDescription = EditorThemeRes.strings.mainCategoryChooserExpandedIconDesc,
+                contentDescription = EditorThemeRes.strings.chooseCategoryTitle,
                 tint = categoryNameColor,
             )
         }
     }
-    if (openDialog.value && currentCategory != null) {
-        MainCategoryDialogChooser(
+    if (openSubCategorySelectorSheet && currentCategory != null) {
+        MainCategorySelectorBottomSheet(
             initCategory = currentCategory,
             allCategories = allCategories,
-            onDismiss = { openDialog.value = false },
+            onDismiss = { openSubCategorySelectorSheet = false },
+            onEditCategory = onEditCategory,
             onChooseCategory = {
-                onChange(it)
-                openDialog.value = false
+                onChangeCategory(it)
+                openSubCategorySelectorSheet = false
             },
         )
     }
@@ -153,97 +168,146 @@ internal fun MainCategoryChooser(
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-internal fun MainCategoryDialogChooser(
+internal fun MainCategorySelectorBottomSheet(
     modifier: Modifier = Modifier,
     allCategories: List<MainCategoryUi>,
     initCategory: MainCategoryUi,
     onDismiss: () -> Unit,
+    onEditCategory: (MainCategoryUi) -> Unit,
     onChooseCategory: (MainCategoryUi) -> Unit,
 ) {
-    val initPosition = allCategories.indexOf(initCategory).let { if (it == -1) 0 else it }
-    val listState = rememberLazyListState(initPosition)
+    val coreStrings = TimePlannerRes.strings
     var selectedCategory by rememberSaveable { mutableStateOf(initCategory) }
+    var searchQuery by rememberSaveable { mutableStateOf<String?>(null) }
+    val searchedCategory = remember(searchQuery, allCategories) {
+        allCategories.filter { category ->
+            searchQuery == null || (category.fetchName(coreStrings)?.contains(searchQuery ?: "", true) == true)
+        }
+    }
 
-    BasicAlertDialog(onDismissRequest = onDismiss) {
-        Surface(
-            modifier = modifier.width(280.dp).wrapContentHeight(),
-            shape = MaterialTheme.shapes.extraLarge,
-            tonalElevation = TimePlannerRes.elevations.levelThree,
-        ) {
-            Column {
-                Box(modifier = Modifier.padding(24.dp)) {
-                    Text(
-                        text = EditorThemeRes.strings.mainCategoryChooserTitle,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        style = MaterialTheme.typography.headlineSmall,
+    BaseSelectorBottomSheet(
+        modifier = modifier,
+        selected = selectedCategory,
+        items = searchedCategory,
+        header = EditorThemeRes.strings.mainCategoryChooserTitle,
+        title = null,
+        itemView = { category ->
+            val isSelected = category.id == selectedCategory.id
+            val density = LocalDensity.current
+            val dismissState = remember(category) {
+                SwipeToDismissBoxState(
+                    initialValue = SwipeToDismissBoxValue.Settled,
+                    density = density,
+                    confirmValueChange = { dismissBoxValue ->
+                        when (dismissBoxValue) {
+                            SwipeToDismissBoxValue.StartToEnd -> Unit
+                            SwipeToDismissBoxValue.EndToStart -> onEditCategory(category)
+                            SwipeToDismissBoxValue.Settled -> Unit
+                        }
+                        false
+                    },
+                    positionalThreshold = { it * .60f }
+                )
+            }
+            SelectorSwipeItemView(
+                onClick = { selectedCategory = category },
+                state = dismissState,
+                selected = isSelected,
+                title = category.fetchName() ?: "*",
+                label = null,
+                enableDismissFromStartToEnd = false,
+                backgroundContent = {
+                    SwipeToDismissBackground(
+                        dismissState = dismissState,
+                        endToStartContent = {
+                            Icon(
+                                imageVector = Icons.Default.Edit,
+                                contentDescription = null,
+                            )
+                        },
+                        endToStartColor = MaterialTheme.colorScheme.tertiaryContainer,
                     )
-                }
-                LazyColumn(modifier = Modifier.height(300.dp), state = listState) {
-                    items(allCategories) { category ->
-                        MainCategoryDialogItem(
-                            modifier = Modifier.fillMaxWidth(),
-                            selected = selectedCategory == category,
-                            title = category.fetchName() ?: "*",
-                            icon = category.defaultType?.mapToIconPainter(),
-                            onSelectedChange = { selectedCategory = category },
+                },
+                leadingIcon = {
+                    val title = category.fetchName() ?: "*"
+                    val icon = category.defaultType?.mapToIconPainter()
+                    if (icon != null) {
+                        CategoryIconMonogram(
+                            icon = icon,
+                            iconColor = MaterialTheme.colorScheme.onPrimary,
+                            backgroundColor = MaterialTheme.colorScheme.primary,
+                            iconDescription = title,
+                        )
+                    } else {
+                        CategoryTextMonogram(
+                            text = title.first().toString(),
+                            textColor = MaterialTheme.colorScheme.onPrimary,
+                            backgroundColor = MaterialTheme.colorScheme.primary,
                         )
                     }
                 }
-                DialogButtons(
-                    onCancelClick = onDismiss,
-                    onConfirmClick = { onChooseCategory.invoke(selectedCategory) },
-                )
-            }
-        }
-    }
-}
-
-@Composable
-internal fun MainCategoryDialogItem(
-    modifier: Modifier = Modifier,
-    selected: Boolean,
-    title: String,
-    icon: Painter?,
-    onSelectedChange: () -> Unit,
-) {
-    Column {
-        Row(
-            modifier = modifier
-                .padding(vertical = 8.dp, horizontal = 8.dp)
-                .clip(MaterialTheme.shapes.medium)
-                .clickable(onClick = onSelectedChange)
-                .padding(start = 8.dp, end = 16.dp)
-                .requiredHeight(56.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            if (icon != null) {
-                CategoryIconMonogram(
-                    icon = icon,
-                    iconColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                    backgroundColor = MaterialTheme.colorScheme.primaryContainer,
-                    iconDescription = title,
-                )
-            } else {
-                CategoryTextMonogram(
-                    text = title.first().toString(),
-                    textColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                    backgroundColor = MaterialTheme.colorScheme.primaryContainer,
-                )
-            }
-            Text(
-                modifier = Modifier.weight(1f),
-                text = title,
-                color = MaterialTheme.colorScheme.onSurface,
-                style = MaterialTheme.typography.bodyLarge,
             )
-            RadioButton(selected = selected, onClick = null)
-        }
-        HorizontalDivider(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-            color = MaterialTheme.colorScheme.outlineVariant
-        )
-    }
+        },
+        searchBar = {
+            SearchBar(
+                inputField = {
+                    val focusManager = LocalFocusManager.current
+                    val searchInteractionSource = remember { MutableInteractionSource() }
+                    val isFocus = searchInteractionSource.collectIsFocusedAsState().value
+
+                    SearchBarDefaults.InputField(
+                        query = searchQuery ?: "",
+                        onQueryChange = { searchQuery = it.takeIf { it.isNotBlank() } },
+                        onSearch = {
+                            searchQuery = it.takeIf { it.isNotBlank() }
+                            focusManager.clearFocus()
+                        },
+                        expanded = false,
+                        onExpandedChange = {},
+                        enabled = true,
+                        placeholder = {
+                            Text(text = EditorThemeRes.strings.chooseCategoryTitle)
+                        },
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.Search,
+                                contentDescription = EditorThemeRes.strings.topAppBarBackIconDesc,
+                                tint = MaterialTheme.colorScheme.onSurface,
+                            )
+                        },
+                        trailingIcon = {
+                            AnimatedVisibility(
+                                visible = isFocus,
+                                enter = fadeIn() + scaleIn(),
+                                exit = fadeOut() + scaleOut(),
+                            ) {
+                                IconButton(
+                                    onClick = {
+                                        focusManager.clearFocus()
+                                        searchQuery = null
+                                    }
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Close,
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.error,
+                                    )
+                                }
+                            }
+                        },
+                        interactionSource = searchInteractionSource,
+                    )
+                },
+                expanded = false,
+                onExpandedChange = {},
+                modifier = Modifier.fillMaxWidth(),
+                windowInsets = WindowInsets(0.dp),
+                content = {},
+            )
+        },
+        onDismissRequest = onDismiss,
+        onConfirm = { category -> if (category != null) onChooseCategory(category) },
+    )
 }
 
 /* ----------------------- Release Preview -----------------------

@@ -95,6 +95,8 @@ internal fun EditorContent(
     onAddSubCategory: (String) -> Unit,
     onTimeRangeChange: (TimeRange) -> Unit,
     onChangeParameters: (EditParameters) -> Unit,
+    onEditCategory: (MainCategoryUi) -> Unit,
+    onEditSubCategory: (SubCategoryUi) -> Unit,
     onControlTemplate: () -> Unit,
     onCreateTemplate: () -> Unit,
     onSaveClick: () -> Unit,
@@ -119,6 +121,8 @@ internal fun EditorContent(
                         subCategory = state.editModel.subCategory,
                         allCategories = state.categories,
                         note = state.editModel.note,
+                        onEditCategory = onEditCategory,
+                        onEditSubCategory = onEditSubCategory,
                         onCategoriesChange = onCategoriesChange,
                         onAddSubCategory = onAddSubCategory,
                         onNoteChange = onNoteChange,
@@ -161,6 +165,8 @@ internal fun CategoriesSection(
     subCategory: SubCategoryUi?,
     allCategories: List<CategoriesUi>,
     note: String?,
+    onEditCategory: (MainCategoryUi) -> Unit,
+    onEditSubCategory: (SubCategoryUi) -> Unit,
     onCategoriesChange: (MainCategoryUi, SubCategoryUi?) -> Unit,
     onAddSubCategory: (String) -> Unit,
     onNoteChange: (String?) -> Unit,
@@ -185,7 +191,8 @@ internal fun CategoriesSection(
                 isError = isMainCategoryValidError,
                 currentCategory = mainCategory,
                 allCategories = allCategories.map { it.mainCategory },
-                onChange = { newMainCategory ->
+                onEditCategory = onEditCategory,
+                onChangeCategory = { newMainCategory ->
                     onCategoriesChange(newMainCategory, null)
                 },
             )
@@ -205,7 +212,8 @@ internal fun CategoriesSection(
             allSubCategories = findCategories?.subCategories ?: emptyList(),
             currentSubCategory = subCategory,
             onAddSubCategory = onAddSubCategory,
-            onChangeCategory = { newSubCategory ->
+            onEditSubCategory = onEditSubCategory,
+            onChangeSubCategory = { newSubCategory ->
                 if (mainCategory != null) onCategoriesChange(mainCategory, newSubCategory)
             },
         )
@@ -346,7 +354,7 @@ internal fun ParametersSection(
         )
         SegmentedParametersChooser(
             enabled = enabled,
-            parameters = PriorityParameters.values(),
+            parameters = PriorityParameters.entries.toTypedArray(),
             selected = parameters.priority.convertToParameter(),
             leadingIcon = painterResource(id = EditorThemeRes.icons.priority),
             title = EditorThemeRes.strings.priorityParameterTitle,

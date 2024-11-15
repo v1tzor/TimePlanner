@@ -29,7 +29,7 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
@@ -46,7 +46,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import ru.aleshin.core.ui.theme.TimePlannerRes
 import ru.aleshin.core.ui.theme.tokens.LanguageUiType
 import ru.aleshin.core.ui.views.DialogButtons
 import ru.aleshin.features.settings.impl.presentation.mappers.toLanguageName
@@ -66,7 +65,7 @@ fun LanguageChooser(
         onClick = { isOpenDialog = true },
         modifier = modifier.height(60.dp),
         shape = MaterialTheme.shapes.medium,
-        tonalElevation = TimePlannerRes.elevations.levelTwo,
+        color = MaterialTheme.colorScheme.surfaceContainer,
     ) {
         Row(
             modifier = Modifier.padding(vertical = 16.dp, horizontal = 16.dp),
@@ -107,19 +106,24 @@ fun LanguageDialogChooser(
     onLanguageChoose: (LanguageUiType) -> Unit,
 ) {
     if (openDialog) {
-        val initPosition = LanguageUiType.values().indexOf(initialLanguage)
+        val initPosition = LanguageUiType.entries.indexOf(initialLanguage)
         val listState = rememberLazyListState(initPosition)
         var selectedLanguage by rememberSaveable { mutableStateOf(initialLanguage) }
 
-        AlertDialog(onDismissRequest = onCloseDialog) {
+        BasicAlertDialog(onDismissRequest = onCloseDialog) {
             Surface(
                 modifier = modifier.width(280.dp).wrapContentHeight(),
                 shape = MaterialTheme.shapes.extraLarge,
-                tonalElevation = TimePlannerRes.elevations.levelThree,
+                color = MaterialTheme.colorScheme.surfaceContainer,
             ) {
                 Column {
                     Box(
-                        modifier = Modifier.padding(start = 24.dp, end = 24.dp, top = 24.dp, bottom = 12.dp),
+                        modifier = Modifier.padding(
+                            start = 24.dp,
+                            end = 24.dp,
+                            top = 24.dp,
+                            bottom = 12.dp
+                        ),
                     ) {
                         Text(
                             text = SettingsThemeRes.strings.mainSettingsLanguageTitle,
@@ -128,7 +132,7 @@ fun LanguageDialogChooser(
                         )
                     }
                     LazyColumn(modifier = Modifier.height(300.dp), state = listState) {
-                        items(LanguageUiType.values()) { language ->
+                        items(LanguageUiType.entries.toTypedArray()) { language ->
                             LanguageDialogItem(
                                 modifier = Modifier.fillMaxWidth(),
                                 title = language.toLanguageName(),

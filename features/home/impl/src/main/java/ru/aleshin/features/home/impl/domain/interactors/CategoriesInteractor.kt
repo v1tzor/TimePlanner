@@ -25,6 +25,7 @@ import ru.aleshin.core.utils.functional.DomainResult
 import ru.aleshin.core.utils.functional.UnitDomainResult
 import ru.aleshin.features.home.impl.domain.common.HomeEitherWrapper
 import ru.aleshin.features.home.impl.domain.entities.HomeFailures
+import ru.aleshin.features.home.impl.domain.repositories.FeatureCategoryRepository
 import javax.inject.Inject
 
 /**
@@ -37,9 +38,12 @@ internal interface CategoriesInteractor {
     suspend fun updateMainCategory(mainCategory: MainCategory): UnitDomainResult<HomeFailures>
     suspend fun deleteMainCategory(mainCategory: MainCategory): UnitDomainResult<HomeFailures>
     suspend fun restoreDefaultCategories(): UnitDomainResult<HomeFailures>
+    suspend fun fetchFeatureMainCategory(): Int?
+    fun setFeatureMainCategory(id: Int?)
 
     class Base @Inject constructor(
         private val categoriesRepository: CategoriesRepository,
+        private val featureCategoryRepository: FeatureCategoryRepository,
         private val eitherWrapper: HomeEitherWrapper,
     ) : CategoriesInteractor {
 
@@ -68,6 +72,16 @@ internal interface CategoriesInteractor {
                     categoriesRepository.updateMainCategory(it.category.copy(customName = null))
                 }
             }
+        }
+
+        override suspend fun fetchFeatureMainCategory(): Int? {
+            val mainCategory = featureCategoryRepository.fetchMainCategoryId()
+            featureCategoryRepository.setMainCategoryId(null)
+            return mainCategory
+        }
+
+        override fun setFeatureMainCategory(id: Int?) {
+            featureCategoryRepository.setMainCategoryId(id)
         }
     }
 }

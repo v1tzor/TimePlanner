@@ -69,7 +69,7 @@ class TabScreenModel @Inject constructor(
             showHomeFeature(HomeScreens.Templates)
         }
         TabsEvent.SelectedCategoriesScreen -> navigate(TabsBottomBarItems.HOME) {
-            showHomeFeature(HomeScreens.Categories)
+            showHomeFeature(HomeScreens.Categories())
         }
         TabsEvent.SelectedAnalyticsTab -> navigate(TabsBottomBarItems.ANALYTICS) {
             showAnalyticsFeature()

@@ -18,8 +18,11 @@ package ru.aleshin.features.home.impl.di.modules
 import dagger.Binds
 import dagger.Module
 import ru.aleshin.core.utils.di.FeatureScope
+import ru.aleshin.features.home.impl.data.datasource.FeatureCategoryLocalDataSource
 import ru.aleshin.features.home.impl.data.datasource.FeatureScheduleLocalDataSource
+import ru.aleshin.features.home.impl.data.repositories.FeatureCategoryRepositoryImpl
 import ru.aleshin.features.home.impl.data.repositories.FeatureScheduleRepositoryImpl
+import ru.aleshin.features.home.impl.domain.repositories.FeatureCategoryRepository
 import ru.aleshin.features.home.impl.domain.repositories.FeatureScheduleRepository
 
 /**
@@ -34,4 +37,12 @@ internal interface DataModule {
 
     @Binds
     fun bindFeatureScheduleRepository(repository: FeatureScheduleRepositoryImpl): FeatureScheduleRepository
+
+
+    @Binds
+    @FeatureScope
+    fun bindFeatureCategoryLocalDataSource(dataSource: FeatureCategoryLocalDataSource.Base): FeatureCategoryLocalDataSource
+
+    @Binds
+    fun bindFeatureCategoryRepository(repository: FeatureCategoryRepositoryImpl): FeatureCategoryRepository
 }

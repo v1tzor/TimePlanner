@@ -52,6 +52,7 @@ import ru.aleshin.core.utils.functional.TimeRange
 import ru.aleshin.timeplanner.presentation.widgets.common.CompatScaffold
 import ru.aleshin.timeplanner.presentation.widgets.compatCornerBackground
 import ru.aleshin.timeplanner.presentation.widgets.main.views.CompletedWidgetTimeTask
+import ru.aleshin.timeplanner.presentation.widgets.main.views.EmptyWidgetTimeTask
 import ru.aleshin.timeplanner.presentation.widgets.main.views.PlannedWidgetTimeTask
 import ru.aleshin.timeplanner.presentation.widgets.main.views.RunningWidgetTimeTask
 import ru.aleshin.timeplanner.presentation.widgets.typography
@@ -75,25 +76,32 @@ fun MainWidgetContent(
         backgroundColor = GlanceTheme.colors.background,
     ) {
         val sortedTimeTasks = remember(timeTasks) { timeTasks.sortedBy { it.timeRange.from.time } }
-        LazyColumn {
-            items(sortedTimeTasks, itemId = { it.key }) { task ->
-                Row(modifier = GlanceModifier.fillMaxWidth().padding(bottom = 8.dp)) {
-                    WidgetTimeRange(
-                        timeRange = task.timeRange,
-                        isTwoLines = task.subCategory != null,
-                    )
-                    Spacer(modifier = GlanceModifier.width(8.dp))
-                    WidgetTimeTask(
-                        modifier = GlanceModifier.defaultWeight(),
-                        currentTime = currentTime,
-                        onTimeTaskClickAction = { onTimeTaskClickAction(task) },
-                        timeRange = task.timeRange,
-                        category = task.category,
-                        subCategory = task.subCategory,
-                        priority = task.priority,
-                        isCompleted = task.isCompleted,
-                    )
+        if (sortedTimeTasks.isNotEmpty()) {
+            LazyColumn {
+                items(sortedTimeTasks, itemId = { it.key }) { task ->
+                    Row(modifier = GlanceModifier.fillMaxWidth().padding(bottom = 8.dp)) {
+                        WidgetTimeRange(
+                            timeRange = task.timeRange,
+                            isTwoLines = task.subCategory != null,
+                        )
+                        Spacer(modifier = GlanceModifier.width(8.dp))
+                        WidgetTimeTask(
+                            modifier = GlanceModifier.defaultWeight(),
+                            currentTime = currentTime,
+                            onTimeTaskClickAction = { onTimeTaskClickAction(task) },
+                            timeRange = task.timeRange,
+                            category = task.category,
+                            subCategory = task.subCategory,
+                            priority = task.priority,
+                            isCompleted = task.isCompleted,
+                        )
+                    }
                 }
+            }
+        } else {
+            Column(modifier.fillMaxSize()) {
+                EmptyWidgetTimeTask(modifier = GlanceModifier.defaultWeight())
+                Spacer(modifier = GlanceModifier.height(12.dp))
             }
         }
     }

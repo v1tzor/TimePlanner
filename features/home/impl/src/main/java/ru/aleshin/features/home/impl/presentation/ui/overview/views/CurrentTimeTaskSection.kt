@@ -53,7 +53,6 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import ru.aleshin.core.ui.mappers.mapToIconPainter
 import ru.aleshin.core.ui.mappers.mapToUi
-import ru.aleshin.core.ui.theme.material.surfaceTwo
 import ru.aleshin.core.ui.views.CategoryIconMonogram
 import ru.aleshin.core.ui.views.CategoryTextMonogram
 import ru.aleshin.core.ui.views.PlaceholderBox
@@ -204,7 +203,7 @@ internal fun CurrentTimeTaskView(
                     progress = { model.progress },
                     modifier = Modifier.fillMaxWidth().height(10.dp).clip(RoundedCornerShape(100.dp)),
                     color = MaterialTheme.colorScheme.primary,
-                    trackColor = MaterialTheme.colorScheme.surfaceVariant,
+                    trackColor = MaterialTheme.colorScheme.surfaceContainerHigh,
                     strokeCap = StrokeCap.Square,
                     gapSize = 0.dp,
                     drawStopIndicator = {},
@@ -220,7 +219,7 @@ internal fun NoneCurrentTimeTaskView(
 ) {
     Surface(
         modifier = modifier,
-        color = MaterialTheme.colorScheme.surfaceTwo(),
+        color = MaterialTheme.colorScheme.surfaceContainerLow,
         shape = MaterialTheme.shapes.large,
     ) {
         Text(

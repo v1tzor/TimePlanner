@@ -20,6 +20,7 @@ import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
 import ru.aleshin.core.utils.managers.CoroutineManager
 import ru.aleshin.core.utils.platform.screenmodel.BaseScreenModel
+import ru.aleshin.core.utils.platform.screenmodel.work.BackgroundWorkKey
 import ru.aleshin.core.utils.platform.screenmodel.work.WorkScope
 import ru.aleshin.features.home.impl.di.holder.HomeComponentHolder
 import ru.aleshin.features.home.impl.presentation.ui.categories.contract.CategoriesAction
@@ -46,6 +47,8 @@ internal class CategoriesScreenModel @Inject constructor(
         if (!isInitialize.get()) {
             super.init()
             dispatchEvent(CategoriesEvent.Init)
+        } else {
+            dispatchEvent(CategoriesEvent.CheckSelectedCategory)
         }
     }
 
@@ -53,42 +56,50 @@ internal class CategoriesScreenModel @Inject constructor(
         event: CategoriesEvent,
     ) {
         when (event) {
-            is CategoriesEvent.Init -> launchBackgroundWork(CategoriesWorkCommand.LoadCategories) {
+            is CategoriesEvent.Init -> launchBackgroundWork(BackgroundKey.LOAD_CATEGORIES) {
                 val command = CategoriesWorkCommand.LoadCategories
+                categoriesWorkProcessor.work(command).collectAndHandleWork()
+            }
+            is CategoriesEvent.CheckSelectedCategory -> launchBackgroundWork(BackgroundKey.CHECK_CATEGORIES) {
+                val command = CategoriesWorkCommand.CheckSelectedCategory(state().categories)
                 categoriesWorkProcessor.work(command).collectAndHandleWork()
             }
             is CategoriesEvent.ChangeMainCategory -> {
                 sendAction(CategoriesAction.ChangeMainCategory(event.mainCategory))
             }
-            is CategoriesEvent.UpdateSubCategory -> {
+            is CategoriesEvent.UpdateSubCategory -> launchBackgroundWork(BackgroundKey.CATEGORY_ACTION){
                 val command = CategoriesWorkCommand.UpdateSubCategory(event.subCategory)
                 categoriesWorkProcessor.work(command).collectAndHandleWork()
             }
-            is CategoriesEvent.DeleteSubCategory -> {
+            is CategoriesEvent.DeleteSubCategory -> launchBackgroundWork(BackgroundKey.CATEGORY_ACTION){
                 val command = CategoriesWorkCommand.DeleteSubCategory(event.subCategory)
                 categoriesWorkProcessor.work(command).collectAndHandleWork()
             }
-            is CategoriesEvent.AddSubCategory -> {
+            is CategoriesEvent.AddSubCategory -> launchBackgroundWork(BackgroundKey.CATEGORY_ACTION){
                 val command = CategoriesWorkCommand.AddSubCategory(event.name, event.mainCategory)
                 categoriesWorkProcessor.work(command).collectAndHandleWork()
             }
-            is CategoriesEvent.AddMainCategory -> {
+            is CategoriesEvent.AddMainCategory -> launchBackgroundWork(BackgroundKey.CATEGORY_ACTION){
                 val command = CategoriesWorkCommand.AddMainCategory(event.name)
                 categoriesWorkProcessor.work(command).collectAndHandleWork()
             }
-            is CategoriesEvent.DeleteMainCategory -> {
+            is CategoriesEvent.DeleteMainCategory -> launchBackgroundWork(BackgroundKey.CATEGORY_ACTION){
                 val command = CategoriesWorkCommand.DeleteMainCategory(event.mainCategory)
                 categoriesWorkProcessor.work(command).collectAndHandleWork()
             }
-            is CategoriesEvent.UpdateMainCategory -> {
+            is CategoriesEvent.UpdateMainCategory -> launchBackgroundWork(BackgroundKey.CATEGORY_ACTION){
                 val command = CategoriesWorkCommand.UpdateMainCategory(event.mainCategory)
                 categoriesWorkProcessor.work(command).collectAndHandleWork()
             }
-            is CategoriesEvent.RestoreDefaultCategories -> {
+            is CategoriesEvent.RestoreDefaultCategories -> launchBackgroundWork(BackgroundKey.CATEGORY_ACTION){
                 val command = CategoriesWorkCommand.RestoreDefaultCategories
                 categoriesWorkProcessor.work(command).collectAndHandleWork()
             }
         }
+    }
+
+    enum class BackgroundKey : BackgroundWorkKey {
+        LOAD_CATEGORIES, CHECK_CATEGORIES, CATEGORY_ACTION
     }
 
     override suspend fun reduce(
@@ -100,6 +111,7 @@ internal class CategoriesScreenModel @Inject constructor(
         )
         is CategoriesAction.SetUp -> currentState.copy(
             categories = action.categories,
+            selectedMainCategory = action.selected,
         )
     }
 }

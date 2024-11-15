@@ -15,38 +15,38 @@
  */
 package ru.aleshin.features.editor.impl.presentation.ui.editor.views
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.clickable
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material3.BasicAlertDialog
-import androidx.compose.material3.Button
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.RadioButton
+import androidx.compose.material3.SearchBar
+import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Surface
+import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -54,15 +54,19 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import ru.aleshin.core.ui.theme.TimePlannerRes
-import ru.aleshin.core.ui.views.DialogButtons
+import ru.aleshin.core.ui.views.BaseSelectorBottomSheet
+import ru.aleshin.core.ui.views.SelectorAddItemView
+import ru.aleshin.core.ui.views.SelectorNotSelectedItemView
+import ru.aleshin.core.ui.views.SelectorSwipeItemView
+import ru.aleshin.core.ui.views.SelectorTextField
+import ru.aleshin.core.ui.views.SwipeToDismissBackground
+import ru.aleshin.core.utils.functional.Constants
 import ru.aleshin.features.editor.impl.presentation.models.categories.MainCategoryUi
 import ru.aleshin.features.editor.impl.presentation.models.categories.SubCategoryUi
 import ru.aleshin.features.editor.impl.presentation.theme.EditorThemeRes
@@ -77,16 +81,18 @@ internal fun SubCategoryChooser(
     mainCategory: MainCategoryUi?,
     allSubCategories: List<SubCategoryUi>,
     currentSubCategory: SubCategoryUi?,
-    onChangeCategory: (SubCategoryUi?) -> Unit,
+    onChangeSubCategory: (SubCategoryUi?) -> Unit,
+    onEditSubCategory: (SubCategoryUi) -> Unit,
     onAddSubCategory: (String) -> Unit,
 ) {
-    val openDialog = rememberSaveable { mutableStateOf(false) }
+    var openSubCategorySelectorSheet by rememberSaveable { mutableStateOf(false) }
     Surface(
         enabled = enabled,
-        onClick = { openDialog.value = true },
+        onClick = { openSubCategorySelectorSheet = true },
         modifier = modifier.sizeIn(minHeight = 68.dp),
         shape = MaterialTheme.shapes.medium,
-        tonalElevation = TimePlannerRes.elevations.levelOne,
+        color = MaterialTheme.colorScheme.surfaceContainerLow,
+//        tonalElevation = TimePlannerRes.elevations.levelOne,
     ) {
         Row(
             modifier = Modifier.padding(top = 8.dp, bottom = 8.dp, start = 16.dp, end = 16.dp),
@@ -123,223 +129,195 @@ internal fun SubCategoryChooser(
             Icon(
                 modifier = Modifier.animateContentSize(),
                 painter = painterResource(icon),
-                contentDescription = EditorThemeRes.strings.mainCategoryChooserExpandedIconDesc,
+                contentDescription = EditorThemeRes.strings.chooseCategoryTitle,
                 tint = tint,
             )
         }
     }
-    if (openDialog.value) {
-        SubCategoryDialogChooser(
+    if (openSubCategorySelectorSheet) {
+        SubCategorySelectorBottomSheet(
             initCategory = currentSubCategory,
             mainCategory = mainCategory,
             allSubCategories = allSubCategories,
-            onDismiss = { openDialog.value = false },
-            onAddCategory = { onAddSubCategory(it) },
-            onChooseSubCategory = { onChangeCategory(it); openDialog.value = false },
+            onDismiss = { openSubCategorySelectorSheet = false },
+            onAddCategory = onAddSubCategory,
+            onEditSubCategory = onEditSubCategory,
+            onChooseSubCategory = { onChangeSubCategory(it); openSubCategorySelectorSheet = false },
         )
     }
 }
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-internal fun SubCategoryDialogChooser(
+internal fun SubCategorySelectorBottomSheet(
     modifier: Modifier = Modifier,
     initCategory: SubCategoryUi?,
     mainCategory: MainCategoryUi?,
     allSubCategories: List<SubCategoryUi>,
     onDismiss: () -> Unit,
     onChooseSubCategory: (SubCategoryUi?) -> Unit,
+    onEditSubCategory: (SubCategoryUi) -> Unit,
     onAddCategory: (String) -> Unit,
 ) {
-    val initItem = initCategory?.let { allSubCategories.find { it.id == initCategory.id } }
-    val initPosition = initItem?.let { allSubCategories.indexOf(it) } ?: 0
-    val listState = rememberLazyListState(initPosition)
     var selectedSubCategory by rememberSaveable { mutableStateOf(initCategory) }
-
-    BasicAlertDialog(onDismissRequest = onDismiss) {
-        Surface(
-            modifier = modifier.width(280.dp).wrapContentHeight(),
-            shape = MaterialTheme.shapes.extraLarge,
-            tonalElevation = TimePlannerRes.elevations.levelThree,
-        ) {
-            Column {
-                Column(
-                    modifier = Modifier.padding(top = 24.dp, bottom = 8.dp, start = 24.dp, end = 24.dp),
-                    verticalArrangement = Arrangement.spacedBy(2.dp),
-                ) {
-                    Text(
-                        text = EditorThemeRes.strings.subCategoryChooserTitle,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        style = MaterialTheme.typography.headlineSmall,
-                    )
-                    Text(
-                        text = EditorThemeRes.strings.subCategoryDialogMainCategoryFormat.format(
-                            mainCategory?.fetchName() ?: EditorThemeRes.strings.categoryNotSelectedTitle,
-                        ),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        style = MaterialTheme.typography.bodyMedium,
-                    )
-                }
-                LazyColumn(modifier = Modifier.height(300.dp), state = listState) {
-                    item {
-                        SubCategoryDialogItem(
-                            selected = selectedSubCategory == null,
-                            title = EditorThemeRes.strings.categoryNotSelectedTitle,
-                            description = null,
-                            onSelectedChange = { selectedSubCategory = null },
-                        )
-                    }
-                    items(allSubCategories) { subCategory ->
-                        SubCategoryDialogItem(
-                            selected = selectedSubCategory == subCategory,
-                            title = subCategory.name ?: TimePlannerRes.strings.categoryEmptyTitle,
-                            description = subCategory.description,
-                            onSelectedChange = { selectedSubCategory = subCategory },
-                        )
-                    }
-                    item {
-                        if (mainCategory?.id != 0 && mainCategory != null) {
-                            AddCategoriesDialogItem(
-                                modifier = Modifier.fillMaxWidth(),
-                                onAddCategory = onAddCategory,
-                            )
-                        }
-                    }
-                }
-                DialogButtons(
-                    onCancelClick = onDismiss,
-                    onConfirmClick = { onChooseSubCategory.invoke(selectedSubCategory) },
-                )
-            }
+    var searchQuery by rememberSaveable { mutableStateOf<String?>(null) }
+    var isEdited by remember { mutableStateOf(false) }
+    var editableSubCategory by remember { mutableStateOf("") }
+    val focusRequester = remember { FocusRequester() }
+    val searchedSubCategory = remember(searchQuery, allSubCategories) {
+        allSubCategories.filter { category ->
+            searchQuery == null || (category.name?.contains(searchQuery ?: "", true) == true)
         }
     }
-}
 
-@Composable
-internal fun SubCategoryDialogItem(
-    modifier: Modifier = Modifier,
-    selected: Boolean,
-    title: String,
-    description: String?,
-    onSelectedChange: () -> Unit,
-) {
-    Column {
-        Row(
-            modifier = modifier
-                .padding(vertical = 8.dp, horizontal = 16.dp)
-                .clip(MaterialTheme.shapes.medium)
-                .clickable(onClick = onSelectedChange)
-                .padding(start = 8.dp, end = 16.dp)
-                .sizeIn(minHeight = 56.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            RadioButton(selected = selected, onClick = null)
-            Column(
-                modifier = Modifier.weight(1f),
-                horizontalAlignment = Alignment.Start,
-            ) {
-                Text(
-                    text = title,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    overflow = TextOverflow.Ellipsis,
-                    maxLines = 4,
-                    style = MaterialTheme.typography.bodyLarge,
-                )
-                if (description != null) {
-                    Text(
-                        text = description,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        style = MaterialTheme.typography.bodyMedium,
-                    )
-                }
-            }
-        }
-        HorizontalDivider(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-            color = MaterialTheme.colorScheme.outlineVariant
-        )
-    }
-}
-
-@Composable
-internal fun AddCategoriesDialogItem(
-    modifier: Modifier = Modifier,
-    onAddCategory: (String) -> Unit,
-) {
-    var isSubCategoryEdited by remember { mutableStateOf(false) }
-    var subCategoryEditedName by remember { mutableStateOf("") }
-
-    Column {
-        Row(
-            modifier = modifier
-                .padding(vertical = 4.dp, horizontal = 24.dp).height(48.dp)
-                .clip(MaterialTheme.shapes.medium)
-                .clickable(onClick = { isSubCategoryEdited = true }),
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Icon(
-                modifier = Modifier.size(24.dp),
-                imageVector = when (isSubCategoryEdited) {
-                    true -> Icons.Default.Edit
-                    false -> Icons.Default.Add
+    BaseSelectorBottomSheet(
+        modifier = modifier,
+        selected = selectedSubCategory,
+        items = searchedSubCategory,
+        header = EditorThemeRes.strings.subCategoryChooserTitle,
+        title = EditorThemeRes.strings.subCategoryDialogMainCategoryFormat.format(
+            mainCategory?.fetchName() ?: EditorThemeRes.strings.categoryNotSelectedTitle,
+        ),
+        itemView = { subCategory ->
+            val dismissState = rememberSwipeToDismissBoxState(
+                confirmValueChange = { dismissBoxValue ->
+                    when (dismissBoxValue) {
+                        SwipeToDismissBoxValue.StartToEnd -> Unit
+                        SwipeToDismissBoxValue.EndToStart -> onEditSubCategory(subCategory)
+                        SwipeToDismissBoxValue.Settled -> Unit
+                    }
+                    return@rememberSwipeToDismissBoxState false
                 },
-                contentDescription = EditorThemeRes.strings.subCategoryDialogAddedTitle,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                positionalThreshold = { it * .60f },
             )
-            if (!isSubCategoryEdited) {
-                Text(
-                    text = EditorThemeRes.strings.subCategoryDialogAddedTitle,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    style = MaterialTheme.typography.bodyLarge,
-                )
-            } else {
-                val focusRequester = remember { FocusRequester() }
-                BasicTextField(
-                    modifier = Modifier.weight(1f).padding(vertical = 4.dp).focusRequester(focusRequester),
-                    value = subCategoryEditedName,
-                    onValueChange = { subCategoryEditedName = it },
-                    textStyle = MaterialTheme.typography.bodyLarge.copy(
-                        color = MaterialTheme.colorScheme.onSurface,
-                    ),
-                    cursorBrush = SolidColor(MaterialTheme.colorScheme.onSurface),
-                )
-                IconButton(onClick = { isSubCategoryEdited = false; subCategoryEditedName = "" }) {
-                    Icon(
-                        modifier = Modifier.size(18.dp),
-                        imageVector = Icons.Default.Close,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onSurface,
+            SelectorSwipeItemView(
+                onClick = { selectedSubCategory = subCategory },
+                state = dismissState,
+                selected = subCategory.id == selectedSubCategory?.id,
+                title = subCategory.name ?: TimePlannerRes.strings.categoryEmptyTitle,
+                label = subCategory.description,
+                enableDismissFromStartToEnd = false,
+                backgroundContent = {
+                    SwipeToDismissBackground(
+                        dismissState = dismissState,
+                        endToStartContent = {
+                            Icon(
+                                imageVector = Icons.Default.Edit,
+                                contentDescription = null,
+                            )
+                        },
+                        endToStartColor = MaterialTheme.colorScheme.tertiaryContainer,
                     )
-                }
-
-                LaunchedEffect(key1 = isSubCategoryEdited) {
-                    when (isSubCategoryEdited) {
-                        true -> focusRequester.requestFocus()
-                        false -> focusRequester.freeFocus()
+                },
+            )
+        },
+        addItemView = if (searchQuery == null) {
+            {
+                AnimatedContent(targetState = isEdited, label = "subCategory") { edit ->
+                    if (edit) {
+                        SelectorTextField(
+                            modifier = Modifier.focusRequester(focusRequester),
+                            value = editableSubCategory,
+                            onValueChange = {
+                                if (it.length < Constants.Text.MAX_LENGTH) {
+                                    editableSubCategory = it
+                                }
+                            },
+                            onDismiss = {
+                                editableSubCategory = ""
+                                isEdited = false
+                            },
+                            maxLines = 1,
+                            onConfirm = {
+                                onAddCategory(editableSubCategory)
+                                editableSubCategory = ""
+                                isEdited = false
+                            }
+                        )
+                        SideEffect { focusRequester.requestFocus() }
+                    } else {
+                        SelectorAddItemView(
+                            text = EditorThemeRes.strings.subCategoryDialogAddedTitle,
+                            enabled = mainCategory?.id != 0 && mainCategory != null,
+                            onClick = { isEdited = true },
+                        )
                     }
                 }
             }
-        }
-        if (isSubCategoryEdited) {
-            Button(
-                onClick = { if (subCategoryEditedName.isNotEmpty()) onAddCategory(subCategoryEditedName) },
-                modifier = Modifier.fillMaxWidth().padding(
-                    start = 16.dp,
-                    end = 16.dp,
-                    top = 4.dp,
-                    bottom = 8.dp,
-                ),
-            ) {
-                Text(text = EditorThemeRes.strings.subCategoryDialogAddedTitle)
+        } else {
+            null
+        },
+        notSelectedItem = if (searchQuery == null) {
+            {
+                SelectorNotSelectedItemView(
+                    text = EditorThemeRes.strings.categoryNotSelectedTitle,
+                    selected = selectedSubCategory == null,
+                    onClick = { selectedSubCategory = null },
+                )
             }
-        }
-        HorizontalDivider(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-            color = MaterialTheme.colorScheme.outlineVariant
-        )
-    }
+        } else {
+            null
+        },
+        searchBar = {
+            SearchBar(
+                inputField = {
+                    val focusManager = LocalFocusManager.current
+                    val searchInteractionSource = remember { MutableInteractionSource() }
+                    val isFocus = searchInteractionSource.collectIsFocusedAsState().value
+
+                    SearchBarDefaults.InputField(
+                        query = searchQuery ?: "",
+                        onQueryChange = { searchQuery = it.takeIf { it.isNotBlank() } },
+                        onSearch = {
+                            searchQuery = it.takeIf { it.isNotBlank() }
+                            focusManager.clearFocus()
+                        },
+                        expanded = false,
+                        onExpandedChange = {},
+                        enabled = true,
+                        placeholder = {
+                            Text(text = EditorThemeRes.strings.chooseCategoryTitle)
+                        },
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.Search,
+                                contentDescription = EditorThemeRes.strings.topAppBarBackIconDesc,
+                                tint = MaterialTheme.colorScheme.onSurface,
+                            )
+                        },
+                        trailingIcon = {
+                            AnimatedVisibility(
+                                visible = isFocus,
+                                enter = fadeIn() + scaleIn(),
+                                exit = fadeOut() + scaleOut(),
+                            ) {
+                                IconButton(
+                                    onClick = {
+                                        focusManager.clearFocus()
+                                        searchQuery = null
+                                    }
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Close,
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.error,
+                                    )
+                                }
+                            }
+                        },
+                        interactionSource = searchInteractionSource,
+                    )
+                },
+                expanded = false,
+                onExpandedChange = {},
+                modifier = Modifier.fillMaxWidth(),
+                windowInsets = WindowInsets(0.dp),
+                content = {},
+            )
+        },
+        onDismissRequest = onDismiss,
+        onConfirm = onChooseSubCategory,
+    )
 }
 
 /* ----------------------- Release Preview -----------------------

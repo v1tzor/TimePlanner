@@ -42,9 +42,9 @@ data class TimePlannerStrings(
     val minutesSymbol: String,
     val hoursSymbol: String,
     val separator: String,
-    val alertDialogDismissTitle: String,
-    val alertDialogSelectConfirmTitle: String,
-    val alertDialogOkConfirmTitle: String,
+    val cancelTitle: String,
+    val confirmTitle: String,
+    val okConfirmTitle: String,
     val categoryEmptyTitle: String,
     val expandedViewToggleTitle: String,
     val compactViewToggleTitle: String,
@@ -92,6 +92,7 @@ data class TimePlannerStrings(
     val priorityStandard: String,
     val priorityMedium: String,
     val priorityMax: String,
+    val emptyScheduleTitle: String,
 )
 
 internal val russianTimePlannerString = TimePlannerStrings(
@@ -116,9 +117,9 @@ internal val russianTimePlannerString = TimePlannerStrings(
     minutesSymbol = "м",
     hoursSymbol = "ч",
     separator = ":",
-    alertDialogDismissTitle = "Отменить",
-    alertDialogSelectConfirmTitle = "Выбрать",
-    alertDialogOkConfirmTitle = "ОК",
+    cancelTitle = "Отменить",
+    confirmTitle = "Выбрать",
+    okConfirmTitle = "ОК",
     categoryEmptyTitle = "Отсутствует",
     expandedViewToggleTitle = "Расширенный вид",
     compactViewToggleTitle = "Компактный вид",
@@ -166,6 +167,7 @@ internal val russianTimePlannerString = TimePlannerStrings(
     priorityStandard = "Обычный",
     priorityMedium = "Средний",
     priorityMax = "Макс.",
+    emptyScheduleTitle = "План отсутствует",
 )
 
 internal val englishTimePlannerString = TimePlannerStrings(
@@ -190,9 +192,9 @@ internal val englishTimePlannerString = TimePlannerStrings(
     minutesSymbol = "m",
     hoursSymbol = "h",
     separator = ":",
-    alertDialogDismissTitle = "Cancel",
-    alertDialogSelectConfirmTitle = "Select",
-    alertDialogOkConfirmTitle = "OK",
+    cancelTitle = "Cancel",
+    confirmTitle = "Select",
+    okConfirmTitle = "OK",
     categoryEmptyTitle = "Absent",
     expandedViewToggleTitle = "Expanded view",
     compactViewToggleTitle = "Compact view",
@@ -240,6 +242,7 @@ internal val englishTimePlannerString = TimePlannerStrings(
     priorityStandard = "Standard",
     priorityMedium = "Medium",
     priorityMax = "Max",
+    emptyScheduleTitle = "Nothing planned yet",
 )
 
 internal val germanTimePlannerString = TimePlannerStrings(
@@ -264,9 +267,9 @@ internal val germanTimePlannerString = TimePlannerStrings(
     minutesSymbol = "m",
     hoursSymbol = "h",
     separator = ":",
-    alertDialogDismissTitle = "Schließen",
-    alertDialogSelectConfirmTitle = "Wählen",
-    alertDialogOkConfirmTitle = "OK",
+    cancelTitle = "Schließen",
+    confirmTitle = "Wählen",
+    okConfirmTitle = "OK",
     categoryEmptyTitle = "Leer",
     expandedViewToggleTitle = "Erweiterte Ansicht",
     compactViewToggleTitle = "Kompakte Ansicht",
@@ -314,6 +317,7 @@ internal val germanTimePlannerString = TimePlannerStrings(
     priorityStandard = "Gewöhnlich",
     priorityMedium = "Mittel",
     priorityMax = "Max.",
+    emptyScheduleTitle = "Kein Plan",
 )
 
 internal val spanishTimePlannerString = TimePlannerStrings(
@@ -338,9 +342,9 @@ internal val spanishTimePlannerString = TimePlannerStrings(
     minutesSymbol = "m",
     hoursSymbol = "h",
     separator = ":",
-    alertDialogDismissTitle = "Cancelar",
-    alertDialogSelectConfirmTitle = "Guardar",
-    alertDialogOkConfirmTitle = "Vale",
+    cancelTitle = "Cancelar",
+    confirmTitle = "Guardar",
+    okConfirmTitle = "Vale",
     categoryEmptyTitle = "Ninguna",
     expandedViewToggleTitle = "Vista ampliada",
     compactViewToggleTitle = "Vista compacta",
@@ -388,6 +392,7 @@ internal val spanishTimePlannerString = TimePlannerStrings(
     priorityStandard = "Normal",
     priorityMedium = "Promedio",
     priorityMax = "Máximo",
+    emptyScheduleTitle = "Nada planeado todavía",
 )
 
 internal val persianTimePlannerString = TimePlannerStrings(
@@ -412,9 +417,9 @@ internal val persianTimePlannerString = TimePlannerStrings(
     minutesSymbol = "m",
     hoursSymbol = "h",
     separator = ":",
-    alertDialogDismissTitle = "لغو",
-    alertDialogSelectConfirmTitle = "انتخاب کنید",
-    alertDialogOkConfirmTitle = "باشه",
+    cancelTitle = "لغو",
+    confirmTitle = "انتخاب کنید",
+    okConfirmTitle = "باشه",
     categoryEmptyTitle = "غایب",
     expandedViewToggleTitle = "نمای گسترده",
     compactViewToggleTitle = "نمای جمع و جور",
@@ -462,6 +467,7 @@ internal val persianTimePlannerString = TimePlannerStrings(
     priorityStandard = "استاندارد",
     priorityMedium = "میانگین",
     priorityMax = "حداکثر",
+    emptyScheduleTitle = "هنوز هیچ چیز برنامه ریزی نشده است",
 )
 
 internal val frenchTimePlannerString = TimePlannerStrings(
@@ -486,9 +492,9 @@ internal val frenchTimePlannerString = TimePlannerStrings(
     minutesSymbol = "m",
     hoursSymbol = "h",
     separator = ":",
-    alertDialogDismissTitle = "Annuler",
-    alertDialogSelectConfirmTitle = "Sélectionner",
-    alertDialogOkConfirmTitle = "OK",
+    cancelTitle = "Annuler",
+    confirmTitle = "Sélectionner",
+    okConfirmTitle = "OK",
     categoryEmptyTitle = "Absent",
     expandedViewToggleTitle = "Affichage étendu",
     compactViewToggleTitle = "Affichage compact",
@@ -536,6 +542,7 @@ internal val frenchTimePlannerString = TimePlannerStrings(
     priorityStandard = "Ordinaire",
     priorityMedium = "Moyen",
     priorityMax = "Max.",
+    emptyScheduleTitle = "Rien de prévu pour le moment",
 )
 
 internal val brazilianPortugueseTimePlannerString = TimePlannerStrings(
@@ -560,9 +567,9 @@ internal val brazilianPortugueseTimePlannerString = TimePlannerStrings(
     minutesSymbol = "m",
     hoursSymbol = "h",
     separator = ":",
-    alertDialogDismissTitle = "Cancelar",
-    alertDialogSelectConfirmTitle = "Selecionar",
-    alertDialogOkConfirmTitle = "OK",
+    cancelTitle = "Cancelar",
+    confirmTitle = "Selecionar",
+    okConfirmTitle = "OK",
     categoryEmptyTitle = "Vazio",
     expandedViewToggleTitle = "Visão expandida",
     compactViewToggleTitle = "Visão comprimida",
@@ -610,6 +617,7 @@ internal val brazilianPortugueseTimePlannerString = TimePlannerStrings(
     priorityStandard = "Usual",
     priorityMedium = "Média",
     priorityMax = "Máximo",
+    emptyScheduleTitle = "Nada planejado ainda",
 )
 
 internal val turkishTimePlannerString = TimePlannerStrings(
@@ -634,9 +642,9 @@ internal val turkishTimePlannerString = TimePlannerStrings(
     minutesSymbol = "dak",
     hoursSymbol = "sa",
     separator = ":",
-    alertDialogDismissTitle = "İptal",
-    alertDialogSelectConfirmTitle = "Seç",
-    alertDialogOkConfirmTitle = "Tamam",
+    cancelTitle = "İptal",
+    confirmTitle = "Seç",
+    okConfirmTitle = "Tamam",
     categoryEmptyTitle = "Yok",
     expandedViewToggleTitle = "Genişletilmiş görünüm",
     compactViewToggleTitle = "Kompakt görünüm",
@@ -684,6 +692,7 @@ internal val turkishTimePlannerString = TimePlannerStrings(
     priorityStandard = "Normal",
     priorityMedium = "Orta",
     priorityMax = "Azami",
+    emptyScheduleTitle = "Henüz planlanmış bir şey yok",
 )
 
 internal val vietnameseTimePlannerString = TimePlannerStrings(
@@ -708,9 +717,9 @@ internal val vietnameseTimePlannerString = TimePlannerStrings(
     minutesSymbol = "m",
     hoursSymbol = "h",
     separator = ":",
-    alertDialogDismissTitle = "Hủy bỏ",
-    alertDialogSelectConfirmTitle = "Lựa chọn",
-    alertDialogOkConfirmTitle = "OK",
+    cancelTitle = "Hủy bỏ",
+    confirmTitle = "Lựa chọn",
+    okConfirmTitle = "OK",
     categoryEmptyTitle = "Vắng mặt",
     expandedViewToggleTitle = "Chế độ xem mở rộng",
     compactViewToggleTitle = "Chế độ xem thu gọn",
@@ -758,6 +767,7 @@ internal val vietnameseTimePlannerString = TimePlannerStrings(
     priorityStandard = "Thông thường",
     priorityMedium = "Trung bình",
     priorityMax = "Tối đa",
+    emptyScheduleTitle = "Chưa có kế hoạch nào hết",
 )
 
 internal val polishTimePlannerString = TimePlannerStrings(
@@ -782,9 +792,9 @@ internal val polishTimePlannerString = TimePlannerStrings(
     minutesSymbol = "m",
     hoursSymbol = "h",
     separator = ":",
-    alertDialogDismissTitle = "Anuluj",
-    alertDialogSelectConfirmTitle = "Wybierz",
-    alertDialogOkConfirmTitle = "OK",
+    cancelTitle = "Anuluj",
+    confirmTitle = "Wybierz",
+    okConfirmTitle = "OK",
     categoryEmptyTitle = "Brak",
     expandedViewToggleTitle = "Widok rozszerzony",
     compactViewToggleTitle = "Widok kompaktowy",
@@ -832,6 +842,7 @@ internal val polishTimePlannerString = TimePlannerStrings(
     priorityStandard = "Zwykły",
     priorityMedium = "Średni",
     priorityMax = "Max.",
+    emptyScheduleTitle = "Nic jeszcze nie zaplanowano",
 )
 
 val LocalTimePlannerStrings = staticCompositionLocalOf<TimePlannerStrings> {

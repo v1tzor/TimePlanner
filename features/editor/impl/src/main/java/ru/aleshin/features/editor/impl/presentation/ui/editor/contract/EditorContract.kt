@@ -17,7 +17,10 @@ package ru.aleshin.features.editor.impl.presentation.ui.editor.contract
 
 import kotlinx.parcelize.Parcelize
 import ru.aleshin.core.utils.functional.TimeRange
-import ru.aleshin.core.utils.platform.screenmodel.contract.*
+import ru.aleshin.core.utils.platform.screenmodel.contract.BaseAction
+import ru.aleshin.core.utils.platform.screenmodel.contract.BaseEvent
+import ru.aleshin.core.utils.platform.screenmodel.contract.BaseUiEffect
+import ru.aleshin.core.utils.platform.screenmodel.contract.BaseViewState
 import ru.aleshin.features.editor.impl.domain.entites.EditorFailures
 import ru.aleshin.features.editor.impl.presentation.models.categories.CategoriesUi
 import ru.aleshin.features.editor.impl.presentation.models.categories.MainCategoryUi
@@ -43,8 +46,8 @@ internal data class EditorViewState(
 ) : BaseViewState
 
 internal sealed class EditorEvent : BaseEvent {
-    object Init : EditorEvent()
-    object CreateTemplate : EditorEvent()
+    data object Init : EditorEvent()
+    data object CreateTemplate : EditorEvent()
     data class ApplyTemplate(val template: TemplateUi) : EditorEvent()
     data class ApplyUndefinedTask(val task: UndefinedTaskUi) : EditorEvent()
     data class ChangeTime(val timeRange: TimeRange) : EditorEvent()
@@ -52,10 +55,12 @@ internal sealed class EditorEvent : BaseEvent {
     data class ChangeNote(val note: String?) : EditorEvent()
     data class ChangeParameters(val parameters: EditParameters) : EditorEvent()
     data class AddSubCategory(val name: String) : EditorEvent()
-    object PressDeleteButton : EditorEvent()
-    object PressSaveButton : EditorEvent()
-    object PressControlTemplateButton : EditorEvent()
-    object PressBackButton : EditorEvent()
+    data class NavigateToCategoryEditor(val category: MainCategoryUi) : EditorEvent()
+    data class NavigateToSubCategoryEditor(val category: SubCategoryUi) : EditorEvent()
+    data object PressDeleteButton : EditorEvent()
+    data object PressSaveButton : EditorEvent()
+    data object PressControlTemplateButton : EditorEvent()
+    data object PressBackButton : EditorEvent()
 }
 
 internal sealed class EditorEffect : BaseUiEffect {

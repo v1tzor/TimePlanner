@@ -27,7 +27,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import ru.aleshin.core.ui.theme.TimePlannerRes
-import ru.aleshin.core.ui.theme.material.surfaceThree
 import ru.aleshin.core.utils.functional.TimeFormat
 
 @Composable
@@ -50,7 +49,7 @@ fun TimeFormatSelector(
                 colors = ButtonDefaults.textButtonColors(
                     containerColor = when (format) {
                         TimeFormat.AM -> MaterialTheme.colorScheme.primaryContainer
-                        TimeFormat.PM -> MaterialTheme.colorScheme.surfaceThree()
+                        TimeFormat.PM -> MaterialTheme.colorScheme.surfaceContainerHigh
                     },
                 ),
             ) {
@@ -71,7 +70,7 @@ fun TimeFormatSelector(
                 colors = ButtonDefaults.textButtonColors(
                     containerColor = when (format) {
                         TimeFormat.PM -> MaterialTheme.colorScheme.primaryContainer
-                        TimeFormat.AM -> MaterialTheme.colorScheme.surfaceThree()
+                        TimeFormat.AM -> MaterialTheme.colorScheme.surfaceContainerHigh
                     },
                 ),
             ) {

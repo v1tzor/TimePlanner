@@ -70,7 +70,7 @@ internal fun SubCategoryEditorDialog(
         Surface(
             modifier = modifier.width(328.dp).wrapContentHeight(),
             shape = MaterialTheme.shapes.extraLarge,
-            tonalElevation = TimePlannerRes.elevations.levelThree,
+            color = MaterialTheme.colorScheme.surfaceContainer,
         ) {
             Column {
                 SubCategoryEditorDialogHeader(
@@ -86,7 +86,7 @@ internal fun SubCategoryEditorDialog(
                 )
                 DialogButtons(
                     confirmTitle = when (editSubCategory != null) {
-                        true -> TimePlannerRes.strings.alertDialogOkConfirmTitle
+                        true -> TimePlannerRes.strings.okConfirmTitle
                         false -> HomeThemeRes.strings.dialogCreateTitle
                     },
                     onConfirmClick = {
@@ -143,6 +143,7 @@ internal fun CategoryDialogField(
             singleLine = true,
             isError = isError,
             label = { Text(text = HomeThemeRes.strings.categoryFieldLabel) },
+            shape = MaterialTheme.shapes.large,
         )
     }
     LaunchedEffect(

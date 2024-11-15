@@ -204,9 +204,10 @@ internal fun SortedTypeMenu(
         expanded = isExpanded,
         onDismissRequest = onDismiss,
         modifier = modifier,
+        shape = MaterialTheme.shapes.large,
         offset = DpOffset(0.dp, 2.dp),
     ) {
-        TemplatesSortedType.values().forEach { type ->
+        TemplatesSortedType.entries.forEach { type ->
             DropdownMenuItem(
                 onClick = { onSelected(type) },
                 text = {

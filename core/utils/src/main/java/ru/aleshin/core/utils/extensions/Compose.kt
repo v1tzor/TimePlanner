@@ -15,8 +15,17 @@
  */
 package ru.aleshin.core.utils.extensions
 
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 
 /**
  * @author Stanislav Aleshin on 23.02.2023.
@@ -37,4 +46,13 @@ fun LazyListState.isScrollingUp(): Boolean {
             }
         }
     }.value
+}
+
+@Composable
+fun Modifier.alphaByEnabled(enabled: Boolean, disabledAlpha: Float = 0.6F): Modifier {
+    val value by animateFloatAsState(
+        targetValue = if (enabled) 1f else disabledAlpha,
+        animationSpec = tween(),
+    )
+    return alpha(alpha = value)
 }

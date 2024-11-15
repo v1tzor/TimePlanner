@@ -64,7 +64,6 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import ru.aleshin.core.ui.mappers.mapToIconPainter
 import ru.aleshin.core.ui.theme.TimePlannerRes
-import ru.aleshin.core.ui.theme.material.surfaceOne
 import ru.aleshin.core.utils.extensions.isCurrentDay
 import ru.aleshin.core.utils.extensions.isCurrentMonth
 import ru.aleshin.features.analytics.impl.presenatiton.models.analytics.PlanningAnalyticUi
@@ -95,7 +94,7 @@ internal fun PlanningAnalyticsSection(
         Surface(
             modifier = Modifier.padding(horizontal = 16.dp),
             shape = MaterialTheme.shapes.medium,
-            color = MaterialTheme.colorScheme.surfaceOne(),
+            color = MaterialTheme.colorScheme.surfaceContainerLow,
         ) {
             AnimatedContent(
                 targetState = isLoading,

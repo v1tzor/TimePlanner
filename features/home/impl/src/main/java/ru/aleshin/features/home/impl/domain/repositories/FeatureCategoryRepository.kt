@@ -13,17 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ru.aleshin.features.home.api.navigation
-
-import java.util.Date
+package ru.aleshin.features.home.impl.domain.repositories
 
 /**
- * @author Stanislav Aleshin on 29.07.2023.
+ * @author Stanislav Aleshin on 05.11.2023.
  */
-sealed class HomeScreens {
-    data object Overview : HomeScreens()
-    data class Home(val scheduleDate: Date? = null) : HomeScreens()
-    data object Details : HomeScreens()
-    data object Templates : HomeScreens()
-    data class Categories(val mainCategoryId: Int? = null) : HomeScreens()
+internal interface FeatureCategoryRepository {
+    suspend fun fetchMainCategoryId(): Int?
+    fun setMainCategoryId(id: Int?)
 }

@@ -22,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import ru.aleshin.core.ui.theme.TimePlannerRes
 import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
 
 /**
@@ -41,7 +42,7 @@ internal fun EmptyDateView(
     ) {
         Icon(
             painter = painterResource(HomeThemeRes.icons.notFound),
-            contentDescription = HomeThemeRes.strings.emptyScheduleTitle,
+            contentDescription = TimePlannerRes.strings.emptyScheduleTitle,
             tint = MaterialTheme.colorScheme.surfaceVariant,
         )
         Column(

@@ -13,17 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ru.aleshin.features.home.api.navigation
+package ru.aleshin.features.home.impl.data.datasource
 
-import java.util.Date
+import javax.inject.Inject
 
 /**
- * @author Stanislav Aleshin on 29.07.2023.
+ * @author Stanislav Aleshin on 05.11.2023.
  */
-sealed class HomeScreens {
-    data object Overview : HomeScreens()
-    data class Home(val scheduleDate: Date? = null) : HomeScreens()
-    data object Details : HomeScreens()
-    data object Templates : HomeScreens()
-    data class Categories(val mainCategoryId: Int? = null) : HomeScreens()
+internal interface FeatureCategoryLocalDataSource {
+
+    suspend fun fetchMainCategoryId(): Int?
+
+    fun setMainCategoryId(id: Int?)
+
+    class Base @Inject constructor() : FeatureCategoryLocalDataSource {
+
+        private var mainCategoryId: Int? = null
+
+        override suspend fun fetchMainCategoryId(): Int? {
+            return mainCategoryId
+        }
+
+        override fun setMainCategoryId(id: Int?) {
+            this.mainCategoryId = id
+        }
+    }
 }

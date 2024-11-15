@@ -130,11 +130,7 @@ internal fun MainCategoryItem(
         shape = MaterialTheme.shapes.small,
         color = when (isSelected) {
             true -> MaterialTheme.colorScheme.primaryContainer
-            false -> MaterialTheme.colorScheme.surface
-        },
-        tonalElevation = when (isSelected) {
-            true -> TimePlannerRes.elevations.levelZero
-            false -> TimePlannerRes.elevations.levelOne
+            false -> MaterialTheme.colorScheme.surfaceContainerLow
         },
     ) {
         Row(
@@ -296,6 +292,7 @@ internal fun MainCategoriesOptionMenu(
         expanded = isExpanded,
         onDismissRequest = onDismiss,
         modifier = modifier,
+        shape = MaterialTheme.shapes.large,
         offset = DpOffset(0.dp, 4.dp),
     ) {
         DropdownMenuItem(

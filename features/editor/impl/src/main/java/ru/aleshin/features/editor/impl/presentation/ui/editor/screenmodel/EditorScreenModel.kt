@@ -117,6 +117,12 @@ internal class EditorScreenModel @Inject constructor(
                     sendAction(action)
                 }
             }
+            is EditorEvent.NavigateToCategoryEditor -> {
+                navigationManager.navigateToCategoriesScreen(event.category.id)
+            }
+            is EditorEvent.NavigateToSubCategoryEditor -> {
+                navigationManager.navigateToCategoriesScreen(event.category.mainCategory.id)
+            }
             is EditorEvent.PressControlTemplateButton -> {
                 navigationManager.navigateToTemplatesScreen()
             }

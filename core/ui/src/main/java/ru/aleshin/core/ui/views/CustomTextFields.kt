@@ -40,12 +40,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
-import ru.aleshin.core.ui.theme.material.surfaceOne
 
 /**
  * @author Stanislav Aleshin on 04.10.2023.
@@ -68,6 +68,7 @@ fun CustomSmallTextField(
     cursorBrush: Brush = SolidColor(MaterialTheme.colorScheme.onSurface),
     visualTransformation: VisualTransformation = VisualTransformation.None,
     onTextLayout: (TextLayoutResult) -> Unit = {},
+    background: Color = MaterialTheme.colorScheme.surfaceContainerLow,
     readOnly: Boolean = false,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
 ) {
@@ -76,7 +77,7 @@ fun CustomSmallTextField(
     Surface(
         modifier = modifier.fillMaxWidth().defaultMinSize(minHeight = 56.dp),
         shape = MaterialTheme.shapes.medium,
-        color = MaterialTheme.colorScheme.surfaceOne(),
+        color = background,
         border = when (isFocused) {
             true -> BorderStroke(1.5.dp, MaterialTheme.colorScheme.outlineVariant)
             false -> null
@@ -151,6 +152,7 @@ fun CustomLargeTextField(
     cursorBrush: Brush = SolidColor(MaterialTheme.colorScheme.onSurface),
     visualTransformation: VisualTransformation = VisualTransformation.None,
     onTextLayout: (TextLayoutResult) -> Unit = {},
+    background: Color = MaterialTheme.colorScheme.surfaceContainerLow,
     readOnly: Boolean = false,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
 ) {
@@ -159,7 +161,7 @@ fun CustomLargeTextField(
     Surface(
         modifier = modifier.fillMaxWidth().defaultMinSize(minHeight = 64.dp),
         shape = MaterialTheme.shapes.medium,
-        color = MaterialTheme.colorScheme.surfaceOne(),
+        color = background,
         border = when (isFocused) {
             true -> BorderStroke(1.5.dp, MaterialTheme.colorScheme.outlineVariant)
             false -> null
@@ -242,6 +244,7 @@ fun CustomLargeTextField(
     cursorBrush: Brush = SolidColor(MaterialTheme.colorScheme.onSurface),
     visualTransformation: VisualTransformation = VisualTransformation.None,
     onTextLayout: (TextLayoutResult) -> Unit = {},
+    color: Color = MaterialTheme.colorScheme.surfaceContainerLow,
     readOnly: Boolean = false,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
 ) {
@@ -250,7 +253,8 @@ fun CustomLargeTextField(
     Surface(
         modifier = modifier.fillMaxWidth().defaultMinSize(minHeight = 64.dp),
         shape = MaterialTheme.shapes.medium,
-        color = MaterialTheme.colorScheme.surfaceOne(),
+        color = color,
+        // color = MaterialTheme.colorScheme.surfaceOne(),
         border = when (isFocused) {
             true -> BorderStroke(1.5.dp, MaterialTheme.colorScheme.outlineVariant)
             false -> null

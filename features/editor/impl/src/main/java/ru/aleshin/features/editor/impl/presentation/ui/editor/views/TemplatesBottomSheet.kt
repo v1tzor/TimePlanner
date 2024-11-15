@@ -24,6 +24,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -50,16 +51,15 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import ru.aleshin.core.domain.entities.template.RepeatTime
 import ru.aleshin.core.ui.mappers.mapToIconPainter
 import ru.aleshin.core.ui.mappers.mapToString
 import ru.aleshin.core.ui.theme.TimePlannerRes
-import ru.aleshin.core.ui.theme.material.surfaceThree
 import ru.aleshin.core.ui.views.CategoryIconMonogram
 import ru.aleshin.core.ui.views.CategoryTextMonogram
 import ru.aleshin.core.ui.views.ExpandedIcon
+import ru.aleshin.core.ui.views.NoneItemsView
 import ru.aleshin.core.ui.views.toMinutesOrHoursTitle
 import ru.aleshin.core.utils.extensions.duration
 import ru.aleshin.features.editor.impl.presentation.models.categories.MainCategoryUi
@@ -83,59 +83,52 @@ internal fun TemplatesBottomSheet(
     onControlClick: () -> Unit,
     onChooseTemplate: (TemplateUi) -> Unit,
 ) {
-    val sheetState = rememberModalBottomSheetState()
-    val containerColor = MaterialTheme.colorScheme.surfaceThree()
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
     if (isShow) {
         ModalBottomSheet(
-            modifier = modifier.height(462.dp),
+            modifier = modifier,
             sheetState = sheetState,
-            containerColor = containerColor,
             onDismissRequest = onDismiss,
         ) {
-            TemplatesBottomSheetHeader(
-                templateCount = templates?.size,
-                onControlClick = onControlClick,
-            )
-            HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp))
-            LazyColumn(
-                modifier = Modifier.padding(horizontal = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(10.dp),
-            ) {
-                if (templates != null) {
-                    if (templates.isNotEmpty()) {
-                        items(items = templates, key = { it.templateId }) { template ->
-                            TemplateBottomSheetItem(
-                                enable = template.templateId != currentTemplateId,
-                                model = template,
-                                onChoose = { onChooseTemplate(template) },
-                            )
+            Column(modifier = Modifier.heightIn(min = 350.dp)) {
+                TemplatesBottomSheetHeader(
+                    templateCount = templates?.size,
+                    onControlClick = onControlClick,
+                )
+                HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp))
+                LazyColumn(
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(10.dp),
+                ) {
+                    if (templates != null) {
+                        if (templates.isNotEmpty()) {
+                            items(items = templates, key = { it.templateId }) { template ->
+                                TemplateBottomSheetItem(
+                                    enable = template.templateId != currentTemplateId,
+                                    model = template,
+                                    onChoose = { onChooseTemplate(template) },
+                                )
+                            }
+                        } else {
+                            item {
+                                NoneItemsView(text = EditorThemeRes.strings.emptyTemplatesTitle)
+                            }
                         }
                     } else {
                         item {
-                            Text(
+                            Box(
                                 modifier = Modifier.fillMaxSize(),
-                                text = EditorThemeRes.strings.emptyTemplatesTitle,
-                                textAlign = TextAlign.Center,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                style = MaterialTheme.typography.headlineSmall,
-                            )
-                        }
-                    }
-                } else {
-                    item {
-                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                            CircularProgressIndicator()
+                                contentAlignment = Alignment.Center
+                            ) {
+                                CircularProgressIndicator()
+                            }
                         }
                     }
                 }
             }
         }
     }
-    BottomSheetSystemUi(
-        isShow = isShow,
-        containerColor = containerColor,
-    )
 }
 
 @Composable
@@ -177,7 +170,7 @@ internal fun TemplateBottomSheetItem(
         onClick = { isExpanded = !isExpanded },
         modifier = modifier.fillMaxWidth(),
         shape = MaterialTheme.shapes.large,
-        color = MaterialTheme.colorScheme.surface,
+        color = MaterialTheme.colorScheme.surfaceContainer,
     ) {
         Column(modifier = Modifier.animateContentSize()) {
             Row(

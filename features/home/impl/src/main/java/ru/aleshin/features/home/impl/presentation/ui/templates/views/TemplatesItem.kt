@@ -77,8 +77,7 @@ internal fun TemplatesItem(
         onClick = { isShowTemplateEditor = true },
         modifier = modifier.fillMaxWidth().animateContentSize(),
         shape = MaterialTheme.shapes.large,
-        color = MaterialTheme.colorScheme.surface,
-        tonalElevation = TimePlannerRes.elevations.levelOne,
+        color = MaterialTheme.colorScheme.surfaceContainerLow,
     ) {
         Row(
             modifier = Modifier.padding(start = 16.dp, end = 8.dp, top = 16.dp, bottom = 16.dp),

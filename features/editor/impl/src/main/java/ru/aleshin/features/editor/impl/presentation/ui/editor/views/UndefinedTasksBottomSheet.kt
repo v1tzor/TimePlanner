@@ -22,9 +22,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -47,20 +47,17 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import ru.aleshin.core.ui.mappers.mapToIconPainter
 import ru.aleshin.core.ui.mappers.mapToUi
-import ru.aleshin.core.ui.theme.TimePlannerRes
-import ru.aleshin.core.ui.theme.material.surfaceThree
-import ru.aleshin.core.ui.theme.material.surfaceTwo
 import ru.aleshin.core.ui.views.CategoryIconMonogram
 import ru.aleshin.core.ui.views.CategoryTextMonogram
+import ru.aleshin.core.ui.views.NoneItemsView
 import ru.aleshin.core.ui.views.toDaysTitle
+import ru.aleshin.core.utils.extensions.alphaByEnabled
 import ru.aleshin.features.editor.impl.presentation.models.tasks.UndefinedTaskUi
 import ru.aleshin.features.editor.impl.presentation.theme.EditorThemeRes
 import java.util.Date
@@ -78,50 +75,40 @@ internal fun UndefinedTasksBottomSheet(
     onDismiss: () -> Unit,
     onChooseUndefinedTask: (UndefinedTaskUi) -> Unit,
 ) {
-    val sheetState = rememberModalBottomSheetState()
-    val containerColor = MaterialTheme.colorScheme.surfaceThree()
-
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     if (isShow) {
         ModalBottomSheet(
-            modifier = modifier.height(462.dp),
+            modifier = modifier,
             sheetState = sheetState,
-            containerColor = containerColor,
+            contentWindowInsets = { WindowInsets(0.dp) },
             onDismissRequest = onDismiss,
         ) {
-            UndefinedTasksBottomSheetHeader(tasksCount = undefinedTasks?.size)
-            HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp))
-            LazyColumn(
-                modifier = Modifier.padding(horizontal = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(10.dp),
-            ) {
-                if (undefinedTasks != null) {
-                    if (undefinedTasks.isNotEmpty()) {
-                        items(items = undefinedTasks, key = { it.id }) { task ->
-                            UndefinedTaskBottomSheetItem(
-                                enable = task.id != currentUndefinedTaskId,
-                                model = task,
-                                onChoose = { onChooseUndefinedTask(task) },
-                            )
-                        }
-                    } else {
-                        item {
-                            Text(
-                                modifier = Modifier.fillMaxSize(),
-                                text = EditorThemeRes.strings.emptyTemplatesTitle,
-                                textAlign = TextAlign.Center,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                style = MaterialTheme.typography.headlineSmall,
-                            )
+            Column(modifier = Modifier.heightIn(min = 350.dp)) {
+                UndefinedTasksBottomSheetHeader(tasksCount = undefinedTasks?.size)
+                HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp))
+                LazyColumn(
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(10.dp),
+                ) {
+                    if (undefinedTasks != null) {
+                        if (undefinedTasks.isNotEmpty()) {
+                            items(items = undefinedTasks, key = { it.id }) { task ->
+                                UndefinedTaskBottomSheetItem(
+                                    enable = task.id != currentUndefinedTaskId,
+                                    model = task,
+                                    onChoose = { onChooseUndefinedTask(task) },
+                                )
+                            }
+                        } else {
+                            item {
+                                NoneItemsView(text = EditorThemeRes.strings.emptyTemplatesTitle)
+                            }
                         }
                     }
                 }
             }
         }
     }
-    BottomSheetSystemUi(
-        isShow = isShow,
-        containerColor = containerColor,
-    )
 }
 
 @Composable
@@ -157,10 +144,10 @@ internal fun UndefinedTaskBottomSheetItem(
 
     Surface(
         onClick = onChoose,
-        modifier = modifier.alpha(if (enable) 1f else 0.6f),
+        modifier = modifier.alphaByEnabled(enable),
         enabled = enable,
         shape = MaterialTheme.shapes.medium,
-        tonalElevation = TimePlannerRes.elevations.levelOne,
+        color = MaterialTheme.colorScheme.surfaceContainer,
     ) {
         Column(modifier = Modifier.animateContentSize()) {
             Row(
@@ -231,7 +218,7 @@ internal fun DeadlineView(
     Surface(
         modifier = modifier,
         shape = MaterialTheme.shapes.small,
-        color = MaterialTheme.colorScheme.surfaceTwo(),
+        color = MaterialTheme.colorScheme.surfaceContainerHigh,
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 4.dp, vertical = 6.dp),

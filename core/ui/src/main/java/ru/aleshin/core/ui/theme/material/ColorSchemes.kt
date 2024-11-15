@@ -18,11 +18,12 @@ package ru.aleshin.core.ui.theme.material
 import android.os.Build
 import android.os.Parcelable
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material3.*
+import androidx.compose.material3.ColorScheme
+import androidx.compose.material3.dynamicDarkColorScheme
+import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import kotlinx.parcelize.Parcelize
-import ru.aleshin.core.ui.theme.TimePlannerRes
 
 /**
  * @author Stanislav Aleshin on 14.02.2023.
@@ -101,18 +102,3 @@ fun ThemeUiType.toColorScheme(
         colors.fetchColorScheme(themeType = this)
     }
 }
-
-@Composable
-fun ColorScheme.surfaceOne() = surfaceColorAtElevation(TimePlannerRes.elevations.levelOne)
-
-@Composable
-fun ColorScheme.surfaceTwo() = surfaceColorAtElevation(TimePlannerRes.elevations.levelTwo)
-
-@Composable
-fun ColorScheme.surfaceThree() = surfaceColorAtElevation(TimePlannerRes.elevations.levelThree)
-
-@Composable
-fun ColorScheme.surfaceFour() = surfaceColorAtElevation(TimePlannerRes.elevations.levelFour)
-
-@Composable
-fun ColorScheme.surfaceFive() = surfaceColorAtElevation(TimePlannerRes.elevations.levelFive)

@@ -69,7 +69,7 @@ internal fun MainCategoryEditorDialog(
         Surface(
             modifier = modifier.width(328.dp).wrapContentHeight(),
             shape = MaterialTheme.shapes.extraLarge,
-            tonalElevation = TimePlannerRes.elevations.levelThree,
+            color = MaterialTheme.colorScheme.surfaceContainer,
         ) {
             Column {
                 MainCategoryEditorDialogHeader()
@@ -102,7 +102,7 @@ internal fun MainCategoryEditorDialog(
                 }
                 DialogButtons(
                     confirmTitle = when (editCategory != null) {
-                        true -> TimePlannerRes.strings.alertDialogOkConfirmTitle
+                        true -> TimePlannerRes.strings.okConfirmTitle
                         false -> HomeThemeRes.strings.dialogCreateTitle
                     },
                     onConfirmClick = {

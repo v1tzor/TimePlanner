@@ -16,8 +16,22 @@
 package ru.aleshin.features.home.impl.presentation.ui.home.views
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -34,7 +48,7 @@ import ru.aleshin.core.ui.theme.TimePlannerRes
 import ru.aleshin.core.utils.extensions.mapToDate
 import ru.aleshin.core.utils.extensions.startThisDay
 import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
-import java.util.*
+import java.util.Date
 
 /**
  * @author Stanislav Aleshin on 22.02.2023.
@@ -51,7 +65,7 @@ internal fun DateChooser(
     Surface(
         modifier = modifier.height(36.dp),
         shape = MaterialTheme.shapes.large,
-        tonalElevation = TimePlannerRes.elevations.levelOne,
+        color = MaterialTheme.colorScheme.surfaceContainerLow,
     ) {
         Row(modifier = Modifier.fillMaxHeight(), verticalAlignment = Alignment.CenterVertically) {
             DateChooserIcon(
@@ -150,12 +164,12 @@ internal fun HomeDatePicker(
                     },
                     enabled = confirmEnabled,
                 ) {
-                    Text(text = TimePlannerRes.strings.alertDialogSelectConfirmTitle)
+                    Text(text = TimePlannerRes.strings.confirmTitle)
                 }
             },
             dismissButton = {
                 TextButton(onClick = onDismiss) {
-                    Text(text = TimePlannerRes.strings.alertDialogDismissTitle)
+                    Text(text = TimePlannerRes.strings.cancelTitle)
                 }
             },
         ) {

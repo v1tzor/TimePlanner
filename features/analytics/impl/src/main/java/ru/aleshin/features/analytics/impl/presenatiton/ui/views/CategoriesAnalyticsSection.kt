@@ -104,7 +104,7 @@ internal fun CategoriesAnalyticsSection(
                     Surface(
                         modifier = Modifier,
                         shape = MaterialTheme.shapes.large,
-                        tonalElevation = TimePlannerRes.elevations.levelOne,
+                        color = MaterialTheme.colorScheme.surfaceContainerLow,
                         content = { Box(Modifier.fillMaxWidth().height(190.dp)) },
                     )
                     LazyColumn(
@@ -115,8 +115,7 @@ internal fun CategoriesAnalyticsSection(
                         items(6) {
                             Surface(
                                 shape = MaterialTheme.shapes.large,
-                                color = MaterialTheme.colorScheme.surface,
-                                tonalElevation = TimePlannerRes.elevations.levelOne,
+                                color = MaterialTheme.colorScheme.surfaceContainerLow,
                             ) {
                                 Box(Modifier.fillMaxWidth().height(58.dp))
                             }
@@ -231,8 +230,7 @@ internal fun SubAnalyticsTimeLegendItem(
     Surface(
         modifier = modifier,
         shape = MaterialTheme.shapes.large,
-        color = MaterialTheme.colorScheme.surface,
-        tonalElevation = TimePlannerRes.elevations.levelOne,
+        color = MaterialTheme.colorScheme.surfaceContainerLow,
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),

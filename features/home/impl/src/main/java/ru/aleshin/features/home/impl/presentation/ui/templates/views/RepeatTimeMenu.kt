@@ -17,6 +17,7 @@ package ru.aleshin.features.home.impl.presentation.ui.templates.views
 
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -54,6 +55,7 @@ internal fun RepeatTimeMenu(
         expanded = isExpanded,
         onDismissRequest = onDismiss,
         modifier = modifier.sizeIn(maxHeight = 200.dp),
+        shape = MaterialTheme.shapes.large,
         offset = DpOffset(0.dp, 6.dp),
     ) {
         when (repeatCategory) {

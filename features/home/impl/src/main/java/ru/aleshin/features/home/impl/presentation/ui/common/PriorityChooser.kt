@@ -95,9 +95,10 @@ internal fun PriorityMenu(
         expanded = isExpanded,
         onDismissRequest = onDismiss,
         modifier = modifier.sizeIn(maxHeight = 200.dp),
+        shape = MaterialTheme.shapes.large,
         offset = DpOffset(0.dp, 6.dp),
     ) {
-        TaskPriority.values().forEach { priority ->
+        TaskPriority.entries.forEach { priority ->
             DropdownMenuItem(
                 enabled = selected != priority,
                 onClick = { onChoose(priority) },

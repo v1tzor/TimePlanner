@@ -52,7 +52,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import ru.aleshin.core.domain.entities.schedules.TaskPriority
 import ru.aleshin.core.ui.mappers.mapToUi
-import ru.aleshin.core.ui.theme.TimePlannerRes
 import ru.aleshin.core.ui.views.CategoryIconMonogram
 import ru.aleshin.core.ui.views.CategoryTextMonogram
 import ru.aleshin.core.ui.views.ExpandedIcon
@@ -80,7 +79,8 @@ internal fun PlannedTimeTask(
         modifier = modifier,
         enabled = true,
         shape = MaterialTheme.shapes.large,
-        tonalElevation = TimePlannerRes.elevations.levelOne,
+        color = MaterialTheme.colorScheme.surfaceContainerLow,
+        // tonalElevation = TimePlannerRes.elevations.levelOne,
     ) {
         Column(modifier = Modifier.animateContentSize()) {
             Row(

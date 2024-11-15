@@ -51,8 +51,7 @@ fun WarningDeleteDialog(
     ) {
         Surface(
             shape = MaterialTheme.shapes.extraLarge,
-            color = MaterialTheme.colorScheme.surface,
-            tonalElevation = TimePlannerRes.elevations.levelThree,
+            color = MaterialTheme.colorScheme.surfaceContainer,
         ) {
             Column {
                 WarningDeleteDialogHeader(modifier = Modifier.fillMaxWidth())

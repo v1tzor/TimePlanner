@@ -80,7 +80,7 @@ fun TimePickerDialog(
     BasicAlertDialog(onDismissRequest = onDismissRequest) {
         Surface(
             modifier = modifier.width(if (is24Format) 243.dp else 348.dp),
-            tonalElevation = TimePlannerRes.elevations.levelThree,
+            color = MaterialTheme.colorScheme.surfaceContainer,
             shape = MaterialTheme.shapes.extraLarge,
         ) {
             Column(
@@ -185,7 +185,7 @@ internal fun TimePickerHourMinuteSelector(
             }
         },
         textStyle = MaterialTheme.typography.displayMedium.copy(textAlign = TextAlign.Center),
-        shape = MaterialTheme.shapes.small,
+        shape = MaterialTheme.shapes.large,
         supportingText = if (isEnableSupportText) { {
             Text(TimePlannerRes.strings.hoursTitle)
         } } else {
@@ -196,8 +196,8 @@ internal fun TimePickerHourMinuteSelector(
         colors = OutlinedTextFieldDefaults.colors(
             focusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
             focusedBorderColor = MaterialTheme.colorScheme.primary,
-            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
-            unfocusedBorderColor = MaterialTheme.colorScheme.surfaceVariant,
+            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+            unfocusedBorderColor = MaterialTheme.colorScheme.surfaceContainerHighest,
         ),
     )
     Text(
@@ -219,7 +219,7 @@ internal fun TimePickerHourMinuteSelector(
             }
         },
         textStyle = MaterialTheme.typography.displayMedium.copy(textAlign = TextAlign.Center),
-        shape = MaterialTheme.shapes.small,
+        shape = MaterialTheme.shapes.large,
         supportingText = if (isEnableSupportText) { {
             Text(TimePlannerRes.strings.minutesTitle)
         } } else {
@@ -230,8 +230,8 @@ internal fun TimePickerHourMinuteSelector(
         colors = OutlinedTextFieldDefaults.colors(
             focusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
             focusedBorderColor = MaterialTheme.colorScheme.primary,
-            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
-            unfocusedBorderColor = MaterialTheme.colorScheme.surfaceVariant,
+            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+            unfocusedBorderColor = MaterialTheme.colorScheme.surfaceContainerHighest,
         ),
     )
     TimeFormatSelector(
@@ -263,9 +263,9 @@ internal fun TimePickerActions(
     }
     Spacer(modifier = Modifier.weight(1f))
     TextButton(onClick = onDismissClick) {
-        Text(text = TimePlannerRes.strings.alertDialogDismissTitle)
+        Text(text = TimePlannerRes.strings.cancelTitle)
     }
     TextButton(enabled = enabledConfirm, onClick = onConfirmClick) {
-        Text(text = TimePlannerRes.strings.alertDialogSelectConfirmTitle)
+        Text(text = TimePlannerRes.strings.confirmTitle)
     }
 }

@@ -78,7 +78,7 @@ internal fun TaskDateChooserDialog(
          Surface(
              modifier = modifier.width(290.dp).wrapContentHeight(),
              shape = MaterialTheme.shapes.extraLarge,
-             tonalElevation = TimePlannerRes.elevations.levelThree,
+             color = MaterialTheme.colorScheme.surfaceContainer,
          ) {
              Column {
                  TaskDateChooserDialogHeader()
@@ -92,8 +92,8 @@ internal fun TaskDateChooserDialog(
                          onSelected = { selectedDate = it },
                      )
                      DialogButtons(
-                         isConfirmEnabled = selectedDate != null,
-                         confirmTitle = TimePlannerRes.strings.alertDialogOkConfirmTitle,
+                         enabledConfirm = selectedDate != null,
+                         confirmTitle = TimePlannerRes.strings.okConfirmTitle,
                          onConfirmClick = { selectedDate?.let { onConfirm(it) } },
                          onCancelClick = onDismiss,
                      )
@@ -138,6 +138,7 @@ internal fun DayChooser(
         readOnly = true,
         label = { Text(text = HomeThemeRes.strings.taskDateChooserFieldLabel) },
         trailingIcon = { ExpandedIcon(isExpanded = isDayChooseMenuOpen) },
+        shape = MaterialTheme.shapes.large,
         interactionSource = interactionSource,
     )
     Box(contentAlignment = Alignment.TopEnd) {
@@ -171,6 +172,7 @@ internal fun DayChooseMenu(
         expanded = isExpanded,
         onDismissRequest = onDismiss,
         modifier = modifier.sizeIn(maxHeight = 200.dp),
+        shape = MaterialTheme.shapes.large,
         offset = DpOffset(0.dp, 6.dp),
     ) {
         days.forEach { day ->

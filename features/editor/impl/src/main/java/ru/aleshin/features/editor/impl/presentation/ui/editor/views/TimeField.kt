@@ -16,8 +16,18 @@
 package ru.aleshin.features.editor.impl.presentation.ui.editor.views
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -27,15 +37,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import ru.aleshin.core.ui.theme.TimePlannerRes
 import ru.aleshin.core.ui.views.DurationPickerDialog
 import ru.aleshin.core.ui.views.TimePickerDialog
 import ru.aleshin.core.ui.views.toMinutesAndHoursTitle
 import ru.aleshin.features.editor.impl.presentation.theme.EditorThemeRes
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
 
 /**
  * @author Stanislav Aleshin on 25.02.2023.
@@ -48,6 +58,7 @@ internal fun BaseTimeField(
     isError: Boolean,
     label: String,
     leadingIcon: Int,
+    color: Color = MaterialTheme.colorScheme.surfaceContainerLow,
     onChangeTime: (Date) -> Unit,
 ) {
     val timeFormat = SimpleDateFormat.getTimeInstance(SimpleDateFormat.SHORT)
@@ -58,7 +69,8 @@ internal fun BaseTimeField(
         onClick = { openDialog = true },
         modifier = modifier.height(56.dp).widthIn(min = 120.dp),
         shape = MaterialTheme.shapes.medium,
-        tonalElevation = TimePlannerRes.elevations.levelOne,
+        color = color,
+//        tonalElevation = TimePlannerRes.elevations.levelOne,
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 12.dp),

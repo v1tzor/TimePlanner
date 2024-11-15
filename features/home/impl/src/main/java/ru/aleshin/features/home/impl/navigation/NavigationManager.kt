@@ -20,6 +20,7 @@ import ru.aleshin.features.editor.api.navigations.EditorFeatureStarter
 import ru.aleshin.features.editor.api.navigations.EditorScreens
 import ru.aleshin.features.home.api.navigation.HomeScreens
 import ru.aleshin.features.home.impl.di.annontation.LocalRouter
+import ru.aleshin.features.home.impl.domain.interactors.CategoriesInteractor
 import ru.aleshin.features.home.impl.domain.interactors.ScheduleInteractor
 import ru.aleshin.features.home.impl.presentation.ui.categories.CategoriesScreen
 import ru.aleshin.features.home.impl.presentation.ui.details.DetailsScreen
@@ -40,6 +41,7 @@ internal interface NavigationManager {
 
     class Base @Inject constructor(
         private val scheduleInteractor: ScheduleInteractor,
+        private val categoriesInteractor: CategoriesInteractor,
         @LocalRouter private val localRouter: Router,
         private val globalRouter: Router,
         private val editorFeatureStarter: Provider<EditorFeatureStarter>,
@@ -53,7 +55,9 @@ internal interface NavigationManager {
                 }
                 is HomeScreens.Details -> DetailsScreen()
                 is HomeScreens.Templates -> TemplatesScreen()
-                is HomeScreens.Categories -> CategoriesScreen()
+                is HomeScreens.Categories -> CategoriesScreen().apply {
+                    categoriesInteractor.setFeatureMainCategory(screen.mainCategoryId)
+                }
                 else -> return@with
             }
             if (isRoot) replaceTo(screenInstance, true) else navigateTo(screenInstance)

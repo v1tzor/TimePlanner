@@ -26,8 +26,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import ru.aleshin.core.domain.entities.settings.CalendarButtonBehavior
-import ru.aleshin.core.domain.entities.settings.CalendarButtonBehavior.*
-import ru.aleshin.core.ui.theme.TimePlannerRes
+import ru.aleshin.core.domain.entities.settings.CalendarButtonBehavior.OPEN_CALENDAR
+import ru.aleshin.core.domain.entities.settings.CalendarButtonBehavior.SET_CURRENT_DATE
 import ru.aleshin.core.ui.views.SegmentedButtonItem
 import ru.aleshin.core.ui.views.SegmentedButtons
 import ru.aleshin.features.settings.impl.presentation.theme.SettingsThemeRes
@@ -44,7 +44,7 @@ internal fun CalendarButtonBehaviorChooser(
     Surface(
         modifier = modifier,
         shape = MaterialTheme.shapes.medium,
-        tonalElevation = TimePlannerRes.elevations.levelTwo,
+        color = MaterialTheme.colorScheme.surfaceContainer,
     ) {
         Column(
             modifier = Modifier.padding(vertical = 12.dp, horizontal = 16.dp),
@@ -57,7 +57,7 @@ internal fun CalendarButtonBehaviorChooser(
             )
             SegmentedButtons(
                 modifier = Modifier.fillMaxWidth(),
-                items = CalendarButtonBehaviorSegmentedItems.values(),
+                items = CalendarButtonBehaviorSegmentedItems.entries.toTypedArray(),
                 selectedItem = calendarButtonBehavior.toSegmentedItem(),
                 onItemClick = { onUpdateCalendarBehavior.invoke(it.toCalendarButtonBehavior()) },
             )

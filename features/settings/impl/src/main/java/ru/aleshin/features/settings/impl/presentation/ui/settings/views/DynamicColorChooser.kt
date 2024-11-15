@@ -27,7 +27,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import ru.aleshin.core.ui.theme.TimePlannerRes
 import ru.aleshin.features.settings.impl.presentation.theme.SettingsThemeRes
 
 /**
@@ -43,7 +42,7 @@ internal fun DynamicColorChooser(
         Surface(
             modifier = modifier.fillMaxWidth(),
             shape = MaterialTheme.shapes.medium,
-            tonalElevation = TimePlannerRes.elevations.levelTwo,
+            color = MaterialTheme.colorScheme.surfaceContainer,
         ) {
             Row(
                 modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp),

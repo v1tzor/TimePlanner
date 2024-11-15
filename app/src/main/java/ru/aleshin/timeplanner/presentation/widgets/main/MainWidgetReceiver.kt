@@ -106,8 +106,7 @@ class MainWidgetReceiver : GlanceAppWidgetReceiver() {
 
     private fun createBroadcastPendingIntent(context: Context?): PendingIntent? {
         if (context == null) return null
-        val intent = Intent(context, MainWidgetReceiver::class.java).setAction("${context.packageName}.tick")
-        return PendingIntent.getBroadcast(context, 0, intent, FLAG_IMMUTABLE or FLAG_UPDATE_CURRENT)
+        return PendingIntent.getBroadcast(context, 0, intent(context), FLAG_IMMUTABLE or FLAG_UPDATE_CURRENT)
     }
 
     private fun updateDataInfo(context: Context) = coroutineScope.launch {
@@ -142,6 +141,11 @@ class MainWidgetReceiver : GlanceAppWidgetReceiver() {
 
     companion object {
         val TASKS_KEY = stringPreferencesKey("daily_time_tasks")
+
         val COLORS_TYPE_KEY = stringPreferencesKey("colors_type")
+
+        fun intent(context: Context) = Intent(context, MainWidgetReceiver::class.java).apply {
+            action = "${context.packageName}.tick"
+        }
     }
 }

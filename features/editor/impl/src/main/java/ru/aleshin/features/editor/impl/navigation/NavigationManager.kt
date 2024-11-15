@@ -29,6 +29,7 @@ internal interface NavigationManager {
 
     fun navigateToHomeScreen()
     fun navigateToTemplatesScreen()
+    fun navigateToCategoriesScreen(mainCategory: Int? = null)
     fun navigateToBack()
 
     class Base @Inject constructor(
@@ -43,6 +44,12 @@ internal interface NavigationManager {
 
         override fun navigateToTemplatesScreen() {
             val screen = homeFeatureStarter.get().provideHomeScreen(HomeScreens.Templates, false)
+            tabRouter.showTab(screen)
+            globalRouter.navigateBack()
+        }
+
+        override fun navigateToCategoriesScreen(mainCategory: Int?) {
+            val screen = homeFeatureStarter.get().provideHomeScreen(HomeScreens.Categories(mainCategory), false)
             tabRouter.showTab(screen)
             globalRouter.navigateBack()
         }

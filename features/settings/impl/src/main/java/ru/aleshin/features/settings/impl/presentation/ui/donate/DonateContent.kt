@@ -41,8 +41,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import ru.aleshin.core.ui.theme.material.surfaceOne
-import ru.aleshin.core.ui.theme.material.surfaceTwo
 import ru.aleshin.core.utils.extensions.setClipboard
 import ru.aleshin.features.settings.impl.presentation.mappers.mapToIcon
 import ru.aleshin.features.settings.impl.presentation.models.CryptoAddress
@@ -74,7 +72,7 @@ internal fun CryptoAddressLazyColumn(
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
         verticalArrangement = Arrangement.spacedBy(24.dp),
     ) {
-        items(CryptoAddress.values()) { address ->
+        items(CryptoAddress.entries.toTypedArray()) { address ->
             Text(
                 modifier = Modifier.padding(start = 12.dp, end = 12.dp, bottom = 8.dp),
                 text = address.cryptoName,
@@ -101,7 +99,7 @@ internal fun CryptoAddressItem(
 ) {
     Surface(
         modifier = modifier,
-        color = MaterialTheme.colorScheme.surfaceOne(),
+        color = MaterialTheme.colorScheme.surfaceContainer,
         shape = MaterialTheme.shapes.medium,
     ) {
         Row(
@@ -111,7 +109,7 @@ internal fun CryptoAddressItem(
         ) {
             Surface(
                 modifier = Modifier.size(38.dp),
-                color = MaterialTheme.colorScheme.surfaceTwo(),
+                color = MaterialTheme.colorScheme.surfaceContainer,
                 shape = MaterialTheme.shapes.medium,
             ) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {

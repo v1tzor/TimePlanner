@@ -52,7 +52,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.lerp
 import kotlinx.coroutines.launch
-import ru.aleshin.core.ui.theme.material.surfaceTwo
 import kotlin.math.absoluteValue
 
 @Composable
@@ -114,7 +113,7 @@ fun <T : TabItem> TabList(
             )
         },
         divider = {
-            HorizontalDivider(color = MaterialTheme.colorScheme.surfaceTwo())
+            HorizontalDivider()
         },
     ) {
         tabs.forEachIndexed { index, tab ->

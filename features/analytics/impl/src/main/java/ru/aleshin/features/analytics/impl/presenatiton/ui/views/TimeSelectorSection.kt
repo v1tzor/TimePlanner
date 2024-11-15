@@ -121,9 +121,10 @@ internal fun TimePeriodMenu(
         expanded = isExpanded,
         onDismissRequest = onDismiss,
         modifier = modifier,
+        shape = MaterialTheme.shapes.large,
         offset = DpOffset(0.dp, 6.dp),
     ) {
-        val items = TimePeriod.values()
+        val items = TimePeriod.entries.toTypedArray()
         items.forEach { period ->
             DropdownMenuItem(
                 enabled = enabled,

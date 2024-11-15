@@ -20,6 +20,8 @@ import androidx.compose.runtime.Composable
 import kotlinx.parcelize.Parcelize
 import ru.aleshin.core.domain.entities.categories.DefaultCategoryType
 import ru.aleshin.core.ui.mappers.mapToName
+import ru.aleshin.core.ui.mappers.mapToString
+import ru.aleshin.core.ui.theme.tokens.TimePlannerStrings
 
 /**
  * @author Stanislav Aleshin on 30.07.2023.
@@ -30,6 +32,11 @@ internal data class MainCategoryUi(
     val customName: String? = null,
     val defaultType: DefaultCategoryType? = DefaultCategoryType.EMPTY,
 ) : Parcelable {
+
+    fun fetchName(strings: TimePlannerStrings) = when (customName != null && customName != "null") {
+        true -> customName
+        false -> defaultType?.mapToString(strings)
+    }
 
     @Composable
     fun fetchName() = when (customName != null && customName != "null") {

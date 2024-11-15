@@ -16,7 +16,10 @@
 package ru.aleshin.features.editor.impl.presentation.ui.editor
 
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.*
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -25,7 +28,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.core.screen.Screen
-import ru.aleshin.core.ui.views.*
+import ru.aleshin.core.ui.views.ErrorSnackbar
 import ru.aleshin.core.ui.views.Scaffold
 import ru.aleshin.core.utils.functional.TimeRange
 import ru.aleshin.core.utils.platform.screen.ScreenContent
@@ -68,6 +71,8 @@ internal class EditorScreen @Inject constructor() : Screen {
                         onAddSubCategory = { dispatchEvent(EditorEvent.AddSubCategory(it)) },
                         onTimeRangeChange = { dispatchEvent(EditorEvent.ChangeTime(it)) },
                         onChangeParameters = { dispatchEvent(EditorEvent.ChangeParameters(it)) },
+                        onEditCategory = { dispatchEvent(EditorEvent.NavigateToCategoryEditor(it)) },
+                        onEditSubCategory = { dispatchEvent(EditorEvent.NavigateToSubCategoryEditor(it)) },
                         onControlTemplate = { dispatchEvent(EditorEvent.PressControlTemplateButton) },
                         onCreateTemplate = { dispatchEvent(EditorEvent.CreateTemplate) },
                         onSaveClick = { dispatchEvent(EditorEvent.PressSaveButton) },

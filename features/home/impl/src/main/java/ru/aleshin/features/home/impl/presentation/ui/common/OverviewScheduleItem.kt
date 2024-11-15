@@ -15,6 +15,7 @@
  */
 package ru.aleshin.features.home.impl.presentation.ui.common
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -31,7 +32,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
@@ -39,8 +39,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import ru.aleshin.core.domain.entities.schedules.DailyScheduleStatus
 import ru.aleshin.core.ui.theme.TimePlannerRes
-import ru.aleshin.core.ui.theme.material.surfaceThree
-import ru.aleshin.core.ui.theme.material.surfaceTwo
+import ru.aleshin.core.utils.extensions.alphaByEnabled
 import ru.aleshin.core.utils.extensions.isCurrentDay
 import ru.aleshin.features.home.impl.presentation.models.schedules.ScheduleUi
 import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
@@ -61,9 +60,10 @@ internal fun OverviewScheduleItem(
         onClick = onClick,
         modifier = modifier.height(125.dp),
         shape = MaterialTheme.shapes.large,
-        color = when (model.date.isCurrentDay()) {
-            true -> MaterialTheme.colorScheme.surfaceThree()
-            false -> MaterialTheme.colorScheme.surfaceTwo()
+        color = MaterialTheme.colorScheme.surfaceContainerLow,
+        border = when (model.date.isCurrentDay()) {
+            true -> BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+            false -> null
         },
     ) {
         Row(
@@ -75,15 +75,14 @@ internal fun OverviewScheduleItem(
                 verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
                 CircularProgressIndicator(
-                    progress = when (model.dateStatus) {
-                        DailyScheduleStatus.REALIZED -> model.progress
-                        DailyScheduleStatus.ACCOMPLISHMENT -> model.progress
-                        DailyScheduleStatus.PLANNED -> 0f
+                    progress = {
+                        when (model.dateStatus) {
+                            DailyScheduleStatus.REALIZED -> model.progress
+                            DailyScheduleStatus.ACCOMPLISHMENT -> model.progress
+                            DailyScheduleStatus.PLANNED -> 0f
+                        }
                     },
-                    color = when (model.dateStatus) {
-                        DailyScheduleStatus.REALIZED -> MaterialTheme.colorScheme.secondary
-                        else -> MaterialTheme.colorScheme.primary
-                    },
+                    color = MaterialTheme.colorScheme.primary,
                     trackColor = MaterialTheme.colorScheme.surfaceVariant,
                 )
                 Spacer(modifier = Modifier.weight(1f))
@@ -148,7 +147,7 @@ internal fun ShortInfoView(
     color: Color = MaterialTheme.colorScheme.onSurfaceVariant,
 ) {
     Row(
-        modifier = modifier.width(32.dp).alpha(if (enabled) 1f else 0.6f),
+        modifier = modifier.width(32.dp).alphaByEnabled(enabled),
         horizontalArrangement = Arrangement.spacedBy(6.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {

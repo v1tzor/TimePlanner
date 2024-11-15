@@ -15,11 +15,28 @@
  */
 package ru.aleshin.core.ui.theme
 
-import androidx.compose.material3.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Shapes
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import ru.aleshin.core.ui.theme.material.*
-import ru.aleshin.core.ui.theme.tokens.*
+import androidx.compose.ui.unit.dp
+import ru.aleshin.core.ui.theme.material.ColorsUiType
+import ru.aleshin.core.ui.theme.material.ThemeUiType
+import ru.aleshin.core.ui.theme.material.baseShapes
+import ru.aleshin.core.ui.theme.material.baseTypography
+import ru.aleshin.core.ui.theme.material.toColorScheme
+import ru.aleshin.core.ui.theme.tokens.LanguageUiType
+import ru.aleshin.core.ui.theme.tokens.LocalTimePlannerColorsType
+import ru.aleshin.core.ui.theme.tokens.LocalTimePlannerElevations
+import ru.aleshin.core.ui.theme.tokens.LocalTimePlannerIcons
+import ru.aleshin.core.ui.theme.tokens.LocalTimePlannerLanguage
+import ru.aleshin.core.ui.theme.tokens.LocalTimePlannerStrings
+import ru.aleshin.core.ui.theme.tokens.fetchAppColorsType
+import ru.aleshin.core.ui.theme.tokens.fetchAppElevations
+import ru.aleshin.core.ui.theme.tokens.fetchAppLanguage
+import ru.aleshin.core.ui.theme.tokens.fetchCoreIcons
+import ru.aleshin.core.ui.theme.tokens.fetchCoreStrings
 
 /**
  * @author Stanislav Aleshin on 27.02.2023.
@@ -53,3 +70,6 @@ fun TimePlannerTheme(
         )
     }
 }
+
+val Shapes.full: RoundedCornerShape
+    get() = RoundedCornerShape(100.dp)

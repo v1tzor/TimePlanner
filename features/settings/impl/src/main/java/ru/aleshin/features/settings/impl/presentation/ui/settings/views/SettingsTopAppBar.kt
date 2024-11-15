@@ -17,11 +17,17 @@ package ru.aleshin.features.settings.impl.presentation.ui.settings.views
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material3.*
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.style.TextAlign
 import ru.aleshin.core.ui.theme.TimePlannerRes
-import ru.aleshin.core.ui.views.*
+import ru.aleshin.core.ui.views.TopAppBarAction
+import ru.aleshin.core.ui.views.TopAppBarButton
+import ru.aleshin.core.ui.views.TopAppBarMoreActions
+import ru.aleshin.core.ui.views.TopAppBarTitle
 import ru.aleshin.features.settings.impl.presentation.theme.SettingsThemeRes
 
 /**
@@ -49,7 +55,7 @@ internal fun SettingsTopAppBar(
         },
         actions = {
             TopAppBarMoreActions(
-                items = SettingsMoreActions.values(),
+                items = SettingsMoreActions.entries.toTypedArray(),
                 moreIconDescription = SettingsThemeRes.strings.moreIconDesc,
                 onItemClick = { action ->
                     when (action) {

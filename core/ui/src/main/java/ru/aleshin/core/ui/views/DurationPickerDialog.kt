@@ -78,7 +78,7 @@ fun DurationPickerDialog(
     BasicAlertDialog(onDismissRequest = onDismissRequest) {
         Surface(
             modifier = modifier.width(243.dp),
-            tonalElevation = TimePlannerRes.elevations.levelThree,
+            color = MaterialTheme.colorScheme.surfaceContainer,
             shape = MaterialTheme.shapes.extraLarge,
         ) {
             Column(
@@ -170,7 +170,6 @@ internal fun DurationPickerHourMinuteSelector(
             onMinutesChanges(value)
             if (value.length == 2 && value.toIntOrNull() in 0..23) requester.requestFocus()
         },
-        shape = MaterialTheme.shapes.small,
         supportingText = if (isEnableSupportText) {
             {
                 Text(TimePlannerRes.strings.hoursTitle)
@@ -180,11 +179,12 @@ internal fun DurationPickerHourMinuteSelector(
         },
         singleLine = true,
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+        shape = MaterialTheme.shapes.large,
         colors = OutlinedTextFieldDefaults.colors(
             focusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
             focusedBorderColor = MaterialTheme.colorScheme.primary,
-            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
-            unfocusedBorderColor = MaterialTheme.colorScheme.surfaceVariant,
+            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+            unfocusedBorderColor = MaterialTheme.colorScheme.surfaceContainerHighest,
         ),
     )
     Text(
@@ -199,7 +199,6 @@ internal fun DurationPickerHourMinuteSelector(
         value = minutes,
         textStyle = MaterialTheme.typography.displayMedium.copy(textAlign = TextAlign.Center),
         onValueChange = onHoursChanges,
-        shape = MaterialTheme.shapes.small,
         supportingText = if (isEnableSupportText) {
             {
                 Text(TimePlannerRes.strings.minutesTitle)
@@ -209,11 +208,12 @@ internal fun DurationPickerHourMinuteSelector(
         },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
         singleLine = true,
+        shape = MaterialTheme.shapes.large,
         colors = OutlinedTextFieldDefaults.colors(
             focusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
             focusedBorderColor = MaterialTheme.colorScheme.primary,
-            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
-            unfocusedBorderColor = MaterialTheme.colorScheme.surfaceVariant,
+            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+            unfocusedBorderColor = MaterialTheme.colorScheme.surfaceContainerHighest,
         ),
     )
 }

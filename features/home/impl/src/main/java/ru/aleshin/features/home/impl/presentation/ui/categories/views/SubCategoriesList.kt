@@ -105,11 +105,7 @@ internal fun SubCategoryViewItem(
         shape = MaterialTheme.shapes.large,
         color = when (isEditable) {
             true -> MaterialTheme.colorScheme.secondaryContainer
-            false -> MaterialTheme.colorScheme.surface
-        },
-        tonalElevation = when (isEditable) {
-            true -> TimePlannerRes.elevations.levelZero
-            false -> TimePlannerRes.elevations.levelTwo
+            false -> MaterialTheme.colorScheme.surfaceContainerLow
         },
     ) {
         Row(
@@ -160,8 +156,7 @@ internal fun SubCategoryAddItem(
         modifier = modifier.animateContentSize().alpha(if (enabled) 1f else 0.6f),
         enabled = enabled,
         shape = MaterialTheme.shapes.large,
-        color = MaterialTheme.colorScheme.surface,
-        tonalElevation = TimePlannerRes.elevations.levelOne,
+        color = MaterialTheme.colorScheme.surfaceContainer,
     ) {
         Row(
             modifier = Modifier.fillMaxWidth().padding(start = 16.dp, end = 8.dp, top = 4.dp, bottom = 4.dp),

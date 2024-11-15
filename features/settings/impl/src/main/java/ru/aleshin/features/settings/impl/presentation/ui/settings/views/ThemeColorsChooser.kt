@@ -15,14 +15,16 @@
  */
 package ru.aleshin.features.settings.impl.presentation.ui.settings.views
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import ru.aleshin.core.ui.theme.TimePlannerRes
 import ru.aleshin.core.ui.theme.material.ThemeUiType
 import ru.aleshin.core.ui.views.SegmentedButtonItem
 import ru.aleshin.core.ui.views.SegmentedButtons
@@ -40,7 +42,7 @@ internal fun ThemeColorsChooser(
     Surface(
         modifier = modifier,
         shape = MaterialTheme.shapes.medium,
-        tonalElevation = TimePlannerRes.elevations.levelTwo,
+        color = MaterialTheme.colorScheme.surfaceContainer,
     ) {
         Column(
             modifier = Modifier.padding(vertical = 12.dp, horizontal = 16.dp),
@@ -53,7 +55,7 @@ internal fun ThemeColorsChooser(
             )
             SegmentedButtons(
                 modifier = Modifier.fillMaxWidth(),
-                items = ThemeColorsTypeSegmentedItems.values(),
+                items = ThemeColorsTypeSegmentedItems.entries.toTypedArray(),
                 selectedItem = themeColors.toSegmentedItem(),
                 onItemClick = { onThemeColorUpdate.invoke(it.toThemeColorsType()) },
             )

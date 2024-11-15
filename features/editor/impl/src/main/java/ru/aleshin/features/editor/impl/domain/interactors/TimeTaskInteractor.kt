@@ -25,7 +25,6 @@ import ru.aleshin.core.utils.extensions.extractAllItem
 import ru.aleshin.core.utils.extensions.generateUniqueKey
 import ru.aleshin.core.utils.extensions.shiftDay
 import ru.aleshin.core.utils.functional.DomainResult
-import ru.aleshin.core.utils.functional.Either
 import ru.aleshin.core.utils.functional.TimeRange
 import ru.aleshin.core.utils.managers.DateManager
 import ru.aleshin.core.utils.managers.TimeOverlayException
@@ -54,15 +53,16 @@ internal interface TimeTaskInteractor {
 
         override suspend fun addTimeTask(timeTask: TimeTask) = eitherWrapper.wrap {
             val timeRange = TimeRange(timeTask.date.shiftDay(-1), timeTask.date.shiftDay(1))
-            val schedules = scheduleRepository.fetchSchedulesByRange(timeRange).first().let {
-                it.ifEmpty {
+            val schedules = scheduleRepository.fetchSchedulesByRange(timeRange).first().let { schedules ->
+                if (schedules.find { it.date == timeTask.date.time } == null) {
                     val createdSchedule = Schedule(
                         date = timeTask.date.time,
                         status = statusChecker.fetchState(timeTask.date, dateManager.fetchBeginningCurrentDay()),
-                    ).apply {
-                        scheduleRepository.createSchedules(listOf(this))
-                    }
+                    )
+                    scheduleRepository.createSchedules(listOf(createdSchedule))
                     listOf(createdSchedule)
+                } else {
+                    schedules
                 }
             }
             val allTimeTask = schedules.map { it.timeTasks }.extractAllItem()

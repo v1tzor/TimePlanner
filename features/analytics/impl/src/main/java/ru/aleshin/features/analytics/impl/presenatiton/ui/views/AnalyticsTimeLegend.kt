@@ -38,7 +38,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import hu.ma.charts.legend.data.LegendEntry
-import ru.aleshin.core.ui.theme.TimePlannerRes
 import kotlin.math.roundToInt
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -83,11 +82,10 @@ internal fun AnalyticsTimeLegendItem(
             .clip(MaterialTheme.shapes.small)
             .clickable { onSelectedItem() },
         shape = MaterialTheme.shapes.small,
-        color = MaterialTheme.colorScheme.surface,
-        tonalElevation = when (isSelected) {
-            true -> TimePlannerRes.elevations.levelOne
-            false -> TimePlannerRes.elevations.levelZero
-        },
+        color = when (isSelected) {
+            true -> MaterialTheme.colorScheme.surfaceContainerHigh
+            false -> MaterialTheme.colorScheme.background
+        }
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 4.dp, vertical = 8.dp),

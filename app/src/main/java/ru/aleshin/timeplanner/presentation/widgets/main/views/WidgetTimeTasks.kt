@@ -24,9 +24,11 @@ import androidx.glance.Image
 import androidx.glance.ImageProvider
 import androidx.glance.action.Action
 import androidx.glance.action.clickable
+import androidx.glance.background
 import androidx.glance.layout.Alignment
 import androidx.glance.layout.Box
 import androidx.glance.layout.Column
+import androidx.glance.layout.ContentScale
 import androidx.glance.layout.Row
 import androidx.glance.layout.Spacer
 import androidx.glance.layout.fillMaxWidth
@@ -38,6 +40,7 @@ import androidx.glance.unit.ColorProvider
 import ru.aleshin.core.domain.entities.schedules.TaskPriority
 import ru.aleshin.core.ui.mappers.mapToUi
 import ru.aleshin.core.ui.theme.TimePlannerRes
+import ru.aleshin.timeplanner.R
 import ru.aleshin.timeplanner.presentation.widgets.compatCornerBackground
 import ru.aleshin.timeplanner.presentation.widgets.surfaceColorAtElevation
 import ru.aleshin.timeplanner.presentation.widgets.typography
@@ -204,6 +207,26 @@ internal fun RunningWidgetTimeTask(
                 subTitle = taskSubTitle,
             )
         }
+    }
+}
+
+@Composable
+internal fun EmptyWidgetTimeTask(
+    modifier: GlanceModifier = GlanceModifier,
+) {
+    Box(
+        modifier = modifier.fillMaxWidth().background(
+            imageProvider = ImageProvider(R.drawable.stoke_rouned_background),
+            contentScale = ContentScale.FillBounds,
+            colorFilter = ColorFilter.tint(GlanceTheme.colors.secondary)
+        ),
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(
+            text = TimePlannerRes.strings.emptyScheduleTitle,
+            style = GlanceTheme.typography().titleMedium.copy(color = GlanceTheme.colors.secondary),
+            maxLines = 1,
+        )
     }
 }
 

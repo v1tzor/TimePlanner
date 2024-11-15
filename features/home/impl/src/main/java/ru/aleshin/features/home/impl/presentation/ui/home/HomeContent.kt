@@ -26,12 +26,30 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.layout.* // ktlint-disable no-wildcard-imports
-import androidx.compose.foundation.lazy.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyItemScope
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,7 +58,7 @@ import androidx.compose.ui.unit.dp
 import ru.aleshin.core.domain.entities.schedules.DailyScheduleStatus
 import ru.aleshin.core.domain.entities.schedules.TimeTaskStatus
 import ru.aleshin.core.domain.entities.settings.ViewToggleStatus
-import ru.aleshin.core.ui.theme.material.surfaceOne
+import ru.aleshin.core.ui.theme.TimePlannerRes
 import ru.aleshin.core.ui.views.ViewToggle
 import ru.aleshin.core.utils.extensions.endThisDay
 import ru.aleshin.core.utils.extensions.isCurrentDay
@@ -49,12 +67,17 @@ import ru.aleshin.core.utils.extensions.shiftDay
 import ru.aleshin.features.home.impl.presentation.models.schedules.TimeTaskUi
 import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
 import ru.aleshin.features.home.impl.presentation.ui.home.contract.HomeViewState
-import ru.aleshin.features.home.impl.presentation.ui.home.views.*
+import ru.aleshin.features.home.impl.presentation.ui.home.views.AddTimeTaskViewItem
 import ru.aleshin.features.home.impl.presentation.ui.home.views.CompletedTimeTaskItem
 import ru.aleshin.features.home.impl.presentation.ui.home.views.DateChooser
+import ru.aleshin.features.home.impl.presentation.ui.home.views.EmptyDateView
+import ru.aleshin.features.home.impl.presentation.ui.home.views.EmptyItem
+import ru.aleshin.features.home.impl.presentation.ui.home.views.HomeDatePicker
 import ru.aleshin.features.home.impl.presentation.ui.home.views.PlannedTimeTaskItem
+import ru.aleshin.features.home.impl.presentation.ui.home.views.RunningTimeTaskItem
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.Locale
 
 /**
  * @author Stanislav Aleshin on 18.02.2023.
@@ -230,7 +253,7 @@ internal fun TimeTasksSection(
                             !isCompactView,
                     ) {
                         val trackColor = when (timeTask.executionStatus) {
-                            TimeTaskStatus.PLANNED -> MaterialTheme.colorScheme.surfaceOne()
+                            TimeTaskStatus.PLANNED -> MaterialTheme.colorScheme.surfaceContainerLow
                             TimeTaskStatus.RUNNING -> MaterialTheme.colorScheme.primaryContainer
                             TimeTaskStatus.COMPLETED -> MaterialTheme.colorScheme.tertiaryContainer
                         }
@@ -274,7 +297,7 @@ internal fun TimeTasksSection(
         } else if (currentDate != null) {
             EmptyDateView(
                 modifier = Modifier.align(Alignment.Center),
-                emptyTitle = HomeThemeRes.strings.emptyScheduleTitle,
+                emptyTitle = TimePlannerRes.strings.emptyScheduleTitle,
                 subTitle = null,
             ) {
                 OutlinedButton(
