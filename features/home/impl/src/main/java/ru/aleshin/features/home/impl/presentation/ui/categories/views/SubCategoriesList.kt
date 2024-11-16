@@ -17,15 +17,13 @@ package ru.aleshin.features.home.impl.presentation.ui.categories.views
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
@@ -37,14 +35,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.unit.dp
 import ru.aleshin.core.domain.entities.categories.DefaultCategoryType
 import ru.aleshin.core.ui.theme.TimePlannerRes
+import ru.aleshin.core.utils.extensions.alphaByEnabled
 import ru.aleshin.features.home.impl.presentation.models.categories.MainCategoryUi
 import ru.aleshin.features.home.impl.presentation.models.categories.SubCategoryUi
 import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
@@ -61,16 +59,13 @@ internal fun SubCategoriesList(
     onCategoryDelete: (SubCategoryUi) -> Unit,
     onAddSubCategory: () -> Unit,
 ) {
-    val listState = rememberLazyListState()
     if (mainCategory != null) {
-        LazyColumn(
-            modifier = modifier.padding(top = 8.dp).animateContentSize(),
-            state = listState,
-            contentPadding = PaddingValues(horizontal = 16.dp),
+        Column(
+            modifier = modifier.padding(start = 16.dp, end = 16.dp, top = 8.dp).animateContentSize(),
             verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
             if (subCategories.isNotEmpty()) {
-                items(subCategories) { subCategory ->
+                subCategories.forEach { subCategory ->
                     SubCategoryViewItem(
                         mainCategory = mainCategory,
                         subCategory = subCategory,
@@ -79,12 +74,11 @@ internal fun SubCategoriesList(
                     )
                 }
             }
-            item {
-                SubCategoryAddItem(
-                    enabled = mainCategory.defaultType != DefaultCategoryType.EMPTY,
-                    onClick = onAddSubCategory,
-                )
-            }
+            SubCategoryAddItem(
+                enabled = mainCategory.defaultType != DefaultCategoryType.EMPTY,
+                onClick = onAddSubCategory,
+            )
+            Spacer(modifier = Modifier.height(50.dp))
         }
     }
 }
@@ -97,7 +91,7 @@ internal fun SubCategoryViewItem(
     onChange: (SubCategoryUi) -> Unit,
     onDelete: (SubCategoryUi) -> Unit,
 ) {
-    var isEditable by remember { mutableStateOf(false) }
+    var isEditable by rememberSaveable { mutableStateOf(false) }
     Surface(
         onClick = { isEditable = !isEditable },
         modifier = modifier.animateContentSize(),
@@ -153,7 +147,7 @@ internal fun SubCategoryAddItem(
 ) {
     Surface(
         onClick = onClick,
-        modifier = modifier.animateContentSize().alpha(if (enabled) 1f else 0.6f),
+        modifier = modifier.animateContentSize().alphaByEnabled(enabled),
         enabled = enabled,
         shape = MaterialTheme.shapes.large,
         color = MaterialTheme.colorScheme.surfaceContainer,

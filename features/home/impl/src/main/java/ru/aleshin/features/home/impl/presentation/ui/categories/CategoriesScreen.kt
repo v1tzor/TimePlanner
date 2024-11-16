@@ -17,12 +17,15 @@ package ru.aleshin.features.home.impl.presentation.ui.categories
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.*
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.core.screen.Screen
@@ -52,7 +55,7 @@ internal class CategoriesScreen : Screen {
     ) { state ->
         val scope = rememberCoroutineScope()
         val snackbarState = remember { SnackbarHostState() }
-        var isShowSubCategoryDialog by remember { mutableStateOf(false) }
+        var isShowSubCategoryDialog by rememberSaveable { mutableStateOf(false) }
         val drawerManager = LocalDrawerManager.current
         val strings = HomeThemeRes.strings
 

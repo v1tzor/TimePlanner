@@ -48,7 +48,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -60,7 +59,6 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import ru.aleshin.core.domain.entities.categories.DefaultCategoryType
 import ru.aleshin.core.ui.mappers.mapToIconPainter
-import ru.aleshin.core.ui.theme.TimePlannerRes
 import ru.aleshin.core.ui.views.WarningDeleteDialog
 import ru.aleshin.features.home.impl.presentation.models.categories.MainCategoryUi
 import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
@@ -101,7 +99,7 @@ internal fun MainCategoriesHorizontalList(
                 },
             )
         }
-        item {
+        item(key = "AddItem") {
             MainCategoryAddItem(onClick = onAddCategory)
         }
     }
@@ -120,7 +118,7 @@ internal fun MainCategoryItem(
     onDelete: () -> Unit,
     onUpdate: (name: String) -> Unit,
 ) {
-    var isExpanded by remember { mutableStateOf(false) }
+    var isExpanded by rememberSaveable { mutableStateOf(false) }
     var isCreatorDialogOpen by rememberSaveable { mutableStateOf(false) }
     var isWarningDeleteDialogOpen by rememberSaveable { mutableStateOf(false) }
 
@@ -134,9 +132,7 @@ internal fun MainCategoryItem(
         },
     ) {
         Row(
-            modifier = Modifier
-                .padding(top = 12.dp, bottom = 12.dp, start = 12.dp, end = 4.dp)
-                .animateContentSize(),
+            modifier = Modifier.padding(top = 12.dp, bottom = 12.dp, start = 12.dp, end = 4.dp).animateContentSize(),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Column(
@@ -227,7 +223,7 @@ internal fun MainCategoryAddItem(
 ) {
     Surface(
         modifier = modifier.size(180.dp, 100.dp),
-        tonalElevation = TimePlannerRes.elevations.levelOne,
+        color = MaterialTheme.colorScheme.surfaceContainerLow,
         shape = MaterialTheme.shapes.small,
         onClick = onClick,
     ) {
