@@ -13,17 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ru.aleshin.features.analytics.impl.domain.common
+package ru.aleshin.timeplanner.presentation.ui.main.contract
 
-import ru.aleshin.core.utils.wrappers.FlowEitherWrapper
-import ru.aleshin.features.analytics.impl.domain.entities.AnalyticsFailure
-import javax.inject.Inject
+import kotlinx.parcelize.Parcelize
+import ru.aleshin.core.utils.platform.screenmodel.ScreenDependencies
 
 /**
- * @author Stanislav Aleshin on 22.04.2023.
+ * @author Stanislav Aleshin on 16.11.2024.
  */
-internal interface AnalyticsEitherWrapper : FlowEitherWrapper<AnalyticsFailure> {
-
-    class Base @Inject constructor(errorHandler: AnalyticsErrorHandler) : AnalyticsEitherWrapper,
-        FlowEitherWrapper.Abstract<AnalyticsFailure>(errorHandler = errorHandler)
-}
+@Parcelize
+data class MainDeps(val screenTarget: DeepLinkTarget) : ScreenDependencies

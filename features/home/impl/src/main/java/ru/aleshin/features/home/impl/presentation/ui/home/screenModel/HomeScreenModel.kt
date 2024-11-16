@@ -22,6 +22,7 @@ import ru.aleshin.core.domain.entities.settings.ViewToggleStatus
 import ru.aleshin.core.utils.functional.TimeRange
 import ru.aleshin.core.utils.managers.CoroutineManager
 import ru.aleshin.core.utils.platform.screenmodel.BaseScreenModel
+import ru.aleshin.core.utils.platform.screenmodel.EmptyDeps
 import ru.aleshin.core.utils.platform.screenmodel.work.BackgroundWorkKey
 import ru.aleshin.core.utils.platform.screenmodel.work.WorkScope
 import ru.aleshin.features.home.impl.di.holder.HomeComponentHolder
@@ -29,7 +30,6 @@ import ru.aleshin.features.home.impl.presentation.ui.home.contract.HomeAction
 import ru.aleshin.features.home.impl.presentation.ui.home.contract.HomeEffect
 import ru.aleshin.features.home.impl.presentation.ui.home.contract.HomeEvent
 import ru.aleshin.features.home.impl.presentation.ui.home.contract.HomeViewState
-import java.util.Date
 import javax.inject.Inject
 
 /**
@@ -41,16 +41,16 @@ internal class HomeScreenModel @Inject constructor(
     stateCommunicator: HomeStateCommunicator,
     effectCommunicator: HomeEffectCommunicator,
     coroutineManager: CoroutineManager,
-) : BaseScreenModel<HomeViewState, HomeEvent, HomeAction, HomeEffect>(
+) : BaseScreenModel<HomeViewState, HomeEvent, HomeAction, HomeEffect, EmptyDeps>(
     stateCommunicator = stateCommunicator,
     effectCommunicator = effectCommunicator,
     coroutineManager = coroutineManager,
 ) {
 
-    override fun init() {
+    override fun init(deps: EmptyDeps) {
         if (!isInitialize.get()) {
+            super.init(deps)
             dispatchEvent(HomeEvent.Init)
-            super.init()
         }
     }
 
@@ -58,15 +58,41 @@ internal class HomeScreenModel @Inject constructor(
         event: HomeEvent,
     ) {
         when (event) {
-            is HomeEvent.Init -> launchBackgroundWork(HomeWorkKey.SETUP_SETTINGS) {
-                val setupCommand = ScheduleWorkCommand.SetupSettings
-                scheduleWorkProcessor.work(setupCommand).collectAndHandleWork()
+            is HomeEvent.Init -> {
+                launchBackgroundWork(BackgroundKey.SETUP_SETTINGS) {
+                    val setupCommand = ScheduleWorkCommand.SetupSettings
+                    scheduleWorkProcessor.work(setupCommand).collectAndHandleWork()
+                }
             }
-            is HomeEvent.LoadSchedule -> loadSchedule(event.date)
-            is HomeEvent.CreateSchedule -> {
+            is HomeEvent.LoadSchedule -> launchBackgroundWork(BackgroundKey.LOAD_SCHEDULE) {
+                val command = ScheduleWorkCommand.LoadScheduleByDate(event.date)
+                scheduleWorkProcessor.work(command).collectAndHandleWork()
+            }
+            is HomeEvent.CreateSchedule -> launchBackgroundWork(BackgroundKey.CREATE_SCHEDULE){
                 val currentDate = checkNotNull(state().currentDate)
                 val createCommand = ScheduleWorkCommand.CreateSchedule(currentDate)
                 scheduleWorkProcessor.work(createCommand).collectAndHandleWork()
+            }
+            is HomeEvent.TimeTaskShiftUp -> launchBackgroundWork(BackgroundKey.DATA_ACTION) {
+                val shiftUpCommand = ScheduleWorkCommand.TimeTaskShiftUp(event.timeTask)
+                scheduleWorkProcessor.work(shiftUpCommand).collectAndHandleWork()
+            }
+            is HomeEvent.TimeTaskShiftDown -> launchBackgroundWork(BackgroundKey.DATA_ACTION) {
+                val shiftDownCommand = ScheduleWorkCommand.TimeTaskShiftDown(event.timeTask)
+                scheduleWorkProcessor.work(shiftDownCommand).collectAndHandleWork()
+            }
+            is HomeEvent.ChangeTaskDoneStateButton -> launchBackgroundWork(BackgroundKey.DATA_ACTION) {
+                val date = checkNotNull(state().currentDate)
+                val changeStatusCommand = ScheduleWorkCommand.ChangeTaskDoneState(date, event.timeTask.key)
+                scheduleWorkProcessor.work(changeStatusCommand).collectAndHandleWork()
+            }
+            is HomeEvent.PressViewToggleButton -> launchBackgroundWork(BackgroundKey.DATA_ACTION) {
+                val status = when (event.status) {
+                    ViewToggleStatus.EXPANDED -> ViewToggleStatus.COMPACT
+                    ViewToggleStatus.COMPACT -> ViewToggleStatus.EXPANDED
+                }
+                val changeCommand = ScheduleWorkCommand.ChangeTaskViewStatus(status)
+                scheduleWorkProcessor.work(changeCommand).collectAndHandleWork()
             }
             is HomeEvent.PressEditTimeTaskButton -> {
                 val navCommand = NavigationWorkCommand.NavigateToEditor(timeTask = event.timeTask)
@@ -82,30 +108,6 @@ internal class HomeScreenModel @Inject constructor(
             is HomeEvent.PressOverviewButton -> {
                 val navCommand = NavigationWorkCommand.NavigateToOverview
                 navigationWorkProcessor.work(navCommand).handleWork()
-            }
-            is HomeEvent.TimeTaskShiftUp -> {
-                val shiftUpCommand = ScheduleWorkCommand.TimeTaskShiftUp(event.timeTask)
-                scheduleWorkProcessor.work(shiftUpCommand).collectAndHandleWork()
-                loadSchedule(checkNotNull(state().currentDate))
-            }
-            is HomeEvent.TimeTaskShiftDown -> {
-                val shiftDownCommand = ScheduleWorkCommand.TimeTaskShiftDown(event.timeTask)
-                scheduleWorkProcessor.work(shiftDownCommand).collectAndHandleWork()
-                loadSchedule(checkNotNull(state().currentDate))
-            }
-            is HomeEvent.ChangeTaskDoneStateButton -> {
-                val date = checkNotNull(state().currentDate)
-                val changeStatusCommand = ScheduleWorkCommand.ChangeTaskDoneState(date, event.timeTask.key)
-                scheduleWorkProcessor.work(changeStatusCommand).collectAndHandleWork()
-                loadSchedule(checkNotNull(state().currentDate))
-            }
-            is HomeEvent.PressViewToggleButton -> {
-                val status = when (event.status) {
-                    ViewToggleStatus.EXPANDED -> ViewToggleStatus.COMPACT
-                    ViewToggleStatus.COMPACT -> ViewToggleStatus.EXPANDED
-                }
-                val changeCommand = ScheduleWorkCommand.ChangeTaskViewStatus(status)
-                scheduleWorkProcessor.work(changeCommand).collectAndHandleWork()
             }
         }
     }
@@ -136,16 +138,9 @@ internal class HomeScreenModel @Inject constructor(
         HomeComponentHolder.clear()
     }
 
-    private suspend fun WorkScope<HomeViewState, HomeAction, HomeEffect>.loadSchedule(date: Date?) {
-        val loadCommand = ScheduleWorkCommand.LoadScheduleByDate(date)
-        launchBackgroundWork(HomeWorkKey.SUBSCRIBE_SCHEDULE) {
-            scheduleWorkProcessor.work(loadCommand).collectAndHandleWork()
-        }
+    enum class BackgroundKey : BackgroundWorkKey {
+        LOAD_SCHEDULE, SETUP_SETTINGS, CREATE_SCHEDULE, DATA_ACTION
     }
-}
-
-internal enum class HomeWorkKey : BackgroundWorkKey {
-    SUBSCRIBE_SCHEDULE, SETUP_SETTINGS
 }
 
 @Composable

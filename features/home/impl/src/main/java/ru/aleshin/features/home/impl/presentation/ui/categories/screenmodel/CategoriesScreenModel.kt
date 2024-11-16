@@ -20,6 +20,7 @@ import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
 import ru.aleshin.core.utils.managers.CoroutineManager
 import ru.aleshin.core.utils.platform.screenmodel.BaseScreenModel
+import ru.aleshin.core.utils.platform.screenmodel.EmptyDeps
 import ru.aleshin.core.utils.platform.screenmodel.work.BackgroundWorkKey
 import ru.aleshin.core.utils.platform.screenmodel.work.WorkScope
 import ru.aleshin.features.home.impl.di.holder.HomeComponentHolder
@@ -37,15 +38,15 @@ internal class CategoriesScreenModel @Inject constructor(
     stateCommunicator: CategoriesStateCommunicator,
     effectCommunicator: CategoriesEffectCommunicator,
     coroutineManager: CoroutineManager,
-) : BaseScreenModel<CategoriesViewState, CategoriesEvent, CategoriesAction, CategoriesEffect>(
+) : BaseScreenModel<CategoriesViewState, CategoriesEvent, CategoriesAction, CategoriesEffect, EmptyDeps>(
     stateCommunicator = stateCommunicator,
     effectCommunicator = effectCommunicator,
     coroutineManager = coroutineManager,
 ) {
 
-    override fun init() {
+    override fun init(deps: EmptyDeps) {
         if (!isInitialize.get()) {
-            super.init()
+            super.init(deps)
             dispatchEvent(CategoriesEvent.Init)
         } else {
             dispatchEvent(CategoriesEvent.CheckSelectedCategory)
@@ -98,21 +99,24 @@ internal class CategoriesScreenModel @Inject constructor(
         }
     }
 
-    enum class BackgroundKey : BackgroundWorkKey {
-        LOAD_CATEGORIES, CHECK_CATEGORIES, CATEGORY_ACTION
-    }
-
     override suspend fun reduce(
         action: CategoriesAction,
         currentState: CategoriesViewState,
     ) = when (action) {
-        is CategoriesAction.ChangeMainCategory -> currentState.copy(
-            selectedMainCategory = action.category,
-        )
         is CategoriesAction.SetUp -> currentState.copy(
             categories = action.categories,
             selectedMainCategory = action.selected,
         )
+        is CategoriesAction.UpdateCategories -> currentState.copy(
+            categories = action.categories,
+        )
+        is CategoriesAction.ChangeMainCategory -> currentState.copy(
+            selectedMainCategory = action.category,
+        )
+    }
+
+    enum class BackgroundKey : BackgroundWorkKey {
+        LOAD_CATEGORIES, CHECK_CATEGORIES, CATEGORY_ACTION
     }
 }
 

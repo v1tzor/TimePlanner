@@ -15,14 +15,14 @@
  */
 package ru.aleshin.features.settings.impl.domain.common
 
-import ru.aleshin.core.utils.wrappers.EitherWrapper
+import ru.aleshin.core.utils.wrappers.FlowEitherWrapper
 import javax.inject.Inject
 
 /**
  * @author Stanislav Aleshin on 17.02.2023.
  */
-internal interface SettingsEitherWrapper : EitherWrapper<SettingsFailures> {
+internal interface SettingsEitherWrapper : FlowEitherWrapper<SettingsFailures> {
 
     class Base @Inject constructor(errorHandler: SettingsErrorHandler) : SettingsEitherWrapper,
-        EitherWrapper.Abstract<SettingsFailures>(errorHandler)
+        FlowEitherWrapper.Abstract<SettingsFailures>(errorHandler)
 }

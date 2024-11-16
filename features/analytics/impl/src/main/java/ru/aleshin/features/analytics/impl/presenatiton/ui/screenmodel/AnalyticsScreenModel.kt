@@ -20,6 +20,8 @@ import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
 import ru.aleshin.core.utils.managers.CoroutineManager
 import ru.aleshin.core.utils.platform.screenmodel.BaseScreenModel
+import ru.aleshin.core.utils.platform.screenmodel.EmptyDeps
+import ru.aleshin.core.utils.platform.screenmodel.work.BackgroundWorkKey
 import ru.aleshin.core.utils.platform.screenmodel.work.WorkScope
 import ru.aleshin.features.analytics.impl.di.holder.AnalyticsComponentHolder
 import ru.aleshin.features.analytics.impl.presenatiton.ui.contract.AnalyticsAction
@@ -36,39 +38,41 @@ internal class AnalyticsScreenModel @Inject constructor(
     stateCommunicator: AnalyticsStateCommunicator,
     effectCommunicator: AnalyticsEffectCommunicator,
     coroutineManager: CoroutineManager,
-) : BaseScreenModel<AnalyticsViewState, AnalyticsEvent, AnalyticsAction, AnalyticsEffect>(
+) : BaseScreenModel<AnalyticsViewState, AnalyticsEvent, AnalyticsAction, AnalyticsEffect, EmptyDeps>(
     stateCommunicator = stateCommunicator,
     effectCommunicator = effectCommunicator,
     coroutineManager = coroutineManager,
 ) {
 
-    override fun init() {
+    override fun init(deps: EmptyDeps) {
         if (!isInitialize.get()) {
+            super.init(deps)
             dispatchEvent(AnalyticsEvent.Init)
-            super.init()
         }
     }
 
     override suspend fun WorkScope<AnalyticsViewState, AnalyticsAction, AnalyticsEffect>.handleEvent(
         event: AnalyticsEvent,
-    ) = when (event) {
-        is AnalyticsEvent.Init -> {
-            val settingsCommand = AnalyticsWorkCommand.LoadSettings
-            analyticsWorkProcessor.work(settingsCommand).collectAndHandleWork()
-
-            val analyticsCommand = AnalyticsWorkCommand.LoadAnalytics(checkNotNull(state().timePeriod))
-            analyticsWorkProcessor.work(analyticsCommand).collectAndHandleWork()
-        }
-        is AnalyticsEvent.ChangeTimePeriod -> {
-            val periodCommand = AnalyticsWorkCommand.UpdateTimePeriod(event.period)
-            analyticsWorkProcessor.work(periodCommand).collectAndHandleWork()
-
-            val analyticsCommand = AnalyticsWorkCommand.LoadAnalytics(event.period)
-            analyticsWorkProcessor.work(analyticsCommand).collectAndHandleWork()
-        }
-        is AnalyticsEvent.PressRefreshAnalytics -> {
-            val analyticsCommand = AnalyticsWorkCommand.LoadAnalytics(checkNotNull(state().timePeriod))
-            analyticsWorkProcessor.work(analyticsCommand).collectAndHandleWork()
+    ) {
+        when (event) {
+            is AnalyticsEvent.Init -> {
+                launchBackgroundWork(BackgroundKey.LOAD_ANALYTICS) {
+                    val settingsCommand = AnalyticsWorkCommand.LoadSettings
+                    analyticsWorkProcessor.work(settingsCommand).collectAndHandleWork()
+                    val analyticsCommand = AnalyticsWorkCommand.LoadAnalytics(checkNotNull(state().timePeriod))
+                    analyticsWorkProcessor.work(analyticsCommand).collectAndHandleWork()
+                }
+            }
+            is AnalyticsEvent.ChangeTimePeriod -> {
+                launchBackgroundWork(BackgroundKey.UPDATE_TIME_PERIOD) {
+                    val periodCommand = AnalyticsWorkCommand.UpdateTimePeriod(event.period)
+                    analyticsWorkProcessor.work(periodCommand).collectAndHandleWork()
+                }
+                launchBackgroundWork(BackgroundKey.LOAD_ANALYTICS) {
+                    val analyticsCommand = AnalyticsWorkCommand.LoadAnalytics(event.period)
+                    analyticsWorkProcessor.work(analyticsCommand).collectAndHandleWork()
+                }
+            }
         }
     }
 
@@ -91,6 +95,10 @@ internal class AnalyticsScreenModel @Inject constructor(
     override fun onDispose() {
         super.onDispose()
         AnalyticsComponentHolder.clear()
+    }
+
+    enum class BackgroundKey : BackgroundWorkKey {
+        LOAD_SETTING, LOAD_ANALYTICS, UPDATE_TIME_PERIOD
     }
 }
 

@@ -45,7 +45,10 @@ import ru.aleshin.timeplanner.presentation.ui.tabs.views.TabsBottomNavigationBar
 class TabsScreen : Screen {
 
     @Composable
-    override fun Content() = ScreenContent(rememberTabsScreenModel(), TabsViewState()) {
+    override fun Content() = ScreenContent(
+        screenModel = rememberTabsScreenModel(),
+        initialState = TabsViewState(),
+    ) {
         val state = fetchState()
         val appComponent = fetchAppComponent()
         val navigatorManager = rememberNavigatorManager { appComponent.fetchTabNavigatorManager() }

@@ -18,9 +18,9 @@ package ru.aleshin.features.settings.impl.presentation.ui.settings.screensmodel
 import androidx.compose.runtime.Composable
 import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
-import kotlinx.coroutines.Dispatchers
 import ru.aleshin.core.utils.managers.CoroutineManager
 import ru.aleshin.core.utils.platform.screenmodel.BaseScreenModel
+import ru.aleshin.core.utils.platform.screenmodel.EmptyDeps
 import ru.aleshin.core.utils.platform.screenmodel.work.BackgroundWorkKey
 import ru.aleshin.core.utils.platform.screenmodel.work.WorkScope
 import ru.aleshin.features.settings.impl.di.holder.SettingsComponentHolder
@@ -41,15 +41,15 @@ internal class SettingsScreenModel @Inject constructor(
     stateCommunicator: SettingsStateCommunicator,
     effectCommunicator: SettingsEffectCommunicator,
     coroutineManager: CoroutineManager,
-) : BaseScreenModel<SettingsViewState, SettingsEvent, SettingsAction, SettingsEffect>(
+) : BaseScreenModel<SettingsViewState, SettingsEvent, SettingsAction, SettingsEffect, EmptyDeps>(
     stateCommunicator = stateCommunicator,
     effectCommunicator = effectCommunicator,
     coroutineManager = coroutineManager,
 ) {
 
-    override fun init() {
+    override fun init(deps: EmptyDeps) {
         if (!isInitialize.get()) {
-            super.init()
+            super.init(deps)
             dispatchEvent(SettingsEvent.Init)
         }
     }
@@ -58,25 +58,25 @@ internal class SettingsScreenModel @Inject constructor(
         event: SettingsEvent,
     ) {
         when (event) {
-            is SettingsEvent.Init -> {
-                settingsWorkProcessor.work(SettingsWorkCommand.LoadAllSettings).handleWork()
+            is SettingsEvent.Init -> launchBackgroundWork(BackgroundKey.LOAD_SETTINGS) {
+                settingsWorkProcessor.work(SettingsWorkCommand.LoadAllSettings).collectAndHandleWork()
             }
-            is SettingsEvent.ChangedThemeSettings -> {
-                settingsWorkProcessor.work(SettingsWorkCommand.UpdateThemeSettings(event.themeSettings)).handleWork()
+            is SettingsEvent.ChangedThemeSettings -> launchBackgroundWork(BackgroundKey.SETTINGS_ACTION) {
+                settingsWorkProcessor.work(SettingsWorkCommand.UpdateThemeSettings(event.themeSettings)).collectAndHandleWork()
             } 
-            is SettingsEvent.ChangedTasksSettings -> {
-                settingsWorkProcessor.work(SettingsWorkCommand.UpdateTasksSettings(event.tasksSettings)).handleWork()
+            is SettingsEvent.ChangedTasksSettings -> launchBackgroundWork(BackgroundKey.SETTINGS_ACTION) {
+                settingsWorkProcessor.work(SettingsWorkCommand.UpdateTasksSettings(event.tasksSettings)).collectAndHandleWork()
             }
-            is SettingsEvent.PressResetButton -> {
-                settingsWorkProcessor.work(SettingsWorkCommand.ResetSettings).handleWork()
+            is SettingsEvent.PressResetButton -> launchBackgroundWork(BackgroundKey.SETTINGS_ACTION) {
+                settingsWorkProcessor.work(SettingsWorkCommand.ResetSettings).collectAndHandleWork()
             }
-            is SettingsEvent.PressClearDataButton -> launchBackgroundWork(SettingsWorkKey.DATA_WORK, Dispatchers.IO) {
+            is SettingsEvent.PressClearDataButton -> launchBackgroundWork(BackgroundKey.DATA_WORK) {
                 dataWorkProcessor.work(DataWorkCommand.ClearAllData).collectAndHandleWork()
             }
-            is SettingsEvent.PressRestoreBackupData -> launchBackgroundWork(SettingsWorkKey.DATA_WORK, Dispatchers.IO) {
+            is SettingsEvent.PressRestoreBackupData -> launchBackgroundWork(BackgroundKey.DATA_WORK) {
                 dataWorkProcessor.work(DataWorkCommand.RestoreBackupData(event.uri)).collectAndHandleWork()
             }
-            is SettingsEvent.PressSaveBackupData -> launchBackgroundWork(SettingsWorkKey.DATA_WORK, Dispatchers.IO) {
+            is SettingsEvent.PressSaveBackupData -> launchBackgroundWork(BackgroundKey.DATA_WORK) {
                 dataWorkProcessor.work(DataWorkCommand.SaveBackupData(event.uri)).collectAndHandleWork()
             } 
             is SettingsEvent.PressDonateButton -> {
@@ -90,18 +90,10 @@ internal class SettingsScreenModel @Inject constructor(
         currentState: SettingsViewState,
     ) = when (action) {
         is SettingsAction.ChangeAllSettings -> currentState.copy(
+            failure = null,
             themeSettings = action.settings.themeSettings,
             tasksSettings = action.settings.tasksSettings,
-            failure = null,
             isBackupLoading = false,
-        )
-        is SettingsAction.ChangeThemeSettings -> currentState.copy(
-            themeSettings = action.settings,
-            failure = null,
-        )
-        is SettingsAction.ChangeTasksSettings -> currentState.copy(
-            tasksSettings = action.settings,
-            failure = null,
         )
         is SettingsAction.ShowLoadingBackup -> currentState.copy(
             isBackupLoading = action.isLoading,
@@ -112,10 +104,10 @@ internal class SettingsScreenModel @Inject constructor(
         super.onDispose()
         SettingsComponentHolder.clear()
     }
-}
 
-internal enum class SettingsWorkKey : BackgroundWorkKey {
-    DATA_WORK,
+    enum class BackgroundKey : BackgroundWorkKey {
+        LOAD_SETTINGS, SETTINGS_ACTION, DATA_WORK,
+    }
 }
 
 @Composable

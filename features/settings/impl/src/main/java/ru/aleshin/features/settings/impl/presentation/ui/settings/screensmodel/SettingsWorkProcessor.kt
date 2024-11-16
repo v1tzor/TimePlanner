@@ -15,11 +15,13 @@
  */
 package ru.aleshin.features.settings.impl.presentation.ui.settings.screensmodel
 
-import ru.aleshin.core.utils.functional.Either
+import kotlinx.coroutines.flow.flow
+import ru.aleshin.core.utils.functional.collectAndHandle
+import ru.aleshin.core.utils.functional.handle
 import ru.aleshin.core.utils.platform.screenmodel.work.ActionResult
 import ru.aleshin.core.utils.platform.screenmodel.work.EffectResult
+import ru.aleshin.core.utils.platform.screenmodel.work.FlowWorkProcessor
 import ru.aleshin.core.utils.platform.screenmodel.work.WorkCommand
-import ru.aleshin.core.utils.platform.screenmodel.work.WorkProcessor
 import ru.aleshin.features.settings.impl.domain.interactors.SettingsInteractor
 import ru.aleshin.features.settings.impl.presentation.mappers.mapToDomain
 import ru.aleshin.features.settings.impl.presentation.mappers.mapToUi
@@ -32,7 +34,7 @@ import javax.inject.Inject
 /**
  * @author Stanislav Aleshin on 17.02.2023.
  */
-internal interface SettingsWorkProcessor : WorkProcessor<SettingsWorkCommand, SettingsAction, SettingsEffect> {
+internal interface SettingsWorkProcessor : FlowWorkProcessor<SettingsWorkCommand, SettingsAction, SettingsEffect> {
 
     class Base @Inject constructor(
         private val settingsInteractor: SettingsInteractor,
@@ -45,42 +47,36 @@ internal interface SettingsWorkProcessor : WorkProcessor<SettingsWorkCommand, Se
             is SettingsWorkCommand.ResetSettings -> resetSettingsWork()
         }
 
-        private suspend fun loadAllSettingsWork(): Either<SettingsAction, SettingsEffect> {
-            return when (val settings = settingsInteractor.fetchAllSettings()) {
-                is Either.Right -> ActionResult(SettingsAction.ChangeAllSettings(settings.data.mapToUi()))
-                is Either.Left -> EffectResult(SettingsEffect.ShowError(settings.data))
-            }
+        private suspend fun loadAllSettingsWork() = flow {
+            settingsInteractor.fetchAllSettings().collectAndHandle(
+                onLeftAction = { emit(EffectResult(SettingsEffect.ShowError(it))) },
+                onRightAction = { emit(ActionResult(SettingsAction.ChangeAllSettings(it.mapToUi()))) }
+            )
         }
 
-        private suspend fun updateThemeSettingsWork(settings: ThemeSettingsUi): Either<SettingsAction, SettingsEffect> {
-            return when (val either = settingsInteractor.updateThemeSettings(settings.mapToDomain())) {
-                is Either.Right -> ActionResult(SettingsAction.ChangeThemeSettings(settings))
-                is Either.Left -> EffectResult(SettingsEffect.ShowError(either.data))
-            }
+        private suspend fun updateThemeSettingsWork(settings: ThemeSettingsUi) = flow {
+            settingsInteractor.updateThemeSettings(settings.mapToDomain()).handle(
+                onLeftAction = { emit(EffectResult(SettingsEffect.ShowError(it))) }
+            )
         }
 
-        private suspend fun updateTasksSettingsWork(settings: TasksSettingsUi): Either<SettingsAction, SettingsEffect> {
-            return when (val either = settingsInteractor.updateTasksSettings(settings.mapToDomain())) {
-                is Either.Right -> ActionResult(SettingsAction.ChangeTasksSettings(settings))
-                is Either.Left -> EffectResult(SettingsEffect.ShowError(either.data))
-            }
+        private suspend fun updateTasksSettingsWork(settings: TasksSettingsUi) = flow {
+            settingsInteractor.updateTasksSettings(settings.mapToDomain()).handle(
+                onLeftAction = { emit(EffectResult(SettingsEffect.ShowError(it))) }
+            )
         }
 
-        private suspend fun resetSettingsWork(): Either<SettingsAction, SettingsEffect> {
-            return when (val result = settingsInteractor.resetAllSettings()) {
-                is Either.Right -> when (val settings = settingsInteractor.fetchAllSettings()) {
-                    is Either.Right -> ActionResult(SettingsAction.ChangeAllSettings(settings.data.mapToUi()))
-                    is Either.Left -> EffectResult(SettingsEffect.ShowError(settings.data))
-                }
-                is Either.Left -> EffectResult(SettingsEffect.ShowError(result.data))
-            }
+        private suspend fun resetSettingsWork() = flow {
+            settingsInteractor.resetAllSettings().handle(
+                onLeftAction = { emit(EffectResult(SettingsEffect.ShowError(it))) }
+            )
         }
     }
 }
 
 internal sealed class SettingsWorkCommand : WorkCommand {
-    object LoadAllSettings : SettingsWorkCommand()
-    object ResetSettings : SettingsWorkCommand()
+    data object LoadAllSettings : SettingsWorkCommand()
+    data object ResetSettings : SettingsWorkCommand()
     data class UpdateThemeSettings(val settings: ThemeSettingsUi) : SettingsWorkCommand()
     data class UpdateTasksSettings(val settings: TasksSettingsUi) : SettingsWorkCommand()
 }

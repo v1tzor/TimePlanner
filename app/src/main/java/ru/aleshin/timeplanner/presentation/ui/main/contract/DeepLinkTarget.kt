@@ -13,17 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ru.aleshin.features.analytics.impl.domain.common
+package ru.aleshin.timeplanner.presentation.ui.main.contract
 
-import ru.aleshin.core.utils.wrappers.FlowEitherWrapper
-import ru.aleshin.features.analytics.impl.domain.entities.AnalyticsFailure
-import javax.inject.Inject
+import android.content.Intent
+import android.content.Intent.ACTION_VIEW
+import ru.aleshin.core.utils.functional.Constants.App.EDITOR_DEEP_LINK
 
 /**
- * @author Stanislav Aleshin on 22.04.2023.
+ * @author Stanislav Aleshin on 16.11.2024.
  */
-internal interface AnalyticsEitherWrapper : FlowEitherWrapper<AnalyticsFailure> {
+enum class DeepLinkTarget {
+    MAIN, EDITOR;
 
-    class Base @Inject constructor(errorHandler: AnalyticsErrorHandler) : AnalyticsEitherWrapper,
-        FlowEitherWrapper.Abstract<AnalyticsFailure>(errorHandler = errorHandler)
+    companion object {
+        fun byIntent(intent: Intent) = when {
+            intent.action == ACTION_VIEW && intent.dataString == EDITOR_DEEP_LINK -> EDITOR
+            else -> MAIN
+        }
+    }
 }

@@ -38,7 +38,7 @@ internal interface SettingsInteractor {
     ) : SettingsInteractor {
 
         override suspend fun fetchTasksSettings() = eitherWrapper.wrapFlow {
-            return@wrapFlow tasksSettingsRepository.fetchSettings()
+            tasksSettingsRepository.fetchSettings()
         }
 
         override suspend fun updateTasksSettings(settings: TasksSettings) = eitherWrapper.wrap {

@@ -35,9 +35,8 @@ internal data class AnalyticsViewState(
 ) : BaseViewState
 
 internal sealed class AnalyticsEvent : BaseEvent {
-    object Init : AnalyticsEvent()
+    data object Init : AnalyticsEvent()
     data class ChangeTimePeriod(val period: TimePeriod) : AnalyticsEvent()
-    object PressRefreshAnalytics : AnalyticsEvent()
 }
 
 internal sealed class AnalyticsEffect : BaseUiEffect {

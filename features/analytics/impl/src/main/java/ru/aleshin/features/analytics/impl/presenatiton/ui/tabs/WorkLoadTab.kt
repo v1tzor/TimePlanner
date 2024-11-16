@@ -24,8 +24,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.google.accompanist.swiperefresh.SwipeRefresh
-import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import ru.aleshin.core.utils.functional.TimePeriod
 import ru.aleshin.features.analytics.impl.presenatiton.ui.contract.AnalyticsViewState
 import ru.aleshin.features.analytics.impl.presenatiton.ui.views.ExecutedAnalyticsSection
@@ -37,41 +35,33 @@ import ru.aleshin.features.analytics.impl.presenatiton.ui.views.WorkLoadSection
  */
 @Composable
 internal fun WorkLoadTab(
+    modifier: Modifier = Modifier,
     state: AnalyticsViewState,
     onTimePeriodChanged: (TimePeriod) -> Unit,
-    onRefresh: () -> Unit,
 ) {
-    // Pullrefresh not available for Material Design 3
-    val refreshState = rememberSwipeRefreshState(
-        isRefreshing = state.scheduleAnalytics?.categoriesAnalytics == null,
-    )
-    SwipeRefresh(
-        state = refreshState,
-        onRefresh = onRefresh,
+    val scrollState = rememberScrollState()
+    Column(
+        modifier = modifier.padding(top = 8.dp).verticalScroll(scrollState),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        Column(
-            modifier = Modifier.padding(top = 8.dp).verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            val analytics = state.scheduleAnalytics
-            WorkLoadSection(
-                isLoading = state.isLoading,
-                timePeriod = state.timePeriod,
-                workLoadMap = analytics?.dateWorkLoadMap,
-                onTimePeriodChanged = onTimePeriodChanged,
-            )
-            HorizontalDivider()
-            ExecutedAnalyticsSection(
-                isLoading = state.isLoading,
-                timePeriod = state.timePeriod,
-                workLoadMap = analytics?.dateWorkLoadMap,
-                onTimePeriodChanged = onTimePeriodChanged,
-            )
-            HorizontalDivider()
-            StatisticsSection(
-                isLoading = state.isLoading,
-                schedulesAnalytics = analytics,
-            )
-        }
+        val analytics = state.scheduleAnalytics
+        WorkLoadSection(
+            isLoading = state.isLoading,
+            timePeriod = state.timePeriod,
+            workLoadMap = analytics?.dateWorkLoadMap,
+            onTimePeriodChanged = onTimePeriodChanged,
+        )
+        HorizontalDivider()
+        ExecutedAnalyticsSection(
+            isLoading = state.isLoading,
+            timePeriod = state.timePeriod,
+            workLoadMap = analytics?.dateWorkLoadMap,
+            onTimePeriodChanged = onTimePeriodChanged,
+        )
+        HorizontalDivider()
+        StatisticsSection(
+            isLoading = state.isLoading,
+            schedulesAnalytics = analytics,
+        )
     }
 }

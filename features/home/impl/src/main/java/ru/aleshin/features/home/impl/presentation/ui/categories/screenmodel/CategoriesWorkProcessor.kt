@@ -55,16 +55,22 @@ internal interface CategoriesWorkProcessor : FlowWorkProcessor<CategoriesWorkCom
         }
 
         private suspend fun loadCategoriesWork() = flow {
+            var isSetUp = false
             val selectedCategoryId = categoriesInteractor.fetchFeatureMainCategory()
             categoriesInteractor.fetchCategories().collect { categoryEither ->
                 categoryEither.handle(
                     onLeftAction = { emit(EffectResult(CategoriesEffect.ShowError(it))) },
                     onRightAction = { domainCategories ->
                         val categories = domainCategories.map { it.mapToUi() }
-                        val emptyCategory = categories.find { it.mainCategory.id == 0 }
-                        val selectedCategories = categories.find { it.mainCategory.id == selectedCategoryId }
-                        val selectedCategory = selectedCategories?.mainCategory ?: emptyCategory?.mainCategory
-                        emit(ActionResult(CategoriesAction.SetUp(categories = categories, selected = selectedCategory)))
+                        if (!isSetUp) {
+                            isSetUp = true
+                            val emptyCategory = categories.find { it.mainCategory.id == 0 }
+                            val selectedCategories = categories.find { it.mainCategory.id == selectedCategoryId }
+                            val selectedCategory = selectedCategories?.mainCategory ?: emptyCategory?.mainCategory
+                            emit(ActionResult(CategoriesAction.SetUp(categories, selectedCategory)))
+                        } else {
+                            emit(ActionResult(CategoriesAction.UpdateCategories(categories)))
+                        }
                     },
                 )
             }

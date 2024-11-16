@@ -20,11 +20,14 @@ import ru.aleshin.core.domain.entities.schedules.DailyScheduleStatus
 import ru.aleshin.core.domain.entities.settings.CalendarButtonBehavior
 import ru.aleshin.core.domain.entities.settings.TasksSettings
 import ru.aleshin.core.domain.entities.settings.ViewToggleStatus
-import ru.aleshin.core.utils.platform.screenmodel.contract.*
+import ru.aleshin.core.utils.platform.screenmodel.contract.BaseAction
+import ru.aleshin.core.utils.platform.screenmodel.contract.BaseEvent
+import ru.aleshin.core.utils.platform.screenmodel.contract.BaseUiEffect
+import ru.aleshin.core.utils.platform.screenmodel.contract.BaseViewState
 import ru.aleshin.features.home.impl.domain.entities.HomeFailures
 import ru.aleshin.features.home.impl.presentation.models.schedules.ScheduleUi
 import ru.aleshin.features.home.impl.presentation.models.schedules.TimeTaskUi
-import java.util.*
+import java.util.Date
 
 /**
  * @author Stanislav Aleshin on 18.02.2023.
@@ -39,9 +42,9 @@ internal data class HomeViewState(
 ) : BaseViewState
 
 internal sealed class HomeEvent : BaseEvent {
-    object Init : HomeEvent()
-    object CreateSchedule : HomeEvent()
-    object PressOverviewButton : HomeEvent()
+    data object Init : HomeEvent()
+    data object CreateSchedule : HomeEvent()
+    data object PressOverviewButton : HomeEvent()
     data class LoadSchedule(val date: Date?) : HomeEvent()
     data class PressAddTimeTaskButton(val startTime: Date, val endTime: Date) : HomeEvent()
     data class PressEditTimeTaskButton(val timeTask: TimeTaskUi) : HomeEvent()

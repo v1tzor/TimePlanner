@@ -20,6 +20,8 @@ import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
 import ru.aleshin.core.utils.managers.CoroutineManager
 import ru.aleshin.core.utils.platform.screenmodel.BaseScreenModel
+import ru.aleshin.core.utils.platform.screenmodel.EmptyDeps
+import ru.aleshin.core.utils.platform.screenmodel.work.BackgroundWorkKey
 import ru.aleshin.core.utils.platform.screenmodel.work.WorkScope
 import ru.aleshin.features.home.api.navigation.HomeScreens
 import ru.aleshin.features.home.impl.di.holder.HomeComponentHolder
@@ -39,15 +41,15 @@ internal class OverviewScreenModel @Inject constructor(
     stateCommunicator: OverviewStateCommunicator,
     effectCommunicator: OverviewEffectCommunicator,
     coroutineManager: CoroutineManager,
-) : BaseScreenModel<OverviewViewState, OverviewEvent, OverviewAction, OverviewEffect>(
+) : BaseScreenModel<OverviewViewState, OverviewEvent, OverviewAction, OverviewEffect, EmptyDeps>(
     stateCommunicator = stateCommunicator,
     effectCommunicator = effectCommunicator,
     coroutineManager = coroutineManager,
 ) {
 
-    override fun init() {
+    override fun init(deps: EmptyDeps) {
         if (!isInitialize.get()) {
-            super.init()
+            super.init(deps)
             dispatchEvent(OverviewEvent.Init)
         }
     }
@@ -58,28 +60,28 @@ internal class OverviewScreenModel @Inject constructor(
         when (event) {
             is OverviewEvent.Init, OverviewEvent.Refresh -> {
                 sendAction(OverviewAction.UpdateLoading(true))
-                launchBackgroundWork(OverviewWorkCommand.LoadSchedules) {
+                launchBackgroundWork(BackgroundKey.LOAD_SCHEDULES) {
                     val schedulesCommand = OverviewWorkCommand.LoadSchedules
                     workProcessor.work(schedulesCommand).collectAndHandleWork()
                 }
-                launchBackgroundWork(OverviewWorkCommand.LoadUndefinedTasks) {
+                launchBackgroundWork(BackgroundKey.LOAD_UNDEFINED_TASKS) {
                     val tasksCommand = OverviewWorkCommand.LoadUndefinedTasks
                     workProcessor.work(tasksCommand).collectAndHandleWork()
                 }
-                launchBackgroundWork(OverviewWorkCommand.LoadCategories) {
+                launchBackgroundWork(BackgroundKey.LOAD_CATEGORIES) {
                     val categoriesCommand = OverviewWorkCommand.LoadCategories
                     workProcessor.work(categoriesCommand).collectAndHandleWork()
                 }
             }
-            is OverviewEvent.CreateOrUpdateUndefinedTask -> {
+            is OverviewEvent.CreateOrUpdateUndefinedTask -> launchBackgroundWork(BackgroundKey.TASK_ACTION) {
                 val command = OverviewWorkCommand.CreateOrUpdateUndefinedTask(event.task)
                 workProcessor.work(command).collectAndHandleWork()
             }
-            is OverviewEvent.ExecuteUndefinedTask -> {
+            is OverviewEvent.ExecuteUndefinedTask -> launchBackgroundWork(BackgroundKey.TASK_ACTION) {
                 val command = OverviewWorkCommand.ExecuteUndefinedTask(event.scheduleDate, event.task)
                 workProcessor.work(command).collectAndHandleWork()
             }
-            is OverviewEvent.DeleteUndefinedTask -> {
+            is OverviewEvent.DeleteUndefinedTask -> launchBackgroundWork(BackgroundKey.TASK_ACTION) {
                 val command = OverviewWorkCommand.DeleteUndefinedTask(event.task)
                 workProcessor.work(command).collectAndHandleWork()
             }
@@ -118,6 +120,10 @@ internal class OverviewScreenModel @Inject constructor(
         is OverviewAction.UpdateCategories -> currentState.copy(
             categories = action.categories,
         )
+    }
+
+    enum class BackgroundKey : BackgroundWorkKey {
+        LOAD_SCHEDULES, LOAD_UNDEFINED_TASKS, LOAD_CATEGORIES, TASK_ACTION
     }
 }
 

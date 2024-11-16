@@ -20,7 +20,9 @@ import ru.aleshin.core.utils.platform.communications.state.EffectCommunicator
 import ru.aleshin.core.utils.platform.screenmodel.BaseViewModel
 import ru.aleshin.core.utils.platform.screenmodel.work.BackgroundWorkKey
 import ru.aleshin.core.utils.platform.screenmodel.work.WorkScope
+import ru.aleshin.timeplanner.presentation.ui.main.contract.DeepLinkTarget
 import ru.aleshin.timeplanner.presentation.ui.main.contract.MainAction
+import ru.aleshin.timeplanner.presentation.ui.main.contract.MainDeps
 import ru.aleshin.timeplanner.presentation.ui.main.contract.MainEffect
 import ru.aleshin.timeplanner.presentation.ui.main.contract.MainEvent
 import ru.aleshin.timeplanner.presentation.ui.main.contract.MainViewState
@@ -35,16 +37,16 @@ class MainViewModel @Inject constructor(
     private val navigationWorkProcessor: NavigationWorkProcessor,
     communicator: MainStateCommunicator,
     coroutineManager: CoroutineManager,
-) : BaseViewModel<MainViewState, MainEvent, MainAction, MainEffect>(
+) : BaseViewModel<MainViewState, MainEvent, MainAction, MainEffect, MainDeps>(
     stateCommunicator = communicator,
     effectCommunicator = EffectCommunicator.Empty(),
     coroutineManager = coroutineManager,
 ) {
 
-    override fun init() {
+    override fun init(deps: MainDeps) {
         if (!isInitialize.get()) {
-            super.init()
-            dispatchEvent(MainEvent.Init)
+            super.init(deps)
+            dispatchEvent(MainEvent.Init(deps.screenTarget))
         }
     }
 
@@ -52,15 +54,19 @@ class MainViewModel @Inject constructor(
         event: MainEvent,
     ) {
         when (event) {
-            is MainEvent.Init -> launchBackgroundWork(BackgroundKey.LOAD_SETTINGS) {
-                settingsWorkProcessor.work(SettingsWorkCommand.LoadSettings).collectAndHandleWork()
-            }
-            is MainEvent.NavigateToTabs -> launchBackgroundWork(BackgroundKey.NAVIGATE) {
-                navigationWorkProcessor.work(NavWorkCommand.NavigateToTab())
+            is MainEvent.Init -> {
+                launchBackgroundWork(BackgroundKey.LOAD_SETTINGS) {
+                    settingsWorkProcessor.work(SettingsWorkCommand.LoadSettings).collectAndHandleWork()
+                }
+                launchBackgroundWork(BackgroundKey.NAVIGATE) {
+                    navigationWorkProcessor.work(NavWorkCommand.NavigateToTab()).handleWork()
+                    if (event.screenTarget == DeepLinkTarget.EDITOR) {
+                        navigationWorkProcessor.work(NavWorkCommand.NavigateToEditor).handleWork()
+                    }
+                }
             }
             is MainEvent.NavigateToEditor -> launchBackgroundWork(BackgroundKey.NAVIGATE) {
-                if (event.isStartScreen) navigationWorkProcessor.work(NavWorkCommand.NavigateToTab())
-                navigationWorkProcessor.work(NavWorkCommand.NavigateToEditor)
+                navigationWorkProcessor.work(NavWorkCommand.NavigateToEditor).handleWork()
             }
         }
     }

@@ -17,7 +17,10 @@ package ru.aleshin.features.settings.impl.presentation.ui.settings.contract
 
 import android.net.Uri
 import kotlinx.parcelize.Parcelize
-import ru.aleshin.core.utils.platform.screenmodel.contract.*
+import ru.aleshin.core.utils.platform.screenmodel.contract.BaseAction
+import ru.aleshin.core.utils.platform.screenmodel.contract.BaseEvent
+import ru.aleshin.core.utils.platform.screenmodel.contract.BaseUiEffect
+import ru.aleshin.core.utils.platform.screenmodel.contract.BaseViewState
 import ru.aleshin.features.settings.impl.domain.common.SettingsFailures
 import ru.aleshin.features.settings.impl.presentation.models.SettingsUi
 import ru.aleshin.features.settings.impl.presentation.models.TasksSettingsUi
@@ -35,10 +38,10 @@ internal data class SettingsViewState(
 ) : BaseViewState
 
 internal sealed class SettingsEvent : BaseEvent {
-    object Init : SettingsEvent()
-    object PressResetButton : SettingsEvent()
-    object PressClearDataButton : SettingsEvent()
-    object PressDonateButton : SettingsEvent()
+    data object Init : SettingsEvent()
+    data object PressResetButton : SettingsEvent()
+    data object PressClearDataButton : SettingsEvent()
+    data object PressDonateButton : SettingsEvent()
     data class PressSaveBackupData(val uri: Uri) : SettingsEvent()
     data class PressRestoreBackupData(val uri: Uri) : SettingsEvent()
     data class ChangedThemeSettings(val themeSettings: ThemeSettingsUi) : SettingsEvent()
@@ -52,6 +55,4 @@ internal sealed class SettingsEffect : BaseUiEffect {
 internal sealed class SettingsAction : BaseAction {
     data class ShowLoadingBackup(val isLoading: Boolean) : SettingsAction()
     data class ChangeAllSettings(val settings: SettingsUi) : SettingsAction()
-    data class ChangeThemeSettings(val settings: ThemeSettingsUi) : SettingsAction()
-    data class ChangeTasksSettings(val settings: TasksSettingsUi) : SettingsAction()
 }

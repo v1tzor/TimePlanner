@@ -22,7 +22,10 @@ import kotlinx.coroutines.flow.FlowCollector
 import ru.aleshin.core.utils.managers.CoroutineManager
 import ru.aleshin.core.utils.platform.communications.state.EffectCommunicator
 import ru.aleshin.core.utils.platform.communications.state.StateCommunicator
-import ru.aleshin.core.utils.platform.screenmodel.contract.*
+import ru.aleshin.core.utils.platform.screenmodel.contract.BaseAction
+import ru.aleshin.core.utils.platform.screenmodel.contract.BaseEvent
+import ru.aleshin.core.utils.platform.screenmodel.contract.BaseUiEffect
+import ru.aleshin.core.utils.platform.screenmodel.contract.BaseViewState
 import ru.aleshin.core.utils.platform.screenmodel.store.launchedStore
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Provider
@@ -30,11 +33,11 @@ import javax.inject.Provider
 /**
  * @author Stanislav Aleshin on 21.03.2023.
  */
-abstract class BaseViewModel<S : BaseViewState, E : BaseEvent, A : BaseAction, F : BaseUiEffect>(
+abstract class BaseViewModel<S : BaseViewState, E : BaseEvent, A : BaseAction, F : BaseUiEffect, D : ScreenDependencies>(
     protected val stateCommunicator: StateCommunicator<S>,
     protected val effectCommunicator: EffectCommunicator<F>,
     coroutineManager: CoroutineManager,
-) : ViewModel(), Reducer<S, A>, Actor<S, E, A, F>, ContractProvider<S, E, F> {
+) : ViewModel(), Reducer<S, A>, Actor<S, E, A, F>, ContractProvider<S, E, F, D> {
 
     private val scope get() = viewModelScope
 
@@ -49,7 +52,7 @@ abstract class BaseViewModel<S : BaseViewState, E : BaseEvent, A : BaseAction, F
         coroutineManager = coroutineManager,
     )
 
-    override fun init() {
+    override fun init(deps: D) {
         isInitialize.set(true)
     }
 

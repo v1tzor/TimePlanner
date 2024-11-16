@@ -31,11 +31,11 @@ import java.util.concurrent.atomic.AtomicBoolean
 /**
  * @author Stanislav Aleshin on 14.02.2023.
  */
-abstract class BaseScreenModel<S : BaseViewState, E : BaseEvent, A : BaseAction, F : BaseUiEffect>(
+abstract class BaseScreenModel<S : BaseViewState, E : BaseEvent, A : BaseAction, F : BaseUiEffect, D : ScreenDependencies>(
     protected val stateCommunicator: StateCommunicator<S>,
     protected val effectCommunicator: EffectCommunicator<F>,
     coroutineManager: CoroutineManager,
-) : ScreenModel, Reducer<S, A>, Actor<S, E, A, F>, ContractProvider<S, E, F> {
+) : ScreenModel, Reducer<S, A>, Actor<S, E, A, F>, ContractProvider<S, E, F, D> {
 
     private val scope get() = screenModelScope
 
@@ -50,7 +50,7 @@ abstract class BaseScreenModel<S : BaseViewState, E : BaseEvent, A : BaseAction,
         coroutineManager = coroutineManager,
     )
 
-    override fun init() {
+    override fun init(deps: D) {
         isInitialize.set(true)
     }
 

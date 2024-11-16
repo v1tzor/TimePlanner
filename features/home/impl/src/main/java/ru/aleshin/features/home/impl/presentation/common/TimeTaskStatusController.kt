@@ -35,8 +35,7 @@ internal interface TimeTaskStatusController {
 
         override fun updateStatus(timeTask: TimeTaskUi) = with(timeTask) {
             val currentTime = dateManager.fetchCurrentDate()
-            val status = statusManager.fetchStatus(timeToTimeRange(), currentTime)
-            when (status) {
+            when (val status = statusManager.fetchStatus(timeToTimeRange(), currentTime)) {
                 TimeTaskStatus.COMPLETED -> copy(
                     executionStatus = status,
                     progress = 1f,

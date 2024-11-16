@@ -18,6 +18,6 @@ package ru.aleshin.core.utils.platform.screenmodel
 /**
  * @author Stanislav Aleshin on 01.06.2023.
  */
-interface Init {
-    fun init()
+interface Init <D : ScreenDependencies> {
+    fun init(deps: D)
 }

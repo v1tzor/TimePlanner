@@ -74,8 +74,12 @@ internal interface OverviewWorkProcessor : FlowWorkProcessor<OverviewWorkCommand
             scheduleInteractor.fetchOverviewSchedules().handle(
                 onLeftAction = { emit(EffectResult(OverviewEffect.ShowError(it))) },
                 onRightAction = { schedules ->
-                    val previewSchedules = schedules.filter { previewTimeRange.isIncludeTime(it.date.mapToDate()) }
-                    emit(ActionResult(OverviewAction.UpdateSchedules(currentDate, previewSchedules.map { schedulesUiMapper.map(it) })))
+                    val previewSchedules = schedules.filter {
+                        previewTimeRange.isIncludeTime(it.date.mapToDate())
+                    }.map {
+                        schedulesUiMapper.map(it)
+                    }
+                    emit(ActionResult(OverviewAction.UpdateSchedules(currentDate, previewSchedules)))
                 },
             )
         }
@@ -104,7 +108,7 @@ internal interface OverviewWorkProcessor : FlowWorkProcessor<OverviewWorkCommand
             )
         }
 
-        private fun executeUndefinedTaskWork(date: Date, task: UndefinedTaskUi) = flow<WorkResult<OverviewAction, OverviewEffect>> {
+        private fun executeUndefinedTaskWork(date: Date, task: UndefinedTaskUi) = flow<OverviewWorkResult> {
             val targetTime = dateManager.setCurrentHMS(date)
             val timeTask = task.convertToTimeTask(date.startThisDay(), TimeRange(targetTime, targetTime))
             val screen = EditorScreens.Editor(
@@ -124,10 +128,12 @@ internal interface OverviewWorkProcessor : FlowWorkProcessor<OverviewWorkCommand
 }
 
 internal sealed class OverviewWorkCommand : WorkCommand {
-    object LoadSchedules : OverviewWorkCommand()
-    object LoadUndefinedTasks : OverviewWorkCommand()
-    object LoadCategories : OverviewWorkCommand()
+    data object LoadSchedules : OverviewWorkCommand()
+    data object LoadUndefinedTasks : OverviewWorkCommand()
+    data object LoadCategories : OverviewWorkCommand()
     data class CreateOrUpdateUndefinedTask(val task: UndefinedTaskUi) : OverviewWorkCommand()
     data class ExecuteUndefinedTask(val data: Date, val task: UndefinedTaskUi) : OverviewWorkCommand()
     data class DeleteUndefinedTask(val task: UndefinedTaskUi) : OverviewWorkCommand()
 }
+
+internal typealias OverviewWorkResult = WorkResult<OverviewAction, OverviewEffect>

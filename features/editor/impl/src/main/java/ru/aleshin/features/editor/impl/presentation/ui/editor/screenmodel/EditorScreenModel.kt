@@ -21,6 +21,8 @@ import cafe.adriel.voyager.core.screen.Screen
 import ru.aleshin.core.utils.extensions.duration
 import ru.aleshin.core.utils.managers.CoroutineManager
 import ru.aleshin.core.utils.platform.screenmodel.BaseScreenModel
+import ru.aleshin.core.utils.platform.screenmodel.EmptyDeps
+import ru.aleshin.core.utils.platform.screenmodel.work.BackgroundWorkKey
 import ru.aleshin.core.utils.platform.screenmodel.work.WorkScope
 import ru.aleshin.features.editor.impl.di.holder.EditorComponentHolder
 import ru.aleshin.features.editor.impl.navigation.NavigationManager
@@ -47,15 +49,15 @@ internal class EditorScreenModel @Inject constructor(
     stateCommunicator: EditorStateCommunicator,
     effectCommunicator: EditorEffectCommunicator,
     coroutineManager: CoroutineManager,
-) : BaseScreenModel<EditorViewState, EditorEvent, EditorAction, EditorEffect>(
+) : BaseScreenModel<EditorViewState, EditorEvent, EditorAction, EditorEffect, EmptyDeps>(
     stateCommunicator = stateCommunicator,
     effectCommunicator = effectCommunicator,
     coroutineManager = coroutineManager,
 ) {
-    override fun init() {
+    override fun init(deps: EmptyDeps) {
         if (!isInitialize.get()) {
+            super.init(deps)
             dispatchEvent(EditorEvent.Init)
-            super.init()
         }
     }
 
@@ -66,11 +68,11 @@ internal class EditorScreenModel @Inject constructor(
             is EditorEvent.Init -> {
                 val command = EditorWorkCommand.LoadSendEditModel
                 editorWorkProcessor.work(command).handleWork()
-                launchBackgroundWork(EditorWorkCommand.LoadTemplates) {
+                launchBackgroundWork(BackgroundKey.LOAD_TEMPLATES) {
                     val templatesCommand = EditorWorkCommand.LoadTemplates
                     editorWorkProcessor.work(templatesCommand).handleWork()
                 }
-                launchBackgroundWork(TimeTaskWorkCommand.LoadUndefinedTasks) {
+                launchBackgroundWork(BackgroundKey.LOAD_UNDEFINED_TASKS) {
                     val tasksCommand = TimeTaskWorkCommand.LoadUndefinedTasks
                     timeTaskWorkProcessor.work(tasksCommand).handleWork()
                 }
@@ -87,34 +89,38 @@ internal class EditorScreenModel @Inject constructor(
             is EditorEvent.ChangeNote -> updateEditModel {
                 copy(note = event.note)
             }
-            is EditorEvent.AddSubCategory -> {
+            is EditorEvent.AddSubCategory -> launchBackgroundWork(BackgroundKey.DATA_ACTION) {
                 val mainCategory = checkNotNull(state().editModel?.mainCategory)
-                editorWorkProcessor.work(EditorWorkCommand.AddSubCategory(event.name, mainCategory)).handleWork()
-            }
-            is EditorEvent.CreateTemplate -> with(checkNotNull(state().editModel)) {
-                val command = EditorWorkCommand.AddTemplate(this)
+                val command = EditorWorkCommand.AddSubCategory(event.name, mainCategory)
                 editorWorkProcessor.work(command).handleWork()
             }
-            is EditorEvent.ApplyTemplate -> {
-                val model = checkNotNull(state().editModel)
-                editorWorkProcessor.work(EditorWorkCommand.ApplyTemplate(event.template, model)).handleWork()
+            is EditorEvent.CreateTemplate -> launchBackgroundWork(BackgroundKey.DATA_ACTION) {
+                val command = EditorWorkCommand.AddTemplate(checkNotNull(state().editModel))
+                editorWorkProcessor.work(command).handleWork()
             }
-            is EditorEvent.ApplyUndefinedTask -> {
-                val model = checkNotNull(state().editModel)
-                editorWorkProcessor.work(EditorWorkCommand.ApplyUndefinedTask(event.task, model)).handleWork()
+            is EditorEvent.ApplyTemplate -> launchBackgroundWork(BackgroundKey.DATA_ACTION) {
+                val command = EditorWorkCommand.ApplyTemplate(event.template, checkNotNull(state().editModel))
+                editorWorkProcessor.work(command).handleWork()
             }
-            is EditorEvent.PressDeleteButton -> with(checkNotNull(state().editModel)) {
-                timeTaskWorkProcessor.work(TimeTaskWorkCommand.DeleteModel(this)).handleWork()
+            is EditorEvent.ApplyUndefinedTask -> launchBackgroundWork(BackgroundKey.DATA_ACTION) {
+                val command = EditorWorkCommand.ApplyUndefinedTask(event.task, checkNotNull(state().editModel))
+                editorWorkProcessor.work(command).handleWork()
             }
-            is EditorEvent.PressSaveButton -> with(checkNotNull(state().editModel)) {
-                val timeValidate = timeRangeValidator.validate(timeRange)
-                val categoryValidate = categoryValidator.validate(mainCategory)
-                if (timeValidate.isValid && categoryValidate.isValid) {
-                    val command = TimeTaskWorkCommand.AddOrSaveModel(this)
-                    timeTaskWorkProcessor.work(command).handleWork()
-                } else {
-                    val action = EditorAction.SetValidError(timeValidate.validError, categoryValidate.validError)
-                    sendAction(action)
+            is EditorEvent.PressDeleteButton -> launchBackgroundWork(BackgroundKey.DELETE_MODEL) {
+                val command = TimeTaskWorkCommand.DeleteModel(checkNotNull(state().editModel))
+                timeTaskWorkProcessor.work(command).handleWork()
+            }
+            is EditorEvent.PressSaveButton -> launchBackgroundWork(BackgroundKey.SAVE_MODEL) {
+                with(checkNotNull(state().editModel)) {
+                    val timeValidate = timeRangeValidator.validate(timeRange)
+                    val categoryValidate = categoryValidator.validate(mainCategory)
+                    if (timeValidate.isValid && categoryValidate.isValid) {
+                        val command = TimeTaskWorkCommand.AddOrSaveModel(this)
+                        timeTaskWorkProcessor.work(command).handleWork()
+                    } else {
+                        val action = EditorAction.SetValidError(timeValidate.validError, categoryValidate.validError)
+                        sendAction(action)
+                    }
                 }
             }
             is EditorEvent.NavigateToCategoryEditor -> {
@@ -174,6 +180,10 @@ internal class EditorScreenModel @Inject constructor(
     override fun onDispose() {
         super.onDispose()
         EditorComponentHolder.clear()
+    }
+
+    enum class BackgroundKey : BackgroundWorkKey {
+        LOAD_TEMPLATES, LOAD_UNDEFINED_TASKS, SAVE_MODEL, DELETE_MODEL, DATA_ACTION
     }
 }
 

@@ -13,17 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ru.aleshin.features.analytics.impl.domain.common
 
-import ru.aleshin.core.utils.wrappers.FlowEitherWrapper
-import ru.aleshin.features.analytics.impl.domain.entities.AnalyticsFailure
-import javax.inject.Inject
+package ru.aleshin.core.utils.platform.screenmodel
+
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
 
 /**
- * @author Stanislav Aleshin on 22.04.2023.
+ * @author Stanislav Aleshin on 14.04.2024.
  */
-internal interface AnalyticsEitherWrapper : FlowEitherWrapper<AnalyticsFailure> {
+interface ScreenDependencies : Parcelable
 
-    class Base @Inject constructor(errorHandler: AnalyticsErrorHandler) : AnalyticsEitherWrapper,
-        FlowEitherWrapper.Abstract<AnalyticsFailure>(errorHandler = errorHandler)
-}
+@Parcelize
+object EmptyDeps : ScreenDependencies

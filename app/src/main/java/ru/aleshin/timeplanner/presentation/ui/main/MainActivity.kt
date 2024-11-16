@@ -36,7 +36,9 @@ import ru.aleshin.core.utils.platform.activity.BaseActivity
 import ru.aleshin.core.utils.platform.screen.ScreenContent
 import ru.aleshin.timeplanner.application.fetchApp
 import ru.aleshin.timeplanner.di.annotation.GlobalNavigation
+import ru.aleshin.timeplanner.presentation.ui.main.contract.DeepLinkTarget
 import ru.aleshin.timeplanner.presentation.ui.main.contract.MainAction
+import ru.aleshin.timeplanner.presentation.ui.main.contract.MainDeps
 import ru.aleshin.timeplanner.presentation.ui.main.contract.MainEffect
 import ru.aleshin.timeplanner.presentation.ui.main.contract.MainEvent
 import ru.aleshin.timeplanner.presentation.ui.main.contract.MainViewState
@@ -46,7 +48,7 @@ import ru.aleshin.timeplanner.presentation.ui.tabs.TabsScreen
 import ru.aleshin.timeplanner.presentation.widgets.main.MainWidgetReceiver
 import javax.inject.Inject
 
-class MainActivity : BaseActivity<MainViewState, MainEvent, MainAction, MainEffect>() {
+class MainActivity : BaseActivity<MainViewState, MainEvent, MainAction, MainEffect, MainDeps>() {
 
     @Inject
     @GlobalNavigation
@@ -65,6 +67,7 @@ class MainActivity : BaseActivity<MainViewState, MainEvent, MainAction, MainEffe
     override fun Content() = ScreenContent(
         screenModel = viewModel,
         initialState = MainViewState(),
+        dependencies = MainDeps(screenTarget = DeepLinkTarget.byIntent(intent))
     ) { state ->
         TimePlannerTheme(
             languageType = state.language,
@@ -89,20 +92,10 @@ class MainActivity : BaseActivity<MainViewState, MainEvent, MainAction, MainEffe
         }
     }
 
-    override fun onCreateSetup() {
-        super.onCreateSetup()
-        if (intent.action == ACTION_VIEW && intent.dataString == EDITOR_DEEP_LINK) {
-            viewModel.dispatchEvent(MainEvent.NavigateToEditor(true))
-        } else {
-            viewModel.dispatchEvent(MainEvent.NavigateToTabs)
-        }
-    }
-
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        setIntent(intent)
         if (intent.action == ACTION_VIEW && intent.dataString == EDITOR_DEEP_LINK) {
-            viewModel.dispatchEvent(MainEvent.NavigateToEditor(false))
+            viewModel.dispatchEvent(MainEvent.NavigateToEditor)
         }
     }
 

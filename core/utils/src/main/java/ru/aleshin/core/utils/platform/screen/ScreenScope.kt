@@ -23,12 +23,15 @@ import androidx.compose.runtime.saveable.SaverScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import kotlinx.coroutines.CoroutineScope
 import ru.aleshin.core.utils.platform.screenmodel.ContractProvider
-import ru.aleshin.core.utils.platform.screenmodel.contract.*
+import ru.aleshin.core.utils.platform.screenmodel.ScreenDependencies
+import ru.aleshin.core.utils.platform.screenmodel.contract.BaseEvent
+import ru.aleshin.core.utils.platform.screenmodel.contract.BaseUiEffect
+import ru.aleshin.core.utils.platform.screenmodel.contract.BaseViewState
 
 /**
  * @author Stanislav Aleshin on 18.03.2023.
  */
-interface ScreenScope<S : BaseViewState, E : BaseEvent, F : BaseUiEffect> {
+interface ScreenScope<S : BaseViewState, E : BaseEvent, F : BaseUiEffect, D : ScreenDependencies> {
 
     fun dispatchEvent(event: E)
 
@@ -38,10 +41,10 @@ interface ScreenScope<S : BaseViewState, E : BaseEvent, F : BaseUiEffect> {
     @Composable
     fun handleEffect(block: suspend CoroutineScope.(F) -> Unit)
 
-    class Base<S : BaseViewState, E : BaseEvent, F : BaseUiEffect>(
-        private val contractProvider: ContractProvider<S, E, F>,
+    class Base<S : BaseViewState, E : BaseEvent, F : BaseUiEffect, D : ScreenDependencies>(
+        private val contractProvider: ContractProvider<S, E, F, D>,
         internal val initialState: S,
-    ) : ScreenScope<S, E, F> {
+    ) : ScreenScope<S, E, F, D> {
 
         override fun dispatchEvent(event: E) {
             contractProvider.dispatchEvent(event)
@@ -50,9 +53,7 @@ interface ScreenScope<S : BaseViewState, E : BaseEvent, F : BaseUiEffect> {
         @Composable
         override fun fetchState(): S {
             val state = rememberSaveable { mutableStateOf(initialState) }
-            LaunchedEffect(Unit) {
-                contractProvider.collectState { state.value = it }
-            }
+            LaunchedEffect(Unit) { contractProvider.collectState { state.value = it } }
 
             return state.value
         }
@@ -67,24 +68,24 @@ interface ScreenScope<S : BaseViewState, E : BaseEvent, F : BaseUiEffect> {
 }
 
 @Composable
-fun <S : BaseViewState, E : BaseEvent, F : BaseUiEffect> rememberScreenScope(
-    contractProvider: ContractProvider<S, E, F>,
+fun <S : BaseViewState, E : BaseEvent, F : BaseUiEffect, D : ScreenDependencies> rememberScreenScope(
+    contractProvider: ContractProvider<S, E, F, D>,
     initialState: S,
-): ScreenScope<S, E, F> {
+): ScreenScope<S, E, F, D> {
     return rememberSaveable(saver = screenScopeSaver(contractProvider)) {
         ScreenScope.Base(contractProvider, initialState)
     }
 }
 
-private fun <S : BaseViewState, E : BaseEvent, F : BaseUiEffect> screenScopeSaver(
-    contractProvider: ContractProvider<S, E, F>,
-): Saver<ScreenScope.Base<S, E, F>, S> = object : Saver<ScreenScope.Base<S, E, F>, S> {
+private fun <S : BaseViewState, E : BaseEvent, F : BaseUiEffect, D : ScreenDependencies> screenScopeSaver(
+    contractProvider: ContractProvider<S, E, F, D>,
+): Saver<ScreenScope.Base<S, E, F, D>, S> = object : Saver<ScreenScope.Base<S, E, F, D>, S> {
 
-    override fun SaverScope.save(value: ScreenScope.Base<S, E, F>): S {
+    override fun SaverScope.save(value: ScreenScope.Base<S, E, F, D>): S {
         return value.initialState
     }
 
-    override fun restore(value: S): ScreenScope.Base<S, E, F> {
+    override fun restore(value: S): ScreenScope.Base<S, E, F, D> {
         return ScreenScope.Base(contractProvider, value)
     }
 }

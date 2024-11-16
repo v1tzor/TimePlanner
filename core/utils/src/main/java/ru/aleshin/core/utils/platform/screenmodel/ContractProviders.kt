@@ -35,8 +35,8 @@ interface EventReceiver<E : BaseEvent> {
     fun dispatchEvent(event: E)
 }
 
-interface ContractProvider<S : BaseViewState, E : BaseEvent, F : BaseUiEffect> :
+interface ContractProvider<S : BaseViewState, E : BaseEvent, F : BaseUiEffect, D : ScreenDependencies> :
     StateProvider<S>,
     EventReceiver<E>,
     UiEffectProvider<F>,
-    Init
+    Init<D>

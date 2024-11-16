@@ -22,6 +22,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import ru.aleshin.core.utils.managers.CoroutineManager
 import ru.aleshin.core.utils.platform.communications.state.EffectCommunicator
 import ru.aleshin.core.utils.platform.screenmodel.BaseScreenModel
+import ru.aleshin.core.utils.platform.screenmodel.EmptyDeps
 import ru.aleshin.core.utils.platform.screenmodel.work.WorkScope
 import ru.aleshin.features.home.api.navigation.HomeScreens
 import ru.aleshin.timeplanner.application.fetchAppComponent
@@ -40,42 +41,47 @@ class TabScreenModel @Inject constructor(
     private val navigationManager: TabNavigationManager,
     communicator: TabsStateCommunicator,
     coroutineManager: CoroutineManager,
-) : BaseScreenModel<TabsViewState, TabsEvent, TabsAction, TabsEffect>(
+) : BaseScreenModel<TabsViewState, TabsEvent, TabsAction, TabsEffect, EmptyDeps>(
     stateCommunicator = communicator,
     effectCommunicator = EffectCommunicator.Empty(),
     coroutineManager = coroutineManager,
 ) {
 
-    init {
-        dispatchEvent(TabsEvent.Init)
+    override fun init(deps: EmptyDeps) {
+        if (!isInitialize.get()) {
+            super.init(deps)
+            dispatchEvent(TabsEvent.Init)
+        }
     }
 
     override suspend fun WorkScope<TabsViewState, TabsAction, TabsEffect>.handleEvent(
         event: TabsEvent,
-    ) = when (event) {
-        TabsEvent.Init -> navigate(TabsBottomBarItems.HOME) {
-            showHomeFeature(HomeScreens.Home(), isRoot = true)
-        }
-        TabsEvent.SelectedHomeTab -> navigate(TabsBottomBarItems.HOME) {
-            showHomeFeature(null)
-        }
-        TabsEvent.SelectedOverviewScreen -> navigate(TabsBottomBarItems.HOME) {
-            showHomeFeature(HomeScreens.Overview)
-        }
-        TabsEvent.SelectedMainScreen -> navigate(TabsBottomBarItems.HOME) {
-            showHomeFeature(HomeScreens.Home())
-        }
-        TabsEvent.SelectedTemplateScreen -> navigate(TabsBottomBarItems.HOME) {
-            showHomeFeature(HomeScreens.Templates)
-        }
-        TabsEvent.SelectedCategoriesScreen -> navigate(TabsBottomBarItems.HOME) {
-            showHomeFeature(HomeScreens.Categories())
-        }
-        TabsEvent.SelectedAnalyticsTab -> navigate(TabsBottomBarItems.ANALYTICS) {
-            showAnalyticsFeature()
-        }
-        TabsEvent.SelectedSettingsTab -> navigate(TabsBottomBarItems.SETTINGS) {
-            showSettingsFeature()
+    ) {
+        when (event) {
+            TabsEvent.Init -> navigate(TabsBottomBarItems.HOME) {
+                showHomeFeature(HomeScreens.Home(), isRoot = true)
+            }
+            TabsEvent.SelectedHomeTab -> navigate(TabsBottomBarItems.HOME) {
+                showHomeFeature(null)
+            }
+            TabsEvent.SelectedOverviewScreen -> navigate(TabsBottomBarItems.HOME) {
+                showHomeFeature(HomeScreens.Overview)
+            }
+            TabsEvent.SelectedMainScreen -> navigate(TabsBottomBarItems.HOME) {
+                showHomeFeature(HomeScreens.Home())
+            }
+            TabsEvent.SelectedTemplateScreen -> navigate(TabsBottomBarItems.HOME) {
+                showHomeFeature(HomeScreens.Templates)
+            }
+            TabsEvent.SelectedCategoriesScreen -> navigate(TabsBottomBarItems.HOME) {
+                showHomeFeature(HomeScreens.Categories())
+            }
+            TabsEvent.SelectedAnalyticsTab -> navigate(TabsBottomBarItems.ANALYTICS) {
+                showAnalyticsFeature()
+            }
+            TabsEvent.SelectedSettingsTab -> navigate(TabsBottomBarItems.SETTINGS) {
+                showSettingsFeature()
+            }
         }
     }
 

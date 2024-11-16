@@ -15,7 +15,6 @@
  */
 package ru.aleshin.features.home.impl.presentation.ui.templates.screenmodel
 
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
 import ru.aleshin.core.domain.entities.template.RepeatTime
 import ru.aleshin.core.domain.entities.template.Template
@@ -109,7 +108,7 @@ internal interface TemplatesWorkProcessor : FlowWorkProcessor<TemplatesWorkComma
         }
 
         private fun loadCategories() = flow {
-            categoriesInteractor.fetchCategories().firstOrNull()?.handle(
+            categoriesInteractor.fetchCategories().collectAndHandle(
                 onLeftAction = { emit(EffectResult(TemplatesEffect.ShowError(it))) },
                 onRightAction = { categories ->
                     emit(ActionResult(TemplatesAction.UpdateCategories(categories.map { it.mapToUi() })))
@@ -209,7 +208,7 @@ internal interface TemplatesWorkProcessor : FlowWorkProcessor<TemplatesWorkComma
 }
 
 internal sealed class TemplatesWorkCommand : WorkCommand {
-    object LoadCategories : TemplatesWorkCommand()
+    data object LoadCategories : TemplatesWorkCommand()
     data class LoadTemplates(val sortedType: TemplatesSortedType) : TemplatesWorkCommand()
     data class DeleteTemplate(val id: Int) : TemplatesWorkCommand()
     data class AddTemplate(val template: TemplateUi) : TemplatesWorkCommand()

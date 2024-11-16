@@ -70,14 +70,12 @@ internal class AnalyticsScreen @Inject constructor() : Screen {
                         when (tab) {
                             AnalyticsTabItem.TIME -> TimeTab(
                                 state = state,
-                                onRefresh = { dispatchEvent(AnalyticsEvent.PressRefreshAnalytics) },
                                 onTimePeriodChanged = { timePeriod ->
                                     dispatchEvent(AnalyticsEvent.ChangeTimePeriod(timePeriod))
                                 },
                             )
                             AnalyticsTabItem.WORKLOAD -> WorkLoadTab(
                                 state = state,
-                                onRefresh = { dispatchEvent(AnalyticsEvent.PressRefreshAnalytics) },
                                 onTimePeriodChanged = { timePeriod ->
                                     dispatchEvent(AnalyticsEvent.ChangeTimePeriod(timePeriod))
                                 },

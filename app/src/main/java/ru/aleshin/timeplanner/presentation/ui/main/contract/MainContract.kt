@@ -38,9 +38,8 @@ data class MainViewState(
 ) : BaseViewState, Parcelable
 
 sealed class MainEvent : BaseEvent {
-    data object Init : MainEvent()
-    data object NavigateToTabs : MainEvent()
-    data class NavigateToEditor(val isStartScreen: Boolean) : MainEvent()
+    data class Init(val screenTarget: DeepLinkTarget) : MainEvent()
+    data object NavigateToEditor : MainEvent()
 }
 
 sealed class MainEffect : EmptyUiEffect

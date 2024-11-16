@@ -17,14 +17,17 @@ package ru.aleshin.features.analytics.impl.presenatiton.ui.screenmodel
 
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.onStart
 import ru.aleshin.core.utils.functional.Constants
 import ru.aleshin.core.utils.functional.TimePeriod
+import ru.aleshin.core.utils.functional.collectAndHandle
 import ru.aleshin.core.utils.functional.handle
 import ru.aleshin.core.utils.functional.rightOrError
 import ru.aleshin.core.utils.platform.screenmodel.work.ActionResult
 import ru.aleshin.core.utils.platform.screenmodel.work.EffectResult
 import ru.aleshin.core.utils.platform.screenmodel.work.FlowWorkProcessor
 import ru.aleshin.core.utils.platform.screenmodel.work.WorkCommand
+import ru.aleshin.core.utils.platform.screenmodel.work.WorkResult
 import ru.aleshin.features.analytics.impl.domain.interactors.AnalyticsInteractor
 import ru.aleshin.features.analytics.impl.domain.interactors.SettingsInteractor
 import ru.aleshin.features.analytics.impl.presenatiton.mappers.mapToUi
@@ -66,21 +69,24 @@ internal interface AnalyticsWorkProcessor : FlowWorkProcessor<AnalyticsWorkComma
             )
         }
 
-        private fun loadAnalyticsWork(period: TimePeriod) = flow {
-            emit(ActionResult(AnalyticsAction.UpdateLoading(true)))
+        private fun loadAnalyticsWork(period: TimePeriod) = flow<AnalyticsWorkResult> {
             delay(Constants.Delay.LOAD_ANIMATION)
-            analyticsInteractor.fetchAnalytics(period).handle(
+            analyticsInteractor.fetchAnalytics(period).collectAndHandle(
                 onLeftAction = { emit(EffectResult(AnalyticsEffect.ShowFailure(it))) },
                 onRightAction = { analytics ->
                     emit(ActionResult(AnalyticsAction.UpdateAnalytics(analytics.mapToUi())))
                 },
             )
+        }.onStart {
+            emit(ActionResult(AnalyticsAction.UpdateLoading(true)))
         }
     }
 }
 
 internal sealed class AnalyticsWorkCommand : WorkCommand {
-    object LoadSettings : AnalyticsWorkCommand()
+    data object LoadSettings : AnalyticsWorkCommand()
     data class UpdateTimePeriod(val period: TimePeriod) : AnalyticsWorkCommand()
     data class LoadAnalytics(val period: TimePeriod) : AnalyticsWorkCommand()
 }
+
+internal typealias AnalyticsWorkResult = WorkResult<AnalyticsAction, AnalyticsEffect>

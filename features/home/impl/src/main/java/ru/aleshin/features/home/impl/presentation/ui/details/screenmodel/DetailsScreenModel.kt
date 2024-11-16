@@ -20,6 +20,8 @@ import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
 import ru.aleshin.core.utils.managers.CoroutineManager
 import ru.aleshin.core.utils.platform.screenmodel.BaseScreenModel
+import ru.aleshin.core.utils.platform.screenmodel.EmptyDeps
+import ru.aleshin.core.utils.platform.screenmodel.work.BackgroundWorkKey
 import ru.aleshin.core.utils.platform.screenmodel.work.WorkScope
 import ru.aleshin.features.home.api.navigation.HomeScreens
 import ru.aleshin.features.home.impl.di.holder.HomeComponentHolder
@@ -39,15 +41,15 @@ internal class DetailsScreenModel @Inject constructor(
     stateCommunicator: DetailsStateCommunicator,
     effectCommunicator: DetailsEffectCommunicator,
     coroutineManager: CoroutineManager,
-) : BaseScreenModel<DetailsViewState, DetailsEvent, DetailsAction, DetailsEffect>(
+) : BaseScreenModel<DetailsViewState, DetailsEvent, DetailsAction, DetailsEffect, EmptyDeps>(
     stateCommunicator = stateCommunicator,
     effectCommunicator = effectCommunicator,
     coroutineManager = coroutineManager,
 ) {
 
-    override fun init() {
+    override fun init(deps: EmptyDeps) {
         if (!isInitialize.get()) {
-            super.init()
+            super.init(deps)
             dispatchEvent(DetailsEvent.Init)
         }
     }
@@ -56,7 +58,7 @@ internal class DetailsScreenModel @Inject constructor(
         event: DetailsEvent,
     ) {
         when (event) {
-            is DetailsEvent.Init -> launchBackgroundWork(DetailsWorkCommand.LoadSchedules) {
+            is DetailsEvent.Init -> launchBackgroundWork(BackgroundKey.LOAD_SCHEDULES) {
                 val command = DetailsWorkCommand.LoadSchedules
                 workProcessor.work(command).collectAndHandleWork()
             }
@@ -82,6 +84,10 @@ internal class DetailsScreenModel @Inject constructor(
         is DetailsAction.UpdateLoading -> currentState.copy(
             isLoading = action.isLoading,
         )
+    }
+
+    enum class BackgroundKey : BackgroundWorkKey {
+        LOAD_SCHEDULES
     }
 }
 

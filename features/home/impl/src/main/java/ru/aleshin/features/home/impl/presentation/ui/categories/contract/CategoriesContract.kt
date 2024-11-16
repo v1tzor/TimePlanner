@@ -53,5 +53,6 @@ internal sealed class CategoriesEffect : BaseUiEffect {
 
 internal sealed class CategoriesAction : BaseAction {
     data class SetUp(val categories: List<CategoriesUi>, val selected: MainCategoryUi?) : CategoriesAction()
+    data class UpdateCategories(val categories: List<CategoriesUi>) : CategoriesAction()
     data class ChangeMainCategory(val category: MainCategoryUi) : CategoriesAction()
 }

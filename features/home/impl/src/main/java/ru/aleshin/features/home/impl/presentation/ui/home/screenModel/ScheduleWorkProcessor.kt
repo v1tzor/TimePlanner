@@ -15,11 +15,15 @@
  */
 package ru.aleshin.features.home.impl.presentation.ui.home.screenModel
 
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.FlowCollector
+import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import ru.aleshin.core.domain.entities.schedules.TimeTask
 import ru.aleshin.core.domain.entities.schedules.TimeTaskStatus
 import ru.aleshin.core.domain.entities.settings.ViewToggleStatus
@@ -30,7 +34,10 @@ import ru.aleshin.core.utils.functional.handle
 import ru.aleshin.core.utils.functional.rightOrElse
 import ru.aleshin.core.utils.functional.rightOrError
 import ru.aleshin.core.utils.managers.DateManager
-import ru.aleshin.core.utils.platform.screenmodel.work.*
+import ru.aleshin.core.utils.platform.screenmodel.work.ActionResult
+import ru.aleshin.core.utils.platform.screenmodel.work.EffectResult
+import ru.aleshin.core.utils.platform.screenmodel.work.FlowWorkProcessor
+import ru.aleshin.core.utils.platform.screenmodel.work.WorkCommand
 import ru.aleshin.features.home.impl.domain.interactors.ScheduleInteractor
 import ru.aleshin.features.home.impl.domain.interactors.SettingsInteractor
 import ru.aleshin.features.home.impl.domain.interactors.TimeShiftInteractor
@@ -41,7 +48,7 @@ import ru.aleshin.features.home.impl.presentation.models.schedules.ScheduleUi
 import ru.aleshin.features.home.impl.presentation.models.schedules.TimeTaskUi
 import ru.aleshin.features.home.impl.presentation.ui.home.contract.HomeAction
 import ru.aleshin.features.home.impl.presentation.ui.home.contract.HomeEffect
-import java.util.*
+import java.util.Date
 import javax.inject.Inject
 
 /**
@@ -76,38 +83,46 @@ internal interface ScheduleWorkProcessor : FlowWorkProcessor<ScheduleWorkCommand
             )
         }
 
-        private suspend fun loadScheduleByDateWork(date: Date?) = flow {
+        private suspend fun loadScheduleByDateWork(date: Date?) = channelFlow {
+            var cycleUpdateJob: Job? = null
             val sendDate = scheduleInteractor.fetchFeatureScheduleDate()
             val scheduleDate = sendDate ?: date ?: dateManager.fetchBeginningCurrentDay()
-            scheduleInteractor.fetchScheduleByDate(scheduleDate.time).collectAndHandle(
-                onLeftAction = { error -> emit(EffectResult(HomeEffect.ShowError(error))) },
-                onRightAction = { schedule ->
-                    if (schedule != null) {
-                        refreshScheduleState(schedule.map(mapperToUi))
-                    } else {
-                        emit(ActionResult(HomeAction.SetEmptySchedule(scheduleDate, null)))
-                    }
-                },
-            )
+            scheduleInteractor.fetchScheduleByDate(scheduleDate.time).collect { scheduleEither ->
+                cycleUpdateJob?.cancelAndJoin()
+                scheduleEither.handle(
+                    onLeftAction = { error -> send(EffectResult(HomeEffect.ShowError(error))) },
+                    onRightAction = { scheduleModel ->
+                        if (scheduleModel != null) {
+                            val schedule = scheduleModel.map(mapperToUi)
+
+                            send(ActionResult(HomeAction.UpdateSchedule(schedule)))
+
+                            cycleUpdateJob = refreshScheduleState(schedule)
+                                .onEach { send(it) }
+                                .launchIn(this)
+                                .apply { start() }
+                        } else {
+                            send(ActionResult(HomeAction.SetEmptySchedule(scheduleDate, null)))
+                        }
+                    },
+                )
+            }
         }
-        
-        private suspend fun FlowCollector<WorkResult<HomeAction, HomeEffect>>.refreshScheduleState(
-            schedule: ScheduleUi,
-        ) {
+
+        private suspend fun refreshScheduleState(schedule: ScheduleUi) = flow {
             var oldTimeTasks = schedule.timeTasks
             var isWorking = true
             while (isWorking) {
                 val newTimeTasks = oldTimeTasks.map { statusController.updateStatus(it) }
                 if (newTimeTasks != oldTimeTasks || schedule.timeTasks == oldTimeTasks) {
+                    val completedChange = oldTimeTasks.map { it.isCompleted } != newTimeTasks.map { it.isCompleted }
                     oldTimeTasks = newTimeTasks
                     val newSchedule = schedule.copy(timeTasks = oldTimeTasks)
                     emit(ActionResult(HomeAction.UpdateSchedule(newSchedule)))
-                    if (newTimeTasks.find { it.executionStatus != TimeTaskStatus.COMPLETED } != null) {
-                        scheduleInteractor.updateSchedule(newSchedule.mapToDomain())
-                    }
+                    if (completedChange) scheduleInteractor.updateSchedule(newSchedule.mapToDomain())
                 }
-                if (isWorking) delay(Constants.Delay.CHECK_STATUS)
                 isWorking = oldTimeTasks.find { it.executionStatus != TimeTaskStatus.COMPLETED } != null
+                delay(Constants.Delay.CHECK_STATUS)
             }
         }
 
@@ -167,7 +182,7 @@ internal interface ScheduleWorkProcessor : FlowWorkProcessor<ScheduleWorkCommand
 }
 
 internal sealed class ScheduleWorkCommand : WorkCommand {
-    object SetupSettings : ScheduleWorkCommand()
+    data object SetupSettings : ScheduleWorkCommand()
     data class LoadScheduleByDate(val date: Date?) : ScheduleWorkCommand()
     data class CreateSchedule(val date: Date) : ScheduleWorkCommand()
     data class ChangeTaskDoneState(val date: Date, val key: Long) : ScheduleWorkCommand()

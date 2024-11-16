@@ -21,6 +21,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import ru.aleshin.core.utils.managers.CoroutineManager
 import ru.aleshin.core.utils.platform.communications.state.EffectCommunicator
 import ru.aleshin.core.utils.platform.screenmodel.BaseScreenModel
+import ru.aleshin.core.utils.platform.screenmodel.EmptyDeps
 import ru.aleshin.core.utils.platform.screenmodel.work.WorkScope
 import ru.aleshin.features.settings.impl.di.holder.SettingsComponentHolder
 import ru.aleshin.features.settings.impl.navigation.NavigationManager
@@ -37,7 +38,7 @@ internal class DonateScreenModel @Inject constructor(
     private val navigationManager: NavigationManager,
     stateCommunicator: DonateStateCommunicator,
     coroutineManager: CoroutineManager,
-) : BaseScreenModel<DonateViewState, DonateEvent, DonateAction, DonateEffect>(
+) : BaseScreenModel<DonateViewState, DonateEvent, DonateAction, DonateEffect, EmptyDeps>(
     stateCommunicator = stateCommunicator,
     effectCommunicator = EffectCommunicator.Empty(),
     coroutineManager = coroutineManager,
