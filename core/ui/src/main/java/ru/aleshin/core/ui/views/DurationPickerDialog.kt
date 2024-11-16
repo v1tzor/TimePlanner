@@ -36,6 +36,7 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -161,14 +162,17 @@ internal fun DurationPickerHourMinuteSelector(
     modifier = modifier.padding(horizontal = 24.dp),
     verticalAlignment = Alignment.CenterVertically,
 ) {
-    val requester = remember { FocusRequester() }
+    var isRequestFirstFocus by rememberSaveable { mutableStateOf(false) }
+    val hourRequester = remember { FocusRequester() }
+    val minuteRequester = remember { FocusRequester() }
+
     OutlinedTextField(
-        modifier = Modifier.weight(1f),
+        modifier = Modifier.weight(1f).focusRequester(hourRequester),
         value = hours,
         textStyle = MaterialTheme.typography.displayMedium.copy(textAlign = TextAlign.Center),
         onValueChange = { value ->
             onMinutesChanges(value)
-            if (value.length == 2 && value.toIntOrNull() in 0..23) requester.requestFocus()
+            if (value.length == 2 && value.toIntOrNull() in 0..23) minuteRequester.requestFocus()
         },
         supportingText = if (isEnableSupportText) {
             {
@@ -195,7 +199,7 @@ internal fun DurationPickerHourMinuteSelector(
         color = MaterialTheme.colorScheme.onSurface,
     )
     OutlinedTextField(
-        modifier = Modifier.weight(1f).focusRequester(requester),
+        modifier = Modifier.weight(1f).focusRequester(minuteRequester),
         value = minutes,
         textStyle = MaterialTheme.typography.displayMedium.copy(textAlign = TextAlign.Center),
         onValueChange = onHoursChanges,
@@ -216,4 +220,10 @@ internal fun DurationPickerHourMinuteSelector(
             unfocusedBorderColor = MaterialTheme.colorScheme.surfaceContainerHighest,
         ),
     )
+    LaunchedEffect(Unit) {
+        if (!isRequestFirstFocus) {
+            hourRequester.requestFocus()
+            isRequestFirstFocus = true
+        }
+    }
 }
