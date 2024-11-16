@@ -132,9 +132,4 @@ class DataBaseModule {
     @Provides
     @Singleton
     fun provideSchedulesDataBase(context: Context): SchedulesDataBase = SchedulesDataBase.create(context)
-
-    // WorkManager
-
-//    @Provides
-//    fun provideWorkManager(context: Context): WorkManager = WorkManager.getInstance(context)
 }

@@ -15,23 +15,21 @@
  */
 package ru.aleshin.core.utils.functional
 
-import java.lang.IllegalArgumentException
-
 /**
  * @author Stanislav Aleshin on 03.08.2023.
  */
 enum class WeekDay(val number: Int, val priority: Int) {
-    SUNDAY(1, 6),
-    MONDAY(2, 0),
-    TUESDAY(3, 1),
-    WEDNESDAY(4, 2),
-    THURSDAY(5, 3),
-    FRIDAY(6, 4),
-    SATURDAY(7, 5);
+    SUNDAY(1, 0),
+    MONDAY(2, 1),
+    TUESDAY(3, 2),
+    WEDNESDAY(4, 3),
+    THURSDAY(5, 4),
+    FRIDAY(6, 5),
+    SATURDAY(7, 6);
 
     companion object {
         fun fetchByWeekDayNumber(week: Int): WeekDay {
-            val weekInstance = WeekDay.values().find { it.number == week }
+            val weekInstance = entries.find { it.number == week }
             return weekInstance ?: throw IllegalArgumentException("Wrong week number: $week")
         }
     }

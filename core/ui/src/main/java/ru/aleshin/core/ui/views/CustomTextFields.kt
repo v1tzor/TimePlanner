@@ -254,7 +254,6 @@ fun CustomLargeTextField(
         modifier = modifier.fillMaxWidth().defaultMinSize(minHeight = 64.dp),
         shape = MaterialTheme.shapes.medium,
         color = color,
-        // color = MaterialTheme.colorScheme.surfaceOne(),
         border = when (isFocused) {
             true -> BorderStroke(1.5.dp, MaterialTheme.colorScheme.outlineVariant)
             false -> null

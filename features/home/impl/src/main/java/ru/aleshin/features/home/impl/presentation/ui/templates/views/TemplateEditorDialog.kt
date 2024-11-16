@@ -49,11 +49,16 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import ru.aleshin.core.domain.entities.schedules.TaskPriority
 import ru.aleshin.core.ui.theme.TimePlannerRes
 import ru.aleshin.core.ui.views.DialogButtons
 import ru.aleshin.core.ui.views.TimeFormatSelector
+import ru.aleshin.core.ui.views.changeTwoDigitNumber
+import ru.aleshin.core.ui.views.endLimitCharTransition
+import ru.aleshin.core.ui.views.mapHour24ToAmPm
+import ru.aleshin.core.ui.views.mapHourAmPmTo24
 import ru.aleshin.core.utils.extensions.generateUniqueKey
 import ru.aleshin.core.utils.extensions.setHoursAndMinutes
 import ru.aleshin.core.utils.extensions.shiftDay
@@ -84,10 +89,31 @@ internal fun TemplateEditorDialog(
     var isEnableNotification by remember { mutableStateOf(model?.isEnableNotification ?: true) }
     var isConsiderInStatistics by remember { mutableStateOf(model?.isConsiderInStatistics ?: true) }
     var subCategory by remember { mutableStateOf(model?.subCategory) }
-    var timeStartHours by remember { mutableStateOf(model?.startTime?.hours) }
-    var timeStartMinutes by remember { mutableStateOf(model?.startTime?.minutes) }
-    var timeEndHours by remember { mutableStateOf(model?.endTime?.hours) }
-    var timeEndMinutes by remember { mutableStateOf(model?.endTime?.minutes) }
+
+    val is24Format = DateFormat.is24HourFormat(LocalContext.current)
+
+    val startHour = remember { model?.startTime?.hours ?: 0 }
+    val startMinute = remember { model?.startTime?.minutes ?: 0 }
+    var startFormat by remember { mutableStateOf(if (startHour > 11) TimeFormat.PM else TimeFormat.AM) }
+    var editableStartHour by rememberSaveable(stateSaver = TextFieldValue.Saver) {
+        val formatHour = if (is24Format) startHour else startHour.mapHour24ToAmPm().second
+        mutableStateOf(TextFieldValue(formatHour.toString().padStart(2, '0')))
+    }
+    var editableStartMinute by rememberSaveable(stateSaver = TextFieldValue.Saver) {
+        mutableStateOf(TextFieldValue(startMinute.toString().padStart(2, '0')))
+    }
+
+    val endHour = remember { model?.endTime?.hours ?: 0 }
+    val endMinute = remember { model?.endTime?.minutes ?: 0 }
+    var endFormat by remember { mutableStateOf(if (endHour > 11) TimeFormat.PM else TimeFormat.AM) }
+    var editableEndHour by rememberSaveable(stateSaver = TextFieldValue.Saver) {
+        val formatHour = if (is24Format) endHour else endHour.mapHour24ToAmPm().second
+        mutableStateOf(TextFieldValue(formatHour.toString().padStart(2, '0')))
+    }
+    var editableEndMinute by rememberSaveable(stateSaver = TextFieldValue.Saver) {
+        mutableStateOf(TextFieldValue(endMinute.toString().padStart(2, '0')))
+    }
+
     var priority by remember { mutableStateOf(model?.priority ?: TaskPriority.STANDARD) }
 
     BasicAlertDialog(onDismissRequest = onDismiss) {
@@ -118,20 +144,22 @@ internal fun TemplateEditorDialog(
                         onSubCategoryChange = { subCategory = it },
                     )
                     TemplateEditorStartTimeChooser(
-                        hours = timeStartHours,
-                        minutes = timeStartMinutes,
-                        onTimeChange = { hours, minutes ->
-                            timeStartHours = hours
-                            timeStartMinutes = minutes
-                        },
+                        hour = editableStartHour,
+                        minute = editableStartMinute,
+                        is24Format = is24Format,
+                        format = startFormat,
+                        onHourChange = { editableStartHour = it },
+                        onMinuteChange = { editableStartMinute = it },
+                        onChangeFormat = { startFormat = it },
                     )
                     TemplateEditorEndTimeChooser(
-                        hours = timeEndHours,
-                        minutes = timeEndMinutes,
-                        onTimeChange = { hours, minutes ->
-                            timeEndHours = hours
-                            timeEndMinutes = minutes
-                        },
+                        hour = editableEndHour,
+                        minute = editableEndMinute,
+                        is24Format = is24Format,
+                        format = endFormat,
+                        onHourChange = { editableEndHour = it },
+                        onMinuteChange = { editableEndMinute = it },
+                        onChangeFormat = { endFormat = it },
                     )
                     TemplateEditorNotificationChooser(
                         isEnableNotification = isEnableNotification,
@@ -147,41 +175,51 @@ internal fun TemplateEditorDialog(
                     )
                 }
 
-                val isEnabled = timeStartHours != null && timeStartMinutes != null &&
-                        timeEndHours != null && timeEndMinutes != null
                 DialogButtons(
-                    enabledConfirm = isEnabled,
+                    enabledConfirm = mainCategory.id != 0,
                     confirmTitle = when (model != null) {
                         true -> TimePlannerRes.strings.okConfirmTitle
                         false -> HomeThemeRes.strings.dialogCreateTitle
                     },
                     onConfirmClick = {
-                        if (isEnabled) {
-                            val calendar = Calendar.getInstance()
-                            val startTime = calendar.setHoursAndMinutes(
-                                timeStartHours!!,
-                                timeStartMinutes!!
+                        val calendar = Calendar.getInstance()
+                        val startTime = if (is24Format) {
+                            calendar.setHoursAndMinutes(
+                                hour = editableStartHour.text.toInt(),
+                                minute = editableStartMinute.text.toInt()
                             ).time
-                            val endTime = calendar.setHoursAndMinutes(
-                                timeEndHours!!,
-                                timeEndMinutes!!
-                            ).time.let { endTime ->
-                                if (endTime > startTime) endTime else endTime.shiftDay(1)
-                            }
-                            val template = TemplateUi(
-                                templateId = model?.templateId ?: generateUniqueKey().toInt(),
-                                startTime = startTime,
-                                endTime = endTime,
-                                category = mainCategory,
-                                subCategory = subCategory,
-                                isEnableNotification = isEnableNotification,
-                                isConsiderInStatistics = isConsiderInStatistics,
-                                priority = priority,
-                                repeatEnabled = model?.repeatEnabled ?: false,
-                                repeatTimes = model?.repeatTimes ?: emptyList(),
-                            )
-                            onConfirm(template)
+                        } else {
+                            calendar.setHoursAndMinutes(
+                                hour = editableStartHour.text.toInt().mapHourAmPmTo24(startFormat),
+                                minute = editableStartMinute.text.toInt()
+                            ).time
                         }
+                        val endTime = if (is24Format) {
+                            calendar.setHoursAndMinutes(
+                                hour = editableEndHour.text.toInt(),
+                                minute = editableEndMinute.text.toInt()
+                            ).time
+                        } else {
+                            calendar.setHoursAndMinutes(
+                                hour = editableEndHour.text.toInt().mapHourAmPmTo24(endFormat),
+                                minute = editableEndMinute.text.toInt()
+                            ).time
+                        }.let { endTime ->
+                            if (endTime > startTime) endTime else endTime.shiftDay(1)
+                        }
+                        val template = TemplateUi(
+                            templateId = model?.templateId ?: generateUniqueKey().toInt(),
+                            startTime = startTime,
+                            endTime = endTime,
+                            category = mainCategory,
+                            subCategory = subCategory,
+                            isEnableNotification = isEnableNotification,
+                            isConsiderInStatistics = isConsiderInStatistics,
+                            priority = priority,
+                            repeatEnabled = model?.repeatEnabled ?: false,
+                            repeatTimes = model?.repeatTimes ?: emptyList(),
+                        )
+                        onConfirm(template)
                     },
                     onCancelClick = onDismiss,
                 )
@@ -193,16 +231,15 @@ internal fun TemplateEditorDialog(
 @Composable
 internal fun TemplateEditorStartTimeChooser(
     modifier: Modifier = Modifier,
-    hours: Int?,
-    minutes: Int?,
-    onTimeChange: (hours: Int?, minutes: Int?) -> Unit,
+    hour: TextFieldValue,
+    minute: TextFieldValue,
+    is24Format: Boolean,
+    format: TimeFormat,
+    onHourChange: (TextFieldValue) -> Unit,
+    onMinuteChange: (TextFieldValue) -> Unit,
+    onChangeFormat: (TimeFormat) -> Unit,
 ) {
-    val minutesFocusRequester = remember { FocusRequester() }
-    var lastHours by rememberSaveable { mutableStateOf<Int?>(null) }
-    val is24Format = DateFormat.is24HourFormat(LocalContext.current)
-    var format by remember {
-        mutableStateOf(if (hours != null && hours > 11) TimeFormat.PM else TimeFormat.AM)
-    }
+    val minuteRequester = remember { FocusRequester() }
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
@@ -220,36 +257,15 @@ internal fun TemplateEditorStartTimeChooser(
         ) {
             OutlinedTextField(
                 modifier = Modifier.weight(1f),
-                value = if (is24Format) {
-                    hours?.toString() ?: ""
-                } else {
-                    when {
-                        hours == 0 && format == TimeFormat.AM -> "12"
-                        hours == 0 && format == TimeFormat.PM -> "12"
-                        format == TimeFormat.PM && hours != 12 -> hours?.minus(12)?.toString() ?: ""
-                        else -> hours?.toString() ?: ""
-                    }
-                },
+                value = hour,
                 onValueChange = {
-                    val time = it.toIntOrNull()
-                    if (time != null && is24Format && time in 0..23) {
-                        if (lastHours != null && lastHours.toString().length == 1 && it.length == 2) {
-                            minutesFocusRequester.requestFocus()
-                        }
-                        lastHours = time
-                        onTimeChange(time, minutes)
-                    } else if (time != null && !is24Format && time in 1..12) {
-                        val formatTime = when (format) {
-                            TimeFormat.PM -> if (time != 12) time + 12 else 12
-                            TimeFormat.AM -> if (time != 12) time else 0
-                        }
-                        if (lastHours != null && lastHours.toString().length == 1 && it.length == 2) {
-                            minutesFocusRequester.requestFocus()
-                        }
-                        lastHours = time
-                        onTimeChange(formatTime, minutes)
-                    } else if (it.isBlank()) {
-                        onTimeChange(null, minutes)
+                    val onLimitAction = { char: Char ->
+                        onMinuteChange(minute.endLimitCharTransition(char, 0..59, minuteRequester))
+                    }
+                    if (is24Format) {
+                        onHourChange(hour.changeTwoDigitNumber(it, 0..23, onLimitAction))
+                    } else {
+                        onHourChange(hour.changeTwoDigitNumber(it, 0..12, onLimitAction))
                     }
                 },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -262,15 +278,10 @@ internal fun TemplateEditorStartTimeChooser(
                 color = MaterialTheme.colorScheme.onSurface,
             )
             OutlinedTextField(
-                modifier = Modifier.weight(1f).align(Alignment.Bottom).focusRequester(minutesFocusRequester),
-                value = minutes?.toString() ?: "",
+                modifier = Modifier.weight(1f).align(Alignment.Bottom).focusRequester(minuteRequester),
+                value = minute,
                 onValueChange = {
-                    val time = it.toIntOrNull()
-                    if (time != null && time in 0..59) {
-                        onTimeChange(hours, time)
-                    } else if (it.isBlank()) {
-                        onTimeChange(hours, null)
-                    }
+                    onMinuteChange(minute.changeTwoDigitNumber(it, 0..59))
                 },
                 shape = MaterialTheme.shapes.large,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -280,10 +291,7 @@ internal fun TemplateEditorStartTimeChooser(
             modifier = Modifier.size(height = 60.dp, width = 45.dp).align(Alignment.Bottom),
             isVisible = !is24Format,
             format = format,
-            onChangeFormat = {
-                onTimeChange(null, minutes)
-                format = it
-            },
+            onChangeFormat = { onChangeFormat(it) },
         )
     }
 }
@@ -291,16 +299,15 @@ internal fun TemplateEditorStartTimeChooser(
 @Composable
 internal fun TemplateEditorEndTimeChooser(
     modifier: Modifier = Modifier,
-    hours: Int?,
-    minutes: Int?,
-    onTimeChange: (hours: Int?, minutes: Int?) -> Unit,
+    hour: TextFieldValue,
+    minute: TextFieldValue,
+    is24Format: Boolean,
+    format: TimeFormat,
+    onHourChange: (TextFieldValue) -> Unit,
+    onMinuteChange: (TextFieldValue) -> Unit,
+    onChangeFormat: (TimeFormat) -> Unit,
 ) {
-    val minutesFocusRequester = remember { FocusRequester() }
-    var lastHours by rememberSaveable { mutableStateOf<Int?>(null) }
-    val is24Format = DateFormat.is24HourFormat(LocalContext.current)
-    var format by remember {
-        mutableStateOf(if (hours != null && hours > 11) TimeFormat.PM else TimeFormat.AM)
-    }
+    val minuteRequester = remember { FocusRequester() }
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
@@ -318,40 +325,15 @@ internal fun TemplateEditorEndTimeChooser(
         ) {
             OutlinedTextField(
                 modifier = Modifier.weight(1f),
-                value = if (is24Format) {
-                    hours?.toString() ?: ""
-                } else {
-                    when {
-                        hours == 0 && format == TimeFormat.AM -> "12"
-                        hours == 0 && format == TimeFormat.PM -> "12"
-                        format == TimeFormat.PM && hours != 12 -> hours?.minus(12)?.toString() ?: ""
-                        else -> hours?.toString() ?: ""
-                    }
-                },
+                value = hour,
                 onValueChange = {
-                    val time = it.toIntOrNull()
-                    if (time != null && is24Format && time in 0..23) {
-                        if (lastHours != null && lastHours.toString().length == 1 && it.length == 2) {
-                            minutesFocusRequester.requestFocus()
-                        }
-                        lastHours = time
-                        onTimeChange(time, minutes)
-                    } else if (time != null && !is24Format && time in 1..12) {
-                        if ((time in 1..12 && format == TimeFormat.PM) ||
-                            (time in 1..11 && format == TimeFormat.AM)
-                        ) {
-                            val formatTime = when (format) {
-                                TimeFormat.PM -> if (time != 12) time + 12 else 12
-                                TimeFormat.AM -> if (time != 12) time else 0
-                            }
-                            if (lastHours != null && lastHours.toString().length == 1 && it.length == 2) {
-                                minutesFocusRequester.requestFocus()
-                            }
-                            lastHours = time
-                            onTimeChange(formatTime, minutes)
-                        }
-                    } else if (it.isBlank()) {
-                        onTimeChange(null, minutes)
+                    val onLimitAction = { char: Char ->
+                        onMinuteChange(minute.endLimitCharTransition(char, 0..59, minuteRequester))
+                    }
+                    if (is24Format) {
+                        onHourChange(hour.changeTwoDigitNumber(it, 0..23, onLimitAction))
+                    } else {
+                        onHourChange(hour.changeTwoDigitNumber(it, 0..12, onLimitAction))
                     }
                 },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -364,13 +346,10 @@ internal fun TemplateEditorEndTimeChooser(
                 color = MaterialTheme.colorScheme.onSurface,
             )
             OutlinedTextField(
-                modifier = Modifier.weight(1f).align(Alignment.Bottom).focusRequester(minutesFocusRequester),
-                value = minutes?.toString() ?: "",
+                modifier = Modifier.weight(1f).align(Alignment.Bottom).focusRequester(minuteRequester),
+                value = minute,
                 onValueChange = {
-                    val time = it.toIntOrNull()
-                    if (time != null && time in 0..59) {
-                        onTimeChange(hours, time)
-                    } else if (it.isBlank()) onTimeChange(hours, null)
+                    onMinuteChange(minute.changeTwoDigitNumber(it, 0..59))
                 },
                 shape = MaterialTheme.shapes.large,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -380,10 +359,7 @@ internal fun TemplateEditorEndTimeChooser(
             modifier = Modifier.size(height = 60.dp, width = 45.dp).align(Alignment.Bottom),
             isVisible = !is24Format,
             format = format,
-            onChangeFormat = {
-                onTimeChange(null, minutes)
-                format = it
-            },
+            onChangeFormat = { onChangeFormat(it) },
         )
     }
 }

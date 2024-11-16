@@ -90,15 +90,10 @@ internal fun MainCategoryChooser(
         modifier = modifier.height(68.dp),
         enabled = currentCategory != null && enabled,
         shape = MaterialTheme.shapes.medium,
-//        color = when (isError) {
-//            true -> MaterialTheme.colorScheme.errorContainer
-//            false -> MaterialTheme.colorScheme.surface
-//        },
         color = when (isError) {
             true -> MaterialTheme.colorScheme.errorContainer
             false -> MaterialTheme.colorScheme.surfaceContainerLow
         },
-        // tonalElevation = if (!isError) TimePlannerRes.elevations.levelOne else 0.dp,
         border = when (isError) {
             true -> BorderStroke(1.5.dp, MaterialTheme.colorScheme.error)
             false -> null

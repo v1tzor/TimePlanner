@@ -49,7 +49,9 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import ru.aleshin.core.ui.theme.TimePlannerRes
@@ -69,12 +71,17 @@ fun TimePickerDialog(
     onDismissRequest: () -> Unit,
     onSelectedTime: (Date) -> Unit,
 ) {
-    val calendar = Calendar.getInstance().apply { time = initTime }
+    val calendar = remember { Calendar.getInstance().apply { time = initTime } }
     val is24Format = DateFormat.is24HourFormat(LocalContext.current)
-    var hours by rememberSaveable { mutableStateOf<Int?>(calendar.get(Calendar.HOUR_OF_DAY)) }
-    var minutes by rememberSaveable { mutableStateOf<Int?>(calendar.get(Calendar.MINUTE)) }
-    var format by remember {
-        mutableStateOf(if (hours != null && hours!! > 11) TimeFormat.PM else TimeFormat.AM)
+    val hour = remember { calendar.get(Calendar.HOUR_OF_DAY) }
+    val minute = remember { calendar.get(Calendar.MINUTE) }
+    var format by remember { mutableStateOf(if (hour > 11) TimeFormat.PM else TimeFormat.AM) }
+    var editableHour by rememberSaveable(stateSaver = TextFieldValue.Saver) {
+        val formatHour = if (is24Format) hour else hour.mapHour24ToAmPm().second
+        mutableStateOf(TextFieldValue(formatHour.toString().padStart(2, '0')))
+    }
+    var editableMinute by rememberSaveable(stateSaver = TextFieldValue.Saver) {
+        mutableStateOf(TextFieldValue(minute.toString().padStart(2, '0')))
     }
 
     BasicAlertDialog(onDismissRequest = onDismissRequest) {
@@ -90,37 +97,46 @@ fun TimePickerDialog(
             ) {
                 TimePickerHeader(title = headerTitle)
                 TimePickerHourMinuteSelector(
-                    hours = hours,
-                    minutes = minutes,
+                    hour = editableHour,
+                    minute = editableMinute,
                     format = format,
                     is24Format = is24Format,
-                    onHoursChanges = { value -> hours = value },
-                    onMinutesChanges = { value -> minutes = value },
-                    onChangeFormat = {
-                        hours = if (format == TimeFormat.PM) hours?.minus(12) else hours?.plus(12)
-                        format = it
-                    },
+                    onHourChanges = { value -> editableHour = value },
+                    onMinuteChanges = { value -> editableMinute = value },
+                    onChangeFormat = { format = it },
                 )
                 TimePickerActions(
-                    enabledConfirm = minutes in 0..59 && hours in 0..23,
                     onDismissClick = onDismissRequest,
                     onCurrentTimeChoose = {
-                        val currentTime = Calendar.getInstance()
-                        currentTime.add(Calendar.MINUTE, 1)
-                        hours = currentTime.get(Calendar.HOUR_OF_DAY)
-                        minutes = currentTime.get(Calendar.MINUTE)
-                        if (!is24Format) {
-                            format = if (hours in 0..11) TimeFormat.AM else TimeFormat.PM
+                        val currentTime = Calendar.getInstance().apply { add(Calendar.MINUTE, 1) }
+                        val currentHour = currentTime.get(Calendar.HOUR_OF_DAY)
+                        val currentMinute = currentTime.get(Calendar.MINUTE)
+                        if (is24Format) {
+                            editableHour = TextFieldValue(currentHour.toString().padStart(2, '0'))
+                            editableMinute = TextFieldValue(currentMinute.toString().padStart(2, '0'))
+                        } else {
+                            val amPmHour = currentHour.mapHour24ToAmPm()
+                            format = amPmHour.first
+                            editableHour = TextFieldValue(amPmHour.second.toString().padStart(2, '0'))
+                            editableMinute = TextFieldValue(currentMinute.toString().padStart(2, '0'))
                         }
                     },
                     onConfirmClick = {
                         val time = calendar.apply {
-                            set(Calendar.HOUR_OF_DAY, checkNotNull(hours))
-                            set(Calendar.MINUTE, checkNotNull(minutes))
+                            if (is24Format) {
+                                set(Calendar.HOUR_OF_DAY, editableHour.text.toInt())
+                                set(Calendar.MINUTE, editableMinute.text.toInt())
+                            } else {
+                                set(
+                                    Calendar.HOUR_OF_DAY,
+                                    editableHour.text.toInt().mapHourAmPmTo24(format)
+                                )
+                                set(Calendar.MINUTE, editableMinute.text.toInt())
+                            }
                             set(Calendar.SECOND, 0)
                             set(Calendar.MILLISECOND, 0)
-                        }.time
-                        onSelectedTime.invoke(time)
+                        }
+                        onSelectedTime.invoke(time.time)
                     },
                 )
             }
@@ -145,50 +161,40 @@ internal fun TimePickerHeader(
 @Composable
 internal fun TimePickerHourMinuteSelector(
     modifier: Modifier = Modifier,
-    hours: Int?,
-    minutes: Int?,
+    hour: TextFieldValue,
+    minute: TextFieldValue,
     isEnableSupportText: Boolean = false,
     is24Format: Boolean,
     format: TimeFormat,
-    onHoursChanges: (Int?) -> Unit,
-    onMinutesChanges: (Int?) -> Unit,
+    onHourChanges: (TextFieldValue) -> Unit,
+    onMinuteChanges: (TextFieldValue) -> Unit,
     onChangeFormat: (TimeFormat) -> Unit,
 ) = Row(
     modifier = modifier.padding(horizontal = 24.dp),
     verticalAlignment = Alignment.CenterVertically,
 ) {
-    val requester = remember { FocusRequester() }
+    val hourRequester = remember { FocusRequester() }
+    val minuteRequester = remember { FocusRequester() }
     OutlinedTextField(
-        modifier = Modifier.weight(1f),
-        value = if (is24Format) {
-            hours?.toString() ?: ""
-        } else {
-            when {
-                hours == 0 && format == TimeFormat.AM -> "12"
-                hours == 0 && format == TimeFormat.PM -> "12"
-                format == TimeFormat.PM && hours != 12 -> hours?.minus(12)?.toString() ?: ""
-                else -> hours?.toString() ?: ""
-            }
-        },
+        modifier = Modifier.weight(1f).focusRequester(hourRequester),
+        value = hour,
         onValueChange = {
-            val time = it.toIntOrNull()
-            if (time != null && is24Format && time in 0..23) {
-                onHoursChanges(time)
-            } else if (time != null && !is24Format && time in 1..12) {
-                val formatTime = when (format) {
-                    TimeFormat.PM -> if (time != 12) time + 12 else 12
-                    TimeFormat.AM -> if (time != 12) time else 0
-                }
-                onHoursChanges(formatTime)
-            } else if (it.isBlank()) {
-                onHoursChanges(null)
+            val onLimitAction = { char: Char ->
+                onMinuteChanges(minute.endLimitCharTransition(char, 0..59, minuteRequester))
+            }
+            if (is24Format) {
+                onHourChanges(hour.changeTwoDigitNumber(it, 0..23, onLimitAction))
+            } else {
+                onHourChanges(hour.changeTwoDigitNumber(it, 0..12, onLimitAction))
             }
         },
         textStyle = MaterialTheme.typography.displayMedium.copy(textAlign = TextAlign.Center),
         shape = MaterialTheme.shapes.large,
-        supportingText = if (isEnableSupportText) { {
-            Text(TimePlannerRes.strings.hoursTitle)
-        } } else {
+        supportingText = if (isEnableSupportText) {
+            {
+                Text(TimePlannerRes.strings.hoursTitle)
+            }
+        } else {
             null
         },
         singleLine = true,
@@ -208,21 +214,18 @@ internal fun TimePickerHourMinuteSelector(
         color = MaterialTheme.colorScheme.onSurface,
     )
     OutlinedTextField(
-        modifier = Modifier.weight(1f).focusRequester(requester),
-        value = minutes?.toString() ?: "",
+        modifier = Modifier.weight(1f).focusRequester(minuteRequester),
+        value = minute,
         onValueChange = {
-            val time = it.toIntOrNull()
-            if (time != null && time in 0..59) {
-                onMinutesChanges(time)
-            } else if (it.isBlank()) {
-                onMinutesChanges(null)
-            }
+            onMinuteChanges(minute.changeTwoDigitNumber(it, 0..59))
         },
         textStyle = MaterialTheme.typography.displayMedium.copy(textAlign = TextAlign.Center),
         shape = MaterialTheme.shapes.large,
-        supportingText = if (isEnableSupportText) { {
-            Text(TimePlannerRes.strings.minutesTitle)
-        } } else {
+        supportingText = if (isEnableSupportText) {
+            {
+                Text(TimePlannerRes.strings.minutesTitle)
+            }
+        } else {
             null
         },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -267,5 +270,75 @@ internal fun TimePickerActions(
     }
     TextButton(enabled = enabledConfirm, onClick = onConfirmClick) {
         Text(text = TimePlannerRes.strings.confirmTitle)
+    }
+}
+
+fun Int.mapHourAmPmTo24(format: TimeFormat): Int {
+    return when (format) {
+        TimeFormat.PM -> if (this != 12) this + 12 else 12
+        TimeFormat.AM -> if (this != 12) this else 0
+    }
+}
+
+fun Int.mapHour24ToAmPm(): Pair<TimeFormat, Int> {
+    return Pair(
+        first = if (this in 0..11) TimeFormat.AM else TimeFormat.PM,
+        second = when (this@mapHour24ToAmPm) {
+            0 -> 12
+            in 1..12 -> this@mapHour24ToAmPm
+            else -> this@mapHour24ToAmPm - 12
+        },
+    )
+}
+
+fun TextFieldValue.changeTwoDigitNumber(
+    newValue: TextFieldValue,
+    restrict: IntRange = Int.MIN_VALUE..Int.MAX_VALUE,
+    onLimit: ((Char) -> Unit)? = null,
+): TextFieldValue {
+    val cursor = selection.min
+    val oldText = text
+    val newText = newValue.text.filter { it.isDigit() }.take(2)
+    val finalText = if (newText.length < oldText.length) {
+        if (cursor == 2) {
+            newText + "0"
+        } else {
+            newText.padStart(2, '0')
+        }
+    } else {
+        if (cursor == 0) {
+            newText.first().toString() + oldText.last().toString()
+        } else {
+            newText.padStart(2, '0')
+        }
+    }
+    val newCursor = minOf(newValue.selection.start, finalText.length)
+    if (cursor == 2 && newCursor == 2 && newText == finalText) {
+        onLimit?.invoke(newValue.text.last())
+    }
+    return if (finalText.toInt() in restrict) {
+        TextFieldValue(text = finalText, selection = TextRange(newCursor))
+    } else {
+        this@changeTwoDigitNumber
+    }
+}
+
+fun TextFieldValue.endLimitCharTransition(
+    char: Char,
+    restrict: IntRange = Int.MIN_VALUE..Int.MAX_VALUE,
+    requester: FocusRequester,
+): TextFieldValue {
+    requester.requestFocus()
+    val newText = char.toString() + text.last().toString()
+    return if (newText.toInt() in restrict) {
+        TextFieldValue(
+            text = newText,
+            selection = TextRange(1),
+        )
+    } else {
+        TextFieldValue(
+            text = text,
+            selection = TextRange(0),
+        )
     }
 }

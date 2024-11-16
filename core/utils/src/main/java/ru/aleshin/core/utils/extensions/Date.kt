@@ -20,7 +20,9 @@ import ru.aleshin.core.utils.functional.Month
 import ru.aleshin.core.utils.functional.TimeRange
 import ru.aleshin.core.utils.functional.WeekDay
 import java.math.RoundingMode
-import java.util.*
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 import kotlin.math.abs
 import kotlin.math.ceil
 
@@ -124,9 +126,9 @@ fun Calendar.setEndDay() = this.apply {
     set(Calendar.MILLISECOND, 59)
 }
 
-fun Calendar.setHoursAndMinutes(hours: Int, minutes: Int) = this.apply {
-    set(Calendar.HOUR_OF_DAY, hours)
-    set(Calendar.MINUTE, minutes)
+fun Calendar.setHoursAndMinutes(hour: Int, minute: Int) = this.apply {
+    set(Calendar.HOUR_OF_DAY, hour)
+    set(Calendar.MINUTE, minute)
     set(Calendar.SECOND, 0)
     set(Calendar.MILLISECOND, 0)
 }

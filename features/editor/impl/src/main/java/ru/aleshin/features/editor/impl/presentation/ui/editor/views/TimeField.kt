@@ -70,7 +70,6 @@ internal fun BaseTimeField(
         modifier = modifier.height(56.dp).widthIn(min = 120.dp),
         shape = MaterialTheme.shapes.medium,
         color = color,
-//        tonalElevation = TimePlannerRes.elevations.levelOne,
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 12.dp),

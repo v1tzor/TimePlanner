@@ -58,7 +58,6 @@ internal fun ParameterChooser(
         modifier = modifier.fillMaxWidth(),
         shape = MaterialTheme.shapes.medium,
         color = MaterialTheme.colorScheme.surfaceContainerLow,
-        // tonalElevation = TimePlannerRes.elevations.levelOne,
     ) {
         Row(
             modifier = Modifier.padding(16.dp),
@@ -121,7 +120,6 @@ internal fun <Item : SegmentedButtonItem> SegmentedParametersChooser(
         modifier = modifier.fillMaxWidth(),
         shape = MaterialTheme.shapes.medium,
         color = MaterialTheme.colorScheme.surfaceContainerLow,
-        // tonalElevation = TimePlannerRes.elevations.levelOne,
     ) {
         Column(
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),

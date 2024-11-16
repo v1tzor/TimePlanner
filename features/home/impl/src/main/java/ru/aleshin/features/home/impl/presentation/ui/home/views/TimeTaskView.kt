@@ -80,7 +80,6 @@ internal fun PlannedTimeTask(
         enabled = true,
         shape = MaterialTheme.shapes.large,
         color = MaterialTheme.colorScheme.surfaceContainerLow,
-        // tonalElevation = TimePlannerRes.elevations.levelOne,
     ) {
         Column(modifier = Modifier.animateContentSize()) {
             Row(
