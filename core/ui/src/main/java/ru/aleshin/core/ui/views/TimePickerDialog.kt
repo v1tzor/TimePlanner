@@ -19,15 +19,19 @@ import android.text.format.DateFormat
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.BasicAlertDialog
+import androidx.compose.material3.ButtonDefaults.ContentPadding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -37,6 +41,9 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TimeInput
+import androidx.compose.material3.TimePicker
+import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -48,6 +55,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextRange
@@ -55,6 +63,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import ru.aleshin.core.ui.theme.TimePlannerRes
 import ru.aleshin.core.utils.functional.TimeFormat
 import java.util.Calendar
@@ -64,8 +74,110 @@ import java.util.Date
  * @author Stanislav Aleshin on 03.03.2023.
  */
 @Composable
+fun BasicTimePickerDialog(
+    modifier: Modifier = Modifier,
+    title: String,
+    onCancel: () -> Unit,
+    onConfirm: () -> Unit,
+    onCurrentTimeChoose: () -> Unit,
+    toggle: @Composable () -> Unit = {},
+    content: @Composable () -> Unit,
+) {
+    Dialog(
+        onDismissRequest = onCancel,
+        properties = DialogProperties(usePlatformDefaultWidth = false),
+    ) {
+        Surface(
+            modifier = modifier
+                .width(IntrinsicSize.Min)
+                .height(IntrinsicSize.Min),
+            shape = MaterialTheme.shapes.extraLarge,
+            color = MaterialTheme.colorScheme.surfaceContainer,
+        ) {
+            Column(
+                modifier = Modifier.padding(vertical = 24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 24.dp, end = 24.dp, bottom = 20.dp),
+                    text = title,
+                    style = MaterialTheme.typography.labelMedium
+                )
+                Box(modifier = Modifier.padding(horizontal = 24.dp)) { content() }
+                TimePickerActions(
+                    modifier = Modifier.fillMaxWidth(),
+                    paddingValues = PaddingValues(start = 16.dp, end = 8.dp),
+                    onDismissClick = onCancel,
+                    toggle = toggle,
+                    onCurrentTimeChoose = onCurrentTimeChoose,
+                    onConfirmClick = onConfirm
+                )
+            }
+        }
+    }
+}
+
+@Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun TimePickerDialog(
+fun MultiTimePickerDialog(
+    headerTitle: String,
+    initTime: Date,
+    onDismissRequest: () -> Unit,
+    onSelectedTime: (Date) -> Unit,
+) {
+    val calendar = remember { Calendar.getInstance().apply { time = initTime } }
+    val hour = remember { calendar.get(Calendar.HOUR_OF_DAY) }
+    val minute = remember { calendar.get(Calendar.MINUTE) }
+    val state = rememberTimePickerState(initialHour = hour, initialMinute = minute)
+    var showingPicker by remember { mutableStateOf(false) }
+    val configuration = LocalConfiguration.current
+
+    BasicTimePickerDialog(
+        title = headerTitle,
+        onCancel = onDismissRequest,
+        onConfirm = {
+            val cal = Calendar.getInstance()
+            cal.set(Calendar.HOUR_OF_DAY, state.hour)
+            cal.set(Calendar.MINUTE, state.minute)
+            onSelectedTime(cal.time)
+        },
+        onCurrentTimeChoose = {
+            val currentTime = Calendar.getInstance().apply { add(Calendar.MINUTE, 1) }
+            state.hour = currentTime.get(Calendar.HOUR_OF_DAY)
+            state.minute = currentTime.get(Calendar.MINUTE)
+        },
+        toggle = {
+            if (configuration.screenHeightDp > 400) {
+                IconButton(
+                    modifier = Modifier.size(36.dp),
+                    onClick = { showingPicker = !showingPicker }
+                ) {
+                    Icon(
+                        painter = if (showingPicker) {
+                            painterResource(TimePlannerRes.icons.keyboard)
+                        } else {
+                            painterResource(TimePlannerRes.icons.schedulerIcon)
+                        },
+                        contentDescription = null,
+                    )
+                }
+            }
+        }
+    ) {
+        if (showingPicker && configuration.screenHeightDp > 400) {
+            TimePicker(state = state)
+        } else {
+            TimeInput(state = state)
+        }
+    }
+}
+
+@Composable
+@OptIn(ExperimentalMaterial3Api::class)
+@Deprecated("Use Material 3 Time Picker")
+fun TimeInputPickerDialog(
     modifier: Modifier = Modifier,
     headerTitle: String,
     initTime: Date,
@@ -128,10 +240,7 @@ fun TimePickerDialog(
                                 set(Calendar.HOUR_OF_DAY, editableHour.text.toInt())
                                 set(Calendar.MINUTE, editableMinute.text.toInt())
                             } else {
-                                set(
-                                    Calendar.HOUR_OF_DAY,
-                                    editableHour.text.toInt().mapHourAmPmTo24(format)
-                                )
+                                set(Calendar.HOUR_OF_DAY, editableHour.text.toInt().mapHourAmPmTo24(format))
                                 set(Calendar.MINUTE, editableMinute.text.toInt())
                             }
                             set(Calendar.SECOND, 0)
@@ -150,7 +259,9 @@ internal fun TimePickerHeader(
     modifier: Modifier = Modifier,
     title: String,
 ) = Box(
-    modifier = modifier.padding(start = 24.dp, end = 24.dp, top = 24.dp).fillMaxWidth(),
+    modifier = modifier
+        .padding(start = 24.dp, end = 24.dp, top = 24.dp)
+        .fillMaxWidth(),
 ) {
     Text(
         text = title,
@@ -179,7 +290,9 @@ internal fun TimePickerHourMinuteSelector(
     val minuteRequester = remember { FocusRequester() }
 
     OutlinedTextField(
-        modifier = Modifier.weight(1f).focusRequester(hourRequester),
+        modifier = Modifier
+            .weight(1f)
+            .focusRequester(hourRequester),
         value = hour,
         onValueChange = {
             val onLimitAction = { char: Char ->
@@ -217,7 +330,9 @@ internal fun TimePickerHourMinuteSelector(
         color = MaterialTheme.colorScheme.onSurface,
     )
     OutlinedTextField(
-        modifier = Modifier.weight(1f).focusRequester(minuteRequester),
+        modifier = Modifier
+            .weight(1f)
+            .focusRequester(minuteRequester),
         value = minute,
         onValueChange = {
             onMinuteChanges(minute.changeTwoDigitNumber(it, 0..59))
@@ -241,7 +356,9 @@ internal fun TimePickerHourMinuteSelector(
         ),
     )
     TimeFormatSelector(
-        modifier = Modifier.size(height = 80.dp, width = 52.dp).offset(x = 12.dp),
+        modifier = Modifier
+            .size(height = 80.dp, width = 52.dp)
+            .offset(x = 12.dp),
         isVisible = !is24Format,
         format = format,
         onChangeFormat = onChangeFormat,
@@ -258,27 +375,45 @@ internal fun TimePickerHourMinuteSelector(
 internal fun TimePickerActions(
     modifier: Modifier = Modifier,
     enabledConfirm: Boolean = true,
+    paddingValues: PaddingValues = PaddingValues(bottom = 20.dp, start = 16.dp, end = 24.dp),
+    toggle: @Composable () -> Unit = {},
     onDismissClick: () -> Unit,
     onCurrentTimeChoose: () -> Unit,
     onConfirmClick: () -> Unit,
 ) = Row(
-    modifier = modifier.padding(bottom = 20.dp, start = 16.dp, end = 24.dp),
-    horizontalArrangement = Arrangement.spacedBy(8.dp),
+    modifier = modifier.padding(paddingValues),
     verticalAlignment = Alignment.CenterVertically,
 ) {
-    IconButton(onClick = onCurrentTimeChoose) {
-        Icon(
-            painter = painterResource(TimePlannerRes.icons.time),
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.onSurface,
-        )
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        toggle()
+        IconButton(
+            modifier = Modifier.size(36.dp),
+            onClick = onCurrentTimeChoose
+        ) {
+            Icon(
+                painter = painterResource(TimePlannerRes.icons.time),
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurface,
+            )
+        }
     }
     Spacer(modifier = Modifier.weight(1f))
-    TextButton(onClick = onDismissClick) {
+    TextButton(
+        onClick = onDismissClick,
+        contentPadding = PaddingValues(
+            start = 6.dp,
+            top = ContentPadding.calculateTopPadding(),
+            end = 6.dp,
+            bottom = ContentPadding.calculateBottomPadding()
+        ),
+    ) {
         Text(text = TimePlannerRes.strings.cancelTitle)
     }
     TextButton(enabled = enabledConfirm, onClick = onConfirmClick) {
-        Text(text = TimePlannerRes.strings.confirmTitle)
+        Text(text = TimePlannerRes.strings.okConfirmTitle)
     }
 }
 

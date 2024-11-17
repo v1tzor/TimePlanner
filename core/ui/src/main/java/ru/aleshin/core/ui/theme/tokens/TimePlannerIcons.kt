@@ -61,6 +61,7 @@ data class TimePlannerIcons(
     val cancel: Int,
     val check: Int,
     val add: Int,
+    val keyboard: Int,
 )
 
 internal val baseTimePlannerIcons = TimePlannerIcons(
@@ -103,6 +104,7 @@ internal val baseTimePlannerIcons = TimePlannerIcons(
     cancel = R.drawable.ic_cancel,
     check = R.drawable.ic_check,
     add = R.drawable.ic_add,
+    keyboard = R.drawable.ic_keyboard_outline,
 )
 
 val LocalTimePlannerIcons = staticCompositionLocalOf<TimePlannerIcons> {

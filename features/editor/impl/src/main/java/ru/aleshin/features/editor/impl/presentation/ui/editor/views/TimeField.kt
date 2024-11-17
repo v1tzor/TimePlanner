@@ -41,7 +41,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import ru.aleshin.core.ui.views.DurationPickerDialog
-import ru.aleshin.core.ui.views.TimePickerDialog
+import ru.aleshin.core.ui.views.MultiTimePickerDialog
 import ru.aleshin.core.ui.views.toMinutesAndHoursTitle
 import ru.aleshin.features.editor.impl.presentation.theme.EditorThemeRes
 import java.text.SimpleDateFormat
@@ -104,7 +104,7 @@ internal fun BaseTimeField(
         }
     }
     if (openDialog) {
-        TimePickerDialog(
+        MultiTimePickerDialog(
             headerTitle = EditorThemeRes.strings.timePickerHeader,
             initTime = currentTime,
             onDismissRequest = { openDialog = false },
