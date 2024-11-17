@@ -474,8 +474,8 @@ fun TextFieldValue.endLimitCharTransition(
     requester: FocusRequester,
 ): TextFieldValue {
     requester.requestFocus()
-    val newText = char.toString() + text.last().toString()
-    return if (newText.toInt() in restrict) {
+    val newText = char.toString() + (text.lastOrNull()?.toString() ?: "")
+    return if (newText.toIntOrNull() in restrict) {
         TextFieldValue(
             text = newText,
             selection = TextRange(1),
