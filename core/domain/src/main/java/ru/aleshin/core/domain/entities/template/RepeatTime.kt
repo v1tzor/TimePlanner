@@ -43,33 +43,41 @@ sealed class RepeatTime : Parcelable {
     @Serializable
     data class WeekDays(val day: WeekDay) : RepeatTime() {
 
-        @IgnoredOnParcel override val repeatType = RepeatTimeType.WEEK_DAY
+        @IgnoredOnParcel
+        override val repeatType = RepeatTimeType.WEEK_DAY
 
-        @IgnoredOnParcel override val key = day.number
+        @IgnoredOnParcel
+        override val key = day.number
     }
 
     @Serializable
     data class WeekDayInMonth(val day: WeekDay, val weekNumber: Int) : RepeatTime() {
 
-        @IgnoredOnParcel override val repeatType = RepeatTimeType.WEEK_DAY_IN_MONTH
+        @IgnoredOnParcel
+        override val repeatType = RepeatTimeType.WEEK_DAY_IN_MONTH
 
-        @IgnoredOnParcel override val key = day.number + weekNumber
+        @IgnoredOnParcel
+        override val key = day.number + weekNumber
     }
 
     @Serializable
     data class MonthDay(val dayNumber: Int) : RepeatTime() {
 
-        @IgnoredOnParcel override val repeatType = RepeatTimeType.MONTH_DAY
+        @IgnoredOnParcel
+        override val repeatType = RepeatTimeType.MONTH_DAY
 
-        @IgnoredOnParcel override val key = dayNumber
+        @IgnoredOnParcel
+        override val key = dayNumber
     }
 
     @Serializable
     data class YearDay(val month: Month, val dayNumber: Int) : RepeatTime() {
 
-        @IgnoredOnParcel override val repeatType = RepeatTimeType.YEAR_DAY
+        @IgnoredOnParcel
+        override val repeatType = RepeatTimeType.YEAR_DAY
 
-        @IgnoredOnParcel override val key = month.number + dayNumber
+        @IgnoredOnParcel
+        override val key = month.number + dayNumber
     }
 
     fun checkDateIsRepeat(date: Date) = when (this) {
@@ -81,14 +89,18 @@ sealed class RepeatTime : Parcelable {
 
     fun nextDate(startTime: Date, current: Date = Date()): Date {
         val calendar = Calendar.getInstance()
+        val firstDay = calendar.firstDayOfWeek
         when (this) {
             is WeekDays -> {
                 calendar.time = current
-                if (current.fetchWeekDay().priority >= day.priority) {
+                if (current.fetchWeekDay().priorityByFirstDayOfWeek(firstDay) >=
+                    day.priorityByFirstDayOfWeek(firstDay)
+                ) {
                     calendar.add(Calendar.DAY_OF_WEEK_IN_MONTH, 1)
                 }
                 calendar.set(Calendar.DAY_OF_WEEK, day.number)
             }
+
             is MonthDay -> {
                 calendar.time = current
                 if (current.fetchDay() >= dayNumber) {
@@ -97,6 +109,7 @@ sealed class RepeatTime : Parcelable {
                 }
                 calendar.set(Calendar.DAY_OF_MONTH, dayNumber)
             }
+
             is YearDay -> {
                 calendar.time = current
                 if (current.fetchMonth().number >= month.number && current.fetchDay() > dayNumber) {
@@ -105,9 +118,12 @@ sealed class RepeatTime : Parcelable {
                 calendar.set(Calendar.MONTH, month.number)
                 calendar.set(Calendar.DAY_OF_MONTH, dayNumber)
             }
+
             is WeekDayInMonth -> {
                 calendar.time = current
-                if (current.fetchWeekNumber() >= weekNumber && current.fetchWeekDay().priority > day.priority) {
+                if (current.fetchWeekNumber() >= weekNumber &&
+                    current.fetchWeekDay().priorityByFirstDayOfWeek(firstDay) > day.priorityByFirstDayOfWeek(firstDay)
+                ) {
                     calendar.add(Calendar.MONTH, 1)
                 }
                 calendar.set(Calendar.DAY_OF_WEEK, day.number)
