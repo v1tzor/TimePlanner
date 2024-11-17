@@ -24,7 +24,7 @@ object Versions {
     const val refreshLayout = "1.1.0"
     const val lifecycle = "2.8.7"
     const val serialization = "1.7.3"
-    const val glance = "1.1.0"
+    const val glance = "1.1.1"
 
     const val accompanist = "0.36.0"
     const val gson = "2.10.1"

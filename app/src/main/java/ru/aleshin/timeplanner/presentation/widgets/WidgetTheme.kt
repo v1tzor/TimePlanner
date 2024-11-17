@@ -49,8 +49,9 @@ import ru.aleshin.core.ui.theme.tokens.fetchCoreLanguage
 import ru.aleshin.core.ui.theme.tokens.fetchCoreStrings
 import ru.aleshin.core.utils.extensions.fetchLocale
 import ru.aleshin.timeplanner.R
-import ru.aleshin.timeplanner.presentation.widgets.WidgetGlanceColorScheme.fetchColorSchemeByColorsType
+import ru.aleshin.timeplanner.presentation.widgets.WidgetGlanceColorScheme.fetchColorScheme
 import ru.aleshin.timeplanner.presentation.widgets.main.MainWidgetReceiver.Companion.COLORS_TYPE_KEY
+import ru.aleshin.timeplanner.presentation.widgets.main.MainWidgetReceiver.Companion.DYNAMIC_COLOR
 import kotlin.math.ln
 
 /**
@@ -66,9 +67,10 @@ fun WidgetTheme(
     val coreStrings = fetchCoreStrings(appLanguage)
     val appElevations = fetchAppElevations()
     val colorsType = currentState(COLORS_TYPE_KEY)?.let { ColorsUiType.valueOf(it) } ?: ColorsUiType.PINK
+    val dynamicColors = currentState(DYNAMIC_COLOR) ?: false
     val coreIcons = fetchCoreIcons()
 
-    GlanceTheme(colors = fetchColorSchemeByColorsType(colorsType)) {
+    GlanceTheme(colors = fetchColorScheme(colorsType, dynamicColors)) {
         CompositionLocalProvider(
             LocalGlanceTypography provides typography,
             LocalTimePlannerLanguage provides appLanguage,

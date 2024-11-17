@@ -115,7 +115,7 @@ internal fun EditorContent(
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                 ) {
                     CategoriesSection(
-                        enabled = !state.editModel.checkDateIsRepeat(),
+                        enabledCategories = !state.editModel.checkDateIsRepeat(),
                         isMainCategoryValidError = state.categoryValid is CategoryValidateError.EmptyCategoryError,
                         mainCategory = state.editModel.mainCategory,
                         subCategory = state.editModel.subCategory,
@@ -159,7 +159,8 @@ internal fun EditorContent(
 @Composable
 internal fun CategoriesSection(
     modifier: Modifier = Modifier,
-    enabled: Boolean = true,
+    enabledCategories: Boolean = true,
+    enabledNote: Boolean = true,
     isMainCategoryValidError: Boolean,
     mainCategory: MainCategoryUi?,
     subCategory: SubCategoryUi?,
@@ -186,7 +187,7 @@ internal fun CategoriesSection(
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             MainCategoryChooser(
-                enabled = enabled,
+                enabled = enabledCategories,
                 modifier = Modifier.fillMaxWidth(),
                 isError = isMainCategoryValidError,
                 currentCategory = mainCategory,
@@ -206,7 +207,7 @@ internal fun CategoriesSection(
         }
         val findCategories = allCategories.find { it.mainCategory == mainCategory }
         SubCategoryChooser(
-            enabled = enabled,
+            enabled = enabledCategories,
             modifier = Modifier.fillMaxWidth(),
             mainCategory = mainCategory,
             allSubCategories = findCategories?.subCategories ?: emptyList(),
@@ -218,7 +219,7 @@ internal fun CategoriesSection(
             },
         )
         CustomLargeTextField(
-            enabled = enabled,
+            enabled = enabledNote,
             text = editableNote, 
             onTextChange = { 
                 if (it.text.length <= Constants.Text.MAX_NOTE_LENGTH) {
@@ -389,7 +390,6 @@ internal fun ActionButtonsSection(
                 content = { Text(text = EditorThemeRes.strings.cancelButtonTitle) },
             )
             Button(
-                enabled = !isRepeatTemplate,
                 onClick = onSaveClick,
                 content = { Text(text = EditorThemeRes.strings.saveTaskButtonTitle) },
             )

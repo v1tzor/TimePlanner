@@ -17,7 +17,11 @@ package ru.aleshin.features.editor.impl.presentation.ui.editor.processors
 
 import ru.aleshin.core.utils.functional.Either
 import ru.aleshin.core.utils.functional.rightOrElse
-import ru.aleshin.core.utils.platform.screenmodel.work.*
+import ru.aleshin.core.utils.platform.screenmodel.work.ActionResult
+import ru.aleshin.core.utils.platform.screenmodel.work.EffectResult
+import ru.aleshin.core.utils.platform.screenmodel.work.WorkCommand
+import ru.aleshin.core.utils.platform.screenmodel.work.WorkProcessor
+import ru.aleshin.core.utils.platform.screenmodel.work.WorkResult
 import ru.aleshin.features.editor.impl.domain.common.convertToEditModel
 import ru.aleshin.features.editor.impl.domain.common.convertToTemplate
 import ru.aleshin.features.editor.impl.domain.interactors.CategoriesInteractor

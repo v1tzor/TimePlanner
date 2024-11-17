@@ -48,6 +48,7 @@ import ru.aleshin.core.ui.mappers.mapToName
 import ru.aleshin.core.ui.theme.TimePlannerRes
 import ru.aleshin.core.ui.views.toMinutesOrHoursTitle
 import ru.aleshin.core.utils.extensions.duration
+import ru.aleshin.core.utils.extensions.setZeroSecond
 import ru.aleshin.core.utils.functional.TimeRange
 import ru.aleshin.timeplanner.presentation.widgets.common.CompatScaffold
 import ru.aleshin.timeplanner.presentation.widgets.compatCornerBackground
@@ -68,11 +69,12 @@ fun MainWidgetContent(
     currentTime: Date,
     timeTasks: List<TimeTask>,
     onTimeTaskClickAction: (TimeTask) -> Action,
+    onUpdateClickAction: () -> Action,
     onAddAction: () -> Action,
 ) {
     CompatScaffold(
         modifier = modifier.fillMaxSize(),
-        titleBar = { MainWidgetTitleBar(onAddAction = onAddAction) },
+        titleBar = { MainWidgetTitleBar(onUpdateAction = onUpdateClickAction, onAddAction = onAddAction) },
         backgroundColor = GlanceTheme.colors.background,
     ) {
         val sortedTimeTasks = remember(timeTasks) { timeTasks.sortedBy { it.timeRange.from.time } }
@@ -89,7 +91,10 @@ fun MainWidgetContent(
                             modifier = GlanceModifier.defaultWeight(),
                             currentTime = currentTime,
                             onTimeTaskClickAction = { onTimeTaskClickAction(task) },
-                            timeRange = task.timeRange,
+                            timeRange = task.timeRange.copy(
+                                from = task.timeRange.from.setZeroSecond(),
+                                to = task.timeRange.to.setZeroSecond(),
+                            ),
                             category = task.category,
                             subCategory = task.subCategory,
                             priority = task.priority,
@@ -110,6 +115,7 @@ fun MainWidgetContent(
 @Composable
 fun MainWidgetTitleBar(
     modifier: GlanceModifier = GlanceModifier,
+    onUpdateAction: () -> Action,
     onAddAction: () -> Action,
 ) {
     Row(
@@ -127,6 +133,20 @@ fun MainWidgetTitleBar(
             )
         }
         Spacer(GlanceModifier.defaultWeight())
+        Box(
+            modifier = modifier
+                .size(48.dp)
+                .compatCornerBackground(GlanceTheme.colors.background, 100)
+                .clickable(onUpdateAction()),
+            contentAlignment = Alignment.Center,
+        ) {
+            Image(
+                provider = ImageProvider(TimePlannerRes.icons.reset),
+                contentDescription = null,
+                modifier = GlanceModifier.size(24.dp),
+                colorFilter = ColorFilter.tint(GlanceTheme.colors.onBackground),
+            )
+        }
         Box(
             modifier = modifier
                 .size(48.dp)

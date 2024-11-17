@@ -261,13 +261,18 @@ fun Long.toDaysString(dayTitle: String): String {
     return if (days > 0) "< $days $dayTitle" else "$days $dayTitle"
 }
 
-fun Date.setZeroSecond(): Date {
+fun Date.setSecond(second: Int): Date {
     val calendar = Calendar.getInstance().apply {
-        time = this@setZeroSecond
-        set(Calendar.SECOND, 0)
+        time = this@setSecond
+        set(Calendar.SECOND, second)
+        set(Calendar.MILLISECOND, 0)
     }
 
     return calendar.time
+}
+
+fun Date.setZeroSecond(): Date {
+    return setSecond(0)
 }
 
 fun TimeRange.isIncludeTime(time: Date): Boolean {

@@ -18,7 +18,11 @@ package ru.aleshin.features.editor.impl.presentation.ui.editor.processors
 import ru.aleshin.core.domain.entities.schedules.TimeTask
 import ru.aleshin.core.ui.notifications.TimeTaskAlarmManager
 import ru.aleshin.core.utils.functional.Either
-import ru.aleshin.core.utils.platform.screenmodel.work.*
+import ru.aleshin.core.utils.platform.screenmodel.work.ActionResult
+import ru.aleshin.core.utils.platform.screenmodel.work.EffectResult
+import ru.aleshin.core.utils.platform.screenmodel.work.WorkCommand
+import ru.aleshin.core.utils.platform.screenmodel.work.WorkProcessor
+import ru.aleshin.core.utils.platform.screenmodel.work.WorkResult
 import ru.aleshin.features.editor.impl.domain.common.convertToTimeTask
 import ru.aleshin.features.editor.impl.domain.entites.EditorFailures
 import ru.aleshin.features.editor.impl.domain.interactors.TimeTaskInteractor
@@ -63,20 +67,31 @@ internal interface TimeTaskWorkProcessor : WorkProcessor<TimeTaskWorkCommand, Ed
                 true -> timeTaskInteractor.updateTimeTask(timeTask)
                 false -> timeTaskInteractor.addTimeTask(timeTask)
             }
-            return when (saveResult) {
-                is Either.Right -> notifyUpdateOrAdd(timeTask.copy(key = saveResult.data)).let {
-                    if (editModel.undefinedTaskId != null) {
-                        undefinedTasksInteractor.deleteUndefinedTask(editModel.undefinedTaskId)
+            return if (!editModel.checkDateIsRepeat()) {
+                when (saveResult) {
+                    is Either.Right -> notifyUpdateOrAdd(timeTask.copy(key = saveResult.data)).let {
+                        if (editModel.undefinedTaskId != null) {
+                            undefinedTasksInteractor.deleteUndefinedTask(editModel.undefinedTaskId)
+                        }
+                        navigationManager.navigateToHomeScreen()
+                        ActionResult(EditorAction.Navigate)
                     }
-                    navigationManager.navigateToHomeScreen()
-                    ActionResult(EditorAction.Navigate)
+                    is Either.Left -> with(saveResult.data) {
+                        val effect = when (this is EditorFailures.TimeOverlayError) {
+                            true -> EditorEffect.ShowOverlayError(editModel.timeRange, this)
+                            false -> EditorEffect.ShowError(this)
+                        }
+                        EffectResult(effect)
+                    }
                 }
-                is Either.Left -> with(saveResult.data) {
-                    val effect = when (this is EditorFailures.TimeOverlayError) {
-                        true -> EditorEffect.ShowOverlayError(editModel.timeRange, this)
-                        false -> EditorEffect.ShowError(this)
+            } else {
+                when (saveResult) {
+                    is Either.Right -> navigationManager.navigateToHomeScreen().let {
+                        ActionResult(EditorAction.Navigate)
                     }
-                    EffectResult(effect)
+                    is Either.Left -> {
+                        EffectResult(EditorEffect.ShowError(saveResult.data))
+                    }
                 }
             }
         }

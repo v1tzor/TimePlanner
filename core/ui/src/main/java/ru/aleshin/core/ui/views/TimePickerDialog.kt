@@ -150,9 +150,7 @@ internal fun TimePickerHeader(
     modifier: Modifier = Modifier,
     title: String,
 ) = Box(
-    modifier = modifier
-        .padding(start = 24.dp, end = 24.dp, top = 24.dp)
-        .fillMaxWidth(),
+    modifier = modifier.padding(start = 24.dp, end = 24.dp, top = 24.dp).fillMaxWidth(),
 ) {
     Text(
         text = title,
@@ -176,14 +174,12 @@ internal fun TimePickerHourMinuteSelector(
     modifier = modifier.padding(horizontal = 24.dp),
     verticalAlignment = Alignment.CenterVertically,
 ) {
-    var isRequestFirstFocus by rememberSaveable { mutableStateOf(false) }
+    var isRequestedFirstFocus by rememberSaveable { mutableStateOf(false) }
     val hourRequester = remember { FocusRequester() }
     val minuteRequester = remember { FocusRequester() }
 
     OutlinedTextField(
-        modifier = Modifier
-            .weight(1f)
-            .focusRequester(hourRequester),
+        modifier = Modifier.weight(1f).focusRequester(hourRequester),
         value = hour,
         onValueChange = {
             val onLimitAction = { char: Char ->
@@ -221,9 +217,7 @@ internal fun TimePickerHourMinuteSelector(
         color = MaterialTheme.colorScheme.onSurface,
     )
     OutlinedTextField(
-        modifier = Modifier
-            .weight(1f)
-            .focusRequester(minuteRequester),
+        modifier = Modifier.weight(1f).focusRequester(minuteRequester),
         value = minute,
         onValueChange = {
             onMinuteChanges(minute.changeTwoDigitNumber(it, 0..59))
@@ -247,17 +241,15 @@ internal fun TimePickerHourMinuteSelector(
         ),
     )
     TimeFormatSelector(
-        modifier = Modifier
-            .size(height = 80.dp, width = 52.dp)
-            .offset(x = 12.dp),
+        modifier = Modifier.size(height = 80.dp, width = 52.dp).offset(x = 12.dp),
         isVisible = !is24Format,
         format = format,
         onChangeFormat = onChangeFormat,
     )
     LaunchedEffect(Unit) {
-        if (!isRequestFirstFocus) {
+        if (!isRequestedFirstFocus) {
             hourRequester.requestFocus()
-            isRequestFirstFocus = true
+            isRequestedFirstFocus = true
         }
     }
 }

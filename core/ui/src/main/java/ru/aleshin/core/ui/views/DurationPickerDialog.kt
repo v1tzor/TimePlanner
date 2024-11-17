@@ -162,7 +162,7 @@ internal fun DurationPickerHourMinuteSelector(
     modifier = modifier.padding(horizontal = 24.dp),
     verticalAlignment = Alignment.CenterVertically,
 ) {
-    var isRequestFirstFocus by rememberSaveable { mutableStateOf(false) }
+    var isRequestedFirstFocus by rememberSaveable { mutableStateOf(false) }
     val hourRequester = remember { FocusRequester() }
     val minuteRequester = remember { FocusRequester() }
 
@@ -221,9 +221,9 @@ internal fun DurationPickerHourMinuteSelector(
         ),
     )
     LaunchedEffect(Unit) {
-        if (!isRequestFirstFocus) {
+        if (!isRequestedFirstFocus) {
             hourRequester.requestFocus()
-            isRequestFirstFocus = true
+            isRequestedFirstFocus = true
         }
     }
 }

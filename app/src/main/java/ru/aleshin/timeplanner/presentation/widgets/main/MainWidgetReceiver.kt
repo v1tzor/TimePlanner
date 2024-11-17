@@ -23,6 +23,7 @@ import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
 import androidx.core.content.getSystemService
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.glance.ExperimentalGlanceApi
 import androidx.glance.appwidget.GlanceAppWidget
@@ -67,6 +68,8 @@ class MainWidgetReceiver : GlanceAppWidgetReceiver() {
     ) {
         super.onUpdate(context, appWidgetManager, appWidgetIds)
         if (appComponent == null) appComponent = context.applicationContext.fetchApp().appComponent
+        updateDataInfo(context)
+        scheduleNextUpdate(context)
     }
 
     override fun onReceive(context: Context, intent: Intent) {
@@ -120,10 +123,13 @@ class MainWidgetReceiver : GlanceAppWidgetReceiver() {
             onRightAction = { TimeTasks(it) },
         ) ?: return@launch
 
-        val colorType = settingsInteractor?.fetchSettings()?.firstOrNull()?.handleAndGet(
+        val settings = settingsInteractor?.fetchSettings()?.firstOrNull()?.handleAndGet(
             onLeftAction = { error(it) },
-            onRightAction = { it.themeSettings.colorsType.toString() },
+            onRightAction = { it.themeSettings },
         ) ?: return@launch
+
+        val dynamicColorEnable = settings.isDynamicColorEnable
+        val colorType = settings.colorsType.toString()
 
 
         val widgetManager = GlanceAppWidgetManager(context)
@@ -132,6 +138,7 @@ class MainWidgetReceiver : GlanceAppWidgetReceiver() {
             updateAppWidgetState(context, PreferencesGlanceStateDefinition, glanceId) { prefs ->
                 prefs.toMutablePreferences().apply {
                     this[TASKS_KEY] = if (timeTasks.tasks.isNotEmpty()) Json.encodeToString(timeTasks) else ""
+                    this[DYNAMIC_COLOR] = dynamicColorEnable
                     this[COLORS_TYPE_KEY] = colorType
                 }
             }
@@ -141,7 +148,7 @@ class MainWidgetReceiver : GlanceAppWidgetReceiver() {
 
     companion object {
         val TASKS_KEY = stringPreferencesKey("daily_time_tasks")
-
+        val DYNAMIC_COLOR = booleanPreferencesKey("is_dynamic_color_enabled")
         val COLORS_TYPE_KEY = stringPreferencesKey("colors_type")
 
         fun intent(context: Context) = Intent(context, MainWidgetReceiver::class.java).apply {

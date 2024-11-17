@@ -16,6 +16,8 @@
 package ru.aleshin.timeplanner.presentation.widgets
 
 import androidx.compose.runtime.Composable
+import androidx.glance.color.ColorProviders
+import androidx.glance.color.DynamicThemeColorProviders
 import androidx.glance.material3.ColorProviders
 import ru.aleshin.core.ui.theme.material.ColorsUiType
 import ru.aleshin.core.ui.theme.material.blueDarkColorScheme
@@ -59,5 +61,14 @@ object WidgetGlanceColorScheme {
         ColorsUiType.PURPLE -> purple
         ColorsUiType.BLUE -> blue
         else -> pink
+    }
+
+    @Composable
+    fun fetchColorScheme(colors: ColorsUiType?, isDynamic: Boolean): ColorProviders {
+        return if (isDynamic) {
+            DynamicThemeColorProviders
+        } else {
+            fetchColorSchemeByColorsType(colors = colors)
+        }
     }
 }

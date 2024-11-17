@@ -24,6 +24,7 @@ import androidx.glance.GlanceId
 import androidx.glance.action.actionStartActivity
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.SizeMode
+import androidx.glance.appwidget.action.actionSendBroadcast
 import androidx.glance.appwidget.action.actionStartActivity
 import androidx.glance.appwidget.provideContent
 import androidx.glance.currentState
@@ -62,6 +63,7 @@ class MainWidget : GlanceAppWidget() {
                 currentTime = currentTime,
                 timeTasks = timeTasks.tasks,
                 onTimeTaskClickAction = { actionStartActivity<MainActivity>() },
+                onUpdateClickAction = { actionSendBroadcast<MainWidgetReceiver>() },
                 onAddAction = {
                     val mainActivityUri = Uri.parse(EDITOR_DEEP_LINK)
                     actionStartActivity(Intent(ACTION_VIEW, mainActivityUri))
