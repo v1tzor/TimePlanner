@@ -24,13 +24,13 @@ object Config {
     const val targetSdkVersion = 34
     const val minSdkVersion = 24
 
-    const val versionCode = 29
-    const val versionName = "0.9.0"
+    const val versionCode = 30
+    const val versionName = "1.0.0"
 
     const val testInstrumentRunner = "androidx.test.runner.AndroidJUnitRunner"
     const val consumerProguardFiles = "consumer-rules.pro"
 
     const val jvmTarget = "17"
 
-    const val kotlinCompiler = "1.4.7"
+    const val kotlinCompiler = "1.5.15"
 }

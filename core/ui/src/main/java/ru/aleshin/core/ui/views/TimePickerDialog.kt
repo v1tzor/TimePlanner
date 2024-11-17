@@ -95,7 +95,7 @@ fun BasicTimePickerDialog(
             color = MaterialTheme.colorScheme.surfaceContainer,
         ) {
             Column(
-                modifier = Modifier.padding(vertical = 24.dp),
+                modifier = Modifier.padding(top = 24.dp, bottom = 20.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
@@ -141,6 +141,7 @@ fun MultiTimePickerDialog(
             val cal = Calendar.getInstance()
             cal.set(Calendar.HOUR_OF_DAY, state.hour)
             cal.set(Calendar.MINUTE, state.minute)
+            cal.set(Calendar.SECOND, 0)
             onSelectedTime(cal.time)
         },
         onCurrentTimeChoose = {

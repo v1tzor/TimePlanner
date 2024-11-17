@@ -191,7 +191,6 @@ internal fun NoteCompactTextField(
             onValueChange = {
                 if (it.length <= Constants.Text.MAX_NOTE_LENGTH) onNoteChange(it.ifEmpty { null })
             },
-            readOnly = true,
             label = { Text(text = HomeThemeRes.strings.noteTitle) },
             trailingIcon = if (interactionSource.collectIsFocusedAsState().value) { {
                 IconButton(
