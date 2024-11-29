@@ -54,14 +54,14 @@ internal class NavScreen @Inject constructor() : Screen {
                 }
             },
         ) { navigator ->
-            val screenIndex = fetchFeatureScreenIndex(navigator.lastItem)
+            val screenIndex = fetchFeatureScreenIndex(navigator.lastItemOrNull)
             drawerManager?.selectedItem?.tryEmit(screenIndex)
             CurrentScreen()
         }
     }
 }
 
-internal fun fetchFeatureScreenIndex(screen: Screen) = when (screen) {
+internal fun fetchFeatureScreenIndex(screen: Screen?) = when (screen) {
     is HomeScreen -> 0
     is OverviewScreen -> 1
     is DetailsScreen -> 1

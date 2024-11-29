@@ -275,7 +275,13 @@ internal fun DateTimeSection(
             modifier = Modifier.weight(1f),
             currentTime = timeRanges.from,
             isError = isTimeValidError,
-            onChangeTime = { newStartTime -> onTimeRangeChange(timeRanges.copy(from = newStartTime)) },
+            onChangeTime = { newStartTime ->
+                if (newStartTime <= timeRanges.to) {
+                    onTimeRangeChange(timeRanges.copy(from = newStartTime))
+                } else {
+                    onTimeRangeChange(timeRanges.copy(from = newStartTime, to = timeRanges.to.shiftDay(1)))
+                }
+            },
         )
         EndTimeField(
             enabled = enabled,
@@ -283,7 +289,7 @@ internal fun DateTimeSection(
             currentTime = timeRanges.to,
             isError = isTimeValidError,
             onChangeTime = { newEndTime ->
-                val newTime = if (newEndTime > timeRanges.from) newEndTime else newEndTime.shiftDay(1)
+                val newTime = if (newEndTime >= timeRanges.from) newEndTime else newEndTime.shiftDay(1)
                 onTimeRangeChange(timeRanges.copy(to = newTime))
             },
         )

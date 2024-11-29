@@ -113,8 +113,8 @@ internal interface EditorWorkProcessor : WorkProcessor<EditorWorkCommand, Editor
 }
 
 internal sealed class EditorWorkCommand : WorkCommand {
-    object LoadSendEditModel : EditorWorkCommand()
-    object LoadTemplates : EditorWorkCommand()
+    data object LoadSendEditModel : EditorWorkCommand()
+    data object LoadTemplates : EditorWorkCommand()
     data class AddSubCategory(val name: String, val mainCategory: MainCategoryUi) : EditorWorkCommand()
     data class AddTemplate(val editModel: EditModelUi) : EditorWorkCommand()
     data class ApplyTemplate(val template: TemplateUi, val model: EditModelUi) : EditorWorkCommand()

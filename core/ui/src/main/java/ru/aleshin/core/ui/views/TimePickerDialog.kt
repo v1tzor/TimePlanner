@@ -138,11 +138,10 @@ fun MultiTimePickerDialog(
         title = headerTitle,
         onCancel = onDismissRequest,
         onConfirm = {
-            val cal = Calendar.getInstance()
-            cal.set(Calendar.HOUR_OF_DAY, state.hour)
-            cal.set(Calendar.MINUTE, state.minute)
-            cal.set(Calendar.SECOND, 0)
-            onSelectedTime(cal.time)
+            calendar.set(Calendar.HOUR_OF_DAY, state.hour)
+            calendar.set(Calendar.MINUTE, state.minute)
+            calendar.set(Calendar.SECOND, 0)
+            onSelectedTime(calendar.time)
         },
         onCurrentTimeChoose = {
             val currentTime = Calendar.getInstance().apply { add(Calendar.MINUTE, 1) }

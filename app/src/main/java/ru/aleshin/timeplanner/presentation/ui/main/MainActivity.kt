@@ -80,7 +80,7 @@ class MainActivity : BaseActivity<MainViewState, MainEvent, MainAction, MainEffe
                 navigatorManager = navigatorManager,
                 content = { navigator ->
                     CurrentScreen()
-                    if (navigator.lastItem is TabsScreen) getNotificationPermission()
+                    if (navigator.lastItemOrNull is TabsScreen) getNotificationPermission()
                 },
             )
             LaunchedEffect(key1 = state.secureMode) {
