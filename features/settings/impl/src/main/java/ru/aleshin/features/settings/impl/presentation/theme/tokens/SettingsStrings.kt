@@ -604,6 +604,59 @@ internal val polishSettingsString = SettingsStrings(
     selectDayCalendarBehavior = "Wybór daty",
 )
 
+internal val italianSettingsString = SettingsStrings(
+    settingsTitle = "Impostazioni",
+    mainSettingsTitle = "Grafica",
+    mainSettingsThemeTitle = "Tema",
+    darkThemeTitle = "Scuro",
+    lightThemeTitle = "Chiaro",
+    systemThemeTitle = "Sistema",
+    mainSettingsLanguageTitle = "Lingua",
+    rusLanguageTitle = "Russo",
+    engLanguageTitle = "Inglese",
+    gerLanguageTitle = "Tedesco",
+    spaLanguageTitle = "Spagnolo",
+    perLanguageTitle = "Persiano(b)",
+    freLanguageTitle = "Francese",
+    braporLanguageTitle = "Portoghese",
+    turLanguageTitle = "Turco",
+    vieLanguageTitle = "Vietnamese",
+    polLanguageTitle = "Polacco",
+    defaultLanguageTitle = "Default",
+    backIconDesc = "Torna indietro",
+    moreIconDesc = "Altro",
+    resetToDefaultTitle = "Reimposta le impostazioni originali",
+    menuIconDesc = "Menu",
+    dataSectionHeader = "Database",
+    clearDataTitle = "Cancella tutti i dati",
+    clearDataButtonTitle = "Cancella",
+    clearDataWarning = "Questa azione provocherà l'eliminazione di tutti i dati",
+    backupDataTitle = "Backup",
+    backupDataButtonTitle = "Salva",
+    restoreDataButtonTitle = "Ripristina",
+    errorBackupMessage = "Errore di Backup",
+    errorBackupFileMessage = "C'è stato un errore nella gestione del file",
+    otherError = "Qualcosa è andato storto. Contatta lo sviluppatore per ricevere assistenza.",
+    mainSettingsDynamicColorTitle = "Colori dinamici",
+    aboutAppHeader = "Informazioni dell'App",
+    versionCodeTitle = "Build number",
+    versionNameTitle = "Versione",
+    developerTitle = "Sviluppatore",
+    licenseTitle = "Licenza",
+    githubTitle = "Github",
+    askQuestionTitle = "Fai una domanda",
+    donateTitle = "Supporta con una donazione",
+    copyTitle = "Copia",
+    mainSettingsColorsTitle = "Colori",
+    donateHeader = "Dona",
+    secureSectionHeader = "Sicurezza",
+    secureModeTitle = "Schermata sicura",
+    interfaceSectionHeader = "Interfaccia",
+    calendarButtonBehaviorTitle = "Cosa succede quando clicco sull'icona del calendario?",
+    currentDayCalendarBehavior = "Vai al giorno corrente",
+    selectDayCalendarBehavior = "Scegli una data",
+)
+
 internal val LocalSettingsStrings = staticCompositionLocalOf<SettingsStrings> {
     error("Settings Strings is not provided")
 }
@@ -619,4 +672,5 @@ internal fun fetchSettingsStrings(language: TimePlannerLanguage) = when (languag
     TimePlannerLanguage.TR -> turkishSettingsString
     TimePlannerLanguage.VN -> vietnameseSettingsString
     TimePlannerLanguage.PL -> polishSettingsString
+    TimePlannerLanguage.IT -> italianSettingsString
 }

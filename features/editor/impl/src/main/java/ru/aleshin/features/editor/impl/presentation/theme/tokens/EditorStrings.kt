@@ -646,6 +646,63 @@ internal val polishEditorString = EditorStrings(
     beforeEndTitle = "Przed zakończeniem",
 )
 
+internal val italianEditorString = EditorStrings(
+    topAppBarEditorTitle = "Editor",
+    topAppBarBackIconDesc = "Indietro",
+    topAppBarMoreIconDesc = "Altro",
+    topAppBarTemplatesTitle = "Template",
+    mainCategoryChooserTitle = "Categoria",
+    subCategoryChooserTitle = "Sottocategoria",
+    chooseCategoryTitle = "Seleziona una categoria",
+    categoryNotSelectedTitle = "Niente",
+    subCategoryDialogAddedTitle = "aggiungi",
+    subCategoryDialogMainCategoryFormat = "Categoria: %s",
+    timeFieldStartLabel = "Inizio",
+    timeFieldEndLabel = "Fine",
+    parameterChooserSwitchIconDesc = "Imposta un parametro",
+    timePickerHeader = "Inserisci l'orario",
+    timePickerSeparator = ":",
+    notifyParameterTitle = "Notifiche",
+    notifyParameterDesc = "Imposta un promemoria per l'inizio del task",
+    statisticsParameterTitle = "Statistiche",
+    statisticsParameterDesc = "Includi nelle statistiche",
+    saveTaskButtonTitle = "Salva",
+    cancelButtonTitle = "Annulla",
+    templateIconDesc = "Salva come template",
+    topAppBarDeleteTitle = "Elimina",
+    categoryValidateError = "* Seleziona una categoria",
+    otherError = "Qualcosa è andato storto. Contatta lo sviluppatore per ottenere assistenza.",
+    startOverlayError = "Conflitto! Sovrapposizione con l'orario di inizio",
+    endOverlayError = "Conflitto! Sovrapposizione con l'orario di fine",
+    fullOverlayError = "Conflitto! Task Sovrapposti",
+    correctOverlayTitle = "Correggi",
+    durationPickerTitle = "Durata",
+    templatesSheetTitle = "Template",
+    controlTitle = "Gestione",
+    applyTitle = "Applica",
+    timeRangeFormat = "Orario: dalle %S alle %s",
+    durationFormat = "Durata: %s",
+    notificationEnabledTitle = "Notifiche: abilitate",
+    notificationDisabledTitle = "Notifiche: disabilitate",
+    emptyTemplatesTitle = "La lista è vuota",
+    saveTemplateWarningTitle = "Applicare le modifiche al template?",
+    saveTemplateWarningConfirm = "Sì",
+    saveTemplateWarningUnsave = "No",
+    categoriesManageWarningTitle = "Andare alla gestione delle categorie? " +
+        "I cambiamenti dei parametri non verranno salvati.",
+    confirmNavigateTitle = "Vai",
+    priorityParameterTitle = "Priorità",
+    noteLabel = "Note",
+    notePlaceholder = "Opzionali",
+    undefinedTasksSheetTitle = "Task non pianificate",
+    fifteenMinutesBeforeTitle = "15 minuti prima",
+    oneHourBeforeTitle = "Un'ora prima",
+    threeHourBeforeTitle = "Due ore prima",
+    oneDayBeforeTitle = "Un giorno prima",
+    oneWeekBeforeTitle = "Una settimana prima",
+    beforeEndTitle = "Prima del completamento",
+)
+
 internal val LocalEditorStrings = staticCompositionLocalOf<EditorStrings> {
     error("Home Strings is not provided")
 }
@@ -661,4 +718,5 @@ internal fun fetchEditorStrings(language: TimePlannerLanguage) = when (language)
     TimePlannerLanguage.TR -> turkishEditorString
     TimePlannerLanguage.VN -> vietnameseEditorString
     TimePlannerLanguage.PL -> polishEditorString
+    TimePlannerLanguage.IT -> italianEditorString
 }
