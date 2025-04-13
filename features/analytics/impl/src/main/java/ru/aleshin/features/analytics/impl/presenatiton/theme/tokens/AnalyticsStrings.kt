@@ -296,6 +296,31 @@ internal val polishAnalyticsString = AnalyticsStrings(
     executedStatisticsTitle = "Statystyki wykonania",
 )
 
+internal val italianAnalyticsString = AnalyticsStrings(
+    topAppBarTitle = "Statistiche",
+    menuIconDesc = "Menu",
+    timeTabTitle = "Tempi",
+    workLoadTabTitle = "Carico di Lavoro",
+    intelligenceTabTitle = "Informazioni",
+    weekTimePeriod = "Settimana",
+    monthTimePeriod = "Mese",
+    yearTimePeriod = "Anno",
+    timeSelectorTitle = "Periodo di Tempo:",
+    refreshAnalyticIconDesc = "Aggiorna Statistiche",
+    otherAnalyticsName = "Altro",
+    allTimeTitle = "Totale:",
+    totalCountTaskTitle = "Task Totali",
+    averageCountTaskTitle = "Task Giornalieri",
+    totalTimeTaskTitle = "Tempo speso\nsui task",
+    averageTimeTaskTitle = "Tempo medio\nper task",
+    workLoadAnalyticsTitle = "Carico di Lavoro",
+    planningAnalyticsTitle = "Pianificazione",
+    otherError = "Qualcosa è andato storto. Contatta lo sviluppatore per ottenere assistenza.",
+    halfYearTimePeriod = "Metà Anno",
+    categoryStatisticsTitle = "Categorie",
+    executedStatisticsTitle = "Completamento",
+)
+
 internal val LocalAnalyticsStrings = staticCompositionLocalOf<AnalyticsStrings> {
     error("Analytics Strings is not provided")
 }
@@ -311,4 +336,5 @@ internal fun fetchAnalyticsStrings(language: TimePlannerLanguage) = when (langua
     TimePlannerLanguage.TR -> turkishAnalyticsString
     TimePlannerLanguage.VN -> vietnameseAnalyticsString
     TimePlannerLanguage.PL -> polishAnalyticsString
+    TimePlannerLanguage.IT -> italianAnalyticsString
 }

@@ -34,6 +34,7 @@ enum class TimePlannerLanguage(val code: String) {
     TR("tr"),
     VN("vn"),
     PL("pl"),
+    IT("it"),
 }
 
 @Parcelize
@@ -49,6 +50,7 @@ enum class LanguageUiType(val code: String?) : Parcelable {
     TR("tr"),
     VN("vn"),
     PL("pl"),
+    IT("it"),
 }
 
 val LocalTimePlannerLanguage = staticCompositionLocalOf<TimePlannerLanguage> {
@@ -71,4 +73,5 @@ fun fetchAppLanguage(languageType: LanguageUiType) = when (languageType) {
     LanguageUiType.TR -> TimePlannerLanguage.TR
     LanguageUiType.VN -> TimePlannerLanguage.VN
     LanguageUiType.PL -> TimePlannerLanguage.PL
+    LanguageUiType.IT -> TimePlannerLanguage.IT
 }
