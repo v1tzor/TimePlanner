@@ -1,0 +1,127 @@
+[versions]
+applicationId = "ru.aleshin.timeplanner"
+productionDimension = "production"
+compileSdkVersion = "35"
+targetSdkVersion = "35"
+minSdkVersion = "24"
+versionCode = "32"
+versionName = "1.0.2"
+testInstrumentRunner = "androidx.test.runner.AndroidJUnitRunner"
+consumerProguardFiles = "consumer-rules.pro"
+jvmTarget = "17"
+kotlinCompiler = "1.5.15"
+
+agp = "8.5.2"
+ksp = "2.1.20-2.0.0"
+kotlin = "2.1.0"
+kotlin-coroutines = "1.9.0"
+kotlin-serialization = "1.7.3"
+
+coreKtx = "1.13.1"
+appcompat = "1.7.0"
+accompanist = "0.36.0"
+lifecycle = "2.8.7"
+glance = "1.1.1"
+activityCompose = "1.10.1"
+
+compose = "1.7.8"
+compose-compiler = "1.5.15"
+compose-material = "1.12.0"
+compose-material3 = "1.3.2"
+compose-adaptive = "1.1.0"
+compose-plugin = "1.8.0-alpha03"
+voyager = "1.0.0"
+chartsMahu = "0.3.5"
+chartsHimanshoe = "1.0.1"
+
+dagger = "2.52"
+room = "2.7.0"
+
+tracer = "1.0.4"
+mytracker = "3.4.1"
+
+leakcanary = "3.0-alpha-8"
+jUnit = "4.13.2"
+jUnitExt = "1.1.4"
+turbine = "0.12.1"
+coroutinesTest = "1.6.1"
+fragmentTest = "1.5.5"
+espresso = "3.5.0"
+
+[libraries]
+kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
+kotlin-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlin-coroutines" }
+kotlin-serialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlin-serialization" }
+kotlin-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlin-serialization" }
+
+androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
+androidx-systemUiController = { group = "com.google.accompanist", name = "accompanist-systemuicontroller", version.ref = "accompanist" }
+androidx-lifecycle-viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycle" }
+androidx-lifecycle-runtime = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycle" }
+androidx-glance = { module = "androidx.glance:glance-appwidget", version.ref = "glance" }
+androidx-glance-compose = { module = "androidx.glance:glance-material3", version.ref = "glance" }
+androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }
+
+compose-ui = { module = "androidx.compose.ui:ui", version.ref = "compose" }
+compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose" }
+compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "compose" }
+compose-ui-testmanifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "compose" }
+compose-foundation = { module = "androidx.compose.foundation:foundation", version.ref = "compose" }
+compose-foundation-layout = { module = "androidx.compose.foundation:foundation-layout", version.ref = "compose" }
+compose-material = { group = "com.google.android.material", name = "material", version.ref = "compose-material" }
+compose-material3 = { module = "androidx.compose.material3:material3", version.ref = "compose-material3" }
+compose-material3-adaptive = { module = "androidx.compose.material3.adaptive:adaptive", version.ref = "compose-adaptive" }
+compose-material3-adaptive-layout = { module = "androidx.compose.material3.adaptive:adaptive-layout", version.ref = "compose-adaptive" }
+compose-placeholder = { module = "com.google.accompanist:accompanist-placeholder-material", version.ref = "accompanist" }
+compose-swiperefresh = { module = "com.google.accompanist:accompanist-swiperefresh", version.ref = "accompanist" }
+voyager-navigator = { module = "cafe.adriel.voyager:voyager-navigator", version.ref = "voyager" }
+voyager-screenModel = { module = "cafe.adriel.voyager:voyager-screenmodel", version.ref = "voyager" }
+voyager-transitions = { module = "cafe.adriel.voyager:voyager-transitions", version.ref = "voyager" }
+voyager-kodein = { module = "cafe.adriel.voyager:voyager-kodein", version.ref = "voyager" }
+charts-mahu = { module = "ma.hu:compose-charts", version.ref = "chartsMahu" }
+charts-himanshoe = { module = "com.himanshoe:charty", version.ref = "chartsHimanshoe" }
+
+dagger-core = { module = "com.google.dagger:dagger", version.ref = "dagger" }
+dagger-ksp = { module = "com.google.dagger:dagger-compiler", version.ref = "dagger" }
+room-core = { module = "androidx.room:room-runtime", version.ref = "room" }
+room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
+room-ksp = { module = "androidx.room:room-compiler", version.ref = "room" }
+rustore-universalpush-hms = { module = "ru.rustore.sdk:universalhms" }
+
+tracer-plugin = { module = "ru.ok.tracer:tracer-plugin", version.ref = "tracer" }
+tracer-bom = { module = "ru.ok.tracer:tracer-platform", version.ref = "tracer" }
+tracer-crashReport = { module = "ru.ok.tracer:tracer-crash-report" }
+tracer-crashReportNative = { module = "ru.ok.tracer:tracer-crash-report-native" }
+tracer-heapDumps = { module = "ru.ok.tracer:tracer-heap-dumps" }
+tracer-diskUsage = { module = "ru.ok.tracer:tracer-disk-usage" }
+tracer-samplingProfiler = { module = "ru.ok.tracer:tracer-profiler-sampling" }
+tracer-systraceProfiler = { module = "ru.ok.tracer:tracer-profiler-systrace" }
+mytracker-core = { module = "com.my.tracker:mytracker-sdk", version.ref = "mytracker" }
+
+jUnit = { module = "junit:junit", version.ref = "jUnit" }
+composeJUnit = { module = "androidx.compose.ui:ui-test-junit4", version.ref = "compose" }
+jUnitExt = { module = "androidx.test.ext:junit", version.ref = "jUnitExt" }
+coroutinesTest = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutinesTest" }
+turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
+espresso = { module = "androidx.test.espresso:espresso-core", version.ref = "espresso" }
+
+leakcanary = { module = "com.squareup.leakcanary:leakcanary-android", version.ref = "leakcanary" }
+
+[bundles]
+compose = ["androidx-activity-compose", 'compose-ui', "compose-foundation", "compose-foundation-layout", "compose-placeholder", "compose-swiperefresh", "compose-material", "compose-material3", "compose-material3-adaptive", "compose-material3-adaptive-layout", "androidx-systemUiController"]
+voyager = ["voyager-navigator", "voyager-screenModel", "voyager-transitions", "voyager-kodein"]
+tracer = ["tracer-crashReport", "tracer-crashReportNative", "tracer-heapDumps", "tracer-diskUsage", "tracer-samplingProfiler", "tracer-systraceProfiler"]
+
+[plugins]
+androidApplication = { id = "com.android.application", version.ref = "agp" }
+androidLibrary = { id = "com.android.library", version.ref = "agp" }
+kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
+compose = { id = "org.jetbrains.compose", version.ref = "compose-plugin" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+room = { id = "androidx.room", version.ref = "room" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
+tracer = { id = "ru.ok.tracer", version.ref = "tracer" }

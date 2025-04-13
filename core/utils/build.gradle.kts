@@ -14,28 +14,21 @@
  * limitations under the License.
  */
 plugins {
-    id("com.android.library")
-    id("org.jetbrains.kotlin.android")
-    id("kotlin-parcelize")
-    id("org.jetbrains.kotlin.plugin.compose") version "2.0.20"
-    kotlin("plugin.serialization") version "1.8.21"
-    kotlin("kapt")
-}
-
-repositories {
-    mavenCentral()
-    gradlePluginPortal()
-    google()
+    alias(libs.plugins.androidLibrary)
+    alias(libs.plugins.kotlinAndroid)
+    alias(libs.plugins.parcelize)
+    alias(libs.plugins.serialization)
+    alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.ksp)
 }
 
 android {
     namespace = "ru.aleshin.core.utils"
-    compileSdk = Config.compileSdkVersion
+    compileSdk = libs.versions.compileSdkVersion.get().toIntOrNull()
 
     defaultConfig {
-        minSdk = Config.minSdkVersion
-
-        testInstrumentationRunner = Config.testInstrumentRunner
+        minSdk = libs.versions.minSdkVersion.get().toIntOrNull()
+        testInstrumentationRunner = libs.versions.testInstrumentRunner.get()
     }
 
     buildTypes {
@@ -54,7 +47,7 @@ android {
     }
 
     kotlinOptions {
-        jvmTarget = Config.jvmTarget
+        jvmTarget = libs.versions.jvmTarget.get()
     }
 
     buildFeatures {
@@ -63,10 +56,10 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = Config.kotlinCompiler
+        kotlinCompilerExtensionVersion = libs.versions.kotlinCompiler.get()
     }
 
-    packagingOptions {
+    packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
@@ -74,26 +67,24 @@ android {
 }
 
 dependencies {
-    implementation(Dependencies.AndroidX.core)
-    implementation(Dependencies.AndroidX.lifecycleRuntime)
-    implementation(Dependencies.AndroidX.appcompat)
-    implementation(Dependencies.AndroidX.material)
-    implementation(Dependencies.AndroidX.serialization)
+    api(project(":module-injector"))
 
-    implementation(Dependencies.Compose.ui)
-    implementation(Dependencies.Compose.activity)
+    api(libs.androidx.core.ktx)
+    api(libs.androidx.appcompat)
+    api(libs.androidx.lifecycle.viewmodel)
+    api(libs.androidx.lifecycle.runtime)
+    api(libs.kotlin.serialization)
+    api(libs.kotlin.serialization.json)
+    api(libs.voyager.navigator)
 
-    implementation(Dependencies.Charts.library)
+    implementation(libs.bundles.compose)
+    implementation(libs.bundles.voyager)
+    implementation(libs.charts.mahu)
+    implementation(libs.charts.himanshoe)
 
-    implementation(Dependencies.Dagger.core)
-    kapt(Dependencies.Dagger.kapt)
+    api(libs.dagger.core)
+    ksp(libs.dagger.ksp)
 
-    implementation(Dependencies.Voyager.navigator)
-    implementation(Dependencies.Voyager.screenModel)
-    implementation(Dependencies.Voyager.transitions)
-
-    testImplementation(Dependencies.Test.jUnit)
-    androidTestImplementation(Dependencies.Test.jUnitExt)
-    androidTestImplementation(Dependencies.Test.espresso)
+    testImplementation(libs.jUnit)
     implementation(kotlin("reflect"))
 }

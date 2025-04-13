@@ -14,25 +14,18 @@
  * limitations under the License.
  */
 plugins {
-    id("com.android.library")
-    id("org.jetbrains.kotlin.android")
-    id("org.jetbrains.kotlin.plugin.compose") version "2.0.20"
-}
-
-repositories {
-    mavenCentral()
-    google()
+    alias(libs.plugins.androidLibrary)
+    alias(libs.plugins.kotlinAndroid)
+    alias(libs.plugins.compose.compiler)
 }
 
 android {
     namespace = "ru.aleshin.features.settings.api"
-    compileSdk = Config.compileSdkVersion
+    compileSdk = libs.versions.compileSdkVersion.get().toIntOrNull()
 
     defaultConfig {
-        minSdk = Config.minSdkVersion
-
-        testInstrumentationRunner = Config.testInstrumentRunner
-        consumerProguardFiles(Config.consumerProguardFiles)
+        minSdk = libs.versions.minSdkVersion.get().toIntOrNull()
+        testInstrumentationRunner = libs.versions.testInstrumentRunner.get()
     }
 
     buildTypes {
@@ -51,29 +44,26 @@ android {
     }
 
     kotlinOptions {
-        jvmTarget = Config.jvmTarget
+        jvmTarget = libs.versions.jvmTarget.get()
     }
 
     buildFeatures {
+        compose = true
         buildConfig = true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = libs.versions.kotlinCompiler.get()
+    }
+
+    packaging {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
     }
 }
 
 dependencies {
-
-    implementation(project(":module-injector"))
     implementation(project(":core:utils"))
     implementation(project(":core:ui"))
-
-    implementation(Dependencies.Voyager.navigator)
-
-    implementation(Dependencies.AndroidX.core)
-    implementation(Dependencies.AndroidX.appcompat)
-    implementation(Dependencies.AndroidX.material)
-
-    implementation(Dependencies.Dagger.core)
-
-    testImplementation(Dependencies.Test.jUnit)
-    androidTestImplementation(Dependencies.Test.jUnitExt)
-    androidTestImplementation(Dependencies.Test.espresso)
 }

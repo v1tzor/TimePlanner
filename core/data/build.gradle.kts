@@ -14,27 +14,21 @@
  * limitations under the License.
  */
 plugins {
-    id("com.android.library")
-    id("org.jetbrains.kotlin.android")
-    id("kotlin-parcelize")
-    kotlin("plugin.serialization") version "1.8.21"
-    kotlin("kapt")
-}
-
-repositories {
-    mavenCentral()
-    google()
+    alias(libs.plugins.androidLibrary)
+    alias(libs.plugins.kotlinAndroid)
+    alias(libs.plugins.parcelize)
+    alias(libs.plugins.serialization)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.room)
 }
 
 android {
     namespace = "ru.aleshin.core.data"
-    compileSdk = Config.compileSdkVersion
+    compileSdk = libs.versions.compileSdkVersion.get().toIntOrNull()
 
     defaultConfig {
-        minSdk = Config.minSdkVersion
-
-        testInstrumentationRunner = Config.testInstrumentRunner
-        consumerProguardFiles(Config.consumerProguardFiles)
+        minSdk = libs.versions.minSdkVersion.get().toIntOrNull()
+        testInstrumentationRunner = libs.versions.testInstrumentRunner.get()
     }
 
     buildTypes {
@@ -53,53 +47,34 @@ android {
     }
 
     kotlinOptions {
-        jvmTarget = Config.jvmTarget
+        jvmTarget = libs.versions.jvmTarget.get()
     }
 
     buildFeatures {
         buildConfig = true
     }
 
-    composeOptions {
-        kotlinCompilerExtensionVersion = Config.kotlinCompiler
-    }
-
-    packagingOptions {
+    packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
 
-    kapt {
-        arguments {
-            arg("room.schemaLocation", "$projectDir/schemas")
-        }
+    room {
+        schemaDirectory("$projectDir/schemas")
     }
 }
 
 dependencies {
-
-    implementation(project(":module-injector"))
     implementation(project(":core:utils"))
     implementation(project(":core:domain"))
 
-    implementation(Dependencies.Voyager.navigator)
+    ksp(libs.dagger.ksp)
 
-    implementation(Dependencies.AndroidX.core)
-    implementation(Dependencies.AndroidX.appcompat)
-    implementation(Dependencies.AndroidX.serialization)
+    implementation(libs.room.core)
+    implementation(libs.room.ktx)
+    ksp(libs.room.ksp)
 
-    implementation(Dependencies.Dagger.core)
-    kapt(Dependencies.Dagger.kapt)
-
-    implementation(Dependencies.Room.core)
-    implementation(Dependencies.Room.ktx)
-    kapt(Dependencies.Room.kapt)
-
-    testImplementation(Dependencies.Test.jUnit)
-    androidTestImplementation(Dependencies.Test.jUnitExt)
-    androidTestImplementation(Dependencies.Test.espresso)
-    androidTestImplementation(Dependencies.Test.composeJUnit)
-    debugImplementation(Dependencies.Compose.uiTooling)
-    debugImplementation(Dependencies.Compose.uiTestManifest)
+    testImplementation(libs.jUnit)
+    implementation(kotlin("reflect"))
 }

@@ -13,28 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 plugins {
-    id("com.android.library")
-    id("org.jetbrains.kotlin.android")
-    id("kotlin-parcelize")
-    id("org.jetbrains.kotlin.plugin.compose") version "2.0.20"
-    kotlin("kapt")
-}
-
-repositories {
-    mavenCentral()
-    google()
+    alias(libs.plugins.androidLibrary)
+    alias(libs.plugins.kotlinAndroid)
+    alias(libs.plugins.parcelize)
+    alias(libs.plugins.serialization)
+    alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.ksp)
 }
 
 android {
     namespace = "ru.aleshin.core.ui"
-    compileSdk = Config.compileSdkVersion
+    compileSdk = libs.versions.compileSdkVersion.get().toIntOrNull()
 
     defaultConfig {
-        minSdk = Config.minSdkVersion
-
-        testInstrumentationRunner = Config.testInstrumentRunner
+        minSdk = libs.versions.minSdkVersion.get().toIntOrNull()
+        testInstrumentationRunner = libs.versions.testInstrumentRunner.get()
     }
 
     buildTypes {
@@ -53,7 +47,7 @@ android {
     }
 
     kotlinOptions {
-        jvmTarget = Config.jvmTarget
+        jvmTarget = libs.versions.jvmTarget.get()
     }
 
     buildFeatures {
@@ -62,10 +56,10 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = Config.kotlinCompiler
+        kotlinCompilerExtensionVersion = libs.versions.kotlinCompiler.get()
     }
 
-    packagingOptions {
+    packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
@@ -76,25 +70,15 @@ dependencies {
     implementation(project(":core:utils"))
     implementation(project(":core:domain"))
 
-    implementation(Dependencies.AndroidX.core)
-    implementation(Dependencies.AndroidX.appcompat)
-    implementation(Dependencies.AndroidX.material)
-    implementation(Dependencies.AndroidX.googleMaterial)
-    implementation(Dependencies.AndroidX.systemUiController)
-    implementation(Dependencies.AndroidX.placeHolder)
+    api(libs.bundles.voyager)
+    api(libs.bundles.compose)
 
-    implementation(Dependencies.Voyager.navigator)
+    ksp(libs.dagger.ksp)
 
-    implementation(Dependencies.Compose.ui)
-    implementation(Dependencies.Compose.activity)
-
-    implementation(Dependencies.Dagger.core)
-    kapt(Dependencies.Dagger.kapt)
-
-    testImplementation(Dependencies.Test.jUnit)
-    androidTestImplementation(Dependencies.Test.jUnitExt)
-    androidTestImplementation(Dependencies.Test.espresso)
-    androidTestImplementation(Dependencies.Test.composeJUnit)
-    debugImplementation(Dependencies.Compose.uiTooling)
-    debugImplementation(Dependencies.Compose.uiTestManifest)
+    testImplementation(libs.jUnit)
+    androidTestImplementation(libs.jUnitExt)
+    androidTestImplementation(libs.espresso)
+    androidTestImplementation(libs.composeJUnit)
+    debugImplementation(libs.compose.ui.tooling)
+    debugImplementation(libs.compose.ui.testmanifest)
 }

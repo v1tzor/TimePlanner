@@ -15,36 +15,26 @@
  */
 
 plugins {
-    id("com.android.library")
-    id("org.jetbrains.kotlin.android")
-    id("kotlin-parcelize")
-    id("org.jetbrains.kotlin.plugin.compose") version "2.0.20"
-    kotlin("kapt")
-}
-
-repositories {
-    google()
-    mavenCentral()
+    alias(libs.plugins.androidLibrary)
+    alias(libs.plugins.kotlinAndroid)
+    alias(libs.plugins.parcelize)
+    alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.ksp)
 }
 
 android {
-    namespace = "ru.aleshin.editor.home.impl"
-    compileSdk = Config.compileSdkVersion
+    namespace = "ru.aleshin.features.editor.impl"
+    compileSdk = libs.versions.compileSdkVersion.get().toIntOrNull()
 
     defaultConfig {
-        minSdk = Config.minSdkVersion
-
-        testInstrumentationRunner = Config.testInstrumentRunner
-        consumerProguardFiles(Config.consumerProguardFiles)
+        minSdk = libs.versions.minSdkVersion.get().toIntOrNull()
+        testInstrumentationRunner = libs.versions.testInstrumentRunner.get()
     }
 
     buildTypes {
         getByName("release") {
             isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro",
-            )
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
 
@@ -54,7 +44,7 @@ android {
     }
 
     kotlinOptions {
-        jvmTarget = Config.jvmTarget
+        jvmTarget = libs.versions.jvmTarget.get()
     }
 
     buildFeatures {
@@ -63,10 +53,10 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = Config.kotlinCompiler
+        kotlinCompilerExtensionVersion = libs.versions.kotlinCompiler.get()
     }
 
-    packagingOptions {
+    packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
@@ -75,7 +65,6 @@ android {
 
 dependencies {
 
-    implementation(project(":module-injector"))
     implementation(project(":core:utils"))
     implementation(project(":core:data"))
     implementation(project(":core:domain"))
@@ -84,29 +73,12 @@ dependencies {
     implementation(project(":features:editor:api"))
     implementation(project(":features:home:api"))
 
-    implementation(Dependencies.AndroidX.core)
-    implementation(Dependencies.AndroidX.appcompat)
-    implementation(Dependencies.AndroidX.lifecycleRuntime)
-    implementation(Dependencies.AndroidX.lifecycleViewModel)
-    implementation(Dependencies.AndroidX.material)
-    implementation(Dependencies.AndroidX.placeHolder)
-    implementation(Dependencies.AndroidX.systemUiController)
+    ksp(libs.dagger.ksp)
 
-    implementation(Dependencies.Compose.ui)
-    implementation(Dependencies.Compose.activity)
-
-    implementation(Dependencies.Dagger.core)
-    kapt(Dependencies.Dagger.kapt)
-
-    implementation(Dependencies.Voyager.navigator)
-    implementation(Dependencies.Voyager.screenModel)
-
-    testImplementation(Dependencies.Test.jUnit)
-    testImplementation(Dependencies.Test.turbine)
-    testImplementation(Dependencies.Test.coroutinesTest)
-    androidTestImplementation(Dependencies.Test.jUnitExt)
-    androidTestImplementation(Dependencies.Test.espresso)
-    androidTestImplementation(Dependencies.Test.composeJUnit)
-    debugImplementation(Dependencies.Compose.uiTooling)
-    debugImplementation(Dependencies.Compose.uiTestManifest)
+    testImplementation(libs.jUnit)
+    androidTestImplementation(libs.jUnitExt)
+    androidTestImplementation(libs.espresso)
+    androidTestImplementation(libs.composeJUnit)
+    debugImplementation(libs.compose.ui.tooling)
+    debugImplementation(libs.compose.ui.testmanifest)
 }

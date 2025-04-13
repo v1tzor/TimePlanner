@@ -14,24 +14,17 @@
  * limitations under the License.
  */
 plugins {
-    id("com.android.library")
-    id("org.jetbrains.kotlin.android")
-}
-
-repositories {
-    mavenCentral()
-    google()
+    alias(libs.plugins.androidLibrary)
+    alias(libs.plugins.kotlinAndroid)
 }
 
 android {
     namespace = "ru.aleshin.module_injector"
-    compileSdk = Config.compileSdkVersion
+    compileSdk = libs.versions.compileSdkVersion.get().toIntOrNull()
 
     defaultConfig {
-        minSdk = Config.minSdkVersion
-
-        testInstrumentationRunner = Config.testInstrumentRunner
-        consumerProguardFiles("consumer-rules.pro")
+        minSdk = libs.versions.minSdkVersion.get().toIntOrNull()
+        testInstrumentationRunner = libs.versions.testInstrumentRunner.get()
     }
 
     buildTypes {
@@ -49,18 +42,23 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
+    kotlinOptions {
+        jvmTarget = libs.versions.jvmTarget.get()
+    }
+
     buildFeatures {
         buildConfig = true
     }
 
-    kotlinOptions {
-        jvmTarget = Config.jvmTarget
+    packaging {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
     }
 }
 
 dependencies {
-    implementation(Dependencies.AndroidX.core)
-    testImplementation(Dependencies.Test.jUnit)
-    androidTestImplementation(Dependencies.Test.jUnitExt)
-    androidTestImplementation(Dependencies.Test.espresso)
+    implementation(libs.androidx.core.ktx)
+    testImplementation(libs.jUnit)
+    implementation(kotlin("reflect"))
 }

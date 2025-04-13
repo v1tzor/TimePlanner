@@ -14,28 +14,20 @@
  * limitations under the License.
  */
 plugins {
-    id("com.android.library")
-    id("org.jetbrains.kotlin.android")
-    id("kotlin-parcelize")
-    id("org.jetbrains.kotlin.plugin.compose") version "2.0.20"
-    kotlin("plugin.serialization") version "1.8.21"
-    kotlin("kapt")
-}
-
-repositories {
-    mavenCentral()
-    google()
+    alias(libs.plugins.androidLibrary)
+    alias(libs.plugins.kotlinAndroid)
+    alias(libs.plugins.parcelize)
+    alias(libs.plugins.serialization)
+    alias(libs.plugins.ksp)
 }
 
 android {
     namespace = "ru.aleshin.core.domain"
-    compileSdk = Config.compileSdkVersion
+    compileSdk = libs.versions.compileSdkVersion.get().toIntOrNull()
 
     defaultConfig {
-        minSdk = Config.minSdkVersion
-
-        testInstrumentationRunner = Config.testInstrumentRunner
-        consumerProguardFiles(Config.consumerProguardFiles)
+        minSdk = libs.versions.minSdkVersion.get().toIntOrNull()
+        testInstrumentationRunner = libs.versions.testInstrumentRunner.get()
     }
 
     buildTypes {
@@ -54,19 +46,14 @@ android {
     }
 
     kotlinOptions {
-        jvmTarget = Config.jvmTarget
+        jvmTarget = libs.versions.jvmTarget.get()
     }
 
     buildFeatures {
-        compose = true
         buildConfig = true
     }
 
-    composeOptions {
-        kotlinCompilerExtensionVersion = Config.kotlinCompiler
-    }
-
-    packagingOptions {
+    packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
@@ -74,23 +61,9 @@ android {
 }
 
 dependencies {
-
-    implementation(project(":module-injector"))
     implementation(project(":core:utils"))
 
-    implementation(Dependencies.AndroidX.core)
-    implementation(Dependencies.AndroidX.lifecycleRuntime)
-    implementation(Dependencies.AndroidX.appcompat)
-    implementation(Dependencies.AndroidX.material)
-    implementation(Dependencies.AndroidX.serialization)
-
-    implementation(Dependencies.Dagger.core)
-    kapt(Dependencies.Dagger.kapt)
-
-    testImplementation(Dependencies.Test.jUnit)
-    androidTestImplementation(Dependencies.Test.jUnitExt)
-    androidTestImplementation(Dependencies.Test.espresso)
-    androidTestImplementation(Dependencies.Test.composeJUnit)
-    debugImplementation(Dependencies.Compose.uiTooling)
-    debugImplementation(Dependencies.Compose.uiTestManifest)
+    ksp(libs.dagger.ksp)
+    testImplementation(libs.jUnit)
+    implementation(kotlin("reflect"))
 }

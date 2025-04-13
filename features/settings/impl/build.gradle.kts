@@ -14,40 +14,30 @@
  * limitations under the License.
  */
 plugins {
-    id("com.android.library")
-    id("org.jetbrains.kotlin.android")
-    id("kotlin-parcelize")
-    id("org.jetbrains.kotlin.plugin.compose") version "2.0.20"
-    kotlin("plugin.serialization") version "1.8.21"
-    kotlin("kapt")
-}
-
-repositories {
-    mavenCentral()
-    google()
+    alias(libs.plugins.androidLibrary)
+    alias(libs.plugins.kotlinAndroid)
+    alias(libs.plugins.parcelize)
+    alias(libs.plugins.serialization)
+    alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.ksp)
 }
 
 android {
     namespace = "ru.aleshin.features.settings.impl"
-    compileSdk = Config.compileSdkVersion
+    compileSdk = libs.versions.compileSdkVersion.get().toIntOrNull()
 
     defaultConfig {
-        minSdk = Config.minSdkVersion
+        minSdk = libs.versions.minSdkVersion.get().toIntOrNull()
+        testInstrumentationRunner = libs.versions.testInstrumentRunner.get()
 
-        testInstrumentationRunner = Config.testInstrumentRunner
-        consumerProguardFiles(Config.consumerProguardFiles)
-
-        buildConfigField("String", "VERSION_NAME", "\"${Config.versionName}\"")
-        buildConfigField("String", "VERSION_CODE", "\"${Config.versionCode}\"")
+        buildConfigField("String", "VERSION_NAME", "\"${libs.versions.versionName.get()}\"")
+        buildConfigField("String", "VERSION_CODE", "\"${libs.versions.versionCode.get()}\"")
     }
 
     buildTypes {
         getByName("release") {
             isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro",
-            )
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
 
@@ -57,7 +47,7 @@ android {
     }
 
     kotlinOptions {
-        jvmTarget = Config.jvmTarget
+        jvmTarget = libs.versions.jvmTarget.get()
     }
 
     buildFeatures {
@@ -66,10 +56,10 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = Config.kotlinCompiler
+        kotlinCompilerExtensionVersion = libs.versions.kotlinCompiler.get()
     }
 
-    packagingOptions {
+    packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
@@ -86,26 +76,12 @@ dependencies {
 
     implementation(project(":features:settings:api"))
 
-    implementation(Dependencies.AndroidX.core)
-    implementation(Dependencies.AndroidX.appcompat)
-    implementation(Dependencies.AndroidX.material)
-    implementation(Dependencies.AndroidX.lifecycleRuntime)
-    implementation(Dependencies.AndroidX.serialization)
+    ksp(libs.dagger.ksp)
 
-    implementation(Dependencies.Compose.ui)
-    implementation(Dependencies.Compose.activity)
-
-    implementation(Dependencies.Dagger.core)
-    kapt(Dependencies.Dagger.kapt)
-
-    implementation(Dependencies.Voyager.navigator)
-    implementation(Dependencies.Voyager.screenModel)
-
-    testImplementation(Dependencies.Test.jUnit)
-    testImplementation(Dependencies.Test.turbine)
-    androidTestImplementation(Dependencies.Test.jUnitExt)
-    androidTestImplementation(Dependencies.Test.espresso)
-    androidTestImplementation(Dependencies.Test.composeJUnit)
-    debugImplementation(Dependencies.Compose.uiTooling)
-    debugImplementation(Dependencies.Compose.uiTestManifest)
+    testImplementation(libs.jUnit)
+    androidTestImplementation(libs.jUnitExt)
+    androidTestImplementation(libs.espresso)
+    androidTestImplementation(libs.composeJUnit)
+    debugImplementation(libs.compose.ui.tooling)
+    debugImplementation(libs.compose.ui.testmanifest)
 }

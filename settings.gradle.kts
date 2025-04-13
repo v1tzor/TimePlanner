@@ -21,6 +21,14 @@ pluginManagement {
     }
 }
 
+dependencyResolutionManagement {
+    repositories {
+        mavenCentral()
+        google()
+        gradlePluginPortal()
+    }
+}
+
 rootProject.name = "TimePlanner"
 
 include(":app")

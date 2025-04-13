@@ -24,6 +24,7 @@ import ru.aleshin.features.editor.impl.di.EditorFeatureDependencies
 import ru.aleshin.features.home.impl.di.HomeFeatureDependencies
 import ru.aleshin.features.settings.impl.di.SettingsFeatureDependencies
 import ru.aleshin.timeplanner.application.TimePlannerApp
+import ru.aleshin.timeplanner.di.PlatformServicesModule
 import ru.aleshin.timeplanner.di.annotation.TabNavigation
 import ru.aleshin.timeplanner.di.modules.CoreModule
 import ru.aleshin.timeplanner.di.modules.DataBaseModule
@@ -49,6 +50,7 @@ import javax.inject.Singleton
         DataModule::class,
         NavigationModule::class,
         CoreModule::class,
+        PlatformServicesModule::class,
         PresentationModule::class,
         DomainModules::class,
         DependenciesModule::class,
@@ -75,6 +77,7 @@ interface AppComponent :
         fun applicationContext(context: Context): Builder
         fun navigationModule(module: NavigationModule): Builder
         fun featureModule(module: FeatureModule): Builder
+        fun platformServicesModule(module: PlatformServicesModule): Builder
         fun dataBaseModule(module: DataBaseModule): Builder
         fun build(): AppComponent
     }
@@ -84,6 +87,7 @@ interface AppComponent :
             return DaggerAppComponent.builder()
                 .applicationContext(context)
                 .navigationModule(NavigationModule())
+                .platformServicesModule(PlatformServicesModule())
                 .featureModule(FeatureModule())
                 .dataBaseModule(DataBaseModule())
                 .build()

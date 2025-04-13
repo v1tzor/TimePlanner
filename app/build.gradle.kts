@@ -15,43 +15,51 @@
  */
 
 import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
+import ru.ok.tracer.mapping_plugin.TracerConfig
 
 plugins {
-    id("com.android.application")
-    id("org.jetbrains.kotlin.android")
-    id("kotlin-parcelize")
-    id("org.jetbrains.kotlin.plugin.compose") version "2.0.20"
-    kotlin("plugin.serialization") version "1.8.21"
-    kotlin("kapt")
+    alias(libs.plugins.androidApplication)
+    alias(libs.plugins.kotlinAndroid)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.serialization)
+    alias(libs.plugins.parcelize)
 }
 
-repositories {
-    mavenCentral()
-    google()
+val localProperties = gradleLocalProperties(rootDir, providers)
+
+val hasRustore = gradle.startParameter.taskNames.any {
+    it.contains("RustoreDebug", ignoreCase = true) || it.contains("RustoreRelease", ignoreCase = true)
+}
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath(libs.tracer.plugin)
+    }
 }
 
 android {
-    namespace = Config.applicationId
-    compileSdk = Config.compileSdkVersion
+    namespace = libs.versions.applicationId.get()
+    compileSdk = libs.versions.compileSdkVersion.get().toIntOrNull()
+    flavorDimensions += libs.versions.productionDimension.get()
 
     defaultConfig {
-        applicationId = Config.applicationId
-        minSdk = Config.minSdkVersion
-        targetSdk = Config.targetSdkVersion
-        versionCode = Config.versionCode
-        versionName = Config.versionName
+        applicationId = libs.versions.applicationId.get()
+        minSdk = libs.versions.minSdkVersion.get().toIntOrNull()
+        targetSdk = libs.versions.targetSdkVersion.get().toIntOrNull()
+        compileSdk = libs.versions.compileSdkVersion.get().toIntOrNull()
 
-        manifestPlaceholders["versionCode"] = Config.versionCode
-        manifestPlaceholders["versionName"] = Config.versionName
+        versionCode = libs.versions.versionCode.get().toIntOrNull()
+        versionName = libs.versions.versionName.get()
 
-        testInstrumentationRunner = Config.testInstrumentRunner
-        vectorDrawables {
-            useSupportLibrary = true
-        }
+        testInstrumentationRunner = libs.versions.testInstrumentRunner.get()
+        vectorDrawables.useSupportLibrary = true
     }
 
     signingConfigs {
-        val localProperties = gradleLocalProperties(rootDir, providers)
         create("release") {
             storeFile = file(localProperties.getProperty("storeFile"))
             storePassword = localProperties.getProperty("storePassword")
@@ -86,13 +94,24 @@ android {
         }
     }
 
+    productFlavors {
+        create("fdroid") {
+            dimension = libs.versions.productionDimension.get()
+        }
+        create("rustore") {
+            dimension = libs.versions.productionDimension.get()
+            val myTrackerKey = localProperties.getProperty("myTrackerKey")
+            buildConfigField("String", "MY_TRACKER_KEY", "\"$myTrackerKey\"")
+        }
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
 
     kotlinOptions {
-        jvmTarget = Config.jvmTarget
+        jvmTarget = libs.versions.jvmTarget.get()
     }
 
     buildFeatures {
@@ -101,11 +120,13 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = Config.kotlinCompiler
+        kotlinCompilerExtensionVersion = libs.versions.kotlinCompiler.get()
     }
 
-    packagingOptions {
+    packaging {
         resources {
+            resources.pickFirsts.add("META-INF/INDEX.LIST")
+            resources.merges.add("META-INF/DEPENDENCIES")
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
@@ -116,9 +137,11 @@ android {
     }
 }
 
-dependencies {
+val rustoreImplementation = "rustoreImplementation"
+val fdroidImplementation = "fdroidImplementation"
+val githubImplementation = "githubImplementation"
 
-    implementation(project(":module-injector"))
+dependencies {
 
     implementation(project(":core:utils"))
     implementation(project(":core:data"))
@@ -134,34 +157,36 @@ dependencies {
     implementation(project(":features:settings:api"))
     implementation(project(":features:settings:impl"))
 
-    implementation(Dependencies.AndroidX.core)
-    implementation(Dependencies.AndroidX.appcompat)
-    implementation(Dependencies.AndroidX.material)
-    implementation(Dependencies.AndroidX.googleMaterial)
-    implementation(Dependencies.AndroidX.lifecycleRuntime)
-    implementation(Dependencies.AndroidX.serialization)
-    implementation(Dependencies.AndroidX.glance)
-    implementation(Dependencies.AndroidX.glanceMaterial)
+    implementation(libs.androidx.glance)
+    implementation(libs.androidx.glance.compose)
 
-    implementation(Dependencies.Compose.ui)
-    implementation(Dependencies.Compose.activity)
+    ksp(libs.dagger.ksp)
 
-    implementation(Dependencies.Dagger.core)
-    kapt(Dependencies.Dagger.kapt)
+    implementation(libs.room.core)
+    ksp(libs.room.ksp)
 
-    implementation(Dependencies.Room.core)
-    kapt(Dependencies.Room.kapt)
+    testImplementation(libs.jUnit)
+    androidTestImplementation(libs.jUnitExt)
+    androidTestImplementation(libs.espresso)
+    androidTestImplementation(libs.composeJUnit)
+    debugImplementation(libs.compose.ui.tooling)
+    debugImplementation(libs.compose.ui.testmanifest)
 
-    implementation(Dependencies.Voyager.navigator)
-    implementation(Dependencies.Voyager.screenModel)
-    implementation(Dependencies.Voyager.transitions)
+    debugImplementation(libs.leakcanary)
 
-    testImplementation(Dependencies.Test.jUnit)
-    androidTestImplementation(Dependencies.Test.jUnitExt)
-    androidTestImplementation(Dependencies.Test.espresso)
-    androidTestImplementation(Dependencies.Test.composeJUnit)
-    debugImplementation(Dependencies.Compose.uiTooling)
-    debugImplementation(Dependencies.Compose.uiTestManifest)
+    rustoreImplementation(platform(libs.tracer.bom))
+    rustoreImplementation(libs.bundles.tracer)
+    rustoreImplementation(libs.mytracker.core)
+}
 
-    debugImplementation(Dependencies.Leakcanary.library)
+if (hasRustore) {
+    plugins.apply(libs.plugins.tracer.get().pluginId)
+    project.extensions.configure<NamedDomainObjectContainer<TracerConfig>> {
+        create("defaultConfig") {
+            pluginToken = localProperties.getProperty("tracerPluginToken")
+            appToken = localProperties.getProperty("tracerAppToken")
+            uploadMapping = true
+            uploadNativeSymbols = true
+        }
+    }
 }

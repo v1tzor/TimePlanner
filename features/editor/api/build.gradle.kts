@@ -14,25 +14,18 @@
  * limitations under the License.
  */
 plugins {
-    id("com.android.library")
-    id("org.jetbrains.kotlin.android")
-    id("org.jetbrains.kotlin.plugin.compose") version "2.0.20"
-}
-
-repositories {
-    mavenCentral()
-    google()
+    alias(libs.plugins.androidLibrary)
+    alias(libs.plugins.kotlinAndroid)
+    alias(libs.plugins.compose.compiler)
 }
 
 android {
-    namespace = "ru.aleshin.editor.home.api"
-    compileSdk = Config.compileSdkVersion
+    namespace = "ru.aleshin.features.editor.api"
+    compileSdk = libs.versions.compileSdkVersion.get().toIntOrNull()
 
     defaultConfig {
-        minSdk = Config.minSdkVersion
-
-        testInstrumentationRunner = Config.testInstrumentRunner
-        consumerProguardFiles(Config.consumerProguardFiles)
+        minSdk = libs.versions.minSdkVersion.get().toIntOrNull()
+        testInstrumentationRunner = libs.versions.testInstrumentRunner.get()
     }
 
     buildTypes {
@@ -50,15 +43,20 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
+    kotlinOptions {
+        jvmTarget = libs.versions.jvmTarget.get()
+    }
+
     buildFeatures {
+        compose = true
         buildConfig = true
     }
 
-    kotlinOptions {
-        jvmTarget = Config.jvmTarget
+    composeOptions {
+        kotlinCompilerExtensionVersion = libs.versions.kotlinCompiler.get()
     }
 
-    packagingOptions {
+    packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
@@ -66,22 +64,9 @@ android {
 }
 
 dependencies {
-
     implementation(project(":module-injector"))
     implementation(project(":core:utils"))
     implementation(project(":core:domain"))
     implementation(project(":core:ui"))
     implementation(project(":features:home:api"))
-
-    implementation(Dependencies.Voyager.navigator)
-
-    implementation(Dependencies.AndroidX.core)
-    implementation(Dependencies.AndroidX.appcompat)
-    implementation(Dependencies.AndroidX.material)
-
-    implementation(Dependencies.Dagger.core)
-
-    testImplementation(Dependencies.Test.jUnit)
-    androidTestImplementation(Dependencies.Test.jUnitExt)
-    androidTestImplementation(Dependencies.Test.espresso)
 }

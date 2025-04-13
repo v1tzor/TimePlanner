@@ -16,7 +16,7 @@
 package ru.aleshin.features.editor.impl.presentation.theme.tokens
 
 import androidx.compose.runtime.staticCompositionLocalOf
-import ru.aleshin.editor.home.impl.R
+import ru.aleshin.features.editor.impl.R
 
 /**
  * @author Stanislav Aleshin on 22.02.2023.

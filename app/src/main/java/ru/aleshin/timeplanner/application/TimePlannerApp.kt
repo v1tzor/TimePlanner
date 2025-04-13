@@ -15,7 +15,6 @@
  */
 package ru.aleshin.timeplanner.application
 
-import android.app.Application
 import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -35,7 +34,7 @@ import javax.inject.Inject
 /**
  * @author Stanislav Aleshin on 14.02.2023.
  */
-class TimePlannerApp : Application() {
+class TimePlannerApp : BaseFlavorApplication() {
 
     val appComponent by lazy {
         AppComponent.create(applicationContext)
@@ -47,9 +46,11 @@ class TimePlannerApp : Application() {
     private val coreStrings: TimePlannerStrings
         get() = fetchCoreStrings(fetchCoreLanguage(fetchLocale().language))
 
-    override fun onCreate() {
-        super.onCreate()
+    override fun initDI() {
         appComponent.inject(this)
+    }
+
+    override fun initSettings() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             deleteOldChannel()
             createTimeTaskNotifyChannel()
