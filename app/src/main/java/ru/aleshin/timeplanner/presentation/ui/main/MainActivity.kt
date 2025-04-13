@@ -83,7 +83,7 @@ class MainActivity : BaseActivity<MainViewState, MainEvent, MainAction, MainEffe
                     if (navigator.lastItemOrNull is TabsScreen) getNotificationPermission()
                 },
             )
-
+            throw NullPointerException("Test")
             LaunchedEffect(key1 = state.secureMode) {
                 when (state.secureMode) {
                     true -> window.setFlags(FLAG_SECURE, FLAG_SECURE)
