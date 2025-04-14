@@ -1,13 +1,15 @@
-Time Planner is an application for convenient scheduling and tracking of daily tasks.
+TimePlanner is an all-in-one app for creating and managing your daily schedule. With its intuitive interface, you can easily create a personalized schedule, track your tasks, and stay on top of your priorities.
 
-📱The application supports:
-- Convenient division of tasks by priority, categories and subcategories 🔥
-- Scheduled alerts about the start of events ⏰
-- Built-in notes for tasks 📌
-- Templates for everyday tasks 🏃
-- Automatic repetition of template tasks 🔁
-- Protection against erroneous task overlap 📐
-- Maintaining analytics and statistics 📊
-- Backup and transfer of data 💾
-- More than 10 different color themes 🎨
-- 6 languages 🌍
+Key features of TimePlanner include:
+- Easy sorting of tasks by priority and category
+- Smart reminders for events and deadlines
+- Built-in note taking for tasks and reminders
+- Templates for recurring tasks
+- Automatic repetition of scheduled tasks
+- Prevention of overlapping events in your schedule
+- Detailed analytics and stats for tracking your productivity
+- Backup and sync of data across devices
+- Over 10 customizable color themes and widget options
+- Support for 10+ languages
+
+With TimePlanner, you can take control of your time and get more done in less time. Say goodbye to chaos and hello to organized productivity!

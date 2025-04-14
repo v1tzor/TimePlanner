@@ -66,6 +66,7 @@ import ru.aleshin.core.ui.mappers.mapToIconPainter
 import ru.aleshin.core.ui.theme.TimePlannerRes
 import ru.aleshin.core.utils.extensions.isCurrentDay
 import ru.aleshin.core.utils.extensions.isCurrentMonth
+import ru.aleshin.core.utils.extensions.substringOrFull
 import ru.aleshin.features.analytics.impl.presenatiton.models.analytics.PlanningAnalyticUi
 import ru.aleshin.features.analytics.impl.presenatiton.models.analytics.PlanningAnalyticsUi
 import ru.aleshin.features.analytics.impl.presenatiton.models.timetask.TimeTaskUi
@@ -145,7 +146,7 @@ internal fun PlanningAnalyticsMonthItem(
 
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Text(
-            text = monthFormat.format(monthAnalytics[0].date).substring(0, 3),
+            text = monthFormat.format(monthAnalytics[0].date).substringOrFull(0, 3),
             color = when (monthAnalytics[0].date.isCurrentMonth()) {
                 true -> MaterialTheme.colorScheme.primary
                 else -> MaterialTheme.colorScheme.onSurface
