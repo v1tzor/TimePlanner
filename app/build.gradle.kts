@@ -32,6 +32,10 @@ val hasRustore = gradle.startParameter.taskNames.any {
     it.contains("RustoreDebug", ignoreCase = true) || it.contains("RustoreRelease", ignoreCase = true)
 }
 
+val hasHuawei = gradle.startParameter.taskNames.any {
+    it.contains("HuaweiDebug", ignoreCase = true) || it.contains("HuaweiRelease", ignoreCase = true)
+}
+
 buildscript {
     repositories {
         mavenCentral()
@@ -103,6 +107,11 @@ android {
             val myTrackerKey = localProperties.getProperty("myTrackerKey")
             buildConfigField("String", "MY_TRACKER_KEY", "\"$myTrackerKey\"")
         }
+        create("huawei") {
+            dimension = libs.versions.productionDimension.get()
+            val myTrackerKey = localProperties.getProperty("myTrackerKey")
+            buildConfigField("String", "MY_TRACKER_KEY", "\"$myTrackerKey\"")
+        }
     }
 
     compileOptions {
@@ -139,7 +148,7 @@ android {
 
 val rustoreImplementation = "rustoreImplementation"
 val fdroidImplementation = "fdroidImplementation"
-val githubImplementation = "githubImplementation"
+val huaweiImplementation = "huaweiImplementation"
 
 dependencies {
 
@@ -177,9 +186,13 @@ dependencies {
     rustoreImplementation(platform(libs.tracer.bom))
     rustoreImplementation(libs.bundles.tracer)
     rustoreImplementation(libs.mytracker.core)
+
+    huaweiImplementation(platform(libs.tracer.bom))
+    huaweiImplementation(libs.bundles.tracer)
+    huaweiImplementation(libs.mytracker.core)
 }
 
-if (hasRustore) {
+if (hasRustore || hasHuawei) {
     plugins.apply(libs.plugins.tracer.get().pluginId)
     project.extensions.configure<NamedDomainObjectContainer<TracerConfig>> {
         create("defaultConfig") {
