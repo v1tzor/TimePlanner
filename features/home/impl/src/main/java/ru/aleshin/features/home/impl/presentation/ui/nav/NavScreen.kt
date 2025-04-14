@@ -40,7 +40,7 @@ internal class NavScreen @Inject constructor() : Screen {
 
     @Composable
     override fun Content() = HomeTheme {
-        val component = HomeComponentHolder.fetchComponent()
+        val component by lazy { HomeComponentHolder.fetchComponent() }
         val navigatorManager = rememberNavigatorManager { component.fetchLocalNavigatorManager() }
         val scope = rememberCoroutineScope()
         val drawerManager = LocalDrawerManager.current
