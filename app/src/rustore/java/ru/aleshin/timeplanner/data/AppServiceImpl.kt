@@ -13,17 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package ru.aleshin.timeplanner.domain
 
-package ru.aleshin.core.utils.platform.services
+import android.content.Context
+import ru.aleshin.core.utils.platform.services.AppService
+import ru.aleshin.core.utils.platform.services.Flavor
 
 /**
- * @author Stanislav Aleshin on 11.09.2024.
+ * @author Stanislav Aleshin on 13.04.2025.
  */
-interface AppService {
+class AppServiceImpl : AppService {
 
-    val flavor: Flavor
+    override val flavor: Flavor
+        get() = Flavor.RUSTORE
 
-    val isAvailableServices: Boolean
+    override val isAvailableServices: Boolean
+        get() = false
 
-    fun initializeApp()
+    override fun initializeApp() = Unit
 }

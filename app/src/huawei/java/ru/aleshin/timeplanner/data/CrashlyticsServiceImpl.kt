@@ -13,9 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ru.aleshin.timeplanner.domain
+package ru.aleshin.timeplanner.data
 
-import android.content.Context
 import ru.aleshin.core.utils.platform.services.CrashlyticsService
 import ru.aleshin.timeplanner.BuildConfig
 import ru.ok.tracer.CoreTracerConfiguration
@@ -39,7 +38,7 @@ class CrashlyticsServiceImpl : CrashlyticsService {
         TracerCrashReport.report(exception, issueKey)
     }
 
-    override fun initializeService(context: Context) = Unit
+    override fun initializeService() = Unit
 
     companion object {
         val tracerConfiguration: List<TracerConfiguration>

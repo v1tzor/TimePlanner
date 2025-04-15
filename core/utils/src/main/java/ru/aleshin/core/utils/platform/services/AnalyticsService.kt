@@ -15,12 +15,10 @@
  */
 package ru.aleshin.core.utils.platform.services
 
-import android.content.Context
-
 /**
  * @author Stanislav Aleshin on 13.04.2025.
  */
 interface AnalyticsService {
     fun trackEvent(name: String, eventParams: Map<String, String>)
-    fun initializeService(context: Context)
+    fun initializeService()
 }

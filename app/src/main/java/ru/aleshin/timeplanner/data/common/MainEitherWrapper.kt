@@ -13,17 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package ru.aleshin.timeplanner.data.common
 
-package ru.aleshin.core.utils.platform.services
+import ru.aleshin.core.utils.wrappers.FlowEitherWrapper
+import javax.inject.Inject
 
 /**
- * @author Stanislav Aleshin on 11.09.2024.
+ * @author Stanislav Aleshin on 14.02.2023.
  */
-interface AppService {
+interface MainEitherWrapper : FlowEitherWrapper<MainFailures> {
 
-    val flavor: Flavor
-
-    val isAvailableServices: Boolean
-
-    fun initializeApp()
+    class Base @Inject constructor(errorHandler: MainErrorHandler) : MainEitherWrapper,
+        FlowEitherWrapper.Abstract<MainFailures>(errorHandler)
 }

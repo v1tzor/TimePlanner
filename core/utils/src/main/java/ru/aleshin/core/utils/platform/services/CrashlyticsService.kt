@@ -16,13 +16,11 @@
 
 package ru.aleshin.core.utils.platform.services
 
-import android.content.Context
-
 /**
  * @author Stanislav Aleshin on 11.09.2024.
  */
 interface CrashlyticsService {
     fun sendLog(message: String)
     fun recordException(exception: Throwable, issueKey: String, )
-    fun initializeService(context: Context)
+    fun initializeService()
 }

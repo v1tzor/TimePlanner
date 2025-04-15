@@ -32,7 +32,7 @@ import androidx.glance.state.GlanceStateDefinition
 import androidx.glance.state.PreferencesGlanceStateDefinition
 import kotlinx.serialization.json.Json
 import ru.aleshin.core.utils.functional.Constants.App.EDITOR_DEEP_LINK
-import ru.aleshin.timeplanner.domain.entities.TimeTasks
+import ru.aleshin.timeplanner.data.entities.TimeTasks
 import ru.aleshin.timeplanner.presentation.ui.main.MainActivity
 import ru.aleshin.timeplanner.presentation.widgets.WidgetTheme
 import ru.aleshin.timeplanner.presentation.widgets.main.MainWidgetReceiver.Companion.TASKS_KEY

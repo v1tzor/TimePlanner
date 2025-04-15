@@ -21,7 +21,7 @@ import ru.aleshin.core.utils.platform.screenmodel.work.ActionResult
 import ru.aleshin.core.utils.platform.screenmodel.work.FlowWorkProcessor
 import ru.aleshin.core.utils.platform.screenmodel.work.WorkCommand
 import ru.aleshin.features.settings.impl.presentation.mappers.mapToUi
-import ru.aleshin.timeplanner.domain.interactors.SettingsInteractor
+import ru.aleshin.timeplanner.data.interactors.SettingsInteractor
 import ru.aleshin.timeplanner.presentation.ui.main.contract.MainAction
 import ru.aleshin.timeplanner.presentation.ui.main.contract.MainEffect
 import javax.inject.Inject

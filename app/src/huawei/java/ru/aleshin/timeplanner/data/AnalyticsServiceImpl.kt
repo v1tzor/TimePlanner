@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ru.aleshin.timeplanner.domain
+package ru.aleshin.timeplanner.data
 
 import android.app.Application
 import android.content.Context
@@ -26,15 +26,16 @@ import ru.aleshin.timeplanner.BuildConfig
 /**
  * @author Stanislav Aleshin on 13.04.2025.
  */
-class AnalyticsServiceImpl : AnalyticsService {
+class AnalyticsServiceImpl(private val context: Context) : AnalyticsService {
 
     override fun trackEvent(name: String, eventParams: Map<String, String>) {
         MyTracker.trackEvent(name, eventParams)
     }
 
-    override fun initializeService(context: Context) {
+    override fun initializeService() {
         MyTracker.getTrackerParams().apply {
             setCustomParam("android_id", getAndroidId(context))
+            setCustomParam("store", "appgallery")
         }
         MyTracker.initTracker(BuildConfig.MY_TRACKER_KEY, (context.applicationContext as Application))
     }

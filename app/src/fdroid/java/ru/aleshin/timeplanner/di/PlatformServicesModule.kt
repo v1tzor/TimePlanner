@@ -20,9 +20,9 @@ import dagger.Module
 import ru.aleshin.core.utils.platform.services.AnalyticsService
 import ru.aleshin.core.utils.platform.services.AppService
 import ru.aleshin.core.utils.platform.services.CrashlyticsService
-import ru.aleshin.timeplanner.domain.AnalyticsServiceImpl
-import ru.aleshin.timeplanner.domain.AppServiceImpl
-import ru.aleshin.timeplanner.domain.CrashlyticsServiceImpl
+import ru.aleshin.timeplanner.data.AnalyticsServiceImpl
+import ru.aleshin.timeplanner.data.AppServiceImpl
+import ru.aleshin.timeplanner.data.CrashlyticsServiceImpl
 import javax.inject.Singleton
 
 /**

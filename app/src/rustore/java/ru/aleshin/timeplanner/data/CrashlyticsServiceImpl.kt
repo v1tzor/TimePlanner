@@ -39,7 +39,7 @@ class CrashlyticsServiceImpl : CrashlyticsService {
         TracerCrashReport.report(exception, issueKey)
     }
 
-    override fun initializeService(context: Context) = Unit
+    override fun initializeService() = Unit
 
     companion object {
         val tracerConfiguration: List<TracerConfiguration>

@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ru.aleshin.timeplanner.domain.interactors
+package ru.aleshin.timeplanner.data.interactors
 
 import kotlinx.coroutines.flow.map
 import ru.aleshin.core.domain.entities.schedules.TimeTask
 import ru.aleshin.core.domain.repository.ScheduleRepository
 import ru.aleshin.core.utils.functional.FlowDomainResult
-import ru.aleshin.timeplanner.domain.common.MainEitherWrapper
-import ru.aleshin.timeplanner.domain.common.MainFailures
+import ru.aleshin.timeplanner.data.common.MainEitherWrapper
+import ru.aleshin.timeplanner.data.common.MainFailures
 import java.util.Date
 import javax.inject.Inject
 

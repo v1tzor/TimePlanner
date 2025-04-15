@@ -19,7 +19,7 @@ import ru.aleshin.core.utils.platform.services.AnalyticsService
 import ru.aleshin.core.utils.platform.services.AppService
 import ru.aleshin.core.utils.platform.services.BaseApplication
 import ru.aleshin.core.utils.platform.services.CrashlyticsService
-import ru.aleshin.timeplanner.domain.CrashlyticsServiceImpl
+import ru.aleshin.timeplanner.data.CrashlyticsServiceImpl
 import javax.inject.Inject
 
 /**
@@ -37,8 +37,8 @@ abstract class BaseFlavorApplication : BaseApplication() {
     override lateinit var analyticsService: AnalyticsService
 
     override fun initPlatformService() {
-        appService.initializeApp(this)
-        analyticsService.initializeService(this)
-        crashlyticsService.initializeService(this)
+        appService.initializeApp()
+        analyticsService.initializeService()
+        crashlyticsService.initializeService()
     }
 }

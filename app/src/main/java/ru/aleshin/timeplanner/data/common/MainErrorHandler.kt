@@ -13,22 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ru.aleshin.timeplanner.domain
+package ru.aleshin.timeplanner.data.common
 
-import android.content.Context
-import ru.aleshin.core.utils.platform.services.AppService
-import ru.aleshin.core.utils.platform.services.Flavor
+import ru.aleshin.core.utils.handlers.ErrorHandler
+import javax.inject.Inject
 
 /**
- * @author Stanislav Aleshin on 13.04.2025.
+ * @author Stanislav Aleshin on 14.02.2023.
  */
-class AppServiceImpl : AppService {
+interface MainErrorHandler : ErrorHandler<MainFailures> {
 
-    override val flavor: Flavor
-        get() = Flavor.HUAWEI
-
-    override val isAvailableServices: Boolean
-        get() = false
-
-    override fun initializeApp(context: Context) = Unit
+    class Base @Inject constructor() : MainErrorHandler {
+        override fun handle(throwable: Throwable) = when (throwable) {
+            else -> MainFailures.OtherError(throwable)
+        }
+    }
 }

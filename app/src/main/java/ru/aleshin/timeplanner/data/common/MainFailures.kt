@@ -13,17 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package ru.aleshin.timeplanner.data.common
 
-package ru.aleshin.core.utils.platform.services
+import kotlinx.parcelize.Parcelize
+import ru.aleshin.core.utils.functional.DomainFailures
 
 /**
- * @author Stanislav Aleshin on 11.09.2024.
+ * @author Stanislav Aleshin on 14.02.2023.
  */
-interface AppService {
-
-    val flavor: Flavor
-
-    val isAvailableServices: Boolean
-
-    fun initializeApp()
+@Parcelize
+sealed class MainFailures : DomainFailures {
+    data class OtherError(val throwable: Throwable) : MainFailures()
 }

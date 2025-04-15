@@ -26,21 +26,20 @@ import ru.aleshin.timeplanner.BuildConfig
 /**
  * @author Stanislav Aleshin on 13.04.2025.
  */
-class AnalyticsServiceImpl : AnalyticsService {
+class AnalyticsServiceImpl(private val context: Context) : AnalyticsService {
 
     override fun trackEvent(name: String, eventParams: Map<String, String>) {
         MyTracker.trackEvent(name, eventParams)
     }
 
-    override fun initializeService(context: Context) {
+    override fun initializeService() {
         MyTracker.getTrackerParams().apply {
             setCustomParam("android_id", getAndroidId(context))
-            setCustomParam("store", "appgallery")
         }
         MyTracker.initTracker(BuildConfig.MY_TRACKER_KEY, (context.applicationContext as Application))
     }
 
-     private fun getAndroidId(context: Context): String? {
+     private fun getAndroidId(): String? {
         return Secure.getString(context.contentResolver, Secure.ANDROID_ID)
     }
 }
