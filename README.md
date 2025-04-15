@@ -40,8 +40,16 @@
 </div>
 
 ## Download 🔥
-[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" alt="Get it on F-Droid" height="80">](https://f-droid.org/en/packages/ru.aleshin.timeplanner/)
-<a href="https://apt.izzysoft.de/fdroid/index/apk/ru.aleshin.timeplanner" target="_blank">
+<p>
+<a href="https://appgallery.huawei.com/app/C113948591" target="_blank">
+<img src="https://github.com/user-attachments/assets/f02b4096-d02b-4982-aa98-644bace52eac" height="63" alt="Download on the AppGallery">
+</a>
+<a href="https://www.rustore.ru/catalog/app/ru.aleshin.timeplanner?rsm=1&mt_link_id=l394r2" target="_blank">
+<img src="https://www.rustore.ru/help/icons/logo-color-dark.png" width="188" height="63" alt="Download on the Rustore">
+</a>
+<a href="https://f-droid.org/en/packages/ru.aleshin.timeplanner/" target="_blank">
+<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" height="63" alt="Download on the Fdroid">
+</a>
 
 ## Available languages 🌍
 - Russian 🇷🇺
