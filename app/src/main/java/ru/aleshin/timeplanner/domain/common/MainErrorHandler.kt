@@ -13,16 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ru.aleshin.timeplanner.data.common
+package ru.aleshin.timeplanner.domain.common
 
-import ru.aleshin.core.utils.wrappers.FlowEitherWrapper
+import ru.aleshin.core.utils.handlers.ErrorHandler
 import javax.inject.Inject
 
 /**
  * @author Stanislav Aleshin on 14.02.2023.
  */
-interface MainEitherWrapper : FlowEitherWrapper<MainFailures> {
+interface MainErrorHandler : ErrorHandler<MainFailures> {
 
-    class Base @Inject constructor(errorHandler: MainErrorHandler) : MainEitherWrapper,
-        FlowEitherWrapper.Abstract<MainFailures>(errorHandler)
+    class Base @Inject constructor() : MainErrorHandler {
+        override fun handle(throwable: Throwable) = when (throwable) {
+            else -> MainFailures.OtherError(throwable)
+        }
+    }
 }

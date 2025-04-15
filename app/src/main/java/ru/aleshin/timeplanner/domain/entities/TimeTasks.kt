@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ru.aleshin.timeplanner.data.entities
+package ru.aleshin.timeplanner.domain.entities
 
 import kotlinx.serialization.Serializable
 import ru.aleshin.core.domain.entities.schedules.TimeTask

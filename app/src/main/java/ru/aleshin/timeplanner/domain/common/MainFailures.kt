@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ru.aleshin.timeplanner.data.common
+package ru.aleshin.timeplanner.domain.common
 
 import kotlinx.parcelize.Parcelize
 import ru.aleshin.core.utils.functional.DomainFailures

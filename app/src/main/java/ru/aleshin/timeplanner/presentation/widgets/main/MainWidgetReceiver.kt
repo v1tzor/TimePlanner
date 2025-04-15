@@ -43,7 +43,7 @@ import ru.aleshin.core.utils.functional.Constants.Date.MILLIS_IN_MINUTE
 import ru.aleshin.core.utils.functional.handleAndGet
 import ru.aleshin.timeplanner.application.fetchApp
 import ru.aleshin.timeplanner.di.component.AppComponent
-import ru.aleshin.timeplanner.data.entities.TimeTasks
+import ru.aleshin.timeplanner.domain.entities.TimeTasks
 import java.util.Calendar
 import java.util.Date
 

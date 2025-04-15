@@ -24,8 +24,8 @@ import ru.aleshin.features.editor.impl.di.EditorFeatureDependencies
 import ru.aleshin.features.home.impl.di.HomeFeatureDependencies
 import ru.aleshin.features.settings.impl.di.SettingsFeatureDependencies
 import ru.aleshin.timeplanner.application.TimePlannerApp
-import ru.aleshin.timeplanner.data.interactors.SettingsInteractor
-import ru.aleshin.timeplanner.data.interactors.TimeTaskInteractor
+import ru.aleshin.timeplanner.domain.interactors.SettingsInteractor
+import ru.aleshin.timeplanner.domain.interactors.TimeTaskInteractor
 import ru.aleshin.timeplanner.di.PlatformServicesModule
 import ru.aleshin.timeplanner.di.annotation.TabNavigation
 import ru.aleshin.timeplanner.di.modules.CoreModule

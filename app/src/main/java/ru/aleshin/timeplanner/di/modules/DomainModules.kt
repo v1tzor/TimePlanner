@@ -17,10 +17,10 @@ package ru.aleshin.timeplanner.di.modules
 
 import dagger.Binds
 import dagger.Module
-import ru.aleshin.timeplanner.data.common.MainEitherWrapper
-import ru.aleshin.timeplanner.data.common.MainErrorHandler
-import ru.aleshin.timeplanner.data.interactors.SettingsInteractor
-import ru.aleshin.timeplanner.data.interactors.TimeTaskInteractor
+import ru.aleshin.timeplanner.domain.common.MainEitherWrapper
+import ru.aleshin.timeplanner.domain.common.MainErrorHandler
+import ru.aleshin.timeplanner.domain.interactors.SettingsInteractor
+import ru.aleshin.timeplanner.domain.interactors.TimeTaskInteractor
 import javax.inject.Singleton
 
 /**
