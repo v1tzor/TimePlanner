@@ -141,6 +141,13 @@ internal fun EditorContent(
                         parameters = state.editModel.parameters,
                         onChangeParameters = onChangeParameters,
                     )
+                    if (state.editModel.status == TaskStatus.COMPLETED) {
+                        CompletedTaskAdjustmentSection(
+                            duration = state.editModel.duration,
+                            onIncreaseDuration = { /* Logic to increase duration */ },
+                            onReduceDuration = { /* Logic to reduce duration */ },
+                        )
+                    }
                 }
                 ActionButtonsSection(
                     enableTemplateSelector = state.editModel.key != 0L,
@@ -441,6 +448,37 @@ internal fun TemplateSelector(
             contentDescription = EditorThemeRes.strings.templateIconDesc,
             tint = MaterialTheme.colorScheme.onPrimaryContainer,
         )
+    }
+}
+
+@Composable
+internal fun CompletedTaskAdjustmentSection(
+    modifier: Modifier = Modifier,
+    duration: Long,
+    onIncreaseDuration: () -> Unit,
+    onReduceDuration: () -> Unit,
+) {
+    Row(
+        modifier = modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            text = "Adjust Duration:",
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurface,
+        )
+        Button(onClick = onReduceDuration) {
+            Text("-")
+        }
+        Text(
+            text = "$duration mins",
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.primary,
+        )
+        Button(onClick = onIncreaseDuration) {
+            Text("+")
+        }
     }
 }
 
