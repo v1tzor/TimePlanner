@@ -1,6 +1,7 @@
 TimePlanner is an all-in-one app for creating and managing your daily schedule. With its intuitive interface, you can easily create a personalized schedule, track your tasks, and stay on top of your priorities.
 
 Key features of TimePlanner include:
+
 - Easy sorting of tasks by priority and category
 - Smart reminders for events and deadlines
 - Built-in note taking for tasks and reminders
