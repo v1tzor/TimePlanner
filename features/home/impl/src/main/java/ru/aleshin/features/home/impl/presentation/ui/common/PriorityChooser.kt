@@ -27,6 +27,7 @@ import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -99,17 +100,19 @@ internal fun PriorityMenu(
         offset = DpOffset(0.dp, 6.dp),
     ) {
         TaskPriority.entries.forEach { priority ->
-            DropdownMenuItem(
-                enabled = selected != priority,
-                onClick = { onChoose(priority) },
-                text = {
-                    Text(
-                        text = priority.mapToString(),
-                        color = MaterialTheme.colorScheme.onSurface,
-                        style = MaterialTheme.typography.titleMedium,
-                    )
-                },
-            )
+            key(priority) {
+                DropdownMenuItem(
+                    enabled = selected != priority,
+                    onClick = { onChoose(priority) },
+                    text = {
+                        Text(
+                            text = priority.mapToString(),
+                            color = MaterialTheme.colorScheme.onSurface,
+                            style = MaterialTheme.typography.titleMedium,
+                        )
+                    },
+                )
+            }
         }
     }
 }

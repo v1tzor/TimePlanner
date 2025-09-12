@@ -83,7 +83,7 @@ internal fun RepeatTimeMenu(
                 onAddRepeat = onAddRepeat,
                 onDeleteRepeat = onDeleteRepeat,
             )
-            null -> RepeatTimeType.values().forEach { type ->
+            null -> RepeatTimeType.entries.forEach { type ->
                 NavMenuItem(text = type.mapToString(), onClick = { repeatCategory = type })
             }
         }
@@ -102,7 +102,7 @@ internal fun WeekDayMenuItems(
         onClick = onBackClick,
         title = HomeThemeRes.strings.navToBackTitle,
     )
-    WeekDay.values().forEach { day ->
+    WeekDay.entries.forEach { day ->
         CheckedMenuItem(
             text = day.mapToString(),
             check = selectedTimes.contains(RepeatTime.WeekDays(day)),
@@ -153,7 +153,7 @@ internal fun WeekDayInMonthMenuItems(
             onClick = { isOpenSubMenu = false; selectedWeekNumber = null },
             title = HomeThemeRes.strings.navToBackTitle,
         )
-        WeekDay.values().forEach { day ->
+        WeekDay.entries.forEach { day ->
             CheckedMenuItem(
                 text = day.mapToString(),
                 check = selectedTimes.contains(RepeatTime.WeekDayInMonth(day, selectedWeekNumber!!)),
@@ -212,7 +212,7 @@ internal fun YearDayMenuItems(
             onClick = onBackClick,
             title = HomeThemeRes.strings.navToBackTitle,
         )
-        Month.values().forEach { month ->
+        Month.entries.forEach { month ->
             NavMenuItem(
                 text = month.mapToString(),
                 onClick = {

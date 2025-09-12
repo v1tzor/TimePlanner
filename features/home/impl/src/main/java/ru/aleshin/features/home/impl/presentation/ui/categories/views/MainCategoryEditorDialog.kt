@@ -61,7 +61,7 @@ internal fun MainCategoryEditorDialog(
 ) {
     var isError by rememberSaveable { mutableStateOf(false) }
     val categoryName = editCategory?.fetchName()
-    val textRange = TextRange(categoryName?.length ?: 0)
+    val textRange = remember { TextRange(categoryName?.length ?: 0) }
     var mainCategoryNameValue by remember {
         mutableStateOf(TextFieldValue(text = categoryName ?: "", selection = textRange))
     }

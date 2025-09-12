@@ -42,6 +42,7 @@ internal fun TimeTab(
 ) {
     val analytics = state.scheduleAnalytics
     val scrollState = rememberScrollState()
+
     Column(
         modifier = modifier.fillMaxSize().padding(top = 24.dp).verticalScroll(scrollState),
         verticalArrangement = Arrangement.spacedBy(16.dp),

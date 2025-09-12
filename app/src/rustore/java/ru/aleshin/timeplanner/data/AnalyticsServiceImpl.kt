@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ru.aleshin.timeplanner.domain
+package ru.aleshin.timeplanner.data
 
 import android.app.Application
 import android.content.Context
@@ -34,7 +34,7 @@ class AnalyticsServiceImpl(private val context: Context) : AnalyticsService {
 
     override fun initializeService() {
         MyTracker.getTrackerParams().apply {
-            setCustomParam("android_id", getAndroidId(context))
+            setCustomParam("android_id", getAndroidId())
         }
         MyTracker.initTracker(BuildConfig.MY_TRACKER_KEY, (context.applicationContext as Application))
     }

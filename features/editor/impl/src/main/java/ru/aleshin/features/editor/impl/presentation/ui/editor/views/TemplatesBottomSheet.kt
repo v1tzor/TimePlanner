@@ -47,6 +47,7 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -240,9 +241,9 @@ internal fun TemplateBottomSheetItemInfo(
     isEnableNotification: Boolean,
     repeatTimes: List<RepeatTime>,
 ) {
-    val timeFormat = SimpleDateFormat.getTimeInstance(SimpleDateFormat.SHORT)
-    val startTimeFormat = timeFormat.format(startTime)
-    val endTimeFormat = timeFormat.format(endTime)
+    val timeFormat = remember { SimpleDateFormat.getTimeInstance(SimpleDateFormat.SHORT) }
+    val startTimeFormat = remember(startTime) { timeFormat.format(startTime) }
+    val endTimeFormat = remember(endTime) { timeFormat.format(endTime) }
     val duration = duration(startTime, endTime).toMinutesOrHoursTitle()
     val categoryName = mainCategory.fetchName() ?: "*"
     val subCategoryName = subCategory?.name ?: TimePlannerRes.strings.categoryEmptyTitle

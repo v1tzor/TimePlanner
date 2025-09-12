@@ -43,6 +43,7 @@ import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -124,7 +125,9 @@ internal fun CurrentTimeTaskView(
     ) {
         Column(modifier = Modifier.animateContentSize()) {
             Row(
-                modifier = Modifier.padding(start = 16.dp, end = 8.dp, top = 16.dp, bottom = 4.dp).fillMaxWidth(),
+                modifier = Modifier
+                    .padding(start = 16.dp, end = 8.dp, top = 16.dp, bottom = 4.dp)
+                    .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
             ) {
@@ -168,7 +171,11 @@ internal fun CurrentTimeTaskView(
                             modifier = Modifier.size(32.dp),
                             onClick = {
                                 scope.launch {
-                                    if (!tooltipState.isVisible) tooltipState.show() else tooltipState.dismiss()
+                                    if (!tooltipState.isVisible) {
+                                        tooltipState.show()
+                                    } else {
+                                        tooltipState.dismiss()
+                                    }
                                 }
                             },
                         ) {
@@ -188,20 +195,27 @@ internal fun CurrentTimeTaskView(
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
-                        modifier = Modifier.weight(1f).height(IntrinsicSize.Min),
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(IntrinsicSize.Min),
                         text = HomeThemeRes.strings.progressTitle,
                         color = MaterialTheme.colorScheme.onPrimaryContainer,
                         style = MaterialTheme.typography.titleSmall,
                     )
                     Text(
-                        text = (model.progress * 100).roundToInt().toString() + "%",
+                        text = remember(model.progress) {
+                            (model.progress * 100).roundToInt().toString() + "%"
+                        },
                         color = MaterialTheme.colorScheme.onPrimaryContainer,
                         style = MaterialTheme.typography.titleSmall,
                     )
                 }
                 LinearProgressIndicator(
                     progress = { model.progress },
-                    modifier = Modifier.fillMaxWidth().height(10.dp).clip(RoundedCornerShape(100.dp)),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(10.dp)
+                        .clip(RoundedCornerShape(100.dp)),
                     color = MaterialTheme.colorScheme.primary,
                     trackColor = MaterialTheme.colorScheme.surfaceContainerHigh,
                     strokeCap = StrokeCap.Square,

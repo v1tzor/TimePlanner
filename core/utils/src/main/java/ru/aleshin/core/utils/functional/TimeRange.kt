@@ -18,7 +18,7 @@ package ru.aleshin.core.utils.functional
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
-import java.util.*
+import java.util.Date
 
 /**
  * @author Stanislav Aleshin on 26.03.2023.

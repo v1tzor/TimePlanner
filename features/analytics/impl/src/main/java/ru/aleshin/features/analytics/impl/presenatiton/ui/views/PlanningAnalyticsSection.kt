@@ -133,21 +133,24 @@ internal fun PlanningAnalyticsSection(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
+@OptIn(ExperimentalMaterial3Api::class)
 internal fun PlanningAnalyticsMonthItem(
     modifier: Modifier = Modifier,
     monthAnalytics: List<PlanningAnalyticUi>,
 ) {
-    val dateFormat = SimpleDateFormat.getDateInstance(SimpleDateFormat.MEDIUM)
-    val monthFormat = SimpleDateFormat("MMMM", Locale.getDefault())
+    val dateFormat = remember { SimpleDateFormat.getDateInstance(SimpleDateFormat.MEDIUM) }
+    val monthFormat = remember { SimpleDateFormat("MMMM", Locale.getDefault()) }
     val coroutineScope = rememberCoroutineScope()
     var selectedAnalyticItem by remember { mutableStateOf<PlanningAnalyticUi?>(null) }
 
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        val isCurrentMonth = remember(monthAnalytics) { monthAnalytics[0].date.isCurrentMonth() }
         Text(
-            text = monthFormat.format(monthAnalytics[0].date).substringOrFull(0, 3),
-            color = when (monthAnalytics[0].date.isCurrentMonth()) {
+            text = remember(monthAnalytics) {
+                monthFormat.format(monthAnalytics[0].date).substringOrFull(0, 3)
+            },
+            color = when (isCurrentMonth) {
                 true -> MaterialTheme.colorScheme.primary
                 else -> MaterialTheme.colorScheme.onSurface
             },
@@ -196,7 +199,11 @@ internal fun PlanningAnalyticsMonthItem(
                         onClick = {
                             selectedAnalyticItem = analytic
                             coroutineScope.launch {
-                                if (!tooltipState.isVisible) tooltipState.show() else tooltipState.dismiss()
+                                if (!tooltipState.isVisible) {
+                                    tooltipState.show()
+                                } else {
+                                    tooltipState.dismiss()
+                                }
                             }
                         },
                     )
@@ -278,8 +285,9 @@ internal fun TooltipTimeTaskItem(
     modifier: Modifier = Modifier,
     model: TimeTaskUi,
 ) {
-    val dateFormat = SimpleDateFormat.getDateInstance(SHORT)
-    val timeFormat = SimpleDateFormat.getTimeInstance(SHORT)
+    val dateFormat = remember { SimpleDateFormat.getDateInstance(SHORT) }
+    val timeFormat = remember { SimpleDateFormat.getTimeInstance(SHORT) }
+
     Row(
         modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(12.dp),

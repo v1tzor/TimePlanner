@@ -134,24 +134,29 @@ internal fun CategoriesAnalyticsChart(
     selectedItem: Int,
     onSelectItem: (Int) -> Unit,
 ) {
-    val topList = analytics.subList(fromIndex = 0, toIndex = 5)
-    val otherList = analytics.subList(5, analytics.lastIndex)
-    val pieDataList = mutableListOf<PieChartEntry>().apply {
-        topList.forEachIndexed { index, analytic ->
-            val label = analytic.mainCategory.fetchName() ?: "*"
-            val data = PieChartEntry(
-                value = analytic.duration.toFloat() + 1f,
-                label = AnnotatedString(label),
-                color = fetchPieColorByTop(index),
+    val coreStrings = TimePlannerRes.strings
+    val otherAnalyticsName = AnalyticsThemeRes.strings.otherAnalyticsName
+
+    val topList = remember(analytics) { analytics.subList(fromIndex = 0, toIndex = 5) }
+    val otherList = remember(analytics) { analytics.subList(5, analytics.lastIndex) }
+    val pieDataList = remember(topList, otherList) {
+        mutableListOf<PieChartEntry>().apply {
+            topList.forEachIndexed { index, analytic ->
+                val label = analytic.mainCategory.fetchName(coreStrings) ?: "*"
+                val data = PieChartEntry(
+                    value = analytic.duration.toFloat() + 1f,
+                    label = AnnotatedString(label),
+                    color = fetchPieColorByTop(index),
+                )
+                add(data)
+            }
+            val otherPieData = PieChartEntry(
+                value = otherList.sumOf { it.duration }.toFloat(),
+                label = AnnotatedString(otherAnalyticsName),
+                color = fetchPieColorByTop(5),
             )
-            add(data)
+            add(otherPieData)
         }
-        val otherPieData = PieChartEntry(
-            value = otherList.sumOf { it.duration }.toFloat(),
-            label = AnnotatedString(AnalyticsThemeRes.strings.otherAnalyticsName),
-            color = fetchPieColorByTop(5),
-        )
-        add(otherPieData)
     }
     Box(modifier = modifier.height(230.dp)) {
         PieChart(
@@ -197,7 +202,9 @@ internal fun SubAnalyticsTimeLegend(
             val subCategoryAnalytic = allSubCategoryAnalytics.subCategoriesInfo
 
             items(subCategoryAnalytic) { analytic ->
-                val percent = analytic.duration.toFloat() / allSubCategoryAnalytics.duration * 100
+                val percent = remember(analytic, allSubCategoryAnalytics) {
+                    analytic.duration.toFloat() / allSubCategoryAnalytics.duration * 100
+                }
 
                 SubAnalyticsTimeLegendItem(
                     name = analytic.subCategory.name ?: TimePlannerRes.strings.categoryEmptyTitle,
@@ -208,7 +215,9 @@ internal fun SubAnalyticsTimeLegend(
         } else {
             val otherAnalytics = analytics.subList(5, analytics.lastIndex)
             items(otherAnalytics) { analytic ->
-                val percent = analytic.duration.toFloat() / otherAnalytics.sumOf { it.duration } * 100
+                val percent = remember(analytic, otherAnalytics) {
+                    analytic.duration.toFloat() / otherAnalytics.sumOf { it.duration } * 100
+                }
 
                 SubAnalyticsTimeLegendItem(
                     name = analytic.mainCategory.fetchName() ?: "*",

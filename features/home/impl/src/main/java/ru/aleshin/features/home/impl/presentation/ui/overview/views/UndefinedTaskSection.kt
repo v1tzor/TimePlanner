@@ -157,14 +157,14 @@ internal fun UndefinedTaskSectionLazyRow(
     ) {
         item {
             AddUndefinedTaskItem(
-                modifier = Modifier.animateItemPlacement(),
+                modifier = Modifier.animateItem(),
                 isCompact = tasks.isNotEmpty(),
                 onClick = { openTaskEditorDialog = true; editableTask = null },
             )
         }
-        items(tasks) { undefinedTask ->
+        items(tasks, key = { it.id }) { undefinedTask ->
             UndefinedTaskItem(
-                modifier = Modifier.animateItemPlacement(),
+                modifier = Modifier.animateItem(),
                 model = undefinedTask,
                 onClick = { openTaskEditorDialog = true; editableTask = undefinedTask },
                 onDeleteIconClick = { onDeleteIconClick(undefinedTask) },
@@ -254,7 +254,9 @@ internal fun UndefinedTaskItem(
                     )
                 } else {
                     Text(
-                        text = model.mainCategory.customName?.first()?.uppercaseChar()?.toString() ?: "*",
+                        text = remember(model.mainCategory) {
+                            model.mainCategory.customName?.first()?.uppercaseChar()?.toString() ?: "*"
+                        },
                         color = MaterialTheme.colorScheme.primary,
                         style = MaterialTheme.typography.titleLarge,
                     )
@@ -281,7 +283,11 @@ internal fun UndefinedTaskItem(
                                 .background(MaterialTheme.colorScheme.surfaceContainerHigh)
                                 .clickable {
                                     scope.launch {
-                                        if (tooltipState.isVisible) tooltipState.dismiss() else tooltipState.show()
+                                        if (tooltipState.isVisible) {
+                                            tooltipState.dismiss()
+                                        } else {
+                                            tooltipState.show()
+                                        }
                                     }
                                 },
                         ) {
@@ -394,7 +400,10 @@ internal fun AddUndefinedTaskItem(
 ) {
     Surface(
         onClick = onClick,
-        modifier = modifier.height(170.dp).width(if (isCompact) 48.dp else 165.dp).animateContentSize(),
+        modifier = modifier
+            .height(170.dp)
+            .width(if (isCompact) 48.dp else 165.dp)
+            .animateContentSize(),
         enabled = enabled,
         shape = MaterialTheme.shapes.large,
         color = MaterialTheme.colorScheme.surfaceContainerLow,

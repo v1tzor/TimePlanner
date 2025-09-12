@@ -111,7 +111,10 @@ internal fun EditorContent(
         Column(modifier = modifier.fillMaxSize().animateContentSize()) {
             if (state.editModel != null) {
                 Column(
-                    modifier = Modifier.weight(1f).verticalScroll(scrollState).padding(top = 16.dp),
+                    modifier = Modifier
+                        .weight(1f)
+                        .verticalScroll(scrollState)
+                        .padding(top = 16.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                 ) {
                     CategoriesSection(
@@ -220,8 +223,8 @@ internal fun CategoriesSection(
         )
         CustomLargeTextField(
             enabled = enabledNote,
-            text = editableNote, 
-            onTextChange = { 
+            text = editableNote,
+            onTextChange = {
                 if (it.text.length <= Constants.Text.MAX_NOTE_LENGTH) {
                     editableNote = it
                     onNoteChange(editableNote.text.ifEmpty { null })
@@ -237,18 +240,20 @@ internal fun CategoriesSection(
                 )
             },
             maxLines = 4,
-            trailingIcon = if (noteInteractionSource.collectIsFocusedAsState().value) { {
-                IconButton(
-                    modifier = Modifier.size(32.dp),
-                    onClick = { focusManager.clearFocus(); },
-                ) {
-                    Icon(
-                        imageVector = Icons.Outlined.CheckCircle,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onSurface,
-                    )
+            trailingIcon = if (noteInteractionSource.collectIsFocusedAsState().value) {
+                {
+                    IconButton(
+                        modifier = Modifier.size(32.dp),
+                        onClick = { focusManager.clearFocus(); },
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.CheckCircle,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onSurface,
+                        )
+                    }
                 }
-            } } else {
+            } else {
                 null
             },
             interactionSource = noteInteractionSource,
@@ -279,7 +284,12 @@ internal fun DateTimeSection(
                 if (newStartTime <= timeRanges.to) {
                     onTimeRangeChange(timeRanges.copy(from = newStartTime))
                 } else {
-                    onTimeRangeChange(timeRanges.copy(from = newStartTime, to = timeRanges.to.shiftDay(1)))
+                    onTimeRangeChange(
+                        timeRanges.copy(
+                            from = newStartTime,
+                            to = timeRanges.to.shiftDay(1)
+                        )
+                    )
                 }
             },
         )
@@ -333,26 +343,28 @@ internal fun ParametersSection(
             leadingIcon = painterResource(id = EditorThemeRes.icons.notifications),
             title = EditorThemeRes.strings.notifyParameterTitle,
             description = EditorThemeRes.strings.notifyParameterDesc,
-            optionsButton = if (parameters.isEnableNotification) { {
-                Box {
-                    IconButton(
-                        modifier = Modifier.size(32.dp),
-                        onClick = { openTaskNotificationMenu = true },
-                        colors = IconButtonDefaults.iconButtonColors(
-                            containerColor = MaterialTheme.colorScheme.surfaceVariant,
-                            contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                        ),
-                    ) {
-                        Icon(imageVector = Icons.Default.Settings, contentDescription = null)
+            optionsButton = if (parameters.isEnableNotification) {
+                {
+                    Box {
+                        IconButton(
+                            modifier = Modifier.size(32.dp),
+                            onClick = { openTaskNotificationMenu = true },
+                            colors = IconButtonDefaults.iconButtonColors(
+                                containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                                contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                            ),
+                        ) {
+                            Icon(imageVector = Icons.Default.Settings, contentDescription = null)
+                        }
+                        TaskNotificationsMenu(
+                            isExpanded = openTaskNotificationMenu,
+                            taskNotification = parameters.taskNotifications,
+                            onDismiss = { openTaskNotificationMenu = false },
+                            onUpdate = { onChangeParameters(parameters.copy(taskNotifications = it)) },
+                        )
                     }
-                    TaskNotificationsMenu(
-                        isExpanded = openTaskNotificationMenu,
-                        taskNotification = parameters.taskNotifications,
-                        onDismiss = { openTaskNotificationMenu = false },
-                        onUpdate = { onChangeParameters(parameters.copy(taskNotifications = it)) },
-                    )
                 }
-            } } else {
+            } else {
                 null
             },
             onChangeSelected = { notification ->
@@ -385,7 +397,9 @@ internal fun ActionButtonsSection(
 ) {
     Box(modifier = modifier, contentAlignment = Alignment.BottomStart) {
         Row(
-            modifier = Modifier.fillMaxWidth().padding(16.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
             horizontalArrangement = Arrangement.spacedBy(10.dp),
         ) {
             FilledTonalButton(
@@ -423,10 +437,12 @@ internal fun TemplateSelector(
 ) {
     IconButton(
         onClick = { if (isSelect) onControl() else onCreateTemplate() },
-        modifier = modifier.size(40.dp).background(
-            color = MaterialTheme.colorScheme.primaryContainer,
-            shape = RoundedCornerShape(40.dp),
-        ),
+        modifier = modifier
+            .size(40.dp)
+            .background(
+                color = MaterialTheme.colorScheme.primaryContainer,
+                shape = RoundedCornerShape(40.dp),
+            ),
         enabled = enabled,
     ) {
         val templatesButton = when (isSelect) {
@@ -434,6 +450,7 @@ internal fun TemplateSelector(
                 true -> EditorThemeRes.icons.repeat
                 false -> TimePlannerRes.icons.enabledSettingsIcon
             }
+
             false -> EditorThemeRes.icons.unFavorite
         }
         Icon(

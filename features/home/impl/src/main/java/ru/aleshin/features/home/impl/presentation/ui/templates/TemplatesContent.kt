@@ -38,6 +38,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -109,12 +110,9 @@ internal fun TemplatesLazyColumn(
             modifier = modifier.padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            items(
-                items = templates,
-                key = { it.templateId },
-            ) { template ->
+            items(items = templates, key = { it.templateId }) { template ->
                 TemplatesItem(
-                    modifier = Modifier.animateItemPlacement(),
+                    modifier = Modifier.animateItem(),
                     model = template,
                     categories = categories,
                     onUpdate = { onUpdateTemplate(it) },
@@ -149,7 +147,9 @@ internal fun TemplatesFiltersHeader(
 ) {
     var isExpanded by rememberSaveable { mutableStateOf(false) }
     Row(
-        modifier = modifier.fillMaxWidth().padding(start = 16.dp, end = 8.dp, top = 8.dp, bottom = 8.dp),
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(start = 16.dp, end = 8.dp, top = 8.dp, bottom = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
@@ -208,16 +208,18 @@ internal fun SortedTypeMenu(
         offset = DpOffset(0.dp, 2.dp),
     ) {
         TemplatesSortedType.entries.forEach { type ->
-            DropdownMenuItem(
-                onClick = { onSelected(type) },
-                text = {
-                    Text(
-                        text = type.mapToString(),
-                        color = MaterialTheme.colorScheme.onSurface,
-                        style = MaterialTheme.typography.titleMedium,
-                    )
-                },
-            )
+            key(type) {
+                DropdownMenuItem(
+                    onClick = { onSelected(type) },
+                    text = {
+                        Text(
+                            text = type.mapToString(),
+                            color = MaterialTheme.colorScheme.onSurface,
+                            style = MaterialTheme.typography.titleMedium,
+                        )
+                    },
+                )
+            }
         }
     }
 }

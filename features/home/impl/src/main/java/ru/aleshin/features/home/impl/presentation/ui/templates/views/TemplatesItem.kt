@@ -33,6 +33,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -151,7 +152,7 @@ internal fun TemplateItemInfo(
     isConsiderInStatistics: Boolean,
     repeatTimes: List<RepeatTime>,
 ) {
-    val timeFormat = SimpleDateFormat.getTimeInstance(SimpleDateFormat.SHORT)
+    val timeFormat = remember { SimpleDateFormat.getTimeInstance(SimpleDateFormat.SHORT) }
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Row(modifier = modifier, horizontalArrangement = Arrangement.spacedBy(16.dp)) {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -224,7 +225,10 @@ internal fun TemplateItemControlButtons(
 ) {
     var isShowRepeatTimesMenu by rememberSaveable { mutableStateOf(false) }
 
-    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(12.dp)) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
         if (repeatTimes.isEmpty()) {
             IconButton(onClick = { isShowRepeatTimesMenu = true }) {
                 Icon(

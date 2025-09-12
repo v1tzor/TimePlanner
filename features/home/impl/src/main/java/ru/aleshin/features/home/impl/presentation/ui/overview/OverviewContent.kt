@@ -21,11 +21,13 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.PullToRefreshState
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.google.accompanist.swiperefresh.SwipeRefresh
-import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import ru.aleshin.core.utils.extensions.isIncludeTime
 import ru.aleshin.features.home.impl.presentation.models.schedules.UndefinedTaskUi
 import ru.aleshin.features.home.impl.presentation.ui.overview.contract.OverviewViewState
@@ -38,6 +40,7 @@ import java.util.Date
  * @author Stanislav Aleshin on 02.11.2023.
  */
 @Composable
+@OptIn(ExperimentalMaterial3Api::class)
 internal fun OverviewContent(
     modifier: Modifier = Modifier,
     state: OverviewViewState,
@@ -49,14 +52,13 @@ internal fun OverviewContent(
     onExecuteTask: (Date, UndefinedTaskUi) -> Unit,
 ) {
     val scrollState = rememberScrollState()
-    // Pullrefresh not available for Material Design 3
-    val refreshState = rememberSwipeRefreshState(
-        isRefreshing = state.currentDate == null && state.schedules.isEmpty(),
-    )
-    SwipeRefresh(
+    val refreshState: PullToRefreshState = rememberPullToRefreshState()
+
+    PullToRefreshBox(
         modifier = modifier,
         state = refreshState,
         onRefresh = onRefresh,
+        isRefreshing = state.currentDate == null && state.schedules.isEmpty(),
     ) {
         Column(
             modifier = Modifier.verticalScroll(state = scrollState, enabled = !state.isLoading),
@@ -71,7 +73,9 @@ internal fun OverviewContent(
             )
             CurrentTimeTaskSection(
                 isLoading = state.isLoading,
-                task = state.currentSchedule?.timeTasks?.find { it.timeToTimeRange().isIncludeTime(Date()) },
+                task = state.currentSchedule?.timeTasks?.find {
+                    it.timeToTimeRange().isIncludeTime(Date())
+                },
                 onOpenTask = { onOpenSchedule(null) },
             )
             UndefinedTaskSection(

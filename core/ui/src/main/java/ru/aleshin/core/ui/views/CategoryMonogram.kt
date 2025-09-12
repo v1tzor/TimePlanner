@@ -50,7 +50,10 @@ fun CategoryIconMonogram(
     contentAlignment = Alignment.Center,
 ) {
     Box(
-        modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(40.dp)).background(backgroundColor),
+        modifier = Modifier
+            .fillMaxSize()
+            .clip(RoundedCornerShape(40.dp))
+            .background(backgroundColor),
         contentAlignment = Alignment.Center,
     ) {
         Icon(
@@ -63,7 +66,11 @@ fun CategoryIconMonogram(
     if (priority != MonogramPriority.STANDARD) {
         MonogramBadge(
             modifier = Modifier.align(Alignment.TopEnd),
-            color = if (priority == MonogramPriority.MEDIUM) badgePriorityMedium else badgePriorityMax,
+            color = if (priority == MonogramPriority.MEDIUM) {
+                badgePriorityMedium
+            } else {
+                badgePriorityMax
+            }
         )
     }
 }
@@ -80,7 +87,10 @@ fun CategoryTextMonogram(
     contentAlignment = Alignment.Center,
 ) {
     Box(
-        modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(40.dp)).background(backgroundColor),
+        modifier = Modifier
+            .fillMaxSize()
+            .clip(RoundedCornerShape(40.dp))
+            .background(backgroundColor),
         contentAlignment = Alignment.Center,
     ) {
         Text(

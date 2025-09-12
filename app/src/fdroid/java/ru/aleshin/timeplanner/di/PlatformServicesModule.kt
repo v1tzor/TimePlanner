@@ -15,8 +15,8 @@
  */
 package ru.aleshin.timeplanner.di
 
-import dagger.Provides
 import dagger.Module
+import dagger.Provides
 import ru.aleshin.core.utils.platform.services.AnalyticsService
 import ru.aleshin.core.utils.platform.services.AppService
 import ru.aleshin.core.utils.platform.services.CrashlyticsService

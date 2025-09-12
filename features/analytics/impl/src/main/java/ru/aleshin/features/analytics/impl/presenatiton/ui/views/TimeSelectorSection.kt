@@ -34,6 +34,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -92,7 +93,10 @@ internal fun TimeSelector(
                     color = MaterialTheme.colorScheme.onSurface,
                     style = MaterialTheme.typography.titleSmall,
                 )
-                ExpandedIcon(isExpanded = isExpanded, color = MaterialTheme.colorScheme.onSurface)
+                ExpandedIcon(
+                    isExpanded = isExpanded,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
             }
         }
         TimePeriodMenu(
@@ -126,27 +130,29 @@ internal fun TimePeriodMenu(
     ) {
         val items = TimePeriod.entries.toTypedArray()
         items.forEach { period ->
-            DropdownMenuItem(
-                enabled = enabled,
-                text = {
-                    Text(
-                        text = period.mapToString(),
-                        color = MaterialTheme.colorScheme.onSurface,
-                        style = MaterialTheme.typography.titleMedium,
-                    )
-                },
-                trailingIcon = {
-                    if (period == currentPeriod) {
-                        Icon(
-                            modifier = Modifier.size(18.dp),
-                            imageVector = Icons.Default.Check,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary,
+            key(period) {
+                DropdownMenuItem(
+                    enabled = enabled,
+                    text = {
+                        Text(
+                            text = period.mapToString(),
+                            color = MaterialTheme.colorScheme.onSurface,
+                            style = MaterialTheme.typography.titleMedium,
                         )
-                    }
-                },
-                onClick = { onTimeSelected(period) },
-            )
+                    },
+                    trailingIcon = {
+                        if (period == currentPeriod) {
+                            Icon(
+                                modifier = Modifier.size(18.dp),
+                                imageVector = Icons.Default.Check,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary,
+                            )
+                        }
+                    },
+                    onClick = { onTimeSelected(period) },
+                )
+            }
         }
     }
 }

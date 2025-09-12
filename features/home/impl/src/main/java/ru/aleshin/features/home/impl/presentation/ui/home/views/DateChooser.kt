@@ -69,8 +69,8 @@ internal fun DateChooser(
     ) {
         Row(modifier = Modifier.fillMaxHeight(), verticalAlignment = Alignment.CenterVertically) {
             DateChooserIcon(
-                enabled = enabled, 
-                icon = painterResource(HomeThemeRes.icons.previousDate), 
+                enabled = enabled,
+                icon = painterResource(HomeThemeRes.icons.previousDate),
                 description = HomeThemeRes.strings.previousDateIconDesc,
                 onClick = onPrevious,
             )
@@ -104,7 +104,9 @@ internal fun DateChooserIcon(
         enabled = enabled,
     ) {
         Icon(
-            modifier = Modifier.size(12.dp).graphicsLayer(alpha = if (enabled) 1f else 0.5f),
+            modifier = Modifier
+                .size(12.dp)
+                .graphicsLayer(alpha = if (enabled) 1f else 0.5f),
             painter = icon,
             contentDescription = description,
             tint = MaterialTheme.colorScheme.onSurface,
@@ -120,16 +122,21 @@ internal fun DateChooserContent(
     onClick: () -> Unit,
 ) {
     Box(
-        modifier = modifier.fillMaxHeight().clip(MaterialTheme.shapes.medium).clickable(
-            enabled = enabled,
-            onClick = onClick, 
-        ),
+        modifier = modifier
+            .fillMaxHeight()
+            .clip(MaterialTheme.shapes.medium)
+            .clickable(
+                enabled = enabled,
+                onClick = onClick,
+            ),
         contentAlignment = Alignment.Center,
     ) {
         Text(
-            modifier = Modifier.padding(horizontal = 12.dp).graphicsLayer(
-                alpha = if (enabled) 1f else 0.5f,
-            ),
+            modifier = Modifier
+                .padding(horizontal = 12.dp)
+                .graphicsLayer(
+                    alpha = if (enabled) 1f else 0.5f,
+                ),
             text = dateTitle,
             textAlign = TextAlign.Center,
             maxLines = 1,

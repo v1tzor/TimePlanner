@@ -79,7 +79,9 @@ internal fun MainCategoriesHorizontalList(
 ) {
     LazyHorizontalGrid(
         rows = GridCells.Fixed(2),
-        modifier = modifier.height(236.dp).animateContentSize(),
+        modifier = modifier
+            .height(236.dp)
+            .animateContentSize(),
         state = gridState,
         contentPadding = PaddingValues(start = 16.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -132,7 +134,9 @@ internal fun MainCategoryItem(
         },
     ) {
         Row(
-            modifier = Modifier.padding(top = 12.dp, bottom = 12.dp, start = 12.dp, end = 4.dp).animateContentSize(),
+            modifier = Modifier
+                .padding(top = 12.dp, bottom = 12.dp, start = 12.dp, end = 4.dp)
+                .animateContentSize(),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Column(

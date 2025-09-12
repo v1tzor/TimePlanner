@@ -30,6 +30,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -55,7 +56,8 @@ internal fun OverviewScheduleItem(
     model: ScheduleUi,
     onClick: () -> Unit,
 ) {
-    val dateFormat = SimpleDateFormat("EEE, d MMM", Locale.getDefault())
+    val dateFormat = remember { SimpleDateFormat("EEE, d MMM", Locale.getDefault()) }
+
     Surface(
         onClick = onClick,
         modifier = modifier.height(125.dp),
@@ -111,16 +113,22 @@ internal fun OverviewScheduleItem(
                 ShortInfoView(
                     modifier = Modifier.weight(1f),
                     enabled = model.dateStatus != DailyScheduleStatus.PLANNED,
-                    text = model.timeTasks.count { !it.isCompleted }.toString(),
+                    text = remember(model.timeTasks) {
+                        model.timeTasks.count { !it.isCompleted }.toString() // TODO: Move logic to domain
+                    },
                     icon = painterResource(id = HomeThemeRes.icons.unexecutedTask),
                 )
                 ShortInfoView(
                     modifier = Modifier.weight(1f),
                     enabled = model.dateStatus != DailyScheduleStatus.PLANNED,
-                    text = model.timeTasks.count { it.progress == 1f && it.isCompleted }.toString(),
+                    text = remember(model.timeTasks) {
+                        model.timeTasks.count { it.progress == 1f && it.isCompleted }.toString() // TODO: Move logic to domain
+                    },
                     icon = painterResource(id = HomeThemeRes.icons.completedTask),
                 )
-                val plannedTimeTasks = model.timeTasks.count { it.progress < 1f }
+                val plannedTimeTasks = remember(model.timeTasks) {
+                    model.timeTasks.count { it.progress < 1f } // TODO: Move logic to domain
+                }
                 ShortInfoView(
                     modifier = Modifier.weight(1f),
                     enabled = model.dateStatus != DailyScheduleStatus.REALIZED,

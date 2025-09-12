@@ -37,6 +37,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import ru.aleshin.core.ui.views.PlaceholderBox
@@ -78,7 +79,9 @@ internal fun SchedulesSection(
         ) { loading ->
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 if (!loading && currentSchedule != null) {
-                    val currentScheduleIndex = schedules.indexOf(currentSchedule)
+                    val currentScheduleIndex = remember(schedules, currentSchedule) {
+                        schedules.indexOf(currentSchedule)
+                    }
                     val gridState = rememberLazyGridState(
                         initialFirstVisibleItemIndex = if (currentScheduleIndex == -1) 0 else currentScheduleIndex,
                     )
@@ -88,16 +91,23 @@ internal fun SchedulesSection(
                         onScheduleClick = onOpenSchedule,
                     )
                     Button(
-                        modifier = Modifier.fillMaxWidth().height(40.dp).padding(horizontal = 16.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(40.dp)
+                            .padding(horizontal = 16.dp),
                         onClick = onOpenAllSchedules,
                         shape = MaterialTheme.shapes.large,
                         contentPadding = PaddingValues(),
-                        content = { Text(text = HomeThemeRes.strings.showAllSchedulesTitle) },
-                    )
+                    ) {
+                        Text(text = HomeThemeRes.strings.showAllSchedulesTitle)
+                    }
                 } else {
                     SchedulesSectionGridViewPlaceholder()
                     PlaceholderBox(
-                        modifier = Modifier.fillMaxWidth().height(40.dp).padding(horizontal = 16.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(40.dp)
+                            .padding(horizontal = 16.dp),
                         shape = MaterialTheme.shapes.large,
                         color = MaterialTheme.colorScheme.primary,
                     )
@@ -141,7 +151,9 @@ internal fun SchedulesSectionGridViewPlaceholder(
 ) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
-        modifier = modifier.fillMaxWidth().height(262.dp),
+        modifier = modifier
+            .fillMaxWidth()
+            .height(262.dp),
         contentPadding = PaddingValues(horizontal = 16.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),

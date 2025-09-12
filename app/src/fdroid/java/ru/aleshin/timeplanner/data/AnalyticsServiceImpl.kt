@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ru.aleshin.timeplanner.domain
+package ru.aleshin.timeplanner.data
 
 import ru.aleshin.core.utils.platform.services.AnalyticsService
 
@@ -22,5 +22,5 @@ import ru.aleshin.core.utils.platform.services.AnalyticsService
  */
 class AnalyticsServiceImpl : AnalyticsService {
     override fun trackEvent(name: String, eventParams: Map<String, String>) = Unit
-    override fun initializeService(context: Context) = Unit
+    override fun initializeService() = Unit
 }

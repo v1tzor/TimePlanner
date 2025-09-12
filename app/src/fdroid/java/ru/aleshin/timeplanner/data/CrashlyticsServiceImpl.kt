@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ru.aleshin.timeplanner.domain
+package ru.aleshin.timeplanner.data
 
 import ru.aleshin.core.utils.platform.services.CrashlyticsService
 
@@ -23,5 +23,5 @@ import ru.aleshin.core.utils.platform.services.CrashlyticsService
 class CrashlyticsServiceImpl : CrashlyticsService {
     override fun sendLog(message: String) = Unit
     override fun recordException(exception: Throwable, issueKey: String) = Unit
-    override fun initializeService(context: Context) = Unit
+    override fun initializeService() = Unit
 }

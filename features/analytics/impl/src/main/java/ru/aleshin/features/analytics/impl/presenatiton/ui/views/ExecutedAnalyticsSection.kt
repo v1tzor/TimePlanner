@@ -29,6 +29,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.himanshoe.charty.common.axis.AxisConfig
@@ -91,22 +92,27 @@ internal fun ExecutedAnalyticsChart(
     workLoadMap: WorkLoadMapUi,
     period: TimePeriod,
 ) {
-    val lineData = mutableListOf<LineData>().apply {
-        workLoadMap.forEach { (timeRange, timeTasks) ->
-            val xValue = when (period == TimePeriod.YEAR || period == TimePeriod.HALF_YEAR) {
-                true -> timeRange.toMonthTitle()
-                false -> timeRange.toDaysTitle()
+    val lineData = remember(workLoadMap, period) {
+        mutableListOf<LineData>().apply {
+            workLoadMap.forEach { (timeRange, timeTasks) ->
+                val xValue = when (period == TimePeriod.YEAR || period == TimePeriod.HALF_YEAR) {
+                    true -> timeRange.toMonthTitle()
+                    false -> timeRange.toDaysTitle()
+                }
+                val allTimeTasks = timeTasks.size.let { if (it == 0) 1 else it }
+                val yValue = timeTasks.count { it.isCompleted } / allTimeTasks.toFloat()
+                add(LineData(xValue, yValue.toBigDecimal().setScale(1, RoundingMode.UP).toFloat() * 100f))
             }
-            val allTimeTasks = timeTasks.size.let { if (it == 0) 1 else it }
-            val yValue = timeTasks.count { it.isCompleted } / allTimeTasks.toFloat()
-            add(LineData(xValue, yValue.toBigDecimal().setScale(1, RoundingMode.UP).toFloat() * 100f))
         }
     }
     LineChart(
-        modifier = modifier.height(200.dp).fillMaxWidth().padding(
-            horizontal = 36.dp, 
-            vertical = 32.dp,
-        ),
+        modifier = modifier
+            .height(200.dp)
+            .fillMaxWidth()
+            .padding(
+                horizontal = 36.dp,
+                vertical = 32.dp,
+            ),
         lineData = lineData,
         color = MaterialTheme.colorScheme.secondary,
         axisConfig = AxisConfig(

@@ -11,8 +11,8 @@
       "type": "SINGLE",
       "filters": [],
       "attributes": [],
-      "versionCode": 29,
-      "versionName": "0.9.0",
+      "versionCode": 31,
+      "versionName": "1.0.1",
       "outputFile": "app-release.apk"
     }
   ],
@@ -27,7 +27,7 @@
     },
     {
       "minApi": 31,
-      "maxApi": 34,
+      "maxApi": 2147483647,
       "baselineProfiles": [
         "baselineProfiles/0/app-release.dm"
       ]

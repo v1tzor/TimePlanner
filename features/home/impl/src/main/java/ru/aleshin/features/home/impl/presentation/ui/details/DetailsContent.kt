@@ -51,26 +51,9 @@ internal fun DetailsContent(
     state: DetailsViewState,
     onOpenSchedule: (ScheduleUi) -> Unit,
 ) {
-    DetailsSchedulesLazyGrid(
-        modifier = modifier,
-        isLoading = state.isLoading,
-        currentSchedule = state.currentSchedule,
-        schedules = state.schedules,
-        onOpenSchedule = onOpenSchedule,
-    )
-}
-
-@Composable
-internal fun DetailsSchedulesLazyGrid(
-    modifier: Modifier = Modifier,
-    isLoading: Boolean,
-    currentSchedule: ScheduleUi?,
-    schedules: List<ScheduleUi>,
-    onOpenSchedule: (ScheduleUi) -> Unit,
-) {
     AnimatedContent(
         modifier = modifier,
-        targetState = isLoading,
+        targetState = state.isLoading,
         label = "Details schedules",
         transitionSpec = {
             fadeIn(animationSpec = tween(600, delayMillis = 90)).togetherWith(
@@ -78,6 +61,9 @@ internal fun DetailsSchedulesLazyGrid(
             )
         },
     ) { loading ->
+        val currentSchedule = state.currentSchedule
+        val schedules = state.schedules
+
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
             if (!loading && currentSchedule != null) {
                 val currentScheduleIndex = schedules.indexOf(currentSchedule)

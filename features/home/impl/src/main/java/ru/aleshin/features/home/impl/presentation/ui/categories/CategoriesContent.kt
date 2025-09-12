@@ -36,6 +36,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -70,8 +71,12 @@ internal fun CategoriesContent(
     val scrollableState = rememberScrollState()
 
     Column(modifier = modifier.fillMaxSize().verticalScroll(scrollableState)) {
-        val categories = state.categories.find { it.mainCategory == state.selectedMainCategory }
-        val subCategories = categories?.subCategories ?: emptyList()
+        val categories = remember(state.categories, state.selectedMainCategory) {
+            state.categories.find { it.mainCategory == state.selectedMainCategory }
+        }
+        val subCategories = remember(categories) {
+            categories?.subCategories ?: emptyList()
+        }
 
         MainCategoriesHeader(
             modifier = Modifier.padding(top = 8.dp, bottom = 4.dp).fillMaxWidth(),
@@ -79,7 +84,9 @@ internal fun CategoriesContent(
         )
         MainCategoriesHorizontalList(
             modifier = Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 12.dp),
-            mainCategories = state.categories.map { it.mainCategory },
+            mainCategories = remember(state.categories) {
+                state.categories.map { it.mainCategory }
+            },
             selectedCategory = state.selectedMainCategory,
             onSelectCategory = onChangeMainCategory,
             onUpdateCategory = onMainCategoryUpdate,

@@ -19,7 +19,6 @@ import ru.aleshin.core.utils.platform.services.AnalyticsService
 import ru.aleshin.core.utils.platform.services.AppService
 import ru.aleshin.core.utils.platform.services.BaseApplication
 import ru.aleshin.core.utils.platform.services.CrashlyticsService
-import ru.aleshin.timeplanner.data.CrashlyticsServiceImpl
 import javax.inject.Inject
 
 /**

@@ -62,13 +62,15 @@ internal fun SubCategoryEditorDialog(
 ) {
     var isError by rememberSaveable { mutableStateOf(false) }
     val subCategoryName = editSubCategory?.name
-    val textRange = TextRange(subCategoryName?.length ?: 0)
+    val textRange = remember { TextRange(subCategoryName?.length ?: 0) }
     var subCategoryNameValue by remember {
         mutableStateOf(TextFieldValue(text = subCategoryName ?: "", selection = textRange))
     }
     BasicAlertDialog(onDismissRequest = onDismiss) {
         Surface(
-            modifier = modifier.width(328.dp).wrapContentHeight(),
+            modifier = modifier
+                .width(328.dp)
+                .wrapContentHeight(),
             shape = MaterialTheme.shapes.extraLarge,
             color = MaterialTheme.colorScheme.surfaceContainer,
         ) {
@@ -78,7 +80,8 @@ internal fun SubCategoryEditorDialog(
                 )
                 HorizontalDivider()
                 CategoryDialogField(
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
                         .padding(top = 18.dp, bottom = 8.dp, start = 24.dp, end = 24.dp),
                     categoryNameValue = subCategoryNameValue,
                     isError = isError,

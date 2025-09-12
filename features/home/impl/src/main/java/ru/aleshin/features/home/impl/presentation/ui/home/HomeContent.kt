@@ -52,6 +52,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -161,13 +162,15 @@ internal fun HomeDateChooser(
     currentDate: Date?,
     onChangeDate: (Date) -> Unit,
 ) {
-    val dateFormat = SimpleDateFormat("EEE, d MMM", Locale.getDefault())
+    val dateFormat = remember { SimpleDateFormat("EEE, d MMM", Locale.getDefault()) }
     val isDateDialogShow = rememberSaveable { mutableStateOf(false) }
 
     DateChooser(
         modifier = modifier,
         enabled = enabled,
-        dateTitle = currentDate?.let { dateFormat.format(it) } ?: "",
+        dateTitle = remember(currentDate) {
+            currentDate?.let { dateFormat.format(it) } ?: ""
+        },
         onNext = { currentDate?.let { onChangeDate.invoke(it.shiftDay(amount = 1)) } },
         onPrevious = { currentDate?.let { onChangeDate.invoke(it.shiftDay(amount = -1)) } },
         onChooseDate = { isDateDialogShow.value = true },
@@ -205,7 +208,9 @@ internal fun TimeTasksSection(
 ) {
     val isCompactView = timeTaskViewStatus == ViewToggleStatus.COMPACT
     var isScrolled by rememberSaveable { mutableStateOf(false) }
-    val visibleFirstAdd = timeTasks.isNotEmpty() && timeTasks.first().startTime > currentDate && !isCompactView
+    val visibleFirstAdd = remember(timeTasks, currentDate, isCompactView) {
+        timeTasks.isNotEmpty() && timeTasks.first().startTime > currentDate && !isCompactView
+    }
 
     Box(modifier = modifier.fillMaxSize()) {
         if (dateStatus != null) {
@@ -217,10 +222,11 @@ internal fun TimeTasksSection(
                 if (visibleFirstAdd) {
                     item {
                         val startTime = checkNotNull(currentDate)
-                        val endTime = timeTasks[0].startTime
+                        val endTime = remember(timeTasks) { timeTasks[0].startTime }
+
                         AddTimeTaskViewItem(
-                            modifier = Modifier.animateItemPlacement(
-                                animationSpec = spring(
+                            modifier = Modifier.animateItem(
+                                placementSpec = spring(
                                     stiffness = Spring.StiffnessMedium,
                                     visibilityThreshold = IntOffset.VisibilityThreshold,
                                 ),
@@ -232,12 +238,16 @@ internal fun TimeTasksSection(
                     }
                 }
                 items(timeTasks, key = { it.key }) { timeTask ->
-                    val timeTaskIndex = timeTasks.indexOf(timeTask)
-                    val nextItem = timeTasks.getOrNull(timeTaskIndex + 1)
+                    val timeTaskIndex = remember(timeTasks) {
+                        timeTasks.indexOf(timeTask)
+                    }
+                    val nextItem = remember(timeTasks, timeTaskIndex) {
+                        timeTasks.getOrNull(timeTaskIndex + 1)
+                    }
 
                     TimeTaskViewItem(
-                        modifier = Modifier.animateItemPlacement(
-                            animationSpec = spring(
+                        modifier = Modifier.animateItem(
+                            placementSpec = spring(
                                 stiffness = Spring.StiffnessMedium,
                                 visibilityThreshold = IntOffset.VisibilityThreshold,
                             ),
@@ -247,16 +257,20 @@ internal fun TimeTasksSection(
                         onIncrease = onTimeTaskIncrease,
                         onReduce = onTimeTaskReduce,
                         onDoneChange = onTaskDoneChange,
-                        isCompactView = isCompactView && nextItem != null && timeTask.endTime.isNotZeroDifference(
-                            nextItem.startTime,
-                        ),
+                        isCompactView = remember(nextItem, isCompactView) {
+                            isCompactView &&
+                                    nextItem != null &&
+                                    timeTask.endTime.isNotZeroDifference(nextItem.startTime)
+                        }
                     )
                     AnimatedVisibility(
                         enter = fadeIn() + slideInVertically(),
                         exit = shrinkVertically() + fadeOut(),
-                        visible = nextItem != null &&
-                            timeTask.endTime.isNotZeroDifference(nextItem.startTime) &&
-                            !isCompactView,
+                        visible = remember(nextItem, isCompactView) {
+                            nextItem != null &&
+                                    timeTask.endTime.isNotZeroDifference(nextItem.startTime) &&
+                                    !isCompactView
+                        },
                     ) {
                         val trackColor = when (timeTask.executionStatus) {
                             TimeTaskStatus.PLANNED -> MaterialTheme.colorScheme.surfaceContainerLow
@@ -265,8 +279,8 @@ internal fun TimeTasksSection(
                         }
                         if (nextItem != null) {
                             AddTimeTaskViewItem(
-                                modifier = Modifier.animateItemPlacement(
-                                    animationSpec = spring(
+                                modifier = Modifier.animateItem(
+                                    placementSpec = spring(
                                         stiffness = Spring.StiffnessMedium,
                                         visibilityThreshold = IntOffset.VisibilityThreshold,
                                     ),
@@ -280,19 +294,27 @@ internal fun TimeTasksSection(
                     }
                 }
                 item {
-                    val startTime = when (timeTasks.isEmpty()) {
-                        true -> checkNotNull(currentDate)
-                        false -> timeTasks.last().endTime
+                    val startTime = remember(timeTasks, currentDate) {
+                        when (timeTasks.isEmpty()) {
+                            true -> checkNotNull(currentDate)
+                            false -> timeTasks.last().endTime
+                        }
                     }
-                    val endTime = startTime.endThisDay()
+                    val endTime = remember(startTime) {
+                        startTime.endThisDay()
+                    }
+                    val enabled = remember(timeTasks, currentDate) {
+                        timeTasks.isEmpty() || timeTasks.last().endTime.isCurrentDay(currentDate!!)
+                    }
+
                     AddTimeTaskViewItem(
-                        modifier = Modifier.animateItemPlacement(
-                            animationSpec = spring(
+                        modifier = Modifier.animateItem(
+                            placementSpec = spring(
                                 stiffness = Spring.StiffnessMedium,
                                 visibilityThreshold = IntOffset.VisibilityThreshold,
                             ),
                         ),
-                        enabled = timeTasks.isEmpty() || timeTasks.last().endTime.isCurrentDay(currentDate!!),
+                        enabled = enabled,
                         onAddClick = { onTimeTaskAdd(startTime, endTime) },
                         startTime = startTime,
                         endTime = endTime,
@@ -300,6 +322,7 @@ internal fun TimeTasksSection(
                 }
                 item { EmptyItem() }
             }
+
             LaunchedEffect(Unit) {
                 val runningTask = timeTasks.find { it.executionStatus == TimeTaskStatus.RUNNING }
                 if (runningTask != null && !isScrolled) {

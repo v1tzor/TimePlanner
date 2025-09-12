@@ -39,6 +39,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -106,7 +107,7 @@ fun LanguageDialogChooser(
     onLanguageChoose: (LanguageUiType) -> Unit,
 ) {
     if (openDialog) {
-        val initPosition = LanguageUiType.entries.indexOf(initialLanguage)
+        val initPosition = remember { LanguageUiType.entries.indexOf(initialLanguage) }
         val listState = rememberLazyListState(initPosition)
         var selectedLanguage by rememberSaveable { mutableStateOf(initialLanguage) }
 
@@ -132,7 +133,7 @@ fun LanguageDialogChooser(
                         )
                     }
                     LazyColumn(modifier = Modifier.height(300.dp), state = listState) {
-                        items(LanguageUiType.entries.toTypedArray()) { language ->
+                        items(LanguageUiType.entries.toTypedArray(), key = { it }) { language ->
                             LanguageDialogItem(
                                 modifier = Modifier.fillMaxWidth(),
                                 title = language.toLanguageName(),

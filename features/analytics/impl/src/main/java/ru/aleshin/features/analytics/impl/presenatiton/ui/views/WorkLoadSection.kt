@@ -29,6 +29,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.himanshoe.charty.bar.BarChart
@@ -89,13 +90,15 @@ internal fun WorkLoadAnalyticsChart(
     workLoadMap: WorkLoadMapUi,
     period: TimePeriod,
 ) {
-    val barData = mutableListOf<BarData>().apply {
-        workLoadMap.forEach { (timeRange, timeTasks) ->
-            val xValue = when (period == TimePeriod.YEAR || period == TimePeriod.HALF_YEAR) {
-                true -> timeRange.toMonthTitle()
-                false -> timeRange.toDaysTitle()
+    val barData = remember(workLoadMap, period) {
+        mutableListOf<BarData>().apply {
+            workLoadMap.forEach { (timeRange, timeTasks) ->
+                val xValue = when (period == TimePeriod.YEAR || period == TimePeriod.HALF_YEAR) {
+                    true -> timeRange.toMonthTitle()
+                    false -> timeRange.toDaysTitle()
+                }
+                add(BarData(xValue, timeTasks.size.toFloat()))
             }
-            add(BarData(xValue, timeTasks.size.toFloat()))
         }
     }
     BarChart(

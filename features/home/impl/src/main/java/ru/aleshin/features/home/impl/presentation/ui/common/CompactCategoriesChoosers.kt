@@ -32,6 +32,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -118,32 +119,36 @@ internal fun MainCategoriesChooseMenu(
         offset = DpOffset(0.dp, 6.dp),
     ) {
         mainCategories.forEach { category ->
-            DropdownMenuItem(
-                onClick = { onChoose(category) },
-                leadingIcon = {
-                    if (category.defaultType != null) {
-                        Icon(
-                            modifier = Modifier.size(18.dp),
-                            painter = category.defaultType.mapToIconPainter(),
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary,
-                        )
-                    } else {
+            key(category) {
+                DropdownMenuItem(
+                    onClick = { onChoose(category) },
+                    leadingIcon = {
+                        if (category.defaultType != null) {
+                            Icon(
+                                modifier = Modifier.size(18.dp),
+                                painter = category.defaultType.mapToIconPainter(),
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary,
+                            )
+                        } else {
+                            Text(
+                                text = remember(category.customName) {
+                                    category.customName?.first()?.uppercaseChar()?.toString() ?: "*"
+                                },
+                                color = MaterialTheme.colorScheme.primary,
+                                style = MaterialTheme.typography.titleLarge,
+                            )
+                        }
+                    },
+                    text = {
                         Text(
-                            text = category.customName?.first()?.uppercaseChar()?.toString() ?: "*",
-                            color = MaterialTheme.colorScheme.primary,
-                            style = MaterialTheme.typography.titleLarge,
+                            text = category.fetchName() ?: "*",
+                            color = MaterialTheme.colorScheme.onSurface,
+                            style = MaterialTheme.typography.titleMedium,
                         )
-                    }
-                },
-                text = {
-                    Text(
-                        text = category.fetchName() ?: "*",
-                        color = MaterialTheme.colorScheme.onSurface,
-                        style = MaterialTheme.typography.titleMedium,
-                    )
-                },
-            )
+                    },
+                )
+            }
         }
     }
 }
@@ -159,7 +164,9 @@ internal fun CompactSubCategoryChooser(
     val interactionSource = remember { MutableInteractionSource() }
     var isSubCategoryMenuOpen by remember { mutableStateOf(false) }
     val isPressed: Boolean by interactionSource.collectIsPressedAsState()
-    val subCategories = allCategories.find { it.mainCategory == selectedMainCategory }?.subCategories ?: emptyList()
+    val subCategories = remember(allCategories, selectedMainCategory) {
+        allCategories.find { it.mainCategory == selectedMainCategory }?.subCategories ?: emptyList()
+    }
 
     Row(
         modifier = modifier,
@@ -184,7 +191,9 @@ internal fun CompactSubCategoryChooser(
         Box(contentAlignment = Alignment.TopEnd) {
             SubCategoriesChooseMenu(
                 isExpanded = isSubCategoryMenuOpen,
-                subCategories = subCategories.toMutableList().apply { add(SubCategoryUi()) },
+                subCategories = remember(subCategories) {
+                    subCategories.toMutableList().apply { add(SubCategoryUi()) }
+                },
                 onDismiss = { isSubCategoryMenuOpen = false },
                 onChoose = { subCategory ->
                     isSubCategoryMenuOpen = false
@@ -217,16 +226,18 @@ internal fun SubCategoriesChooseMenu(
         offset = DpOffset(0.dp, 6.dp),
     ) {
         subCategories.forEach { subCategory ->
-            DropdownMenuItem(
-                onClick = { if (subCategory.id == 0) onChoose(null) else onChoose(subCategory) },
-                text = {
-                    Text(
-                        text = subCategory.name ?: TimePlannerRes.strings.categoryEmptyTitle,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        style = MaterialTheme.typography.titleMedium,
-                    )
-                },
-            )
+            key(subCategory) {
+                DropdownMenuItem(
+                    onClick = { if (subCategory.id == 0) onChoose(null) else onChoose(subCategory) },
+                    text = {
+                        Text(
+                            text = subCategory.name ?: TimePlannerRes.strings.categoryEmptyTitle,
+                            color = MaterialTheme.colorScheme.onSurface,
+                            style = MaterialTheme.typography.titleMedium,
+                        )
+                    },
+                )
+            }
         }
     }
 }

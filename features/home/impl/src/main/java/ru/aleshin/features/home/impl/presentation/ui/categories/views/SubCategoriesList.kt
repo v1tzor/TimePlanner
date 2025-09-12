@@ -34,6 +34,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -61,17 +62,21 @@ internal fun SubCategoriesList(
 ) {
     if (mainCategory != null) {
         Column(
-            modifier = modifier.padding(start = 16.dp, end = 16.dp, top = 8.dp).animateContentSize(),
+            modifier = modifier
+                .padding(start = 16.dp, end = 16.dp, top = 8.dp)
+                .animateContentSize(),
             verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
             if (subCategories.isNotEmpty()) {
                 subCategories.forEach { subCategory ->
-                    SubCategoryViewItem(
-                        mainCategory = mainCategory,
-                        subCategory = subCategory,
-                        onChange = onCategoryUpdate,
-                        onDelete = onCategoryDelete,
-                    )
+                    key(subCategory) {
+                        SubCategoryViewItem(
+                            mainCategory = mainCategory,
+                            subCategory = subCategory,
+                            onChange = onCategoryUpdate,
+                            onDelete = onCategoryDelete,
+                        )
+                    }
                 }
             }
             SubCategoryAddItem(
@@ -103,7 +108,9 @@ internal fun SubCategoryViewItem(
         },
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth().padding(start = 16.dp, end = 8.dp, top = 12.dp, bottom = 12.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 16.dp, end = 8.dp, top = 12.dp, bottom = 12.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
@@ -147,13 +154,17 @@ internal fun SubCategoryAddItem(
 ) {
     Surface(
         onClick = onClick,
-        modifier = modifier.animateContentSize().alphaByEnabled(enabled),
+        modifier = modifier
+            .animateContentSize()
+            .alphaByEnabled(enabled),
         enabled = enabled,
         shape = MaterialTheme.shapes.large,
         color = MaterialTheme.colorScheme.surfaceContainer,
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth().padding(start = 16.dp, end = 8.dp, top = 4.dp, bottom = 4.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 16.dp, end = 8.dp, top = 4.dp, bottom = 4.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(

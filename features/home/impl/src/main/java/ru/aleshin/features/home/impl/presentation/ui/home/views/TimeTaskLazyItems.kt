@@ -34,6 +34,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -247,7 +248,9 @@ internal fun LazyItemScope.AddTimeTaskViewItem(
             if (enabled) {
                 AddTimeTaskView(
                     showAddIconForFreeTime = startTime >= Date(),
-                    isFreeTime = duration(startTime, endTime) >= Constants.Date.MILLIS_IN_MINUTE,
+                    isFreeTime = remember(startTime, endTime) {
+                        duration(startTime, endTime) >= Constants.Date.MILLIS_IN_MINUTE
+                    },
                     remainingTimeTitle = duration(startTime, endTime).toMinutesOrHoursTitle(),
                     onViewClicked = onAddClick,
                 )
@@ -277,7 +280,9 @@ fun EndTaskTimeTitle(
     isVisible: Boolean,
     time: Date,
 ) {
-    val timeFormat = SimpleDateFormat.getTimeInstance(SimpleDateFormat.SHORT)
+    val timeFormat = remember {
+        SimpleDateFormat.getTimeInstance(SimpleDateFormat.SHORT)
+    }
     val alpha by animateFloatAsState(
         targetValue = if (isVisible) 1f else 0f, 
         label = "alpha",

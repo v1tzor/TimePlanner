@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ru.aleshin.timeplanner.domain
+package ru.aleshin.timeplanner.data
 
 import ru.aleshin.core.utils.platform.services.AppService
 import ru.aleshin.core.utils.platform.services.Flavor
@@ -29,5 +29,5 @@ class AppServiceImpl : AppService {
     override val isAvailableServices: Boolean
         get() = false
 
-    override fun initializeApp(context: Context) = Unit
+    override fun initializeApp() = Unit
 }

@@ -56,7 +56,7 @@ internal fun AnalyticsTimeLegend(
         items(6) { index ->
             val entry = legendEntries[index]
             AnalyticsTimeLegendItem(
-                modifier = Modifier.animateItemPlacement(),
+                modifier = Modifier.animateItem(),
                 isSelected = selectedItem == index,
                 categoryName = entry.text.text,
                 percent = entry.percent,
@@ -92,7 +92,12 @@ internal fun AnalyticsTimeLegendItem(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Box(modifier = Modifier.size(10.dp).clip(RoundedCornerShape(100.dp)).background(color))
+            Box(
+                modifier = Modifier
+                    .size(10.dp)
+                    .clip(RoundedCornerShape(100.dp))
+                    .background(color)
+            )
             Text(
                 modifier = Modifier.weight(1f),
                 text = categoryName,

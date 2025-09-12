@@ -1,4 +1,4 @@
- /*
+/*
  * Copyright 2023 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -38,6 +38,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -56,7 +57,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
- /**
+/**
  * @author Stanislav Aleshin on 04.11.2023.
  */
 @Composable
@@ -74,34 +75,38 @@ internal fun TaskDateChooserDialog(
         }
     }
 
-     BasicAlertDialog(onDismissRequest = onDismiss) {
-         Surface(
-             modifier = modifier.width(290.dp).wrapContentHeight(),
-             shape = MaterialTheme.shapes.extraLarge,
-             color = MaterialTheme.colorScheme.surfaceContainer,
-         ) {
-             Column {
-                 TaskDateChooserDialogHeader()
-                 HorizontalDivider(Modifier.fillMaxWidth())
-                 Column(
-                     modifier = Modifier.height(160.dp).padding(start = 16.dp, end = 16.dp, top = 16.dp),
-                 ) {
-                     DayChooser(
-                         days = dateList,
-                         selected = selectedDate,
-                         onSelected = { selectedDate = it },
-                     )
-                     DialogButtons(
-                         enabledConfirm = selectedDate != null,
-                         confirmTitle = TimePlannerRes.strings.okConfirmTitle,
-                         onConfirmClick = { selectedDate?.let { onConfirm(it) } },
-                         onCancelClick = onDismiss,
-                     )
-                 }
-             }
-         }
-     }
- }
+    BasicAlertDialog(onDismissRequest = onDismiss) {
+        Surface(
+            modifier = modifier
+                .width(290.dp)
+                .wrapContentHeight(),
+            shape = MaterialTheme.shapes.extraLarge,
+            color = MaterialTheme.colorScheme.surfaceContainer,
+        ) {
+            Column {
+                TaskDateChooserDialogHeader()
+                HorizontalDivider(Modifier.fillMaxWidth())
+                Column(
+                    modifier = Modifier
+                        .height(160.dp)
+                        .padding(start = 16.dp, end = 16.dp, top = 16.dp),
+                ) {
+                    DayChooser(
+                        days = dateList,
+                        selected = selectedDate,
+                        onSelected = { selectedDate = it },
+                    )
+                    DialogButtons(
+                        enabledConfirm = selectedDate != null,
+                        confirmTitle = TimePlannerRes.strings.okConfirmTitle,
+                        onConfirmClick = { selectedDate?.let { onConfirm(it) } },
+                        onCancelClick = onDismiss,
+                    )
+                }
+            }
+        }
+    }
+}
 
 @Composable
 internal fun TaskDateChooserDialogHeader(
@@ -127,13 +132,18 @@ internal fun DayChooser(
     onSelected: (Date?) -> Unit,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
 ) {
-    val dateFormat = SimpleDateFormat("EEE, MMM d, ''yy", Locale.getDefault())
+    val dateFormat = remember {
+        SimpleDateFormat("EEE, MMM d, ''yy", Locale.getDefault())
+    }
+
     val isPressed by interactionSource.collectIsPressedAsState()
     var isDayChooseMenuOpen by remember { mutableStateOf(false) }
 
     OutlinedTextField(
         modifier = modifier.fillMaxWidth(),
-        value = selected?.let { dateFormat.format(it) } ?: "",
+        value = remember(selected) {
+            selected?.let { dateFormat.format(it) } ?: ""
+        },
         onValueChange = {},
         readOnly = true,
         label = { Text(text = HomeThemeRes.strings.taskDateChooserFieldLabel) },
@@ -167,7 +177,10 @@ internal fun DayChooseMenu(
     onDismiss: () -> Unit,
     onChoose: (Date?) -> Unit,
 ) {
-    val dateFormat = SimpleDateFormat("EEE, MMM d, ''yy", Locale.getDefault())
+    val dateFormat = remember {
+        SimpleDateFormat("EEE, MMM d, ''yy", Locale.getDefault())
+    }
+
     DropdownMenu(
         expanded = isExpanded,
         onDismissRequest = onDismiss,
@@ -176,16 +189,18 @@ internal fun DayChooseMenu(
         offset = DpOffset(0.dp, 6.dp),
     ) {
         days.forEach { day ->
-            DropdownMenuItem(
-                onClick = { onChoose(day) },
-                text = {
-                    Text(
-                        text = dateFormat.format(day),
-                        color = MaterialTheme.colorScheme.onSurface,
-                        style = MaterialTheme.typography.titleMedium,
-                    )
-                },
-            )
+            key(day) {
+                DropdownMenuItem(
+                    onClick = { onChoose(day) },
+                    text = {
+                        Text(
+                            text = dateFormat.format(day),
+                            color = MaterialTheme.colorScheme.onSurface,
+                            style = MaterialTheme.typography.titleMedium,
+                        )
+                    },
+                )
+            }
         }
     }
 }
