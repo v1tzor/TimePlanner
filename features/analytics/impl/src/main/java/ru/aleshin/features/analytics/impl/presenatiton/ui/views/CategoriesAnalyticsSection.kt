@@ -57,6 +57,8 @@ import ru.aleshin.features.analytics.impl.presenatiton.models.analytics.Categori
 import ru.aleshin.features.analytics.impl.presenatiton.models.analytics.CategoryAnalyticUi
 import ru.aleshin.features.analytics.impl.presenatiton.theme.AnalyticsThemeRes
 
+private const val TOP_CATEGORIES_COUNT = 5
+
 /**
  * @author Stanislav Aleshin on 27.10.2023.
  */
@@ -89,7 +91,7 @@ internal fun CategoriesAnalyticsSection(
                 verticalArrangement = Arrangement.spacedBy(4.dp),
             ) {
                 var selectedItem by remember { mutableIntStateOf(0) }
-                if (!loading && categoriesAnalytics != null) {
+                if (!loading && !categoriesAnalytics.isNullOrEmpty()) {
                     CategoriesAnalyticsChart(
                         analytics = categoriesAnalytics,
                         selectedItem = selectedItem,
@@ -137,8 +139,8 @@ internal fun CategoriesAnalyticsChart(
     val coreStrings = TimePlannerRes.strings
     val otherAnalyticsName = AnalyticsThemeRes.strings.otherAnalyticsName
 
-    val topList = remember(analytics) { analytics.subList(fromIndex = 0, toIndex = 5) }
-    val otherList = remember(analytics) { analytics.subList(5, analytics.lastIndex) }
+    val topList = remember(analytics) { analytics.take(TOP_CATEGORIES_COUNT) }
+    val otherList = remember(analytics) { analytics.drop(TOP_CATEGORIES_COUNT) }
     val pieDataList = remember(topList, otherList) {
         mutableListOf<PieChartEntry>().apply {
             topList.forEachIndexed { index, analytic ->
@@ -150,12 +152,20 @@ internal fun CategoriesAnalyticsChart(
                 )
                 add(data)
             }
-            val otherPieData = PieChartEntry(
-                value = otherList.sumOf { it.duration }.toFloat(),
-                label = AnnotatedString(otherAnalyticsName),
-                color = fetchPieColorByTop(5),
-            )
-            add(otherPieData)
+            if (otherList.isNotEmpty()) {
+                val otherPieData = PieChartEntry(
+                    value = otherList.sumOf { it.duration }.toFloat(),
+                    label = AnnotatedString(otherAnalyticsName),
+                    color = fetchPieColorByTop(TOP_CATEGORIES_COUNT),
+                )
+                add(otherPieData)
+            }
+        }
+    }
+    val selectedDuration = remember(analytics, otherList, selectedItem) {
+        when {
+            selectedItem < TOP_CATEGORIES_COUNT -> analytics.getOrNull(selectedItem)?.duration ?: 0L
+            else -> otherList.sumOf { it.duration }
         }
     }
     Box(modifier = modifier.height(230.dp)) {
@@ -179,7 +189,7 @@ internal fun CategoriesAnalyticsChart(
         }
         Text(
             modifier = Modifier.align(Alignment.CenterStart).offset(x = 55.dp, y = (-1).dp),
-            text = analytics[selectedItem].duration.toMinutesAndHoursTitle(),
+            text = selectedDuration.toMinutesAndHoursTitle(),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.titleMedium,
         )
@@ -192,18 +202,25 @@ internal fun SubAnalyticsTimeLegend(
     analytics: List<CategoryAnalyticUi>,
     selectedItem: Int,
 ) {
+    val otherAnalytics = remember(analytics) { analytics.drop(TOP_CATEGORIES_COUNT) }
+    val otherDuration = remember(otherAnalytics) { otherAnalytics.sumOf { it.duration } }
+
     LazyColumn(
         modifier = modifier,
         state = rememberLazyListState(),
         verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
-        if (selectedItem < 5) {
-            val allSubCategoryAnalytics = analytics[selectedItem]
-            val subCategoryAnalytic = allSubCategoryAnalytics.subCategoriesInfo
+        if (selectedItem < TOP_CATEGORIES_COUNT) {
+            val allSubCategoryAnalytics = analytics.getOrNull(selectedItem)
+            val subCategoryAnalytic = allSubCategoryAnalytics?.subCategoriesInfo.orEmpty()
 
             items(subCategoryAnalytic) { analytic ->
                 val percent = remember(analytic, allSubCategoryAnalytics) {
-                    analytic.duration.toFloat() / allSubCategoryAnalytics.duration * 100
+                    if (allSubCategoryAnalytics != null && allSubCategoryAnalytics.duration != 0L) {
+                        analytic.duration.toFloat() / allSubCategoryAnalytics.duration * 100
+                    } else {
+                        0F
+                    }
                 }
 
                 SubAnalyticsTimeLegendItem(
@@ -213,10 +230,13 @@ internal fun SubAnalyticsTimeLegend(
                 )
             }
         } else {
-            val otherAnalytics = analytics.subList(5, analytics.lastIndex)
             items(otherAnalytics) { analytic ->
-                val percent = remember(analytic, otherAnalytics) {
-                    analytic.duration.toFloat() / otherAnalytics.sumOf { it.duration } * 100
+                val percent = remember(analytic, otherDuration) {
+                    if (otherDuration != 0L) {
+                        analytic.duration.toFloat() / otherDuration * 100
+                    } else {
+                        0F
+                    }
                 }
 
                 SubAnalyticsTimeLegendItem(

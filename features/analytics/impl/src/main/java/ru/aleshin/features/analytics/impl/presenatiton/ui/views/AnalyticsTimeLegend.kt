@@ -40,6 +40,8 @@ import androidx.compose.ui.unit.dp
 import hu.ma.charts.legend.data.LegendEntry
 import kotlin.math.roundToInt
 
+private const val LEGEND_ITEMS_COUNT = 6
+
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 internal fun AnalyticsTimeLegend(
@@ -53,7 +55,7 @@ internal fun AnalyticsTimeLegend(
         modifier = modifier,
         state = listState,
     ) {
-        items(6) { index ->
+        items(minOf(LEGEND_ITEMS_COUNT, legendEntries.size)) { index ->
             val entry = legendEntries[index]
             AnalyticsTimeLegendItem(
                 modifier = Modifier.animateItem(),
