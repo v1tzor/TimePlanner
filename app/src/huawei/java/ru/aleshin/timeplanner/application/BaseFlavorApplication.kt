@@ -15,8 +15,6 @@
  */
 package ru.aleshin.timeplanner.application
 
-import ru.aleshin.core.utils.platform.services.AnalyticsService
-import ru.aleshin.core.utils.platform.services.AppService
 import ru.aleshin.core.utils.platform.services.BaseApplication
 import ru.aleshin.core.utils.platform.services.CrashlyticsService
 import ru.aleshin.timeplanner.data.CrashlyticsServiceImpl
@@ -33,15 +31,7 @@ abstract class BaseFlavorApplication : BaseApplication(), HasTracerConfiguration
     @Inject
     override lateinit var crashlyticsService: CrashlyticsService
 
-    @Inject
-    override lateinit var appService: AppService
-
-    @Inject
-    override lateinit var analyticsService: AnalyticsService
-
     override fun initPlatformService() {
-        appService.initializeApp()
-        analyticsService.initializeService()
         crashlyticsService.initializeService()
     }
 }

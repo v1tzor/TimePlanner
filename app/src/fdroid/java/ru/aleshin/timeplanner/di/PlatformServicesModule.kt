@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2025 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,11 +17,7 @@ package ru.aleshin.timeplanner.di
 
 import dagger.Module
 import dagger.Provides
-import ru.aleshin.core.utils.platform.services.AnalyticsService
-import ru.aleshin.core.utils.platform.services.AppService
 import ru.aleshin.core.utils.platform.services.CrashlyticsService
-import ru.aleshin.timeplanner.data.AnalyticsServiceImpl
-import ru.aleshin.timeplanner.data.AppServiceImpl
 import ru.aleshin.timeplanner.data.CrashlyticsServiceImpl
 import javax.inject.Singleton
 
@@ -30,14 +26,6 @@ import javax.inject.Singleton
  */
 @Module
 class PlatformServicesModule {
-
-    @Provides
-    @Singleton
-    fun provideAppService(): AppService = AppServiceImpl()
-
-    @Provides
-    @Singleton
-    fun provideAnalyticsService(): AnalyticsService = AnalyticsServiceImpl()
 
     @Provides
     @Singleton

@@ -18,11 +18,7 @@ package ru.aleshin.timeplanner.di
 import android.content.Context
 import dagger.Module
 import dagger.Provides
-import ru.aleshin.core.utils.platform.services.AnalyticsService
-import ru.aleshin.core.utils.platform.services.AppService
 import ru.aleshin.core.utils.platform.services.CrashlyticsService
-import ru.aleshin.timeplanner.data.AnalyticsServiceImpl
-import ru.aleshin.timeplanner.data.AppServiceImpl
 import ru.aleshin.timeplanner.data.CrashlyticsServiceImpl
 import javax.inject.Singleton
 
@@ -31,14 +27,6 @@ import javax.inject.Singleton
  */
 @Module
 class PlatformServicesModule {
-
-    @Provides
-    @Singleton
-    fun provideAppService(): AppService = AppServiceImpl()
-
-    @Provides
-    @Singleton
-    fun provideAnalyticsService(context: Context): AnalyticsService = AnalyticsServiceImpl(context)
 
     @Provides
     @Singleton

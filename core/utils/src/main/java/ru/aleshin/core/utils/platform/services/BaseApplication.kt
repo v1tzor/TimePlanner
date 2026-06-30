@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2025 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,10 +21,6 @@ import android.app.Application
  * @author Stanislav Aleshin on 13.04.2025.
  */
 abstract class BaseApplication : Application() {
-
-    abstract var appService: AppService
-
-    abstract var analyticsService: AnalyticsService
 
     abstract var crashlyticsService: CrashlyticsService
 

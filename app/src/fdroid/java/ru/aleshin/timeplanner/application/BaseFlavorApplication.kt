@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2025 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,8 +15,6 @@
  */
 package ru.aleshin.timeplanner.application
 
-import ru.aleshin.core.utils.platform.services.AnalyticsService
-import ru.aleshin.core.utils.platform.services.AppService
 import ru.aleshin.core.utils.platform.services.BaseApplication
 import ru.aleshin.core.utils.platform.services.CrashlyticsService
 import javax.inject.Inject
@@ -29,15 +27,7 @@ abstract class BaseFlavorApplication : BaseApplication() {
     @Inject
     override lateinit var crashlyticsService: CrashlyticsService
 
-    @Inject
-    override lateinit var appService: AppService
-
-    @Inject
-    override lateinit var analyticsService: AnalyticsService
-
     override fun initPlatformService() {
-        appService.initializeApp()
-        analyticsService.initializeService()
         crashlyticsService.initializeService()
     }
 }
