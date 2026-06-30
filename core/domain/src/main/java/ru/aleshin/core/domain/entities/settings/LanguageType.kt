@@ -19,5 +19,5 @@ package ru.aleshin.core.domain.entities.settings
  * @author Stanislav Aleshin on 17.02.2023.
  */
 enum class LanguageType(val code: String?) {
-    DEFAULT(null), EN("en"), RU("ru"), DE("de"), ES("es"), FA("fa"), FR("fr"), PT_BR("pt-br"), TR("tr"), VN("vn"), PL("pl")
+    DEFAULT(null), EN("en"), RU("ru"), DE("de"), ES("es"), FA("fa"), FR("fr"), PT_BR("pt-br"), TR("tr"), VN("vn"), PL("pl"), IT("it"), ZH("zh")
 }

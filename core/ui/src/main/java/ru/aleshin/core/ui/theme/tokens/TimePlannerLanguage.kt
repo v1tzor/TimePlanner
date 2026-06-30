@@ -37,6 +37,7 @@ enum class TimePlannerLanguage(val code: String) {
     VN("vn"),
     PL("pl"),
     IT("it"),
+    ZH("zh"),
 }
 
 @Immutable
@@ -54,6 +55,7 @@ enum class LanguageUiType(val code: String?) {
     VN("vn"),
     PL("pl"),
     IT("it"),
+    ZH("zh"),
 }
 
 val LocalTimePlannerLanguage = staticCompositionLocalOf<TimePlannerLanguage> {
@@ -77,4 +79,5 @@ fun fetchAppLanguage(languageType: LanguageUiType) = when (languageType) {
     LanguageUiType.VN -> TimePlannerLanguage.VN
     LanguageUiType.PL -> TimePlannerLanguage.PL
     LanguageUiType.IT -> TimePlannerLanguage.IT
+    LanguageUiType.ZH -> TimePlannerLanguage.ZH
 }

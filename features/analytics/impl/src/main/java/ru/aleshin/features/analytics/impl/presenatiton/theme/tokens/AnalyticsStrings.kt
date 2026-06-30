@@ -321,6 +321,31 @@ internal val italianAnalyticsString = AnalyticsStrings(
     executedStatisticsTitle = "Completamento",
 )
 
+internal val chineseAnalyticsString = AnalyticsStrings(
+    topAppBarTitle = "统计",
+    menuIconDesc = "菜单",
+    timeTabTitle = "时间",
+    workLoadTabTitle = "负荷",
+    intelligenceTabTitle = "信息",
+    weekTimePeriod = "周",
+    monthTimePeriod = "月",
+    yearTimePeriod = "年",
+    halfYearTimePeriod = "半年",
+    timeSelectorTitle = "时间范围：",
+    refreshAnalyticIconDesc = "刷新统计",
+    otherAnalyticsName = "其他",
+    allTimeTitle = "合计：",
+    totalCountTaskTitle = "总任务数",
+    totalTimeTaskTitle = "任务耗时",
+    averageCountTaskTitle = "每日任务数",
+    averageTimeTaskTitle = "平均任务时长",
+    planningAnalyticsTitle = "计划统计",
+    workLoadAnalyticsTitle = "负荷统计",
+    categoryStatisticsTitle = "分类统计",
+    executedStatisticsTitle = "执行统计",
+    otherError = "出现问题。请联系开发者获取帮助。",
+)
+
 internal val LocalAnalyticsStrings = staticCompositionLocalOf<AnalyticsStrings> {
     error("Analytics Strings is not provided")
 }
@@ -337,4 +362,5 @@ internal fun fetchAnalyticsStrings(language: TimePlannerLanguage) = when (langua
     TimePlannerLanguage.VN -> vietnameseAnalyticsString
     TimePlannerLanguage.PL -> polishAnalyticsString
     TimePlannerLanguage.IT -> italianAnalyticsString
+    TimePlannerLanguage.ZH -> chineseAnalyticsString
 }

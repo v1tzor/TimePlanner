@@ -703,6 +703,62 @@ internal val italianEditorString = EditorStrings(
     beforeEndTitle = "Prima del completamento",
 )
 
+internal val chineseEditorString = EditorStrings(
+    topAppBarEditorTitle = "编辑器",
+    topAppBarBackIconDesc = "返回",
+    topAppBarMoreIconDesc = "更多",
+    topAppBarTemplatesTitle = "模板",
+    mainCategoryChooserTitle = "分类",
+    subCategoryChooserTitle = "子分类",
+    chooseCategoryTitle = "选择分类",
+    categoryNotSelectedTitle = "无",
+    subCategoryDialogAddedTitle = "添加",
+    subCategoryDialogMainCategoryFormat = "分类：%s",
+    timeFieldStartLabel = "开始",
+    timeFieldEndLabel = "结束",
+    parameterChooserSwitchIconDesc = "设置参数",
+    timePickerHeader = "输入时间",
+    timePickerSeparator = ":",
+    notifyParameterTitle = "通知",
+    notifyParameterDesc = "设置任务开始提醒",
+    statisticsParameterTitle = "统计",
+    statisticsParameterDesc = "计入统计",
+    saveTaskButtonTitle = "保存",
+    cancelButtonTitle = "取消",
+    templateIconDesc = "保存为模板",
+    topAppBarDeleteTitle = "删除",
+    categoryValidateError = "* 请选择分类",
+    otherError = "出现问题。请联系开发者获取帮助。",
+    startOverlayError = "冲突！开始时间重叠",
+    endOverlayError = "冲突！结束时间重叠",
+    fullOverlayError = "冲突！任务时间重叠",
+    correctOverlayTitle = "修正",
+    durationPickerTitle = "时长",
+    templatesSheetTitle = "模板",
+    controlTitle = "管理",
+    applyTitle = "应用",
+    timeRangeFormat = "时间：从 %S 到 %s",
+    durationFormat = "时长：%s",
+    notificationEnabledTitle = "通知：已开启",
+    notificationDisabledTitle = "通知：已关闭",
+    emptyTemplatesTitle = "列表为空",
+    saveTemplateWarningTitle = "是否将更改应用到当前模板？",
+    saveTemplateWarningConfirm = "是",
+    saveTemplateWarningUnsave = "否",
+    categoriesManageWarningTitle = "前往分类管理？当前参数的更改将不会保存。",
+    confirmNavigateTitle = "前往",
+    priorityParameterTitle = "优先级",
+    noteLabel = "备注",
+    notePlaceholder = "可选",
+    undefinedTasksSheetTitle = "未分配任务",
+    fifteenMinutesBeforeTitle = "提前 15 分钟",
+    oneHourBeforeTitle = "提前 1 小时",
+    threeHourBeforeTitle = "提前 2 小时",
+    oneDayBeforeTitle = "提前 1 天",
+    oneWeekBeforeTitle = "提前 1 周",
+    beforeEndTitle = "结束前",
+)
+
 internal val LocalEditorStrings = staticCompositionLocalOf<EditorStrings> {
     error("Home Strings is not provided")
 }
@@ -719,4 +775,5 @@ internal fun fetchEditorStrings(language: TimePlannerLanguage) = when (language)
     TimePlannerLanguage.VN -> vietnameseEditorString
     TimePlannerLanguage.PL -> polishEditorString
     TimePlannerLanguage.IT -> italianEditorString
+    TimePlannerLanguage.ZH -> chineseEditorString
 }
