@@ -15,15 +15,16 @@
  */
 package ru.aleshin.features.analytics.impl.presenatiton.models.analytics
 
-import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
+import androidx.compose.runtime.Immutable
+import kotlinx.serialization.Serializable
 import ru.aleshin.core.utils.functional.TimeRange
 import ru.aleshin.features.analytics.impl.presenatiton.models.timetask.TimeTaskUi
 
 /**
  * @author Stanislav Aleshin on 25.07.2023.
  */
-@Parcelize
+@Immutable
+@Serializable
 internal data class ScheduleAnalyticsUi(
     val dateWorkLoadMap: WorkLoadMapUi,
     val categoriesAnalytics: CategoriesAnalyticsUi,
@@ -32,6 +33,6 @@ internal data class ScheduleAnalyticsUi(
     val totalTasksTime: Long,
     val averageDayLoad: Int,
     val averageTaskTime: Long,
-) : Parcelable
+)
 
 internal typealias WorkLoadMapUi = Map<TimeRange, List<TimeTaskUi>>

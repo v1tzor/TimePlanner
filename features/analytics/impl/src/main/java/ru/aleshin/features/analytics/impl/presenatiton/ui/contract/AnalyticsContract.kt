@@ -15,35 +15,35 @@
  */
 package ru.aleshin.features.analytics.impl.presenatiton.ui.contract
 
-import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Serializable
+import ru.aleshin.core.utils.architecture.store.contract.StoreAction
+import ru.aleshin.core.utils.architecture.store.contract.StoreEffect
+import ru.aleshin.core.utils.architecture.store.contract.StoreEvent
+import ru.aleshin.core.utils.architecture.store.contract.StoreState
 import ru.aleshin.core.utils.functional.TimePeriod
-import ru.aleshin.core.utils.platform.screenmodel.contract.BaseAction
-import ru.aleshin.core.utils.platform.screenmodel.contract.BaseEvent
-import ru.aleshin.core.utils.platform.screenmodel.contract.BaseUiEffect
-import ru.aleshin.core.utils.platform.screenmodel.contract.BaseViewState
 import ru.aleshin.features.analytics.impl.domain.entities.AnalyticsFailure
 import ru.aleshin.features.analytics.impl.presenatiton.models.analytics.ScheduleAnalyticsUi
 
 /**
  * @author Stanislav Aleshin on 30.03.2023.
  */
-@Parcelize
-internal data class AnalyticsViewState(
+@Serializable
+internal data class AnalyticsState(
     val isLoading: Boolean = true,
     val timePeriod: TimePeriod? = null,
     val scheduleAnalytics: ScheduleAnalyticsUi? = null,
-) : BaseViewState
+) : StoreState
 
-internal sealed class AnalyticsEvent : BaseEvent {
+internal sealed class AnalyticsEvent : StoreEvent {
     data object Init : AnalyticsEvent()
     data class ChangeTimePeriod(val period: TimePeriod) : AnalyticsEvent()
 }
 
-internal sealed class AnalyticsEffect : BaseUiEffect {
+internal sealed class AnalyticsEffect : StoreEffect {
     data class ShowFailure(val failure: AnalyticsFailure) : AnalyticsEffect()
 }
 
-internal sealed class AnalyticsAction : BaseAction {
+internal sealed class AnalyticsAction : StoreAction {
     data class UpdateAnalytics(val analytics: ScheduleAnalyticsUi) : AnalyticsAction()
     data class UpdateTimePeriod(val period: TimePeriod) : AnalyticsAction()
     data class UpdateLoading(val isLoading: Boolean) : AnalyticsAction()

@@ -15,10 +15,11 @@
  */
 package ru.aleshin.features.editor.impl.presentation.models.editmodel
 
-import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
+import androidx.compose.runtime.Immutable
+import kotlinx.serialization.Serializable
 import ru.aleshin.core.domain.entities.template.RepeatTime
 import ru.aleshin.core.utils.extensions.duration
+import ru.aleshin.core.utils.functional.DateSerializer
 import ru.aleshin.core.utils.functional.TimeRange
 import ru.aleshin.features.editor.impl.presentation.models.categories.MainCategoryUi
 import ru.aleshin.features.editor.impl.presentation.models.categories.SubCategoryUi
@@ -27,23 +28,26 @@ import java.util.Date
 /**
  * @author Stanislav Aleshin on 16.05.2023.
  */
-@Parcelize
+@Immutable
+@Serializable
 internal data class EditModelUi(
     val key: Long = 0L,
+    @Serializable(DateSerializer::class)
     val date: Date,
     val timeRange: TimeRange,
+    @Serializable(DateSerializer::class)
     val createdAt: Date? = null,
     val duration: Long = duration(timeRange.from, timeRange.to),
     val mainCategory: MainCategoryUi = MainCategoryUi(),
     val subCategory: SubCategoryUi? = null,
     val isCompleted: Boolean = true,
-    val parameters: EditParameters = EditParameters(),
+    val parameters: EditParametersUi = EditParametersUi(),
     val repeatEnabled: Boolean = false,
     val templateId: Int? = null,
     val undefinedTaskId: Long? = null,
     val repeatTimes: List<RepeatTime> = emptyList(),
     val note: String? = null,
-) : Parcelable {
+) {
     fun checkDateIsRepeat(): Boolean {
         return repeatEnabled && repeatTimes.find { it.checkDateIsRepeat(date) } != null
     }

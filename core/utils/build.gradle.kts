@@ -55,10 +55,6 @@ android {
         buildConfig = true
     }
 
-    composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.kotlinCompiler.get()
-    }
-
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
@@ -76,6 +72,10 @@ dependencies {
     api(libs.kotlin.serialization)
     api(libs.kotlin.serialization.json)
     api(libs.voyager.navigator)
+    api(libs.decompose.core)
+
+    implementation(libs.decompose.compose)
+    implementation(libs.decompose.compose.experimental)
 
     implementation(libs.bundles.compose)
     implementation(libs.bundles.voyager)

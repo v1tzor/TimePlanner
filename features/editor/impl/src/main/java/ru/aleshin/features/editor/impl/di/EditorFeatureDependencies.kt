@@ -24,31 +24,25 @@ import ru.aleshin.core.domain.repository.TemplatesRepository
 import ru.aleshin.core.domain.repository.TimeTaskRepository
 import ru.aleshin.core.domain.repository.UndefinedTasksRepository
 import ru.aleshin.core.ui.notifications.TimeTaskAlarmManager
+import ru.aleshin.core.utils.inject.BaseFeatureDependencies
 import ru.aleshin.core.utils.managers.CoroutineManager
 import ru.aleshin.core.utils.managers.DateManager
 import ru.aleshin.core.utils.managers.TimeOverlayManager
-import ru.aleshin.core.utils.navigation.Router
-import ru.aleshin.core.utils.navigation.TabRouter
-import ru.aleshin.features.home.api.navigation.HomeFeatureStarter
-import ru.aleshin.module_injector.BaseFeatureDependencies
 
 /**
  * @author Stanislav Aleshin on 08.03.2023.
  */
-interface EditorFeatureDependencies : BaseFeatureDependencies {
-    val globalRouter: Router
-    val tabRouter: TabRouter
-    val homeFeatureStarter: HomeFeatureStarter
-    val categoriesRepository: CategoriesRepository
-    val timeTaskRepository: TimeTaskRepository
-    val scheduleRepository: ScheduleRepository
-    val templatesRepository: TemplatesRepository
-    val undefinedTasksRepository: UndefinedTasksRepository
-    val subCategoriesRepository: SubCategoriesRepository
-    val schedulesLocalDataSource: SchedulesLocalDataSource
-    val scheduleStatusChecker: ScheduleStatusChecker
-    val coroutineManager: CoroutineManager
-    val timeOverlayManager: TimeOverlayManager
-    val timeTaskAlarmManager: TimeTaskAlarmManager
-    val dateManger: DateManager
+public interface EditorFeatureDependencies : BaseFeatureDependencies {
+    public val categoriesRepository: CategoriesRepository
+    public val timeTaskRepository: TimeTaskRepository
+    public val scheduleRepository: ScheduleRepository
+    public val templatesRepository: TemplatesRepository
+    public val undefinedTasksRepository: UndefinedTasksRepository
+    public val subCategoriesRepository: SubCategoriesRepository
+    public val schedulesLocalDataSource: SchedulesLocalDataSource
+    public val scheduleStatusChecker: ScheduleStatusChecker
+    public val coroutineManager: CoroutineManager
+    public val timeOverlayManager: TimeOverlayManager
+    public val timeTaskAlarmManager: TimeTaskAlarmManager
+    public val dateManger: DateManager
 }

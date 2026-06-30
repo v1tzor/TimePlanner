@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2025 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,10 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
 
 plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.kotlinAndroid)
+    alias(libs.plugins.serialization)
     alias(libs.plugins.parcelize)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.ksp)
@@ -52,15 +54,15 @@ android {
         buildConfig = true
     }
 
-    composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.kotlinCompiler.get()
-    }
-
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+}
+
+kotlin {
+    explicitApi = ExplicitApiMode.Warning
 }
 
 dependencies {
@@ -76,6 +78,7 @@ dependencies {
     ksp(libs.dagger.ksp)
 
     testImplementation(libs.jUnit)
+    testImplementation(libs.coroutinesTest)
     androidTestImplementation(libs.jUnitExt)
     androidTestImplementation(libs.espresso)
     androidTestImplementation(libs.composeJUnit)

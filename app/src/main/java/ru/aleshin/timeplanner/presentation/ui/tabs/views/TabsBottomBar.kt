@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import ru.aleshin.core.ui.theme.TimePlannerRes
 import ru.aleshin.core.ui.views.BottomBarItem
 import ru.aleshin.core.ui.views.BottomNavigationBar
+import ru.aleshin.timeplanner.presentation.ui.tabs.store.TabNavigationComponent
 
 /**
  * @author Stanislav Aleshin on 06.05.2023.
@@ -35,10 +36,16 @@ fun TabsBottomNavigationBar(
     BottomNavigationBar(
         modifier = modifier.height(80.dp),
         selectedItem = selectedItem,
-        items = TabsBottomBarItems.values(),
+        items = TabsBottomBarItems.entries.toTypedArray(),
         showLabel = true,
         onItemSelected = onItemSelected,
     )
+}
+
+fun TabNavigationComponent.TabNavigationChild.mapToBottomItem() = when (this) {
+    is TabNavigationComponent.TabNavigationChild.AnalyticsChild -> TabsBottomBarItems.ANALYTICS
+    is TabNavigationComponent.TabNavigationChild.HomeChild -> TabsBottomBarItems.HOME
+    is TabNavigationComponent.TabNavigationChild.SettingsChild -> TabsBottomBarItems.SETTINGS
 }
 
 enum class TabsBottomBarItems : BottomBarItem {

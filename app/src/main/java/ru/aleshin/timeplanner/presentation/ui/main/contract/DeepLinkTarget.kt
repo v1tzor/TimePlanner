@@ -17,18 +17,22 @@ package ru.aleshin.timeplanner.presentation.ui.main.contract
 
 import android.content.Intent
 import android.content.Intent.ACTION_VIEW
+import androidx.compose.runtime.Immutable
+import kotlinx.serialization.Serializable
 import ru.aleshin.core.utils.functional.Constants.App.EDITOR_DEEP_LINK
 
 /**
  * @author Stanislav Aleshin on 16.11.2024.
  */
+@Immutable
+@Serializable
 enum class DeepLinkTarget {
     MAIN, EDITOR;
 
     companion object {
         fun byIntent(intent: Intent) = when {
             intent.action == ACTION_VIEW && intent.dataString == EDITOR_DEEP_LINK -> EDITOR
-            else -> MAIN
+            else -> null
         }
     }
 }

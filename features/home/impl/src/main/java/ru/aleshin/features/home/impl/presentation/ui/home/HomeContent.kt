@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2025 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,36 +47,50 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.launch
 import ru.aleshin.core.domain.entities.schedules.DailyScheduleStatus
 import ru.aleshin.core.domain.entities.schedules.TimeTaskStatus
 import ru.aleshin.core.domain.entities.settings.ViewToggleStatus
 import ru.aleshin.core.ui.theme.TimePlannerRes
+import ru.aleshin.core.ui.views.ErrorSnackbar
 import ru.aleshin.core.ui.views.ViewToggle
+import ru.aleshin.core.utils.architecture.store.compose.handleEffects
+import ru.aleshin.core.utils.architecture.store.compose.stateAsState
 import ru.aleshin.core.utils.extensions.endThisDay
 import ru.aleshin.core.utils.extensions.isCurrentDay
 import ru.aleshin.core.utils.extensions.isNotZeroDifference
 import ru.aleshin.core.utils.extensions.shiftDay
+import ru.aleshin.core.utils.managers.LocalDrawerManager
+import ru.aleshin.features.home.impl.presentation.mapppers.mapToMessage
 import ru.aleshin.features.home.impl.presentation.models.schedules.TimeTaskUi
 import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
-import ru.aleshin.features.home.impl.presentation.ui.home.contract.HomeViewState
+import ru.aleshin.features.home.impl.presentation.ui.home.contract.HomeEffect
+import ru.aleshin.features.home.impl.presentation.ui.home.contract.HomeEvent
+import ru.aleshin.features.home.impl.presentation.ui.home.contract.HomeState
+import ru.aleshin.features.home.impl.presentation.ui.home.store.HomeComponent
 import ru.aleshin.features.home.impl.presentation.ui.home.views.AddTimeTaskViewItem
 import ru.aleshin.features.home.impl.presentation.ui.home.views.CompletedTimeTaskItem
 import ru.aleshin.features.home.impl.presentation.ui.home.views.DateChooser
 import ru.aleshin.features.home.impl.presentation.ui.home.views.EmptyDateView
 import ru.aleshin.features.home.impl.presentation.ui.home.views.EmptyItem
 import ru.aleshin.features.home.impl.presentation.ui.home.views.HomeDatePicker
+import ru.aleshin.features.home.impl.presentation.ui.home.views.HomeTopAppBar
 import ru.aleshin.features.home.impl.presentation.ui.home.views.PlannedTimeTaskItem
 import ru.aleshin.features.home.impl.presentation.ui.home.views.RunningTimeTaskItem
 import java.text.SimpleDateFormat
@@ -88,7 +102,73 @@ import java.util.Locale
  */
 @Composable
 internal fun HomeContent(
-    state: HomeViewState,
+    homeComponent: HomeComponent,
+    modifier: Modifier = Modifier,
+) {
+    val store = homeComponent.store
+    val state by store.stateAsState()
+    val scope = rememberCoroutineScope()
+    val snackbarState = remember { SnackbarHostState() }
+    var isDateDialogShow by rememberSaveable { mutableStateOf(false) }
+    val drawerManager = LocalDrawerManager.current
+    val strings = HomeThemeRes.strings
+
+    Scaffold(
+        modifier = modifier,
+        content = { paddingValues ->
+            BaseHomeContent(
+                state = state,
+                modifier = Modifier.padding(paddingValues),
+                onChangeDate = { date -> store.dispatchEvent(HomeEvent.LoadSchedule(date)) },
+                onTimeTaskEdit = { store.dispatchEvent(HomeEvent.PressEditTimeTaskButton(it)) },
+                onTaskDoneChange = { store.dispatchEvent(HomeEvent.ChangeTaskDoneStateButton(it)) },
+                onTimeTaskAdd = { start, end ->
+                    store.dispatchEvent(HomeEvent.PressAddTimeTaskButton(start, end))
+                },
+                onCreateSchedule = { store.dispatchEvent(HomeEvent.CreateSchedule) },
+                onTimeTaskIncrease = { store.dispatchEvent(HomeEvent.TimeTaskShiftUp(it)) },
+                onTimeTaskReduce = { store.dispatchEvent(HomeEvent.TimeTaskShiftDown(it)) },
+                onChangeToggleStatus = { store.dispatchEvent(HomeEvent.PressViewToggleButton(it)) },
+            )
+        },
+        topBar = {
+            HomeTopAppBar(
+                calendarIconBehavior = state.calendarButtonBehavior,
+                onMenuIconClick = { scope.launch { drawerManager?.openDrawer() } },
+                onOverviewIconClick = { store.dispatchEvent(HomeEvent.PressOverviewButton) },
+                onOpenCalendar = { isDateDialogShow = true },
+                onGoToToday = { store.dispatchEvent(HomeEvent.SelectedCurrentDate) },
+            )
+        },
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarState) { snackbarData ->
+                ErrorSnackbar(snackbarData)
+            }
+        },
+    )
+
+    HomeDatePicker(
+        isOpenDialog = isDateDialogShow,
+        onDismiss = { isDateDialogShow = false },
+        onSelectedDate = {
+            isDateDialogShow = false
+            store.dispatchEvent(HomeEvent.LoadSchedule(it))
+        },
+    )
+
+    store.handleEffects { effect ->
+        when (effect) {
+            is HomeEffect.ShowError -> snackbarState.showSnackbar(
+                message = effect.failures.mapToMessage(strings),
+                withDismissAction = true,
+            )
+        }
+    }
+}
+
+@Composable
+private fun BaseHomeContent(
+    state: HomeState,
     modifier: Modifier = Modifier,
     onChangeDate: (Date) -> Unit,
     onCreateSchedule: () -> Unit,
@@ -101,14 +181,14 @@ internal fun HomeContent(
 ) {
     Column(modifier = modifier.fillMaxSize()) {
         DateChooserSection(
-            visible = state.currentDate != null,
-            currentDate = state.currentDate,
+            visible = state.selectedDate != null,
+            currentDate = state.selectedDate,
             toggleState = state.taskViewStatus,
             onChangeDate = onChangeDate,
             onChangeToggleStatus = onChangeToggleStatus,
         )
         TimeTasksSection(
-            currentDate = state.currentDate,
+            currentDate = state.selectedDate,
             dateStatus = state.dateStatus,
             timeTasks = state.timeTasks,
             timeTaskViewStatus = state.taskViewStatus,
@@ -211,101 +291,17 @@ internal fun TimeTasksSection(
     val visibleFirstAdd = remember(timeTasks, currentDate, isCompactView) {
         timeTasks.isNotEmpty() && timeTasks.first().startTime > currentDate && !isCompactView
     }
-
-    Box(modifier = modifier.fillMaxSize()) {
-        if (dateStatus != null) {
-            LazyColumn(
-                state = listState,
-                contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
-                verticalArrangement = Arrangement.spacedBy(4.dp),
-            ) {
-                if (visibleFirstAdd) {
-                    item {
-                        val startTime = checkNotNull(currentDate)
-                        val endTime = remember(timeTasks) { timeTasks[0].startTime }
-
-                        AddTimeTaskViewItem(
-                            modifier = Modifier.animateItem(
-                                placementSpec = spring(
-                                    stiffness = Spring.StiffnessMedium,
-                                    visibilityThreshold = IntOffset.VisibilityThreshold,
-                                ),
-                            ),
-                            onAddClick = { onTimeTaskAdd(startTime, endTime) },
-                            startTime = startTime,
-                            endTime = endTime,
-                        )
-                    }
-                }
-                items(timeTasks, key = { it.key }) { timeTask ->
-                    val timeTaskIndex = remember(timeTasks) {
-                        timeTasks.indexOf(timeTask)
-                    }
-                    val nextItem = remember(timeTasks, timeTaskIndex) {
-                        timeTasks.getOrNull(timeTaskIndex + 1)
-                    }
-
-                    TimeTaskViewItem(
-                        modifier = Modifier.animateItem(
-                            placementSpec = spring(
-                                stiffness = Spring.StiffnessMedium,
-                                visibilityThreshold = IntOffset.VisibilityThreshold,
-                            ),
-                        ),
-                        timeTask = timeTask,
-                        onEdit = onTimeTaskEdit,
-                        onIncrease = onTimeTaskIncrease,
-                        onReduce = onTimeTaskReduce,
-                        onDoneChange = onTaskDoneChange,
-                        isCompactView = remember(nextItem, isCompactView) {
-                            isCompactView &&
-                                    nextItem != null &&
-                                    timeTask.endTime.isNotZeroDifference(nextItem.startTime)
-                        }
-                    )
-                    AnimatedVisibility(
-                        enter = fadeIn() + slideInVertically(),
-                        exit = shrinkVertically() + fadeOut(),
-                        visible = remember(nextItem, isCompactView) {
-                            nextItem != null &&
-                                    timeTask.endTime.isNotZeroDifference(nextItem.startTime) &&
-                                    !isCompactView
-                        },
-                    ) {
-                        val trackColor = when (timeTask.executionStatus) {
-                            TimeTaskStatus.PLANNED -> MaterialTheme.colorScheme.surfaceContainerLow
-                            TimeTaskStatus.RUNNING -> MaterialTheme.colorScheme.primaryContainer
-                            TimeTaskStatus.COMPLETED -> MaterialTheme.colorScheme.tertiaryContainer
-                        }
-                        if (nextItem != null) {
-                            AddTimeTaskViewItem(
-                                modifier = Modifier.animateItem(
-                                    placementSpec = spring(
-                                        stiffness = Spring.StiffnessMedium,
-                                        visibilityThreshold = IntOffset.VisibilityThreshold,
-                                    ),
-                                ),
-                                onAddClick = { onTimeTaskAdd.invoke(timeTask.endTime, nextItem.startTime) },
-                                startTime = timeTask.endTime,
-                                endTime = nextItem.startTime,
-                                indicatorColor = trackColor,
-                            )
-                        }
-                    }
-                }
+    if (dateStatus != null) {
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            state = listState,
+            contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+        ) {
+            if (visibleFirstAdd) {
                 item {
-                    val startTime = remember(timeTasks, currentDate) {
-                        when (timeTasks.isEmpty()) {
-                            true -> checkNotNull(currentDate)
-                            false -> timeTasks.last().endTime
-                        }
-                    }
-                    val endTime = remember(startTime) {
-                        startTime.endThisDay()
-                    }
-                    val enabled = remember(timeTasks, currentDate) {
-                        timeTasks.isEmpty() || timeTasks.last().endTime.isCurrentDay(currentDate!!)
-                    }
+                    val startTime = checkNotNull(currentDate)
+                    val endTime = remember(timeTasks) { timeTasks[0].startTime }
 
                     AddTimeTaskViewItem(
                         modifier = Modifier.animateItem(
@@ -314,24 +310,113 @@ internal fun TimeTasksSection(
                                 visibilityThreshold = IntOffset.VisibilityThreshold,
                             ),
                         ),
-                        enabled = enabled,
                         onAddClick = { onTimeTaskAdd(startTime, endTime) },
                         startTime = startTime,
                         endTime = endTime,
                     )
                 }
-                item { EmptyItem() }
             }
+            items(timeTasks, key = { it.key }) { timeTask ->
+                val timeTaskIndex = remember(timeTasks) {
+                    timeTasks.indexOf(timeTask)
+                }
+                val nextItem = remember(timeTasks, timeTaskIndex) {
+                    timeTasks.getOrNull(timeTaskIndex + 1)
+                }
 
-            LaunchedEffect(Unit) {
-                val runningTask = timeTasks.find { it.executionStatus == TimeTaskStatus.RUNNING }
-                if (runningTask != null && !isScrolled) {
-                    val index = timeTasks.indexOf(runningTask) + if (visibleFirstAdd) 1 else 0
-                    listState.animateScrollToItem(index)
-                    isScrolled = true
+                TimeTaskViewItem(
+                    modifier = Modifier.animateItem(
+                        placementSpec = spring(
+                            stiffness = Spring.StiffnessMedium,
+                            visibilityThreshold = IntOffset.VisibilityThreshold,
+                        ),
+                    ),
+                    timeTask = timeTask,
+                    onEdit = onTimeTaskEdit,
+                    onIncrease = onTimeTaskIncrease,
+                    onReduce = onTimeTaskReduce,
+                    onDoneChange = onTaskDoneChange,
+                    isCompactView = remember(nextItem, isCompactView) {
+                        isCompactView &&
+                                nextItem != null &&
+                                timeTask.endTime.isNotZeroDifference(nextItem.startTime)
+                    }
+                )
+                AnimatedVisibility(
+                    enter = fadeIn() + slideInVertically(),
+                    exit = shrinkVertically() + fadeOut(),
+                    visible = remember(nextItem, isCompactView) {
+                        nextItem != null &&
+                                timeTask.endTime.isNotZeroDifference(nextItem.startTime) &&
+                                !isCompactView
+                    },
+                ) {
+                    val trackColor = when (timeTask.executionStatus) {
+                        TimeTaskStatus.PLANNED -> MaterialTheme.colorScheme.surfaceContainerLow
+                        TimeTaskStatus.RUNNING -> MaterialTheme.colorScheme.primaryContainer
+                        TimeTaskStatus.COMPLETED -> MaterialTheme.colorScheme.tertiaryContainer
+                    }
+                    if (nextItem != null) {
+                        AddTimeTaskViewItem(
+                            modifier = Modifier.animateItem(
+                                placementSpec = spring(
+                                    stiffness = Spring.StiffnessMedium,
+                                    visibilityThreshold = IntOffset.VisibilityThreshold,
+                                ),
+                            ),
+                            onAddClick = {
+                                onTimeTaskAdd.invoke(
+                                    timeTask.endTime,
+                                    nextItem.startTime
+                                )
+                            },
+                            startTime = timeTask.endTime,
+                            endTime = nextItem.startTime,
+                            indicatorColor = trackColor,
+                        )
+                    }
                 }
             }
-        } else if (currentDate != null) {
+            item {
+                val startTime = remember(timeTasks, currentDate) {
+                    when (timeTasks.isEmpty()) {
+                        true -> checkNotNull(currentDate)
+                        false -> timeTasks.last().endTime
+                    }
+                }
+                val endTime = remember(startTime) {
+                    startTime.endThisDay()
+                }
+                val enabled = remember(timeTasks, currentDate) {
+                    timeTasks.isEmpty() || timeTasks.last().endTime.isCurrentDay(currentDate!!)
+                }
+
+                AddTimeTaskViewItem(
+                    modifier = Modifier.animateItem(
+                        placementSpec = spring(
+                            stiffness = Spring.StiffnessMedium,
+                            visibilityThreshold = IntOffset.VisibilityThreshold,
+                        ),
+                    ),
+                    enabled = enabled,
+                    onAddClick = { onTimeTaskAdd(startTime, endTime) },
+                    startTime = startTime,
+                    endTime = endTime,
+                )
+            }
+            item { EmptyItem() }
+        }
+
+        LaunchedEffect(Unit) {
+            val runningTask = timeTasks.find { it.executionStatus == TimeTaskStatus.RUNNING }
+            if (runningTask != null && !isScrolled) {
+                val index = timeTasks.indexOf(runningTask) + if (visibleFirstAdd) 1 else 0
+                listState.animateScrollToItem(index)
+                isScrolled = true
+            }
+        }
+    } else if (currentDate != null) {
+        Box(modifier = modifier.fillMaxSize()) {
             EmptyDateView(
                 modifier = Modifier.align(Alignment.Center),
                 emptyTitle = TimePlannerRes.strings.emptyScheduleTitle,
@@ -387,6 +472,7 @@ internal fun LazyItemScope.TimeTaskViewItem(
                 isCompactView = isCompactView,
             )
         }
+
         TimeTaskStatus.RUNNING -> {
             RunningTimeTaskItem(
                 modifier = modifier,
@@ -397,6 +483,7 @@ internal fun LazyItemScope.TimeTaskViewItem(
                 isCompactView = isCompactView,
             )
         }
+
         TimeTaskStatus.COMPLETED -> {
             CompletedTimeTaskItem(
                 modifier = modifier,

@@ -599,7 +599,7 @@ private class FakeScheduleRepository : ScheduleRepository {
         }
     }
 
-    override suspend fun fetchScheduleByDate(date: Long): Flow<Schedule?> {
+    override fun fetchScheduleByDate(date: Long): Flow<Schedule?> {
         fetchSchedulesCount++
         return flowOf(scheduleList.find { it.date == date })
     }

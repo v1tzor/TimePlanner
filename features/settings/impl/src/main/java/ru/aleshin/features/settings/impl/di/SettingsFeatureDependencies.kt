@@ -25,26 +25,24 @@ import ru.aleshin.core.domain.repository.ThemeSettingsRepository
 import ru.aleshin.core.domain.repository.UndefinedTasksRepository
 import ru.aleshin.core.ui.notifications.TemplatesAlarmManager
 import ru.aleshin.core.ui.notifications.TimeTaskAlarmManager
+import ru.aleshin.core.utils.inject.BaseFeatureDependencies
 import ru.aleshin.core.utils.managers.CoroutineManager
 import ru.aleshin.core.utils.managers.DateManager
-import ru.aleshin.core.utils.navigation.Router
-import ru.aleshin.module_injector.BaseFeatureDependencies
 
 /**
  * @author Stanislav Aleshin on 17.02.2023.
  */
-interface SettingsFeatureDependencies : BaseFeatureDependencies {
-    val themeSettingsRepository: ThemeSettingsRepository
-    val tasksSettingsRepository: TasksSettingsRepository
-    val categoriesRepository: CategoriesRepository
-    val subCategoriesRepository: SubCategoriesRepository
-    val templatesRepository: TemplatesRepository
-    val undefinedTasksRepository: UndefinedTasksRepository
-    val scheduleRepository: ScheduleRepository
-    val coroutineManager: CoroutineManager
-    val timeTaskAlarmManager: TimeTaskAlarmManager
-    val templatesAlarmManager: TemplatesAlarmManager
-    val dateManager: DateManager
-    val globalRouter: Router
-    val applicationContext: Context
+public interface SettingsFeatureDependencies : BaseFeatureDependencies {
+    public val themeSettingsRepository: ThemeSettingsRepository
+    public val tasksSettingsRepository: TasksSettingsRepository
+    public val categoriesRepository: CategoriesRepository
+    public val subCategoriesRepository: SubCategoriesRepository
+    public val templatesRepository: TemplatesRepository
+    public val undefinedTasksRepository: UndefinedTasksRepository
+    public val scheduleRepository: ScheduleRepository
+    public val coroutineManager: CoroutineManager
+    public val timeTaskAlarmManager: TimeTaskAlarmManager
+    public val templatesAlarmManager: TemplatesAlarmManager
+    public val dateManager: DateManager
+    public val applicationContext: Context
 }

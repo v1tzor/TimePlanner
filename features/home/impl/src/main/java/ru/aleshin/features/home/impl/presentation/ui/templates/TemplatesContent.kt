@@ -32,14 +32,20 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -47,23 +53,112 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.launch
 import ru.aleshin.core.domain.entities.template.RepeatTime
+import ru.aleshin.core.ui.views.ErrorSnackbar
 import ru.aleshin.core.ui.views.ExpandedIcon
+import ru.aleshin.core.ui.views.Scaffold
+import ru.aleshin.core.utils.architecture.store.compose.handleEffects
+import ru.aleshin.core.utils.architecture.store.compose.stateAsState
+import ru.aleshin.core.utils.managers.LocalDrawerManager
+import ru.aleshin.features.home.impl.presentation.mapppers.mapToMessage
 import ru.aleshin.features.home.impl.presentation.mapppers.templates.mapToString
 import ru.aleshin.features.home.impl.presentation.models.categories.CategoriesUi
 import ru.aleshin.features.home.impl.presentation.models.templates.TemplateUi
 import ru.aleshin.features.home.impl.presentation.models.templates.TemplatesSortedType
 import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
 import ru.aleshin.features.home.impl.presentation.ui.home.views.EmptyDateView
-import ru.aleshin.features.home.impl.presentation.ui.templates.contract.TemplatesViewState
+import ru.aleshin.features.home.impl.presentation.ui.templates.contract.TemplatesEffect
+import ru.aleshin.features.home.impl.presentation.ui.templates.contract.TemplatesEvent
+import ru.aleshin.features.home.impl.presentation.ui.templates.contract.TemplatesState
+import ru.aleshin.features.home.impl.presentation.ui.templates.store.TemplatesComponent
+import ru.aleshin.features.home.impl.presentation.ui.templates.views.TemplateEditorDialog
 import ru.aleshin.features.home.impl.presentation.ui.templates.views.TemplatesItem
+import ru.aleshin.features.home.impl.presentation.ui.templates.views.TemplatesTopAppBar
 
 /**
  * @author Stanislav Aleshin on 08.05.2023.
  */
 @Composable
+@OptIn(ExperimentalMaterial3Api::class)
 internal fun TemplatesContent(
-    state: TemplatesViewState,
+    templatesComponent: TemplatesComponent,
+    modifier: Modifier = Modifier,
+) {
+    val store = templatesComponent.store
+    val state by store.stateAsState()
+    val scope = rememberCoroutineScope()
+    val snackbarState = remember { SnackbarHostState() }
+    var isShowTemplateCreator by rememberSaveable { mutableStateOf(false) }
+    val drawerManager = LocalDrawerManager.current
+    val strings = HomeThemeRes.strings
+
+    Scaffold(
+        modifier = modifier.fillMaxSize(),
+        content = { paddingValues ->
+            BaseTemplatesContent(
+                state = state,
+                modifier = Modifier.padding(paddingValues),
+                onChangeSortedType = { store.dispatchEvent(TemplatesEvent.UpdatedSortedType(it)) },
+                onDeleteTemplate = { store.dispatchEvent(TemplatesEvent.DeleteTemplate(it.templateId)) },
+                onUpdateTemplate = { store.dispatchEvent(TemplatesEvent.UpdateTemplate(it)) },
+                onRestartRepeat = { store.dispatchEvent(TemplatesEvent.RestartTemplateRepeat(it)) },
+                onStopRepeat = { store.dispatchEvent(TemplatesEvent.StopTemplateRepeat(it)) },
+                onAddRepeatTemplate = { time, template ->
+                    store.dispatchEvent(TemplatesEvent.AddRepeatTemplate(time, template))
+                },
+                onDeleteRepeatTemplate = { time, template ->
+                    store.dispatchEvent(TemplatesEvent.DeleteRepeatTemplate(time, template))
+                },
+            )
+        },
+        topBar = {
+            TemplatesTopAppBar(
+                onMenuIconClick = { scope.launch { drawerManager?.openDrawer() } },
+            )
+        },
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarState) {
+                ErrorSnackbar(snackbarData = it)
+            }
+        },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = { isShowTemplateCreator = true },
+                content = {
+                    Text(
+                        text = HomeThemeRes.strings.addTemplatesFabTitle,
+                        style = MaterialTheme.typography.titleLarge,
+                    )
+                },
+            )
+        },
+    )
+
+    if (isShowTemplateCreator) {
+        TemplateEditorDialog(
+            categories = state.categories,
+            model = null,
+            onDismiss = { isShowTemplateCreator = false },
+            onConfirm = { template ->
+                store.dispatchEvent(TemplatesEvent.AddTemplate(template))
+                isShowTemplateCreator = false
+            },
+        )
+    }
+
+    store.handleEffects { effect ->
+        when (effect) {
+            is TemplatesEffect.ShowError -> snackbarState.showSnackbar(
+                message = effect.failures.mapToMessage(strings),
+            )
+        }
+    }
+}
+
+@Composable
+private fun BaseTemplatesContent(
+    state: TemplatesState,
     modifier: Modifier = Modifier,
     onChangeSortedType: (TemplatesSortedType) -> Unit,
     onUpdateTemplate: (TemplateUi) -> Unit,

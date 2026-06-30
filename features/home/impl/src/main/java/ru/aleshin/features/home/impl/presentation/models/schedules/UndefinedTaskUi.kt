@@ -16,9 +16,11 @@
 package ru.aleshin.features.home.impl.presentation.models.schedules
 
 import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
+import androidx.compose.runtime.Immutable
+import kotlinx.serialization.Serializable
 import ru.aleshin.core.domain.entities.schedules.TaskPriority
 import ru.aleshin.core.domain.entities.schedules.TimeTaskStatus
+import ru.aleshin.core.utils.functional.DateSerializer
 import ru.aleshin.core.utils.functional.TimeRange
 import ru.aleshin.features.home.impl.presentation.models.categories.MainCategoryUi
 import ru.aleshin.features.home.impl.presentation.models.categories.SubCategoryUi
@@ -27,16 +29,19 @@ import java.util.Date
 /**
  * @author Stanislav Aleshin on 02.11.2023.
  */
-@Parcelize
+@Immutable
+@Serializable
 internal data class UndefinedTaskUi(
     val id: Long = 0L,
+    @Serializable(DateSerializer::class)
     val createdAt: Date? = null,
+    @Serializable(DateSerializer::class)
     val deadline: Date? = null,
     val mainCategory: MainCategoryUi,
     val subCategory: SubCategoryUi? = null,
     val priority: TaskPriority = TaskPriority.STANDARD,
     val note: String? = null,
-) : Parcelable
+)
 
 internal fun UndefinedTaskUi.convertToTimeTask(
     scheduleDate: Date,

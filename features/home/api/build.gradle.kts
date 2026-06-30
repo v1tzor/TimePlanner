@@ -13,10 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
+
 plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.kotlinAndroid)
-    alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.serialization)
 }
 
 android {
@@ -45,12 +47,7 @@ android {
     }
 
     buildFeatures {
-        compose = true
         buildConfig = true
-    }
-
-    composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.kotlinCompiler.get()
     }
 
     packaging {
@@ -60,9 +57,11 @@ android {
     }
 }
 
+kotlin {
+    explicitApi = ExplicitApiMode.Warning
+}
+
 dependencies {
-    implementation(project(":module-injector"))
     implementation(project(":core:utils"))
-    implementation(project(":core:ui"))
     implementation(project(":core:domain"))
 }

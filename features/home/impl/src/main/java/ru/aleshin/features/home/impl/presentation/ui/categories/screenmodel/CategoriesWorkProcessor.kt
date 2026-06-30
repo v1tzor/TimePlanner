@@ -16,11 +16,11 @@
 package ru.aleshin.features.home.impl.presentation.ui.categories.screenmodel
 
 import kotlinx.coroutines.flow.flow
+import ru.aleshin.core.utils.architecture.store.work.ActionResult
+import ru.aleshin.core.utils.architecture.store.work.EffectResult
+import ru.aleshin.core.utils.architecture.store.work.FlowWorkProcessor
+import ru.aleshin.core.utils.architecture.store.work.WorkCommand
 import ru.aleshin.core.utils.functional.handle
-import ru.aleshin.core.utils.platform.screenmodel.work.ActionResult
-import ru.aleshin.core.utils.platform.screenmodel.work.EffectResult
-import ru.aleshin.core.utils.platform.screenmodel.work.FlowWorkProcessor
-import ru.aleshin.core.utils.platform.screenmodel.work.WorkCommand
 import ru.aleshin.features.home.impl.domain.interactors.CategoriesInteractor
 import ru.aleshin.features.home.impl.domain.interactors.SubCategoriesInteractor
 import ru.aleshin.features.home.impl.presentation.mapppers.categories.mapToDomain
@@ -30,12 +30,14 @@ import ru.aleshin.features.home.impl.presentation.models.categories.MainCategory
 import ru.aleshin.features.home.impl.presentation.models.categories.SubCategoryUi
 import ru.aleshin.features.home.impl.presentation.ui.categories.contract.CategoriesAction
 import ru.aleshin.features.home.impl.presentation.ui.categories.contract.CategoriesEffect
+import ru.aleshin.features.home.impl.presentation.ui.categories.contract.CategoriesOutput
 import javax.inject.Inject
 
 /**
  * @author Stanislav Aleshin on 06.04.2023.
  */
-internal interface CategoriesWorkProcessor : FlowWorkProcessor<CategoriesWorkCommand, CategoriesAction, CategoriesEffect> {
+internal interface CategoriesWorkProcessor :
+    FlowWorkProcessor<CategoriesWorkCommand, CategoriesAction, CategoriesEffect, CategoriesOutput> {
 
     class Base @Inject constructor(
         private val categoriesInteractor: CategoriesInteractor,
@@ -54,7 +56,7 @@ internal interface CategoriesWorkProcessor : FlowWorkProcessor<CategoriesWorkCom
             is CategoriesWorkCommand.DeleteSubCategory -> deleteSubCategory(command.subCategory)
         }
 
-        private suspend fun loadCategoriesWork() = flow {
+        private fun loadCategoriesWork() = flow {
             var isSetUp = false
             val selectedCategoryId = categoriesInteractor.fetchFeatureMainCategory()
             categoriesInteractor.fetchCategories().collect { categoryEither ->
@@ -91,14 +93,14 @@ internal interface CategoriesWorkProcessor : FlowWorkProcessor<CategoriesWorkCom
             )
         }
 
-        private suspend fun addSubCategory(name: String, mainCategory: MainCategoryUi) = flow {
+        private fun addSubCategory(name: String, mainCategory: MainCategoryUi) = flow {
             val subCategory = SubCategoryUi(name = name, mainCategory = mainCategory)
             subCategoriesInteractor.addSubCategory(subCategory.mapToDomain()).handle(
                 onLeftAction = { emit(EffectResult(CategoriesEffect.ShowError(it))) },
             )
         }
 
-        private suspend fun addMainCategory(categoryName: String) = flow {
+        private fun addMainCategory(categoryName: String) = flow {
             val mainCategory = MainCategoryUi(customName = categoryName, defaultType = null)
             categoriesInteractor.addMainCategory(mainCategory.mapToDomain()).handle(
                 onLeftAction = { emit(EffectResult(CategoriesEffect.ShowError(it))) },
@@ -108,25 +110,25 @@ internal interface CategoriesWorkProcessor : FlowWorkProcessor<CategoriesWorkCom
             )
         }
 
-        private suspend fun deleteSubCategory(subCategory: SubCategoryUi) = flow {
+        private fun deleteSubCategory(subCategory: SubCategoryUi) = flow {
             subCategoriesInteractor.deleteSubCategory(subCategory.mapToDomain()).handle(
                 onLeftAction = { emit(EffectResult(CategoriesEffect.ShowError(it))) },
             )
         }
 
-        private suspend fun updateSubCategory(subCategory: SubCategoryUi) = flow {
+        private fun updateSubCategory(subCategory: SubCategoryUi) = flow {
             subCategoriesInteractor.updateSubCategory(subCategory.mapToDomain()).handle(
                 onLeftAction = { emit(EffectResult(CategoriesEffect.ShowError(it))) },
             )
         }
 
-        private suspend fun deleteMainCategory(category: MainCategoryUi) = flow {
+        private fun deleteMainCategory(category: MainCategoryUi) = flow {
             categoriesInteractor.deleteMainCategory(category.mapToDomain()).handle(
                 onLeftAction = { emit(EffectResult(CategoriesEffect.ShowError(it))) },
             )
         }
 
-        private suspend fun updateMainCategory(category: MainCategoryUi) = flow {
+        private fun updateMainCategory(category: MainCategoryUi) = flow {
             categoriesInteractor.updateMainCategory(category.mapToDomain()).handle(
                 onRightAction = { emit(ActionResult(CategoriesAction.ChangeMainCategory(category))) },
                 onLeftAction = { emit(EffectResult(CategoriesEffect.ShowError(it))) },

@@ -16,10 +16,12 @@
 package ru.aleshin.core.ui.views
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 
 /**
  * @author Stanislav Aleshin on 28.02.2023.
  */
+@Immutable
 interface TopAppBarAction {
     val icon: Int? @Composable get
     val title: String @Composable get

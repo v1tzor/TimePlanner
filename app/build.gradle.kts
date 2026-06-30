@@ -128,10 +128,6 @@ android {
         buildConfig = true
     }
 
-    composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.kotlinCompiler.get()
-    }
-
     packaging {
         resources {
             resources.pickFirsts.add("META-INF/INDEX.LIST")

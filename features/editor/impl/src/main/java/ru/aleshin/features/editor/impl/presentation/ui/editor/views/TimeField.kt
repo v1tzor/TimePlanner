@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2025 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -61,7 +61,7 @@ internal fun BaseTimeField(
     color: Color = MaterialTheme.colorScheme.surfaceContainerLow,
     onChangeTime: (Date) -> Unit,
 ) {
-    val timeFormat = SimpleDateFormat.getTimeInstance(SimpleDateFormat.SHORT)
+    val timeFormat = remember { SimpleDateFormat.getTimeInstance(SimpleDateFormat.SHORT) }
     var openDialog by rememberSaveable { mutableStateOf(false) }
 
     Surface(
@@ -166,9 +166,9 @@ internal fun DurationTitle(
         false -> MaterialTheme.colorScheme.onSurface
     }
     Box(
-        modifier = modifier.clip(MaterialTheme.shapes.small).clickable(enabled) {
-            isOpenDurationDialog = true
-        },
+        modifier = modifier
+            .clip(MaterialTheme.shapes.small)
+            .clickable(enabled) { isOpenDurationDialog = true },
     ) {
         Text(
             modifier = Modifier.padding(4.dp),

@@ -15,27 +15,39 @@
  */
 package ru.aleshin.core.utils.managers
 
-import kotlinx.coroutines.* // ktlint-disable no-wildcard-imports
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 /**
  * @author Stanislav Aleshin on 14.02.2023.
  */
-interface CoroutineManager {
+interface CoroutineManager : WorkDispatchersProvider {
 
-    fun runOnBackground(scope: CoroutineScope, block: CoroutineBlock): Job
+    fun runOnIOBackground(scope: CoroutineScope, block: CoroutineBlock): Job
+
+    fun runOnDefaultBackground(scope: CoroutineScope, block: CoroutineBlock): Job
 
     fun runOnUi(scope: CoroutineScope, block: CoroutineBlock): Job
 
     suspend fun changeFlow(coroutineFlow: CoroutineFlow, block: CoroutineBlock)
 
     abstract class Abstract(
-        private val backgroundDispatcher: CoroutineDispatcher,
-        private val uiDispatcher: CoroutineDispatcher,
+        override val defaultDispatcher: CoroutineDispatcher,
+        override val ioDispatcher: CoroutineDispatcher,
+        override val uiDispatcher: CoroutineDispatcher,
     ) : CoroutineManager {
 
-        override fun runOnBackground(scope: CoroutineScope, block: CoroutineBlock): Job {
-            return scope.launch(context = backgroundDispatcher, block = block)
+        override fun runOnIOBackground(scope: CoroutineScope, block: CoroutineBlock): Job {
+            return scope.launch(context = ioDispatcher, block = block)
+        }
+
+        override fun runOnDefaultBackground(scope: CoroutineScope, block: CoroutineBlock): Job {
+            return scope.launch(context = defaultDispatcher, block = block)
         }
 
         override fun runOnUi(scope: CoroutineScope, block: CoroutineBlock): Job {
@@ -44,7 +56,8 @@ interface CoroutineManager {
 
         override suspend fun changeFlow(coroutineFlow: CoroutineFlow, block: CoroutineBlock) {
             val dispatcher = when (coroutineFlow) {
-                CoroutineFlow.BACKGROUND -> backgroundDispatcher
+                CoroutineFlow.DEFAULT -> defaultDispatcher
+                CoroutineFlow.IO -> ioDispatcher
                 CoroutineFlow.UI -> uiDispatcher
             }
             withContext(context = dispatcher, block = block)
@@ -52,13 +65,20 @@ interface CoroutineManager {
     }
 
     class Base @Inject constructor() : Abstract(
-        backgroundDispatcher = Dispatchers.IO,
+        defaultDispatcher = Dispatchers.Main,
+        ioDispatcher = Dispatchers.IO,
         uiDispatcher = Dispatchers.Main,
     )
+}
+
+interface WorkDispatchersProvider {
+    val ioDispatcher: CoroutineDispatcher
+    val defaultDispatcher: CoroutineDispatcher
+    val uiDispatcher: CoroutineDispatcher
 }
 
 typealias CoroutineBlock = suspend CoroutineScope.() -> Unit
 
 enum class CoroutineFlow {
-    BACKGROUND, UI
+    DEFAULT, IO, UI
 }

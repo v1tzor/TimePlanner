@@ -15,36 +15,47 @@
  */
 package ru.aleshin.timeplanner.presentation.ui.main.contract
 
-import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
+import androidx.compose.runtime.Immutable
+import kotlinx.serialization.Serializable
 import ru.aleshin.core.ui.theme.material.ColorsUiType
 import ru.aleshin.core.ui.theme.material.ThemeUiType
 import ru.aleshin.core.ui.theme.tokens.LanguageUiType
-import ru.aleshin.core.utils.platform.screenmodel.contract.BaseAction
-import ru.aleshin.core.utils.platform.screenmodel.contract.BaseEvent
-import ru.aleshin.core.utils.platform.screenmodel.contract.BaseViewState
-import ru.aleshin.core.utils.platform.screenmodel.contract.EmptyUiEffect
+import ru.aleshin.core.utils.architecture.component.BaseInput
+import ru.aleshin.core.utils.architecture.component.BaseOutput
+import ru.aleshin.core.utils.architecture.store.contract.StoreAction
+import ru.aleshin.core.utils.architecture.store.contract.StoreEffect
+import ru.aleshin.core.utils.architecture.store.contract.StoreEvent
+import ru.aleshin.core.utils.architecture.store.contract.StoreState
+import ru.aleshin.features.editor.api.EditorFeatureComponent.EditorConfig
 
 /**
  * @author Stanislav Aleshin on 14.02.2023.
  */
-@Parcelize
-data class MainViewState(
+@Immutable
+@Serializable
+data class MainState(
     val language: LanguageUiType = LanguageUiType.DEFAULT,
     val theme: ThemeUiType = ThemeUiType.DEFAULT,
     val colors: ColorsUiType = ColorsUiType.PINK,
     val isEnableDynamicColors: Boolean = false,
     val secureMode: Boolean = false,
-) : BaseViewState, Parcelable
+) : StoreState
 
-sealed class MainEvent : BaseEvent {
-    data class Init(val screenTarget: DeepLinkTarget) : MainEvent()
-    data object NavigateToEditor : MainEvent()
+data class MainInput(
+    val initialDeepLinkTarget: DeepLinkTarget?,
+) : BaseInput
+
+sealed class MainEvent : StoreEvent {
+    data class Init(
+        val isRestore: Boolean,
+        val initialDeepLinkTarget: DeepLinkTarget?,
+    ) : MainEvent()
+    data class ProcessDeepLink(val screenTarget: DeepLinkTarget) : MainEvent()
 }
 
-sealed class MainEffect : EmptyUiEffect
+sealed class MainEffect : StoreEffect
 
-sealed class MainAction : MainEffect(), BaseAction {
+sealed class MainAction : StoreAction {
     object Navigate : MainAction()
     data class ChangeSettings(
         val language: LanguageUiType,
@@ -53,4 +64,9 @@ sealed class MainAction : MainEffect(), BaseAction {
         val enableDynamicColors: Boolean,
         val secureMode: Boolean,
     ) : MainAction()
+}
+
+sealed class MainOutput : BaseOutput {
+    data class NavigateToEditor(val config: EditorConfig) : MainOutput()
+    data object NavigateToTabNavigation : MainOutput()
 }

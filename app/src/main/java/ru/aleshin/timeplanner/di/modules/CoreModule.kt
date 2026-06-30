@@ -26,8 +26,6 @@ import ru.aleshin.core.utils.managers.CoroutineManager
 import ru.aleshin.core.utils.managers.DateManager
 import ru.aleshin.core.utils.managers.TimeOverlayManager
 import ru.aleshin.core.utils.notifications.NotificationCreator
-import ru.aleshin.timeplanner.navigation.GlobalNavigationManager
-import ru.aleshin.timeplanner.navigation.TabNavigationManager
 import ru.aleshin.timeplanner.presentation.receiver.AlarmReceiverProviderImpl
 import javax.inject.Singleton
 
@@ -46,14 +44,6 @@ interface CoreModule {
     @Binds
     @Singleton
     fun bindCoroutineManager(manager: CoroutineManager.Base): CoroutineManager
-
-    @Binds
-    @Singleton
-    fun bindAppNavigationManager(manager: GlobalNavigationManager.Base): GlobalNavigationManager
-
-    @Binds
-    @Singleton
-    fun bindTabNavigationManager(manager: TabNavigationManager.Base): TabNavigationManager
 
     @Binds
     fun bindTimeTaskAlarmManager(manager: TimeTaskAlarmManager.Base): TimeTaskAlarmManager

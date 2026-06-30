@@ -15,8 +15,6 @@
  */
 package ru.aleshin.features.analytics.impl.presenatiton.ui.views
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TopAppBar
@@ -24,7 +22,6 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
-import ru.aleshin.core.ui.views.TopAppBarButton
 import ru.aleshin.core.ui.views.TopAppBarEmptyButton
 import ru.aleshin.core.ui.views.TopAppBarTitle
 import ru.aleshin.features.analytics.impl.presenatiton.theme.AnalyticsThemeRes
@@ -36,7 +33,6 @@ import ru.aleshin.features.analytics.impl.presenatiton.theme.AnalyticsThemeRes
 @OptIn(ExperimentalMaterial3Api::class)
 internal fun AnalyticsTopAppBar(
     modifier: Modifier = Modifier,
-    onMenuButtonClick: () -> Unit,
 ) {
     TopAppBar(
         modifier = modifier,
@@ -44,13 +40,6 @@ internal fun AnalyticsTopAppBar(
             TopAppBarTitle(
                 text = AnalyticsThemeRes.strings.topAppBarTitle,
                 textAlign = TextAlign.Center,
-            )
-        },
-        navigationIcon = {
-            TopAppBarButton(
-                imageVector = Icons.Default.Menu,
-                imageDescription = null,
-                onButtonClick = onMenuButtonClick,
             )
         },
         actions = {

@@ -15,29 +15,33 @@
  */
 package ru.aleshin.features.editor.impl.presentation.models.tasks
 
-import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
+import androidx.compose.runtime.Immutable
+import kotlinx.serialization.Serializable
 import ru.aleshin.core.domain.entities.schedules.TaskPriority
+import ru.aleshin.core.utils.functional.DateSerializer
 import ru.aleshin.core.utils.functional.TimeRange
 import ru.aleshin.features.editor.impl.presentation.models.categories.MainCategoryUi
 import ru.aleshin.features.editor.impl.presentation.models.categories.SubCategoryUi
 import ru.aleshin.features.editor.impl.presentation.models.editmodel.EditModelUi
-import ru.aleshin.features.editor.impl.presentation.models.editmodel.EditParameters
+import ru.aleshin.features.editor.impl.presentation.models.editmodel.EditParametersUi
 import java.util.Date
 
 /**
  * @author Stanislav Aleshin on 02.11.2023.
  */
-@Parcelize
+@Immutable
+@Serializable
 internal data class UndefinedTaskUi(
     val id: Long = 0L,
+    @Serializable(DateSerializer::class)
     val createdAt: Date? = null,
+    @Serializable(DateSerializer::class)
     val deadline: Date? = null,
     val mainCategory: MainCategoryUi,
     val subCategory: SubCategoryUi? = null,
     val priority: TaskPriority = TaskPriority.STANDARD,
     val note: String? = null,
-) : Parcelable
+)
 
 internal fun UndefinedTaskUi.convertToEditModel(
     scheduleDate: Date,
@@ -48,7 +52,7 @@ internal fun UndefinedTaskUi.convertToEditModel(
     createdAt = createdAt,
     mainCategory = mainCategory,
     subCategory = subCategory,
-    parameters = EditParameters(
+    parameters = EditParametersUi(
         priority = priority,
     ),
     undefinedTaskId = id,

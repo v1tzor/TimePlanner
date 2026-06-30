@@ -25,47 +25,68 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import ru.aleshin.core.utils.architecture.store.compose.stateAsState
 import ru.aleshin.core.utils.extensions.setClipboard
 import ru.aleshin.features.settings.impl.presentation.mappers.mapToIcon
 import ru.aleshin.features.settings.impl.presentation.models.CryptoAddress
 import ru.aleshin.features.settings.impl.presentation.theme.SettingsThemeRes
-import ru.aleshin.features.settings.impl.presentation.ui.donate.contract.DonateViewState
+import ru.aleshin.features.settings.impl.presentation.ui.donate.contract.DonateEvent
+import ru.aleshin.features.settings.impl.presentation.ui.donate.contract.DonateState
+import ru.aleshin.features.settings.impl.presentation.ui.donate.store.DonateComponent
+import ru.aleshin.features.settings.impl.presentation.ui.donate.views.DonateTopAppBar
 
 /**
  * @author Stanislav Aleshin on 13.10.2023.
  */
 @Composable
 internal fun DonateContent(
-    state: DonateViewState,
+    donateComponent: DonateComponent,
     modifier: Modifier = Modifier,
 ) {
-    CryptoAddressLazyColumn(
-        modifier = modifier,
+    val store = donateComponent.store
+    val state by store.stateAsState()
+
+    Scaffold(
+        modifier = modifier.fillMaxSize(),
+        content = { paddingValues ->
+            BaseDonateContent(
+                state = state,
+                modifier = Modifier.padding(paddingValues),
+            )
+        },
+        topBar = {
+            DonateTopAppBar(
+                onNavButtonClick = { store.dispatchEvent(DonateEvent.PressBackButton) },
+            )
+        },
     )
 }
 
 @Composable
-internal fun CryptoAddressLazyColumn(
+private fun BaseDonateContent(
+    state: DonateState,
     modifier: Modifier = Modifier,
-    state: LazyListState = rememberLazyListState(),
 ) {
+    val state = rememberLazyListState()
     val context = LocalContext.current
+
     LazyColumn(
         modifier = modifier,
         state = state,
@@ -85,7 +106,7 @@ internal fun CryptoAddressLazyColumn(
                 onCopy = { setClipboard(context, it) },
             )
         }
-        item { 
+        item {
             Spacer(modifier = Modifier.padding(48.dp))
         }
     }

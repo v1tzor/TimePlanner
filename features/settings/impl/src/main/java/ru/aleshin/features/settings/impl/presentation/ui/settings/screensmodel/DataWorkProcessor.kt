@@ -22,15 +22,15 @@ import ru.aleshin.core.domain.entities.schedules.TimeTask
 import ru.aleshin.core.domain.entities.template.Template
 import ru.aleshin.core.ui.notifications.TemplatesAlarmManager
 import ru.aleshin.core.ui.notifications.TimeTaskAlarmManager
+import ru.aleshin.core.utils.architecture.store.work.ActionResult
+import ru.aleshin.core.utils.architecture.store.work.EffectResult
+import ru.aleshin.core.utils.architecture.store.work.FlowWorkProcessor
+import ru.aleshin.core.utils.architecture.store.work.WorkCommand
+import ru.aleshin.core.utils.architecture.store.work.WorkResult
 import ru.aleshin.core.utils.extensions.extractAllItem
 import ru.aleshin.core.utils.functional.Either
 import ru.aleshin.core.utils.functional.handle
 import ru.aleshin.core.utils.managers.DateManager
-import ru.aleshin.core.utils.platform.screenmodel.work.ActionResult
-import ru.aleshin.core.utils.platform.screenmodel.work.EffectResult
-import ru.aleshin.core.utils.platform.screenmodel.work.FlowWorkProcessor
-import ru.aleshin.core.utils.platform.screenmodel.work.WorkCommand
-import ru.aleshin.core.utils.platform.screenmodel.work.WorkResult
 import ru.aleshin.features.settings.impl.domain.common.SettingsFailures
 import ru.aleshin.features.settings.impl.domain.interactors.CategoriesInteractor
 import ru.aleshin.features.settings.impl.domain.interactors.ScheduleInteractor
@@ -41,13 +41,15 @@ import ru.aleshin.features.settings.impl.presentation.mappers.mapToUi
 import ru.aleshin.features.settings.impl.presentation.models.BackupModel
 import ru.aleshin.features.settings.impl.presentation.ui.settings.contract.SettingsAction
 import ru.aleshin.features.settings.impl.presentation.ui.settings.contract.SettingsEffect
+import ru.aleshin.features.settings.impl.presentation.ui.settings.contract.SettingsOutput
 import ru.aleshin.features.settings.impl.presentation.ui.settings.managers.BackupManager
 import javax.inject.Inject
 
 /**
  * @author Stanislav Aleshin on 10.06.2023.
  */
-internal interface DataWorkProcessor : FlowWorkProcessor<DataWorkCommand, SettingsAction, SettingsEffect> {
+internal interface DataWorkProcessor :
+    FlowWorkProcessor<DataWorkCommand, SettingsAction, SettingsEffect, SettingsOutput> {
 
     class Base @Inject constructor(
         private val settingsInteractor: SettingsInteractor,
@@ -160,7 +162,7 @@ internal interface DataWorkProcessor : FlowWorkProcessor<DataWorkCommand, Settin
         }
 
         private suspend fun <R> Either<SettingsFailures, R>.dataOrError(
-            collector: FlowCollector<WorkResult<SettingsAction, SettingsEffect>>,
+            collector: FlowCollector<WorkResult<SettingsAction, SettingsEffect, SettingsOutput>>,
         ): R? = when (this) {
             is Either.Right -> data
             is Either.Left -> collector.emit(EffectResult(SettingsEffect.ShowError(data))).let { null }

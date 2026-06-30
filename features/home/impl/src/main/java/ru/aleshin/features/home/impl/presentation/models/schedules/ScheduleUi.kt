@@ -15,18 +15,21 @@
  */
 package ru.aleshin.features.home.impl.presentation.models.schedules
 
-import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
+import androidx.compose.runtime.Immutable
+import kotlinx.serialization.Serializable
 import ru.aleshin.core.domain.entities.schedules.DailyScheduleStatus
+import ru.aleshin.core.utils.functional.DateSerializer
 import java.util.Date
 
 /**
  * @author Stanislav Aleshin on 11.03.2023.
  */
-@Parcelize
+@Immutable
+@Serializable
 internal data class ScheduleUi(
+    @Serializable(DateSerializer::class)
     val date: Date,
     val dateStatus: DailyScheduleStatus,
     val timeTasks: List<TimeTaskUi>,
     val progress: Float,
-) : Parcelable
+)

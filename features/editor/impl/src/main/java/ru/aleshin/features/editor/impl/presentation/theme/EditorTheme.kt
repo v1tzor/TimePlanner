@@ -19,9 +19,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import ru.aleshin.core.ui.theme.TimePlannerRes
 import ru.aleshin.core.ui.views.SystemBarsColor
-import ru.aleshin.features.editor.impl.presentation.theme.tokens.*
 import ru.aleshin.features.editor.impl.presentation.theme.tokens.LocalEditorIcons
 import ru.aleshin.features.editor.impl.presentation.theme.tokens.LocalEditorStrings
+import ru.aleshin.features.editor.impl.presentation.theme.tokens.fetchEditorIcons
+import ru.aleshin.features.editor.impl.presentation.theme.tokens.fetchEditorStrings
 
 /**
  * @author Stanislav Aleshin on 08.03.2023.

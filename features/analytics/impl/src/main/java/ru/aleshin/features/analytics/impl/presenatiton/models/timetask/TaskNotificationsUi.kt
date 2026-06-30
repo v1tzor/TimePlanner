@@ -15,13 +15,14 @@
  */
 package ru.aleshin.features.analytics.impl.presenatiton.models.timetask
 
-import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
+import androidx.compose.runtime.Immutable
+import kotlinx.serialization.Serializable
 
 /**
  * @author Stanislav Aleshin on 10.11.2023.
  */
-@Parcelize
+@Immutable
+@Serializable
 internal data class TaskNotificationsUi(
     val fifteenMinutesBefore: Boolean = false,
     val oneHourBefore: Boolean = false,
@@ -29,4 +30,4 @@ internal data class TaskNotificationsUi(
     val oneDayBefore: Boolean = false,
     val oneWeekBefore: Boolean = false,
     val beforeEnd: Boolean = false,
-) : Parcelable
+)

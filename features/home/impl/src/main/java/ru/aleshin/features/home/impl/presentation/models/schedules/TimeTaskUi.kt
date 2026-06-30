@@ -15,26 +15,32 @@
  */
 package ru.aleshin.features.home.impl.presentation.models.schedules
 
-import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
+import androidx.compose.runtime.Immutable
+import kotlinx.serialization.Serializable
 import ru.aleshin.core.domain.entities.schedules.TaskPriority
 import ru.aleshin.core.domain.entities.schedules.TimeTaskStatus
 import ru.aleshin.core.utils.extensions.duration
+import ru.aleshin.core.utils.functional.DateSerializer
 import ru.aleshin.core.utils.functional.TimeRange
 import ru.aleshin.features.home.impl.presentation.models.categories.MainCategoryUi
 import ru.aleshin.features.home.impl.presentation.models.categories.SubCategoryUi
-import java.util.*
+import java.util.Date
 
 /**
  * @author Stanislav Aleshin on 23.02.2023.
  */
-@Parcelize
+@Immutable
+@Serializable
 internal data class TimeTaskUi(
     val key: Long = 0L,
     val executionStatus: TimeTaskStatus = TimeTaskStatus.PLANNED,
+    @Serializable(DateSerializer::class)
     val date: Date,
+    @Serializable(DateSerializer::class)
     val startTime: Date,
+    @Serializable(DateSerializer::class)
     val endTime: Date,
+    @Serializable(DateSerializer::class)
     val createdAt: Date? = null,
     val duration: Long = duration(startTime, endTime),
     val leftTime: Long = 0L,
@@ -48,6 +54,6 @@ internal data class TimeTaskUi(
     val isConsiderInStatistics: Boolean = true,
     val isTemplate: Boolean = false,
     val note: String? = null,
-) : Parcelable {
+) {
     fun timeToTimeRange() = TimeRange(startTime, endTime)
 }

@@ -16,13 +16,16 @@
 package ru.aleshin.features.editor.impl.presentation.models
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
+import kotlinx.serialization.Serializable
 import ru.aleshin.core.ui.theme.TimePlannerRes
 import ru.aleshin.core.ui.views.SegmentedButtonItem
-import ru.aleshin.features.editor.impl.presentation.theme.EditorThemeRes
 
 /**
  * @author Stanislav Aleshin on 16.01.2024.
  */
+@Immutable
+@Serializable
 internal enum class PriorityParameters : SegmentedButtonItem {
     STANDARD {
         override val title: String @Composable get() = TimePlannerRes.strings.priorityStandard

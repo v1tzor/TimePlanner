@@ -20,6 +20,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Shapes
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.remember
 import androidx.compose.ui.unit.dp
 import ru.aleshin.core.ui.theme.material.ColorsUiType
 import ru.aleshin.core.ui.theme.material.ThemeUiType
@@ -37,6 +38,7 @@ import ru.aleshin.core.ui.theme.tokens.fetchAppElevations
 import ru.aleshin.core.ui.theme.tokens.fetchAppLanguage
 import ru.aleshin.core.ui.theme.tokens.fetchCoreIcons
 import ru.aleshin.core.ui.theme.tokens.fetchCoreStrings
+import ru.aleshin.core.ui.views.NavigationBarColor
 
 /**
  * @author Stanislav Aleshin on 27.02.2023.
@@ -49,11 +51,11 @@ fun TimePlannerTheme(
     dynamicColor: Boolean = false,
     content: @Composable () -> Unit,
 ) {
-    val appLanguage = fetchAppLanguage(languageType)
-    val coreStrings = fetchCoreStrings(appLanguage)
+    val appLanguage = remember(languageType) { fetchAppLanguage(languageType) }
+    val coreStrings = remember(appLanguage) { fetchCoreStrings(appLanguage) }
     val colorsType = fetchAppColorsType(themeType, colors)
-    val appElevations = fetchAppElevations()
-    val coreIcons = fetchCoreIcons()
+    val appElevations = remember { fetchAppElevations() }
+    val coreIcons = remember { fetchCoreIcons() }
 
     MaterialTheme(
         colorScheme = themeType.toColorScheme(dynamicColor, colors),
@@ -69,6 +71,7 @@ fun TimePlannerTheme(
             content = content,
         )
     }
+    NavigationBarColor(themeType.isDarkTheme())
 }
 
 val Shapes.full: RoundedCornerShape

@@ -20,7 +20,7 @@ import ru.aleshin.core.utils.extensions.duration
 import ru.aleshin.core.utils.functional.TimeRange
 import ru.aleshin.features.editor.impl.domain.entites.EditModel
 import ru.aleshin.features.editor.impl.presentation.models.editmodel.EditModelUi
-import ru.aleshin.features.editor.impl.presentation.models.editmodel.EditParameters
+import ru.aleshin.features.editor.impl.presentation.models.editmodel.EditParametersUi
 import ru.aleshin.features.editor.impl.presentation.models.editmodel.TaskNotificationsUi
 
 /**
@@ -34,7 +34,7 @@ internal fun EditModel.mapToUi() = EditModelUi(
     duration = duration(startTime, endTime),
     mainCategory = mainCategory.mapToUi(),
     subCategory = subCategory?.mapToUi(),
-    parameters = EditParameters(
+    parameters = EditParametersUi(
         priority = priority,
         isEnableNotification = isEnableNotification,
         taskNotifications = taskNotifications.mapToUi(),

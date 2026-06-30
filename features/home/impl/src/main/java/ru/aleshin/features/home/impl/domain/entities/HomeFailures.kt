@@ -15,13 +15,11 @@
  */
 package ru.aleshin.features.home.impl.domain.entities
 
-import kotlinx.parcelize.Parcelize
 import ru.aleshin.core.utils.functional.DomainFailures
 
 /**
  * @author Stanislav Aleshin on 18.02.2023.
  */
-@Parcelize
 internal sealed class HomeFailures : DomainFailures {
     object ShiftError : HomeFailures()
     object ImportanceError : HomeFailures()

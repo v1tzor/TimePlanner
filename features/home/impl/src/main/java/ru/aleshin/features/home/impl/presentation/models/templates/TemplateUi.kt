@@ -16,9 +16,11 @@
 package ru.aleshin.features.home.impl.presentation.models.templates
 
 import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
+import androidx.compose.runtime.Immutable
+import kotlinx.serialization.Serializable
 import ru.aleshin.core.domain.entities.schedules.TaskPriority
 import ru.aleshin.core.domain.entities.template.RepeatTime
+import ru.aleshin.core.utils.functional.DateSerializer
 import ru.aleshin.features.home.impl.presentation.models.categories.MainCategoryUi
 import ru.aleshin.features.home.impl.presentation.models.categories.SubCategoryUi
 import java.util.Date
@@ -26,10 +28,13 @@ import java.util.Date
 /**
  * @author Stanislav Aleshin on 30.07.2023.
  */
-@Parcelize
+@Immutable
+@Serializable
 internal data class TemplateUi(
     val templateId: Int,
+    @Serializable(DateSerializer::class)
     val startTime: Date,
+    @Serializable(DateSerializer::class)
     val endTime: Date,
     val category: MainCategoryUi,
     val subCategory: SubCategoryUi? = null,
@@ -38,4 +43,4 @@ internal data class TemplateUi(
     val isConsiderInStatistics: Boolean = true,
     val repeatEnabled: Boolean = false,
     val repeatTimes: List<RepeatTime> = emptyList(),
-) : Parcelable
+)

@@ -15,17 +15,18 @@
  */
 package ru.aleshin.features.settings.impl.presentation.models
 
-import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
+import androidx.compose.runtime.Immutable
+import kotlinx.serialization.Serializable
 import ru.aleshin.core.domain.entities.settings.CalendarButtonBehavior
 import ru.aleshin.core.domain.entities.settings.ViewToggleStatus
 
 /**
  * @author Stanislav Aleshin on 15.09.2023.
  */
-@Parcelize
-data class TasksSettingsUi(
+@Immutable
+@Serializable
+internal data class TasksSettingsUi(
     val taskViewStatus: ViewToggleStatus = ViewToggleStatus.COMPACT,
     val calendarButtonBehavior: CalendarButtonBehavior = CalendarButtonBehavior.SET_CURRENT_DATE,
     val secureMode: Boolean = false,
-) : Parcelable
+)

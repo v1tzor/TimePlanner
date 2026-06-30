@@ -16,12 +16,12 @@
 package ru.aleshin.features.settings.impl.presentation.ui.settings.screensmodel
 
 import kotlinx.coroutines.flow.flow
+import ru.aleshin.core.utils.architecture.store.work.ActionResult
+import ru.aleshin.core.utils.architecture.store.work.EffectResult
+import ru.aleshin.core.utils.architecture.store.work.FlowWorkProcessor
+import ru.aleshin.core.utils.architecture.store.work.WorkCommand
 import ru.aleshin.core.utils.functional.collectAndHandle
 import ru.aleshin.core.utils.functional.handle
-import ru.aleshin.core.utils.platform.screenmodel.work.ActionResult
-import ru.aleshin.core.utils.platform.screenmodel.work.EffectResult
-import ru.aleshin.core.utils.platform.screenmodel.work.FlowWorkProcessor
-import ru.aleshin.core.utils.platform.screenmodel.work.WorkCommand
 import ru.aleshin.features.settings.impl.domain.interactors.SettingsInteractor
 import ru.aleshin.features.settings.impl.presentation.mappers.mapToDomain
 import ru.aleshin.features.settings.impl.presentation.mappers.mapToUi
@@ -29,12 +29,14 @@ import ru.aleshin.features.settings.impl.presentation.models.TasksSettingsUi
 import ru.aleshin.features.settings.impl.presentation.models.ThemeSettingsUi
 import ru.aleshin.features.settings.impl.presentation.ui.settings.contract.SettingsAction
 import ru.aleshin.features.settings.impl.presentation.ui.settings.contract.SettingsEffect
+import ru.aleshin.features.settings.impl.presentation.ui.settings.contract.SettingsOutput
 import javax.inject.Inject
 
 /**
  * @author Stanislav Aleshin on 17.02.2023.
  */
-internal interface SettingsWorkProcessor : FlowWorkProcessor<SettingsWorkCommand, SettingsAction, SettingsEffect> {
+internal interface SettingsWorkProcessor :
+    FlowWorkProcessor<SettingsWorkCommand, SettingsAction, SettingsEffect, SettingsOutput> {
 
     class Base @Inject constructor(
         private val settingsInteractor: SettingsInteractor,
@@ -47,26 +49,26 @@ internal interface SettingsWorkProcessor : FlowWorkProcessor<SettingsWorkCommand
             is SettingsWorkCommand.ResetSettings -> resetSettingsWork()
         }
 
-        private suspend fun loadAllSettingsWork() = flow {
+        private fun loadAllSettingsWork() = flow {
             settingsInteractor.fetchAllSettings().collectAndHandle(
                 onLeftAction = { emit(EffectResult(SettingsEffect.ShowError(it))) },
                 onRightAction = { emit(ActionResult(SettingsAction.ChangeAllSettings(it.mapToUi()))) }
             )
         }
 
-        private suspend fun updateThemeSettingsWork(settings: ThemeSettingsUi) = flow {
+        private fun updateThemeSettingsWork(settings: ThemeSettingsUi) = flow {
             settingsInteractor.updateThemeSettings(settings.mapToDomain()).handle(
                 onLeftAction = { emit(EffectResult(SettingsEffect.ShowError(it))) }
             )
         }
 
-        private suspend fun updateTasksSettingsWork(settings: TasksSettingsUi) = flow {
+        private fun updateTasksSettingsWork(settings: TasksSettingsUi) = flow {
             settingsInteractor.updateTasksSettings(settings.mapToDomain()).handle(
                 onLeftAction = { emit(EffectResult(SettingsEffect.ShowError(it))) }
             )
         }
 
-        private suspend fun resetSettingsWork() = flow {
+        private fun resetSettingsWork() = flow {
             settingsInteractor.resetAllSettings().handle(
                 onLeftAction = { emit(EffectResult(SettingsEffect.ShowError(it))) }
             )

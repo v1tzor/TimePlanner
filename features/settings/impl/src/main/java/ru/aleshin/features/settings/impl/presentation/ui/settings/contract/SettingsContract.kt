@@ -16,11 +16,12 @@
 package ru.aleshin.features.settings.impl.presentation.ui.settings.contract
 
 import android.net.Uri
-import kotlinx.parcelize.Parcelize
-import ru.aleshin.core.utils.platform.screenmodel.contract.BaseAction
-import ru.aleshin.core.utils.platform.screenmodel.contract.BaseEvent
-import ru.aleshin.core.utils.platform.screenmodel.contract.BaseUiEffect
-import ru.aleshin.core.utils.platform.screenmodel.contract.BaseViewState
+import kotlinx.serialization.Serializable
+import ru.aleshin.core.utils.architecture.component.BaseOutput
+import ru.aleshin.core.utils.architecture.store.contract.StoreAction
+import ru.aleshin.core.utils.architecture.store.contract.StoreEffect
+import ru.aleshin.core.utils.architecture.store.contract.StoreEvent
+import ru.aleshin.core.utils.architecture.store.contract.StoreState
 import ru.aleshin.features.settings.impl.domain.common.SettingsFailures
 import ru.aleshin.features.settings.impl.presentation.models.SettingsUi
 import ru.aleshin.features.settings.impl.presentation.models.TasksSettingsUi
@@ -29,15 +30,14 @@ import ru.aleshin.features.settings.impl.presentation.models.ThemeSettingsUi
 /**
  * @author Stanislav Aleshin on 17.02.2023.
  */
-@Parcelize
-internal data class SettingsViewState(
+@Serializable
+internal data class SettingsState(
     val themeSettings: ThemeSettingsUi? = null,
     val tasksSettings: TasksSettingsUi? = null,
-    val failure: SettingsFailures? = null,
     val isBackupLoading: Boolean = false,
-) : BaseViewState
+) : StoreState
 
-internal sealed class SettingsEvent : BaseEvent {
+internal sealed class SettingsEvent : StoreEvent {
     data object Init : SettingsEvent()
     data object PressResetButton : SettingsEvent()
     data object PressClearDataButton : SettingsEvent()
@@ -48,11 +48,16 @@ internal sealed class SettingsEvent : BaseEvent {
     data class ChangedTasksSettings(val tasksSettings: TasksSettingsUi) : SettingsEvent()
 }
 
-internal sealed class SettingsEffect : BaseUiEffect {
+internal sealed class SettingsEffect : StoreEffect {
     data class ShowError(val failures: SettingsFailures) : SettingsEffect()
 }
 
-internal sealed class SettingsAction : BaseAction {
+internal sealed class SettingsAction : StoreAction {
     data class ShowLoadingBackup(val isLoading: Boolean) : SettingsAction()
     data class ChangeAllSettings(val settings: SettingsUi) : SettingsAction()
+}
+
+internal sealed class SettingsOutput : BaseOutput {
+    data object NavigateToBack : SettingsOutput()
+    data object NavigateToDonate : SettingsOutput()
 }

@@ -33,12 +33,16 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -50,21 +54,28 @@ import ru.aleshin.core.ui.theme.material.ColorsUiType
 import ru.aleshin.core.ui.theme.material.ThemeUiType
 import ru.aleshin.core.ui.theme.tokens.LanguageUiType
 import ru.aleshin.core.ui.views.WarningDeleteDialog
+import ru.aleshin.core.utils.architecture.store.compose.handleEffects
+import ru.aleshin.core.utils.architecture.store.compose.stateAsState
 import ru.aleshin.core.utils.extensions.openNetworkUri
 import ru.aleshin.core.utils.functional.Constants
+import ru.aleshin.features.settings.impl.presentation.mappers.mapToMessage
 import ru.aleshin.features.settings.impl.presentation.models.TasksSettingsUi
 import ru.aleshin.features.settings.impl.presentation.models.ThemeSettingsUi
 import ru.aleshin.features.settings.impl.presentation.theme.SettingsThemeRes
 import ru.aleshin.features.settings.impl.presentation.ui.settings.contract.RestoreBackupContract
 import ru.aleshin.features.settings.impl.presentation.ui.settings.contract.SaveBackupContract
-import ru.aleshin.features.settings.impl.presentation.ui.settings.contract.SettingsViewState
+import ru.aleshin.features.settings.impl.presentation.ui.settings.contract.SettingsEffect
+import ru.aleshin.features.settings.impl.presentation.ui.settings.contract.SettingsEvent
+import ru.aleshin.features.settings.impl.presentation.ui.settings.contract.SettingsState
 import ru.aleshin.features.settings.impl.presentation.ui.settings.contract.launch
+import ru.aleshin.features.settings.impl.presentation.ui.settings.screensmodel.SettingsComponent
 import ru.aleshin.features.settings.impl.presentation.ui.settings.views.AboutAppSection
 import ru.aleshin.features.settings.impl.presentation.ui.settings.views.CalendarButtonBehaviorChooser
 import ru.aleshin.features.settings.impl.presentation.ui.settings.views.ColorsTypeChooser
 import ru.aleshin.features.settings.impl.presentation.ui.settings.views.DonateButton
 import ru.aleshin.features.settings.impl.presentation.ui.settings.views.DynamicColorChooser
 import ru.aleshin.features.settings.impl.presentation.ui.settings.views.LanguageChooser
+import ru.aleshin.features.settings.impl.presentation.ui.settings.views.SettingsTopAppBar
 import ru.aleshin.features.settings.impl.presentation.ui.settings.views.ThemeColorsChooser
 
 /**
@@ -72,7 +83,55 @@ import ru.aleshin.features.settings.impl.presentation.ui.settings.views.ThemeCol
  */
 @Composable
 internal fun SettingsContent(
-    state: SettingsViewState,
+    settingsComponent: SettingsComponent,
+    modifier: Modifier = Modifier,
+) {
+    val store = settingsComponent.store
+    val state by store.stateAsState()
+    val strings = SettingsThemeRes.strings
+    val snackbarState = remember { SnackbarHostState() }
+
+    Scaffold(
+        modifier = modifier.fillMaxSize(),
+        content = { paddingValues ->
+            BaseSettingsContent(
+                state = state,
+                modifier = Modifier.padding(paddingValues),
+                onBackupData = { store.dispatchEvent(SettingsEvent.PressSaveBackupData(it)) },
+                onRestoreData = { store.dispatchEvent(SettingsEvent.PressRestoreBackupData(it)) },
+                onClearData = { store.dispatchEvent(SettingsEvent.PressClearDataButton) },
+                onDonateButtonClick = { store.dispatchEvent(SettingsEvent.PressDonateButton) },
+                onUpdateThemeSettings = { themeSettings ->
+                    store.dispatchEvent(SettingsEvent.ChangedThemeSettings(themeSettings))
+                },
+                onUpdateTasksSettings = { tasksSettings ->
+                    store.dispatchEvent(SettingsEvent.ChangedTasksSettings(tasksSettings))
+                },
+            )
+        },
+        topBar = {
+            SettingsTopAppBar(
+                onResetToDefaultClick = { store.dispatchEvent(SettingsEvent.PressResetButton) },
+            )
+        },
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarState)
+        },
+    )
+
+    store.handleEffects { effect ->
+        when (effect) {
+            is SettingsEffect.ShowError -> snackbarState.showSnackbar(
+                message = effect.failures.mapToMessage(strings),
+                withDismissAction = true,
+            )
+        }
+    }
+}
+
+@Composable
+private fun BaseSettingsContent(
+    state: SettingsState,
     modifier: Modifier = Modifier,
     onClearData: () -> Unit,
     onRestoreData: (uri: Uri) -> Unit,

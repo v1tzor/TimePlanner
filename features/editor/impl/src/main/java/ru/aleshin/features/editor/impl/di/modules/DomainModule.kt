@@ -20,7 +20,6 @@ import dagger.Module
 import ru.aleshin.features.editor.impl.domain.common.EditorEitherWrapper
 import ru.aleshin.features.editor.impl.domain.common.EditorErrorHandler
 import ru.aleshin.features.editor.impl.domain.interactors.CategoriesInteractor
-import ru.aleshin.features.editor.impl.domain.interactors.EditorInteractor
 import ru.aleshin.features.editor.impl.domain.interactors.TemplatesInteractor
 import ru.aleshin.features.editor.impl.domain.interactors.TimeTaskInteractor
 import ru.aleshin.features.editor.impl.domain.interactors.UndefinedTasksInteractor
@@ -30,9 +29,6 @@ import ru.aleshin.features.editor.impl.domain.interactors.UndefinedTasksInteract
  */
 @Module
 internal interface DomainModule {
-
-    @Binds
-    fun bindEditorInteractor(interactor: EditorInteractor.Base): EditorInteractor
 
     @Binds
     fun bindTimeTaskInteractor(interactor: TimeTaskInteractor.Base): TimeTaskInteractor

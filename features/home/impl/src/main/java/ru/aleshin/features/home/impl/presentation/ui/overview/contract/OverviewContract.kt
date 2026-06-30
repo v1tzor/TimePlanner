@@ -15,11 +15,15 @@
  */
 package ru.aleshin.features.home.impl.presentation.ui.overview.contract
 
-import kotlinx.parcelize.Parcelize
-import ru.aleshin.core.utils.platform.screenmodel.contract.BaseAction
-import ru.aleshin.core.utils.platform.screenmodel.contract.BaseEvent
-import ru.aleshin.core.utils.platform.screenmodel.contract.BaseUiEffect
-import ru.aleshin.core.utils.platform.screenmodel.contract.BaseViewState
+import kotlinx.serialization.Serializable
+import ru.aleshin.core.utils.architecture.component.BaseOutput
+import ru.aleshin.core.utils.architecture.store.contract.StoreAction
+import ru.aleshin.core.utils.architecture.store.contract.StoreEffect
+import ru.aleshin.core.utils.architecture.store.contract.StoreEvent
+import ru.aleshin.core.utils.architecture.store.contract.StoreState
+import ru.aleshin.core.utils.functional.DateSerializer
+import ru.aleshin.features.editor.api.EditorFeatureComponent.EditorConfig
+import ru.aleshin.features.home.api.HomeFeatureComponent.HomeConfig
 import ru.aleshin.features.home.impl.domain.entities.HomeFailures
 import ru.aleshin.features.home.impl.presentation.models.categories.CategoriesUi
 import ru.aleshin.features.home.impl.presentation.models.schedules.ScheduleUi
@@ -29,17 +33,18 @@ import java.util.Date
 /**
  * @author Stanislav Aleshin on 02.11.2023
  */
-@Parcelize
-internal data class OverviewViewState(
+@Serializable
+internal data class OverviewState(
     val isLoading: Boolean = true,
+    @Serializable(DateSerializer::class)
     val currentDate: Date? = null,
     val currentSchedule: ScheduleUi? = null,
     val schedules: List<ScheduleUi> = emptyList(),
     val categories: List<CategoriesUi> = emptyList(),
     val undefinedTasks: List<UndefinedTaskUi> = emptyList(),
-) : BaseViewState
+) : StoreState
 
-internal sealed class OverviewEvent : BaseEvent {
+internal sealed class OverviewEvent : StoreEvent {
     object Init : OverviewEvent()
     object Refresh : OverviewEvent()
     object PressScheduleButton : OverviewEvent()
@@ -50,14 +55,21 @@ internal sealed class OverviewEvent : BaseEvent {
     data class DeleteUndefinedTask(val task: UndefinedTaskUi) : OverviewEvent()
 }
 
-internal sealed class OverviewEffect : BaseUiEffect {
+internal sealed class OverviewEffect : StoreEffect {
     data class ShowError(val failures: HomeFailures) : OverviewEffect()
 }
 
-internal sealed class OverviewAction : BaseAction {
+internal sealed class OverviewAction : StoreAction {
     object Navigate : OverviewAction()
     data class UpdateLoading(val isLoading: Boolean) : OverviewAction()
     data class UpdateSchedules(val date: Date, val schedules: List<ScheduleUi>) : OverviewAction()
     data class UpdateUndefinedTasks(val tasks: List<UndefinedTaskUi>) : OverviewAction()
     data class UpdateCategories(val categories: List<CategoriesUi>) : OverviewAction()
+}
+
+
+internal sealed class OverviewOutput : BaseOutput {
+    data class NavigateToHome(val config: HomeConfig.Home) : OverviewOutput()
+    data object NavigateToDetails : OverviewOutput()
+    data class NavigateToEditor(val config: EditorConfig.Editor) : OverviewOutput()
 }

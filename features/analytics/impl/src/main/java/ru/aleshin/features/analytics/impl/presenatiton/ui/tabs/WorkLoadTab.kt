@@ -25,7 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import ru.aleshin.core.utils.functional.TimePeriod
-import ru.aleshin.features.analytics.impl.presenatiton.ui.contract.AnalyticsViewState
+import ru.aleshin.features.analytics.impl.presenatiton.ui.contract.AnalyticsState
 import ru.aleshin.features.analytics.impl.presenatiton.ui.views.ExecutedAnalyticsSection
 import ru.aleshin.features.analytics.impl.presenatiton.ui.views.StatisticsSection
 import ru.aleshin.features.analytics.impl.presenatiton.ui.views.WorkLoadSection
@@ -36,7 +36,7 @@ import ru.aleshin.features.analytics.impl.presenatiton.ui.views.WorkLoadSection
 @Composable
 internal fun WorkLoadTab(
     modifier: Modifier = Modifier,
-    state: AnalyticsViewState,
+    state: AnalyticsState,
     onTimePeriodChanged: (TimePeriod) -> Unit,
 ) {
     val scrollState = rememberScrollState()

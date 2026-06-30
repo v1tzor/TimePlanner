@@ -15,21 +15,22 @@
  */
 package ru.aleshin.features.home.impl.presentation.models.categories
 
-import android.os.Parcelable
 import androidx.compose.runtime.Composable
-import kotlinx.parcelize.Parcelize
+import androidx.compose.runtime.Immutable
+import kotlinx.serialization.Serializable
 import ru.aleshin.core.domain.entities.categories.DefaultCategoryType
 import ru.aleshin.core.ui.mappers.mapToName
 
 /**
  * @author Stanislav Aleshin on 30.07.2023.
  */
-@Parcelize
+@Immutable
+@Serializable
 internal data class MainCategoryUi(
     val id: Int = 0,
     val customName: String? = null,
     val defaultType: DefaultCategoryType? = DefaultCategoryType.EMPTY,
-) : Parcelable {
+) {
 
     @Composable
     fun fetchName() = when (customName != null && customName != "null") {

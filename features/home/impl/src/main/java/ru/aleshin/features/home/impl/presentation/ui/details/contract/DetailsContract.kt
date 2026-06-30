@@ -15,11 +15,13 @@
  */
 package ru.aleshin.features.home.impl.presentation.ui.details.contract
 
-import kotlinx.parcelize.Parcelize
-import ru.aleshin.core.utils.platform.screenmodel.contract.BaseAction
-import ru.aleshin.core.utils.platform.screenmodel.contract.BaseEvent
-import ru.aleshin.core.utils.platform.screenmodel.contract.BaseUiEffect
-import ru.aleshin.core.utils.platform.screenmodel.contract.BaseViewState
+import kotlinx.serialization.Serializable
+import ru.aleshin.core.utils.architecture.component.BaseOutput
+import ru.aleshin.core.utils.architecture.store.contract.StoreAction
+import ru.aleshin.core.utils.architecture.store.contract.StoreEffect
+import ru.aleshin.core.utils.architecture.store.contract.StoreEvent
+import ru.aleshin.core.utils.architecture.store.contract.StoreState
+import ru.aleshin.features.home.api.HomeFeatureComponent.HomeConfig
 import ru.aleshin.features.home.impl.domain.entities.HomeFailures
 import ru.aleshin.features.home.impl.presentation.models.schedules.ScheduleUi
 import java.util.Date
@@ -27,24 +29,29 @@ import java.util.Date
 /**
  * @author Stanislav Aleshin on 06.11.2023
  */
-@Parcelize
-internal data class DetailsViewState(
+@Serializable
+internal data class DetailsState(
     val isLoading: Boolean = true,
     val currentSchedule: ScheduleUi? = null,
     val schedules: List<ScheduleUi> = emptyList(),
-) : BaseViewState
+) : StoreState
 
-internal sealed class DetailsEvent : BaseEvent {
+internal sealed class DetailsEvent : StoreEvent {
     object Init : DetailsEvent()
     object PressBackButton : DetailsEvent()
     data class OpenSchedule(val schedule: ScheduleUi) : DetailsEvent()
 }
 
-internal sealed class DetailsEffect : BaseUiEffect {
+internal sealed class DetailsEffect : StoreEffect {
     data class ShowError(val failures: HomeFailures) : DetailsEffect()
 }
 
-internal sealed class DetailsAction : BaseAction {
+internal sealed class DetailsAction : StoreAction {
     data class UpdateSchedules(val date: Date, val schedules: List<ScheduleUi>) : DetailsAction()
     data class UpdateLoading(val isLoading: Boolean) : DetailsAction()
+}
+
+internal sealed class DetailsOutput : BaseOutput {
+    data object NavigateToBack : DetailsOutput()
+    data class NavigateToHome(val config: HomeConfig.Home) : DetailsOutput()
 }

@@ -15,18 +15,15 @@
  */
 package ru.aleshin.features.analytics.impl.di.modules
 
-import cafe.adriel.voyager.core.model.ScreenModel
-import cafe.adriel.voyager.core.screen.Screen
 import dagger.Binds
 import dagger.Module
+import ru.aleshin.core.utils.architecture.store.BaseOnlyOutComposeStore
 import ru.aleshin.core.utils.di.FeatureScope
-import ru.aleshin.features.analytics.api.navigation.AnalyticsFeatureStarter
-import ru.aleshin.features.analytics.impl.navigation.AnalyticsFeatureStarterImpl
-import ru.aleshin.features.analytics.impl.presenatiton.ui.AnalyticsScreen
-import ru.aleshin.features.analytics.impl.presenatiton.ui.screenmodel.AnalyticsEffectCommunicator
-import ru.aleshin.features.analytics.impl.presenatiton.ui.screenmodel.AnalyticsScreenModel
-import ru.aleshin.features.analytics.impl.presenatiton.ui.screenmodel.AnalyticsStateCommunicator
-import ru.aleshin.features.analytics.impl.presenatiton.ui.screenmodel.AnalyticsWorkProcessor
+import ru.aleshin.features.analytics.api.AnalyticsFeatureComponentFactory
+import ru.aleshin.features.analytics.impl.navigation.DefaultAnalyticsComponentFactory
+import ru.aleshin.features.analytics.impl.presenatiton.ui.contract.AnalyticsState
+import ru.aleshin.features.analytics.impl.presenatiton.ui.store.AnalyticsComposeStore
+import ru.aleshin.features.analytics.impl.presenatiton.ui.store.AnalyticsWorkProcessor
 
 /**
  * @author Stanislav Aleshin on 30.03.2023.
@@ -35,23 +32,14 @@ import ru.aleshin.features.analytics.impl.presenatiton.ui.screenmodel.AnalyticsW
 internal interface PresentationModule {
 
     @Binds
-    fun bindAnalyticsFeatureStarter(starter: AnalyticsFeatureStarterImpl): AnalyticsFeatureStarter
+    @FeatureScope
+    fun bindAnalyticsComponentFactory(factory: DefaultAnalyticsComponentFactory): AnalyticsFeatureComponentFactory
 
     @Binds
     @FeatureScope
-    fun bindAnalyticsScreen(screen: AnalyticsScreen): Screen
+    fun bindAnalyticsStoreFactory(factory: AnalyticsComposeStore.Factory): BaseOnlyOutComposeStore.Factory<AnalyticsComposeStore, AnalyticsState>
 
     @Binds
-    fun bindAnalyticsScreenModel(screenModel: AnalyticsScreenModel): ScreenModel
-
-    @Binds
+    @FeatureScope
     fun bindAnalyticsWorkProcessor(workProcessor: AnalyticsWorkProcessor.Base): AnalyticsWorkProcessor
-
-    @Binds
-    @FeatureScope
-    fun bindAnalyticsStateCommunicator(communicator: AnalyticsStateCommunicator.Base): AnalyticsStateCommunicator
-
-    @Binds
-    @FeatureScope
-    fun bindAnalyticsEffectCommunicator(communicator: AnalyticsEffectCommunicator.Base): AnalyticsEffectCommunicator
 }

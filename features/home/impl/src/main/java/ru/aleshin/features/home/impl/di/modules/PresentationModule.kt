@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2025 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,40 +15,33 @@
  */
 package ru.aleshin.features.home.impl.di.modules
 
-import cafe.adriel.voyager.core.model.ScreenModel
-import cafe.adriel.voyager.core.screen.Screen
 import dagger.Binds
 import dagger.Module
+import ru.aleshin.core.utils.architecture.store.BaseComposeStore
+import ru.aleshin.core.utils.architecture.store.BaseOnlyOutComposeStore
+import ru.aleshin.core.utils.architecture.store.BaseSimpleComposeStore
 import ru.aleshin.core.utils.di.FeatureScope
-import ru.aleshin.core.utils.di.ScreenModelKey
-import ru.aleshin.features.home.api.navigation.HomeFeatureStarter
-import ru.aleshin.features.home.impl.navigation.HomeFeatureStarterImpl
-import ru.aleshin.features.home.impl.navigation.NavigationManager
+import ru.aleshin.features.home.api.HomeFeatureComponentFactory
+import ru.aleshin.features.home.impl.navigation.DefaultHomeComponentFactory
 import ru.aleshin.features.home.impl.presentation.common.TimeTaskStatusController
 import ru.aleshin.features.home.impl.presentation.mapppers.schedules.ScheduleDomainToUiMapper
 import ru.aleshin.features.home.impl.presentation.mapppers.schedules.TimeTaskDomainToUiMapper
-import ru.aleshin.features.home.impl.presentation.ui.categories.screenmodel.CategoriesEffectCommunicator
-import ru.aleshin.features.home.impl.presentation.ui.categories.screenmodel.CategoriesScreenModel
-import ru.aleshin.features.home.impl.presentation.ui.categories.screenmodel.CategoriesStateCommunicator
+import ru.aleshin.features.home.impl.presentation.ui.categories.contract.CategoriesState
+import ru.aleshin.features.home.impl.presentation.ui.categories.screenmodel.CategoriesComposeStore
 import ru.aleshin.features.home.impl.presentation.ui.categories.screenmodel.CategoriesWorkProcessor
-import ru.aleshin.features.home.impl.presentation.ui.details.screenmodel.DetailsEffectCommunicator
-import ru.aleshin.features.home.impl.presentation.ui.details.screenmodel.DetailsScreenModel
-import ru.aleshin.features.home.impl.presentation.ui.details.screenmodel.DetailsStateCommunicator
-import ru.aleshin.features.home.impl.presentation.ui.details.screenmodel.DetailsWorkProcessor
-import ru.aleshin.features.home.impl.presentation.ui.home.screenModel.HomeEffectCommunicator
-import ru.aleshin.features.home.impl.presentation.ui.home.screenModel.HomeScreenModel
-import ru.aleshin.features.home.impl.presentation.ui.home.screenModel.HomeStateCommunicator
-import ru.aleshin.features.home.impl.presentation.ui.home.screenModel.NavigationWorkProcessor
-import ru.aleshin.features.home.impl.presentation.ui.home.screenModel.ScheduleWorkProcessor
-import ru.aleshin.features.home.impl.presentation.ui.nav.NavScreen
-import ru.aleshin.features.home.impl.presentation.ui.overview.screenmodel.OverviewEffectCommunicator
-import ru.aleshin.features.home.impl.presentation.ui.overview.screenmodel.OverviewScreenModel
-import ru.aleshin.features.home.impl.presentation.ui.overview.screenmodel.OverviewStateCommunicator
-import ru.aleshin.features.home.impl.presentation.ui.overview.screenmodel.OverviewWorkProcessor
-import ru.aleshin.features.home.impl.presentation.ui.templates.screenmodel.TemplatesEffectCommunicator
-import ru.aleshin.features.home.impl.presentation.ui.templates.screenmodel.TemplatesScreenModel
-import ru.aleshin.features.home.impl.presentation.ui.templates.screenmodel.TemplatesStateCommunicator
-import ru.aleshin.features.home.impl.presentation.ui.templates.screenmodel.TemplatesWorkProcessor
+import ru.aleshin.features.home.impl.presentation.ui.details.contract.DetailsState
+import ru.aleshin.features.home.impl.presentation.ui.details.store.DetailsComposeStore
+import ru.aleshin.features.home.impl.presentation.ui.details.store.DetailsWorkProcessor
+import ru.aleshin.features.home.impl.presentation.ui.home.contract.HomeState
+import ru.aleshin.features.home.impl.presentation.ui.home.store.HomeComposeStore
+import ru.aleshin.features.home.impl.presentation.ui.home.store.NavigationWorkProcessor
+import ru.aleshin.features.home.impl.presentation.ui.home.store.ScheduleWorkProcessor
+import ru.aleshin.features.home.impl.presentation.ui.overview.contract.OverviewState
+import ru.aleshin.features.home.impl.presentation.ui.overview.store.OverviewComposeStore
+import ru.aleshin.features.home.impl.presentation.ui.overview.store.OverviewWorkProcessor
+import ru.aleshin.features.home.impl.presentation.ui.templates.contract.TemplatesState
+import ru.aleshin.features.home.impl.presentation.ui.templates.store.TemplatesComposeStore
+import ru.aleshin.features.home.impl.presentation.ui.templates.store.TemplatesWorkProcessor
 
 /**
  * @author Stanislav Aleshin on 18.02.2023.
@@ -58,109 +51,71 @@ internal interface PresentationModule {
 
     @Binds
     @FeatureScope
-    fun bindHomeFeatureStarter(starter: HomeFeatureStarterImpl): HomeFeatureStarter
-
-    @Binds
-    @FeatureScope
-    fun bindNavigationManager(manager: NavigationManager.Base): NavigationManager
+    fun bindHomeComponentFactory(factory: DefaultHomeComponentFactory): HomeFeatureComponentFactory
 
     @Binds
     @FeatureScope
     fun bindTimeTaskStatusController(controller: TimeTaskStatusController.Base): TimeTaskStatusController
 
-    // Nav ScreenModel
-
-    @Binds
-    @FeatureScope
-    fun bindNavScreen(screen: NavScreen): Screen
-
     // Overview
 
     @Binds
-    @ScreenModelKey(OverviewScreenModel::class)
-    fun bindOverviewScreenModel(screenModel: OverviewScreenModel): ScreenModel
+    @FeatureScope
+    fun bindOverviewStoreFactory(factory: OverviewComposeStore.Factory): BaseOnlyOutComposeStore.Factory<OverviewComposeStore, OverviewState>
 
     @Binds
-    fun bindOverviewStateCommunicator(communicator: OverviewStateCommunicator.Base): OverviewStateCommunicator
-
-    @Binds
-    fun bindOverviewEffectCommunicator(communicator: OverviewEffectCommunicator.Base): OverviewEffectCommunicator
-
-    @Binds
+    @FeatureScope
     fun bindOverviewWorkProcessor(processor: OverviewWorkProcessor.Base): OverviewWorkProcessor 
     
     // Details
 
     @Binds
-    @ScreenModelKey(DetailsScreenModel::class)
-    fun bindDetailsScreenModel(screenModel: DetailsScreenModel): ScreenModel
+    @FeatureScope
+    fun bindDetailsStoreFactory(factory: DetailsComposeStore.Factory): BaseOnlyOutComposeStore.Factory<DetailsComposeStore, DetailsState>
 
     @Binds
-    fun bindDetailsStateCommunicator(communicator: DetailsStateCommunicator.Base): DetailsStateCommunicator
-
-    @Binds
-    fun bindDetailsEffectCommunicator(communicator: DetailsEffectCommunicator.Base): DetailsEffectCommunicator
-
-    @Binds
+    @FeatureScope
     fun binDetailsWorkProcessor(processor: DetailsWorkProcessor.Base): DetailsWorkProcessor
 
     // Home ScreenModel
 
     @Binds
-    @ScreenModelKey(HomeScreenModel::class)
-    fun bindHomeScreenModel(screenModel: HomeScreenModel): ScreenModel
+    @FeatureScope
+    fun bindHomeStoreFactory(factory: HomeComposeStore.Factory): BaseComposeStore.Factory<HomeComposeStore, HomeState>
 
     @Binds
     @FeatureScope
-    fun bindHomeStateCommunicator(communicator: HomeStateCommunicator.Base): HomeStateCommunicator
-
-    @Binds
-    @FeatureScope
-    fun bindHomeEffectCommunicator(communicator: HomeEffectCommunicator.Base): HomeEffectCommunicator
-
-    @Binds
     fun bindScheduleWorkProcessor(processor: ScheduleWorkProcessor.Base): ScheduleWorkProcessor
 
     @Binds
+    @FeatureScope
     fun bindNavigationWorkProcessor(processor: NavigationWorkProcessor.Base): NavigationWorkProcessor
 
     @Binds
+    @FeatureScope
     fun bindTimeTaskDomainToUiMapper(mapper: TimeTaskDomainToUiMapper.Base): TimeTaskDomainToUiMapper
 
     @Binds
+    @FeatureScope
     fun bindScheduleDomainToUiMapper(mapper: ScheduleDomainToUiMapper.Base): ScheduleDomainToUiMapper
 
     // Templates
 
     @Binds
-    @ScreenModelKey(TemplatesScreenModel::class)
-    fun bindTemplatesScreenModel(screenModel: TemplatesScreenModel): ScreenModel
+    @FeatureScope
+    fun bindTemplatesStoreFactory(factory: TemplatesComposeStore.Factory): BaseSimpleComposeStore.Factory<TemplatesComposeStore, TemplatesState>
 
     @Binds
     @FeatureScope
-    fun bindTemplatesStateCommunicator(communicator: TemplatesStateCommunicator.Base): TemplatesStateCommunicator
-
-    @Binds
-    @FeatureScope
-    fun bindTemplatesEffectCommunicator(communicator: TemplatesEffectCommunicator.Base): TemplatesEffectCommunicator
-
-    @Binds
     fun bindTemplatesWorkProcessor(processor: TemplatesWorkProcessor.Base): TemplatesWorkProcessor
 
     // Categories
 
     @Binds
-    @ScreenModelKey(CategoriesScreenModel::class)
-    fun bindCategoriesScreenModel(screenModel: CategoriesScreenModel): ScreenModel
+    @FeatureScope
+    fun bindCategoriesStoreFactory(factory: CategoriesComposeStore.Factory): BaseOnlyOutComposeStore.Factory<CategoriesComposeStore, CategoriesState>
 
     @Binds
     @FeatureScope
-    fun bindCategoriesStateCommunicator(communicator: CategoriesStateCommunicator.Base): CategoriesStateCommunicator
-
-    @Binds
-    @FeatureScope
-    fun bindCategoriesEffectCommunicator(communicator: CategoriesEffectCommunicator.Base): CategoriesEffectCommunicator
-
-    @Binds
     fun bindCategoriesWorkProcessor(processor: CategoriesWorkProcessor.Base): CategoriesWorkProcessor
 }

@@ -15,24 +15,29 @@
  */
 package ru.aleshin.features.settings.impl.presentation.ui.donate.contract
 
-import kotlinx.parcelize.Parcelize
-import ru.aleshin.core.utils.platform.screenmodel.contract.BaseAction
-import ru.aleshin.core.utils.platform.screenmodel.contract.BaseEvent
-import ru.aleshin.core.utils.platform.screenmodel.contract.BaseViewState
-import ru.aleshin.core.utils.platform.screenmodel.contract.EmptyUiEffect
+import kotlinx.serialization.Serializable
+import ru.aleshin.core.utils.architecture.component.BaseOutput
+import ru.aleshin.core.utils.architecture.store.contract.StoreAction
+import ru.aleshin.core.utils.architecture.store.contract.StoreEffect
+import ru.aleshin.core.utils.architecture.store.contract.StoreEvent
+import ru.aleshin.core.utils.architecture.store.contract.StoreState
 
 /**
  * @author Stanislav Aleshin on 13.10.2023
  */
-@Parcelize
-internal sealed class DonateViewState : BaseViewState {
-    object Default : DonateViewState()
+@Serializable
+internal sealed class DonateState : StoreState {
+    object Default : DonateState()
 }
 
-internal sealed class DonateEvent : BaseEvent {
+internal sealed class DonateEvent : StoreEvent {
     object PressBackButton : DonateEvent()
 }
 
-internal sealed class DonateEffect : EmptyUiEffect
+internal sealed class DonateEffect : StoreEffect
 
-internal sealed class DonateAction : BaseAction
+internal sealed class DonateAction : StoreAction
+
+internal sealed class DonateOutput : BaseOutput {
+    data object NavigateToBack : DonateOutput()
+}

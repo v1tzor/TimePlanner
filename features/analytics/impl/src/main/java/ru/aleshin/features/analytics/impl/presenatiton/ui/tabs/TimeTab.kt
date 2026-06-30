@@ -27,7 +27,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import ru.aleshin.core.utils.functional.TimePeriod
-import ru.aleshin.features.analytics.impl.presenatiton.ui.contract.AnalyticsViewState
+import ru.aleshin.features.analytics.impl.presenatiton.ui.contract.AnalyticsState
 import ru.aleshin.features.analytics.impl.presenatiton.ui.views.CategoriesAnalyticsSection
 import ru.aleshin.features.analytics.impl.presenatiton.ui.views.PlanningAnalyticsSection
 
@@ -37,7 +37,7 @@ import ru.aleshin.features.analytics.impl.presenatiton.ui.views.PlanningAnalytic
 @Composable
 internal fun TimeTab(
     modifier: Modifier = Modifier,
-    state: AnalyticsViewState,
+    state: AnalyticsState,
     onTimePeriodChanged: (TimePeriod) -> Unit,
 ) {
     val analytics = state.scheduleAnalytics

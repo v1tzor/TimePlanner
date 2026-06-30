@@ -15,14 +15,15 @@
  */
 package ru.aleshin.features.settings.impl.presentation.models
 
-import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
+import androidx.compose.runtime.Immutable
+import kotlinx.serialization.Serializable
 
 /**
  * @author Stanislav Aleshin on 30.07.2023.
  */
-@Parcelize
+@Immutable
+@Serializable
 internal data class SettingsUi(
     val themeSettings: ThemeSettingsUi,
     val tasksSettings: TasksSettingsUi,
-) : Parcelable
+)

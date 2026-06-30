@@ -1,7 +1,7 @@
 <component name="CopyrightManager">
   <settings default="Copyright">
     <module2copyright>
-      <element module="Production" copyright="Copyright" />
+      <element module="All" copyright="Copyright" />
     </module2copyright>
     <LanguageOptions name="__TEMPLATE__">
       <option name="addBlankAfter" value="false" />

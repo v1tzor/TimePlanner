@@ -15,22 +15,18 @@
  */
 package ru.aleshin.features.editor.impl.di.modules
 
-import cafe.adriel.voyager.core.model.ScreenModel
-import cafe.adriel.voyager.core.screen.Screen
 import dagger.Binds
 import dagger.Module
+import ru.aleshin.core.utils.architecture.store.BaseComposeStore
 import ru.aleshin.core.utils.di.FeatureScope
-import ru.aleshin.features.editor.api.navigations.EditorFeatureStarter
-import ru.aleshin.features.editor.impl.navigation.EditorFeatureStarterImpl
-import ru.aleshin.features.editor.impl.navigation.NavigationManager
-import ru.aleshin.features.editor.impl.presentation.ui.editor.EditorScreen
+import ru.aleshin.features.editor.api.EditorFeatureComponentFactory
+import ru.aleshin.features.editor.impl.navigation.DefaultEditorComponentFactory
+import ru.aleshin.features.editor.impl.presentation.ui.editor.contract.EditorState
 import ru.aleshin.features.editor.impl.presentation.ui.editor.processors.EditorWorkProcessor
 import ru.aleshin.features.editor.impl.presentation.ui.editor.processors.TimeTaskWorkProcessor
-import ru.aleshin.features.editor.impl.presentation.ui.editor.screenmodel.CategoryValidator
-import ru.aleshin.features.editor.impl.presentation.ui.editor.screenmodel.EditorEffectCommunicator
-import ru.aleshin.features.editor.impl.presentation.ui.editor.screenmodel.EditorScreenModel
-import ru.aleshin.features.editor.impl.presentation.ui.editor.screenmodel.EditorStateCommunicator
-import ru.aleshin.features.editor.impl.presentation.ui.editor.screenmodel.TimeRangeValidator
+import ru.aleshin.features.editor.impl.presentation.ui.editor.store.CategoryValidator
+import ru.aleshin.features.editor.impl.presentation.ui.editor.store.EditorComposeStore
+import ru.aleshin.features.editor.impl.presentation.ui.editor.store.TimeRangeValidator
 
 /**
  * @author Stanislav Aleshin on 08.03.2023.
@@ -40,36 +36,25 @@ internal interface PresentationModule {
 
     @Binds
     @FeatureScope
-    fun bindEditorFeatureStarter(starter: EditorFeatureStarterImpl): EditorFeatureStarter
+    fun bindEditorComponentFactory(factory: DefaultEditorComponentFactory): EditorFeatureComponentFactory
 
     @Binds
     @FeatureScope
-    fun bindNavigationManager(manager: NavigationManager.Base): NavigationManager
+    fun bindEditorStoreFactory(factory: EditorComposeStore.Factory): BaseComposeStore.Factory<EditorComposeStore, EditorState>
 
     @Binds
     @FeatureScope
-    fun bindEditorScreen(screen: EditorScreen): Screen
-
-    @Binds
-    fun bindEditorScreenModel(screenModel: EditorScreenModel): ScreenModel
-
-    @Binds
-    @FeatureScope
-    fun bindEditorStateCommunicator(communicator: EditorStateCommunicator.Base): EditorStateCommunicator
-
-    @Binds
-    @FeatureScope
-    fun bindEditorEffectCommunicator(communicator: EditorEffectCommunicator.Base): EditorEffectCommunicator
-
-    @Binds
     fun bindTimeTaskWorkProcessor(processor: TimeTaskWorkProcessor.Base): TimeTaskWorkProcessor
 
     @Binds
+    @FeatureScope
     fun bindEditorWorkProcessor(processor: EditorWorkProcessor.Base): EditorWorkProcessor
 
     @Binds
+    @FeatureScope
     fun bindTimeRangeValidator(validator: TimeRangeValidator.Base): TimeRangeValidator
 
     @Binds
+    @FeatureScope
     fun bindCategoryValidator(validator: CategoryValidator.Base): CategoryValidator
 }

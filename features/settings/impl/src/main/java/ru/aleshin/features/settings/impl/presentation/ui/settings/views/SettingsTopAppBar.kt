@@ -15,8 +15,6 @@
  */
 package ru.aleshin.features.settings.impl.presentation.ui.settings.views
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TopAppBar
@@ -25,7 +23,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.style.TextAlign
 import ru.aleshin.core.ui.theme.TimePlannerRes
 import ru.aleshin.core.ui.views.TopAppBarAction
-import ru.aleshin.core.ui.views.TopAppBarButton
 import ru.aleshin.core.ui.views.TopAppBarMoreActions
 import ru.aleshin.core.ui.views.TopAppBarTitle
 import ru.aleshin.features.settings.impl.presentation.theme.SettingsThemeRes
@@ -37,20 +34,12 @@ import ru.aleshin.features.settings.impl.presentation.theme.SettingsThemeRes
 @OptIn(ExperimentalMaterial3Api::class)
 internal fun SettingsTopAppBar(
     onResetToDefaultClick: () -> Unit,
-    onMenuButtonClick: () -> Unit,
 ) {
     TopAppBar(
         title = {
             TopAppBarTitle(
                 text = SettingsThemeRes.strings.settingsTitle,
                 textAlign = TextAlign.Center,
-            )
-        },
-        navigationIcon = {
-            TopAppBarButton(
-                imageVector = Icons.Default.Menu,
-                imageDescription = null,
-                onButtonClick = onMenuButtonClick,
             )
         },
         actions = {

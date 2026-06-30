@@ -15,13 +15,11 @@
  */
 package ru.aleshin.features.analytics.impl.domain.entities
 
-import kotlinx.parcelize.Parcelize
 import ru.aleshin.core.utils.functional.DomainFailures
 
 /**
  * @author Stanislav Aleshin on 22.04.2023.
  */
-@Parcelize
 internal sealed class AnalyticsFailure : DomainFailures {
     data class OtherError(val throwable: Throwable) : AnalyticsFailure()
 }

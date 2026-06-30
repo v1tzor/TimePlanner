@@ -15,9 +15,10 @@
  */
 package ru.aleshin.core.utils.validation
 
-import android.os.Parcelable
+import androidx.compose.runtime.Immutable
 
 /**
  * @author Stanislav Aleshin on 10.03.2023.
  */
-interface ValidateError : Parcelable
+@Immutable
+interface ValidateError

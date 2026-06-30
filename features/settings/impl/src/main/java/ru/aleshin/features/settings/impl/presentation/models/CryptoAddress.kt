@@ -15,10 +15,15 @@
  */
 package ru.aleshin.features.settings.impl.presentation.models
 
+import androidx.compose.runtime.Immutable
+import kotlinx.serialization.Serializable
+
 /**
  * @author Stanislav Aleshin on 14.09.2023.
  */
-enum class CryptoAddress(val cryptoName: String, val address: String) {
+@Immutable
+@Serializable
+internal enum class CryptoAddress(val cryptoName: String, val address: String) {
     BTC("BITCOIN", "bc1qu0a5ujldf8rpc8yz8atlgphrj9wutgfxw82dql"),
     BNB("BNB SMART CHAIN", "0xbA08E4905B3d52f480419A8444C4de3E91BC98df"),
     ETH("ETHEREUM", "0x4cAfa6De0D1968cA8C2a7aB06CE28d0A1aD2C7b9"),

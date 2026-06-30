@@ -15,45 +15,49 @@
  */
 package ru.aleshin.features.editor.impl.presentation.ui.editor.contract
 
-import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Serializable
+import ru.aleshin.core.domain.entities.schedules.TimeTask
+import ru.aleshin.core.domain.entities.template.Template
+import ru.aleshin.core.utils.architecture.component.BaseInput
+import ru.aleshin.core.utils.architecture.component.BaseOutput
+import ru.aleshin.core.utils.architecture.store.contract.StoreAction
+import ru.aleshin.core.utils.architecture.store.contract.StoreEffect
+import ru.aleshin.core.utils.architecture.store.contract.StoreEvent
+import ru.aleshin.core.utils.architecture.store.contract.StoreState
 import ru.aleshin.core.utils.functional.TimeRange
-import ru.aleshin.core.utils.platform.screenmodel.contract.BaseAction
-import ru.aleshin.core.utils.platform.screenmodel.contract.BaseEvent
-import ru.aleshin.core.utils.platform.screenmodel.contract.BaseUiEffect
-import ru.aleshin.core.utils.platform.screenmodel.contract.BaseViewState
 import ru.aleshin.features.editor.impl.domain.entites.EditorFailures
 import ru.aleshin.features.editor.impl.presentation.models.categories.CategoriesUi
 import ru.aleshin.features.editor.impl.presentation.models.categories.MainCategoryUi
 import ru.aleshin.features.editor.impl.presentation.models.categories.SubCategoryUi
 import ru.aleshin.features.editor.impl.presentation.models.editmodel.EditModelUi
-import ru.aleshin.features.editor.impl.presentation.models.editmodel.EditParameters
+import ru.aleshin.features.editor.impl.presentation.models.editmodel.EditParametersUi
 import ru.aleshin.features.editor.impl.presentation.models.tasks.UndefinedTaskUi
 import ru.aleshin.features.editor.impl.presentation.models.template.TemplateUi
-import ru.aleshin.features.editor.impl.presentation.ui.editor.screenmodel.CategoryValidateError
-import ru.aleshin.features.editor.impl.presentation.ui.editor.screenmodel.TimeRangeError
+import ru.aleshin.features.editor.impl.presentation.ui.editor.store.CategoryValidateError
+import ru.aleshin.features.editor.impl.presentation.ui.editor.store.TimeRangeError
 
 /**
  * @author Stanislav Aleshin on 25.02.2023.
  */
-@Parcelize
-internal data class EditorViewState(
+@Serializable
+internal data class EditorState(
     val editModel: EditModelUi? = null,
     val categories: List<CategoriesUi> = emptyList(),
     val templates: List<TemplateUi>? = null,
     val undefinedTasks: List<UndefinedTaskUi>? = null,
     val timeRangeValid: TimeRangeError? = null,
     val categoryValid: CategoryValidateError? = null,
-) : BaseViewState
+) : StoreState
 
-internal sealed class EditorEvent : BaseEvent {
-    data object Init : EditorEvent()
+internal sealed class EditorEvent : StoreEvent {
+    data class Init(val input: EditorInput, val isRestore: Boolean) : EditorEvent()
     data object CreateTemplate : EditorEvent()
     data class ApplyTemplate(val template: TemplateUi) : EditorEvent()
     data class ApplyUndefinedTask(val task: UndefinedTaskUi) : EditorEvent()
     data class ChangeTime(val timeRange: TimeRange) : EditorEvent()
     data class ChangeCategories(val category: MainCategoryUi, val subCategory: SubCategoryUi?) : EditorEvent()
     data class ChangeNote(val note: String?) : EditorEvent()
-    data class ChangeParameters(val parameters: EditParameters) : EditorEvent()
+    data class ChangeParameters(val parameters: EditParametersUi) : EditorEvent()
     data class AddSubCategory(val name: String) : EditorEvent()
     data class NavigateToCategoryEditor(val category: MainCategoryUi) : EditorEvent()
     data class NavigateToSubCategoryEditor(val category: SubCategoryUi) : EditorEvent()
@@ -63,7 +67,7 @@ internal sealed class EditorEvent : BaseEvent {
     data object PressBackButton : EditorEvent()
 }
 
-internal sealed class EditorEffect : BaseUiEffect {
+internal sealed class EditorEffect : StoreEffect {
     data class ShowError(val failures: EditorFailures) : EditorEffect()
     data class ShowOverlayError(
         val currentTimeRange: TimeRange,
@@ -71,7 +75,7 @@ internal sealed class EditorEffect : BaseUiEffect {
     ) : EditorEffect()
 }
 
-internal sealed class EditorAction : BaseAction {
+internal sealed class EditorAction : StoreAction {
     object Navigate : EditorAction()
     data class SetUp(val editModel: EditModelUi, val categories: List<CategoriesUi>) : EditorAction()
     data class UpdateUndefinedTasks(val tasks: List<UndefinedTaskUi>) : EditorAction()
@@ -81,3 +85,9 @@ internal sealed class EditorAction : BaseAction {
     data class UpdateEditModel(val editModel: EditModelUi?) : EditorAction()
     data class SetValidError(val timeRange: TimeRangeError?, val category: CategoryValidateError?) : EditorAction()
 }
+
+internal data class EditorInput(
+    val timeTask: TimeTask,
+    val template: Template?,
+    val undefinedTaskId: Long?,
+) : BaseInput

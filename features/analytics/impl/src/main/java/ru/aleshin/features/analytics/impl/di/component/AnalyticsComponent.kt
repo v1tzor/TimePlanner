@@ -17,11 +17,11 @@ package ru.aleshin.features.analytics.impl.di.component
 
 import dagger.Component
 import ru.aleshin.core.utils.di.FeatureScope
-import ru.aleshin.features.analytics.api.di.AnalyticsFeatureApi
+import ru.aleshin.features.analytics.api.AnalyticsFeatureApi
 import ru.aleshin.features.analytics.impl.di.AnalyticsFeatureDependencies
 import ru.aleshin.features.analytics.impl.di.modules.DomainModule
 import ru.aleshin.features.analytics.impl.di.modules.PresentationModule
-import ru.aleshin.features.analytics.impl.presenatiton.ui.screenmodel.AnalyticsScreenModel
+import ru.aleshin.features.analytics.impl.presenatiton.ui.store.AnalyticsComposeStore
 
 /**
  * @author Stanislav Aleshin on 30.03.2023.
@@ -32,8 +32,6 @@ import ru.aleshin.features.analytics.impl.presenatiton.ui.screenmodel.AnalyticsS
 )
 @FeatureScope
 internal interface AnalyticsComponent : AnalyticsFeatureApi {
-
-    fun fetchAnalyticsScreenModel(): AnalyticsScreenModel
 
     @Component.Builder
     interface Builder {

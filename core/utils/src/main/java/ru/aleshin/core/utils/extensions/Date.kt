@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2025 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -328,5 +328,11 @@ fun Date.fetchDayNumberByMax(dayNumber: Int): Int {
 fun Date.fetchDay(): Int {
     val calendar = Calendar.getInstance().apply { time = this@fetchDay }
     val currentDayNumber = calendar.get(Calendar.DAY_OF_MONTH)
+    return currentDayNumber
+}
+
+fun Date.fetchHourOfDay(): Int {
+    val calendar = Calendar.getInstance().apply { time = this@fetchHourOfDay }
+    val currentDayNumber = calendar.get(Calendar.HOUR_OF_DAY)
     return currentDayNumber
 }

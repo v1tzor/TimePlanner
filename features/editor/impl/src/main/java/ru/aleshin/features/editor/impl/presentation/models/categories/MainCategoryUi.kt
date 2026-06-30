@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2025 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,9 @@ package ru.aleshin.features.editor.impl.presentation.models.categories
 
 import android.os.Parcelable
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Serializable
 import ru.aleshin.core.domain.entities.categories.DefaultCategoryType
 import ru.aleshin.core.ui.mappers.mapToName
 import ru.aleshin.core.ui.mappers.mapToString
@@ -26,6 +28,8 @@ import ru.aleshin.core.ui.theme.tokens.TimePlannerStrings
 /**
  * @author Stanislav Aleshin on 30.07.2023.
  */
+@Immutable
+@Serializable
 @Parcelize
 internal data class MainCategoryUi(
     val id: Int = 0,

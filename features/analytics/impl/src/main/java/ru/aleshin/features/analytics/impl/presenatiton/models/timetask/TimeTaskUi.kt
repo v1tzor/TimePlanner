@@ -15,9 +15,10 @@
  */
 package ru.aleshin.features.analytics.impl.presenatiton.models.timetask
 
-import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
+import androidx.compose.runtime.Immutable
+import kotlinx.serialization.Serializable
 import ru.aleshin.core.domain.entities.schedules.TaskPriority
+import ru.aleshin.core.utils.functional.DateSerializer
 import ru.aleshin.core.utils.functional.TimeRange
 import ru.aleshin.features.analytics.impl.presenatiton.models.categories.MainCategoryUi
 import ru.aleshin.features.analytics.impl.presenatiton.models.categories.SubCategoryUi
@@ -26,9 +27,11 @@ import java.util.Date
 /**
  * @author Stanislav Aleshin on 30.07.2023.
  */
-@Parcelize
+@Immutable
+@Serializable
 internal data class TimeTaskUi(
     val key: Long = 0L,
+    @Serializable(DateSerializer::class)
     val date: Date,
     val timeRanges: TimeRange,
     val category: MainCategoryUi,
@@ -39,4 +42,4 @@ internal data class TimeTaskUi(
     val taskNotifications: TaskNotificationsUi = TaskNotificationsUi(),
     val isConsiderInStatistics: Boolean = true,
     val note: String? = null,
-) : Parcelable
+)

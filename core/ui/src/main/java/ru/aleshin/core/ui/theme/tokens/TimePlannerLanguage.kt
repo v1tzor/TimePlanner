@@ -15,14 +15,16 @@
  */
 package ru.aleshin.core.ui.theme.tokens
 
-import android.os.Parcelable
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.text.intl.Locale
-import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Serializable
 
 /**
  * @author Stanislav Aleshin on 14.02.2023.
  */
+@Serializable
+@Immutable
 enum class TimePlannerLanguage(val code: String) {
     EN("en"),
     RU("ru"),
@@ -37,8 +39,9 @@ enum class TimePlannerLanguage(val code: String) {
     IT("it"),
 }
 
-@Parcelize
-enum class LanguageUiType(val code: String?) : Parcelable {
+@Immutable
+@Serializable
+enum class LanguageUiType(val code: String?) {
     DEFAULT(null),
     EN("en"),
     RU("ru"),
@@ -58,7 +61,7 @@ val LocalTimePlannerLanguage = staticCompositionLocalOf<TimePlannerLanguage> {
 }
 
 fun fetchCoreLanguage(code: String): TimePlannerLanguage {
-    return TimePlannerLanguage.values().find { it.code == code } ?: TimePlannerLanguage.EN
+    return TimePlannerLanguage.entries.find { it.code == code } ?: TimePlannerLanguage.EN
 }
 
 fun fetchAppLanguage(languageType: LanguageUiType) = when (languageType) {

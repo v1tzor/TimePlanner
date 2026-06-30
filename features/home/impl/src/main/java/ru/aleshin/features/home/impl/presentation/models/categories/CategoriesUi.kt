@@ -15,14 +15,15 @@
  */
 package ru.aleshin.features.home.impl.presentation.models.categories
 
-import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
+import androidx.compose.runtime.Immutable
+import kotlinx.serialization.Serializable
 
 /**
  * @author Stanislav Aleshin on 30.07.2023.
  */
-@Parcelize
+@Immutable
+@Serializable
 internal data class CategoriesUi(
     val mainCategory: MainCategoryUi,
     val subCategories: List<SubCategoryUi>,
-) : Parcelable
+)

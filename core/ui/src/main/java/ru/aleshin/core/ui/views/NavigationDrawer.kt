@@ -37,7 +37,7 @@ fun <Item : DrawerItem> DrawerItems(
     modifier: Modifier = Modifier,
     selectedItemIndex: Int,
     items: Array<Item>,
-    isAlwaysSelected: Boolean = false,
+    isAlwaysSelectable: Boolean = false,
     onItemSelected: (Item) -> Unit,
 ) {
     items.forEachIndexed { index, item ->
@@ -45,7 +45,7 @@ fun <Item : DrawerItem> DrawerItems(
             modifier = modifier.height(54.dp).padding(end = 12.dp),
             selected = index == selectedItemIndex,
             onClick = {
-                if (isAlwaysSelected || selectedItemIndex != index) onItemSelected.invoke(item)
+                if (isAlwaysSelectable || selectedItemIndex != index) onItemSelected.invoke(item)
             },
             icon = {
                 Icon(painter = painterResource(item.icon), contentDescription = null)

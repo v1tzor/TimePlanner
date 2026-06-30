@@ -17,17 +17,18 @@ package ru.aleshin.features.editor.impl.presentation.ui.editor.processors
 
 import ru.aleshin.core.domain.entities.schedules.TimeTask
 import ru.aleshin.core.ui.notifications.TimeTaskAlarmManager
+import ru.aleshin.core.utils.architecture.store.work.ActionResult
+import ru.aleshin.core.utils.architecture.store.work.EffectResult
+import ru.aleshin.core.utils.architecture.store.work.OutputResult
+import ru.aleshin.core.utils.architecture.store.work.WorkCommand
+import ru.aleshin.core.utils.architecture.store.work.WorkProcessor
+import ru.aleshin.core.utils.architecture.store.work.WorkResult
 import ru.aleshin.core.utils.functional.Either
-import ru.aleshin.core.utils.platform.screenmodel.work.ActionResult
-import ru.aleshin.core.utils.platform.screenmodel.work.EffectResult
-import ru.aleshin.core.utils.platform.screenmodel.work.WorkCommand
-import ru.aleshin.core.utils.platform.screenmodel.work.WorkProcessor
-import ru.aleshin.core.utils.platform.screenmodel.work.WorkResult
+import ru.aleshin.features.editor.api.EditorFeatureComponent.EditorOutput
 import ru.aleshin.features.editor.impl.domain.common.convertToTimeTask
 import ru.aleshin.features.editor.impl.domain.entites.EditorFailures
 import ru.aleshin.features.editor.impl.domain.interactors.TimeTaskInteractor
 import ru.aleshin.features.editor.impl.domain.interactors.UndefinedTasksInteractor
-import ru.aleshin.features.editor.impl.navigation.NavigationManager
 import ru.aleshin.features.editor.impl.presentation.mappers.mapToDomain
 import ru.aleshin.features.editor.impl.presentation.mappers.mapToUi
 import ru.aleshin.features.editor.impl.presentation.models.editmodel.EditModelUi
@@ -38,13 +39,13 @@ import javax.inject.Inject
 /**
  * @author Stanislav Aleshin on 08.03.2023.
  */
-internal interface TimeTaskWorkProcessor : WorkProcessor<TimeTaskWorkCommand, EditorAction, EditorEffect> {
+internal interface TimeTaskWorkProcessor :
+    WorkProcessor<TimeTaskWorkCommand, EditorAction, EditorEffect, EditorOutput> {
 
     class Base @Inject constructor(
         private val timeTaskInteractor: TimeTaskInteractor,
         private val undefinedTasksInteractor: UndefinedTasksInteractor,
         private val timeTaskAlarmManager: TimeTaskAlarmManager,
-        private val navigationManager: NavigationManager,
     ) : TimeTaskWorkProcessor {
 
         override suspend fun work(command: TimeTaskWorkCommand) = when (command) {
@@ -53,14 +54,14 @@ internal interface TimeTaskWorkProcessor : WorkProcessor<TimeTaskWorkCommand, Ed
             is TimeTaskWorkCommand.DeleteModel -> deleteModelWork(command.editModel)
         }
 
-        private suspend fun loadUndefinedTasksWork(): WorkResult<EditorAction, EditorEffect> {
+        private suspend fun loadUndefinedTasksWork(): TimeTaskWorkResult {
             return when (val tasks = undefinedTasksInteractor.fetchAllUndefinedTasks()) {
                 is Either.Right -> ActionResult(EditorAction.UpdateUndefinedTasks(tasks.data.map { it.mapToUi() }))
                 is Either.Left -> EffectResult(EditorEffect.ShowError(tasks.data))
             }
         }
 
-        private suspend fun saveOrAddModelWork(editModel: EditModelUi): WorkResult<EditorAction, EditorEffect> {
+        private suspend fun saveOrAddModelWork(editModel: EditModelUi): TimeTaskWorkResult {
             val domainModel = editModel.mapToDomain()
             val timeTask = domainModel.convertToTimeTask()
             val saveResult = when (timeTask.key != 0L) {
@@ -73,8 +74,7 @@ internal interface TimeTaskWorkProcessor : WorkProcessor<TimeTaskWorkCommand, Ed
                         if (editModel.undefinedTaskId != null) {
                             undefinedTasksInteractor.deleteUndefinedTask(editModel.undefinedTaskId)
                         }
-                        navigationManager.navigateToHomeScreen()
-                        ActionResult(EditorAction.Navigate)
+                        OutputResult(EditorOutput.NavigateToBack)
                     }
                     is Either.Left -> with(saveResult.data) {
                         val effect = when (this is EditorFailures.TimeOverlayError) {
@@ -86,8 +86,8 @@ internal interface TimeTaskWorkProcessor : WorkProcessor<TimeTaskWorkCommand, Ed
                 }
             } else {
                 when (saveResult) {
-                    is Either.Right -> navigationManager.navigateToHomeScreen().let {
-                        ActionResult(EditorAction.Navigate)
+                    is Either.Right -> {
+                        OutputResult(EditorOutput.NavigateToBack)
                     }
                     is Either.Left -> {
                         EffectResult(EditorEffect.ShowError(saveResult.data))
@@ -96,7 +96,7 @@ internal interface TimeTaskWorkProcessor : WorkProcessor<TimeTaskWorkCommand, Ed
             }
         }
 
-        private suspend fun deleteModelWork(editModel: EditModelUi): WorkResult<EditorAction, EditorEffect> {
+        private suspend fun deleteModelWork(editModel: EditModelUi): TimeTaskWorkResult {
             val domainModel = editModel.mapToDomain()
             if (domainModel.key != 0L) {
                 val deleteResult = timeTaskInteractor.deleteTimeTask(domainModel.key)
@@ -106,9 +106,7 @@ internal interface TimeTaskWorkProcessor : WorkProcessor<TimeTaskWorkCommand, Ed
                     timeTaskAlarmManager.deleteNotifyAlarm(domainModel.convertToTimeTask())
                 }
             }
-            return navigationManager.navigateToBack().let {
-                ActionResult(EditorAction.Navigate)
-            }
+            return OutputResult(EditorOutput.NavigateToBack)
         }
 
         private fun notifyUpdateOrAdd(timeTask: TimeTask) = if (timeTask.isEnableNotification) {
@@ -125,3 +123,6 @@ internal sealed class TimeTaskWorkCommand : WorkCommand {
     data class AddOrSaveModel(val editModel: EditModelUi) : TimeTaskWorkCommand()
     data class DeleteModel(val editModel: EditModelUi) : TimeTaskWorkCommand()
 }
+
+
+internal typealias TimeTaskWorkResult = WorkResult<EditorAction, EditorEffect, EditorOutput>

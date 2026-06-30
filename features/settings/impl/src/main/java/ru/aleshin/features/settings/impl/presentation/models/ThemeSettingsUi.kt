@@ -15,8 +15,8 @@
  */
 package ru.aleshin.features.settings.impl.presentation.models
 
-import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
+import androidx.compose.runtime.Immutable
+import kotlinx.serialization.Serializable
 import ru.aleshin.core.ui.theme.material.ColorsUiType
 import ru.aleshin.core.ui.theme.material.ThemeUiType
 import ru.aleshin.core.ui.theme.tokens.LanguageUiType
@@ -24,10 +24,11 @@ import ru.aleshin.core.ui.theme.tokens.LanguageUiType
 /**
  * @author Stanislav Aleshin on 10.06.2023.
  */
-@Parcelize
-data class ThemeSettingsUi(
+@Immutable
+@Serializable
+internal data class ThemeSettingsUi(
     val language: LanguageUiType = LanguageUiType.DEFAULT,
     val themeColors: ThemeUiType = ThemeUiType.DEFAULT,
     val colorsType: ColorsUiType = ColorsUiType.PINK,
     val isDynamicColorEnable: Boolean = false,
-) : Parcelable
+)

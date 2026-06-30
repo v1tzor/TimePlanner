@@ -15,18 +15,19 @@
  */
 package ru.aleshin.features.analytics.impl.presenatiton.models.analytics
 
-import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
+import androidx.compose.runtime.Immutable
+import kotlinx.serialization.Serializable
 import ru.aleshin.features.analytics.impl.presenatiton.models.categories.MainCategoryUi
 
 /**
  * @author Stanislav Aleshin on 22.04.2023.
  */
-@Parcelize
+@Immutable
+@Serializable
 internal data class CategoryAnalyticUi(
     val mainCategory: MainCategoryUi,
     val duration: Long = 0L,
     val subCategoriesInfo: SubCategoryAnalyticsUi = emptyList(),
-) : Parcelable
+)
 
 internal typealias CategoriesAnalyticsUi = List<CategoryAnalyticUi>

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2025 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -65,24 +65,28 @@ internal fun RepeatTimeMenu(
                 onAddRepeat = onAddRepeat,
                 onDeleteRepeat = onDeleteRepeat,
             )
+
             RepeatTimeType.WEEK_DAY_IN_MONTH -> WeekDayInMonthMenuItems(
                 selectedTimes = selectedTimes,
                 onBackClick = { repeatCategory = null },
                 onAddRepeat = onAddRepeat,
                 onDeleteRepeat = onDeleteRepeat,
             )
+
             RepeatTimeType.MONTH_DAY -> MonthDayMenuItems(
                 selectedTimes = selectedTimes,
                 onBackClick = { repeatCategory = null },
                 onAddRepeat = onAddRepeat,
                 onDeleteRepeat = onDeleteRepeat,
             )
+
             RepeatTimeType.YEAR_DAY -> YearDayMenuItems(
                 selectedTimes = selectedTimes,
                 onBackClick = { repeatCategory = null },
                 onAddRepeat = onAddRepeat,
                 onDeleteRepeat = onDeleteRepeat,
             )
+
             null -> RepeatTimeType.entries.forEach { type ->
                 NavMenuItem(text = type.mapToString(), onClick = { repeatCategory = type })
             }
@@ -156,7 +160,12 @@ internal fun WeekDayInMonthMenuItems(
         WeekDay.entries.forEach { day ->
             CheckedMenuItem(
                 text = day.mapToString(),
-                check = selectedTimes.contains(RepeatTime.WeekDayInMonth(day, selectedWeekNumber!!)),
+                check = selectedTimes.contains(
+                    RepeatTime.WeekDayInMonth(
+                        day,
+                        selectedWeekNumber!!
+                    )
+                ),
                 onCheckedChange = {
                     val repeat = RepeatTime.WeekDayInMonth(day, selectedWeekNumber!!)
                     if (it) onAddRepeat(repeat) else onDeleteRepeat(repeat)
@@ -199,7 +208,12 @@ internal fun YearDayMenuItems(
         for (day in 1..31) {
             CheckedMenuItem(
                 text = day.toString(),
-                check = selectedTimes.contains(RepeatTime.YearDay(month = selectedMonth!!, dayNumber = day)),
+                check = selectedTimes.contains(
+                    RepeatTime.YearDay(
+                        month = selectedMonth!!,
+                        dayNumber = day
+                    )
+                ),
                 onCheckedChange = {
                     val repeat = RepeatTime.YearDay(month = selectedMonth!!, dayNumber = day)
                     if (it) onAddRepeat(repeat) else onDeleteRepeat(repeat)

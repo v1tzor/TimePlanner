@@ -15,23 +15,18 @@
  */
 package ru.aleshin.features.settings.impl.di.modules
 
-import cafe.adriel.voyager.core.model.ScreenModel
-import cafe.adriel.voyager.core.screen.Screen
 import dagger.Binds
 import dagger.Module
+import ru.aleshin.core.utils.architecture.store.BaseOnlyOutComposeStore
 import ru.aleshin.core.utils.di.FeatureScope
-import ru.aleshin.core.utils.di.ScreenModelKey
-import ru.aleshin.features.settings.api.navigation.SettingsFeatureStarter
-import ru.aleshin.features.settings.impl.navigation.NavigationManager
-import ru.aleshin.features.settings.impl.navigation.SettingsFeatureStarterImpl
-import ru.aleshin.features.settings.impl.presentation.ui.donate.screenmodel.DonateScreenModel
-import ru.aleshin.features.settings.impl.presentation.ui.donate.screenmodel.DonateStateCommunicator
-import ru.aleshin.features.settings.impl.presentation.ui.settings.SettingsScreen
+import ru.aleshin.features.settings.api.SettingsFeatureComponentFactory
+import ru.aleshin.features.settings.impl.navigation.DefaultSettingsComponentFactory
+import ru.aleshin.features.settings.impl.presentation.ui.donate.contract.DonateState
+import ru.aleshin.features.settings.impl.presentation.ui.donate.store.DonateComposeStore
+import ru.aleshin.features.settings.impl.presentation.ui.settings.contract.SettingsState
 import ru.aleshin.features.settings.impl.presentation.ui.settings.managers.BackupManager
 import ru.aleshin.features.settings.impl.presentation.ui.settings.screensmodel.DataWorkProcessor
-import ru.aleshin.features.settings.impl.presentation.ui.settings.screensmodel.SettingsEffectCommunicator
-import ru.aleshin.features.settings.impl.presentation.ui.settings.screensmodel.SettingsScreenModel
-import ru.aleshin.features.settings.impl.presentation.ui.settings.screensmodel.SettingsStateCommunicator
+import ru.aleshin.features.settings.impl.presentation.ui.settings.screensmodel.SettingsComposeStore
 import ru.aleshin.features.settings.impl.presentation.ui.settings.screensmodel.SettingsWorkProcessor
 
 /**
@@ -42,11 +37,7 @@ internal interface PresentationModule {
 
     @Binds
     @FeatureScope
-    fun bindSettingsFeatureStarter(starter: SettingsFeatureStarterImpl): SettingsFeatureStarter
-
-    @Binds
-    @FeatureScope
-    fun bindNavigationManager(manager: NavigationManager.Base): NavigationManager
+    fun bindSettingsComponentFactory(factory: DefaultSettingsComponentFactory): SettingsFeatureComponentFactory
 
     @Binds
     @FeatureScope
@@ -56,32 +47,19 @@ internal interface PresentationModule {
 
     @Binds
     @FeatureScope
-    fun bindSettingsScreen(screen: SettingsScreen): Screen
-
-    @Binds
-    @ScreenModelKey(SettingsScreenModel::class)
-    fun bindSettingsScreenModel(screenModel: SettingsScreenModel): ScreenModel
+    fun bindSettingsStoreFactory(factory: SettingsComposeStore.Factory): BaseOnlyOutComposeStore.Factory<SettingsComposeStore, SettingsState>
 
     @Binds
     @FeatureScope
-    fun bindSettingsStateCommunicator(communicator: SettingsStateCommunicator.Base): SettingsStateCommunicator
-
-    @Binds
-    @FeatureScope
-    fun bindSettingsEffectCommunicator(communicator: SettingsEffectCommunicator.Base): SettingsEffectCommunicator
-
-    @Binds
     fun bindSettingsWorkProcessor(processor: SettingsWorkProcessor.Base): SettingsWorkProcessor
 
     @Binds
+    @FeatureScope
     fun bindDataWorkProcessor(processor: DataWorkProcessor.Base): DataWorkProcessor
 
     // Donate
 
     @Binds
-    @ScreenModelKey(DonateScreenModel::class)
-    fun bindDonateScreenModel(screenModel: DonateScreenModel): ScreenModel
-
-    @Binds
-    fun bindDonateStateCommunicator(communicator: DonateStateCommunicator.Base): DonateStateCommunicator
+    @FeatureScope
+    fun bindDonateStoreFactory(factory: DonateComposeStore.Factory): BaseOnlyOutComposeStore.Factory<DonateComposeStore, DonateState>
 }

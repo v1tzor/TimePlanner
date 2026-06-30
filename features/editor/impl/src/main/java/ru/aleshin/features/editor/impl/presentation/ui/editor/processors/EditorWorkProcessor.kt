@@ -15,17 +15,17 @@
  */
 package ru.aleshin.features.editor.impl.presentation.ui.editor.processors
 
+import ru.aleshin.core.utils.architecture.store.work.ActionResult
+import ru.aleshin.core.utils.architecture.store.work.EffectResult
+import ru.aleshin.core.utils.architecture.store.work.WorkCommand
+import ru.aleshin.core.utils.architecture.store.work.WorkProcessor
+import ru.aleshin.core.utils.architecture.store.work.WorkResult
 import ru.aleshin.core.utils.functional.Either
 import ru.aleshin.core.utils.functional.rightOrElse
-import ru.aleshin.core.utils.platform.screenmodel.work.ActionResult
-import ru.aleshin.core.utils.platform.screenmodel.work.EffectResult
-import ru.aleshin.core.utils.platform.screenmodel.work.WorkCommand
-import ru.aleshin.core.utils.platform.screenmodel.work.WorkProcessor
-import ru.aleshin.core.utils.platform.screenmodel.work.WorkResult
+import ru.aleshin.features.editor.api.EditorFeatureComponent.EditorOutput
 import ru.aleshin.features.editor.impl.domain.common.convertToEditModel
 import ru.aleshin.features.editor.impl.domain.common.convertToTemplate
 import ru.aleshin.features.editor.impl.domain.interactors.CategoriesInteractor
-import ru.aleshin.features.editor.impl.domain.interactors.EditorInteractor
 import ru.aleshin.features.editor.impl.domain.interactors.TemplatesInteractor
 import ru.aleshin.features.editor.impl.presentation.mappers.mapToDomain
 import ru.aleshin.features.editor.impl.presentation.mappers.mapToUi
@@ -43,16 +43,16 @@ import javax.inject.Inject
 /**
  * @author Stanislav Aleshin on 26.03.2023.
  */
-internal interface EditorWorkProcessor : WorkProcessor<EditorWorkCommand, EditorAction, EditorEffect> {
+internal interface EditorWorkProcessor :
+    WorkProcessor<EditorWorkCommand, EditorAction, EditorEffect, EditorOutput> {
 
     class Base @Inject constructor(
-        private val editorInteractor: EditorInteractor,
         private val categoriesInteractor: CategoriesInteractor,
         private val templatesInteractor: TemplatesInteractor,
     ) : EditorWorkProcessor {
 
         override suspend fun work(command: EditorWorkCommand) = when (command) {
-            is EditorWorkCommand.LoadSendEditModel -> loadSendModelWork()
+            is EditorWorkCommand.SetupEditModel -> setupEditModelWork(command.editModel)
             is EditorWorkCommand.LoadTemplates -> loadTemplatesWork()
             is EditorWorkCommand.AddSubCategory -> addSubCategoryWork(command.name, command.mainCategory)
             is EditorWorkCommand.AddTemplate -> addTemplateWork(command.editModel)
@@ -60,15 +60,14 @@ internal interface EditorWorkProcessor : WorkProcessor<EditorWorkCommand, Editor
             is EditorWorkCommand.ApplyUndefinedTask -> applyUndefinedTaskWork(command.task, command.model)
         }
 
-        private suspend fun loadSendModelWork(): WorkResult<EditorAction, EditorEffect> {
-            val editModel = editorInteractor.fetchEditModel().mapToUi()
+        private suspend fun setupEditModelWork(editModel: EditModelUi): EditorWorkResult {
             return when (val result = categoriesInteractor.fetchCategories()) {
                 is Either.Right -> ActionResult(EditorAction.SetUp(editModel, result.data.map { it.mapToUi() }))
                 is Either.Left -> EffectResult(EditorEffect.ShowError(result.data))
             }
         }
 
-        private suspend fun loadTemplatesWork(): WorkResult<EditorAction, EditorEffect> {
+        private suspend fun loadTemplatesWork(): EditorWorkResult {
             return when (val templates = templatesInteractor.fetchTemplates()) {
                 is Either.Right -> ActionResult(EditorAction.UpdateTemplates(templates.data.map { it.mapToUi() }))
                 is Either.Left -> EffectResult(EditorEffect.ShowError(templates.data))
@@ -78,7 +77,7 @@ internal interface EditorWorkProcessor : WorkProcessor<EditorWorkCommand, Editor
         private suspend fun addSubCategoryWork(
             name: String,
             mainCategory: MainCategoryUi,
-        ): WorkResult<EditorAction, EditorEffect> {
+        ): EditorWorkResult {
             val subCategory = SubCategoryUi(id = 0, name = name, mainCategory = mainCategory)
             return when (val result = categoriesInteractor.addSubCategory(subCategory.mapToDomain())) {
                 is Either.Right -> {
@@ -91,18 +90,18 @@ internal interface EditorWorkProcessor : WorkProcessor<EditorWorkCommand, Editor
             }
         }
 
-        private suspend fun addTemplateWork(editModel: EditModelUi): WorkResult<EditorAction, EditorEffect> {
+        private suspend fun addTemplateWork(editModel: EditModelUi): EditorWorkResult {
             val template = editModel.mapToDomain().convertToTemplate()
             val templateId = templatesInteractor.addTemplate(template).rightOrElse(null)
             return ActionResult(EditorAction.UpdateTemplateId(templateId))
         }
 
-        private fun applyTemplateWork(template: TemplateUi, model: EditModelUi): WorkResult<EditorAction, EditorEffect> {
+        private fun applyTemplateWork(template: TemplateUi, model: EditModelUi): EditorWorkResult {
             val domainModel = template.mapToDomain().convertToEditModel(model.date).copy(key = model.key)
             return ActionResult(EditorAction.UpdateEditModel(domainModel.mapToUi()))
         }
 
-        private fun applyUndefinedTaskWork(task: UndefinedTaskUi, model: EditModelUi): WorkResult<EditorAction, EditorEffect> {
+        private fun applyUndefinedTaskWork(task: UndefinedTaskUi, model: EditModelUi): EditorWorkResult {
             val editModel = task.convertToEditModel(model.date, model.timeRange).copy(
                 key = model.key,
                 createdAt = Date(),
@@ -113,10 +112,12 @@ internal interface EditorWorkProcessor : WorkProcessor<EditorWorkCommand, Editor
 }
 
 internal sealed class EditorWorkCommand : WorkCommand {
-    data object LoadSendEditModel : EditorWorkCommand()
+    data class SetupEditModel(val editModel: EditModelUi) : EditorWorkCommand()
     data object LoadTemplates : EditorWorkCommand()
     data class AddSubCategory(val name: String, val mainCategory: MainCategoryUi) : EditorWorkCommand()
     data class AddTemplate(val editModel: EditModelUi) : EditorWorkCommand()
     data class ApplyTemplate(val template: TemplateUi, val model: EditModelUi) : EditorWorkCommand()
     data class ApplyUndefinedTask(val task: UndefinedTaskUi, val model: EditModelUi) : EditorWorkCommand()
 }
+
+internal typealias EditorWorkResult = WorkResult<EditorAction, EditorEffect, EditorOutput>

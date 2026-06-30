@@ -16,20 +16,21 @@
 package ru.aleshin.core.ui.theme.material
 
 import android.os.Build
-import android.os.Parcelable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.ui.platform.LocalContext
-import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Serializable
 
 /**
  * @author Stanislav Aleshin on 14.02.2023.
  */
-@Parcelize
-enum class ThemeUiType : Parcelable {
+@Immutable
+@Serializable
+enum class ThemeUiType {
     DEFAULT, LIGHT, DARK;
 
     @Composable
@@ -40,8 +41,9 @@ enum class ThemeUiType : Parcelable {
     }
 }
 
-@Parcelize
-enum class ColorsUiType : Parcelable {
+@Immutable
+@Serializable
+enum class ColorsUiType {
     RED, PINK, PURPLE, BLUE;
 
     fun seed() = when (this) {

@@ -18,7 +18,12 @@ package ru.aleshin.timeplanner.presentation.ui.splash
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandHorizontally
 import androidx.compose.animation.fadeIn
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -30,6 +35,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -37,6 +43,7 @@ import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
 import ru.aleshin.core.ui.theme.TimePlannerRes
 import ru.aleshin.core.ui.theme.material.onSplashGradient
+import ru.aleshin.core.ui.theme.material.splashGradientColors
 import ru.aleshin.core.utils.functional.Constants
 
 /**
@@ -50,7 +57,9 @@ fun SplashContent(
     var isVisibleText by remember { mutableStateOf(false) }
 
     Box(
-        modifier = modifier.fillMaxSize(), 
+        modifier = modifier
+            .background(brush = Brush.verticalGradient(splashGradientColors))
+            .fillMaxSize(),
         contentAlignment = Alignment.Center,
     ) {
         Row(

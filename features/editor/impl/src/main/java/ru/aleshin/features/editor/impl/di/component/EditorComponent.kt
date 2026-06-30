@@ -17,12 +17,10 @@ package ru.aleshin.features.editor.impl.di.component
 
 import dagger.Component
 import ru.aleshin.core.utils.di.FeatureScope
-import ru.aleshin.features.editor.api.di.EditorFeatureApi
+import ru.aleshin.features.editor.api.EditorFeatureApi
 import ru.aleshin.features.editor.impl.di.EditorFeatureDependencies
-import ru.aleshin.features.editor.impl.di.modules.DataModule
 import ru.aleshin.features.editor.impl.di.modules.DomainModule
 import ru.aleshin.features.editor.impl.di.modules.PresentationModule
-import ru.aleshin.features.editor.impl.presentation.ui.editor.screenmodel.EditorScreenModel
 
 /**
  * @author Stanislav Aleshin on 08.03.2023.
@@ -30,11 +28,9 @@ import ru.aleshin.features.editor.impl.presentation.ui.editor.screenmodel.Editor
 @FeatureScope
 @Component(
     dependencies = [EditorFeatureDependencies::class],
-    modules = [DataModule::class, DomainModule::class, PresentationModule::class],
+    modules = [DomainModule::class, PresentationModule::class],
 )
 internal interface EditorComponent : EditorFeatureApi {
-
-    fun fetchEditorScreenModel(): EditorScreenModel
 
     @Component.Builder
     interface Builder {

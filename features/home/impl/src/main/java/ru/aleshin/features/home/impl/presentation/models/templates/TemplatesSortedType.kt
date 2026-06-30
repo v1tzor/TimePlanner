@@ -15,9 +15,14 @@
  */
 package ru.aleshin.features.home.impl.presentation.models.templates
 
+import androidx.compose.runtime.Immutable
+import kotlinx.serialization.Serializable
+
 /**
  * @author Stanislav Aleshin on 08.05.2023.
  */
+@Immutable
+@Serializable
 internal enum class TemplatesSortedType {
     CATEGORIES, DATE, DURATION
 }

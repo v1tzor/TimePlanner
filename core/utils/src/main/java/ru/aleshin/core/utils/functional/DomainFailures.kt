@@ -15,9 +15,7 @@
  */
 package ru.aleshin.core.utils.functional
 
-import android.os.Parcelable
-
 /**
  * @author Stanislav Aleshin on 14.02.2023.
  */
-interface DomainFailures : Parcelable
+interface DomainFailures

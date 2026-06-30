@@ -55,10 +55,6 @@ android {
         buildConfig = true
     }
 
-    composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.kotlinCompiler.get()
-    }
-
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
@@ -70,6 +66,7 @@ dependencies {
     implementation(project(":core:utils"))
     implementation(project(":core:domain"))
 
+    api(libs.bundles.decompose)
     api(libs.bundles.voyager)
     api(libs.bundles.compose)
 

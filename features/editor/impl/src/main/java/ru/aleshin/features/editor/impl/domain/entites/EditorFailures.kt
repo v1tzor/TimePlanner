@@ -15,14 +15,12 @@
  */
 package ru.aleshin.features.editor.impl.domain.entites
 
-import kotlinx.parcelize.Parcelize
 import ru.aleshin.core.utils.functional.DomainFailures
-import java.util.*
+import java.util.Date
 
 /**
  * @author Stanislav Aleshin on 08.03.2023.
  */
-@Parcelize
 internal sealed class EditorFailures : DomainFailures {
     data class TimeOverlayError(val startOverlay: Date?, val endOverlay: Date?) : EditorFailures()
     data class OtherError(val throwable: Throwable) : EditorFailures()

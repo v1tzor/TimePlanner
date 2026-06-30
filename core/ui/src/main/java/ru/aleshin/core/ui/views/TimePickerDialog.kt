@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2025 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,8 +55,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.KeyboardType
@@ -132,7 +132,7 @@ fun MultiTimePickerDialog(
     val minute = remember { calendar.get(Calendar.MINUTE) }
     val state = rememberTimePickerState(initialHour = hour, initialMinute = minute)
     var showingPicker by remember { mutableStateOf(false) }
-    val configuration = LocalConfiguration.current
+    val configuration = LocalWindowInfo.current
 
     BasicTimePickerDialog(
         title = headerTitle,
@@ -144,12 +144,14 @@ fun MultiTimePickerDialog(
             onSelectedTime(calendar.time)
         },
         onCurrentTimeChoose = {
-            val currentTime = Calendar.getInstance().apply { add(Calendar.MINUTE, 1) }
+            val currentTime = Calendar.getInstance().apply {
+                add(Calendar.MINUTE, 1)
+            }
             state.hour = currentTime.get(Calendar.HOUR_OF_DAY)
             state.minute = currentTime.get(Calendar.MINUTE)
         },
         toggle = {
-            if (configuration.screenHeightDp > 400) {
+            if (configuration.containerSize.width > 400) {
                 IconButton(
                     modifier = Modifier.size(36.dp),
                     onClick = { showingPicker = !showingPicker }
@@ -166,7 +168,7 @@ fun MultiTimePickerDialog(
             }
         }
     ) {
-        if (showingPicker && configuration.screenHeightDp > 400) {
+        if (showingPicker && configuration.containerSize.width > 400) {
             TimePicker(state = state)
         } else {
             TimeInput(state = state)
@@ -185,7 +187,8 @@ fun TimeInputPickerDialog(
     onSelectedTime: (Date) -> Unit,
 ) {
     val calendar = remember { Calendar.getInstance().apply { time = initTime } }
-    val is24Format = DateFormat.is24HourFormat(LocalContext.current)
+    val context = LocalContext.current
+    val is24Format = remember { DateFormat.is24HourFormat(context) }
     val hour = remember { calendar.get(Calendar.HOUR_OF_DAY) }
     val minute = remember { calendar.get(Calendar.MINUTE) }
     var format by remember { mutableStateOf(if (hour > 11) TimeFormat.PM else TimeFormat.AM) }

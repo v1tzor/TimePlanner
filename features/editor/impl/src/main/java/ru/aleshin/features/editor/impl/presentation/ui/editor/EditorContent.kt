@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2025 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 package ru.aleshin.features.editor.impl.presentation.ui.editor
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.fadeIn
@@ -59,6 +60,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import ru.aleshin.core.ui.theme.TimePlannerRes
 import ru.aleshin.core.ui.views.CustomLargeTextField
+import ru.aleshin.core.utils.extensions.fetchHourOfDay
 import ru.aleshin.core.utils.extensions.shiftDay
 import ru.aleshin.core.utils.extensions.shiftMillis
 import ru.aleshin.core.utils.functional.Constants
@@ -69,11 +71,11 @@ import ru.aleshin.features.editor.impl.presentation.models.PriorityParameters
 import ru.aleshin.features.editor.impl.presentation.models.categories.CategoriesUi
 import ru.aleshin.features.editor.impl.presentation.models.categories.MainCategoryUi
 import ru.aleshin.features.editor.impl.presentation.models.categories.SubCategoryUi
-import ru.aleshin.features.editor.impl.presentation.models.editmodel.EditParameters
+import ru.aleshin.features.editor.impl.presentation.models.editmodel.EditParametersUi
 import ru.aleshin.features.editor.impl.presentation.theme.EditorThemeRes
-import ru.aleshin.features.editor.impl.presentation.ui.editor.contract.EditorViewState
-import ru.aleshin.features.editor.impl.presentation.ui.editor.screenmodel.CategoryValidateError
-import ru.aleshin.features.editor.impl.presentation.ui.editor.screenmodel.TimeRangeError
+import ru.aleshin.features.editor.impl.presentation.ui.editor.contract.EditorState
+import ru.aleshin.features.editor.impl.presentation.ui.editor.store.CategoryValidateError
+import ru.aleshin.features.editor.impl.presentation.ui.editor.store.TimeRangeError
 import ru.aleshin.features.editor.impl.presentation.ui.editor.views.DurationTitle
 import ru.aleshin.features.editor.impl.presentation.ui.editor.views.EndTimeField
 import ru.aleshin.features.editor.impl.presentation.ui.editor.views.MainCategoryChooser
@@ -88,13 +90,13 @@ import ru.aleshin.features.editor.impl.presentation.ui.editor.views.TaskNotifica
  */
 @Composable
 internal fun EditorContent(
-    state: EditorViewState,
+    state: EditorState,
     modifier: Modifier = Modifier,
     onCategoriesChange: (MainCategoryUi, SubCategoryUi?) -> Unit,
     onNoteChange: (String?) -> Unit,
     onAddSubCategory: (String) -> Unit,
     onTimeRangeChange: (TimeRange) -> Unit,
-    onChangeParameters: (EditParameters) -> Unit,
+    onChangeParameters: (EditParametersUi) -> Unit,
     onEditCategory: (MainCategoryUi) -> Unit,
     onEditSubCategory: (SubCategoryUi) -> Unit,
     onControlTemplate: () -> Unit,
@@ -136,7 +138,10 @@ internal fun EditorContent(
                         isTimeValidError = state.timeRangeValid is TimeRangeError.DurationError,
                         timeRanges = state.editModel.timeRange,
                         duration = state.editModel.duration,
-                        onTimeRangeChange = onTimeRangeChange,
+                        onTimeRangeChange = {
+                            Log.i("test", "old: ${state.editModel.timeRange} | new -> $it")
+                            onTimeRangeChange(it)
+                        },
                     )
                     HorizontalDivider(Modifier.padding(horizontal = 32.dp))
                     ParametersSection(
@@ -281,7 +286,7 @@ internal fun DateTimeSection(
             currentTime = timeRanges.from,
             isError = isTimeValidError,
             onChangeTime = { newStartTime ->
-                if (newStartTime <= timeRanges.to) {
+                if (newStartTime.fetchHourOfDay() <= timeRanges.to.fetchHourOfDay()) {
                     onTimeRangeChange(timeRanges.copy(from = newStartTime))
                 } else {
                     onTimeRangeChange(
@@ -299,7 +304,11 @@ internal fun DateTimeSection(
             currentTime = timeRanges.to,
             isError = isTimeValidError,
             onChangeTime = { newEndTime ->
-                val newTime = if (newEndTime >= timeRanges.from) newEndTime else newEndTime.shiftDay(1)
+                val newTime = if (newEndTime.fetchHourOfDay() >= timeRanges.from.fetchHourOfDay()) {
+                    newEndTime
+                } else {
+                    newEndTime.shiftDay(1)
+                }
                 onTimeRangeChange(timeRanges.copy(to = newTime))
             },
         )
@@ -319,8 +328,8 @@ internal fun DateTimeSection(
 internal fun ParametersSection(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    parameters: EditParameters,
-    onChangeParameters: (EditParameters) -> Unit,
+    parameters: EditParametersUi,
+    onChangeParameters: (EditParametersUi) -> Unit,
 ) {
     var openTaskNotificationMenu by remember { mutableStateOf(false) }
     Column(

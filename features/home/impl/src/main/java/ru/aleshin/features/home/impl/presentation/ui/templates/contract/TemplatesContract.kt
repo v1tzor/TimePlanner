@@ -15,12 +15,12 @@
  */
 package ru.aleshin.features.home.impl.presentation.ui.templates.contract
 
-import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Serializable
 import ru.aleshin.core.domain.entities.template.RepeatTime
-import ru.aleshin.core.utils.platform.screenmodel.contract.BaseAction
-import ru.aleshin.core.utils.platform.screenmodel.contract.BaseEvent
-import ru.aleshin.core.utils.platform.screenmodel.contract.BaseUiEffect
-import ru.aleshin.core.utils.platform.screenmodel.contract.BaseViewState
+import ru.aleshin.core.utils.architecture.store.contract.StoreAction
+import ru.aleshin.core.utils.architecture.store.contract.StoreEffect
+import ru.aleshin.core.utils.architecture.store.contract.StoreEvent
+import ru.aleshin.core.utils.architecture.store.contract.StoreState
 import ru.aleshin.features.home.impl.domain.entities.HomeFailures
 import ru.aleshin.features.home.impl.presentation.models.categories.CategoriesUi
 import ru.aleshin.features.home.impl.presentation.models.templates.TemplateUi
@@ -29,14 +29,14 @@ import ru.aleshin.features.home.impl.presentation.models.templates.TemplatesSort
 /**
  * @author Stanislav Aleshin on 08.05.2023.
  */
-@Parcelize
-internal data class TemplatesViewState(
+@Serializable
+internal data class TemplatesState(
     val templates: List<TemplateUi>? = null,
     val categories: List<CategoriesUi> = emptyList(),
     val sortedType: TemplatesSortedType = TemplatesSortedType.DATE,
-) : BaseViewState
+) : StoreState
 
-internal sealed class TemplatesEvent : BaseEvent {
+internal sealed class TemplatesEvent : StoreEvent {
     object Init : TemplatesEvent()
     data class AddTemplate(val template: TemplateUi) : TemplatesEvent()
     data class UpdateTemplate(val template: TemplateUi) : TemplatesEvent()
@@ -48,11 +48,11 @@ internal sealed class TemplatesEvent : BaseEvent {
     data class DeleteTemplate(val id: Int) : TemplatesEvent()
 }
 
-internal sealed class TemplatesEffect : BaseUiEffect {
+internal sealed class TemplatesEffect : StoreEffect {
     data class ShowError(val failures: HomeFailures) : TemplatesEffect()
 }
 
-internal sealed class TemplatesAction : BaseAction {
+internal sealed class TemplatesAction : StoreAction {
     data class UpdateCategories(val categories: List<CategoriesUi>) : TemplatesAction()
     data class UpdateTemplates(val templates: List<TemplateUi>) : TemplatesAction()
     data class ChangeSortedType(val type: TemplatesSortedType) : TemplatesAction()

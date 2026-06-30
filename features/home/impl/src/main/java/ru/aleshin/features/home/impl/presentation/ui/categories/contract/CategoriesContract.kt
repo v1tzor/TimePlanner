@@ -15,11 +15,12 @@
  */
 package ru.aleshin.features.home.impl.presentation.ui.categories.contract
 
-import kotlinx.parcelize.Parcelize
-import ru.aleshin.core.utils.platform.screenmodel.contract.BaseAction
-import ru.aleshin.core.utils.platform.screenmodel.contract.BaseEvent
-import ru.aleshin.core.utils.platform.screenmodel.contract.BaseUiEffect
-import ru.aleshin.core.utils.platform.screenmodel.contract.BaseViewState
+import kotlinx.serialization.Serializable
+import ru.aleshin.core.utils.architecture.component.BaseOutput
+import ru.aleshin.core.utils.architecture.store.contract.StoreAction
+import ru.aleshin.core.utils.architecture.store.contract.StoreEffect
+import ru.aleshin.core.utils.architecture.store.contract.StoreEvent
+import ru.aleshin.core.utils.architecture.store.contract.StoreState
 import ru.aleshin.features.home.impl.domain.entities.HomeFailures
 import ru.aleshin.features.home.impl.presentation.models.categories.CategoriesUi
 import ru.aleshin.features.home.impl.presentation.models.categories.MainCategoryUi
@@ -28,13 +29,13 @@ import ru.aleshin.features.home.impl.presentation.models.categories.SubCategoryU
 /**
  * @author Stanislav Aleshin on 05.04.2023.
  */
-@Parcelize
-internal data class CategoriesViewState(
+@Serializable
+internal data class CategoriesState(
     val selectedMainCategory: MainCategoryUi? = null,
     val categories: List<CategoriesUi> = emptyList(),
-) : BaseViewState
+) : StoreState
 
-internal sealed class CategoriesEvent : BaseEvent {
+internal sealed class CategoriesEvent : StoreEvent {
     data object Init : CategoriesEvent()
     data object CheckSelectedCategory : CategoriesEvent()
     data object RestoreDefaultCategories : CategoriesEvent()
@@ -47,12 +48,17 @@ internal sealed class CategoriesEvent : BaseEvent {
     data class DeleteSubCategory(val subCategory: SubCategoryUi) : CategoriesEvent()
 }
 
-internal sealed class CategoriesEffect : BaseUiEffect {
+internal sealed class CategoriesEffect : StoreEffect {
     data class ShowError(val failure: HomeFailures) : CategoriesEffect()
 }
 
-internal sealed class CategoriesAction : BaseAction {
+internal sealed class CategoriesAction : StoreAction {
     data class SetUp(val categories: List<CategoriesUi>, val selected: MainCategoryUi?) : CategoriesAction()
     data class UpdateCategories(val categories: List<CategoriesUi>) : CategoriesAction()
     data class ChangeMainCategory(val category: MainCategoryUi) : CategoriesAction()
+}
+
+
+internal sealed class CategoriesOutput : BaseOutput {
+    data object NavigateToBack : CategoriesOutput()
 }

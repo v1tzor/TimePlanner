@@ -15,13 +15,11 @@
  */
 package ru.aleshin.features.settings.impl.domain.common
 
-import kotlinx.parcelize.Parcelize
 import ru.aleshin.core.utils.functional.DomainFailures
 
 /**
  * @author Stanislav Aleshin on 17.02.2023.
  */
-@Parcelize
 internal sealed class SettingsFailures : DomainFailures {
     data class BackupError(val throwable: Throwable) : SettingsFailures()
     data class OtherError(val throwable: Throwable) : SettingsFailures()

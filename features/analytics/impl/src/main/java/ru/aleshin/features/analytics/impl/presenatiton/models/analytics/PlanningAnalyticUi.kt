@@ -15,18 +15,21 @@
  */
 package ru.aleshin.features.analytics.impl.presenatiton.models.analytics
 
-import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
+import androidx.compose.runtime.Immutable
+import kotlinx.serialization.Serializable
+import ru.aleshin.core.utils.functional.DateSerializer
 import ru.aleshin.features.analytics.impl.presenatiton.models.timetask.TimeTaskUi
 import java.util.Date
 
 /**
  * @author Stanislav Aleshin on 24.10.2023.
  */
-@Parcelize
+@Immutable
+@Serializable
 internal data class PlanningAnalyticUi(
+    @Serializable(DateSerializer::class)
     val date: Date,
     val timeTasks: List<TimeTaskUi>,
-) : Parcelable
+)
 
 internal typealias PlanningAnalyticsUi = Map<Int, List<PlanningAnalyticUi>>

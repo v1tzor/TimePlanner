@@ -29,34 +29,110 @@ import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.launch
+import ru.aleshin.core.ui.views.Scaffold
+import ru.aleshin.core.utils.architecture.store.compose.handleEffects
+import ru.aleshin.core.utils.architecture.store.compose.stateAsState
+import ru.aleshin.core.utils.managers.LocalDrawerManager
+import ru.aleshin.features.home.impl.presentation.mapppers.mapToMessage
 import ru.aleshin.features.home.impl.presentation.models.categories.MainCategoryUi
 import ru.aleshin.features.home.impl.presentation.models.categories.SubCategoryUi
 import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
-import ru.aleshin.features.home.impl.presentation.ui.categories.contract.CategoriesViewState
+import ru.aleshin.features.home.impl.presentation.ui.categories.contract.CategoriesEffect
+import ru.aleshin.features.home.impl.presentation.ui.categories.contract.CategoriesEvent
+import ru.aleshin.features.home.impl.presentation.ui.categories.contract.CategoriesState
+import ru.aleshin.features.home.impl.presentation.ui.categories.screenmodel.CategoriesComponent
+import ru.aleshin.features.home.impl.presentation.ui.categories.views.CategoriesTopAppBar
 import ru.aleshin.features.home.impl.presentation.ui.categories.views.MainCategoriesHorizontalList
 import ru.aleshin.features.home.impl.presentation.ui.categories.views.MainCategoryEditorDialog
 import ru.aleshin.features.home.impl.presentation.ui.categories.views.SubCategoriesList
+import ru.aleshin.features.home.impl.presentation.ui.categories.views.SubCategoryEditorDialog
 
 /**
  * @author Stanislav Aleshin on 05.04.2023.
  */
 @Composable
+@OptIn(ExperimentalMaterial3Api::class)
 internal fun CategoriesContent(
-    state: CategoriesViewState,
+    categoriesComponent: CategoriesComponent,
+    modifier: Modifier = Modifier,
+) {
+    val store = categoriesComponent.store
+    val state by store.stateAsState()
+    val scope = rememberCoroutineScope()
+    val snackbarState = remember { SnackbarHostState() }
+    var isShowSubCategoryDialog by rememberSaveable { mutableStateOf(false) }
+    val drawerManager = LocalDrawerManager.current
+    val strings = HomeThemeRes.strings
+
+    Scaffold(
+        modifier = modifier.fillMaxSize(),
+        content = { paddingValues ->
+            BaseCategoriesContent(
+                state = state,
+                modifier = Modifier.padding(paddingValues),
+                onAddMainCategory = { store.dispatchEvent(CategoriesEvent.AddMainCategory(it)) },
+                onAddSubCategory = { isShowSubCategoryDialog = true },
+                onChangeMainCategory = { store.dispatchEvent(CategoriesEvent.ChangeMainCategory(it)) },
+                onMainCategoryUpdate = { store.dispatchEvent(CategoriesEvent.UpdateMainCategory(it)) },
+                onSubCategoryUpdate = { store.dispatchEvent(CategoriesEvent.UpdateSubCategory(it)) },
+                onMainCategoryDelete = { store.dispatchEvent(CategoriesEvent.DeleteMainCategory(it)) },
+                onSubCategoryDelete = { store.dispatchEvent(CategoriesEvent.DeleteSubCategory(it)) },
+                onRestoreDefaultCategories = { store.dispatchEvent(CategoriesEvent.RestoreDefaultCategories) },
+            )
+        },
+        topBar = {
+            CategoriesTopAppBar(
+                onMenuIconClick = { scope.launch { drawerManager?.openDrawer() } },
+            )
+        },
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarState)
+        },
+    )
+
+    val selectedMainCategory = state.selectedMainCategory
+    if (isShowSubCategoryDialog && selectedMainCategory != null) {
+        SubCategoryEditorDialog(
+            mainCategory = selectedMainCategory,
+            onDismiss = { isShowSubCategoryDialog = false },
+            onConfirm = { name ->
+                store.dispatchEvent(CategoriesEvent.AddSubCategory(name, selectedMainCategory))
+                isShowSubCategoryDialog = false
+            },
+        )
+    }
+
+    store.handleEffects { effect ->
+        when (effect) {
+            is CategoriesEffect.ShowError -> snackbarState.showSnackbar(
+                message = effect.failure.mapToMessage(strings),
+            )
+        }
+    }
+}
+
+@Composable
+private fun BaseCategoriesContent(
+    state: CategoriesState,
     modifier: Modifier = Modifier,
     onAddMainCategory: (name: String) -> Unit,
     onAddSubCategory: () -> Unit,
