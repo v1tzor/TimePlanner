@@ -16,6 +16,7 @@
 package ru.aleshin.core.ui.notifications
 
 import android.content.Intent
+import ru.aleshin.core.domain.entities.schedules.TaskNotificationType
 import ru.aleshin.core.domain.entities.template.RepeatTime
 import ru.aleshin.core.ui.models.NotificationTimeType
 import java.util.Date
@@ -29,6 +30,9 @@ interface AlarmReceiverProvider {
         subCategory: String,
         icon: Int?,
         appIcon: Int,
+        notificationId: Int,
+        timeTaskId: Long? = null,
+        taskNotificationType: TaskNotificationType? = null,
         time: Date? = null,
         templateId: Int? = null,
         repeatTime: RepeatTime? = null,

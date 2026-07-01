@@ -19,6 +19,7 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import ru.aleshin.core.domain.entities.categories.MainCategory
 import ru.aleshin.core.domain.entities.categories.SubCategory
 import ru.aleshin.core.domain.entities.schedules.TaskNotificationType
@@ -48,6 +49,7 @@ interface TimeTaskAlarmManager {
         private val context: Context,
         private val receiverProvider: AlarmReceiverProvider,
         private val dateManager: DateManager,
+        private val alarmKeyFactory: AlarmKeyFactory,
     ) : TimeTaskAlarmManager {
 
         private val alarmManager: AlarmManager
@@ -58,30 +60,32 @@ interface TimeTaskAlarmManager {
 
         override fun addOrUpdateNotifyAlarm(timeTask: TimeTask) {
             timeTask.taskNotifications.toTypes(timeTask.isEnableNotification).forEach { type ->
-                val alarmIntent = createAlarmIntent(timeTask.category, timeTask.subCategory, type.toTimeType())
-                val id = timeTask.key + type.idAmount
-                val pendingAlarmIntent = createPendingAlarmIntent(alarmIntent, id.toInt())
+                val id = alarmKeyFactory.fetchTimeTaskAlarmId(timeTask.key, type)
+                val alarmIntent = createAlarmIntent(timeTask.key, timeTask.category, timeTask.subCategory, id, type)
+                val pendingAlarmIntent = createPendingAlarmIntent(alarmIntent, id)
                 val triggerTime = type.fetchNotifyTrigger(timeTask.timeRange).time
                 if (triggerTime > currentTime.time) {
-                    alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerTime, pendingAlarmIntent)
+                    scheduleAlarm(triggerTime, pendingAlarmIntent)
                 }
             }
         }
 
         override fun deleteNotifyAlarm(timeTask: TimeTask) {
             TaskNotificationType.values().forEach { type ->
-                val alarmIntent = createAlarmIntent(timeTask.category, timeTask.subCategory, type.toTimeType())
-                val id = timeTask.key + type.idAmount
-                val pendingAlarmIntent = createPendingAlarmIntent(alarmIntent, id.toInt())
+                val id = alarmKeyFactory.fetchTimeTaskAlarmId(timeTask.key, type)
+                val alarmIntent = createAlarmIntent(timeTask.key, timeTask.category, timeTask.subCategory, id, type)
+                val pendingAlarmIntent = createPendingAlarmIntent(alarmIntent, id)
                 alarmManager.cancel(pendingAlarmIntent)
                 pendingAlarmIntent.cancel()
             }
         }
 
         private fun createAlarmIntent(
+            timeTaskKey: Long,
             category: MainCategory,
             subCategory: SubCategory?,
-            timeType: NotificationTimeType = NotificationTimeType.START_TASK,
+            notificationId: Int,
+            taskNotificationType: TaskNotificationType,
         ): Intent {
             val language = fetchCoreLanguage(context.fetchCurrentLanguage())
             val categoryName = category.let { it.default?.mapToString(fetchCoreStrings(language)) ?: it.customName }
@@ -94,8 +98,31 @@ interface TimeTaskAlarmManager {
                 subCategory = subCategoryName,
                 icon = categoryIcon,
                 appIcon = appIcon,
-                timeType = timeType,
+                notificationId = notificationId,
+                timeTaskId = timeTaskKey,
+                taskNotificationType = taskNotificationType,
+                timeType = taskNotificationType.toTimeType(),
             )
+        }
+
+        private fun scheduleAlarm(
+            triggerTime: Long,
+            pendingAlarmIntent: PendingIntent,
+        ) {
+            try {
+                when {
+                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !alarmManager.canScheduleExactAlarms() -> {
+                        alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerTime, pendingAlarmIntent)
+                    }
+                    else -> {
+                        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerTime, pendingAlarmIntent)
+                    }
+                }
+            } catch (exception: SecurityException) {
+                alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerTime, pendingAlarmIntent)
+            } catch (exception: RuntimeException) {
+                alarmManager.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingAlarmIntent)
+            }
         }
 
         private fun createPendingAlarmIntent(
@@ -105,7 +132,7 @@ interface TimeTaskAlarmManager {
             context,
             requestId,
             alarmIntent,
-            PendingIntent.FLAG_MUTABLE,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
         )
     }
 }

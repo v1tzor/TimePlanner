@@ -15,6 +15,7 @@
  */
 package ru.aleshin.timeplanner.presentation.receiver
 
+import android.app.AlarmManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -22,26 +23,35 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
-import ru.aleshin.core.utils.functional.Constants
 import ru.aleshin.timeplanner.application.fetchApp
 
 /**
- * @author Stanislav Aleshin on 29.03.2023.
+ * @author Stanislav Aleshin on 01.07.2026.
  */
-class TimeTaskAlarmReceiver : BroadcastReceiver() {
+class NotificationRescheduleReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context?, intent: Intent?) {
-        if (intent == null || context == null || intent.action != Constants.Alarm.ALARM_NOTIFICATION_ACTION) return
+        if (context == null || intent?.action !in actions) return
 
         val pendingResult = goAsync()
         CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
             try {
-                context.fetchApp().appComponent.fetchNotificationAlarmHandler().handleAlarm(intent)
+                context.fetchApp().appComponent.fetchNotificationAlarmHandler().rescheduleAll()
             } catch (exception: Exception) {
                 exception.printStackTrace()
             } finally {
                 pendingResult.finish()
             }
         }
+    }
+
+    private companion object {
+        val actions = setOf(
+            Intent.ACTION_BOOT_COMPLETED,
+            Intent.ACTION_MY_PACKAGE_REPLACED,
+            Intent.ACTION_TIME_CHANGED,
+            Intent.ACTION_TIMEZONE_CHANGED,
+            AlarmManager.ACTION_SCHEDULE_EXACT_ALARM_PERMISSION_STATE_CHANGED,
+        )
     }
 }

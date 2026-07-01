@@ -41,6 +41,10 @@ class TimeTaskRepositoryImpl @Inject constructor(
         return timeTasks.map { timeTaskDetails -> timeTaskDetails.mapToDomain() }
     }
 
+    override suspend fun fetchTimeTaskByKey(key: Long): TimeTask? {
+        return localDataSource.fetchTimeTaskByKey(key)?.mapToDomain()
+    }
+
     override suspend fun updateTimeTaskList(timeTaskList: List<TimeTask>) {
         localDataSource.updateTimeTasks(timeTaskList.map { it.mapToData() })
     }

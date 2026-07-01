@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2025 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,10 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 import ru.aleshin.core.ui.theme.tokens.TimePlannerStrings
 import ru.aleshin.core.ui.theme.tokens.fetchCoreLanguage
 import ru.aleshin.core.ui.theme.tokens.fetchCoreStrings
@@ -29,12 +33,14 @@ import ru.aleshin.core.utils.notifications.NotificationCreator
 import ru.aleshin.core.utils.notifications.parameters.NotificationDefaults
 import ru.aleshin.core.utils.notifications.parameters.NotificationImportance
 import ru.aleshin.timeplanner.di.component.AppComponent
+import ru.aleshin.timeplanner.presentation.notifications.NotificationAlarmHandler
 import javax.inject.Inject
+import kotlin.coroutines.CoroutineContext
 
 /**
  * @author Stanislav Aleshin on 14.02.2023.
  */
-class TimePlannerApp : BaseFlavorApplication() {
+class TimePlannerApp : BaseFlavorApplication(), CoroutineScope {
 
     val appComponent by lazy {
         AppComponent.create(applicationContext)
@@ -42,6 +48,11 @@ class TimePlannerApp : BaseFlavorApplication() {
 
     @Inject
     lateinit var notificationCreator: NotificationCreator
+
+    @Inject
+    lateinit var notificationAlarmHandler: NotificationAlarmHandler
+
+    override val coroutineContext: CoroutineContext = SupervisorJob() + Dispatchers.IO
 
     private val coreStrings: TimePlannerStrings
         get() = fetchCoreStrings(fetchCoreLanguage(fetchLocale().language))
@@ -55,6 +66,7 @@ class TimePlannerApp : BaseFlavorApplication() {
             deleteOldChannel()
             createTimeTaskNotifyChannel()
         }
+        rescheduleNotifications()
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -69,6 +81,14 @@ class TimePlannerApp : BaseFlavorApplication() {
     private fun deleteOldChannel() = notificationCreator.deleteNotifyChannel(
         channelId = Constants.Notification.CHANNEL_ID,
     )
+
+    private fun rescheduleNotifications() = launch {
+        try {
+            notificationAlarmHandler.rescheduleAll()
+        } catch (exception: Exception) {
+            exception.printStackTrace()
+        }
+    }
 }
 
 fun Context.fetchApp(): TimePlannerApp {

@@ -587,6 +587,10 @@ private class FakeTimeTaskRepository : TimeTaskRepository {
         }
     }
 
+    override suspend fun fetchTimeTaskByKey(key: Long): TimeTask? {
+        return timeTasksList.find { timeTask -> timeTask.key == key }
+    }
+
     override suspend fun updateTimeTaskList(timeTaskList: List<TimeTask>) {
         updateTaskCount++
         if (!errorWhileAction) {

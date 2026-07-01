@@ -20,6 +20,7 @@ import androidx.room.*
 import kotlinx.coroutines.flow.Flow
 import ru.aleshin.core.data.models.schedules.DailyScheduleEntity
 import ru.aleshin.core.data.models.schedules.ScheduleDetails
+import ru.aleshin.core.data.models.tasks.TimeTaskDetails
 import ru.aleshin.core.data.models.tasks.TimeTaskEntity
 
 /**
@@ -39,6 +40,10 @@ interface SchedulesDao {
     @Transaction
     @Query("SELECT * FROM dailySchedules WHERE date = :date")
     fun fetchDailyScheduleByDate(date: Long): Flow<ScheduleDetails?>
+
+    @Transaction
+    @Query("SELECT * FROM timeTasks WHERE key = :key")
+    suspend fun fetchTimeTaskByKey(key: Long): TimeTaskDetails?
 
     @Update
     suspend fun updateDailySchedules(schedules: List<DailyScheduleEntity>)

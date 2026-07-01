@@ -17,6 +17,7 @@ package ru.aleshin.timeplanner.presentation.receiver
 
 import android.content.Context
 import android.content.Intent
+import ru.aleshin.core.domain.entities.schedules.TaskNotificationType
 import ru.aleshin.core.domain.entities.template.RepeatTime
 import ru.aleshin.core.ui.models.NotificationTimeType
 import ru.aleshin.core.ui.notifications.AlarmReceiverProvider
@@ -36,6 +37,9 @@ class AlarmReceiverProviderImpl @Inject constructor(
         subCategory: String,
         icon: Int?,
         appIcon: Int,
+        notificationId: Int,
+        timeTaskId: Long?,
+        taskNotificationType: TaskNotificationType?,
         time: Date?,
         templateId: Int?,
         repeatTime: RepeatTime?,
@@ -46,7 +50,10 @@ class AlarmReceiverProviderImpl @Inject constructor(
         putExtra(Constants.Alarm.NOTIFICATION_CATEGORY, category)
         putExtra(Constants.Alarm.NOTIFICATION_SUBCATEGORY, subCategory)
         putExtra(Constants.Alarm.NOTIFICATION_ICON, icon)
+        putExtra(Constants.Alarm.NOTIFICATION_ID, notificationId)
         putExtra(Constants.Alarm.APP_ICON, appIcon)
+        if (timeTaskId != null) putExtra(Constants.Alarm.TIME_TASK_ID, timeTaskId)
+        if (taskNotificationType != null) putExtra(Constants.Alarm.TIME_TASK_NOTIFICATION_TYPE, taskNotificationType.name)
         if (time != null) putExtra(Constants.Alarm.REPEAT_TIME, time.time)
         if (repeatTime != null) putExtra(Constants.Alarm.REPEAT_TYPE, repeatTime.repeatType.name)
         if (templateId != null) putExtra(Constants.Alarm.TEMPLATE_ID, templateId)

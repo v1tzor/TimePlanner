@@ -115,6 +115,10 @@ private class FakeTimeTaskRepository : TimeTaskRepository {
         return timeTasksList
     }
 
+    override suspend fun fetchTimeTaskByKey(key: Long): TimeTask? {
+        return timeTasksList.find { timeTask -> timeTask.key == key }
+    }
+
     override suspend fun updateTimeTaskList(timeTaskList: List<TimeTask>) {
         timeTaskList.forEach { timeTask ->
             val index = timeTasksList.indexOfFirst { it.key == timeTask.key }

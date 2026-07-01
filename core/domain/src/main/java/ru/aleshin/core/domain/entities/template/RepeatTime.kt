@@ -87,6 +87,18 @@ sealed class RepeatTime : Parcelable {
         is YearDay -> date.fetchDayNumberByMax(dayNumber) == dayNumber && date.fetchMonth() == month
     }
 
+    fun nextDateOrCurrent(startTime: Date, current: Date = Date()): Date {
+        val currentDate = Calendar.getInstance().apply {
+            time = current
+            setTimeWithoutDate(startTime)
+        }.time
+        return if (checkDateIsRepeat(currentDate) && currentDate > current) {
+            currentDate
+        } else {
+            nextDate(startTime, current)
+        }
+    }
+
     fun nextDate(startTime: Date, current: Date = Date()): Date {
         val calendar = Calendar.getInstance()
         val firstDay = calendar.firstDayOfWeek

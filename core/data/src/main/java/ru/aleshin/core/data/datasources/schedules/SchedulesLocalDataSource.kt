@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import ru.aleshin.core.data.models.schedules.DailyScheduleEntity
 import ru.aleshin.core.data.models.schedules.ScheduleDetails
+import ru.aleshin.core.data.models.tasks.TimeTaskDetails
 import ru.aleshin.core.data.models.tasks.TimeTaskEntity
 import ru.aleshin.core.utils.functional.TimeRange
 import javax.inject.Inject
@@ -31,6 +32,7 @@ interface SchedulesLocalDataSource {
     suspend fun addSchedules(schedules: List<DailyScheduleEntity>, timeTasks: List<TimeTaskEntity>)
     suspend fun addTimeTasks(tasks: List<TimeTaskEntity>)
     fun fetchScheduleByDate(date: Long): Flow<ScheduleDetails?>
+    suspend fun fetchTimeTaskByKey(key: Long): TimeTaskDetails?
     suspend fun fetchScheduleByRange(timeRange: TimeRange?): Flow<List<ScheduleDetails>>
     suspend fun updateTimeTasks(timeTasks: List<TimeTaskEntity>)
     suspend fun removeDailySchedule(schedule: DailyScheduleEntity)
@@ -55,6 +57,10 @@ interface SchedulesLocalDataSource {
 
         override fun fetchScheduleByDate(date: Long): Flow<ScheduleDetails?> {
             return scheduleDao.fetchDailyScheduleByDate(date)
+        }
+
+        override suspend fun fetchTimeTaskByKey(key: Long): TimeTaskDetails? {
+            return scheduleDao.fetchTimeTaskByKey(key)
         }
 
         override suspend fun fetchScheduleByRange(timeRange: TimeRange?): Flow<List<ScheduleDetails>> {

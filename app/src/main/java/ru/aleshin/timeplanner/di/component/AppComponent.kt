@@ -33,6 +33,7 @@ import ru.aleshin.timeplanner.di.modules.FeatureModule
 import ru.aleshin.timeplanner.di.modules.PresentationModule
 import ru.aleshin.timeplanner.domain.interactors.SettingsInteractor
 import ru.aleshin.timeplanner.domain.interactors.TimeTaskInteractor
+import ru.aleshin.timeplanner.presentation.notifications.NotificationAlarmHandler
 import ru.aleshin.timeplanner.presentation.ui.main.MainActivity
 import javax.inject.Singleton
 
@@ -60,6 +61,7 @@ interface AppComponent :
 
     fun fetchTimeTaskInteractor(): TimeTaskInteractor
     fun fetchSettingsInteractor(): SettingsInteractor
+    fun fetchNotificationAlarmHandler(): NotificationAlarmHandler
     fun inject(activity: MainActivity)
     fun inject(application: TimePlannerApp)
 

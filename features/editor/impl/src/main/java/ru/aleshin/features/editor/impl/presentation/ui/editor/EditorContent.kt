@@ -15,7 +15,6 @@
  */
 package ru.aleshin.features.editor.impl.presentation.ui.editor
 
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.fadeIn
@@ -139,7 +138,6 @@ internal fun EditorContent(
                         timeRanges = state.editModel.timeRange,
                         duration = state.editModel.duration,
                         onTimeRangeChange = {
-                            Log.i("test", "old: ${state.editModel.timeRange} | new -> $it")
                             onTimeRangeChange(it)
                         },
                     )

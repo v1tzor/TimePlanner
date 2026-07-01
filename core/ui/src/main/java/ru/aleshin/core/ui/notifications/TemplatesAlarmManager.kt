@@ -19,6 +19,7 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import ru.aleshin.core.domain.entities.template.RepeatTime
 import ru.aleshin.core.domain.entities.template.Template
 import ru.aleshin.core.ui.mappers.mapToIcon
@@ -30,6 +31,7 @@ import ru.aleshin.core.ui.theme.tokens.fetchCoreIcons
 import ru.aleshin.core.ui.theme.tokens.fetchCoreLanguage
 import ru.aleshin.core.ui.theme.tokens.fetchCoreStrings
 import ru.aleshin.core.utils.extensions.fetchCurrentLanguage
+import ru.aleshin.core.utils.managers.DateManager
 import java.util.Date
 import javax.inject.Inject
 
@@ -54,6 +56,8 @@ interface TemplatesAlarmManager {
     class Base @Inject constructor(
         private val context: Context,
         private val receiverProvider: AlarmReceiverProvider,
+        private val dateManager: DateManager,
+        private val alarmKeyFactory: AlarmKeyFactory,
     ) : TemplatesAlarmManager {
 
         private val alarmManager: AlarmManager
@@ -84,30 +88,32 @@ interface TemplatesAlarmManager {
             subCategory: String?,
             icon: Int?,
         ) {
-            val id = templateId + repeatTime.key
+            val id = alarmKeyFactory.fetchTemplateAlarmId(templateId, repeatTime, timeType)
             val alarmIntent = receiverProvider.provideReceiverIntent(
                 category = category,
                 subCategory = subCategory.orEmpty(),
                 icon = icon,
                 appIcon = fetchCoreIcons().logo,
+                notificationId = id,
                 time = time,
                 templateId = templateId,
                 repeatTime = repeatTime,
                 timeType = timeType,
             )
             val pendingAlarmIntent = createPendingAlarmIntent(alarmIntent, id)
-            val triggerTime = repeatTime.nextDate(time)
+            val triggerTime = repeatTime.nextDateOrCurrent(time, dateManager.fetchCurrentDate())
 
-            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerTime.time, pendingAlarmIntent)
+            scheduleAlarm(triggerTime.time, pendingAlarmIntent)
         }
 
         override fun deleteNotifyAlarm(template: Template, repeatTime: RepeatTime) {
-            val id = template.templateId + repeatTime.key
+            val id = alarmKeyFactory.fetchTemplateAlarmId(template.templateId, repeatTime, NotificationTimeType.START_TASK)
             val alarmIntent = receiverProvider.provideReceiverIntent(
                 category = template.category.let { it.default?.mapToString(coreString) ?: it.customName } ?: "",
                 subCategory = template.subCategory?.name.orEmpty(),
                 icon = template.category.default?.mapToIcon(coreIcons),
                 appIcon = fetchCoreIcons().logo,
+                notificationId = id,
                 time = template.startTime,
                 templateId = template.templateId,
                 repeatTime = repeatTime,
@@ -119,6 +125,26 @@ interface TemplatesAlarmManager {
             pendingAlarmIntent.cancel()
         }
 
+        private fun scheduleAlarm(
+            triggerTime: Long,
+            pendingAlarmIntent: PendingIntent,
+        ) {
+            try {
+                when {
+                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !alarmManager.canScheduleExactAlarms() -> {
+                        alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerTime, pendingAlarmIntent)
+                    }
+                    else -> {
+                        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerTime, pendingAlarmIntent)
+                    }
+                }
+            } catch (exception: SecurityException) {
+                alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerTime, pendingAlarmIntent)
+            } catch (exception: RuntimeException) {
+                alarmManager.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingAlarmIntent)
+            }
+        }
+
         private fun createPendingAlarmIntent(
             alarmIntent: Intent,
             requestId: Int,
@@ -126,7 +152,7 @@ interface TemplatesAlarmManager {
             context,
             requestId,
             alarmIntent,
-            PendingIntent.FLAG_MUTABLE,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
         )
     }
 }
