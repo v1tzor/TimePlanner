@@ -324,6 +324,58 @@ internal class TimeTaskInteractorTest {
     }
 
     @Test
+    fun test_add_time_task_with_same_end_nested_overlay() = runBlocking {
+        val calendar = Calendar.getInstance().apply { setStartDay() }
+        val fakeTime = calendar.time
+
+        scheduleRepository.scheduleList.add(
+            Schedule(
+                date = fakeTime.time,
+                status = DailyScheduleStatus.ACCOMPLISHMENT,
+                timeTasks = listOf(
+                    TimeTask(
+                        key = 100L,
+                        date = fakeTime,
+                        timeRange = TimeRange(from = fakeTime.shiftMinutes(540), to = fakeTime.shiftMinutes(1020)),
+                        category = MainCategory(),
+                    ),
+                )
+            )
+        )
+        timeTaskRepository.timeTasksList.add(
+            TimeTask(
+                key = 100L,
+                date = fakeTime,
+                timeRange = TimeRange(from = fakeTime.shiftMinutes(540), to = fakeTime.shiftMinutes(1020)),
+                category = MainCategory(),
+            ),
+        )
+
+        val fakeTask = TimeTask(
+            key = 0L,
+            date = fakeTime,
+            timeRange = TimeRange(from = fakeTime.shiftMinutes(900), to = fakeTime.shiftMinutes(1020)),
+            category = MainCategory(),
+        )
+
+        val actual = timeTaskInteractor.addTimeTask(fakeTask)
+        val expected = EditorFailures.TimeOverlayError(
+            startOverlay = fakeTime.shiftMinutes(1020),
+            endOverlay = null,
+        )
+
+        assertEquals(true, actual.isLeft)
+        assertEquals(expected, (actual as Either.Left).data)
+
+        assertEquals(0, timeTaskRepository.addedTaskCount)
+        assertEquals(1, scheduleRepository.fetchSchedulesCount)
+        assertEquals(0, scheduleRepository.createdScheduleCount)
+
+        assertEquals(1, timeTaskRepository.timeTasksList.size)
+        assertEquals(1, scheduleRepository.scheduleList[0].timeTasks.size)
+    }
+
+    @Test
     fun test_update_time_task() = runBlocking {
         val calendar = Calendar.getInstance().apply { setStartDay() }
         val fakeTime = calendar.time

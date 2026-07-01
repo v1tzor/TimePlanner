@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2025 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import ru.aleshin.core.domain.repository.TimeTaskRepository
 import ru.aleshin.core.utils.extensions.generateUniqueKey
 import ru.aleshin.core.utils.extensions.mapToDate
 import ru.aleshin.core.utils.extensions.startThisDay
-import ru.aleshin.core.utils.functional.Either
+import ru.aleshin.core.utils.functional.DomainResult
 import ru.aleshin.core.utils.managers.DateManager
 import ru.aleshin.core.utils.managers.TimeOverlayManager
 import ru.aleshin.features.home.impl.domain.common.HomeEitherWrapper
@@ -39,18 +39,9 @@ import javax.inject.Inject
  */
 internal interface RepeatTaskInteractor {
 
-    suspend fun updateRepeatTemplate(
-        oldTemplate: Template,
-        template: Template,
-    ): Either<HomeFailures, List<TimeTask>>
-    suspend fun addRepeatsTemplate(
-        template: Template,
-        repeatTimes: List<RepeatTime>,
-    ): Either<HomeFailures, List<TimeTask>>
-    suspend fun deleteRepeatsTemplates(
-        template: Template, 
-        repeatTimes: List<RepeatTime>,
-    ): Either<HomeFailures, List<TimeTask>>
+    suspend fun updateRepeatTemplate(oldTemplate: Template, template: Template): DomainResult<HomeFailures, List<TimeTask>>
+    suspend fun addRepeatsTemplate(template: Template, repeatTimes: List<RepeatTime>): DomainResult<HomeFailures, List<TimeTask>>
+    suspend fun deleteRepeatsTemplates(template: Template, repeatTimes: List<RepeatTime>): DomainResult<HomeFailures, List<TimeTask>>
 
     class Base @Inject constructor(
         private val timeTaskRepository: TimeTaskRepository,
@@ -108,7 +99,7 @@ internal interface RepeatTaskInteractor {
         private suspend fun filteredSchedules(): List<Schedule> {
             val currentDate = dateManager.fetchBeginningCurrentDay()
             return scheduleRepository.fetchSchedulesByRange(null).first().filter { schedule ->
-                schedule.date > currentDate.time 
+                schedule.date >= currentDate.time
             }
         }
 

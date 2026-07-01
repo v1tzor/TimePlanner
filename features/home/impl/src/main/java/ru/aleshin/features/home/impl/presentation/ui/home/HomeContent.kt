@@ -74,7 +74,6 @@ import ru.aleshin.core.utils.architecture.store.compose.handleEffects
 import ru.aleshin.core.utils.architecture.store.compose.stateAsState
 import ru.aleshin.core.utils.extensions.endThisDay
 import ru.aleshin.core.utils.extensions.isCurrentDay
-import ru.aleshin.core.utils.extensions.isNotZeroDifference
 import ru.aleshin.core.utils.extensions.shiftDay
 import ru.aleshin.core.utils.managers.LocalDrawerManager
 import ru.aleshin.features.home.impl.presentation.mapppers.mapToMessage
@@ -339,7 +338,7 @@ internal fun TimeTasksSection(
                     isCompactView = remember(nextItem, isCompactView) {
                         isCompactView &&
                                 nextItem != null &&
-                                timeTask.endTime.isNotZeroDifference(nextItem.startTime)
+                                timeTask.endTime < nextItem.startTime
                     }
                 )
                 AnimatedVisibility(
@@ -347,7 +346,7 @@ internal fun TimeTasksSection(
                     exit = shrinkVertically() + fadeOut(),
                     visible = remember(nextItem, isCompactView) {
                         nextItem != null &&
-                                timeTask.endTime.isNotZeroDifference(nextItem.startTime) &&
+                                timeTask.endTime < nextItem.startTime &&
                                 !isCompactView
                     },
                 ) {
