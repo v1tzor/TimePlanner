@@ -23,7 +23,7 @@ import ru.aleshin.core.utils.architecture.store.work.WorkProcessor
 import ru.aleshin.core.utils.architecture.store.work.WorkResult
 import ru.aleshin.core.utils.functional.TimeRange
 import ru.aleshin.core.utils.functional.rightOrElse
-import ru.aleshin.features.editor.api.EditorFeatureComponent.EditorConfig
+import ru.aleshin.features.editor.api.EditorConfig
 import ru.aleshin.features.home.impl.domain.interactors.TemplatesInteractor
 import ru.aleshin.features.home.impl.presentation.mapppers.schedules.mapToDomain
 import ru.aleshin.features.home.impl.presentation.models.schedules.TimeTaskUi

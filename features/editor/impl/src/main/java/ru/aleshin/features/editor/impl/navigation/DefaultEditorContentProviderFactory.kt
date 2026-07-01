@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2025 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,32 +17,35 @@ package ru.aleshin.features.editor.impl.navigation
 
 import com.arkivanov.decompose.ComponentContext
 import ru.aleshin.core.utils.architecture.component.OutputConsumer
+import ru.aleshin.core.utils.inject.FeatureContentProvider
 import ru.aleshin.core.utils.inject.StartFeatureConfig
-import ru.aleshin.features.editor.api.EditorFeatureComponent
-import ru.aleshin.features.editor.api.EditorFeatureComponent.EditorConfig
-import ru.aleshin.features.editor.api.EditorFeatureComponent.EditorOutput
-import ru.aleshin.features.editor.api.EditorFeatureComponentFactory
+import ru.aleshin.features.editor.api.EditorConfig
+import ru.aleshin.features.editor.api.EditorContentProviderFactory
+import ru.aleshin.features.editor.api.EditorOutput
+import ru.aleshin.features.editor.impl.presentation.ui.editor.EditorContentProvider
 import ru.aleshin.features.editor.impl.presentation.ui.editor.store.EditorComposeStore
 import ru.aleshin.features.editor.impl.presentation.ui.editor.store.InternalEditorFeatureComponent
 import javax.inject.Inject
 
 /**
- * @author Stanislav Aleshin on 13.09.2025.
+ * @author Stanislav Aleshin on 01.07.2026.
  */
-internal class DefaultEditorComponentFactory @Inject constructor(
+internal class DefaultEditorContentProviderFactory @Inject constructor(
     private val editorStoreFactory: EditorComposeStore.Factory,
-) : EditorFeatureComponentFactory {
+) : EditorContentProviderFactory {
 
-    override fun createComponent(
+    override fun createProvider(
         componentContext: ComponentContext,
         startConfig: StartFeatureConfig<EditorConfig>,
         outputConsumer: OutputConsumer<EditorOutput>
-    ): EditorFeatureComponent {
-        return InternalEditorFeatureComponent.Default(
+    ): FeatureContentProvider {
+        val component = InternalEditorFeatureComponent.Default(
             componentContext = componentContext,
             startConfig = startConfig,
             outputConsumer = outputConsumer,
             editorStoreFactory = editorStoreFactory,
         )
+
+        return EditorContentProvider(editorComponent = component)
     }
 }

@@ -17,18 +17,18 @@ package ru.aleshin.timeplanner.di.modules
 
 import dagger.Module
 import dagger.Provides
-import ru.aleshin.features.analytics.api.AnalyticsFeatureStarter
+import ru.aleshin.features.analytics.api.AnalyticsDecomposeFeatureFactory
 import ru.aleshin.features.analytics.impl.di.AnalyticsFeatureDependencies
-import ru.aleshin.features.analytics.impl.navigation.DefaultAnalyticsFeatureStarter
-import ru.aleshin.features.editor.api.EditorFeatureStarter
+import ru.aleshin.features.analytics.impl.navigation.DefaultAnalyticsFeatureFactory
+import ru.aleshin.features.editor.api.EditorDecomposeFeatureFactory
 import ru.aleshin.features.editor.impl.di.EditorFeatureDependencies
-import ru.aleshin.features.editor.impl.navigation.DefaultEditorFeatureStarter
-import ru.aleshin.features.home.api.HomeFeatureStarter
+import ru.aleshin.features.editor.impl.navigation.DefaultEditorFeatureFactory
+import ru.aleshin.features.home.api.HomeDecomposeFeatureFactory
 import ru.aleshin.features.home.impl.di.HomeFeatureDependencies
-import ru.aleshin.features.home.impl.navigation.DefaultHomeFeatureStarter
-import ru.aleshin.features.settings.api.SettingsFeatureStarter
+import ru.aleshin.features.home.impl.navigation.DefaultHomeFeatureFactory
+import ru.aleshin.features.settings.api.SettingsDecomposeFeatureFactory
 import ru.aleshin.features.settings.impl.di.SettingsFeatureDependencies
-import ru.aleshin.features.settings.impl.navigation.DefaultSettingsFeatureStarter
+import ru.aleshin.features.settings.impl.navigation.DefaultSettingsFeatureFactory
 import javax.inject.Provider
 
 /**
@@ -38,37 +38,37 @@ import javax.inject.Provider
 class FeatureModule {
 
     @Provides
-    fun provideHomeFeatureStarter(
+    fun provideHomeFeatureFactory(
         dependencies: Provider<HomeFeatureDependencies>,
-    ): HomeFeatureStarter {
-        return DefaultHomeFeatureStarter(
+    ): HomeDecomposeFeatureFactory {
+        return DefaultHomeFeatureFactory(
             dependenciesFactory = { dependencies.get() }
         )
     }
 
     @Provides
-    fun provideAnalyticsFeatureStarter(
+    fun provideAnalyticsFeatureFactory(
         dependencies: Provider<AnalyticsFeatureDependencies>,
-    ): AnalyticsFeatureStarter {
-        return DefaultAnalyticsFeatureStarter(
+    ): AnalyticsDecomposeFeatureFactory {
+        return DefaultAnalyticsFeatureFactory(
             dependenciesFactory = { dependencies.get() }
         )
     }
 
     @Provides
-    fun provideEditorFeatureStarter(
+    fun provideEditorFeatureFactory(
         dependencies: Provider<EditorFeatureDependencies>,
-    ): EditorFeatureStarter {
-        return DefaultEditorFeatureStarter(
+    ): EditorDecomposeFeatureFactory {
+        return DefaultEditorFeatureFactory(
             dependenciesFactory = { dependencies.get() }
         )
     }
 
     @Provides
-    fun provideSettingsFeatureStarter(
+    fun provideSettingsFeatureFactory(
         dependencies: Provider<SettingsFeatureDependencies>,
-    ): SettingsFeatureStarter {
-        return DefaultSettingsFeatureStarter(
+    ): SettingsDecomposeFeatureFactory {
+        return DefaultSettingsFeatureFactory(
             dependenciesFactory = { dependencies.get() }
         )
     }

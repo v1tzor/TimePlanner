@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2025 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ package ru.aleshin.core.utils.architecture.component
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.essenty.instancekeeper.InstanceKeeper
 import com.arkivanov.essenty.instancekeeper.getOrCreate
-import ru.aleshin.core.utils.inject.FeatureContentProvider
 import ru.aleshin.core.utils.inject.StartFeatureConfig
 
 /**
@@ -29,11 +28,13 @@ abstract class BaseComponent(
     componentContext: ComponentContext
 ) : ComponentContext by componentContext {
 
-    private val componentDestroyer = instanceKeeper.getOrCreate(key = this.toString()) {
-        object : InstanceKeeper.Instance {
-            override fun onDestroy() {
-                super.onDestroy()
-                onDestroyInstance()
+    init {
+        instanceKeeper.getOrCreate(key = this.toString()) {
+            object : InstanceKeeper.Instance {
+                override fun onDestroy() {
+                    super.onDestroy()
+                    onDestroyInstance()
+                }
             }
         }
     }
@@ -50,8 +51,5 @@ abstract class FeatureComponent<C, O : BaseOutput>(
     protected val startConfig: StartFeatureConfig<C>,
     protected val outputConsumer: OutputConsumer<O>,
 ) : BaseComponent(componentContext) {
-
-    abstract val contentProvider: FeatureContentProvider
-
     abstract fun navigateToBack()
 }

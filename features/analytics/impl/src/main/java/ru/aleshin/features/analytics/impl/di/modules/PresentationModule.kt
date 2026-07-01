@@ -19,8 +19,8 @@ import dagger.Binds
 import dagger.Module
 import ru.aleshin.core.utils.architecture.store.BaseOnlyOutComposeStore
 import ru.aleshin.core.utils.di.FeatureScope
-import ru.aleshin.features.analytics.api.AnalyticsFeatureComponentFactory
-import ru.aleshin.features.analytics.impl.navigation.DefaultAnalyticsComponentFactory
+import ru.aleshin.features.analytics.api.AnalyticsContentProviderFactory
+import ru.aleshin.features.analytics.impl.navigation.DefaultAnalyticsContentProviderFactory
 import ru.aleshin.features.analytics.impl.presenatiton.ui.contract.AnalyticsState
 import ru.aleshin.features.analytics.impl.presenatiton.ui.store.AnalyticsComposeStore
 import ru.aleshin.features.analytics.impl.presenatiton.ui.store.AnalyticsWorkProcessor
@@ -33,7 +33,7 @@ internal interface PresentationModule {
 
     @Binds
     @FeatureScope
-    fun bindAnalyticsComponentFactory(factory: DefaultAnalyticsComponentFactory): AnalyticsFeatureComponentFactory
+    fun bindAnalyticsContentProviderFactory(factory: DefaultAnalyticsContentProviderFactory): AnalyticsContentProviderFactory
 
     @Binds
     @FeatureScope

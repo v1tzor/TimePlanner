@@ -26,7 +26,7 @@ import ru.aleshin.core.utils.architecture.store.contract.StoreAction
 import ru.aleshin.core.utils.architecture.store.contract.StoreEffect
 import ru.aleshin.core.utils.architecture.store.contract.StoreEvent
 import ru.aleshin.core.utils.architecture.store.contract.StoreState
-import ru.aleshin.features.editor.api.EditorFeatureComponent.EditorConfig
+import ru.aleshin.features.editor.api.EditorConfig
 
 /**
  * @author Stanislav Aleshin on 14.02.2023.

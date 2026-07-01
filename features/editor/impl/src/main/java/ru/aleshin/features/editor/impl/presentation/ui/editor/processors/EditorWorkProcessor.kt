@@ -22,7 +22,7 @@ import ru.aleshin.core.utils.architecture.store.work.WorkProcessor
 import ru.aleshin.core.utils.architecture.store.work.WorkResult
 import ru.aleshin.core.utils.functional.Either
 import ru.aleshin.core.utils.functional.rightOrElse
-import ru.aleshin.features.editor.api.EditorFeatureComponent.EditorOutput
+import ru.aleshin.features.editor.api.EditorOutput
 import ru.aleshin.features.editor.impl.domain.common.convertToEditModel
 import ru.aleshin.features.editor.impl.domain.common.convertToTemplate
 import ru.aleshin.features.editor.impl.domain.interactors.CategoriesInteractor

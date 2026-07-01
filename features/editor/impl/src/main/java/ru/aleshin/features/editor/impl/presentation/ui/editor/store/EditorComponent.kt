@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2025 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,12 +17,12 @@ package ru.aleshin.features.editor.impl.presentation.ui.editor.store
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.essenty.backhandler.BackCallback
+import ru.aleshin.core.utils.architecture.component.FeatureComponent
 import ru.aleshin.core.utils.architecture.component.OutputConsumer
 import ru.aleshin.core.utils.architecture.component.saveableStore
 import ru.aleshin.core.utils.inject.StartFeatureConfig
-import ru.aleshin.features.editor.api.EditorFeatureComponent
-import ru.aleshin.features.editor.impl.di.holder.EditorFeatureManager
-import ru.aleshin.features.editor.impl.presentation.ui.editor.EditorContentProvider
+import ru.aleshin.features.editor.api.EditorConfig
+import ru.aleshin.features.editor.api.EditorOutput
 import ru.aleshin.features.editor.impl.presentation.ui.editor.contract.EditorInput
 import ru.aleshin.features.editor.impl.presentation.ui.editor.contract.EditorState
 
@@ -33,7 +33,7 @@ internal abstract class InternalEditorFeatureComponent(
     componentContext: ComponentContext,
     startConfig: StartFeatureConfig<EditorConfig>,
     outputConsumer: OutputConsumer<EditorOutput>,
-) : EditorFeatureComponent(
+) : FeatureComponent<EditorConfig, EditorOutput>(
     componentContext = componentContext,
     startConfig = startConfig,
     outputConsumer = outputConsumer,
@@ -51,8 +51,6 @@ internal abstract class InternalEditorFeatureComponent(
         startConfig = startConfig,
         outputConsumer = outputConsumer,
     ) {
-
-        override val contentProvider = EditorContentProvider(this)
 
         override val store by saveableStore(
             storeFactory = editorStoreFactory,
@@ -84,8 +82,5 @@ internal abstract class InternalEditorFeatureComponent(
             outputConsumer.consume(EditorOutput.NavigateToBack)
         }
 
-        override fun onDestroyInstance() {
-            EditorFeatureManager.finish()
-        }
     }
 }

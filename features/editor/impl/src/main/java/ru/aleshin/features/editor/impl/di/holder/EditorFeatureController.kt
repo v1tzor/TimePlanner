@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,25 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package ru.aleshin.features.editor.impl.di.holder
 
-package ru.aleshin.core.utils.inject
+import ru.aleshin.core.utils.inject.BaseFeatureController
+import ru.aleshin.features.editor.api.EditorFeatureApi
+import ru.aleshin.features.editor.impl.di.component.EditorComponent
 
 /**
- * @author Stanislav Aleshin on 14.04.2024.
+ * @author Stanislav Aleshin on 01.07.2026.
  */
-interface BaseFeatureManager<A : BaseFeatureApi, D : BaseFeatureDependencies> {
-
-    /**
-     * Allows get API for this features if DI graph is initialize.
-     *
-     * @param dependencies needed for the features to work
-     *
-     * @return [A] API for working with features
-     */
-    fun createOrGetFeature(dependencies: D): A
-
-    /**
-     * Deleting the internal DI graph to close feature.
-     */
-    fun finish()
-}
+internal class EditorFeatureController(
+    component: EditorComponent,
+) : BaseFeatureController<EditorFeatureApi, EditorComponent>(component = component)

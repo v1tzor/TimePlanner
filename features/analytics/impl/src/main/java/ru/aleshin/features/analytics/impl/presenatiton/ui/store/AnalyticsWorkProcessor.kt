@@ -28,7 +28,7 @@ import ru.aleshin.core.utils.functional.TimePeriod
 import ru.aleshin.core.utils.functional.collectAndHandle
 import ru.aleshin.core.utils.functional.handle
 import ru.aleshin.core.utils.functional.rightOrError
-import ru.aleshin.features.analytics.api.AnalyticsFeatureComponent.AnalyticsOutput
+import ru.aleshin.features.analytics.api.AnalyticsOutput
 import ru.aleshin.features.analytics.impl.domain.interactors.AnalyticsInteractor
 import ru.aleshin.features.analytics.impl.domain.interactors.SettingsInteractor
 import ru.aleshin.features.analytics.impl.presenatiton.mappers.mapToUi

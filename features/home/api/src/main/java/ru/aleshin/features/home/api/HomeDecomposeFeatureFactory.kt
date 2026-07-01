@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,13 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ru.aleshin.features.settings.api
+package ru.aleshin.features.home.api
 
-import ru.aleshin.core.utils.inject.FeatureComponentFactory
-import ru.aleshin.features.settings.api.SettingsFeatureComponent.SettingsConfig
-import ru.aleshin.features.settings.api.SettingsFeatureComponent.SettingsOutput
+import ru.aleshin.core.utils.inject.DecomposeFeatureFactory
 
 /**
- * @author Stanislav Aleshin on 12.09.2025.
+ * @author Stanislav Aleshin on 01.07.2026.
  */
-public interface SettingsFeatureComponentFactory : FeatureComponentFactory<SettingsFeatureComponent, SettingsConfig, SettingsOutput>
+public interface HomeDecomposeFeatureFactory : DecomposeFeatureFactory<HomeFeatureApi>

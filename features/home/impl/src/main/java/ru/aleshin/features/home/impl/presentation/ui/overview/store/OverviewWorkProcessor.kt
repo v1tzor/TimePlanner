@@ -30,7 +30,7 @@ import ru.aleshin.core.utils.functional.TimeRange
 import ru.aleshin.core.utils.functional.collectAndHandle
 import ru.aleshin.core.utils.functional.handle
 import ru.aleshin.core.utils.managers.DateManager
-import ru.aleshin.features.editor.api.EditorFeatureComponent.EditorConfig
+import ru.aleshin.features.editor.api.EditorConfig
 import ru.aleshin.features.home.impl.domain.interactors.CategoriesInteractor
 import ru.aleshin.features.home.impl.domain.interactors.ScheduleInteractor
 import ru.aleshin.features.home.impl.domain.interactors.UndefinedTasksInteractor

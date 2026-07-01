@@ -19,8 +19,8 @@ import dagger.Binds
 import dagger.Module
 import ru.aleshin.core.utils.architecture.store.BaseComposeStore
 import ru.aleshin.core.utils.di.FeatureScope
-import ru.aleshin.features.editor.api.EditorFeatureComponentFactory
-import ru.aleshin.features.editor.impl.navigation.DefaultEditorComponentFactory
+import ru.aleshin.features.editor.api.EditorContentProviderFactory
+import ru.aleshin.features.editor.impl.navigation.DefaultEditorContentProviderFactory
 import ru.aleshin.features.editor.impl.presentation.ui.editor.contract.EditorState
 import ru.aleshin.features.editor.impl.presentation.ui.editor.processors.EditorWorkProcessor
 import ru.aleshin.features.editor.impl.presentation.ui.editor.processors.TimeTaskWorkProcessor
@@ -36,7 +36,7 @@ internal interface PresentationModule {
 
     @Binds
     @FeatureScope
-    fun bindEditorComponentFactory(factory: DefaultEditorComponentFactory): EditorFeatureComponentFactory
+    fun bindEditorContentProviderFactory(factory: DefaultEditorContentProviderFactory): EditorContentProviderFactory
 
     @Binds
     @FeatureScope

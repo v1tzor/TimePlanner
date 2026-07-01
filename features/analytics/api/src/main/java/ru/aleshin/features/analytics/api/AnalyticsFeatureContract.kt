@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,11 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ru.aleshin.features.settings.api
+package ru.aleshin.features.analytics.api
 
-import ru.aleshin.core.utils.inject.BaseFeatureStarter
+import kotlinx.serialization.Serializable
+import ru.aleshin.core.utils.architecture.component.BaseOutput
 
 /**
- * @author Stanislav Aleshin on 12.09.2025.
+ * @author Stanislav Aleshin on 01.07.2026.
  */
-public interface SettingsFeatureStarter : BaseFeatureStarter<SettingsFeatureApi>
+@Serializable
+public sealed interface AnalyticsConfig {
+
+    @Serializable
+    public data object Analytics : AnalyticsConfig
+}
+
+/**
+ * @author Stanislav Aleshin on 01.07.2026.
+ */
+public sealed interface AnalyticsOutput : BaseOutput {
+    public data object NavigateToBack : AnalyticsOutput
+}

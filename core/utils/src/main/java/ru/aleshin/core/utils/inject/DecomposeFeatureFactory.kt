@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ru.aleshin.features.analytics.api
 
-import ru.aleshin.core.utils.inject.BaseFeatureApi
+package ru.aleshin.core.utils.inject
 
+import com.arkivanov.decompose.ComponentContext
 
 /**
- * @author Stanislav Aleshin on 30.03.2023.
+ * @author Stanislav Aleshin on 01.07.2026.
  */
-public interface AnalyticsFeatureApi : BaseFeatureApi {
-    public fun contentProviderFactory(): AnalyticsContentProviderFactory
+interface DecomposeFeatureFactory<A : BaseFeatureApi> {
+    fun createOrGetFeature(context: ComponentContext): A
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,22 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package ru.aleshin.features.settings.api
 
-package ru.aleshin.core.utils.inject
-
-import com.arkivanov.decompose.ComponentContext
+import kotlinx.serialization.Serializable
 import ru.aleshin.core.utils.architecture.component.BaseOutput
-import ru.aleshin.core.utils.architecture.component.FeatureComponent
-import ru.aleshin.core.utils.architecture.component.OutputConsumer
 
 /**
- * @author Stanislav Aleshin on 24.08.2025.
+ * @author Stanislav Aleshin on 01.07.2026.
  */
-interface FeatureComponentFactory<FC : FeatureComponent<C, O>, C, O : BaseOutput> {
+@Serializable
+public sealed class SettingsConfig {
 
-    fun createComponent(
-        componentContext: ComponentContext,
-        startConfig: StartFeatureConfig<C>,
-        outputConsumer: OutputConsumer<O>
-    ): FC
+    @Serializable
+    public data object Settings : SettingsConfig()
+
+    @Serializable
+    public data object Donate : SettingsConfig()
+}
+
+/**
+ * @author Stanislav Aleshin on 01.07.2026.
+ */
+public sealed class SettingsOutput : BaseOutput {
+    public data object NavigateToBack : SettingsOutput()
 }

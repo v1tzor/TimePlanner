@@ -106,20 +106,17 @@ class MainActivity : AppCompatActivity() {
                             is MainComponent.Child.SplashChild -> {
                                 SplashContent()
                             }
-
                             is MainComponent.Child.TabNavigationChild -> {
                                 TabNavigationContent(instance.component)
                                 LaunchedEffect(Unit) {
                                     getNotificationPermission()
                                 }
                             }
-
                             is MainComponent.Child.EditorChild -> {
-                                instance.component.contentProvider.invoke(Modifier)
+                                instance.contentProvider.invoke(Modifier)
                             }
-
                             is MainComponent.Child.HomeChild -> {
-                                instance.component.contentProvider.invoke(Modifier)
+                                instance.contentProvider.invoke(Modifier)
                             }
                         }
                     }

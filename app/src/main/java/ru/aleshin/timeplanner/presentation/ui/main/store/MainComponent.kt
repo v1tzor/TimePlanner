@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2025 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,15 +27,14 @@ import kotlinx.serialization.Serializable
 import ru.aleshin.core.utils.architecture.component.BaseComponent
 import ru.aleshin.core.utils.architecture.component.OutputConsumer
 import ru.aleshin.core.utils.architecture.component.saveableStore
+import ru.aleshin.core.utils.inject.FeatureContentProvider
 import ru.aleshin.core.utils.inject.StartFeatureConfig
-import ru.aleshin.features.editor.api.EditorFeatureComponent
-import ru.aleshin.features.editor.api.EditorFeatureComponent.EditorConfig
-import ru.aleshin.features.editor.api.EditorFeatureComponent.EditorOutput
-import ru.aleshin.features.editor.api.EditorFeatureStarter
-import ru.aleshin.features.home.api.HomeFeatureComponent
-import ru.aleshin.features.home.api.HomeFeatureComponent.HomeConfig
-import ru.aleshin.features.home.api.HomeFeatureComponent.HomeOutput
-import ru.aleshin.features.home.api.HomeFeatureStarter
+import ru.aleshin.features.editor.api.EditorConfig
+import ru.aleshin.features.editor.api.EditorDecomposeFeatureFactory
+import ru.aleshin.features.editor.api.EditorOutput
+import ru.aleshin.features.home.api.HomeConfig
+import ru.aleshin.features.home.api.HomeDecomposeFeatureFactory
+import ru.aleshin.features.home.api.HomeOutput
 import ru.aleshin.timeplanner.presentation.ui.main.contract.DeepLinkTarget
 import ru.aleshin.timeplanner.presentation.ui.main.contract.MainEvent
 import ru.aleshin.timeplanner.presentation.ui.main.contract.MainInput
@@ -80,18 +79,18 @@ abstract class MainComponent(
 
     sealed interface Child {
         data object SplashChild : Child
-        data class HomeChild(val component: HomeFeatureComponent) : Child
+        data class HomeChild(val contentProvider: FeatureContentProvider) : Child
         data class TabNavigationChild(val component: TabNavigationComponent) : Child
-        data class EditorChild(val component: EditorFeatureComponent) : Child
+        data class EditorChild(val contentProvider: FeatureContentProvider) : Child
     }
 
     class Base(
         componentContext: ComponentContext,
         private val initialDeepLinkTarget: DeepLinkTarget?,
         private val mainStoreFactory: MainComposeStore.Factory,
-        private val homeFeatureStarter: HomeFeatureStarter,
+        private val homeFeatureFactory: HomeDecomposeFeatureFactory,
         private val navigationComponentFactory: TabNavigationComponentFactory,
-        private val editorFeatureStarter: EditorFeatureStarter,
+        private val editorFeatureFactory: EditorDecomposeFeatureFactory,
     ) : MainComponent(componentContext) {
 
         companion object {
@@ -130,27 +129,32 @@ abstract class MainComponent(
         private fun childFactory(config: Config, componentContext: ComponentContext): Child {
             return when (config) {
                 is Config.Splash -> Child.SplashChild
-                is Config.TabNavigation -> Child.TabNavigationChild(
-                    component = navigationComponentFactory.createComponent(
+                is Config.TabNavigation -> {
+                    val component = navigationComponentFactory.createComponent(
                         componentContext = componentContext,
                         startConfig = config.startConfig,
                         outputConsumer = tabNavigationOutputConsumer()
                     )
-                )
-                is Config.Editor -> EditorChild(
-                    component = editorFeatureStarter.createOrGetFeature().componentFactory().createComponent(
+                    Child.TabNavigationChild(component = component)
+                }
+                is Config.Editor -> {
+                    val api = editorFeatureFactory.createOrGetFeature(componentContext).contentProviderFactory()
+                    val provider = api.createProvider(
                         componentContext = componentContext,
                         startConfig = config.startConfig,
                         outputConsumer = editorOutputConsumer()
                     )
-                )
-                is Config.Home -> Child.HomeChild(
-                    component = homeFeatureStarter.createOrGetFeature().componentFactory().createComponent(
+                    EditorChild(contentProvider = provider)
+                }
+                is Config.Home -> {
+                    val api = homeFeatureFactory.createOrGetFeature(componentContext)
+                    val provider = api.contentProviderFactory().createProvider(
                         componentContext = componentContext,
                         startConfig = config.config ?: StartFeatureConfig(null),
                         outputConsumer = homeOutputConsumer()
                     )
-                )
+                    Child.HomeChild(contentProvider = provider)
+                }
             }
         }
 

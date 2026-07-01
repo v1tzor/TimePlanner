@@ -51,15 +51,15 @@ fun TabNavigationContent(
                 ) { child ->
                     when (val instance = child.instance) {
                         is TabNavigationComponent.TabNavigationChild.HomeChild -> {
-                            instance.component.contentProvider.invoke(Modifier)
+                            instance.contentProvider.invoke(Modifier)
                         }
 
                         is TabNavigationComponent.TabNavigationChild.AnalyticsChild -> {
-                            instance.component.contentProvider.invoke(Modifier)
+                            instance.contentProvider.invoke(Modifier)
                         }
 
                         is TabNavigationComponent.TabNavigationChild.SettingsChild -> {
-                            instance.component.contentProvider.invoke(Modifier)
+                            instance.contentProvider.invoke(Modifier)
                         }
                     }
                 }

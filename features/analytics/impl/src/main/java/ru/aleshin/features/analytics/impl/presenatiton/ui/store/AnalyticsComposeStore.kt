@@ -22,7 +22,7 @@ import ru.aleshin.core.utils.architecture.store.communicators.StateCommunicator
 import ru.aleshin.core.utils.architecture.store.work.BackgroundWorkKey
 import ru.aleshin.core.utils.architecture.store.work.WorkScope
 import ru.aleshin.core.utils.managers.CoroutineManager
-import ru.aleshin.features.analytics.api.AnalyticsFeatureComponent.AnalyticsOutput
+import ru.aleshin.features.analytics.api.AnalyticsOutput
 import ru.aleshin.features.analytics.impl.presenatiton.ui.contract.AnalyticsAction
 import ru.aleshin.features.analytics.impl.presenatiton.ui.contract.AnalyticsEffect
 import ru.aleshin.features.analytics.impl.presenatiton.ui.contract.AnalyticsEvent

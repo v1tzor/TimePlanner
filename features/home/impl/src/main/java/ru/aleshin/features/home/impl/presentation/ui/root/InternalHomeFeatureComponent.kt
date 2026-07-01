@@ -28,12 +28,13 @@ import com.arkivanov.essenty.backhandler.BackCallback
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
+import ru.aleshin.core.utils.architecture.component.FeatureComponent
 import ru.aleshin.core.utils.architecture.component.OutputConsumer
 import ru.aleshin.core.utils.inject.StartFeatureConfig
 import ru.aleshin.core.utils.managers.CoroutineManager
 import ru.aleshin.core.utils.managers.DrawerManager
-import ru.aleshin.features.home.api.HomeFeatureComponent
-import ru.aleshin.features.home.impl.di.holder.HomeFeatureManager
+import ru.aleshin.features.home.api.HomeConfig
+import ru.aleshin.features.home.api.HomeOutput
 import ru.aleshin.features.home.impl.presentation.ui.categories.contract.CategoriesOutput
 import ru.aleshin.features.home.impl.presentation.ui.categories.screenmodel.CategoriesComponent
 import ru.aleshin.features.home.impl.presentation.ui.categories.screenmodel.CategoriesComposeStore
@@ -57,7 +58,7 @@ internal abstract class InternalHomeFeatureComponent(
     componentContext: ComponentContext,
     startConfig: StartFeatureConfig<HomeConfig>,
     outputConsumer: OutputConsumer<HomeOutput>,
-) : HomeFeatureComponent(
+) : FeatureComponent<HomeConfig, HomeOutput>(
     componentContext = componentContext,
     startConfig = startConfig,
     outputConsumer = outputConsumer,
@@ -90,8 +91,6 @@ internal abstract class InternalHomeFeatureComponent(
         startConfig = startConfig,
         outputConsumer = outputConsumer,
     ) {
-
-        override val contentProvider = HomeContentProvider(this)
 
         private var drawerManager: DrawerManager? = null
 
@@ -155,7 +154,6 @@ internal abstract class InternalHomeFeatureComponent(
         }
 
         override fun onDestroyInstance() {
-            HomeFeatureManager.finish()
             coroutineScope.cancel()
             drawerManager = null
         }
@@ -203,7 +201,7 @@ internal abstract class InternalHomeFeatureComponent(
         private fun homeOutputConsumer() = OutputConsumer<HomeScreenOutput> { output ->
             when (output) {
                 is HomeScreenOutput.NavigateToEditor -> {
-                    val config = HomeFeatureComponent.HomeOutput.NavigateToEditor(
+                    val config = HomeOutput.NavigateToEditor(
                         timeTask = output.config.timeTask,
                         template = output.config.template,
                         undefinedTaskId = output.config.undefinedTaskId,
@@ -234,7 +232,7 @@ internal abstract class InternalHomeFeatureComponent(
         private fun overviewOutputConsumer() = OutputConsumer<OverviewOutput> { output ->
             when (output) {
                 is OverviewOutput.NavigateToEditor -> {
-                    val config = HomeFeatureComponent.HomeOutput.NavigateToEditor(
+                    val config = HomeOutput.NavigateToEditor(
                         timeTask = output.config.timeTask,
                         template = output.config.template,
                         undefinedTaskId = output.config.undefinedTaskId,

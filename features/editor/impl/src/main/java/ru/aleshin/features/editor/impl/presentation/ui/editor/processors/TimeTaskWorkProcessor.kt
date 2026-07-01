@@ -24,7 +24,7 @@ import ru.aleshin.core.utils.architecture.store.work.WorkCommand
 import ru.aleshin.core.utils.architecture.store.work.WorkProcessor
 import ru.aleshin.core.utils.architecture.store.work.WorkResult
 import ru.aleshin.core.utils.functional.Either
-import ru.aleshin.features.editor.api.EditorFeatureComponent.EditorOutput
+import ru.aleshin.features.editor.api.EditorOutput
 import ru.aleshin.features.editor.impl.domain.common.convertToTimeTask
 import ru.aleshin.features.editor.impl.domain.entites.EditorFailures
 import ru.aleshin.features.editor.impl.domain.interactors.TimeTaskInteractor

@@ -22,8 +22,8 @@ import ru.aleshin.core.utils.architecture.store.contract.StoreEffect
 import ru.aleshin.core.utils.architecture.store.contract.StoreEvent
 import ru.aleshin.core.utils.architecture.store.contract.StoreState
 import ru.aleshin.core.utils.functional.DateSerializer
-import ru.aleshin.features.editor.api.EditorFeatureComponent.EditorConfig
-import ru.aleshin.features.home.api.HomeFeatureComponent.HomeConfig
+import ru.aleshin.features.editor.api.EditorConfig
+import ru.aleshin.features.home.api.HomeConfig
 import ru.aleshin.features.home.impl.domain.entities.HomeFailures
 import ru.aleshin.features.home.impl.presentation.models.categories.CategoriesUi
 import ru.aleshin.features.home.impl.presentation.models.schedules.ScheduleUi

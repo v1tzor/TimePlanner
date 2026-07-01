@@ -19,9 +19,9 @@ package ru.aleshin.timeplanner.presentation.ui.tabs.store
 import com.arkivanov.decompose.ComponentContext
 import ru.aleshin.core.utils.architecture.component.OutputConsumer
 import ru.aleshin.core.utils.inject.StartFeatureConfig
-import ru.aleshin.features.analytics.api.AnalyticsFeatureStarter
-import ru.aleshin.features.home.api.HomeFeatureStarter
-import ru.aleshin.features.settings.api.SettingsFeatureStarter
+import ru.aleshin.features.analytics.api.AnalyticsDecomposeFeatureFactory
+import ru.aleshin.features.home.api.HomeDecomposeFeatureFactory
+import ru.aleshin.features.settings.api.SettingsDecomposeFeatureFactory
 import ru.aleshin.timeplanner.presentation.ui.tabs.store.TabNavigationComponent.TabNavigationConfig
 import ru.aleshin.timeplanner.presentation.ui.tabs.store.TabNavigationComponent.TabNavigationOutput
 import javax.inject.Inject
@@ -38,9 +38,9 @@ interface TabNavigationComponentFactory {
     ): TabNavigationComponent
 
     class Default @Inject constructor(
-        private val homeFeatureStarter: HomeFeatureStarter,
-        private val analyticsFeatureStarter: AnalyticsFeatureStarter,
-        private val settingsFeatureStarter: SettingsFeatureStarter,
+        private val homeFeatureFactory: HomeDecomposeFeatureFactory,
+        private val analyticsFeatureFactory: AnalyticsDecomposeFeatureFactory,
+        private val settingsFeatureFactory: SettingsDecomposeFeatureFactory,
     ) : TabNavigationComponentFactory {
 
         override fun createComponent(
@@ -52,9 +52,9 @@ interface TabNavigationComponentFactory {
                 componentContext = componentContext,
                 startConfig = startConfig,
                 outputConsumer = outputConsumer,
-                homeFeatureStarter = homeFeatureStarter,
-                analyticsFeatureStarter = analyticsFeatureStarter,
-                settingsFeatureStarter = settingsFeatureStarter,
+                homeFeatureFactory = homeFeatureFactory,
+                analyticsFeatureFactory = analyticsFeatureFactory,
+                settingsFeatureFactory = settingsFeatureFactory,
             )
         }
     }

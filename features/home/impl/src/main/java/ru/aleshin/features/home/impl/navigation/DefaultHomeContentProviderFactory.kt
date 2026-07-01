@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2025 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,42 +15,41 @@
  */
 package ru.aleshin.features.home.impl.navigation
 
-import android.util.Log
 import com.arkivanov.decompose.ComponentContext
 import ru.aleshin.core.utils.architecture.component.OutputConsumer
+import ru.aleshin.core.utils.inject.FeatureContentProvider
 import ru.aleshin.core.utils.inject.StartFeatureConfig
 import ru.aleshin.core.utils.managers.CoroutineManager
-import ru.aleshin.features.home.api.HomeFeatureComponent
-import ru.aleshin.features.home.api.HomeFeatureComponent.HomeConfig
-import ru.aleshin.features.home.api.HomeFeatureComponent.HomeOutput
-import ru.aleshin.features.home.api.HomeFeatureComponentFactory
+import ru.aleshin.features.home.api.HomeConfig
+import ru.aleshin.features.home.api.HomeContentProviderFactory
+import ru.aleshin.features.home.api.HomeOutput
 import ru.aleshin.features.home.impl.presentation.ui.categories.screenmodel.CategoriesComposeStore
 import ru.aleshin.features.home.impl.presentation.ui.details.store.DetailsComposeStore
 import ru.aleshin.features.home.impl.presentation.ui.home.store.HomeComposeStore
 import ru.aleshin.features.home.impl.presentation.ui.overview.store.OverviewComposeStore
+import ru.aleshin.features.home.impl.presentation.ui.root.HomeContentProvider
 import ru.aleshin.features.home.impl.presentation.ui.root.InternalHomeFeatureComponent
 import ru.aleshin.features.home.impl.presentation.ui.templates.store.TemplatesComposeStore
 import javax.inject.Inject
 
 /**
- * @author Stanislav Aleshin on 13.09.2025.
+ * @author Stanislav Aleshin on 01.07.2026.
  */
-internal class DefaultHomeComponentFactory @Inject constructor(
+internal class DefaultHomeContentProviderFactory @Inject constructor(
     private val homeStoreFactory: HomeComposeStore.Factory,
     private val overviewStoreFactory: OverviewComposeStore.Factory,
     private val categoriesStoreFactory: CategoriesComposeStore.Factory,
     private val templatesStoreFactory: TemplatesComposeStore.Factory,
     private val detailsStoreFactory: DetailsComposeStore.Factory,
     private val coroutineManager: CoroutineManager,
-) : HomeFeatureComponentFactory {
+) : HomeContentProviderFactory {
 
-    override fun createComponent(
+    override fun createProvider(
         componentContext: ComponentContext,
         startConfig: StartFeatureConfig<HomeConfig>,
         outputConsumer: OutputConsumer<HomeOutput>
-    ): HomeFeatureComponent {
-        Log.i("test", "create new home component")
-        return InternalHomeFeatureComponent.Default(
+    ): FeatureContentProvider {
+        val component = InternalHomeFeatureComponent.Default(
             componentContext = componentContext,
             startConfig = startConfig,
             outputConsumer = outputConsumer,
@@ -61,5 +60,7 @@ internal class DefaultHomeComponentFactory @Inject constructor(
             detailsStoreFactory = detailsStoreFactory,
             coroutineManager = coroutineManager,
         )
+
+        return HomeContentProvider(homeComponent = component)
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,13 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ru.aleshin.features.editor.api
+package ru.aleshin.features.home.api
 
-import ru.aleshin.core.utils.inject.FeatureComponentFactory
-import ru.aleshin.features.editor.api.EditorFeatureComponent.EditorConfig
-import ru.aleshin.features.editor.api.EditorFeatureComponent.EditorOutput
+import ru.aleshin.core.utils.inject.FeatureContentProviderFactory
 
 /**
- * @author Stanislav Aleshin on 12.09.2025.
+ * @author Stanislav Aleshin on 01.07.2026.
  */
-public interface EditorFeatureComponentFactory : FeatureComponentFactory<EditorFeatureComponent, EditorConfig, EditorOutput>
+public interface HomeContentProviderFactory : FeatureContentProviderFactory<HomeConfig, HomeOutput>

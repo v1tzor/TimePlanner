@@ -31,7 +31,7 @@ import ru.aleshin.core.utils.architecture.store.work.ActionResult
 import ru.aleshin.core.utils.architecture.store.work.OutputResult
 import ru.aleshin.core.utils.functional.TimeRange
 import ru.aleshin.core.utils.managers.CoroutineManager
-import ru.aleshin.features.editor.api.EditorFeatureComponent.EditorOutput
+import ru.aleshin.features.editor.api.EditorOutput
 import ru.aleshin.features.editor.impl.presentation.models.categories.CategoriesUi
 import ru.aleshin.features.editor.impl.presentation.models.categories.MainCategoryUi
 import ru.aleshin.features.editor.impl.presentation.models.tasks.UndefinedTaskUi

@@ -21,8 +21,8 @@ import ru.aleshin.core.utils.architecture.store.BaseComposeStore
 import ru.aleshin.core.utils.architecture.store.BaseOnlyOutComposeStore
 import ru.aleshin.core.utils.architecture.store.BaseSimpleComposeStore
 import ru.aleshin.core.utils.di.FeatureScope
-import ru.aleshin.features.home.api.HomeFeatureComponentFactory
-import ru.aleshin.features.home.impl.navigation.DefaultHomeComponentFactory
+import ru.aleshin.features.home.api.HomeContentProviderFactory
+import ru.aleshin.features.home.impl.navigation.DefaultHomeContentProviderFactory
 import ru.aleshin.features.home.impl.presentation.common.TimeTaskStatusController
 import ru.aleshin.features.home.impl.presentation.mapppers.schedules.ScheduleDomainToUiMapper
 import ru.aleshin.features.home.impl.presentation.mapppers.schedules.TimeTaskDomainToUiMapper
@@ -51,7 +51,7 @@ internal interface PresentationModule {
 
     @Binds
     @FeatureScope
-    fun bindHomeComponentFactory(factory: DefaultHomeComponentFactory): HomeFeatureComponentFactory
+    fun bindHomeContentProviderFactory(factory: DefaultHomeContentProviderFactory): HomeContentProviderFactory
 
     @Binds
     @FeatureScope

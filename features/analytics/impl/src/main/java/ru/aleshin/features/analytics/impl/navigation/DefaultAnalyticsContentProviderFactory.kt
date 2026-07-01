@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2025 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,32 +17,35 @@ package ru.aleshin.features.analytics.impl.navigation
 
 import com.arkivanov.decompose.ComponentContext
 import ru.aleshin.core.utils.architecture.component.OutputConsumer
+import ru.aleshin.core.utils.inject.FeatureContentProvider
 import ru.aleshin.core.utils.inject.StartFeatureConfig
-import ru.aleshin.features.analytics.api.AnalyticsFeatureComponent
-import ru.aleshin.features.analytics.api.AnalyticsFeatureComponent.AnalyticsConfig
-import ru.aleshin.features.analytics.api.AnalyticsFeatureComponent.AnalyticsOutput
-import ru.aleshin.features.analytics.api.AnalyticsFeatureComponentFactory
+import ru.aleshin.features.analytics.api.AnalyticsConfig
+import ru.aleshin.features.analytics.api.AnalyticsContentProviderFactory
+import ru.aleshin.features.analytics.api.AnalyticsOutput
+import ru.aleshin.features.analytics.impl.presenatiton.ui.AnalyticsContentProvider
 import ru.aleshin.features.analytics.impl.presenatiton.ui.store.AnalyticsComposeStore
 import ru.aleshin.features.analytics.impl.presenatiton.ui.store.InternalAnalyticsFeatureComponent
 import javax.inject.Inject
 
 /**
- * @author Stanislav Aleshin on 13.09.2025.
+ * @author Stanislav Aleshin on 01.07.2026.
  */
-internal class DefaultAnalyticsComponentFactory @Inject constructor(
+internal class DefaultAnalyticsContentProviderFactory @Inject constructor(
     private val analyticsStoreFactory: AnalyticsComposeStore.Factory,
-) : AnalyticsFeatureComponentFactory {
+) : AnalyticsContentProviderFactory {
 
-    override fun createComponent(
+    override fun createProvider(
         componentContext: ComponentContext,
         startConfig: StartFeatureConfig<AnalyticsConfig>,
         outputConsumer: OutputConsumer<AnalyticsOutput>
-    ): AnalyticsFeatureComponent {
-        return InternalAnalyticsFeatureComponent.Default(
+    ): FeatureContentProvider {
+        val component = InternalAnalyticsFeatureComponent.Default(
             componentContext = componentContext,
             startConfig = startConfig,
             outputConsumer = outputConsumer,
             analyticsStoreFactory = analyticsStoreFactory,
         )
+
+        return AnalyticsContentProvider(analyticsComponent = component)
     }
 }

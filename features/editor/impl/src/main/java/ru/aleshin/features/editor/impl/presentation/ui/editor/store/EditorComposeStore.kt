@@ -22,7 +22,7 @@ import ru.aleshin.core.utils.architecture.store.work.BackgroundWorkKey
 import ru.aleshin.core.utils.architecture.store.work.WorkScope
 import ru.aleshin.core.utils.extensions.duration
 import ru.aleshin.core.utils.managers.CoroutineManager
-import ru.aleshin.features.editor.api.EditorFeatureComponent.EditorOutput
+import ru.aleshin.features.editor.api.EditorOutput
 import ru.aleshin.features.editor.impl.domain.common.convertToEditModel
 import ru.aleshin.features.editor.impl.presentation.mappers.mapToUi
 import ru.aleshin.features.editor.impl.presentation.models.editmodel.EditModelUi

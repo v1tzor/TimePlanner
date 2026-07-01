@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2025 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,11 +17,12 @@ package ru.aleshin.features.analytics.impl.presenatiton.ui.store
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.essenty.backhandler.BackCallback
+import ru.aleshin.core.utils.architecture.component.FeatureComponent
 import ru.aleshin.core.utils.architecture.component.OutputConsumer
 import ru.aleshin.core.utils.architecture.component.saveableStore
 import ru.aleshin.core.utils.inject.StartFeatureConfig
-import ru.aleshin.features.analytics.api.AnalyticsFeatureComponent
-import ru.aleshin.features.analytics.impl.presenatiton.ui.AnalyticsContentProvider
+import ru.aleshin.features.analytics.api.AnalyticsConfig
+import ru.aleshin.features.analytics.api.AnalyticsOutput
 import ru.aleshin.features.analytics.impl.presenatiton.ui.contract.AnalyticsState
 
 /**
@@ -31,7 +32,7 @@ internal abstract class InternalAnalyticsFeatureComponent(
     startConfig: StartFeatureConfig<AnalyticsConfig>,
     componentContext: ComponentContext,
     outputConsumer: OutputConsumer<AnalyticsOutput>,
-) : AnalyticsFeatureComponent(
+) : FeatureComponent<AnalyticsConfig, AnalyticsOutput>(
     startConfig = startConfig,
     componentContext = componentContext,
     outputConsumer = outputConsumer,
@@ -57,8 +58,6 @@ internal abstract class InternalAnalyticsFeatureComponent(
             outputConsumer = outputConsumer,
             storeKey = COMPONENT_KEY,
         )
-
-        override val contentProvider = AnalyticsContentProvider(this)
 
         private companion object Companion {
             const val COMPONENT_KEY = "ANALYTICS_STORE_KEY"

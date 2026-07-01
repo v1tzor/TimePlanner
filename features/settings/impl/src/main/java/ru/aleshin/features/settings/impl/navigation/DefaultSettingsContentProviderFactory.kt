@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2025 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,34 +17,38 @@ package ru.aleshin.features.settings.impl.navigation
 
 import com.arkivanov.decompose.ComponentContext
 import ru.aleshin.core.utils.architecture.component.OutputConsumer
+import ru.aleshin.core.utils.inject.FeatureContentProvider
 import ru.aleshin.core.utils.inject.StartFeatureConfig
-import ru.aleshin.features.settings.api.SettingsFeatureComponent
-import ru.aleshin.features.settings.api.SettingsFeatureComponent.SettingsOutput
-import ru.aleshin.features.settings.api.SettingsFeatureComponentFactory
+import ru.aleshin.features.settings.api.SettingsConfig
+import ru.aleshin.features.settings.api.SettingsContentProviderFactory
+import ru.aleshin.features.settings.api.SettingsOutput
 import ru.aleshin.features.settings.impl.presentation.ui.donate.store.DonateComposeStore
 import ru.aleshin.features.settings.impl.presentation.ui.root.InternalSettingsFeatureComponent
+import ru.aleshin.features.settings.impl.presentation.ui.root.SettingsContentProvider
 import ru.aleshin.features.settings.impl.presentation.ui.settings.screensmodel.SettingsComposeStore
 import javax.inject.Inject
 
 /**
- * @author Stanislav Aleshin on 13.09.2025.
+ * @author Stanislav Aleshin on 01.07.2026.
  */
-internal class DefaultSettingsComponentFactory @Inject constructor(
+internal class DefaultSettingsContentProviderFactory @Inject constructor(
     private val settingsStoreFactory: SettingsComposeStore.Factory,
     private val donateStoreFactory: DonateComposeStore.Factory,
-) : SettingsFeatureComponentFactory {
+) : SettingsContentProviderFactory {
 
-    override fun createComponent(
+    override fun createProvider(
         componentContext: ComponentContext,
-        startConfig: StartFeatureConfig<SettingsFeatureComponent.SettingsConfig>,
+        startConfig: StartFeatureConfig<SettingsConfig>,
         outputConsumer: OutputConsumer<SettingsOutput>
-    ): SettingsFeatureComponent {
-        return InternalSettingsFeatureComponent.Default(
+    ): FeatureContentProvider {
+        val component = InternalSettingsFeatureComponent.Default(
             componentContext = componentContext,
             startConfig = startConfig,
             outputConsumer = outputConsumer,
             settingsStoreFactory = settingsStoreFactory,
             donateStoreFactory = donateStoreFactory,
         )
+
+        return SettingsContentProvider(settingsComponent = component)
     }
 }

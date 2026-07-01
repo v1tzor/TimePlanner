@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,13 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ru.aleshin.features.analytics.api
 
-import ru.aleshin.core.utils.inject.FeatureComponentFactory
-import ru.aleshin.features.analytics.api.AnalyticsFeatureComponent.AnalyticsConfig
-import ru.aleshin.features.analytics.api.AnalyticsFeatureComponent.AnalyticsOutput
+package ru.aleshin.core.utils.inject
+
+import com.arkivanov.essenty.instancekeeper.InstanceKeeper
 
 /**
- * @author Stanislav Aleshin on 12.09.2025.
+ * @author Stanislav Aleshin on 01.07.2026.
  */
-public interface AnalyticsFeatureComponentFactory : FeatureComponentFactory<AnalyticsFeatureComponent, AnalyticsConfig, AnalyticsOutput>
+abstract class BaseFeatureController<A : BaseFeatureApi, C : A>(
+    private var component: C?,
+) : InstanceKeeper.Instance {
+
+    fun fetchApi(): A {
+        return checkNotNull(component) { "Feature component is not initialized" }
+    }
+
+    override fun onDestroy() {
+        onDestroyComponent()
+        component = null
+    }
+
+    open fun onDestroyComponent() = Unit
+}

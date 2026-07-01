@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2025 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,18 +27,18 @@ import kotlinx.serialization.Serializable
 import ru.aleshin.core.utils.architecture.component.BaseOutput
 import ru.aleshin.core.utils.architecture.component.ChildComponent
 import ru.aleshin.core.utils.architecture.component.OutputConsumer
+import ru.aleshin.core.utils.inject.FeatureContentProvider
 import ru.aleshin.core.utils.inject.StartFeatureConfig
-import ru.aleshin.features.analytics.api.AnalyticsFeatureComponent
-import ru.aleshin.features.analytics.api.AnalyticsFeatureComponent.AnalyticsOutput
-import ru.aleshin.features.analytics.api.AnalyticsFeatureStarter
-import ru.aleshin.features.editor.api.EditorFeatureComponent.EditorConfig
-import ru.aleshin.features.home.api.HomeFeatureComponent
-import ru.aleshin.features.home.api.HomeFeatureComponent.HomeConfig
-import ru.aleshin.features.home.api.HomeFeatureComponent.HomeOutput
-import ru.aleshin.features.home.api.HomeFeatureStarter
-import ru.aleshin.features.settings.api.SettingsFeatureComponent
-import ru.aleshin.features.settings.api.SettingsFeatureComponent.SettingsOutput
-import ru.aleshin.features.settings.api.SettingsFeatureStarter
+import ru.aleshin.features.analytics.api.AnalyticsConfig
+import ru.aleshin.features.analytics.api.AnalyticsDecomposeFeatureFactory
+import ru.aleshin.features.analytics.api.AnalyticsOutput
+import ru.aleshin.features.editor.api.EditorConfig
+import ru.aleshin.features.home.api.HomeConfig
+import ru.aleshin.features.home.api.HomeDecomposeFeatureFactory
+import ru.aleshin.features.home.api.HomeOutput
+import ru.aleshin.features.settings.api.SettingsConfig
+import ru.aleshin.features.settings.api.SettingsDecomposeFeatureFactory
+import ru.aleshin.features.settings.api.SettingsOutput
 
 /**
  * @author Stanislav Aleshin on 12.09.2025.
@@ -56,16 +56,16 @@ abstract class TabNavigationComponent(
     abstract fun clickSettingsTab()
 
     sealed class TabNavigationChild {
-        data class HomeChild(val component: HomeFeatureComponent) : TabNavigationChild()
-        data class AnalyticsChild(val component: AnalyticsFeatureComponent) : TabNavigationChild()
-        data class SettingsChild(val component: SettingsFeatureComponent) : TabNavigationChild()
+        data class HomeChild(val contentProvider: FeatureContentProvider) : TabNavigationChild()
+        data class AnalyticsChild(val contentProvider: FeatureContentProvider) : TabNavigationChild()
+        data class SettingsChild(val contentProvider: FeatureContentProvider) : TabNavigationChild()
     }
 
     @Serializable
     sealed class TabNavigationConfig {
 
         @Serializable
-        data class Home(val config: StartFeatureConfig<HomeConfig>?) : TabNavigationConfig()
+        data object Home : TabNavigationConfig()
 
         @Serializable
         data object Analytics : TabNavigationConfig()
@@ -83,9 +83,9 @@ abstract class TabNavigationComponent(
         componentContext: ComponentContext,
         startConfig: StartFeatureConfig<TabNavigationConfig>,
         private val outputConsumer: OutputConsumer<TabNavigationOutput>,
-        private val homeFeatureStarter: HomeFeatureStarter,
-        private val analyticsFeatureStarter: AnalyticsFeatureStarter,
-        private val settingsFeatureStarter: SettingsFeatureStarter,
+        private val homeFeatureFactory: HomeDecomposeFeatureFactory,
+        private val analyticsFeatureFactory: AnalyticsDecomposeFeatureFactory,
+        private val settingsFeatureFactory: SettingsDecomposeFeatureFactory,
     ) : TabNavigationComponent(
         componentContext = componentContext,
     ) {
@@ -95,7 +95,7 @@ abstract class TabNavigationComponent(
         override val stack = childStack(
             source = stackNavigation,
             serializer = TabNavigationConfig.serializer(),
-            initialStack = { startConfig.backstack ?: listOf(TabNavigationConfig.Home(null)) },
+            initialStack = { startConfig.backstack ?: listOf(TabNavigationConfig.Home) },
             key = STACK_KEY,
             handleBackButton = false,
             childFactory = ::childFactory
@@ -116,7 +116,7 @@ abstract class TabNavigationComponent(
         }
 
         override fun clickHomeTab() {
-            stackNavigation.bringToFront(TabNavigationConfig.Home(null))
+            stackNavigation.bringToFront(TabNavigationConfig.Home)
         }
 
         override fun clickAnalyticsTab() {
@@ -132,27 +132,33 @@ abstract class TabNavigationComponent(
             componentContext: ComponentContext
         ): TabNavigationChild {
             return when (config) {
-                is TabNavigationConfig.Home -> TabNavigationChild.HomeChild(
-                    component = homeFeatureStarter.createOrGetFeature().componentFactory().createComponent(
+                is TabNavigationConfig.Home -> {
+                    val api = homeFeatureFactory.createOrGetFeature(componentContext)
+                    val provider = api.contentProviderFactory().createProvider(
                         componentContext = componentContext,
-                        startConfig = config.config ?: StartFeatureConfig(null),
+                        startConfig = StartFeatureConfig<HomeConfig>(null),
                         outputConsumer = homeOutputConsumer()
                     )
-                )
-                is TabNavigationConfig.Analytics -> TabNavigationChild.AnalyticsChild(
-                    component = analyticsFeatureStarter.createOrGetFeature().componentFactory().createComponent(
+                    TabNavigationChild.HomeChild(contentProvider = provider)
+                }
+                is TabNavigationConfig.Analytics -> {
+                    val api = analyticsFeatureFactory.createOrGetFeature(componentContext)
+                    val provider = api.contentProviderFactory().createProvider(
                         componentContext = componentContext,
-                        startConfig = StartFeatureConfig(null),
+                        startConfig = StartFeatureConfig<AnalyticsConfig>(null),
                         outputConsumer = analyticsOutputConsumer()
                     )
-                )
-                is TabNavigationConfig.Settings -> TabNavigationChild.SettingsChild(
-                    component = settingsFeatureStarter.createOrGetFeature().componentFactory().createComponent(
+                    TabNavigationChild.AnalyticsChild(contentProvider = provider)
+                }
+                is TabNavigationConfig.Settings -> {
+                    val api = settingsFeatureFactory.createOrGetFeature(componentContext)
+                    val provider = api.contentProviderFactory().createProvider(
                         componentContext = componentContext,
-                        startConfig = StartFeatureConfig(null),
+                        startConfig = StartFeatureConfig<SettingsConfig>(null),
                         outputConsumer = settingsOutputConsumer()
                     )
-                )
+                    TabNavigationChild.SettingsChild(contentProvider = provider)
+                }
             }
         }
 

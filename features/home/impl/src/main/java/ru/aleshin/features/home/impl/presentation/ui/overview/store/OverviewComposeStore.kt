@@ -22,7 +22,7 @@ import ru.aleshin.core.utils.architecture.store.communicators.StateCommunicator
 import ru.aleshin.core.utils.architecture.store.work.BackgroundWorkKey
 import ru.aleshin.core.utils.architecture.store.work.WorkScope
 import ru.aleshin.core.utils.managers.CoroutineManager
-import ru.aleshin.features.home.api.HomeFeatureComponent.HomeConfig
+import ru.aleshin.features.home.api.HomeConfig
 import ru.aleshin.features.home.impl.presentation.ui.overview.contract.OverviewAction
 import ru.aleshin.features.home.impl.presentation.ui.overview.contract.OverviewEffect
 import ru.aleshin.features.home.impl.presentation.ui.overview.contract.OverviewEvent

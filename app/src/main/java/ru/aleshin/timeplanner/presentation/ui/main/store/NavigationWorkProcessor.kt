@@ -25,7 +25,7 @@ import ru.aleshin.core.utils.architecture.store.work.WorkResult
 import ru.aleshin.core.utils.functional.Constants
 import ru.aleshin.core.utils.functional.TimeRange
 import ru.aleshin.core.utils.managers.DateManager
-import ru.aleshin.features.editor.api.EditorFeatureComponent
+import ru.aleshin.features.editor.api.EditorConfig
 import ru.aleshin.timeplanner.presentation.ui.main.contract.DeepLinkTarget
 import ru.aleshin.timeplanner.presentation.ui.main.contract.MainAction
 import ru.aleshin.timeplanner.presentation.ui.main.contract.MainEffect
@@ -58,7 +58,7 @@ interface NavigationWorkProcessor : WorkProcessor<NavWorkCommand, MainAction, Ma
                 val timeRange = TimeRange(currentTime, currentTime)
                 val timeTask = TimeTask(date = currentDate, createdAt = currentTime, timeRange = timeRange)
 
-                val config = EditorFeatureComponent.EditorConfig.Editor(timeTask, null)
+                val config = EditorConfig.Editor(timeTask, null)
                 OutputResult(MainOutput.NavigateToEditor(config))
             } else {
                 ActionResult(MainAction.Navigate)

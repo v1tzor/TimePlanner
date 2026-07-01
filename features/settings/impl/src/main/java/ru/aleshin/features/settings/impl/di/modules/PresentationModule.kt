@@ -19,8 +19,8 @@ import dagger.Binds
 import dagger.Module
 import ru.aleshin.core.utils.architecture.store.BaseOnlyOutComposeStore
 import ru.aleshin.core.utils.di.FeatureScope
-import ru.aleshin.features.settings.api.SettingsFeatureComponentFactory
-import ru.aleshin.features.settings.impl.navigation.DefaultSettingsComponentFactory
+import ru.aleshin.features.settings.api.SettingsContentProviderFactory
+import ru.aleshin.features.settings.impl.navigation.DefaultSettingsContentProviderFactory
 import ru.aleshin.features.settings.impl.presentation.ui.donate.contract.DonateState
 import ru.aleshin.features.settings.impl.presentation.ui.donate.store.DonateComposeStore
 import ru.aleshin.features.settings.impl.presentation.ui.settings.contract.SettingsState
@@ -37,7 +37,7 @@ internal interface PresentationModule {
 
     @Binds
     @FeatureScope
-    fun bindSettingsComponentFactory(factory: DefaultSettingsComponentFactory): SettingsFeatureComponentFactory
+    fun bindSettingsContentProviderFactory(factory: DefaultSettingsContentProviderFactory): SettingsContentProviderFactory
 
     @Binds
     @FeatureScope

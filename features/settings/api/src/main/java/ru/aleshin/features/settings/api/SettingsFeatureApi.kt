@@ -21,5 +21,5 @@ import ru.aleshin.core.utils.inject.BaseFeatureApi
  * @author Stanislav Aleshin on 17.02.2023.
  */
 public interface SettingsFeatureApi : BaseFeatureApi {
-    public fun componentFactory(): SettingsFeatureComponentFactory
+    public fun contentProviderFactory(): SettingsContentProviderFactory
 }

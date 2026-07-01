@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2025 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,10 +23,11 @@ import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.pushToFront
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.backhandler.BackCallback
+import ru.aleshin.core.utils.architecture.component.FeatureComponent
 import ru.aleshin.core.utils.architecture.component.OutputConsumer
 import ru.aleshin.core.utils.inject.StartFeatureConfig
-import ru.aleshin.features.settings.api.SettingsFeatureComponent
-import ru.aleshin.features.settings.impl.di.holder.SettingsFeatureManager
+import ru.aleshin.features.settings.api.SettingsConfig
+import ru.aleshin.features.settings.api.SettingsOutput
 import ru.aleshin.features.settings.impl.presentation.ui.donate.contract.DonateOutput
 import ru.aleshin.features.settings.impl.presentation.ui.donate.store.DonateComponent
 import ru.aleshin.features.settings.impl.presentation.ui.donate.store.DonateComposeStore
@@ -41,7 +42,7 @@ internal abstract class InternalSettingsFeatureComponent(
     componentContext: ComponentContext,
     startConfig: StartFeatureConfig<SettingsConfig>,
     outputConsumer: OutputConsumer<SettingsOutput>,
-) : SettingsFeatureComponent(
+) : FeatureComponent<SettingsConfig, SettingsOutput>(
     componentContext = componentContext,
     startConfig = startConfig,
     outputConsumer = outputConsumer,
@@ -65,8 +66,6 @@ internal abstract class InternalSettingsFeatureComponent(
         startConfig = startConfig,
         outputConsumer = outputConsumer,
     ) {
-        override val contentProvider = SettingsContentProvider(this)
-
         private val backCallback = BackCallback { navigateToBack() }
 
         private val stackNavigation = StackNavigation<SettingsConfig>()
@@ -92,10 +91,6 @@ internal abstract class InternalSettingsFeatureComponent(
             stackNavigation.pop { isPop ->
                 if (!isPop) outputConsumer.consume(SettingsOutput.NavigateToBack)
             }
-        }
-
-        override fun onDestroyInstance() {
-            SettingsFeatureManager.finish()
         }
 
         private fun createChild(config: SettingsConfig, componentContext: ComponentContext): Child {
