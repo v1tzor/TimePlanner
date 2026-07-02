@@ -54,7 +54,8 @@ enum class TaskNotificationType(val idAmount: Long) {
     THREE_HOUR_BEFORE(20L),
     ONE_DAY_BEFORE(30L),
     ONE_WEEK_BEFORE(50L),
-    AFTER_START_BEFORE_END(40L);
+    AFTER_START_BEFORE_END(40L),
+    END_ONGOING(70L);
 
     fun fetchNotifyTrigger(timeRange: TimeRange) = when (this) {
         START -> timeRange.from
@@ -64,5 +65,6 @@ enum class TaskNotificationType(val idAmount: Long) {
         ONE_DAY_BEFORE -> timeRange.from.shiftDay(-1)
         ONE_WEEK_BEFORE -> timeRange.from.shiftDay(-7)
         AFTER_START_BEFORE_END -> timeRange.to.shiftMillis(-10000)
+        END_ONGOING -> timeRange.to
     }
 }

@@ -26,6 +26,7 @@ import ru.aleshin.core.utils.architecture.store.work.EffectResult
 import ru.aleshin.core.utils.architecture.store.work.FlowWorkProcessor
 import ru.aleshin.core.utils.architecture.store.work.WorkCommand
 import ru.aleshin.core.utils.extensions.duration
+import ru.aleshin.core.utils.functional.Either
 import ru.aleshin.core.utils.functional.collectAndHandle
 import ru.aleshin.core.utils.functional.handle
 import ru.aleshin.features.home.impl.domain.interactors.CategoriesInteractor
@@ -58,7 +59,7 @@ internal interface TemplatesWorkProcessor :
             is TemplatesWorkCommand.LoadTemplates -> loadTemplatesWork(command.sortedType)
             is TemplatesWorkCommand.LoadCategories -> loadCategories()
             is TemplatesWorkCommand.AddTemplate -> addTemplate(command.template)
-            is TemplatesWorkCommand.DeleteTemplate -> deleteTemplateWork(command.id)
+            is TemplatesWorkCommand.DeleteTemplate -> deleteTemplateWork(command.template)
             is TemplatesWorkCommand.UpdateTemplate -> updateTemplate(command.oldTemplate, command.newTemplate)
             is TemplatesWorkCommand.AddRepeatTemplate -> addRepeatTemplate(command.time, command.template)
             is TemplatesWorkCommand.DeleteRepeatTemplate -> deleteRepeatTemplate(command.time, command.template)
@@ -102,8 +103,19 @@ internal interface TemplatesWorkProcessor :
             )
         }
 
-        private fun deleteTemplateWork(templateId: Int) = flow {
-            templatesInteractor.deleteTemplate(templateId).handle(
+        private fun deleteTemplateWork(template: TemplateUi) = flow {
+            val domainTemplate = template.mapToDomain()
+            if (template.repeatEnabled && template.repeatTimes.isNotEmpty()) {
+                when (val deleteRepeatsResult = repeatTaskInteractor.deleteRepeatsTemplates(domainTemplate, template.repeatTimes)) {
+                    is Either.Left -> {
+                        emit(EffectResult(TemplatesEffect.ShowError(deleteRepeatsResult.data)))
+                        return@flow
+                    }
+                    is Either.Right -> deleteRepeatsResult.data.forEach { timeTaskAlarmManager.deleteNotifyAlarm(it) }
+                }
+            }
+            deleteNotifications(template, template.repeatTimes)
+            templatesInteractor.deleteTemplate(template.templateId).handle(
                 onLeftAction = { emit(EffectResult(TemplatesEffect.ShowError(it))) }
             )
         }
@@ -211,7 +223,7 @@ internal interface TemplatesWorkProcessor :
 internal sealed class TemplatesWorkCommand : WorkCommand {
     data object LoadCategories : TemplatesWorkCommand()
     data class LoadTemplates(val sortedType: TemplatesSortedType) : TemplatesWorkCommand()
-    data class DeleteTemplate(val id: Int) : TemplatesWorkCommand()
+    data class DeleteTemplate(val template: TemplateUi) : TemplatesWorkCommand()
     data class AddTemplate(val template: TemplateUi) : TemplatesWorkCommand()
     data class UpdateTemplate(val oldTemplate: TemplateUi, val newTemplate: TemplateUi) : TemplatesWorkCommand()
     data class RestartRepeat(val template: TemplateUi) : TemplatesWorkCommand()

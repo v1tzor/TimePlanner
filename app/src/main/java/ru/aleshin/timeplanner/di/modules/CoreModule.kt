@@ -21,6 +21,7 @@ import ru.aleshin.core.domain.common.ScheduleStatusChecker
 import ru.aleshin.core.domain.common.TimeTaskStatusChecker
 import ru.aleshin.core.ui.notifications.AlarmKeyFactory
 import ru.aleshin.core.ui.notifications.AlarmReceiverProvider
+import ru.aleshin.core.ui.notifications.OngoingTimeTaskNotificationManager
 import ru.aleshin.core.ui.notifications.TemplatesAlarmManager
 import ru.aleshin.core.ui.notifications.TimeTaskAlarmManager
 import ru.aleshin.core.utils.managers.CoroutineManager
@@ -28,6 +29,8 @@ import ru.aleshin.core.utils.managers.DateManager
 import ru.aleshin.core.utils.managers.TimeOverlayManager
 import ru.aleshin.core.utils.notifications.NotificationCreator
 import ru.aleshin.timeplanner.presentation.notifications.NotificationAlarmHandler
+import ru.aleshin.timeplanner.presentation.notifications.NotificationContentMapper
+import ru.aleshin.timeplanner.presentation.notifications.OngoingTimeTaskNotificationManagerImpl
 import ru.aleshin.timeplanner.presentation.receiver.AlarmReceiverProviderImpl
 import javax.inject.Singleton
 
@@ -45,6 +48,14 @@ interface CoreModule {
 
     @Binds
     fun bindNotificationCreator(creator: NotificationCreator.Base): NotificationCreator
+
+    @Binds
+    fun bindNotificationContentMapper(mapper: NotificationContentMapper.Base): NotificationContentMapper
+
+    @Binds
+    fun bindOngoingTimeTaskNotificationManager(
+        manager: OngoingTimeTaskNotificationManagerImpl,
+    ): OngoingTimeTaskNotificationManager
 
     @Binds
     @Singleton

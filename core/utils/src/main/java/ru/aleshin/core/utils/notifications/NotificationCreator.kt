@@ -58,6 +58,8 @@ interface NotificationCreator {
 
     fun showNotify(notification: Notification, notifyId: Int)
 
+    fun cancelNotify(notifyId: Int)
+
     @RequiresApi(Build.VERSION_CODES.O)
     fun createNotifyChannel(
         channelId: String,
@@ -110,11 +112,11 @@ interface NotificationCreator {
                 if (contentIntent != null) setContentIntent(contentIntent)
                 setAutoCancel(autoCancel)
                 setOngoing(ongoing)
-                if (notificationDefaults.isVibrate) setDefaults(NotificationCompat.DEFAULT_VIBRATE)
-                if (notificationDefaults.isSound) {
-                    setDefaults(NotificationCompat.DEFAULT_SOUND)
-                }
-                if (notificationDefaults.isLights) setDefaults(NotificationCompat.DEFAULT_LIGHTS)
+                var defaults = 0
+                if (notificationDefaults.isVibrate) defaults = defaults or NotificationCompat.DEFAULT_VIBRATE
+                if (notificationDefaults.isSound) defaults = defaults or NotificationCompat.DEFAULT_SOUND
+                if (notificationDefaults.isLights) defaults = defaults or NotificationCompat.DEFAULT_LIGHTS
+                if (defaults != 0) setDefaults(defaults)
                 if (progress != null) with(progress) { setProgress(max, value, isIndeterminate) }
                 if (style != null) setStyle(style.style)
                 actions.forEach { addAction(it) }
@@ -124,6 +126,10 @@ interface NotificationCreator {
 
         override fun showNotify(notification: Notification, notifyId: Int) {
             notificationManager.notify(notifyId, notification)
+        }
+
+        override fun cancelNotify(notifyId: Int) {
+            notificationManager.cancel(notifyId)
         }
 
         @RequiresApi(Build.VERSION_CODES.O)

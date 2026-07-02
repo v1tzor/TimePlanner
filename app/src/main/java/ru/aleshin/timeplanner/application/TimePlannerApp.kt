@@ -65,6 +65,7 @@ class TimePlannerApp : BaseFlavorApplication(), CoroutineScope {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             deleteOldChannel()
             createTimeTaskNotifyChannel()
+            createOngoingTimeTaskNotifyChannel()
         }
         rescheduleNotifications()
     }
@@ -75,6 +76,14 @@ class TimePlannerApp : BaseFlavorApplication(), CoroutineScope {
         channelName = coreStrings.timeTaskChannelName,
         importance = NotificationImportance.MAX,
         defaults = NotificationDefaults(isSound = true, isVibrate = true, isLights = true),
+    )
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun createOngoingTimeTaskNotifyChannel() = notificationCreator.createNotifyChannel(
+        channelId = Constants.Notification.CHANNEL_ID_ONGOING,
+        channelName = coreStrings.ongoingTaskNotifyText,
+        importance = NotificationImportance.LOW,
+        defaults = NotificationDefaults(),
     )
 
     @RequiresApi(Build.VERSION_CODES.O)

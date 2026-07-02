@@ -32,9 +32,8 @@ import ru.aleshin.core.ui.theme.tokens.fetchCoreIcons
 import ru.aleshin.core.ui.theme.tokens.fetchCoreLanguage
 import ru.aleshin.core.ui.theme.tokens.fetchCoreStrings
 import ru.aleshin.core.utils.extensions.fetchCurrentLanguage
-import ru.aleshin.core.utils.functional.Constants.App
+import ru.aleshin.core.utils.functional.Constants
 import ru.aleshin.core.utils.managers.DateManager
-import java.util.Date
 import javax.inject.Inject
 
 /**
@@ -50,23 +49,32 @@ interface TimeTaskAlarmManager {
         private val receiverProvider: AlarmReceiverProvider,
         private val dateManager: DateManager,
         private val alarmKeyFactory: AlarmKeyFactory,
+        private val ongoingNotificationManager: OngoingTimeTaskNotificationManager,
     ) : TimeTaskAlarmManager {
 
         private val alarmManager: AlarmManager
             get() = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
-        private val currentTime: Date
-            get() = dateManager.fetchCurrentDate()
+        private val currentTime: Long
+            get() = dateManager.fetchCurrentDate().time
 
         override fun addOrUpdateNotifyAlarm(timeTask: TimeTask) {
             timeTask.taskNotifications.toTypes(timeTask.isEnableNotification).forEach { type ->
-                val id = alarmKeyFactory.fetchTimeTaskAlarmId(timeTask.key, type)
-                val alarmIntent = createAlarmIntent(timeTask.key, timeTask.category, timeTask.subCategory, id, type)
-                val pendingAlarmIntent = createPendingAlarmIntent(alarmIntent, id)
-                val triggerTime = type.fetchNotifyTrigger(timeTask.timeRange).time
-                if (triggerTime > currentTime.time) {
-                    scheduleAlarm(triggerTime, pendingAlarmIntent)
-                }
+                addOrUpdateNotifyAlarm(timeTask, type)
+            }
+            if (timeTask.isEnableNotification) {
+                addOrUpdateNotifyAlarm(timeTask, TaskNotificationType.END_ONGOING)
+                ongoingNotificationManager.addOrUpdate(timeTask)
+            }
+        }
+
+        private fun addOrUpdateNotifyAlarm(timeTask: TimeTask, type: TaskNotificationType) {
+            val id = alarmKeyFactory.fetchTimeTaskAlarmId(timeTask.key, type)
+            val alarmIntent = createAlarmIntent(timeTask.key, timeTask.category, timeTask.subCategory, id, type)
+            val pendingAlarmIntent = createPendingAlarmIntent(alarmIntent, id)
+            val triggerTime = type.fetchNotifyTrigger(timeTask.timeRange).time
+            if (triggerTime > currentTime) {
+                scheduleAlarm(triggerTime, pendingAlarmIntent)
             }
         }
 
@@ -78,6 +86,7 @@ interface TimeTaskAlarmManager {
                 alarmManager.cancel(pendingAlarmIntent)
                 pendingAlarmIntent.cancel()
             }
+            ongoingNotificationManager.delete(timeTask)
         }
 
         private fun createAlarmIntent(
@@ -94,7 +103,7 @@ interface TimeTaskAlarmManager {
             val appIcon = fetchCoreIcons().logo
 
             return receiverProvider.provideReceiverIntent(
-                category = categoryName ?: App.NAME,
+                category = categoryName ?: Constants.App.NAME,
                 subCategory = subCategoryName,
                 icon = categoryIcon,
                 appIcon = appIcon,

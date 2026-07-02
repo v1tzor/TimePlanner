@@ -40,6 +40,7 @@ object Constants {
     object Notification {
         const val CHANNEL_ID = "timeTaskAlarmChannel"
         const val CHANNEL_ID_NEW = "timeTaskNewAlarmChannel"
+        const val CHANNEL_ID_ONGOING = "timeTaskOngoingAlarmChannel"
     }
 
     object Backup {
@@ -50,6 +51,7 @@ object Constants {
 
     object Alarm {
         const val ALARM_NOTIFICATION_ACTION = "ru.aleshin.ALARM_NOTIFICATION_ACTION"
+        const val MARK_DONE_NOTIFICATION_ACTION = "ru.aleshin.MARK_DONE_NOTIFICATION_ACTION"
         const val NOTIFICATION_TIME_TYPE = "ALARM_DATA_TIME_TYPE"
         const val NOTIFICATION_CATEGORY = "ALARM_DATA_CATEGORY"
         const val NOTIFICATION_SUBCATEGORY = "ALARM_DATA_SUBCATEGORY"
@@ -106,5 +108,6 @@ object Constants {
         const val HOURS_AND_MINUTES_FORMAT = "%s%s %s%s"
 
         const val SHIFT_MINUTE_VALUE = 5
+        const val DEFAULT_DURATION_PRESETS = "10,15,30,45,60,120"
     }
 }

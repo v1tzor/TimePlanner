@@ -29,4 +29,5 @@ data class TasksSettingsEntity(
     @ColumnInfo("task_analytics_range") val taskAnalyticsRange: String = "WEEK",
     @ColumnInfo("calendar_button_behavior") val calendarButtonBehavior: String = "SET_CURRENT_DATE",
     @ColumnInfo("secure_mode") val secureMode: Boolean = false,
+    @ColumnInfo("duration_presets", defaultValue = "'10,15,30,45,60,120'") val durationPresets: String = "10,15,30,45,60,120",
 )

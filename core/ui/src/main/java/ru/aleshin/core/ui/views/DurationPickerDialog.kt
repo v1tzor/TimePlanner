@@ -23,13 +23,18 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -66,8 +71,10 @@ fun DurationPickerDialog(
     headerTitle: String,
     startTime: Date,
     duration: Long,
+    durationPresets: List<Long> = Constants.Date.DEFAULT_DURATION_PRESETS.split(",").map { it.toInt().minutesToMillis() },
     onDismissRequest: () -> Unit,
     onSelectedTime: (Long) -> Unit,
+    onManagePresetsClick: (() -> Unit)? = null,
 ) {
     val startTimeCalendar = Calendar.getInstance().apply { time = startTime }
     val maxHours = Constants.Date.HOURS_IN_DAY.toInt() - startTimeCalendar.get(Calendar.HOUR_OF_DAY) - 1
@@ -113,22 +120,30 @@ fun DurationPickerDialog(
                         contentPadding = PaddingValues(horizontal = 24.dp),
                         horizontalArrangement = Arrangement.spacedBy(10.dp),
                     ) {
-                        items(DurationTemplate.entries.toTypedArray()) {
+                        items(durationPresets) { preset ->
                             AssistChip(
                                 onClick = {
-                                    hours = it.hours
-                                    minutes = it.minutes
+                                    hours = preset.toHorses().toInt()
+                                    minutes = preset.toMinutesInHours().toInt()
                                 },
                                 label = {
-                                    val millis =
-                                        it.hours.hoursToMillis() + it.minutes.minutesToMillis()
-                                    Text(text = millis.toMinutesOrHoursTitle())
+                                    Text(text = preset.toMinutesOrHoursTitle())
                                 },
                                 border = BorderStroke(
                                     1.dp,
                                     color = MaterialTheme.colorScheme.outlineVariant,
                                 ),
                             )
+                        }
+                        if (onManagePresetsClick != null) {
+                            item {
+                                IconButton(
+                                    modifier = Modifier.size(32.dp),
+                                    onClick = onManagePresetsClick,
+                                ) {
+                                    Icon(imageVector = Icons.Filled.Settings, contentDescription = null)
+                                }
+                            }
                         }
                     }
                 }
@@ -156,6 +171,7 @@ internal fun DurationPickerHourMinuteSelector(
     hours: String,
     minutes: String,
     isEnableSupportText: Boolean = false,
+    isRequestInitialFocus: Boolean = true,
     onMinutesChanges: (String) -> Unit,
     onHoursChanges: (String) -> Unit,
 ) = Row(
@@ -221,7 +237,7 @@ internal fun DurationPickerHourMinuteSelector(
         ),
     )
     LaunchedEffect(Unit) {
-        if (!isRequestedFirstFocus) {
+        if (isRequestInitialFocus && !isRequestedFirstFocus) {
             hourRequester.requestFocus()
             isRequestedFirstFocus = true
         }

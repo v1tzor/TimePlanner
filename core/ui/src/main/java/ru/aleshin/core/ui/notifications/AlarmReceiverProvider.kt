@@ -25,6 +25,7 @@ import java.util.Date
  * @author Stanislav Aleshin on 28.03.2023.
  */
 interface AlarmReceiverProvider {
+
     fun provideReceiverIntent(
         category: String,
         subCategory: String,

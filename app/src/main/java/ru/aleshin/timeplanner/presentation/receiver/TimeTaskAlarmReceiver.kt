@@ -31,7 +31,8 @@ import ru.aleshin.timeplanner.application.fetchApp
 class TimeTaskAlarmReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context?, intent: Intent?) {
-        if (intent == null || context == null || intent.action != Constants.Alarm.ALARM_NOTIFICATION_ACTION) return
+        val action = intent?.action
+        if (intent == null || context == null || action !in SUPPORTED_ACTIONS) return
 
         val pendingResult = goAsync()
         CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
@@ -43,5 +44,12 @@ class TimeTaskAlarmReceiver : BroadcastReceiver() {
                 pendingResult.finish()
             }
         }
+    }
+
+    companion object {
+        private val SUPPORTED_ACTIONS = listOf(
+            Constants.Alarm.ALARM_NOTIFICATION_ACTION,
+            Constants.Alarm.MARK_DONE_NOTIFICATION_ACTION,
+        )
     }
 }

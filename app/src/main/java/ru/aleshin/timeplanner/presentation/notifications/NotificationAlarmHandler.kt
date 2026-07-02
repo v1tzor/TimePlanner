@@ -32,17 +32,18 @@ import ru.aleshin.core.domain.repository.ScheduleRepository
 import ru.aleshin.core.domain.repository.TemplatesRepository
 import ru.aleshin.core.domain.repository.TimeTaskRepository
 import ru.aleshin.core.ui.mappers.mapToIcon
-import ru.aleshin.core.ui.mappers.mapToString
 import ru.aleshin.core.ui.models.NotificationTimeType
-import ru.aleshin.core.ui.models.toTimeType
 import ru.aleshin.core.ui.notifications.AlarmKeyFactory
+import ru.aleshin.core.ui.notifications.OngoingTimeTaskNotificationManager
 import ru.aleshin.core.ui.notifications.TemplatesAlarmManager
 import ru.aleshin.core.ui.notifications.TimeTaskAlarmManager
 import ru.aleshin.core.ui.theme.tokens.fetchCoreIcons
 import ru.aleshin.core.ui.theme.tokens.fetchCoreLanguage
 import ru.aleshin.core.ui.theme.tokens.fetchCoreStrings
+import ru.aleshin.core.utils.extensions.changeDay
 import ru.aleshin.core.utils.extensions.fetchCurrentLanguage
 import ru.aleshin.core.utils.extensions.shiftDay
+import ru.aleshin.core.utils.extensions.startThisDay
 import ru.aleshin.core.utils.functional.Constants
 import ru.aleshin.core.utils.functional.Constants.Date.DAYS_IN_WEEK
 import ru.aleshin.core.utils.functional.Month
@@ -52,11 +53,11 @@ import ru.aleshin.core.utils.managers.DateManager
 import ru.aleshin.core.utils.notifications.NotificationCreator
 import ru.aleshin.core.utils.notifications.parameters.NotificationDefaults
 import ru.aleshin.core.utils.notifications.parameters.NotificationPriority
+import ru.aleshin.core.utils.notifications.parameters.NotificationStyles
 import ru.aleshin.timeplanner.R
 import ru.aleshin.timeplanner.presentation.ui.main.MainActivity
 import java.util.Date
 import javax.inject.Inject
-import ru.aleshin.timeplanner.presentation.mappers.mapToString as mapNotificationTimeToString
 
 /**
  * @author Stanislav Aleshin on 01.07.2026.
@@ -74,7 +75,9 @@ interface NotificationAlarmHandler {
         private val templatesRepository: TemplatesRepository,
         private val timeTaskAlarmManager: TimeTaskAlarmManager,
         private val templatesAlarmManager: TemplatesAlarmManager,
+        private val ongoingNotificationManager: OngoingTimeTaskNotificationManager,
         private val notificationCreator: NotificationCreator,
+        private val notificationContentMapper: NotificationContentMapper,
         private val dateManager: DateManager,
         private val alarmKeyFactory: AlarmKeyFactory,
     ) : NotificationAlarmHandler {
@@ -89,6 +92,7 @@ interface NotificationAlarmHandler {
             if (!intent.hasExtra(Constants.Alarm.NOTIFICATION_ID)) return
 
             when {
+                intent.action == Constants.Alarm.MARK_DONE_NOTIFICATION_ACTION -> handleMarkDoneAction(intent)
                 intent.hasExtra(Constants.Alarm.TIME_TASK_ID) -> handleTimeTaskAlarm(intent)
                 intent.hasExtra(Constants.Alarm.TEMPLATE_ID) -> handleTemplateAlarm(intent)
             }
@@ -110,8 +114,13 @@ interface NotificationAlarmHandler {
             scheduleRepository.fetchSchedulesByRange(timeRange).first()
                 .flatMap { schedule -> schedule.overlayTimeTasks + schedule.timeTasks }
                 .distinctBy { timeTask -> timeTask.key }
-                .filter { timeTask -> timeTask.isEnableNotification && !timeTask.isRepeatTemplateTask(repeatTemplates) }
-                .forEach { timeTask -> timeTaskAlarmManager.addOrUpdateNotifyAlarm(timeTask) }
+                .filter { timeTask -> timeTask.isEnableNotification }
+                .forEach { timeTask ->
+                    val isRunning = timeTask.isRunning(dateManager.fetchCurrentDate())
+                    if (!timeTask.isRepeatTemplateTask(repeatTemplates) || isRunning) {
+                        timeTaskAlarmManager.addOrUpdateNotifyAlarm(timeTask)
+                    }
+                }
         }
 
         private suspend fun handleTimeTaskAlarm(intent: Intent) {
@@ -119,18 +128,24 @@ interface NotificationAlarmHandler {
             val notificationType = intent.fetchTaskNotificationType() ?: return
             val timeTask = timeTaskRepository.fetchTimeTaskByKey(timeTaskId) ?: return
             if (!timeTask.isEnableNotification) return
+            if (notificationType == TaskNotificationType.END_ONGOING) {
+                ongoingNotificationManager.delete(timeTask)
+                return
+            }
             if (!timeTask.taskNotifications.toTypes(true).contains(notificationType)) return
 
+            val notificationId = intent.fetchNotificationId(
+                alarmKeyFactory.fetchTimeTaskAlarmId(timeTask.key, notificationType),
+            )
             showNotification(
-                category = timeTask.category.default?.mapToString(coreStrings) ?: timeTask.category.customName.orEmpty(),
-                subCategory = timeTask.subCategory?.name.orEmpty(),
+                content = notificationContentMapper.mapTimeTask(timeTask, notificationType, coreStrings),
                 icon = timeTask.category.default?.mapToIcon(coreIcons),
                 appIcon = coreIcons.logo,
-                timeType = notificationType.toTimeType(),
-                notificationId = intent.fetchNotificationId(
-                    alarmKeyFactory.fetchTimeTaskAlarmId(timeTask.key, notificationType),
-                ),
+                notificationId = notificationId,
             )
+            if (notificationType == TaskNotificationType.START && timeTask.isRunning(dateManager.fetchCurrentDate())) {
+                ongoingNotificationManager.addOrUpdate(timeTask)
+            }
         }
 
         private suspend fun handleTemplateAlarm(intent: Intent) {
@@ -141,15 +156,20 @@ interface NotificationAlarmHandler {
             if (!template.repeatEnabled || !template.isEnableNotification || !template.repeatTimes.contains(repeatTime)) return
 
             showNotification(
-                category = template.category.default?.mapToString(coreStrings) ?: template.category.customName.orEmpty(),
-                subCategory = template.subCategory?.name.orEmpty(),
+                content = notificationContentMapper.mapTemplate(
+                    template = template,
+                    repeatTime = repeatTime,
+                    timeType = timeType,
+                    currentDate = dateManager.fetchCurrentDate(),
+                    strings = coreStrings,
+                ),
                 icon = template.category.default?.mapToIcon(coreIcons),
                 appIcon = coreIcons.logo,
-                timeType = timeType,
                 notificationId = intent.fetchNotificationId(
                     alarmKeyFactory.fetchTemplateAlarmId(template.templateId, repeatTime, timeType),
                 ),
             )
+            if (timeType == NotificationTimeType.START_TASK) showRepeatOngoingNotification(template, repeatTime)
             templatesAlarmManager.addOrUpdateNotifyAlarm(template, repeatTime)
         }
 
@@ -157,21 +177,35 @@ interface NotificationAlarmHandler {
             return templates.any { template -> template.checkDateIsRepeat(date) && template.equalsIsTemplate(this) }
         }
 
+        private suspend fun showRepeatOngoingNotification(template: Template, repeatTime: RepeatTime) {
+            val currentDate = dateManager.fetchCurrentDate()
+            val occurrenceStartTime = repeatTime.fetchCurrentOccurrenceStartTime(template.startTime, currentDate)
+            val schedule = scheduleRepository.fetchScheduleByDate(occurrenceStartTime.startThisDay().time).first()
+            val timeTask = schedule?.let { it.overlayTimeTasks + it.timeTasks }?.firstOrNull { task ->
+                repeatTime.checkDateIsRepeat(task.date) && template.equalsIsTemplate(task)
+            } ?: return
+            timeTaskAlarmManager.addOrUpdateNotifyAlarm(timeTask)
+        }
+
+        private suspend fun handleMarkDoneAction(intent: Intent) {
+            val timeTaskId = intent.getLongExtra(Constants.Alarm.TIME_TASK_ID, 0L)
+            val timeTask = timeTaskRepository.fetchTimeTaskByKey(timeTaskId) ?: return
+            timeTaskRepository.updateTimeTask(timeTask.copy(isCompleted = false))
+            ongoingNotificationManager.delete(timeTask)
+        }
+
         private fun showNotification(
-            category: String,
-            subCategory: String,
+            content: NotificationContent,
             icon: Int?,
             appIcon: Int,
-            timeType: NotificationTimeType,
             notificationId: Int,
         ) {
-            val titleCategory = category.ifBlank { Constants.App.NAME }
             val activityIntent = Intent(context, MainActivity::class.java)
             val contentIntent = PendingIntent.getActivity(context, 0, activityIntent, PendingIntent.FLAG_IMMUTABLE)
             val notification = notificationCreator.createNotify(
                 channelId = Constants.Notification.CHANNEL_ID_NEW,
-                title = if (subCategory.isNotEmpty()) "$titleCategory, $subCategory" else titleCategory,
-                text = timeType.mapNotificationTimeToString(coreStrings),
+                title = content.title,
+                text = content.text,
                 smallIcon = appIcon,
                 largeIcon = icon?.let { largeIcon ->
                     val drawable = ContextCompat.getDrawable(context, largeIcon)
@@ -179,12 +213,23 @@ interface NotificationAlarmHandler {
                     return@let drawable?.toBitmap()
                 },
                 autoCancel = true,
+                ongoing = false,
                 priority = NotificationPriority.MAX,
                 contentIntent = contentIntent,
                 notificationDefaults = NotificationDefaults(true, true, true),
+                style = content.text.takeIf { it.isNotBlank() }?.let { NotificationStyles.BigTextStyle(it) },
                 color = ContextCompat.getColor(context, R.color.notification_icon),
             )
             notificationCreator.showNotify(notification, notificationId)
+        }
+
+        private fun RepeatTime.fetchCurrentOccurrenceStartTime(startTime: Date, currentDate: Date): Date {
+            val currentStartTime = startTime.changeDay(currentDate)
+            return if (checkDateIsRepeat(currentStartTime)) {
+                currentStartTime
+            } else {
+                nextDateOrCurrent(startTime, currentDate)
+            }
         }
 
         private fun Intent.fetchNotificationTimeType(): NotificationTimeType {

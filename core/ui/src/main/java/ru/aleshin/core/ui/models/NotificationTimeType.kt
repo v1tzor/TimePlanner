@@ -32,4 +32,5 @@ fun TaskNotificationType.toTimeType() = when (this) {
     TaskNotificationType.ONE_DAY_BEFORE -> NotificationTimeType.BEFORE_TASK
     TaskNotificationType.ONE_WEEK_BEFORE -> NotificationTimeType.BEFORE_TASK
     TaskNotificationType.AFTER_START_BEFORE_END -> NotificationTimeType.AFTER_TASK
+    TaskNotificationType.END_ONGOING -> NotificationTimeType.AFTER_TASK
 }

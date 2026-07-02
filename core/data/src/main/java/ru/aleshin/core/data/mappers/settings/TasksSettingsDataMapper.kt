@@ -19,6 +19,9 @@ import ru.aleshin.core.data.models.settings.TasksSettingsEntity
 import ru.aleshin.core.domain.entities.settings.CalendarButtonBehavior
 import ru.aleshin.core.domain.entities.settings.TasksSettings
 import ru.aleshin.core.domain.entities.settings.ViewToggleStatus
+import ru.aleshin.core.utils.extensions.minutesToMillis
+import ru.aleshin.core.utils.extensions.toMinutes
+import ru.aleshin.core.utils.functional.Constants
 import ru.aleshin.core.utils.functional.TimePeriod
 
 /**
@@ -30,6 +33,7 @@ fun TasksSettings.mapToData() = TasksSettingsEntity(
     taskAnalyticsRange = taskAnalyticsRange.toString(),
     calendarButtonBehavior = calendarButtonBehavior.toString(),
     secureMode = secureMode,
+    durationPresets = durationPresets.mapToData(),
 )
 
 fun TasksSettingsEntity.mapToDomain() = TasksSettings(
@@ -37,4 +41,27 @@ fun TasksSettingsEntity.mapToDomain() = TasksSettings(
     taskAnalyticsRange = TimePeriod.valueOf(taskAnalyticsRange),
     calendarButtonBehavior = CalendarButtonBehavior.valueOf(calendarButtonBehavior),
     secureMode = secureMode,
+    durationPresets = durationPresets.mapToDomain(),
 )
+
+private fun List<Long>.mapToData(): String {
+    return map { it.toMinutes() }.distinct().sorted().joinToString(separator = ",")
+}
+
+private fun String.mapToDomain(): List<Long> {
+    return split(",")
+        .mapNotNull { value -> value.trim().toIntOrNull() }
+        .filter { value -> value in MIN_PRESET_MINUTES..MAX_PRESET_MINUTES }
+        .distinct()
+        .sorted()
+        .takeIf { it.isNotEmpty() }
+        ?.map { minutes -> minutes.minutesToMillis() }
+        ?: defaultPresets()
+}
+
+private fun defaultPresets(): List<Long> {
+    return Constants.Date.DEFAULT_DURATION_PRESETS.split(",").map { it.toInt().minutesToMillis() }
+}
+
+private const val MIN_PRESET_MINUTES = 1
+private const val MAX_PRESET_MINUTES = 1440

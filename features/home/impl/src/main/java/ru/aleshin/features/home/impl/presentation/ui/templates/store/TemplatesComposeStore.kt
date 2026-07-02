@@ -71,10 +71,10 @@ internal class TemplatesComposeStore @Inject constructor(
                 templatesWorkProcessor.work(command).collectAndHandleWork()
             }
             is TemplatesEvent.DeleteTemplate -> launchBackgroundWork(BackgroundKey.TEMPLATE_ACTION) {
-                val command = TemplatesWorkCommand.DeleteTemplate(event.id)
+                val command = TemplatesWorkCommand.DeleteTemplate(event.template)
                 templatesWorkProcessor.work(command).collectAndHandleWork()
             }
-            is TemplatesEvent.RestartTemplateRepeat -> launchBackgroundWork(BackgroundKey.REPEAT_ACTION){
+            is TemplatesEvent.RestartTemplateRepeat -> launchBackgroundWork(BackgroundKey.REPEAT_ACTION) {
                 val command = TemplatesWorkCommand.RestartRepeat(event.template)
                 templatesWorkProcessor.work(command).collectAndHandleWork()
             }
@@ -119,18 +119,18 @@ internal class TemplatesComposeStore @Inject constructor(
         LOAD_TEMPLATES, LOAD_CATEGORIES, TEMPLATE_ACTION, REPEAT_ACTION
     }
 
-     class Factory @Inject constructor(
-         private val templatesWorkProcessor: TemplatesWorkProcessor,
-         private val coroutineManager: CoroutineManager,
-     ) : BaseSimpleComposeStore.Factory<TemplatesComposeStore, TemplatesState> {
+    class Factory @Inject constructor(
+        private val templatesWorkProcessor: TemplatesWorkProcessor,
+        private val coroutineManager: CoroutineManager,
+    ) : BaseSimpleComposeStore.Factory<TemplatesComposeStore, TemplatesState> {
 
-         override fun create(savedState: TemplatesState): TemplatesComposeStore {
-             return TemplatesComposeStore(
-                 templatesWorkProcessor = templatesWorkProcessor,
-                 stateCommunicator = StateCommunicator.Default(savedState),
-                 effectCommunicator = EffectCommunicator.Default(),
-                 coroutineManager = coroutineManager,
-             )
-         }
-     }
+        override fun create(savedState: TemplatesState): TemplatesComposeStore {
+            return TemplatesComposeStore(
+                templatesWorkProcessor = templatesWorkProcessor,
+                stateCommunicator = StateCommunicator.Default(savedState),
+                effectCommunicator = EffectCommunicator.Default(),
+                coroutineManager = coroutineManager,
+            )
+        }
+    }
 }

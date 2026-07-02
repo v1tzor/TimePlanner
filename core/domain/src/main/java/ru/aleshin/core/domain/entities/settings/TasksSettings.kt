@@ -16,6 +16,8 @@
 package ru.aleshin.core.domain.entities.settings
 
 import ru.aleshin.core.utils.functional.TimePeriod
+import ru.aleshin.core.utils.extensions.minutesToMillis
+import ru.aleshin.core.utils.functional.Constants
 
 /**
  * @author Stanislav Aleshin on 15.09.2023.
@@ -25,4 +27,5 @@ data class TasksSettings(
     val taskAnalyticsRange: TimePeriod = TimePeriod.WEEK,
     val calendarButtonBehavior: CalendarButtonBehavior = CalendarButtonBehavior.SET_CURRENT_DATE,
     val secureMode: Boolean = false,
+    val durationPresets: List<Long> = Constants.Date.DEFAULT_DURATION_PRESETS.split(",").map { it.toInt().minutesToMillis() },
 )

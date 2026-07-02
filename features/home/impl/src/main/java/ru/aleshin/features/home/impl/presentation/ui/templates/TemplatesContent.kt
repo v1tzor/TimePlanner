@@ -100,7 +100,7 @@ internal fun TemplatesContent(
                 state = state,
                 modifier = Modifier.padding(paddingValues),
                 onChangeSortedType = { store.dispatchEvent(TemplatesEvent.UpdatedSortedType(it)) },
-                onDeleteTemplate = { store.dispatchEvent(TemplatesEvent.DeleteTemplate(it.templateId)) },
+                onDeleteTemplate = { store.dispatchEvent(TemplatesEvent.DeleteTemplate(it)) },
                 onUpdateTemplate = { store.dispatchEvent(TemplatesEvent.UpdateTemplate(it)) },
                 onRestartRepeat = { store.dispatchEvent(TemplatesEvent.RestartTemplateRepeat(it)) },
                 onStopRepeat = { store.dispatchEvent(TemplatesEvent.StopTemplateRepeat(it)) },

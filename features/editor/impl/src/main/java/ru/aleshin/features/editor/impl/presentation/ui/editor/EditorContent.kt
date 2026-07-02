@@ -96,6 +96,7 @@ internal fun EditorContent(
     onAddSubCategory: (String) -> Unit,
     onTimeRangeChange: (TimeRange) -> Unit,
     onChangeParameters: (EditParametersUi) -> Unit,
+    onDurationPresetsChange: (List<Long>) -> Unit,
     onEditCategory: (MainCategoryUi) -> Unit,
     onEditSubCategory: (SubCategoryUi) -> Unit,
     onControlTemplate: () -> Unit,
@@ -137,9 +138,11 @@ internal fun EditorContent(
                         isTimeValidError = state.timeRangeValid is TimeRangeError.DurationError,
                         timeRanges = state.editModel.timeRange,
                         duration = state.editModel.duration,
+                        durationPresets = state.durationPresets,
                         onTimeRangeChange = {
                             onTimeRangeChange(it)
                         },
+                        onDurationPresetsChange = onDurationPresetsChange,
                     )
                     HorizontalDivider(Modifier.padding(horizontal = 32.dp))
                     ParametersSection(
@@ -271,7 +274,9 @@ internal fun DateTimeSection(
     isTimeValidError: Boolean,
     timeRanges: TimeRange,
     duration: Long,
+    durationPresets: List<Long>,
     onTimeRangeChange: (TimeRange) -> Unit,
+    onDurationPresetsChange: (List<Long>) -> Unit,
 ) {
     Row(
         modifier = modifier.padding(horizontal = 16.dp),
@@ -314,10 +319,12 @@ internal fun DateTimeSection(
             enabled = enabled,
             duration = duration,
             startTime = timeRanges.from,
+            durationPresets = durationPresets,
             isError = isTimeValidError,
             onChangeDuration = { duration ->
                 onTimeRangeChange(timeRanges.copy(to = timeRanges.from.shiftMillis(duration.toInt())))
             },
+            onDurationPresetsChange = onDurationPresetsChange,
         )
     }
 }

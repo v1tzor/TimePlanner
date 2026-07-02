@@ -20,6 +20,7 @@ import ru.aleshin.core.domain.common.ScheduleStatusChecker
 import ru.aleshin.core.domain.repository.CategoriesRepository
 import ru.aleshin.core.domain.repository.ScheduleRepository
 import ru.aleshin.core.domain.repository.SubCategoriesRepository
+import ru.aleshin.core.domain.repository.TasksSettingsRepository
 import ru.aleshin.core.domain.repository.TemplatesRepository
 import ru.aleshin.core.domain.repository.TimeTaskRepository
 import ru.aleshin.core.domain.repository.UndefinedTasksRepository
@@ -39,6 +40,7 @@ public interface EditorFeatureDependencies : BaseFeatureDependencies {
     public val templatesRepository: TemplatesRepository
     public val undefinedTasksRepository: UndefinedTasksRepository
     public val subCategoriesRepository: SubCategoriesRepository
+    public val tasksSettingsRepository: TasksSettingsRepository
     public val schedulesLocalDataSource: SchedulesLocalDataSource
     public val scheduleStatusChecker: ScheduleStatusChecker
     public val coroutineManager: CoroutineManager

@@ -24,6 +24,8 @@ import ru.aleshin.core.utils.architecture.store.contract.StoreAction
 import ru.aleshin.core.utils.architecture.store.contract.StoreEffect
 import ru.aleshin.core.utils.architecture.store.contract.StoreEvent
 import ru.aleshin.core.utils.architecture.store.contract.StoreState
+import ru.aleshin.core.utils.extensions.minutesToMillis
+import ru.aleshin.core.utils.functional.Constants
 import ru.aleshin.core.utils.functional.TimeRange
 import ru.aleshin.features.editor.impl.domain.entites.EditorFailures
 import ru.aleshin.features.editor.impl.presentation.models.categories.CategoriesUi
@@ -45,6 +47,7 @@ internal data class EditorState(
     val categories: List<CategoriesUi> = emptyList(),
     val templates: List<TemplateUi>? = null,
     val undefinedTasks: List<UndefinedTaskUi>? = null,
+    val durationPresets: List<Long> = Constants.Date.DEFAULT_DURATION_PRESETS.split(",").map { it.toInt().minutesToMillis() },
     val timeRangeValid: TimeRangeError? = null,
     val categoryValid: CategoryValidateError? = null,
 ) : StoreState
@@ -58,6 +61,7 @@ internal sealed class EditorEvent : StoreEvent {
     data class ChangeCategories(val category: MainCategoryUi, val subCategory: SubCategoryUi?) : EditorEvent()
     data class ChangeNote(val note: String?) : EditorEvent()
     data class ChangeParameters(val parameters: EditParametersUi) : EditorEvent()
+    data class UpdateDurationPresets(val presets: List<Long>) : EditorEvent()
     data class AddSubCategory(val name: String) : EditorEvent()
     data class NavigateToCategoryEditor(val category: MainCategoryUi) : EditorEvent()
     data class NavigateToSubCategoryEditor(val category: SubCategoryUi) : EditorEvent()
@@ -81,6 +85,7 @@ internal sealed class EditorAction : StoreAction {
     data class UpdateUndefinedTasks(val tasks: List<UndefinedTaskUi>) : EditorAction()
     data class UpdateCategories(val categories: List<CategoriesUi>) : EditorAction()
     data class UpdateTemplates(val templates: List<TemplateUi>) : EditorAction()
+    data class UpdateDurationPresets(val presets: List<Long>) : EditorAction()
     data class UpdateTemplateId(val templateId: Int?) : EditorAction()
     data class UpdateEditModel(val editModel: EditModelUi?) : EditorAction()
     data class SetValidError(val timeRange: TimeRangeError?, val category: CategoryValidateError?) : EditorAction()

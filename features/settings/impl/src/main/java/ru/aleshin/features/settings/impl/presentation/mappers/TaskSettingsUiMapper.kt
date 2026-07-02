@@ -23,12 +23,16 @@ import ru.aleshin.features.settings.impl.presentation.models.TasksSettingsUi
  */
 internal fun TasksSettings.mapToUi() = TasksSettingsUi(
     taskViewStatus = taskViewStatus,
+    taskAnalyticsRange = taskAnalyticsRange,
     calendarButtonBehavior = calendarButtonBehavior,
     secureMode = secureMode,
+    durationPresets = durationPresets,
 )
 
 internal fun TasksSettingsUi.mapToDomain() = TasksSettings(
     taskViewStatus = taskViewStatus,
+    taskAnalyticsRange = taskAnalyticsRange,
     calendarButtonBehavior = calendarButtonBehavior,
     secureMode = secureMode,
+    durationPresets = durationPresets,
 )

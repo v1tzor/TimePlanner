@@ -45,7 +45,7 @@ internal sealed class TemplatesEvent : StoreEvent {
     data class AddRepeatTemplate(val time: RepeatTime, val template: TemplateUi) : TemplatesEvent()
     data class DeleteRepeatTemplate(val time: RepeatTime, val template: TemplateUi) : TemplatesEvent()
     data class UpdatedSortedType(val type: TemplatesSortedType) : TemplatesEvent()
-    data class DeleteTemplate(val id: Int) : TemplatesEvent()
+    data class DeleteTemplate(val template: TemplateUi) : TemplatesEvent()
 }
 
 internal sealed class TemplatesEffect : StoreEffect {

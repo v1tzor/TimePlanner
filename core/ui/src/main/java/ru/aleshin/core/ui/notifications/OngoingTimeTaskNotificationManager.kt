@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,14 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ru.aleshin.core.ui.views
+package ru.aleshin.core.ui.notifications
+
+import ru.aleshin.core.domain.entities.schedules.TimeTask
 
 /**
- * @author Stanislav Aleshin on 03.03.2023.
+ * @author Stanislav Aleshin on 02.07.2026.
  */
-enum class DurationTemplate(val hours: Int, val minutes: Int) {
-    TEN_MINUTES(0, 10),
-    THIRTY_MINUTES(0, 30),
-    ONE_HOUR(1, 0),
-    FOUR_HOUR(4, 0),
+interface OngoingTimeTaskNotificationManager {
+
+    fun addOrUpdate(timeTask: TimeTask)
+
+    fun delete(timeTask: TimeTask)
 }

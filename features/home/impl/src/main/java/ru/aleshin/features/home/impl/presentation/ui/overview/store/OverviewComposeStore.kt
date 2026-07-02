@@ -89,7 +89,7 @@ internal class OverviewComposeStore @Inject constructor(
                 }
             }
             is OverviewEvent.CreateOrUpdateUndefinedTask -> launchBackgroundWork(BackgroundKey.TASK_ACTION) {
-                val command = OverviewWorkCommand.CreateOrUpdateUndefinedTask(event.task)
+                val command = OverviewWorkCommand.CreateOrUpdateUndefinedTasks(listOf(event.task))
                 workProcessor.work(command).collectAndHandleWork()
             }
             is OverviewEvent.ConfirmBatchUndefinedTasks -> launchBackgroundWork(BackgroundKey.TASK_ACTION) {
@@ -156,18 +156,18 @@ internal class OverviewComposeStore @Inject constructor(
         LOAD_SCHEDULES, LOAD_UNDEFINED_TASKS, LOAD_CATEGORIES, TASK_ACTION, SHARE_IMPORT
     }
 
-     class Factory @Inject constructor(
-         private val workProcessor: OverviewWorkProcessor,
-         private val coroutineManager: CoroutineManager,
-     ) : BaseComposeStore.Factory<OverviewComposeStore, OverviewState> {
+    class Factory @Inject constructor(
+        private val workProcessor: OverviewWorkProcessor,
+        private val coroutineManager: CoroutineManager,
+    ) : BaseComposeStore.Factory<OverviewComposeStore, OverviewState> {
 
-         override fun create(savedState: OverviewState): OverviewComposeStore {
-             return OverviewComposeStore(
-                 workProcessor = workProcessor,
-                 stateCommunicator = StateCommunicator.Default(savedState),
-                 effectCommunicator = EffectCommunicator.Default(),
-                 coroutineManager = coroutineManager,
-             )
-         }
-     }
+        override fun create(savedState: OverviewState): OverviewComposeStore {
+            return OverviewComposeStore(
+                workProcessor = workProcessor,
+                stateCommunicator = StateCommunicator.Default(savedState),
+                effectCommunicator = EffectCommunicator.Default(),
+                coroutineManager = coroutineManager,
+            )
+        }
+    }
 }

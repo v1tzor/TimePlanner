@@ -75,6 +75,10 @@ internal class EditorComposeStore @Inject constructor(
                     val templatesCommand = EditorWorkCommand.LoadTemplates
                     editorWorkProcessor.work(templatesCommand).handleWork()
                 }
+                launchBackgroundWork(BackgroundKey.LOAD_SETTINGS) {
+                    val settingsCommand = EditorWorkCommand.LoadTasksSettings
+                    editorWorkProcessor.work(settingsCommand).handleWork()
+                }
                 launchBackgroundWork(BackgroundKey.LOAD_UNDEFINED_TASKS) {
                     val tasksCommand = TimeTaskWorkCommand.LoadUndefinedTasks
                     timeTaskWorkProcessor.work(tasksCommand).handleWork()
@@ -85,6 +89,10 @@ internal class EditorComposeStore @Inject constructor(
             }
             is EditorEvent.ChangeParameters -> updateEditModel {
                 copy(parameters = event.parameters)
+            }
+            is EditorEvent.UpdateDurationPresets -> launchBackgroundWork(BackgroundKey.DATA_ACTION) {
+                val command = EditorWorkCommand.UpdateDurationPresets(event.presets)
+                editorWorkProcessor.work(command).handleWork()
             }
             is EditorEvent.ChangeCategories -> updateEditModel {
                 copy(mainCategory = event.category, subCategory = event.subCategory)
@@ -158,6 +166,9 @@ internal class EditorComposeStore @Inject constructor(
         is EditorAction.UpdateTemplates -> currentState.copy(
             templates = action.templates,
         )
+        is EditorAction.UpdateDurationPresets -> currentState.copy(
+            durationPresets = action.presets,
+        )
         is EditorAction.UpdateUndefinedTasks -> currentState.copy(
             undefinedTasks = action.tasks,
         )
@@ -181,27 +192,27 @@ internal class EditorComposeStore @Inject constructor(
     }
 
     enum class BackgroundKey : BackgroundWorkKey {
-        LOAD_TEMPLATES, LOAD_UNDEFINED_TASKS, SAVE_MODEL, DELETE_MODEL, DATA_ACTION
+        LOAD_TEMPLATES, LOAD_SETTINGS, LOAD_UNDEFINED_TASKS, SAVE_MODEL, DELETE_MODEL, DATA_ACTION
     }
 
-     class Factory @Inject constructor(
-         private val timeTaskWorkProcessor: TimeTaskWorkProcessor,
-         private val editorWorkProcessor: EditorWorkProcessor,
-         private val timeRangeValidator: TimeRangeValidator,
-         private val categoryValidator: CategoryValidator,
-         private val coroutineManager: CoroutineManager,
-     ) : BaseComposeStore.Factory<EditorComposeStore, EditorState> {
+    class Factory @Inject constructor(
+        private val timeTaskWorkProcessor: TimeTaskWorkProcessor,
+        private val editorWorkProcessor: EditorWorkProcessor,
+        private val timeRangeValidator: TimeRangeValidator,
+        private val categoryValidator: CategoryValidator,
+        private val coroutineManager: CoroutineManager,
+    ) : BaseComposeStore.Factory<EditorComposeStore, EditorState> {
 
-         override fun create(savedState: EditorState): EditorComposeStore {
-             return EditorComposeStore(
-                 timeTaskWorkProcessor = timeTaskWorkProcessor,
-                 editorWorkProcessor = editorWorkProcessor,
-                 timeRangeValidator = timeRangeValidator,
-                 categoryValidator = categoryValidator,
-                 stateCommunicator = StateCommunicator.Default(savedState),
-                 effectCommunicator = EffectCommunicator.Default(),
-                 coroutineManager = coroutineManager,
-             )
-         }
-     }
+        override fun create(savedState: EditorState): EditorComposeStore {
+            return EditorComposeStore(
+                timeTaskWorkProcessor = timeTaskWorkProcessor,
+                editorWorkProcessor = editorWorkProcessor,
+                timeRangeValidator = timeRangeValidator,
+                categoryValidator = categoryValidator,
+                stateCommunicator = StateCommunicator.Default(savedState),
+                effectCommunicator = EffectCommunicator.Default(),
+                coroutineManager = coroutineManager,
+            )
+        }
+    }
 }

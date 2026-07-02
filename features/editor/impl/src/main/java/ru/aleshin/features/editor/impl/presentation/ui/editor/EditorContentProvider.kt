@@ -71,6 +71,7 @@ internal class EditorContentProvider(
                         onAddSubCategory = { store.dispatchEvent(EditorEvent.AddSubCategory(it)) },
                         onTimeRangeChange = { store.dispatchEvent(EditorEvent.ChangeTime(it)) },
                         onChangeParameters = { store.dispatchEvent(EditorEvent.ChangeParameters(it)) },
+                        onDurationPresetsChange = { store.dispatchEvent(EditorEvent.UpdateDurationPresets(it)) },
                         onEditCategory = { store.dispatchEvent(EditorEvent.NavigateToCategoryEditor(it)) },
                         onEditSubCategory = { store.dispatchEvent(EditorEvent.NavigateToSubCategoryEditor(it)) },
                         onControlTemplate = { store.dispatchEvent(EditorEvent.PressControlTemplateButton) },

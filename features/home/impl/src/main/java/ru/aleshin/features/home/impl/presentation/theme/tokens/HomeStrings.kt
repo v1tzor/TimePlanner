@@ -62,6 +62,8 @@ internal data class HomeStrings(
     val deleteCategoryTitle: String,
     val subCategoryTitle: String,
     val warningDeleteCategoryText: String,
+    val warningDeleteTemplateText: String,
+    val warningDeleteRepeatTemplateText: String,
     val sortedTypeTitle: String,
     val sortedTypeDate: String,
     val sortedTypeCategories: String,
@@ -150,6 +152,9 @@ internal val russianHomeString = HomeStrings(
     subCategoryTitle = "Подкатегории",
     warningDeleteCategoryText = "Вы уверены что хотите удалить основную категорию? " +
         "Данное действие приведёт к уничтожению всех ранее запланированных задач.",
+    warningDeleteTemplateText = "Вы уверены, что хотите удалить этот шаблон?",
+    warningDeleteRepeatTemplateText = "Вы уверены, что хотите удалить этот шаблон? " +
+        "Будущие задачи, созданные его повторениями, также будут удалены.",
     sortedTypeTitle = "Сортировать",
     sortedTypeDate = "По дате",
     sortedTypeCategories = "По категориям",
@@ -238,6 +243,9 @@ internal val englishHomeString = HomeStrings(
     subCategoryTitle = "Subcategories",
     warningDeleteCategoryText = "Are you sure you want to delete the main category? " +
         "This action will delete all previously scheduled tasks.",
+    warningDeleteTemplateText = "Are you sure you want to delete this template?",
+    warningDeleteRepeatTemplateText = "Are you sure you want to delete this template? " +
+        "Future tasks created by its repeats will also be deleted.",
     sortedTypeTitle = "Sort",
     sortedTypeDate = "By date",
     sortedTypeCategories = "By category",
@@ -326,6 +334,9 @@ internal val persianHomeString = HomeStrings(
     subCategoryTitle = "زیر مجموعه ها",
     warningDeleteCategoryText = "آیا مطمئن هستید که می خواهید دسته اصلی را حذف کنید؟ " +
         "این عمل تمام کارهای برنامه ریزی شده قبلی را از بین می برد.",
+    warningDeleteTemplateText = "آیا مطمئن هستید که می‌خواهید این قالب را حذف کنید؟",
+    warningDeleteRepeatTemplateText = "آیا مطمئن هستید که می‌خواهید این قالب را حذف کنید؟ " +
+        "کارهای آینده‌ای که از تکرارهای آن ساخته شده‌اند نیز حذف می‌شوند.",
     sortedTypeTitle = "مرتب شده",
     sortedTypeDate = "بر اساس تاریخ",
     sortedTypeCategories = "بر اساس طبقه بندی",
@@ -414,6 +425,9 @@ internal val germanHomeString = HomeStrings(
     subCategoryTitle = "Unterkategorien",
     warningDeleteCategoryText = "Sind Sie sicher, dass Sie die Hauptkategorie löschen möchten? " +
         "Durch diese Aktion werden alle zuvor geplanten Aufgaben gelöscht.",
+    warningDeleteTemplateText = "Möchten Sie diese Vorlage wirklich löschen?",
+    warningDeleteRepeatTemplateText = "Möchten Sie diese Vorlage wirklich löschen? " +
+        "Zukünftige Aufgaben aus ihren Wiederholungen werden ebenfalls gelöscht.",
     sortedTypeTitle = "Sortieren",
     sortedTypeDate = "Nach Datum",
     sortedTypeCategories = "Nach Kategorie",
@@ -502,6 +516,9 @@ internal val spanishHomeString = HomeStrings(
     subCategoryTitle = "Subcategorías",
     warningDeleteCategoryText = "¿Quieres eliminar la categoría principal? " +
         "Esto eliminará todas las tareas programadas anteriormente.",
+    warningDeleteTemplateText = "¿Seguro que quieres eliminar esta plantilla?",
+    warningDeleteRepeatTemplateText = "¿Seguro que quieres eliminar esta plantilla? " +
+        "También se eliminarán las tareas futuras creadas por sus repeticiones.",
     sortedTypeTitle = "Ordenado",
     sortedTypeDate = "Por fecha",
     sortedTypeCategories = "Por categoría",
@@ -590,6 +607,9 @@ internal val frenchHomeString = HomeStrings(
     subCategoryTitle = "Sous-catégories",
     warningDeleteCategoryText = "Êtes-vous sur(e) de vouloir supprimer la catégorie principale? " +
         "Cette action engendredra la suppression de toutes les tâches prévues.",
+    warningDeleteTemplateText = "Voulez-vous vraiment supprimer ce modèle ?",
+    warningDeleteRepeatTemplateText = "Voulez-vous vraiment supprimer ce modèle ? " +
+        "Les futures tâches créées par ses répétitions seront aussi supprimées.",
     sortedTypeTitle = "Trié",
     sortedTypeDate = "Par date",
     sortedTypeCategories = "Par catégorie",
@@ -677,6 +697,9 @@ internal val brazilianPortugueseHomeString = HomeStrings(
     subCategoryTitle = "Subcategorias",
     warningDeleteCategoryText = "Você tem certeza que deseja deletar a categoria principal? " +
         "Esta ação irá apagar todas as tarefas previamente planejadas.",
+    warningDeleteTemplateText = "Tem certeza que deseja excluir este template?",
+    warningDeleteRepeatTemplateText = "Tem certeza que deseja excluir este template? " +
+        "As tarefas futuras criadas pelas repetições dele também serão excluídas.",
     sortedTypeTitle = "Classificado",
     sortedTypeDate = "Por dia",
     sortedTypeCategories = "Por categoria",
@@ -765,6 +788,9 @@ internal val turkishHomeString = HomeStrings(
     subCategoryTitle = "Alt kategoriler",
     warningDeleteCategoryText = "Ana kategoriyi silmek istediğinizden emin misiniz? " +
         "Bu işlem önceden planlanmış tüm görevleri yok eder.",
+    warningDeleteTemplateText = "Bu şablonu silmek istediğinizden emin misiniz?",
+    warningDeleteRepeatTemplateText = "Bu şablonu silmek istediğinizden emin misiniz? " +
+        "Tekrarlarından oluşturulan gelecekteki görevler de silinir.",
     sortedTypeTitle = "Sıralı",
     sortedTypeDate = "Tarihe göre",
     sortedTypeCategories = "Kategoriye göre",
@@ -853,6 +879,9 @@ internal val vietnameseHomeString = HomeStrings(
     subCategoryTitle = "Danh mục con",
     warningDeleteCategoryText = "Bạn có chắc chắn muốn xóa danh mục chính không?" +
         "Hành động này sẽ hủy tất cả các nhiệm vụ đã lên lịch trước đó.",
+    warningDeleteTemplateText = "Bạn có chắc chắn muốn xóa mẫu này không?",
+    warningDeleteRepeatTemplateText = "Bạn có chắc chắn muốn xóa mẫu này không? " +
+        "Các nhiệm vụ tương lai được tạo từ lặp lại của mẫu cũng sẽ bị xóa.",
     sortedTypeTitle = "Đã sắp xếp",
     sortedTypeDate = "Theo ngày",
     sortedTypeCategories = "Theo danh mục",
@@ -941,6 +970,9 @@ internal val polishHomeString = HomeStrings(
     subCategoryTitle = "Podkategorie",
     warningDeleteCategoryText = "Czy na pewno chcesz usunąć kategorię główną? " +
             "Ta operacja spowoduje usunięcie wszystkich wcześniej zaplanowanych zadań.",
+    warningDeleteTemplateText = "Czy na pewno chcesz usunąć ten szablon?",
+    warningDeleteRepeatTemplateText = "Czy na pewno chcesz usunąć ten szablon? " +
+        "Przyszłe zadania utworzone przez jego powtórzenia też zostaną usunięte.",
     sortedTypeTitle = "Posortowane",
     sortedTypeDate = "Według daty",
     sortedTypeCategories = "Według kategorii",
@@ -1029,6 +1061,9 @@ internal val italianHomeString = HomeStrings(
     subCategoryTitle = "Sottocategorie",
     warningDeleteCategoryText = "Sei sicuro di voler eliminare la categoria principale? " +
         "Questa azione eliminerà i task già programmati.",
+    warningDeleteTemplateText = "Sei sicuro di voler eliminare questo template?",
+    warningDeleteRepeatTemplateText = "Sei sicuro di voler eliminare questo template? " +
+        "Saranno eliminate anche le attività future create dalle sue ripetizioni.",
     sortedTypeTitle = "Ordina",
     sortedTypeDate = "Per data",
     sortedTypeCategories = "Per categoria",
@@ -1117,6 +1152,8 @@ internal val chineseHomeString = HomeStrings(
     deleteCategoryTitle = "删除",
     subCategoryTitle = "子分类",
     warningDeleteCategoryText = "确定要删除主分类吗？此操作将删除所有已安排的任务。",
+    warningDeleteTemplateText = "确定要删除此模板吗？",
+    warningDeleteRepeatTemplateText = "确定要删除此模板吗？由其重复规则创建的未来任务也会被删除。",
     sortedTypeTitle = "排序",
     sortedTypeDate = "按日期",
     sortedTypeCategories = "按分类",

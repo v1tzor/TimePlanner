@@ -40,6 +40,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import ru.aleshin.core.ui.views.DurationPresetsEditorDialog
 import ru.aleshin.core.ui.views.DurationPickerDialog
 import ru.aleshin.core.ui.views.MultiTimePickerDialog
 import ru.aleshin.core.ui.views.toMinutesAndHoursTitle
@@ -156,10 +157,13 @@ internal fun DurationTitle(
     enabled: Boolean = true,
     duration: Long,
     startTime: Date,
+    durationPresets: List<Long>,
     isError: Boolean = false,
     onChangeDuration: (Long) -> Unit,
+    onDurationPresetsChange: (List<Long>) -> Unit,
 ) {
     var isOpenDurationDialog by remember { mutableStateOf(false) }
+    var isOpenPresetsDialog by remember { mutableStateOf(false) }
     val correctDuration = if (duration < 0L) 0L else duration
     val titleColor = when (isError) {
         true -> MaterialTheme.colorScheme.error
@@ -183,10 +187,26 @@ internal fun DurationTitle(
             headerTitle = EditorThemeRes.strings.durationPickerTitle,
             duration = duration,
             startTime = startTime,
+            durationPresets = durationPresets,
             onDismissRequest = { isOpenDurationDialog = false },
             onSelectedTime = {
                 onChangeDuration(it)
                 isOpenDurationDialog = false
+            },
+            onManagePresetsClick = {
+                isOpenDurationDialog = false
+                isOpenPresetsDialog = true
+            },
+        )
+    }
+    if (isOpenPresetsDialog) {
+        DurationPresetsEditorDialog(
+            headerTitle = EditorThemeRes.strings.durationPickerTitle,
+            presets = durationPresets,
+            onDismissRequest = { isOpenPresetsDialog = false },
+            onConfirmPresets = {
+                onDurationPresetsChange(it)
+                isOpenPresetsDialog = false
             },
         )
     }

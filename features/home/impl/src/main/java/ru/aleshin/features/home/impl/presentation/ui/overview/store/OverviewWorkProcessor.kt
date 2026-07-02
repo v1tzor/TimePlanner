@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2025 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -67,7 +67,6 @@ internal interface OverviewWorkProcessor :
             is OverviewWorkCommand.LoadSchedules -> loadSchedulesWork()
             is OverviewWorkCommand.LoadUndefinedTasks -> loadUndefinedTasks()
             is OverviewWorkCommand.LoadCategories -> loadCategoriesWork()
-            is OverviewWorkCommand.CreateOrUpdateUndefinedTask -> createOrUpdateTaskWork(command.task)
             is OverviewWorkCommand.CreateOrUpdateUndefinedTasks -> createOrUpdateTasksWork(command.tasks)
             is OverviewWorkCommand.PrepareSharedTextImport -> prepareSharedTextImportWork(command.text)
             is OverviewWorkCommand.ExecuteUndefinedTask -> executeUndefinedTaskWork(command.data, command.task)
@@ -105,12 +104,6 @@ internal interface OverviewWorkProcessor :
                 onRightAction = { categories ->
                     emit(ActionResult(OverviewAction.UpdateCategories(categories.map { it.mapToUi() })))
                 },
-            )
-        }
-
-        private fun createOrUpdateTaskWork(task: UndefinedTaskUi) = flow {
-            undefinedTasksInteractor.addOrUpdateUndefinedTask(task.mapToDomain()).handle(
-                onLeftAction = { emit(EffectResult(OverviewEffect.ShowError(it))) },
             )
         }
 
@@ -161,7 +154,6 @@ internal sealed class OverviewWorkCommand : WorkCommand {
     data object LoadSchedules : OverviewWorkCommand()
     data object LoadUndefinedTasks : OverviewWorkCommand()
     data object LoadCategories : OverviewWorkCommand()
-    data class CreateOrUpdateUndefinedTask(val task: UndefinedTaskUi) : OverviewWorkCommand()
     data class CreateOrUpdateUndefinedTasks(val tasks: List<UndefinedTaskUi>) : OverviewWorkCommand()
     data class PrepareSharedTextImport(val text: String) : OverviewWorkCommand()
     data class ExecuteUndefinedTask(val data: Date, val task: UndefinedTaskUi) : OverviewWorkCommand()

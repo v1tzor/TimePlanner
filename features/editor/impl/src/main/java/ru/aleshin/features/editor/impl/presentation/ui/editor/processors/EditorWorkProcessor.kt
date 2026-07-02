@@ -26,6 +26,7 @@ import ru.aleshin.features.editor.api.EditorOutput
 import ru.aleshin.features.editor.impl.domain.common.convertToEditModel
 import ru.aleshin.features.editor.impl.domain.common.convertToTemplate
 import ru.aleshin.features.editor.impl.domain.interactors.CategoriesInteractor
+import ru.aleshin.features.editor.impl.domain.interactors.SettingsInteractor
 import ru.aleshin.features.editor.impl.domain.interactors.TemplatesInteractor
 import ru.aleshin.features.editor.impl.presentation.mappers.mapToDomain
 import ru.aleshin.features.editor.impl.presentation.mappers.mapToUi
@@ -49,11 +50,14 @@ internal interface EditorWorkProcessor :
     class Base @Inject constructor(
         private val categoriesInteractor: CategoriesInteractor,
         private val templatesInteractor: TemplatesInteractor,
+        private val settingsInteractor: SettingsInteractor,
     ) : EditorWorkProcessor {
 
         override suspend fun work(command: EditorWorkCommand) = when (command) {
             is EditorWorkCommand.SetupEditModel -> setupEditModelWork(command.editModel)
+            is EditorWorkCommand.LoadTasksSettings -> loadTasksSettingsWork()
             is EditorWorkCommand.LoadTemplates -> loadTemplatesWork()
+            is EditorWorkCommand.UpdateDurationPresets -> updateDurationPresetsWork(command.presets)
             is EditorWorkCommand.AddSubCategory -> addSubCategoryWork(command.name, command.mainCategory)
             is EditorWorkCommand.AddTemplate -> addTemplateWork(command.editModel)
             is EditorWorkCommand.ApplyTemplate -> applyTemplateWork(command.template, command.model)
@@ -71,6 +75,25 @@ internal interface EditorWorkProcessor :
             return when (val templates = templatesInteractor.fetchTemplates()) {
                 is Either.Right -> ActionResult(EditorAction.UpdateTemplates(templates.data.map { it.mapToUi() }))
                 is Either.Left -> EffectResult(EditorEffect.ShowError(templates.data))
+            }
+        }
+
+        private suspend fun loadTasksSettingsWork(): EditorWorkResult {
+            return when (val settings = settingsInteractor.fetchTasksSettings()) {
+                is Either.Right -> ActionResult(EditorAction.UpdateDurationPresets(settings.data.durationPresets))
+                is Either.Left -> EffectResult(EditorEffect.ShowError(settings.data))
+            }
+        }
+
+        private suspend fun updateDurationPresetsWork(presets: List<Long>): EditorWorkResult {
+            return when (val settings = settingsInteractor.fetchTasksSettings()) {
+                is Either.Right -> {
+                    when (val update = settingsInteractor.updateTasksSettings(settings.data.copy(durationPresets = presets))) {
+                        is Either.Right -> ActionResult(EditorAction.UpdateDurationPresets(presets))
+                        is Either.Left -> EffectResult(EditorEffect.ShowError(update.data))
+                    }
+                }
+                is Either.Left -> EffectResult(EditorEffect.ShowError(settings.data))
             }
         }
 
@@ -113,7 +136,9 @@ internal interface EditorWorkProcessor :
 
 internal sealed class EditorWorkCommand : WorkCommand {
     data class SetupEditModel(val editModel: EditModelUi) : EditorWorkCommand()
+    data object LoadTasksSettings : EditorWorkCommand()
     data object LoadTemplates : EditorWorkCommand()
+    data class UpdateDurationPresets(val presets: List<Long>) : EditorWorkCommand()
     data class AddSubCategory(val name: String, val mainCategory: MainCategoryUi) : EditorWorkCommand()
     data class AddTemplate(val editModel: EditModelUi) : EditorWorkCommand()
     data class ApplyTemplate(val template: TemplateUi, val model: EditModelUi) : EditorWorkCommand()

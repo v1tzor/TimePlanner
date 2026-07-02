@@ -113,7 +113,7 @@ internal interface TimeTaskWorkProcessor :
             timeTaskAlarmManager.deleteNotifyAlarm(timeTask)
             timeTaskAlarmManager.addOrUpdateNotifyAlarm(timeTask)
         } else {
-            timeTaskAlarmManager.deleteNotifyAlarm(timeTask) 
+            timeTaskAlarmManager.deleteNotifyAlarm(timeTask)
         }
     }
 }

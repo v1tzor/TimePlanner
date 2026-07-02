@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2025 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,4 +44,8 @@ data class TimeTask(
     val note: String? = null,
 ) {
     fun <T> map(mapper: Mapper<TimeTask, T>) = mapper.map(this)
+
+    fun isRunning(currentDate: Date): Boolean {
+        return currentDate.time >= timeRange.from.time && currentDate.time < timeRange.to.time
+    }
 }

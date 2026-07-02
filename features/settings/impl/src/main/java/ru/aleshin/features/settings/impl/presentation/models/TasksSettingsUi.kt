@@ -19,6 +19,7 @@ import androidx.compose.runtime.Immutable
 import kotlinx.serialization.Serializable
 import ru.aleshin.core.domain.entities.settings.CalendarButtonBehavior
 import ru.aleshin.core.domain.entities.settings.ViewToggleStatus
+import ru.aleshin.core.utils.functional.TimePeriod
 
 /**
  * @author Stanislav Aleshin on 15.09.2023.
@@ -27,6 +28,8 @@ import ru.aleshin.core.domain.entities.settings.ViewToggleStatus
 @Serializable
 internal data class TasksSettingsUi(
     val taskViewStatus: ViewToggleStatus = ViewToggleStatus.COMPACT,
+    val taskAnalyticsRange: TimePeriod = TimePeriod.WEEK,
     val calendarButtonBehavior: CalendarButtonBehavior = CalendarButtonBehavior.SET_CURRENT_DATE,
     val secureMode: Boolean = false,
+    val durationPresets: List<Long> = emptyList(),
 )

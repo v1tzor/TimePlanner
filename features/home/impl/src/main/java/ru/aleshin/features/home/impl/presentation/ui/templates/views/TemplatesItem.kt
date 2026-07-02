@@ -47,6 +47,7 @@ import ru.aleshin.core.ui.mappers.mapToString
 import ru.aleshin.core.ui.theme.TimePlannerRes
 import ru.aleshin.core.ui.views.CategoryIconMonogram
 import ru.aleshin.core.ui.views.CategoryTextMonogram
+import ru.aleshin.core.ui.views.WarningDeleteDialog
 import ru.aleshin.core.ui.views.toMinutesOrHoursTitle
 import ru.aleshin.core.utils.extensions.duration
 import ru.aleshin.features.home.impl.presentation.models.categories.CategoriesUi
@@ -71,6 +72,7 @@ internal fun TemplatesItem(
     onDeleteTemplate: () -> Unit,
 ) {
     var isShowTemplateEditor by rememberSaveable { mutableStateOf(false) }
+    var isShowDeleteDialog by rememberSaveable { mutableStateOf(false) }
     val categoryIcon = model.category.defaultType?.mapToIconPainter()
     val categoryName = model.category.fetchName() ?: "*"
 
@@ -121,7 +123,7 @@ internal fun TemplatesItem(
             TemplateItemControlButtons(
                 repeatEnabled = model.repeatEnabled,
                 repeatTimes = model.repeatTimes,
-                onDeleteTemplate = onDeleteTemplate,
+                onDeleteTemplate = { isShowDeleteDialog = true },
                 onAddRepeat = onAddRepeat,
                 onDeleteRepeat = onDeleteRepeat,
                 onRestartRepeat = onRestartRepeat,
@@ -138,6 +140,20 @@ internal fun TemplatesItem(
             onConfirm = { template ->
                 onUpdate(template)
                 isShowTemplateEditor = false
+            },
+        )
+    }
+
+    if (isShowDeleteDialog) {
+        WarningDeleteDialog(
+            text = when (model.repeatTimes.isNotEmpty()) {
+                true -> HomeThemeRes.strings.warningDeleteRepeatTemplateText
+                false -> HomeThemeRes.strings.warningDeleteTemplateText
+            },
+            onDismiss = { isShowDeleteDialog = false },
+            onAction = {
+                onDeleteTemplate()
+                isShowDeleteDialog = false
             },
         )
     }
@@ -273,6 +289,14 @@ internal fun TemplateItemControlButtons(
                         tint = MaterialTheme.colorScheme.error,
                     )
                 }
+            }
+            IconButton(onClick = onDeleteTemplate) {
+                Icon(
+                    modifier = Modifier.size(24.dp),
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
             }
         }
     }

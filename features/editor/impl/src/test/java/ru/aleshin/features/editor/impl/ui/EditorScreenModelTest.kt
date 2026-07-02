@@ -152,8 +152,14 @@ internal class EditorScreenModelTest {
             is EditorWorkCommand.SetupEditModel -> ActionResult(
                 EditorAction.SetUp(command.editModel, categories)
             )
+            is EditorWorkCommand.LoadTasksSettings -> ActionResult(
+                EditorAction.UpdateDurationPresets(EditorState().durationPresets)
+            )
             is EditorWorkCommand.LoadTemplates -> ActionResult(
                 EditorAction.UpdateTemplates(emptyList())
+            )
+            is EditorWorkCommand.UpdateDurationPresets -> ActionResult(
+                EditorAction.UpdateDurationPresets(command.presets)
             )
             is EditorWorkCommand.AddSubCategory -> ActionResult(
                 EditorAction.UpdateCategories(categories)
