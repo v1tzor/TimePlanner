@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2025 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,8 +15,7 @@
  */
 package ru.aleshin.features.home.impl.presentation.ui.overview.store
 
-import ru.aleshin.core.utils.architecture.component.EmptyInput
-import ru.aleshin.core.utils.architecture.store.BaseOnlyOutComposeStore
+import ru.aleshin.core.utils.architecture.store.BaseComposeStore
 import ru.aleshin.core.utils.architecture.store.communicators.EffectCommunicator
 import ru.aleshin.core.utils.architecture.store.communicators.StateCommunicator
 import ru.aleshin.core.utils.architecture.store.work.BackgroundWorkKey
@@ -26,6 +25,7 @@ import ru.aleshin.features.home.api.HomeConfig
 import ru.aleshin.features.home.impl.presentation.ui.overview.contract.OverviewAction
 import ru.aleshin.features.home.impl.presentation.ui.overview.contract.OverviewEffect
 import ru.aleshin.features.home.impl.presentation.ui.overview.contract.OverviewEvent
+import ru.aleshin.features.home.impl.presentation.ui.overview.contract.OverviewInput
 import ru.aleshin.features.home.impl.presentation.ui.overview.contract.OverviewOutput
 import ru.aleshin.features.home.impl.presentation.ui.overview.contract.OverviewState
 import javax.inject.Inject
@@ -38,21 +38,42 @@ internal class OverviewComposeStore @Inject constructor(
     stateCommunicator: StateCommunicator<OverviewState>,
     effectCommunicator: EffectCommunicator<OverviewEffect>,
     coroutineManager: CoroutineManager,
-) : BaseOnlyOutComposeStore<OverviewState, OverviewEvent, OverviewAction, OverviewEffect, OverviewOutput>(
+) : BaseComposeStore<OverviewState, OverviewEvent, OverviewAction, OverviewEffect, OverviewInput, OverviewOutput>(
     stateCommunicator = stateCommunicator,
     effectCommunicator = effectCommunicator,
     coroutineManager = coroutineManager,
 ) {
 
-    override fun initialize(input: EmptyInput, isRestore: Boolean) {
-        dispatchEvent(OverviewEvent.Init)
+    override fun initialize(input: OverviewInput, isRestore: Boolean) {
+        dispatchEvent(OverviewEvent.Init(input, isRestore))
     }
 
     override suspend fun WorkScope<OverviewState, OverviewAction, OverviewEffect, OverviewOutput>.handleEvent(
         event: OverviewEvent,
     ) {
         when (event) {
-            is OverviewEvent.Init, OverviewEvent.Refresh -> {
+            is OverviewEvent.Init -> {
+                sendAction(OverviewAction.UpdateLoading(true))
+                launchBackgroundWork(BackgroundKey.LOAD_SCHEDULES) {
+                    val schedulesCommand = OverviewWorkCommand.LoadSchedules
+                    workProcessor.work(schedulesCommand).collectAndHandleWork()
+                }
+                launchBackgroundWork(BackgroundKey.LOAD_UNDEFINED_TASKS) {
+                    val tasksCommand = OverviewWorkCommand.LoadUndefinedTasks
+                    workProcessor.work(tasksCommand).collectAndHandleWork()
+                }
+                launchBackgroundWork(BackgroundKey.LOAD_CATEGORIES) {
+                    val categoriesCommand = OverviewWorkCommand.LoadCategories
+                    workProcessor.work(categoriesCommand).collectAndHandleWork()
+                }
+                if (!event.isRestore && event.input.sharedText != null) {
+                    launchBackgroundWork(BackgroundKey.SHARE_IMPORT) {
+                        val command = OverviewWorkCommand.PrepareSharedTextImport(event.input.sharedText)
+                        workProcessor.work(command).collectAndHandleWork()
+                    }
+                }
+            }
+            is OverviewEvent.Refresh -> {
                 sendAction(OverviewAction.UpdateLoading(true))
                 launchBackgroundWork(BackgroundKey.LOAD_SCHEDULES) {
                     val schedulesCommand = OverviewWorkCommand.LoadSchedules
@@ -70,6 +91,14 @@ internal class OverviewComposeStore @Inject constructor(
             is OverviewEvent.CreateOrUpdateUndefinedTask -> launchBackgroundWork(BackgroundKey.TASK_ACTION) {
                 val command = OverviewWorkCommand.CreateOrUpdateUndefinedTask(event.task)
                 workProcessor.work(command).collectAndHandleWork()
+            }
+            is OverviewEvent.ConfirmBatchUndefinedTasks -> launchBackgroundWork(BackgroundKey.TASK_ACTION) {
+                sendAction(OverviewAction.ClearSharedTextTasks)
+                val command = OverviewWorkCommand.CreateOrUpdateUndefinedTasks(event.tasks)
+                workProcessor.work(command).collectAndHandleWork()
+            }
+            is OverviewEvent.DismissBatchUndefinedTasks -> {
+                sendAction(OverviewAction.ClearSharedTextTasks)
             }
             is OverviewEvent.ExecuteUndefinedTask -> launchBackgroundWork(BackgroundKey.TASK_ACTION) {
                 val command = OverviewWorkCommand.ExecuteUndefinedTask(event.scheduleDate, event.task)
@@ -113,16 +142,24 @@ internal class OverviewComposeStore @Inject constructor(
         is OverviewAction.UpdateCategories -> currentState.copy(
             categories = action.categories,
         )
+        is OverviewAction.UpdateSharedTextTasks -> currentState.copy(
+            sharedTextTasks = action.tasks,
+            sharedTextCategories = action.categories,
+        )
+        is OverviewAction.ClearSharedTextTasks -> currentState.copy(
+            sharedTextTasks = null,
+            sharedTextCategories = emptyList(),
+        )
     }
 
     enum class BackgroundKey : BackgroundWorkKey {
-        LOAD_SCHEDULES, LOAD_UNDEFINED_TASKS, LOAD_CATEGORIES, TASK_ACTION
+        LOAD_SCHEDULES, LOAD_UNDEFINED_TASKS, LOAD_CATEGORIES, TASK_ACTION, SHARE_IMPORT
     }
 
      class Factory @Inject constructor(
          private val workProcessor: OverviewWorkProcessor,
          private val coroutineManager: CoroutineManager,
-     ) : BaseOnlyOutComposeStore.Factory<OverviewComposeStore, OverviewState> {
+     ) : BaseComposeStore.Factory<OverviewComposeStore, OverviewState> {
 
          override fun create(savedState: OverviewState): OverviewComposeStore {
              return OverviewComposeStore(

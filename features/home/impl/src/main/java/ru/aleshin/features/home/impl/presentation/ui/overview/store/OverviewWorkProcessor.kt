@@ -15,6 +15,7 @@
  */
 package ru.aleshin.features.home.impl.presentation.ui.overview.store
 
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import ru.aleshin.core.utils.architecture.store.work.ActionResult
 import ru.aleshin.core.utils.architecture.store.work.EffectResult
@@ -33,6 +34,7 @@ import ru.aleshin.core.utils.managers.DateManager
 import ru.aleshin.features.editor.api.EditorConfig
 import ru.aleshin.features.home.impl.domain.interactors.CategoriesInteractor
 import ru.aleshin.features.home.impl.domain.interactors.ScheduleInteractor
+import ru.aleshin.features.home.impl.domain.interactors.ShareTextInteractor
 import ru.aleshin.features.home.impl.domain.interactors.UndefinedTasksInteractor
 import ru.aleshin.features.home.impl.presentation.mapppers.categories.mapToUi
 import ru.aleshin.features.home.impl.presentation.mapppers.schedules.ScheduleDomainToUiMapper
@@ -56,6 +58,7 @@ internal interface OverviewWorkProcessor :
         private val scheduleInteractor: ScheduleInteractor,
         private val categoriesInteractor: CategoriesInteractor,
         private val undefinedTasksInteractor: UndefinedTasksInteractor,
+        private val shareTextInteractor: ShareTextInteractor,
         private val schedulesUiMapper: ScheduleDomainToUiMapper,
         private val dateManager: DateManager,
     ) : OverviewWorkProcessor {
@@ -65,6 +68,8 @@ internal interface OverviewWorkProcessor :
             is OverviewWorkCommand.LoadUndefinedTasks -> loadUndefinedTasks()
             is OverviewWorkCommand.LoadCategories -> loadCategoriesWork()
             is OverviewWorkCommand.CreateOrUpdateUndefinedTask -> createOrUpdateTaskWork(command.task)
+            is OverviewWorkCommand.CreateOrUpdateUndefinedTasks -> createOrUpdateTasksWork(command.tasks)
+            is OverviewWorkCommand.PrepareSharedTextImport -> prepareSharedTextImportWork(command.text)
             is OverviewWorkCommand.ExecuteUndefinedTask -> executeUndefinedTaskWork(command.data, command.task)
             is OverviewWorkCommand.DeleteUndefinedTask -> deleteUndefinedTaskWork(command.task)
         }
@@ -109,6 +114,30 @@ internal interface OverviewWorkProcessor :
             )
         }
 
+        private fun createOrUpdateTasksWork(tasks: List<UndefinedTaskUi>) = flow {
+            undefinedTasksInteractor.addOrUpdateUndefinedTasks(tasks.map { it.mapToDomain() }).handle(
+                onLeftAction = { emit(EffectResult(OverviewEffect.ShowError(it))) },
+            )
+        }
+
+        private fun prepareSharedTextImportWork(text: String) = flow {
+            categoriesInteractor.fetchCategories().first().handle(
+                onLeftAction = { emit(EffectResult(OverviewEffect.ShowError(it))) },
+                onRightAction = { categories ->
+                    shareTextInteractor.fetchSharedTextTasks(text, categories).handle(
+                        onLeftAction = { emit(EffectResult(OverviewEffect.ShowError(it))) },
+                        onRightAction = { tasks ->
+                            if (tasks.isNotEmpty()) {
+                                val tasksUi = tasks.map { it.mapToUi() }
+                                val categoriesUi = categories.map { it.mapToUi() }
+                                emit(ActionResult(OverviewAction.UpdateSharedTextTasks(tasksUi, categoriesUi)))
+                            }
+                        },
+                    )
+                },
+            )
+        }
+
         private fun executeUndefinedTaskWork(date: Date, task: UndefinedTaskUi) = flow<OverviewWorkResult> {
             val targetTime = dateManager.setCurrentHMS(date)
             val timeTask = task.convertToTimeTask(date.startThisDay(), TimeRange(targetTime, targetTime))
@@ -133,6 +162,8 @@ internal sealed class OverviewWorkCommand : WorkCommand {
     data object LoadUndefinedTasks : OverviewWorkCommand()
     data object LoadCategories : OverviewWorkCommand()
     data class CreateOrUpdateUndefinedTask(val task: UndefinedTaskUi) : OverviewWorkCommand()
+    data class CreateOrUpdateUndefinedTasks(val tasks: List<UndefinedTaskUi>) : OverviewWorkCommand()
+    data class PrepareSharedTextImport(val text: String) : OverviewWorkCommand()
     data class ExecuteUndefinedTask(val data: Date, val task: UndefinedTaskUi) : OverviewWorkCommand()
     data class DeleteUndefinedTask(val task: UndefinedTaskUi) : OverviewWorkCommand()
 }

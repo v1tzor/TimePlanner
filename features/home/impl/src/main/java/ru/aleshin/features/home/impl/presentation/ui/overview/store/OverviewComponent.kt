@@ -19,6 +19,7 @@ import com.arkivanov.decompose.ComponentContext
 import ru.aleshin.core.utils.architecture.component.ChildComponent
 import ru.aleshin.core.utils.architecture.component.OutputConsumer
 import ru.aleshin.core.utils.architecture.component.saveableStore
+import ru.aleshin.features.home.impl.presentation.ui.overview.contract.OverviewInput
 import ru.aleshin.features.home.impl.presentation.ui.overview.contract.OverviewOutput
 import ru.aleshin.features.home.impl.presentation.ui.overview.contract.OverviewState
 
@@ -34,6 +35,7 @@ internal abstract class OverviewComponent(
     class Default(
         storeFactory: OverviewComposeStore.Factory,
         componentContext: ComponentContext,
+        inputData: OverviewInput,
         outputConsumer: OutputConsumer<OverviewOutput>,
     ) : OverviewComponent(componentContext) {
 
@@ -45,6 +47,7 @@ internal abstract class OverviewComponent(
             storeFactory = storeFactory,
             defaultState = OverviewState(),
             stateSerializer = OverviewState.serializer(),
+            input = inputData,
             outputConsumer = outputConsumer,
             storeKey = COMPONENT_KEY,
         )

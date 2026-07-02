@@ -61,7 +61,7 @@ internal interface PresentationModule {
 
     @Binds
     @FeatureScope
-    fun bindOverviewStoreFactory(factory: OverviewComposeStore.Factory): BaseOnlyOutComposeStore.Factory<OverviewComposeStore, OverviewState>
+    fun bindOverviewStoreFactory(factory: OverviewComposeStore.Factory): BaseComposeStore.Factory<OverviewComposeStore, OverviewState>
 
     @Binds
     @FeatureScope

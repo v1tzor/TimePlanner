@@ -46,7 +46,7 @@ class MainComposeStore(
 ) {
 
     override fun initialize(input: MainInput, isRestore: Boolean) {
-        dispatchEvent(MainEvent.Init(isRestore, input.initialDeepLinkTarget))
+        dispatchEvent(MainEvent.Init(isRestore, input.initialDeepLinkTarget, input.initialShareTarget))
     }
 
     override suspend fun WorkScope<MainState, MainAction, MainEffect, MainOutput>.handleEvent(
@@ -67,12 +67,20 @@ class MainComposeStore(
                             val deepLinkCommand = NavWorkCommand.ProcessDeepLink(initialDeepLinkTarget)
                             navigationWorkProcessor.work(deepLinkCommand).handleWork()
                         }
+                        if (initialShareTarget != null) {
+                            val shareCommand = NavWorkCommand.ProcessShare(initialShareTarget)
+                            navigationWorkProcessor.work(shareCommand).handleWork()
+                        }
                     }
                 }
             }
             is MainEvent.ProcessDeepLink -> {
                 val deepLinkCommand = NavWorkCommand.ProcessDeepLink(event.screenTarget)
                 navigationWorkProcessor.work(deepLinkCommand).handleWork()
+            }
+            is MainEvent.ProcessShare -> {
+                val shareCommand = NavWorkCommand.ProcessShare(event.shareTarget)
+                navigationWorkProcessor.work(shareCommand).handleWork()
             }
         }
     }

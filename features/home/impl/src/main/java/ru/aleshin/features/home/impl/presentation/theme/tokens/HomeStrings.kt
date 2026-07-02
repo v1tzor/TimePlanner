@@ -103,6 +103,9 @@ internal data class HomeStrings(
     val specifyDeadlineTitle: String,
     val deadlineLabel: String,
     val showAllSchedulesTitle: String,
+    val sharedTasksDialogTitle: String,
+    val sharedTasksDialogDesc: String,
+    val sharedTasksCountFormat: String,
 )
 
 internal val russianHomeString = HomeStrings(
@@ -188,6 +191,9 @@ internal val russianHomeString = HomeStrings(
     specifyDeadlineTitle = "Указать",
     deadlineLabel = "Дедлайн",
     showAllSchedulesTitle = "Показать больше",
+    sharedTasksDialogTitle = "Импорт задач",
+    sharedTasksDialogDesc = "Проверьте задачи перед добавлением",
+    sharedTasksCountFormat = "Задач: %s",
 )
 
 internal val englishHomeString = HomeStrings(
@@ -273,6 +279,9 @@ internal val englishHomeString = HomeStrings(
     specifyDeadlineTitle = "Specify",
     deadlineLabel = "Deadline",
     showAllSchedulesTitle = "Show more",
+    sharedTasksDialogTitle = "Import tasks",
+    sharedTasksDialogDesc = "Review shared tasks before adding them",
+    sharedTasksCountFormat = "Tasks: %s",
 )
 
 internal val persianHomeString = HomeStrings(
@@ -358,6 +367,9 @@ internal val persianHomeString = HomeStrings(
     specifyDeadlineTitle = "انتخاب کنید",
     deadlineLabel = "مهلت",
     showAllSchedulesTitle = "نمایش بیشتر",
+    sharedTasksDialogTitle = "وارد کردن کارها",
+    sharedTasksDialogDesc = "کارهای اشتراک‌گذاری‌شده را پیش از افزودن بررسی کنید",
+    sharedTasksCountFormat = "کارها: %s",
 )
 
 internal val germanHomeString = HomeStrings(
@@ -443,6 +455,9 @@ internal val germanHomeString = HomeStrings(
     specifyDeadlineTitle = "Angeben",
     deadlineLabel = "Frist",
     showAllSchedulesTitle = "Mehr anzeigen",
+    sharedTasksDialogTitle = "Aufgaben importieren",
+    sharedTasksDialogDesc = "Prüfe die geteilten Aufgaben vor dem Hinzufügen",
+    sharedTasksCountFormat = "Aufgaben: %s",
 )
 
 internal val spanishHomeString = HomeStrings(
@@ -528,6 +543,9 @@ internal val spanishHomeString = HomeStrings(
     specifyDeadlineTitle = "Especificar",
     deadlineLabel = "Fecha límite",
     showAllSchedulesTitle = "Mostrar más",
+    sharedTasksDialogTitle = "Importar tareas",
+    sharedTasksDialogDesc = "Revisa las tareas compartidas antes de añadirlas",
+    sharedTasksCountFormat = "Tareas: %s",
 )
 
 internal val frenchHomeString = HomeStrings(
@@ -613,6 +631,9 @@ internal val frenchHomeString = HomeStrings(
     specifyDeadlineTitle = "Précisez",
     deadlineLabel = "Date limite",
     showAllSchedulesTitle = "Voir plus",
+    sharedTasksDialogTitle = "Importer des tâches",
+    sharedTasksDialogDesc = "Vérifiez les tâches partagées avant de les ajouter",
+    sharedTasksCountFormat = "Tâches : %s",
 )
 internal val brazilianPortugueseHomeString = HomeStrings(
     topAppBarHomeTitle = "Horário",
@@ -697,6 +718,9 @@ internal val brazilianPortugueseHomeString = HomeStrings(
     specifyDeadlineTitle = "Apontar",
     deadlineLabel = "Prazo",
     showAllSchedulesTitle = "Mostrar mais",
+    sharedTasksDialogTitle = "Importar tarefas",
+    sharedTasksDialogDesc = "Revise as tarefas compartilhadas antes de adicionar",
+    sharedTasksCountFormat = "Tarefas: %s",
 )
 
 internal val turkishHomeString = HomeStrings(
@@ -782,6 +806,9 @@ internal val turkishHomeString = HomeStrings(
     specifyDeadlineTitle = "Belirt",
     deadlineLabel = "Son tarih",
     showAllSchedulesTitle = "Daha fazlasını göster",
+    sharedTasksDialogTitle = "Görevleri içe aktar",
+    sharedTasksDialogDesc = "Eklemeden önce paylaşılan görevleri gözden geçir",
+    sharedTasksCountFormat = "Görevler: %s",
 )
 
 internal val vietnameseHomeString = HomeStrings(
@@ -867,6 +894,9 @@ internal val vietnameseHomeString = HomeStrings(
     specifyDeadlineTitle = "Chỉ định",
     deadlineLabel = "Hạn chót",
     showAllSchedulesTitle = "Hiển thị nhiều hơn",
+    sharedTasksDialogTitle = "Nhập nhiệm vụ",
+    sharedTasksDialogDesc = "Kiểm tra nhiệm vụ được chia sẻ trước khi thêm",
+    sharedTasksCountFormat = "Nhiệm vụ: %s",
 )
 
 internal val polishHomeString = HomeStrings(
@@ -952,6 +982,9 @@ internal val polishHomeString = HomeStrings(
     specifyDeadlineTitle = "Określ",
     deadlineLabel = "Termin",
     showAllSchedulesTitle = "Pokaż więcej",
+    sharedTasksDialogTitle = "Importuj zadania",
+    sharedTasksDialogDesc = "Sprawdź udostępnione zadania przed dodaniem",
+    sharedTasksCountFormat = "Zadania: %s",
 )
 
 internal val italianHomeString = HomeStrings(
@@ -1037,6 +1070,9 @@ internal val italianHomeString = HomeStrings(
     specifyDeadlineTitle = "Specificare",
     deadlineLabel = "Scadenza",
     showAllSchedulesTitle = "Mostra di più",
+    sharedTasksDialogTitle = "Importa attività",
+    sharedTasksDialogDesc = "Controlla le attività condivise prima di aggiungerle",
+    sharedTasksCountFormat = "Attività: %s",
 )
 
 
@@ -1122,6 +1158,9 @@ internal val chineseHomeString = HomeStrings(
     specifyDeadlineTitle = "指定",
     deadlineLabel = "截止时间",
     showAllSchedulesTitle = "显示更多",
+    sharedTasksDialogTitle = "导入任务",
+    sharedTasksDialogDesc = "添加前请检查分享的任务",
+    sharedTasksCountFormat = "任务数：%s",
 )
 
 internal val LocalHomeStrings = staticCompositionLocalOf<HomeStrings> {

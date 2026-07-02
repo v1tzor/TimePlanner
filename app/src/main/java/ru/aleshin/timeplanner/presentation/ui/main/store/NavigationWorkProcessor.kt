@@ -22,14 +22,17 @@ import ru.aleshin.core.utils.architecture.store.work.OutputResult
 import ru.aleshin.core.utils.architecture.store.work.WorkCommand
 import ru.aleshin.core.utils.architecture.store.work.WorkProcessor
 import ru.aleshin.core.utils.architecture.store.work.WorkResult
+import ru.aleshin.core.utils.extensions.generateUniqueKey
 import ru.aleshin.core.utils.functional.Constants
 import ru.aleshin.core.utils.functional.TimeRange
 import ru.aleshin.core.utils.managers.DateManager
 import ru.aleshin.features.editor.api.EditorConfig
+import ru.aleshin.features.home.api.HomeConfig
 import ru.aleshin.timeplanner.presentation.ui.main.contract.DeepLinkTarget
 import ru.aleshin.timeplanner.presentation.ui.main.contract.MainAction
 import ru.aleshin.timeplanner.presentation.ui.main.contract.MainEffect
 import ru.aleshin.timeplanner.presentation.ui.main.contract.MainOutput
+import ru.aleshin.timeplanner.presentation.ui.main.contract.ShareTarget
 import javax.inject.Inject
 
 /**
@@ -44,6 +47,7 @@ interface NavigationWorkProcessor : WorkProcessor<NavWorkCommand, MainAction, Ma
         override suspend fun work(command: NavWorkCommand) = when (command) {
             is NavWorkCommand.InitialNavigation -> initialNavigationWork()
             is NavWorkCommand.ProcessDeepLink -> processDeepLink(command.deepLinkTarget)
+            is NavWorkCommand.ProcessShare -> processShare(command.shareTarget)
         }
 
         private suspend fun initialNavigationWork(): NavWorkResult {
@@ -64,12 +68,17 @@ interface NavigationWorkProcessor : WorkProcessor<NavWorkCommand, MainAction, Ma
                 ActionResult(MainAction.Navigate)
             }
         }
+
+        private fun processShare(shareTarget: ShareTarget): NavWorkResult {
+            return OutputResult(MainOutput.NavigateToHome(HomeConfig.Overview(shareTarget.text, generateUniqueKey())))
+        }
     }
 }
 
 sealed class NavWorkCommand : WorkCommand {
     data object InitialNavigation : NavWorkCommand()
     data class ProcessDeepLink(val deepLinkTarget: DeepLinkTarget) : NavWorkCommand()
+    data class ProcessShare(val shareTarget: ShareTarget) : NavWorkCommand()
 }
 
 typealias NavWorkResult = WorkResult<MainAction, MainEffect, MainOutput>

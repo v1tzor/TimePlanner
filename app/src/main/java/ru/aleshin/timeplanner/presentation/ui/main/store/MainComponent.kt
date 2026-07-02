@@ -40,6 +40,7 @@ import ru.aleshin.timeplanner.presentation.ui.main.contract.MainEvent
 import ru.aleshin.timeplanner.presentation.ui.main.contract.MainInput
 import ru.aleshin.timeplanner.presentation.ui.main.contract.MainOutput
 import ru.aleshin.timeplanner.presentation.ui.main.contract.MainState
+import ru.aleshin.timeplanner.presentation.ui.main.contract.ShareTarget
 import ru.aleshin.timeplanner.presentation.ui.main.store.MainComponent.Child.EditorChild
 import ru.aleshin.timeplanner.presentation.ui.tabs.store.TabNavigationComponent
 import ru.aleshin.timeplanner.presentation.ui.tabs.store.TabNavigationComponent.TabNavigationConfig
@@ -60,6 +61,8 @@ abstract class MainComponent(
     abstract fun navigateToBack()
 
     abstract fun onDeepLink(target: DeepLinkTarget)
+
+    abstract fun onShare(target: ShareTarget)
 
     @Serializable
     sealed interface Config {
@@ -87,6 +90,7 @@ abstract class MainComponent(
     class Base(
         componentContext: ComponentContext,
         private val initialDeepLinkTarget: DeepLinkTarget?,
+        private val initialShareTarget: ShareTarget?,
         private val mainStoreFactory: MainComposeStore.Factory,
         private val homeFeatureFactory: HomeDecomposeFeatureFactory,
         private val navigationComponentFactory: TabNavigationComponentFactory,
@@ -102,7 +106,7 @@ abstract class MainComponent(
             storeFactory = mainStoreFactory,
             defaultState = MainState(),
             stateSerializer = MainState.serializer(),
-            input = MainInput(initialDeepLinkTarget),
+            input = MainInput(initialDeepLinkTarget, initialShareTarget),
             outputConsumer = mainOutputConsumer(),
             storeKey = STORE_KEY,
         )
@@ -124,6 +128,10 @@ abstract class MainComponent(
 
         override fun onDeepLink(target: DeepLinkTarget) {
             store.dispatchEvent(MainEvent.ProcessDeepLink(target))
+        }
+
+        override fun onShare(target: ShareTarget) {
+            store.dispatchEvent(MainEvent.ProcessShare(target))
         }
 
         private fun childFactory(config: Config, componentContext: ComponentContext): Child {
@@ -163,6 +171,10 @@ abstract class MainComponent(
                 is MainOutput.NavigateToEditor -> {
                     val config = StartFeatureConfig(listOf(output.config))
                     stackNavigation.pushToFront(Config.Editor(config))
+                }
+                is MainOutput.NavigateToHome -> {
+                    val config = StartFeatureConfig(listOf(output.config))
+                    stackNavigation.pushToFront(Config.Home(config))
                 }
                 is MainOutput.NavigateToTabNavigation -> {
                     val config = StartFeatureConfig<TabNavigationConfig>(null)

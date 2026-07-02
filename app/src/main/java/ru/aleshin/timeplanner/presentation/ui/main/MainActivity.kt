@@ -40,6 +40,7 @@ import ru.aleshin.core.utils.managers.rememberDrawerManager
 import ru.aleshin.core.utils.navigation.backAnimation
 import ru.aleshin.timeplanner.application.fetchApp
 import ru.aleshin.timeplanner.presentation.ui.main.contract.DeepLinkTarget
+import ru.aleshin.timeplanner.presentation.ui.main.contract.ShareTarget
 import ru.aleshin.timeplanner.presentation.ui.main.store.MainComponent
 import ru.aleshin.timeplanner.presentation.ui.main.store.MainComponentFactory
 import ru.aleshin.timeplanner.presentation.ui.splash.SplashContent
@@ -76,6 +77,7 @@ class MainActivity : AppCompatActivity() {
         mainComponent = componentFactory.createComponent(
             componentContext = defaultComponentContext(),
             initialDeepLinkTarget = DeepLinkTarget.byIntent(intent),
+            initialShareTarget = ShareTarget.byIntent(intent),
         )
 
         setContent {
@@ -137,6 +139,8 @@ class MainActivity : AppCompatActivity() {
         setIntent(intent)
         val target = DeepLinkTarget.byIntent(intent)
         if (target != null && ::mainComponent.isInitialized) mainComponent.onDeepLink(target)
+        val shareTarget = ShareTarget.byIntent(intent)
+        if (shareTarget != null && ::mainComponent.isInitialized) mainComponent.onShare(shareTarget)
     }
 
     override fun onPause() {

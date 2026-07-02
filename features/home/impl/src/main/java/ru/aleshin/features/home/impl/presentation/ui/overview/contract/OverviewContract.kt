@@ -16,6 +16,7 @@
 package ru.aleshin.features.home.impl.presentation.ui.overview.contract
 
 import kotlinx.serialization.Serializable
+import ru.aleshin.core.utils.architecture.component.BaseInput
 import ru.aleshin.core.utils.architecture.component.BaseOutput
 import ru.aleshin.core.utils.architecture.store.contract.StoreAction
 import ru.aleshin.core.utils.architecture.store.contract.StoreEffect
@@ -42,15 +43,23 @@ internal data class OverviewState(
     val schedules: List<ScheduleUi> = emptyList(),
     val categories: List<CategoriesUi> = emptyList(),
     val undefinedTasks: List<UndefinedTaskUi> = emptyList(),
+    val sharedTextTasks: List<UndefinedTaskUi>? = null,
+    val sharedTextCategories: List<CategoriesUi> = emptyList(),
 ) : StoreState
 
+internal data class OverviewInput(
+    val sharedText: String?,
+) : BaseInput
+
 internal sealed class OverviewEvent : StoreEvent {
-    object Init : OverviewEvent()
+    data class Init(val input: OverviewInput, val isRestore: Boolean) : OverviewEvent()
     object Refresh : OverviewEvent()
     object PressScheduleButton : OverviewEvent()
     object OpenAllSchedules : OverviewEvent()
     data class OpenSchedule(val scheduleDate: Date?) : OverviewEvent()
     data class CreateOrUpdateUndefinedTask(val task: UndefinedTaskUi) : OverviewEvent()
+    data class ConfirmBatchUndefinedTasks(val tasks: List<UndefinedTaskUi>) : OverviewEvent()
+    data object DismissBatchUndefinedTasks : OverviewEvent()
     data class ExecuteUndefinedTask(val scheduleDate: Date, val task: UndefinedTaskUi) : OverviewEvent()
     data class DeleteUndefinedTask(val task: UndefinedTaskUi) : OverviewEvent()
 }
@@ -65,6 +74,11 @@ internal sealed class OverviewAction : StoreAction {
     data class UpdateSchedules(val date: Date, val schedules: List<ScheduleUi>) : OverviewAction()
     data class UpdateUndefinedTasks(val tasks: List<UndefinedTaskUi>) : OverviewAction()
     data class UpdateCategories(val categories: List<CategoriesUi>) : OverviewAction()
+    data class UpdateSharedTextTasks(
+        val tasks: List<UndefinedTaskUi>,
+        val categories: List<CategoriesUi>,
+    ) : OverviewAction()
+    data object ClearSharedTextTasks : OverviewAction()
 }
 
 

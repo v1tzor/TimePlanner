@@ -29,6 +29,7 @@ import javax.inject.Inject
 internal interface UndefinedTasksInteractor {
 
     suspend fun addOrUpdateUndefinedTask(task: UndefinedTask): UnitDomainResult<HomeFailures>
+    suspend fun addOrUpdateUndefinedTasks(tasks: List<UndefinedTask>): UnitDomainResult<HomeFailures>
     suspend fun fetchAllUndefinedTasks(): FlowDomainResult<HomeFailures, List<UndefinedTask>>
     suspend fun deleteUndefinedTask(task: UndefinedTask): UnitDomainResult<HomeFailures>
 
@@ -39,6 +40,10 @@ internal interface UndefinedTasksInteractor {
 
         override suspend fun addOrUpdateUndefinedTask(task: UndefinedTask) = eitherWrapper.wrap {
             undefinedTasksRepository.addOrUpdateUndefinedTasks(listOf(task))
+        }
+
+        override suspend fun addOrUpdateUndefinedTasks(tasks: List<UndefinedTask>) = eitherWrapper.wrap {
+            undefinedTasksRepository.addOrUpdateUndefinedTasks(tasks)
         }
 
         override suspend fun fetchAllUndefinedTasks() = eitherWrapper.wrapFlow {

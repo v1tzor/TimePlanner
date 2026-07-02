@@ -44,6 +44,7 @@ import ru.aleshin.features.home.impl.presentation.ui.details.store.DetailsCompos
 import ru.aleshin.features.home.impl.presentation.ui.home.contract.HomeInput
 import ru.aleshin.features.home.impl.presentation.ui.home.store.HomeComponent
 import ru.aleshin.features.home.impl.presentation.ui.home.store.HomeComposeStore
+import ru.aleshin.features.home.impl.presentation.ui.overview.contract.OverviewInput
 import ru.aleshin.features.home.impl.presentation.ui.overview.contract.OverviewOutput
 import ru.aleshin.features.home.impl.presentation.ui.overview.store.OverviewComponent
 import ru.aleshin.features.home.impl.presentation.ui.overview.store.OverviewComposeStore
@@ -138,7 +139,7 @@ internal abstract class InternalHomeFeatureComponent(
                 drawerManager?.events?.collect { index ->
                     when (index) {
                         0 -> stackNavigation.bringToFront(HomeConfig.Home())
-                        1 -> stackNavigation.bringToFront(HomeConfig.Overview)
+                        1 -> stackNavigation.bringToFront(HomeConfig.Overview())
                         2 -> stackNavigation.bringToFront(HomeConfig.Templates)
                         3 -> stackNavigation.bringToFront(HomeConfig.Categories())
                         else -> Unit
@@ -186,6 +187,7 @@ internal abstract class InternalHomeFeatureComponent(
                     component = OverviewComponent.Default(
                         storeFactory = overviewStoreFactory,
                         componentContext = componentContext,
+                        inputData = OverviewInput(config.sharedText),
                         outputConsumer = overviewOutputConsumer(),
                     )
                 )
@@ -209,7 +211,7 @@ internal abstract class InternalHomeFeatureComponent(
                     outputConsumer.consume(config)
                 }
                 is HomeScreenOutput.NavigateToOverview -> {
-                    stackNavigation.pushToFront(HomeConfig.Overview)
+                    stackNavigation.pushToFront(HomeConfig.Overview())
                 }
             }
         }

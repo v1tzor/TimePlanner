@@ -51,6 +51,7 @@ import ru.aleshin.features.home.impl.presentation.ui.overview.store.OverviewComp
 import ru.aleshin.features.home.impl.presentation.ui.overview.views.CurrentTimeTaskSection
 import ru.aleshin.features.home.impl.presentation.ui.overview.views.OverviewTopAppBar
 import ru.aleshin.features.home.impl.presentation.ui.overview.views.SchedulesSection
+import ru.aleshin.features.home.impl.presentation.ui.overview.views.UndefinedTasksBatchEditorDialog
 import ru.aleshin.features.home.impl.presentation.ui.overview.views.UndefinedTaskSection
 import java.util.Date
 
@@ -96,6 +97,18 @@ internal fun OverviewContent(
             )
         },
     )
+
+    val sharedTextTasks = state.sharedTextTasks
+    if (sharedTextTasks != null) {
+        UndefinedTasksBatchEditorDialog(
+            tasks = sharedTextTasks,
+            categories = state.sharedTextCategories,
+            onDismiss = { store.dispatchEvent(OverviewEvent.DismissBatchUndefinedTasks) },
+            onConfirm = {
+                store.dispatchEvent(OverviewEvent.ConfirmBatchUndefinedTasks(it))
+            },
+        )
+    }
 
     store.handleEffects { effect ->
         when (effect) {

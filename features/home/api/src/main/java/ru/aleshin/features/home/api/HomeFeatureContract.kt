@@ -29,7 +29,10 @@ import java.util.Date
 public sealed class HomeConfig {
 
     @Serializable
-    public data object Overview : HomeConfig()
+    public data class Overview(
+        val sharedText: String? = null,
+        val sharedKey: Long = 0L,
+    ) : HomeConfig()
 
     @Serializable
     public data class Home(

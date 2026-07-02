@@ -23,6 +23,7 @@ import ru.aleshin.features.home.impl.domain.interactors.CategoriesInteractor
 import ru.aleshin.features.home.impl.domain.interactors.RepeatTaskInteractor
 import ru.aleshin.features.home.impl.domain.interactors.ScheduleInteractor
 import ru.aleshin.features.home.impl.domain.interactors.SettingsInteractor
+import ru.aleshin.features.home.impl.domain.interactors.ShareTextInteractor
 import ru.aleshin.features.home.impl.domain.interactors.SubCategoriesInteractor
 import ru.aleshin.features.home.impl.domain.interactors.TemplatesInteractor
 import ru.aleshin.features.home.impl.domain.interactors.TimeShiftInteractor
@@ -39,6 +40,9 @@ internal interface DomainModule {
 
     @Binds
     fun bindUndefinedTasksInteractor(interactor: UndefinedTasksInteractor.Base): UndefinedTasksInteractor
+
+    @Binds
+    fun bindShareTextInteractor(interactor: ShareTextInteractor.Base): ShareTextInteractor
 
     @Binds
     fun bindCategoriesInteractor(interactor: CategoriesInteractor.Base): CategoriesInteractor

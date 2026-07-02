@@ -20,6 +20,7 @@ import com.arkivanov.decompose.ComponentContext
 import ru.aleshin.features.editor.api.EditorDecomposeFeatureFactory
 import ru.aleshin.features.home.api.HomeDecomposeFeatureFactory
 import ru.aleshin.timeplanner.presentation.ui.main.contract.DeepLinkTarget
+import ru.aleshin.timeplanner.presentation.ui.main.contract.ShareTarget
 import ru.aleshin.timeplanner.presentation.ui.tabs.store.TabNavigationComponentFactory
 import javax.inject.Inject
 
@@ -31,6 +32,7 @@ interface MainComponentFactory {
     fun createComponent(
         componentContext: ComponentContext,
         initialDeepLinkTarget: DeepLinkTarget?,
+        initialShareTarget: ShareTarget?,
     ): MainComponent
 
     class Default @Inject constructor(
@@ -43,11 +45,13 @@ interface MainComponentFactory {
         override fun createComponent(
             componentContext: ComponentContext,
             initialDeepLinkTarget: DeepLinkTarget?,
+            initialShareTarget: ShareTarget?,
         ): MainComponent {
             return MainComponent.Base(
                 mainStoreFactory = mainStoreFactory,
                 componentContext = componentContext,
                 initialDeepLinkTarget = initialDeepLinkTarget,
+                initialShareTarget = initialShareTarget,
                 homeFeatureFactory = homeFeatureFactory,
                 navigationComponentFactory = navigationComponentFactory,
                 editorFeatureFactory = editorFeatureFactory,
