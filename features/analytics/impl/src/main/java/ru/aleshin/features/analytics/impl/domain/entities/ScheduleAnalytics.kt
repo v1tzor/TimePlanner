@@ -23,6 +23,7 @@ import ru.aleshin.core.utils.functional.TimeRange
  */
 internal data class ScheduleAnalytics(
     val dateWorkLoadMap: WorkLoadMap,
+    val hourlyWorkLoadAnalytics: List<HourlyWorkLoadAnalytic>,
     val categoriesAnalytics: CategoriesAnalytics,
     val planningAnalytics: Map<Int, List<PlanningAnalytic>>,
     val totalTasksCount: Int,
@@ -32,3 +33,12 @@ internal data class ScheduleAnalytics(
 )
 
 internal typealias WorkLoadMap = Map<TimeRange, List<TimeTask>>
+
+/**
+ * @author Stanislav Aleshin on 03.07.2026.
+ */
+internal data class HourlyWorkLoadAnalytic(
+    val fromHour: Int,
+    val toHour: Int,
+    val duration: Long,
+)

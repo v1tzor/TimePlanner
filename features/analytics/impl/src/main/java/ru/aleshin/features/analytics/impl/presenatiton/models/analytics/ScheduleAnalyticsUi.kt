@@ -27,6 +27,7 @@ import ru.aleshin.features.analytics.impl.presenatiton.models.timetask.TimeTaskU
 @Serializable
 internal data class ScheduleAnalyticsUi(
     val dateWorkLoadMap: WorkLoadMapUi,
+    val hourlyWorkLoadAnalytics: List<HourlyWorkLoadAnalyticUi>,
     val categoriesAnalytics: CategoriesAnalyticsUi,
     val planningAnalytic: Map<Int, List<PlanningAnalyticUi>>,
     val totalTasksCount: Int,
@@ -36,3 +37,14 @@ internal data class ScheduleAnalyticsUi(
 )
 
 internal typealias WorkLoadMapUi = Map<TimeRange, List<TimeTaskUi>>
+
+/**
+ * @author Stanislav Aleshin on 03.07.2026.
+ */
+@Immutable
+@Serializable
+internal data class HourlyWorkLoadAnalyticUi(
+    val fromHour: Int,
+    val toHour: Int,
+    val duration: Long,
+)

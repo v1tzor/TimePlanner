@@ -19,6 +19,7 @@ import dagger.Binds
 import dagger.Module
 import ru.aleshin.features.analytics.impl.domain.common.AnalyticsEitherWrapper
 import ru.aleshin.features.analytics.impl.domain.common.AnalyticsErrorHandler
+import ru.aleshin.features.analytics.impl.domain.common.HourlyWorkLoadCalculator
 import ru.aleshin.features.analytics.impl.domain.interactors.AnalyticsInteractor
 import ru.aleshin.features.analytics.impl.domain.interactors.SettingsInteractor
 
@@ -39,4 +40,7 @@ internal interface DomainModule {
 
     @Binds
     fun bindAnalyticsErrorHandler(handler: AnalyticsErrorHandler.Base): AnalyticsErrorHandler
+
+    @Binds
+    fun bindHourlyWorkLoadCalculator(calculator: HourlyWorkLoadCalculator.Base): HourlyWorkLoadCalculator
 }

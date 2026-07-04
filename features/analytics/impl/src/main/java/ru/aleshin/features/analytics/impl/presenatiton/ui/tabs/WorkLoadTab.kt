@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2025 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import ru.aleshin.core.utils.functional.TimePeriod
 import ru.aleshin.features.analytics.impl.presenatiton.ui.contract.AnalyticsState
 import ru.aleshin.features.analytics.impl.presenatiton.ui.views.ExecutedAnalyticsSection
+import ru.aleshin.features.analytics.impl.presenatiton.ui.views.HourlyWorkLoadSection
 import ru.aleshin.features.analytics.impl.presenatiton.ui.views.StatisticsSection
 import ru.aleshin.features.analytics.impl.presenatiton.ui.views.WorkLoadSection
 
@@ -50,6 +51,13 @@ internal fun WorkLoadTab(
             timePeriod = state.timePeriod,
             workLoadMap = analytics?.dateWorkLoadMap,
             onTimePeriodChanged = onTimePeriodChanged,
+        )
+        HorizontalDivider()
+        HourlyWorkLoadSection(
+            isLoading = state.isLoading,
+            timePeriod = state.timePeriod,
+            onTimePeriodChanged = onTimePeriodChanged,
+            hourlyWorkLoadAnalytics = analytics?.hourlyWorkLoadAnalytics,
         )
         HorizontalDivider()
         ExecutedAnalyticsSection(

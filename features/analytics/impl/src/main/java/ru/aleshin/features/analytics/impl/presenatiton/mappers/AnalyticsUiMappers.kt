@@ -16,10 +16,12 @@
 package ru.aleshin.features.analytics.impl.presenatiton.mappers
 
 import ru.aleshin.features.analytics.impl.domain.entities.CategoryAnalytic
+import ru.aleshin.features.analytics.impl.domain.entities.HourlyWorkLoadAnalytic
 import ru.aleshin.features.analytics.impl.domain.entities.PlanningAnalytic
 import ru.aleshin.features.analytics.impl.domain.entities.ScheduleAnalytics
 import ru.aleshin.features.analytics.impl.domain.entities.SubCategoryAnalytic
 import ru.aleshin.features.analytics.impl.presenatiton.models.analytics.CategoryAnalyticUi
+import ru.aleshin.features.analytics.impl.presenatiton.models.analytics.HourlyWorkLoadAnalyticUi
 import ru.aleshin.features.analytics.impl.presenatiton.models.analytics.PlanningAnalyticUi
 import ru.aleshin.features.analytics.impl.presenatiton.models.analytics.ScheduleAnalyticsUi
 import ru.aleshin.features.analytics.impl.presenatiton.models.analytics.SubCategoryAnalyticUi
@@ -29,12 +31,19 @@ import ru.aleshin.features.analytics.impl.presenatiton.models.analytics.SubCateg
  */
 internal fun ScheduleAnalytics.mapToUi() = ScheduleAnalyticsUi(
     dateWorkLoadMap = dateWorkLoadMap.mapValues { map -> map.value.map { it.mapToUi() } },
+    hourlyWorkLoadAnalytics = hourlyWorkLoadAnalytics.map { it.mapToUi() },
     categoriesAnalytics = categoriesAnalytics.map { it.mapToUi() },
     planningAnalytic = planningAnalytics.mapValues { entry -> entry.value.map { it.mapToUi() } },
     totalTasksCount = totalTasksCount,
     totalTasksTime = totalTasksTime,
     averageDayLoad = averageDayLoad,
     averageTaskTime = averageTaskTime,
+)
+
+internal fun HourlyWorkLoadAnalytic.mapToUi() = HourlyWorkLoadAnalyticUi(
+    fromHour = fromHour,
+    toHour = toHour,
+    duration = duration,
 )
 
 internal fun CategoryAnalytic.mapToUi() = CategoryAnalyticUi(

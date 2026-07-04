@@ -41,6 +41,7 @@ import ru.aleshin.core.utils.functional.TimePeriod
 import ru.aleshin.core.utils.functional.TimeRange
 import ru.aleshin.core.utils.managers.DateManager
 import ru.aleshin.features.analytics.impl.domain.common.AnalyticsEitherWrapper
+import ru.aleshin.features.analytics.impl.domain.common.HourlyWorkLoadCalculator
 import ru.aleshin.features.analytics.impl.domain.entities.AnalyticsFailure
 import ru.aleshin.features.analytics.impl.domain.entities.CategoryAnalytic
 import ru.aleshin.features.analytics.impl.domain.entities.PlanningAnalytic
@@ -61,6 +62,7 @@ internal interface AnalyticsInteractor {
         private val scheduleRepository: ScheduleRepository,
         private val categoriesRepository: CategoriesRepository,
         private val dateManager: DateManager,
+        private val hourlyWorkLoadCalculator: HourlyWorkLoadCalculator,
         private val eitherWrapper: AnalyticsEitherWrapper,
     ) : AnalyticsInteractor {
         
@@ -83,6 +85,10 @@ internal interface AnalyticsInteractor {
                     }
 
                     val workLoadMap = countWorkLoad(period, timeTasks)
+                    val hourlyWorkLoadAnalytics = hourlyWorkLoadCalculator.calculate(
+                        timeTasks = timeTasks,
+                        globalTimeRange = globalTimeRange,
+                    )
                     val categoriesAnalytics = countCategoriesAnalytic(
                         categories = allCategories,
                         timeTasks = timeTasks,
@@ -95,6 +101,7 @@ internal interface AnalyticsInteractor {
 
                     return@map ScheduleAnalytics(
                         dateWorkLoadMap = workLoadMap,
+                        hourlyWorkLoadAnalytics = hourlyWorkLoadAnalytics,
                         categoriesAnalytics = categoriesAnalytics,
                         planningAnalytics = planningAnalytics,
                         totalTasksCount = totalTasksCount,
