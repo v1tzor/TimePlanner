@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,15 +18,17 @@ package ru.aleshin.timeplanner.di.component
 import android.content.Context
 import dagger.BindsInstance
 import dagger.Component
+import ru.aleshin.core.data.di.CoreDataBaseModule
+import ru.aleshin.core.data.di.CoreDataModule
+import ru.aleshin.core.domain.di.CoreDomainModule
+import ru.aleshin.core.presentation.di.CorePresentationModule
+import ru.aleshin.core.utils.di.module.CoreUtilsModule
 import ru.aleshin.features.analytics.impl.di.AnalyticsFeatureDependencies
 import ru.aleshin.features.editor.impl.di.EditorFeatureDependencies
 import ru.aleshin.features.home.impl.di.HomeFeatureDependencies
 import ru.aleshin.features.settings.impl.di.SettingsFeatureDependencies
 import ru.aleshin.timeplanner.application.TimePlannerApp
 import ru.aleshin.timeplanner.di.PlatformServicesModule
-import ru.aleshin.timeplanner.di.modules.CoreModule
-import ru.aleshin.timeplanner.di.modules.DataBaseModule
-import ru.aleshin.timeplanner.di.modules.DataModule
 import ru.aleshin.timeplanner.di.modules.DependenciesModule
 import ru.aleshin.timeplanner.di.modules.DomainModules
 import ru.aleshin.timeplanner.di.modules.FeatureModule
@@ -43,9 +45,11 @@ import javax.inject.Singleton
 @Singleton
 @Component(
     modules = [
-        DataBaseModule::class,
-        DataModule::class,
-        CoreModule::class,
+        CoreDataBaseModule::class,
+        CoreDataModule::class,
+        CoreDomainModule::class,
+        CorePresentationModule::class,
+        CoreUtilsModule::class,
         PlatformServicesModule::class,
         PresentationModule::class,
         DomainModules::class,
@@ -71,7 +75,7 @@ interface AppComponent :
         fun applicationContext(context: Context): Builder
         fun featureModule(module: FeatureModule): Builder
         fun platformServicesModule(module: PlatformServicesModule): Builder
-        fun dataBaseModule(module: DataBaseModule): Builder
+        fun dataBaseModule(module: CoreDataBaseModule): Builder
         fun build(): AppComponent
     }
 
@@ -81,7 +85,7 @@ interface AppComponent :
                 .applicationContext(context)
                 .platformServicesModule(PlatformServicesModule())
                 .featureModule(FeatureModule())
-                .dataBaseModule(DataBaseModule())
+                .dataBaseModule(CoreDataBaseModule())
                 .build()
         }
     }

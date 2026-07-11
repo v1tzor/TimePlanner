@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,9 +35,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.dp
-import ru.aleshin.core.ui.views.SegmentedButtonItem
-import ru.aleshin.core.ui.views.SegmentedButtons
 import ru.aleshin.features.editor.impl.presentation.theme.EditorThemeRes
+import ru.aleshin.timeplanner.core.ui.views.SegmentedButtonItem
+import ru.aleshin.timeplanner.core.ui.views.SegmentedButtons
 
 /**
  * @author Stanislav Aleshin on 25.02.2023.

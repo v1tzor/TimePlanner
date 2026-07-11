@@ -16,7 +16,9 @@
 package ru.aleshin.core.domain.entities.template
 
 import junit.framework.TestCase.assertEquals
+import junit.framework.TestCase.assertTrue
 import org.junit.Test
+import ru.aleshin.core.utils.functional.Month
 import ru.aleshin.core.utils.functional.WeekDay
 import java.util.Calendar
 
@@ -47,6 +49,62 @@ class RepeatTimeTest {
         val expected = date(year = 2026, month = Calendar.JULY, day = 7, hour = 10, minute = 0)
 
         assertEquals(expected, actual)
+    }
+
+    @Test
+    fun test_next_date_or_current_returns_next_year_day_when_current_year_occurrence_is_past() {
+        val repeatTime = RepeatTime.YearDay(month = Month.FEBRUARY, dayNumber = 15)
+        val current = date(year = 2026, month = Calendar.MARCH, day = 1, hour = 9, minute = 0)
+        val startTime = date(year = 2026, month = Calendar.JANUARY, day = 1, hour = 10, minute = 0)
+
+        val actual = repeatTime.nextDateOrCurrent(startTime, current)
+        val expected = date(year = 2027, month = Calendar.FEBRUARY, day = 15, hour = 10, minute = 0)
+
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun test_next_date_or_current_returns_next_month_occurrence_when_current_occurrence_is_past() {
+        val repeatTime = RepeatTime.WeekDayInMonth(day = WeekDay.TUESDAY, weekNumber = 1)
+        val current = date(year = 2026, month = Calendar.JUNE, day = 30, hour = 11, minute = 0)
+        val startTime = date(year = 2026, month = Calendar.JANUARY, day = 1, hour = 10, minute = 0)
+
+        val actual = repeatTime.nextDateOrCurrent(startTime, current)
+        val expected = date(year = 2026, month = Calendar.JULY, day = 7, hour = 10, minute = 0)
+
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun test_next_date_or_current_returns_overflow_day_after_short_previous_month() {
+        val repeatTime = RepeatTime.MonthDay(dayNumber = 31)
+        val current = date(year = 2026, month = Calendar.MARCH, day = 1, hour = 9, minute = 0)
+        val startTime = date(year = 2026, month = Calendar.JANUARY, day = 1, hour = 10, minute = 0)
+
+        val actual = repeatTime.nextDateOrCurrent(startTime, current)
+        val expected = date(year = 2026, month = Calendar.MARCH, day = 3, hour = 10, minute = 0)
+
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun test_next_date_or_current_returns_last_day_for_february_twenty_ninth_in_non_leap_year() {
+        val repeatTime = RepeatTime.YearDay(month = Month.FEBRUARY, dayNumber = 29)
+        val current = date(year = 2026, month = Calendar.JANUARY, day = 1, hour = 9, minute = 0)
+        val startTime = date(year = 2026, month = Calendar.JANUARY, day = 1, hour = 10, minute = 0)
+
+        val actual = repeatTime.nextDateOrCurrent(startTime, current)
+        val expected = date(year = 2026, month = Calendar.FEBRUARY, day = 29, hour = 10, minute = 0)
+
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun test_month_day_matches_last_day_of_short_month() {
+        val repeatTime = RepeatTime.MonthDay(dayNumber = 31)
+        val date = date(year = 2026, month = Calendar.MAY, day = 1, hour = 10, minute = 0)
+
+        assertTrue(repeatTime.checkDateIsRepeat(date))
     }
 
     private fun date(

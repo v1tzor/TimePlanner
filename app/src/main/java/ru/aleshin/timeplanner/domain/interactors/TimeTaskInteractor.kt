@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,9 +15,8 @@
  */
 package ru.aleshin.timeplanner.domain.interactors
 
-import kotlinx.coroutines.flow.map
-import ru.aleshin.core.domain.entities.schedules.TimeTask
-import ru.aleshin.core.domain.repository.ScheduleRepository
+import ru.aleshin.core.domain.entities.tasks.TimeTask
+import ru.aleshin.core.domain.repository.TimeTaskRepository
 import ru.aleshin.core.utils.functional.FlowDomainResult
 import ru.aleshin.timeplanner.domain.common.MainEitherWrapper
 import ru.aleshin.timeplanner.domain.common.MainFailures
@@ -32,13 +31,11 @@ interface TimeTaskInteractor {
     suspend fun fetchTimeTasksByDate(date: Date): FlowDomainResult<MainFailures, List<TimeTask>>
 
     class Base @Inject constructor(
-        private val scheduleRepository: ScheduleRepository,
+        private val timeTaskRepository: TimeTaskRepository,
         private val eitherWrapper: MainEitherWrapper,
     ) : TimeTaskInteractor {
         override suspend fun fetchTimeTasksByDate(date: Date) = eitherWrapper.wrapFlow {
-            scheduleRepository.fetchScheduleByDate(date.time).map {
-                it?.timeTasks ?: emptyList()
-            }
+            timeTaskRepository.fetchAllTimeTasksByDate(date)
         }
     }
 }

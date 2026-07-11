@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,10 +15,10 @@
  */
 package ru.aleshin.features.editor.impl.domain.interactors
 
-import kotlinx.coroutines.flow.first
-import ru.aleshin.core.domain.entities.schedules.UndefinedTask
-import ru.aleshin.core.domain.repository.UndefinedTasksRepository
+import ru.aleshin.core.domain.entities.tasks.UndefinedTask
+import ru.aleshin.core.domain.repository.UndefinedTaskRepository
 import ru.aleshin.core.utils.functional.DomainResult
+import ru.aleshin.core.utils.functional.FlowDomainResult
 import ru.aleshin.core.utils.functional.UnitDomainResult
 import ru.aleshin.features.editor.impl.domain.common.EditorEitherWrapper
 import ru.aleshin.features.editor.impl.domain.entites.EditorFailures
@@ -29,21 +29,25 @@ import javax.inject.Inject
  */
 internal interface UndefinedTasksInteractor {
 
-    suspend fun fetchAllUndefinedTasks(): DomainResult<EditorFailures, List<UndefinedTask>>
-
+    suspend fun fetchAllUndefinedTasks(): FlowDomainResult<EditorFailures, List<UndefinedTask>>
+    suspend fun fetchUndefinedTaskById(taskId: Long): DomainResult<EditorFailures, UndefinedTask?>
     suspend fun deleteUndefinedTask(taskId: Long): UnitDomainResult<EditorFailures>
 
     class Base @Inject constructor(
-        private val undefinedTasksRepository: UndefinedTasksRepository,
+        private val undefinedTaskRepository: UndefinedTaskRepository,
         private val eitherWrapper: EditorEitherWrapper,
     ) : UndefinedTasksInteractor {
 
-        override suspend fun fetchAllUndefinedTasks() = eitherWrapper.wrap {
-            undefinedTasksRepository.fetchUndefinedTasks().first()
+        override suspend fun fetchAllUndefinedTasks() = eitherWrapper.wrapFlow {
+            undefinedTaskRepository.fetchUndefinedTasks()
+        }
+
+        override suspend fun fetchUndefinedTaskById(taskId: Long) = eitherWrapper.wrap {
+            undefinedTaskRepository.fetchUndefinedTaskByIdOnce(taskId)
         }
 
         override suspend fun deleteUndefinedTask(taskId: Long) = eitherWrapper.wrap {
-            undefinedTasksRepository.removeUndefinedTask(taskId)
+            undefinedTaskRepository.deleteUndefinedTask(taskId)
         }
     }
 }

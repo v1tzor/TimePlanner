@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,8 @@
 package ru.aleshin.features.home.impl.presentation.mapppers
 
 import androidx.compose.runtime.Composable
-import ru.aleshin.core.domain.entities.schedules.TaskPriority
-import ru.aleshin.core.ui.theme.TimePlannerRes
+import ru.aleshin.core.domain.entities.tasks.TaskPriority
+import ru.aleshin.timeplanner.core.ui.theme.TimePlannerRes
 
 /**
  * @author Stanislav Aleshin on 16.01.2024.

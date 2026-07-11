@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,11 +40,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import ru.aleshin.core.ui.views.PlaceholderBox
+import ru.aleshin.core.presentation.models.schedules.OverviewScheduleUi
 import ru.aleshin.core.utils.functional.Constants
-import ru.aleshin.features.home.impl.presentation.models.schedules.ScheduleUi
 import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
 import ru.aleshin.features.home.impl.presentation.ui.common.OverviewScheduleItem
+import ru.aleshin.timeplanner.core.ui.views.PlaceholderBox
+import java.util.Date
 
 /**
  * @author Stanislav Aleshin on 02.11.2023.
@@ -53,9 +54,9 @@ import ru.aleshin.features.home.impl.presentation.ui.common.OverviewScheduleItem
 internal fun SchedulesSection(
     modifier: Modifier = Modifier,
     isLoading: Boolean,
-    currentSchedule: ScheduleUi?,
-    schedules: List<ScheduleUi>,
-    onOpenSchedule: (ScheduleUi) -> Unit,
+    currentDate: Date?,
+    schedules: List<OverviewScheduleUi>,
+    onOpenSchedule: (OverviewScheduleUi) -> Unit,
     onOpenAllSchedules: () -> Unit,
 ) {
     Column(
@@ -78,13 +79,12 @@ internal fun SchedulesSection(
             },
         ) { loading ->
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                if (!loading && currentSchedule != null) {
-                    val currentScheduleIndex = remember(schedules, currentSchedule) {
-                        schedules.indexOf(currentSchedule)
+                if (!loading) {
+                    val firstVisibleItemIndex = remember(schedules) {
+                        schedules.indexOfFirst { it.date == currentDate }.takeIf { it != -1 } ?: 0
                     }
-                    val gridState = rememberLazyGridState(
-                        initialFirstVisibleItemIndex = if (currentScheduleIndex == -1) 0 else currentScheduleIndex,
-                    )
+                    val gridState = rememberLazyGridState(firstVisibleItemIndex)
+
                     SchedulesSectionGridView(
                         state = gridState,
                         schedules = schedules,
@@ -121,8 +121,8 @@ internal fun SchedulesSection(
 internal fun SchedulesSectionGridView(
     modifier: Modifier = Modifier,
     state: LazyGridState = rememberLazyGridState(),
-    schedules: List<ScheduleUi>,
-    onScheduleClick: (ScheduleUi) -> Unit,
+    schedules: List<OverviewScheduleUi>,
+    onScheduleClick: (OverviewScheduleUi) -> Unit,
     flingBehavior: FlingBehavior = ScrollableDefaults.flingBehavior(),
     userScrollEnabled: Boolean = true,
 ) {

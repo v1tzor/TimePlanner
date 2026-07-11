@@ -82,7 +82,7 @@
 - Room Database
 - Dagger 2
 - Unit tests
-- [Voyager](https://github.com/adrielcafe/voyager) navigation
+- Decompose navigation
 - Charts: [Charty](https://github.com/hi-manshu/Charty), [Compose-Charts](https://github.com/humawork/compose-charts)
 
 ## Donation to support application development ❤️
@@ -143,7 +143,7 @@
 ### License
 
 ```
-Copyright 2023 Stanislav Aleshin
+Copyright 2026 Stanislav Aleshin
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

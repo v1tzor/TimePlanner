@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,7 +44,7 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import ru.aleshin.core.ui.theme.TimePlannerRes
+import ru.aleshin.timeplanner.core.ui.theme.TimePlannerRes
 import ru.aleshin.core.utils.extensions.mapToDate
 import ru.aleshin.core.utils.extensions.startThisDay
 import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +16,16 @@
 package ru.aleshin.features.settings.impl.di
 
 import android.content.Context
-import ru.aleshin.core.domain.repository.CategoriesRepository
+import ru.aleshin.core.domain.repository.MainCategoryRepository
 import ru.aleshin.core.domain.repository.ScheduleRepository
-import ru.aleshin.core.domain.repository.SubCategoriesRepository
+import ru.aleshin.core.domain.repository.SubCategoryRepository
 import ru.aleshin.core.domain.repository.TasksSettingsRepository
 import ru.aleshin.core.domain.repository.TemplatesRepository
 import ru.aleshin.core.domain.repository.ThemeSettingsRepository
-import ru.aleshin.core.domain.repository.UndefinedTasksRepository
-import ru.aleshin.core.ui.notifications.TemplatesAlarmManager
-import ru.aleshin.core.ui.notifications.TimeTaskAlarmManager
+import ru.aleshin.core.domain.repository.TimeTaskRepository
+import ru.aleshin.core.domain.repository.UndefinedTaskRepository
+import ru.aleshin.core.presentation.notifications.TemplatesAlarmManager
+import ru.aleshin.core.presentation.notifications.TimeTaskAlarmManager
 import ru.aleshin.core.utils.inject.BaseFeatureDependencies
 import ru.aleshin.core.utils.managers.CoroutineManager
 import ru.aleshin.core.utils.managers.DateManager
@@ -35,11 +36,12 @@ import ru.aleshin.core.utils.managers.DateManager
 public interface SettingsFeatureDependencies : BaseFeatureDependencies {
     public val themeSettingsRepository: ThemeSettingsRepository
     public val tasksSettingsRepository: TasksSettingsRepository
-    public val categoriesRepository: CategoriesRepository
-    public val subCategoriesRepository: SubCategoriesRepository
+    public val mainCategoryRepository: MainCategoryRepository
+    public val subCategoryRepository: SubCategoryRepository
     public val templatesRepository: TemplatesRepository
-    public val undefinedTasksRepository: UndefinedTasksRepository
+    public val undefinedTaskRepository: UndefinedTaskRepository
     public val scheduleRepository: ScheduleRepository
+    public val timeTaskRepository: TimeTaskRepository
     public val coroutineManager: CoroutineManager
     public val timeTaskAlarmManager: TimeTaskAlarmManager
     public val templatesAlarmManager: TemplatesAlarmManager

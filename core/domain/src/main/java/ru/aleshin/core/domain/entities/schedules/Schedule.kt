@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,21 +16,29 @@
 package ru.aleshin.core.domain.entities.schedules
 
 import kotlinx.serialization.Serializable
+import ru.aleshin.core.domain.entities.tasks.TimeTask
 import ru.aleshin.core.utils.extensions.extractAllItem
+import ru.aleshin.core.utils.functional.DateSerializer
 import ru.aleshin.core.utils.functional.Mapper
 import java.util.Collections.emptyList
+import java.util.Date
 
 /**
- * @author Stanislav Aleshin on 25.02.2023.
+ * @author Stanislav Aleshin on 05.07.2026.
  */
 @Serializable
 data class Schedule(
-    val date: Long,
-    val status: DailyScheduleStatus,
+    @Serializable(DateSerializer::class) val date: Date,
     val timeTasks: List<TimeTask> = emptyList(),
     val overlayTimeTasks: List<TimeTask> = emptyList(),
 ) {
+    val allTimeTasks: List<TimeTask> get() = timeTasks + overlayTimeTasks
+
     fun <T> map(mapper: Mapper<Schedule, T>) = mapper.map(this)
 }
 
-fun List<Schedule>.fetchAllTimeTasks() = map { it.overlayTimeTasks + it.timeTasks }.extractAllItem()
+fun List<Schedule>.fetchAllTimeTasks() = map { it.allTimeTasks }.extractAllItem()
+
+fun Schedule.mapToBase() = BaseDailySchedule(
+    date = date
+)

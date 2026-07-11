@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ object Constants {
         const val ISSUES_URI = "https://github.com/v1tzor/TimePlanner/issues"
         const val EDITOR_DEEP_LINK = "app://timeplanner.com/openEditor"
         const val PERMISSION_TAG = "Notification_Permission"
+        const val LOGGER_TAG = "TimePlanner"
     }
 
     object Text {
@@ -50,8 +51,7 @@ object Constants {
     }
 
     object Alarm {
-        const val ALARM_NOTIFICATION_ACTION = "ru.aleshin.ALARM_NOTIFICATION_ACTION"
-        const val MARK_DONE_NOTIFICATION_ACTION = "ru.aleshin.MARK_DONE_NOTIFICATION_ACTION"
+        const val ALARM_NOTIFICATION_ACTION = "ru.aleshin.TASK_ALARM_NOTIFICATION_ACTION"
         const val NOTIFICATION_TIME_TYPE = "ALARM_DATA_TIME_TYPE"
         const val NOTIFICATION_CATEGORY = "ALARM_DATA_CATEGORY"
         const val NOTIFICATION_SUBCATEGORY = "ALARM_DATA_SUBCATEGORY"
@@ -61,6 +61,7 @@ object Constants {
         const val TIME_TASK_NOTIFICATION_TYPE = "ALARM_TIME_TASK_NOTIFICATION_TYPE"
         const val APP_ICON = "ALARM_DATA_APP_ICON"
         const val REPEAT_TIME = "REPEAT_TIME"
+        const val TEMPLATE_NOTIFICATION_TRIGGER_TIME = "TEMPLATE_NOTIFICATION_TRIGGER_TIME"
         const val REPEAT_TYPE = "REPEAT_TYPE"
         const val TEMPLATE_ID = "REPEAT_TEMPLATE_ID"
         const val DAY_OF_MONTH = "REPEAT_DAY_OF_MONTH"
@@ -98,7 +99,7 @@ object Constants {
         const val MINUTES_IN_HOUR = 60L
         const val HOURS_IN_DAY = 24L
 
-        const val NEXT_REPEAT_LIMIT = 100L
+        const val NEXT_REPEAT_LIMIT_DAYS = 100L
 
         const val OVERVIEW_NEXT_DAYS = 15
         const val OVERVIEW_PREVIOUS_DAYS = 14

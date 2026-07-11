@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,10 +50,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import ru.aleshin.core.domain.entities.settings.CalendarButtonBehavior
-import ru.aleshin.core.ui.theme.material.ColorsUiType
-import ru.aleshin.core.ui.theme.material.ThemeUiType
-import ru.aleshin.core.ui.theme.tokens.LanguageUiType
-import ru.aleshin.core.ui.views.WarningDeleteDialog
+import ru.aleshin.timeplanner.core.ui.theme.material.ColorsUiType
+import ru.aleshin.timeplanner.core.ui.theme.material.ThemeUiType
+import ru.aleshin.timeplanner.core.ui.theme.tokens.LanguageUiType
+import ru.aleshin.timeplanner.core.ui.views.WarningDeleteDialog
 import ru.aleshin.core.utils.architecture.store.compose.handleEffects
 import ru.aleshin.core.utils.architecture.store.compose.stateAsState
 import ru.aleshin.core.utils.extensions.openNetworkUri

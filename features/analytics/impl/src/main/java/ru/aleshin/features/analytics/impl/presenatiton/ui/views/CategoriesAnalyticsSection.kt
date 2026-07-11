@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,8 +49,8 @@ import hu.ma.charts.legend.data.LegendPosition
 import hu.ma.charts.pie.PieChart
 import hu.ma.charts.pie.data.PieChartData
 import hu.ma.charts.pie.data.PieChartEntry
-import ru.aleshin.core.ui.theme.TimePlannerRes
-import ru.aleshin.core.ui.views.toMinutesAndHoursTitle
+import ru.aleshin.timeplanner.core.ui.theme.TimePlannerRes
+import ru.aleshin.timeplanner.core.ui.views.toMinutesAndHoursTitle
 import ru.aleshin.core.utils.charts.fetchPieColorByTop
 import ru.aleshin.core.utils.functional.TimePeriod
 import ru.aleshin.features.analytics.impl.presenatiton.models.analytics.CategoriesAnalyticsUi

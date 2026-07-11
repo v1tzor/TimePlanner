@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,15 @@
 package ru.aleshin.features.home.impl.presentation.ui.details.contract
 
 import kotlinx.serialization.Serializable
+import ru.aleshin.core.presentation.models.schedules.OverviewScheduleUi
 import ru.aleshin.core.utils.architecture.component.BaseOutput
 import ru.aleshin.core.utils.architecture.store.contract.StoreAction
 import ru.aleshin.core.utils.architecture.store.contract.StoreEffect
 import ru.aleshin.core.utils.architecture.store.contract.StoreEvent
 import ru.aleshin.core.utils.architecture.store.contract.StoreState
+import ru.aleshin.core.utils.functional.DateSerializer
 import ru.aleshin.features.home.api.HomeConfig
 import ru.aleshin.features.home.impl.domain.entities.HomeFailures
-import ru.aleshin.features.home.impl.presentation.models.schedules.ScheduleUi
 import java.util.Date
 
 /**
@@ -32,14 +33,15 @@ import java.util.Date
 @Serializable
 internal data class DetailsState(
     val isLoading: Boolean = true,
-    val currentSchedule: ScheduleUi? = null,
-    val schedules: List<ScheduleUi> = emptyList(),
+    @Serializable(DateSerializer::class)
+    val currentDate: Date? = null,
+    val schedules: List<OverviewScheduleUi> = emptyList(),
 ) : StoreState
 
 internal sealed class DetailsEvent : StoreEvent {
     object Init : DetailsEvent()
     object PressBackButton : DetailsEvent()
-    data class OpenSchedule(val schedule: ScheduleUi) : DetailsEvent()
+    data class OpenSchedule(val schedule: OverviewScheduleUi) : DetailsEvent()
 }
 
 internal sealed class DetailsEffect : StoreEffect {
@@ -47,8 +49,8 @@ internal sealed class DetailsEffect : StoreEffect {
 }
 
 internal sealed class DetailsAction : StoreAction {
-    data class UpdateSchedules(val date: Date, val schedules: List<ScheduleUi>) : DetailsAction()
     data class UpdateLoading(val isLoading: Boolean) : DetailsAction()
+    data class UpdateSchedules(val date: Date, val schedules: List<OverviewScheduleUi>) : DetailsAction()
 }
 
 internal sealed class DetailsOutput : BaseOutput {

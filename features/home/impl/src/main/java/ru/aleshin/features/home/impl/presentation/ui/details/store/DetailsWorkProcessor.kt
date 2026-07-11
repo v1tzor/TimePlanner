@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,20 @@
 package ru.aleshin.features.home.impl.presentation.ui.details.store
 
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.onStart
+import ru.aleshin.core.presentation.mappers.mapToUi
 import ru.aleshin.core.utils.architecture.store.work.ActionResult
 import ru.aleshin.core.utils.architecture.store.work.EffectResult
 import ru.aleshin.core.utils.architecture.store.work.FlowWorkProcessor
 import ru.aleshin.core.utils.architecture.store.work.WorkCommand
-import ru.aleshin.core.utils.functional.handle
+import ru.aleshin.core.utils.architecture.store.work.WorkResult
+import ru.aleshin.core.utils.extensions.shiftDay
+import ru.aleshin.core.utils.functional.Constants.Date.OVERVIEW_NEXT_DAYS
+import ru.aleshin.core.utils.functional.Constants.Date.OVERVIEW_PREVIOUS_DAYS
+import ru.aleshin.core.utils.functional.collectAndHandle
+import ru.aleshin.core.utils.functional.toRange
 import ru.aleshin.core.utils.managers.DateManager
 import ru.aleshin.features.home.impl.domain.interactors.ScheduleInteractor
-import ru.aleshin.features.home.impl.presentation.mapppers.schedules.ScheduleDomainToUiMapper
 import ru.aleshin.features.home.impl.presentation.ui.details.contract.DetailsAction
 import ru.aleshin.features.home.impl.presentation.ui.details.contract.DetailsEffect
 import ru.aleshin.features.home.impl.presentation.ui.details.contract.DetailsOutput
@@ -37,7 +43,6 @@ internal interface DetailsWorkProcessor :
 
     class Base @Inject constructor(
         private val scheduleInteractor: ScheduleInteractor,
-        private val schedulesUiMapper: ScheduleDomainToUiMapper,
         private val dateManager: DateManager,
     ) : DetailsWorkProcessor {
 
@@ -45,15 +50,20 @@ internal interface DetailsWorkProcessor :
             is DetailsWorkCommand.LoadSchedules -> loadSchedulesWork()
         }
 
-        private fun loadSchedulesWork() = flow {
+        private fun loadSchedulesWork() = flow<DetailsWorkResult> {
             val currentDate = dateManager.fetchBeginningCurrentDay()
-            scheduleInteractor.fetchOverviewSchedules().handle(
+            val startDate = currentDate.shiftDay(-OVERVIEW_PREVIOUS_DAYS)
+            val endDate = currentDate.shiftDay(OVERVIEW_NEXT_DAYS)
+
+            scheduleInteractor.fetchOverviewSchedules(startDate toRange endDate).collectAndHandle(
                 onLeftAction = { emit(EffectResult(DetailsEffect.ShowError(it))) },
                 onRightAction = { schedules ->
-                    val schedules = schedules.map { schedulesUiMapper.map(it) }
+                    val schedules = schedules.map { it.mapToUi() }
                     emit(ActionResult(DetailsAction.UpdateSchedules(currentDate, schedules)))
-                },
+                }
             )
+        }.onStart {
+            emit(ActionResult(DetailsAction.UpdateLoading(true)))
         }
     }
 }
@@ -61,3 +71,5 @@ internal interface DetailsWorkProcessor :
 internal sealed class DetailsWorkCommand : WorkCommand {
     object LoadSchedules : DetailsWorkCommand()
 }
+
+internal typealias DetailsWorkResult = WorkResult<DetailsAction, DetailsEffect, DetailsOutput>

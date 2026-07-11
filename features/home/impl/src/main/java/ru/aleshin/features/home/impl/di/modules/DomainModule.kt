@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ import dagger.Binds
 import dagger.Module
 import ru.aleshin.features.home.impl.domain.common.HomeEitherWrapper
 import ru.aleshin.features.home.impl.domain.common.HomeErrorHandler
-import ru.aleshin.features.home.impl.domain.interactors.CategoriesInteractor
+import ru.aleshin.features.home.impl.domain.interactors.MainCategoriesInteractor
 import ru.aleshin.features.home.impl.domain.interactors.RepeatTaskInteractor
 import ru.aleshin.features.home.impl.domain.interactors.ScheduleInteractor
 import ru.aleshin.features.home.impl.domain.interactors.SettingsInteractor
@@ -45,7 +45,7 @@ internal interface DomainModule {
     fun bindShareTextInteractor(interactor: ShareTextInteractor.Base): ShareTextInteractor
 
     @Binds
-    fun bindCategoriesInteractor(interactor: CategoriesInteractor.Base): CategoriesInteractor
+    fun bindCategoriesInteractor(interactor: MainCategoriesInteractor.Base): MainCategoriesInteractor
 
     @Binds
     fun bindSubCategoriesInteractor(interactor: SubCategoriesInteractor.Base): SubCategoriesInteractor

@@ -16,10 +16,9 @@
 package ru.aleshin.features.home.api
 
 import kotlinx.serialization.Serializable
-import ru.aleshin.core.domain.entities.schedules.TimeTask
-import ru.aleshin.core.domain.entities.template.Template
 import ru.aleshin.core.utils.architecture.component.BaseOutput
 import ru.aleshin.core.utils.functional.DateSerializer
+import ru.aleshin.core.utils.functional.TimeRange
 import java.util.Date
 
 /**
@@ -46,7 +45,7 @@ public sealed class HomeConfig {
     public data object Templates : HomeConfig()
 
     @Serializable
-    public data class Categories(val mainCategoryId: Int? = null) : HomeConfig()
+    public data class Categories(val mainCategoryId: Long? = null) : HomeConfig()
 }
 
 /**
@@ -57,8 +56,9 @@ public sealed class HomeOutput : BaseOutput {
     public data object NavigateToBack : HomeOutput()
 
     public data class NavigateToEditor(
-        val timeTask: TimeTask,
-        val template: Template?,
+        val timeTaskId: Long? = null,
+        val timeRange: TimeRange? = null,
+        val date: Date? = null,
         val undefinedTaskId: Long? = null,
     ) : HomeOutput()
 }

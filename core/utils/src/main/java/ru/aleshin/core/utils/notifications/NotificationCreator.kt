@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 package ru.aleshin.core.utils.notifications
 
+import android.annotation.SuppressLint
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -22,8 +23,13 @@ import android.app.PendingIntent
 import android.content.Context
 import android.graphics.Bitmap
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
+import ru.aleshin.core.utils.functional.Constants.App.LOGGER_TAG
+import ru.aleshin.core.utils.notifications.parameters.LockScreenVisibility
+import ru.aleshin.core.utils.notifications.parameters.NotificationChronometer
 import ru.aleshin.core.utils.notifications.parameters.NotificationDefaults
 import ru.aleshin.core.utils.notifications.parameters.NotificationImportance
 import ru.aleshin.core.utils.notifications.parameters.NotificationPriority
@@ -41,7 +47,7 @@ interface NotificationCreator {
         channelId: String,
         title: String,
         text: String,
-        timeStamp: Long? = System.currentTimeMillis(),
+        timeStamp: Long? = null,
         smallIcon: Int,
         largeIcon: Bitmap? = null,
         visibility: NotificationVisibility = NotificationVisibility.PUBLIC,
@@ -50,7 +56,10 @@ interface NotificationCreator {
         contentIntent: PendingIntent? = null,
         notificationDefaults: NotificationDefaults = NotificationDefaults(),
         autoCancel: Boolean = true,
+        silent: Boolean = false,
         ongoing: Boolean = false,
+        chronometer: NotificationChronometer? = null,
+        timeoutAfterMillis: Long? = null,
         style: NotificationStyles? = null,
         color: Int? = null,
         progress: NotificationProgress? = null,
@@ -58,13 +67,18 @@ interface NotificationCreator {
 
     fun showNotify(notification: Notification, notifyId: Int)
 
+    fun showNotify(notification: Notification, notifyTag: String?, notifyId: Int)
+
     fun cancelNotify(notifyId: Int)
+
+    fun cancelNotify(notifyTag: String?, notifyId: Int)
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun createNotifyChannel(
         channelId: String,
         channelName: String,
         importance: NotificationImportance,
+        lockscreenVisibility: LockScreenVisibility?,
         defaults: NotificationDefaults,
     )
 
@@ -77,6 +91,9 @@ interface NotificationCreator {
 
         private val notificationManager: NotificationManager
             get() = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+        private val notificationManagerCompat: NotificationManagerCompat
+            get() = NotificationManagerCompat.from(context)
 
         override fun createNotify(
             channelId: String,
@@ -91,45 +108,94 @@ interface NotificationCreator {
             contentIntent: PendingIntent?,
             notificationDefaults: NotificationDefaults,
             autoCancel: Boolean,
+            silent: Boolean,
             ongoing: Boolean,
+            chronometer: NotificationChronometer?,
+            timeoutAfterMillis: Long?,
             style: NotificationStyles?,
             color: Int?,
             progress: NotificationProgress?,
         ): Notification {
-            val builder = when (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                true -> NotificationCompat.Builder(context, channelId)
-                false -> NotificationCompat.Builder(context)
-            }
-            builder.apply {
+            return NotificationCompat.Builder(context, channelId).apply {
+                setSmallIcon(smallIcon)
                 setContentTitle(title)
                 setContentText(text)
                 setVisibility(visibility.visibility)
                 setPriority(priority.importance)
-                if (timeStamp == null) setShowWhen(false) else setWhen(timeStamp)
-                if (color != null) setColor(color)
-                setSmallIcon(smallIcon)
-                if (largeIcon != null) setLargeIcon(largeIcon)
-                if (contentIntent != null) setContentIntent(contentIntent)
-                setAutoCancel(autoCancel)
+
+                if (timeStamp == null) {
+                    setShowWhen(false)
+                } else {
+                    setWhen(timeStamp)
+                    setShowWhen(true)
+                }
+
+                color?.let(::setColor)
+                largeIcon?.let(::setLargeIcon)
+                contentIntent?.let(::setContentIntent)
+
                 setOngoing(ongoing)
-                var defaults = 0
-                if (notificationDefaults.isVibrate) defaults = defaults or NotificationCompat.DEFAULT_VIBRATE
-                if (notificationDefaults.isSound) defaults = defaults or NotificationCompat.DEFAULT_SOUND
-                if (notificationDefaults.isLights) defaults = defaults or NotificationCompat.DEFAULT_LIGHTS
-                if (defaults != 0) setDefaults(defaults)
-                if (progress != null) with(progress) { setProgress(max, value, isIndeterminate) }
-                if (style != null) setStyle(style.style)
-                actions.forEach { addAction(it) }
-            }
-            return builder.build()
+                setAutoCancel(autoCancel && !ongoing)
+
+                if (silent) {
+                    setSilent(true)
+                    setOnlyAlertOnce(true)
+                }
+
+                if (!silent) {
+                    val defaults = notificationDefaults.toCompatDefaults()
+                    if (defaults != 0) {
+                        setDefaults(defaults)
+                    }
+                }
+
+                chronometer?.let {
+                    applyChronometer(it)
+                }
+
+                timeoutAfterMillis?.let {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        setTimeoutAfter(it.coerceAtLeast(0L))
+                    }
+                }
+
+                progress?.let {
+                    setProgress(it.max, it.value, it.isIndeterminate)
+                }
+
+                style?.let {
+                    setStyle(it.style)
+                }
+
+                actions.forEach(::addAction)
+            }.build()
         }
 
+        @SuppressLint("MissingPermission")
         override fun showNotify(notification: Notification, notifyId: Int) {
-            notificationManager.notify(notifyId, notification)
+            showNotify(notification, null, notifyId)
+        }
+
+        @SuppressLint("MissingPermission")
+        override fun showNotify(notification: Notification, notifyTag: String?, notifyId: Int) {
+            if (!notificationManagerCompat.areNotificationsEnabled()) {
+                Log.e(LOGGER_TAG, "Notifications are disabled")
+                return
+            }
+
+            try {
+                notificationManagerCompat.notify(notifyTag, notifyId, notification)
+            } catch (exception: SecurityException) {
+                exception.printStackTrace()
+            }
         }
 
         override fun cancelNotify(notifyId: Int) {
-            notificationManager.cancel(notifyId)
+            cancelNotify(null, notifyId)
+        }
+
+        override fun cancelNotify(notifyTag: String?, notifyId: Int) {
+            notificationManagerCompat.cancel(notifyTag, notifyId)
         }
 
         @RequiresApi(Build.VERSION_CODES.O)
@@ -137,20 +203,49 @@ interface NotificationCreator {
             channelId: String,
             channelName: String,
             importance: NotificationImportance,
+            lockscreenVisibility: LockScreenVisibility?,
             defaults: NotificationDefaults,
         ) {
-            val channel = NotificationChannel(channelId, channelName, importance.importance).apply {
+            val channel = NotificationChannel(
+                channelId,
+                channelName,
+                importance.importance,
+            ).apply {
                 enableLights(defaults.isLights)
                 enableVibration(defaults.isVibrate)
-                vibrationPattern = longArrayOf(500, 500, 500)
+
+                if (!defaults.isSound) {
+                    setSound(null, null)
+                }
+                if (lockscreenVisibility != null) {
+                    this.lockscreenVisibility = lockscreenVisibility.visibility
+                }
             }
+
             notificationManager.createNotificationChannel(channel)
         }
 
         @RequiresApi(Build.VERSION_CODES.O)
         override fun deleteNotifyChannel(channelId: String) {
-            val channel = notificationManager.getNotificationChannel(channelId)
-            if (channel != null) notificationManager.deleteNotificationChannel(channelId)
+            notificationManager.deleteNotificationChannel(channelId)
+        }
+
+        private fun NotificationCompat.Builder.applyChronometer(
+            chronometer: NotificationChronometer,
+        ) {
+            setWhen(chronometer.whenMillis)
+            setShowWhen(true)
+
+            if (chronometer.countDown) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    setUsesChronometer(true)
+                    setChronometerCountDown(true)
+                } else {
+                    setUsesChronometer(false)
+                }
+            } else {
+                setUsesChronometer(true)
+            }
         }
     }
 }

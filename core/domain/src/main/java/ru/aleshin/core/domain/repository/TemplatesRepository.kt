@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,11 +22,10 @@ import ru.aleshin.core.domain.entities.template.Template
  * @author Stanislav Aleshin on 08.03.2023.
  */
 interface TemplatesRepository {
-    suspend fun addTemplates(templates: List<Template>)
-    suspend fun addTemplate(template: Template): Int
-    suspend fun fetchTemplatesById(templateId: Int): Template?
-    fun fetchAllTemplates(): Flow<List<Template>>
-    suspend fun updateTemplate(template: Template)
-    suspend fun deleteTemplateById(id: Int)
+    suspend fun addOrUpdateTemplate(template: Template): Long
+    suspend fun addOrUpdateTemplates(templates: List<Template>)
+    suspend fun fetchTemplatesByIdOnce(templateId: Long): Template?
+    suspend fun fetchAllTemplates(): Flow<List<Template>>
+    suspend fun deleteTemplateById(id: Long)
     suspend fun deleteAllTemplates(): List<Template>
 }

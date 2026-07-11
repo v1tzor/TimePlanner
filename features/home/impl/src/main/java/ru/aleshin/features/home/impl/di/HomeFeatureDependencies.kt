@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,20 +16,21 @@
 package ru.aleshin.features.home.impl.di
 
 import ru.aleshin.core.domain.common.ScheduleStatusChecker
+import ru.aleshin.core.domain.common.TimeOverlayManager
+import ru.aleshin.core.domain.common.TimeTaskProgressManager
 import ru.aleshin.core.domain.common.TimeTaskStatusChecker
-import ru.aleshin.core.domain.repository.CategoriesRepository
+import ru.aleshin.core.domain.repository.MainCategoryRepository
 import ru.aleshin.core.domain.repository.ScheduleRepository
-import ru.aleshin.core.domain.repository.SubCategoriesRepository
+import ru.aleshin.core.domain.repository.SubCategoryRepository
 import ru.aleshin.core.domain.repository.TasksSettingsRepository
 import ru.aleshin.core.domain.repository.TemplatesRepository
 import ru.aleshin.core.domain.repository.TimeTaskRepository
-import ru.aleshin.core.domain.repository.UndefinedTasksRepository
-import ru.aleshin.core.ui.notifications.TemplatesAlarmManager
-import ru.aleshin.core.ui.notifications.TimeTaskAlarmManager
+import ru.aleshin.core.domain.repository.UndefinedTaskRepository
+import ru.aleshin.core.presentation.notifications.TemplatesAlarmManager
+import ru.aleshin.core.presentation.notifications.TimeTaskAlarmManager
 import ru.aleshin.core.utils.inject.BaseFeatureDependencies
 import ru.aleshin.core.utils.managers.CoroutineManager
 import ru.aleshin.core.utils.managers.DateManager
-import ru.aleshin.core.utils.managers.TimeOverlayManager
 
 /**
  * @author Stanislav Aleshin on 18.02.2023.
@@ -37,13 +38,14 @@ import ru.aleshin.core.utils.managers.TimeOverlayManager
 public interface HomeFeatureDependencies : BaseFeatureDependencies {
     public val schedulesRepository: ScheduleRepository
     public val timeTaskRepository: TimeTaskRepository
-    public val undefinedTasksRepository: UndefinedTasksRepository
+    public val undefinedTaskRepository: UndefinedTaskRepository
     public val templatesRepository: TemplatesRepository
-    public val categoriesRepository: CategoriesRepository
-    public val subCategoriesRepository: SubCategoriesRepository
+    public val mainCategoryRepository: MainCategoryRepository
+    public val subCategoryRepository: SubCategoryRepository
     public val tasksSettingsRepository: TasksSettingsRepository
     public val coroutineManager: CoroutineManager
     public val scheduleStatusChecker: ScheduleStatusChecker
+    public val timeTaskProgressManager: TimeTaskProgressManager
     public val timeOverlayManager: TimeOverlayManager
     public val timeTaskAlarmManager: TimeTaskAlarmManager
     public val templatesAlarmManager: TemplatesAlarmManager

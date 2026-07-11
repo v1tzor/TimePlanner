@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -71,14 +71,12 @@ dependencies {
     api(libs.androidx.lifecycle.runtime)
     api(libs.kotlin.serialization)
     api(libs.kotlin.serialization.json)
-    api(libs.voyager.navigator)
     api(libs.decompose.core)
 
     implementation(libs.decompose.compose)
     implementation(libs.decompose.compose.experimental)
 
     implementation(libs.bundles.compose)
-    implementation(libs.bundles.voyager)
     implementation(libs.charts.mahu)
     implementation(libs.charts.himanshoe)
 

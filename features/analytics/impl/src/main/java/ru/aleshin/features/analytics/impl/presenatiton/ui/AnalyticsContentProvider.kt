@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,10 +24,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import ru.aleshin.core.ui.views.ErrorSnackbar
-import ru.aleshin.core.ui.views.HorizontalTabsPager
-import ru.aleshin.core.ui.views.Scaffold
-import ru.aleshin.core.ui.views.TabItem
+import ru.aleshin.timeplanner.core.ui.views.ErrorSnackbar
+import ru.aleshin.timeplanner.core.ui.views.HorizontalTabsPager
+import ru.aleshin.timeplanner.core.ui.views.Scaffold
+import ru.aleshin.timeplanner.core.ui.views.TabItem
 import ru.aleshin.core.utils.architecture.store.compose.handleEffects
 import ru.aleshin.core.utils.architecture.store.compose.stateAsState
 import ru.aleshin.core.utils.inject.FeatureContentProvider

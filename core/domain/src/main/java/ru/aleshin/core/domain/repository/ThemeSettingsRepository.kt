@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import ru.aleshin.core.domain.entities.settings.ThemeSettings
  * @author Stanislav Aleshin on 14.02.2023.
  */
 interface ThemeSettingsRepository {
-    fun fetchSettingsFlow(): Flow<ThemeSettings>
-    suspend fun fetchSettings(): ThemeSettings
+    fun fetchSettings(): Flow<ThemeSettings>
+    suspend fun fetchSettingsOnce(): ThemeSettings
     suspend fun updateSettings(settings: ThemeSettings)
 }

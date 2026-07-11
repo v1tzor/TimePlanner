@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,10 +25,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import ru.aleshin.core.ui.theme.material.ThemeUiType
-import ru.aleshin.core.ui.views.SegmentedButtonItem
-import ru.aleshin.core.ui.views.SegmentedButtons
 import ru.aleshin.features.settings.impl.presentation.theme.SettingsThemeRes
+import ru.aleshin.timeplanner.core.ui.theme.material.ThemeUiType
+import ru.aleshin.timeplanner.core.ui.views.SegmentedButtonItem
+import ru.aleshin.timeplanner.core.ui.views.SegmentedButtons
 
 /**
  * @author Stanislav Aleshin on 23.02.2023.

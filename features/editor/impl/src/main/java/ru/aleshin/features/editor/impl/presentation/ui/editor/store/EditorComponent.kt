@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,8 +59,9 @@ internal abstract class InternalEditorFeatureComponent(
             input = (startConfig.backstack?.getOrNull(0) as? EditorConfig.Editor).let {
                 checkNotNull(it) { "EditorConfig is null" }
                 EditorInput(
-                    timeTask = it.timeTask,
-                    template = it.template,
+                    timeTaskId = it.timeTaskId,
+                    timeRange = it.timeRange,
+                    date = it.date,
                     undefinedTaskId = it.undefinedTaskId,
                 )
             },

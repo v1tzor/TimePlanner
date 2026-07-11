@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,21 +51,21 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import ru.aleshin.core.domain.entities.schedules.TaskPriority
-import ru.aleshin.core.ui.theme.TimePlannerRes
-import ru.aleshin.core.ui.views.DialogButtons
-import ru.aleshin.core.ui.views.TimeFormatSelector
-import ru.aleshin.core.ui.views.changeTwoDigitNumber
-import ru.aleshin.core.ui.views.endLimitCharTransition
-import ru.aleshin.core.ui.views.mapHour24ToAmPm
-import ru.aleshin.core.ui.views.mapHourAmPmTo24
+import ru.aleshin.core.domain.entities.tasks.TaskPriority
+import ru.aleshin.timeplanner.core.ui.theme.TimePlannerRes
+import ru.aleshin.timeplanner.core.ui.views.DialogButtons
+import ru.aleshin.timeplanner.core.ui.views.TimeFormatSelector
+import ru.aleshin.timeplanner.core.ui.views.changeTwoDigitNumber
+import ru.aleshin.timeplanner.core.ui.views.endLimitCharTransition
+import ru.aleshin.timeplanner.core.ui.views.mapHour24ToAmPm
+import ru.aleshin.timeplanner.core.ui.views.mapHourAmPmTo24
 import ru.aleshin.core.utils.extensions.generateUniqueKey
 import ru.aleshin.core.utils.extensions.setHoursAndMinutes
 import ru.aleshin.core.utils.extensions.shiftDay
 import ru.aleshin.core.utils.functional.TimeFormat
-import ru.aleshin.features.home.impl.presentation.models.categories.CategoriesUi
-import ru.aleshin.features.home.impl.presentation.models.categories.MainCategoryUi
-import ru.aleshin.features.home.impl.presentation.models.templates.TemplateUi
+import ru.aleshin.core.presentation.models.categories.MainCategoryDetailsUi
+import ru.aleshin.core.presentation.models.categories.MainCategoryUi
+import ru.aleshin.core.presentation.models.templates.TemplateUi
 import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
 import ru.aleshin.features.home.impl.presentation.ui.common.CompactCategoryChooser
 import ru.aleshin.features.home.impl.presentation.ui.common.CompactSubCategoryChooser
@@ -79,7 +79,7 @@ import java.util.Calendar
 @OptIn(ExperimentalMaterial3Api::class)
 internal fun TemplateEditorDialog(
     modifier: Modifier = Modifier,
-    categories: List<CategoriesUi>,
+    categories: List<MainCategoryDetailsUi>,
     model: TemplateUi?,
     onDismiss: () -> Unit,
     onConfirm: (TemplateUi) -> Unit,
@@ -176,7 +176,7 @@ internal fun TemplateEditorDialog(
                 }
 
                 DialogButtons(
-                    enabledConfirm = mainCategory.id != 0,
+                    enabledConfirm = mainCategory.id != 0L,
                     confirmTitle = when (model != null) {
                         true -> TimePlannerRes.strings.okConfirmTitle
                         false -> HomeThemeRes.strings.dialogCreateTitle
@@ -208,7 +208,7 @@ internal fun TemplateEditorDialog(
                             if (endTime > startTime) endTime else endTime.shiftDay(1)
                         }
                         val template = TemplateUi(
-                            templateId = model?.templateId ?: generateUniqueKey().toInt(),
+                            templateId = model?.templateId ?: generateUniqueKey(),
                             startTime = startTime,
                             endTime = endTime,
                             category = mainCategory,

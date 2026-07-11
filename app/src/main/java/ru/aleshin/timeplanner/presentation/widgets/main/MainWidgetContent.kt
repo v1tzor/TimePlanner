@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,12 +41,12 @@ import androidx.glance.layout.width
 import androidx.glance.text.Text
 import ru.aleshin.core.domain.entities.categories.MainCategory
 import ru.aleshin.core.domain.entities.categories.SubCategory
-import ru.aleshin.core.domain.entities.schedules.TaskPriority
-import ru.aleshin.core.domain.entities.schedules.TimeTask
-import ru.aleshin.core.ui.mappers.mapToIcon
-import ru.aleshin.core.ui.mappers.mapToName
-import ru.aleshin.core.ui.theme.TimePlannerRes
-import ru.aleshin.core.ui.views.toMinutesOrHoursTitle
+import ru.aleshin.core.domain.entities.tasks.TaskPriority
+import ru.aleshin.core.domain.entities.tasks.TimeTask
+import ru.aleshin.core.presentation.mappers.mapToIcon
+import ru.aleshin.core.presentation.mappers.mapToName
+import ru.aleshin.timeplanner.core.ui.theme.TimePlannerRes
+import ru.aleshin.timeplanner.core.ui.views.toMinutesOrHoursTitle
 import ru.aleshin.core.utils.extensions.duration
 import ru.aleshin.core.utils.extensions.setZeroSecond
 import ru.aleshin.core.utils.functional.TimeRange

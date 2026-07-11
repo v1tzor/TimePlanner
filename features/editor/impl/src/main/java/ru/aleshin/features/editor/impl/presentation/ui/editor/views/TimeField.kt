@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,10 +40,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import ru.aleshin.core.ui.views.DurationPresetsEditorDialog
-import ru.aleshin.core.ui.views.DurationPickerDialog
-import ru.aleshin.core.ui.views.MultiTimePickerDialog
-import ru.aleshin.core.ui.views.toMinutesAndHoursTitle
+import ru.aleshin.timeplanner.core.ui.views.DurationPickerDialog
+import ru.aleshin.timeplanner.core.ui.views.DurationPresetsEditorDialog
+import ru.aleshin.timeplanner.core.ui.views.MultiTimePickerDialog
+import ru.aleshin.timeplanner.core.ui.views.toMinutesAndHoursTitle
 import ru.aleshin.features.editor.impl.presentation.theme.EditorThemeRes
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -157,7 +157,7 @@ internal fun DurationTitle(
     enabled: Boolean = true,
     duration: Long,
     startTime: Date,
-    durationPresets: List<Long>,
+    durationPresets: List<Long>?,
     isError: Boolean = false,
     onChangeDuration: (Long) -> Unit,
     onDurationPresetsChange: (List<Long>) -> Unit,
@@ -182,7 +182,7 @@ internal fun DurationTitle(
             color = titleColor,
         )
     }
-    if (isOpenDurationDialog) {
+    if (isOpenDurationDialog && durationPresets != null) {
         DurationPickerDialog(
             headerTitle = EditorThemeRes.strings.durationPickerTitle,
             duration = duration,
@@ -199,7 +199,7 @@ internal fun DurationTitle(
             },
         )
     }
-    if (isOpenPresetsDialog) {
+    if (isOpenPresetsDialog && durationPresets != null) {
         DurationPresetsEditorDialog(
             headerTitle = EditorThemeRes.strings.durationPickerTitle,
             presets = durationPresets,

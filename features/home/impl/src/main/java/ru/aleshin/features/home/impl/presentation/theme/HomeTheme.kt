@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@ package ru.aleshin.features.home.impl.presentation.theme
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import ru.aleshin.core.ui.theme.TimePlannerRes
+import ru.aleshin.timeplanner.core.ui.theme.TimePlannerRes
 import ru.aleshin.features.home.impl.presentation.theme.tokens.*
 import ru.aleshin.features.home.impl.presentation.theme.tokens.LocalHomeIcons
 import ru.aleshin.features.home.impl.presentation.theme.tokens.LocalHomeStrings

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package ru.aleshin.core.data.models.template
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 import ru.aleshin.core.domain.entities.template.RepeatTimeType
 import ru.aleshin.core.utils.functional.Month
@@ -25,10 +26,20 @@ import ru.aleshin.core.utils.functional.WeekDay
 /**
  * @author Stanislav Aleshin on 03.08.2023.
  */
-@Entity(tableName = "repeatTimes")
+@Entity(
+    tableName = "repeatTimes",
+    foreignKeys = [
+        ForeignKey(
+            entity = TemplateEntity::class,
+            parentColumns = arrayOf("id"),
+            childColumns = arrayOf("template_id"),
+            onDelete = ForeignKey.CASCADE,
+        ),
+    ]
+)
 data class RepeatTimeEntity(
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    @ColumnInfo("template_id", index = true) val templateId: Int,
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    @ColumnInfo("template_id", index = true) val templateId: Long,
     @ColumnInfo("type") val type: RepeatTimeType,
     @ColumnInfo("day") val day: WeekDay? = null,
     @ColumnInfo("day_number") val dayNumber: Int? = null,

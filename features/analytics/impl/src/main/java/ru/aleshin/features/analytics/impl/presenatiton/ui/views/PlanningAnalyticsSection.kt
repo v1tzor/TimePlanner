@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -62,15 +62,15 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
-import ru.aleshin.core.ui.mappers.mapToIconPainter
-import ru.aleshin.core.ui.theme.TimePlannerRes
+import ru.aleshin.core.presentation.mappers.mapToIconPainter
+import ru.aleshin.core.presentation.models.tasks.TimeTaskUi
 import ru.aleshin.core.utils.extensions.isCurrentDay
 import ru.aleshin.core.utils.extensions.isCurrentMonth
 import ru.aleshin.core.utils.extensions.substringOrFull
 import ru.aleshin.features.analytics.impl.presenatiton.models.analytics.PlanningAnalyticUi
 import ru.aleshin.features.analytics.impl.presenatiton.models.analytics.PlanningAnalyticsUi
-import ru.aleshin.features.analytics.impl.presenatiton.models.timetask.TimeTaskUi
 import ru.aleshin.features.analytics.impl.presenatiton.theme.AnalyticsThemeRes
+import ru.aleshin.timeplanner.core.ui.theme.TimePlannerRes
 import java.text.SimpleDateFormat
 import java.text.SimpleDateFormat.SHORT
 import java.util.Locale
@@ -296,7 +296,7 @@ internal fun TooltipTimeTaskItem(
         if (model.category.defaultType != null) {
             Icon(
                 modifier = Modifier.size(18.dp),
-                painter = model.category.defaultType.mapToIconPainter(),
+                painter = model.category.defaultType!!.mapToIconPainter(),
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.primary,
             )

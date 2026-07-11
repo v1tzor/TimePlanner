@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -58,15 +58,15 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import ru.aleshin.core.domain.entities.categories.DefaultCategoryType
-import ru.aleshin.core.ui.mappers.mapToIconPainter
-import ru.aleshin.core.ui.theme.TimePlannerRes
-import ru.aleshin.core.ui.views.BaseSelectorBottomSheet
-import ru.aleshin.core.ui.views.CategoryIconMonogram
-import ru.aleshin.core.ui.views.CategoryTextMonogram
-import ru.aleshin.core.ui.views.SelectorSwipeItemView
-import ru.aleshin.core.ui.views.SwipeToDismissBackground
-import ru.aleshin.features.editor.impl.presentation.models.categories.MainCategoryUi
+import ru.aleshin.core.presentation.mappers.mapToIconPainter
+import ru.aleshin.core.presentation.models.categories.MainCategoryUi
 import ru.aleshin.features.editor.impl.presentation.theme.EditorThemeRes
+import ru.aleshin.timeplanner.core.ui.theme.TimePlannerRes
+import ru.aleshin.timeplanner.core.ui.views.BaseSelectorBottomSheet
+import ru.aleshin.timeplanner.core.ui.views.CategoryIconMonogram
+import ru.aleshin.timeplanner.core.ui.views.CategoryTextMonogram
+import ru.aleshin.timeplanner.core.ui.views.SelectorSwipeItemView
+import ru.aleshin.timeplanner.core.ui.views.SwipeToDismissBackground
 
 /**
  * @author Stanislav Aleshin on 25.02.2023.
@@ -172,7 +172,7 @@ internal fun MainCategorySelectorBottomSheet(
     onChooseCategory: (MainCategoryUi) -> Unit,
 ) {
     val coreStrings = TimePlannerRes.strings
-    var selectedCategory by rememberSaveable { mutableStateOf(initCategory) }
+    var selectedCategory by remember { mutableStateOf(initCategory) }
     var searchQuery by rememberSaveable { mutableStateOf<String?>(null) }
     val searchedCategory = remember(searchQuery, allCategories) {
         allCategories.filter { category ->

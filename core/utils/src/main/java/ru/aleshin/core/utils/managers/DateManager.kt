@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,8 +15,15 @@
  */
 package ru.aleshin.core.utils.managers
 
-import ru.aleshin.core.utils.extensions.*
-import java.util.*
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import ru.aleshin.core.utils.extensions.setEndDay
+import ru.aleshin.core.utils.extensions.setStartDay
+import ru.aleshin.core.utils.extensions.toMinutes
+import java.util.Calendar
+import java.util.Date
 import javax.inject.Inject
 
 /**
@@ -27,11 +34,21 @@ interface DateManager {
     fun fetchCurrentDate(): Date
     fun fetchBeginningCurrentDay(): Date
     fun fetchEndCurrentDay(): Date
+    fun fetchTicker(): Flow<Date>
     fun calculateLeftTime(endTime: Date): Long
     fun calculateProgress(startTime: Date, endTime: Date): Float
     fun setCurrentHMS(date: Date): Date
 
-    class Base @Inject constructor() : DateManager {
+    class Base @Inject constructor(
+        private val workDispatchersProvider: WorkDispatchersProvider,
+    ) : DateManager {
+
+        private val ticker = flow {
+            while (true) {
+                emit(fetchCurrentDate())
+                delay(1000L)
+            }
+        }.flowOn(workDispatchersProvider.defaultDispatcher)
 
         override fun fetchCurrentDate() = checkNotNull(Calendar.getInstance().time)
 
@@ -43,6 +60,10 @@ interface DateManager {
         override fun fetchEndCurrentDay(): Date {
             val currentCalendar = Calendar.getInstance()
             return currentCalendar.setEndDay().time
+        }
+
+        override fun fetchTicker(): Flow<Date> {
+            return ticker
         }
 
         override fun calculateLeftTime(endTime: Date): Long {

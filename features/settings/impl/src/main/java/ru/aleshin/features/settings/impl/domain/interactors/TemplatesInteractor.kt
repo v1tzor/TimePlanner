@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,24 +29,24 @@ import javax.inject.Inject
  */
 internal interface TemplatesInteractor {
 
-    suspend fun addTemplates(templates: List<Template>): UnitDomainResult<SettingsFailures>
+    suspend fun addOrUpdateTemplates(templates: List<Template>): UnitDomainResult<SettingsFailures>
     suspend fun fetchAllTemplates(): DomainResult<SettingsFailures, List<Template>>
-    suspend fun removeAllTemplates(): DomainResult<SettingsFailures, List<Template>>
+    suspend fun deleteAllTemplates(): DomainResult<SettingsFailures, List<Template>>
 
     class Base @Inject constructor(
         private val templatesRepository: TemplatesRepository,
         private val eitherWrapper: SettingsEitherWrapper,
     ) : TemplatesInteractor {
 
-        override suspend fun addTemplates(templates: List<Template>) = eitherWrapper.wrap {
-            templatesRepository.addTemplates(templates)
+        override suspend fun addOrUpdateTemplates(templates: List<Template>) = eitherWrapper.wrap {
+            templatesRepository.addOrUpdateTemplates(templates)
         }
 
         override suspend fun fetchAllTemplates() = eitherWrapper.wrap {
             templatesRepository.fetchAllTemplates().first()
         }
 
-        override suspend fun removeAllTemplates() = eitherWrapper.wrap {
+        override suspend fun deleteAllTemplates() = eitherWrapper.wrap {
             templatesRepository.deleteAllTemplates()
         }
     }

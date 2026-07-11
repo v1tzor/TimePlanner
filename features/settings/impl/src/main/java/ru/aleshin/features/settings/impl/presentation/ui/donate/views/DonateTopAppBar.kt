@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,10 +24,10 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
-import ru.aleshin.core.ui.views.TopAppBarButton
-import ru.aleshin.core.ui.views.TopAppBarEmptyButton
-import ru.aleshin.core.ui.views.TopAppBarTitle
 import ru.aleshin.features.settings.impl.presentation.theme.SettingsThemeRes
+import ru.aleshin.timeplanner.core.ui.views.TopAppBarButton
+import ru.aleshin.timeplanner.core.ui.views.TopAppBarEmptyButton
+import ru.aleshin.timeplanner.core.ui.views.TopAppBarTitle
 
 /**
  * @author Stanislav Aleshin on 20.02.2023.

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ import ru.aleshin.core.utils.functional.Constants
 import ru.aleshin.core.utils.functional.TimePeriod
 import ru.aleshin.core.utils.functional.collectAndHandle
 import ru.aleshin.core.utils.functional.handle
-import ru.aleshin.core.utils.functional.rightOrError
+import ru.aleshin.core.utils.functional.rightOrNull
 import ru.aleshin.features.analytics.api.AnalyticsOutput
 import ru.aleshin.features.analytics.impl.domain.interactors.AnalyticsInteractor
 import ru.aleshin.features.analytics.impl.domain.interactors.SettingsInteractor
@@ -65,8 +65,10 @@ internal interface AnalyticsWorkProcessor :
         }
 
         private fun updateTimePeriodWork(period: TimePeriod) = flow {
-            val oldSettings = settingsInteractor.fetchTasksSettings().rightOrError("Error get tasks settings")
-            val newSettings = oldSettings.copy(taskAnalyticsRange = period)
+            val oldSettings = settingsInteractor.fetchTasksSettings().rightOrNull {
+                emit(EffectResult(AnalyticsEffect.ShowFailure(it)))
+            }
+            val newSettings = oldSettings?.copy(taskAnalyticsRange = period) ?: return@flow
             settingsInteractor.updateTasksSettings(newSettings).handle(
                 onLeftAction = { emit(EffectResult(AnalyticsEffect.ShowFailure(it))) },
                 onRightAction = { emit(ActionResult(AnalyticsAction.UpdateTimePeriod(period))) },

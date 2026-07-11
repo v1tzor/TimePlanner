@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,8 @@ package ru.aleshin.features.analytics.impl.presenatiton.models.analytics
 
 import androidx.compose.runtime.Immutable
 import kotlinx.serialization.Serializable
+import ru.aleshin.core.presentation.models.tasks.TimeTaskUi
 import ru.aleshin.core.utils.functional.DateSerializer
-import ru.aleshin.features.analytics.impl.presenatiton.models.timetask.TimeTaskUi
 import java.util.Date
 
 /**
@@ -27,8 +27,7 @@ import java.util.Date
 @Immutable
 @Serializable
 internal data class PlanningAnalyticUi(
-    @Serializable(DateSerializer::class)
-    val date: Date,
+    @Serializable(DateSerializer::class) val date: Date,
     val timeTasks: List<TimeTaskUi>,
 )
 

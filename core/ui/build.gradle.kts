@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ plugins {
 }
 
 android {
-    namespace = "ru.aleshin.core.ui"
+    namespace = "ru.aleshin.timeplanner.core.ui"
     compileSdk = libs.versions.compileSdkVersion.get().toIntOrNull()
 
     defaultConfig {
@@ -67,7 +67,6 @@ dependencies {
     implementation(project(":core:domain"))
 
     api(libs.bundles.decompose)
-    api(libs.bundles.voyager)
     api(libs.bundles.compose)
 
     ksp(libs.dagger.ksp)

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,14 +52,14 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
-import ru.aleshin.core.ui.mappers.mapToIconPainter
-import ru.aleshin.core.ui.mappers.mapToUi
-import ru.aleshin.core.ui.views.CategoryIconMonogram
-import ru.aleshin.core.ui.views.CategoryTextMonogram
-import ru.aleshin.core.ui.views.PlaceholderBox
-import ru.aleshin.features.home.impl.presentation.models.schedules.TimeTaskUi
+import ru.aleshin.core.presentation.mappers.mapToIconPainter
+import ru.aleshin.core.presentation.models.tasks.TimeTaskDetailsUi
 import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
 import ru.aleshin.features.home.impl.presentation.ui.home.views.TimeTaskTitles
+import ru.aleshin.timeplanner.core.ui.mappers.mapToUi
+import ru.aleshin.timeplanner.core.ui.views.CategoryIconMonogram
+import ru.aleshin.timeplanner.core.ui.views.CategoryTextMonogram
+import ru.aleshin.timeplanner.core.ui.views.PlaceholderBox
 import kotlin.math.roundToInt
 
 /**
@@ -69,8 +69,8 @@ import kotlin.math.roundToInt
 internal fun CurrentTimeTaskSection(
     modifier: Modifier = Modifier,
     isLoading: Boolean,
-    task: TimeTaskUi?,
-    onOpenTask: () -> Unit,
+    task: TimeTaskDetailsUi?,
+    onOpenTask: (TimeTaskDetailsUi) -> Unit,
 ) {
     Column(
         modifier = modifier.padding(horizontal = 16.dp),
@@ -98,7 +98,7 @@ internal fun CurrentTimeTaskSection(
             } else if (task != null) {
                 CurrentTimeTaskView(
                     model = task,
-                    onClick = onOpenTask,
+                    onClick = { onOpenTask(task) },
                 )
             } else {
                 NoneCurrentTimeTaskView()
@@ -111,7 +111,7 @@ internal fun CurrentTimeTaskSection(
 @Composable
 internal fun CurrentTimeTaskView(
     modifier: Modifier = Modifier,
-    model: TimeTaskUi,
+    model: TimeTaskDetailsUi,
     onClick: () -> Unit,
 ) {
     val scope = rememberCoroutineScope()
@@ -163,7 +163,7 @@ internal fun CurrentTimeTaskView(
                         tooltip = {
                             RichTooltip(
                                 title = { Text(text = HomeThemeRes.strings.noteTitle) },
-                                text = { Text(text = model.note) },
+                                text = { Text(text = model.note!!) },
                             )
                         }
                     ) {

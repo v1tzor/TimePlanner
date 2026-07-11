@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,15 +15,17 @@
  */
 package ru.aleshin.features.home.impl.domain.interactors
 
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
-import ru.aleshin.core.domain.entities.schedules.TimeTask
+import kotlinx.coroutines.flow.map
+import ru.aleshin.core.domain.entities.tasks.TimeTask
 import ru.aleshin.core.domain.entities.template.Template
 import ru.aleshin.core.domain.repository.TemplatesRepository
+import ru.aleshin.core.utils.extensions.duration
 import ru.aleshin.core.utils.functional.DomainResult
-import ru.aleshin.core.utils.functional.UnitDomainResult
+import ru.aleshin.core.utils.functional.FlowDomainResult
 import ru.aleshin.features.home.impl.domain.common.HomeEitherWrapper
 import ru.aleshin.features.home.impl.domain.entities.HomeFailures
+import ru.aleshin.features.home.impl.domain.entities.TemplatesSortedType
 import javax.inject.Inject
 
 /**
@@ -31,36 +33,36 @@ import javax.inject.Inject
  */
 internal interface TemplatesInteractor {
 
-    suspend fun fetchTemplates(): Flow<DomainResult<HomeFailures, List<Template>>>
-    suspend fun updateTemplate(template: Template): UnitDomainResult<HomeFailures>
+    suspend fun addOrUpdateTemplate(template: Template): DomainResult<HomeFailures, Long>
+    suspend fun fetchTemplates(sortedType: TemplatesSortedType): FlowDomainResult<HomeFailures, List<Template>>
     suspend fun checkIsTemplate(timeTask: TimeTask): DomainResult<HomeFailures, Template?>
-    suspend fun addTemplate(template: Template): DomainResult<HomeFailures, Int>
-    suspend fun deleteTemplate(id: Int): DomainResult<HomeFailures, Unit>
+    suspend fun deleteTemplate(id: Long): DomainResult<HomeFailures, Unit>
 
     class Base @Inject constructor(
         private val templatesRepository: TemplatesRepository,
         private val eitherWrapper: HomeEitherWrapper,
     ) : TemplatesInteractor {
 
-        override suspend fun fetchTemplates() = eitherWrapper.wrapFlow {
-            templatesRepository.fetchAllTemplates()
+        override suspend fun addOrUpdateTemplate(template: Template) = eitherWrapper.wrap {
+            templatesRepository.addOrUpdateTemplate(template)
         }
 
-        override suspend fun updateTemplate(template: Template) = eitherWrapper.wrap {
-            templatesRepository.updateTemplate(template)
-        }
-
-        override suspend fun checkIsTemplate(timeTask: TimeTask) = eitherWrapper.wrap {
-            templatesRepository.fetchAllTemplates().first().find { template ->
-                template.equalsIsTemplate(timeTask)
+        override suspend fun fetchTemplates(sortedType: TemplatesSortedType) = eitherWrapper.wrapFlow {
+            templatesRepository.fetchAllTemplates().map { templates ->
+                when (sortedType) {
+                    TemplatesSortedType.DATE -> templates.sortedBy { it.startTime }
+                    TemplatesSortedType.CATEGORIES -> templates.sortedBy { it.category.id }
+                    TemplatesSortedType.DURATION -> templates.sortedBy { duration(it.startTime, it.endTime) }
+                }
             }
         }
 
-        override suspend fun addTemplate(template: Template) = eitherWrapper.wrap {
-            templatesRepository.addTemplate(template)
+        override suspend fun checkIsTemplate(timeTask: TimeTask) = eitherWrapper.wrap {
+            val templates = templatesRepository.fetchAllTemplates().first()
+            templates.find { template -> template.templateId == timeTask.linkedTemplateId }
         }
 
-        override suspend fun deleteTemplate(id: Int) = eitherWrapper.wrap {
+        override suspend fun deleteTemplate(id: Long) = eitherWrapper.wrap {
             templatesRepository.deleteTemplateById(id)
         }
     }

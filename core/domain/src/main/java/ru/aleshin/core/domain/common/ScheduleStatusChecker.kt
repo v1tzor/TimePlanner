@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
 package ru.aleshin.core.domain.common
 
 import ru.aleshin.core.domain.entities.schedules.DailyScheduleStatus
+import ru.aleshin.core.domain.entities.tasks.TimeTask
+import ru.aleshin.core.utils.managers.DateManager
 import java.util.Date
 import javax.inject.Inject
 
@@ -24,17 +26,32 @@ import javax.inject.Inject
  */
 interface ScheduleStatusChecker {
 
-    fun fetchState(requiredDate: Date, currentDate: Date): DailyScheduleStatus
+    fun fetchStatus(scheduleDate: Date): DailyScheduleStatus
 
-    class Base @Inject constructor() : ScheduleStatusChecker {
+    fun fetchProgress(timeTasks: List<TimeTask>): Float
 
-        override fun fetchState(requiredDate: Date, currentDate: Date): DailyScheduleStatus {
-            return if (requiredDate.time > currentDate.time) {
+    class Base @Inject constructor(
+        private val dateManager: DateManager,
+    ) : ScheduleStatusChecker {
+
+        override fun fetchStatus(scheduleDate: Date): DailyScheduleStatus {
+            val currentDate = dateManager.fetchBeginningCurrentDay()
+
+            return if (scheduleDate.time > currentDate.time) {
                 DailyScheduleStatus.PLANNED
-            } else if (requiredDate.time < currentDate.time) {
+            } else if (scheduleDate.time < currentDate.time) {
                 DailyScheduleStatus.REALIZED
             } else {
                 DailyScheduleStatus.ACCOMPLISHMENT
+            }
+        }
+
+        override fun fetchProgress(timeTasks: List<TimeTask>): Float {
+            val currentTime = dateManager.fetchCurrentDate().time
+
+            return when (timeTasks.isEmpty()) {
+                true -> 0f
+                false -> timeTasks.count { currentTime > it.timeRange.to.time && it.isCompleted } / timeTasks.size.toFloat()
             }
         }
     }

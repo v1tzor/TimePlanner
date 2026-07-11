@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,9 +34,11 @@ rootProject.name = "TimePlanner"
 include(":app")
 include(":core:utils")
 include(":core:ui")
+include(":core:presentation")
 include(":core:domain")
 include(":core:data")
 include(":module-injector")
+
 include(":features:home:api")
 include(":features:home:impl")
 include(":features:editor:api")
@@ -45,3 +47,4 @@ include(":features:analytics:api")
 include(":features:analytics:impl")
 include(":features:settings:api")
 include(":features:settings:impl")
+include(":core:presentation")

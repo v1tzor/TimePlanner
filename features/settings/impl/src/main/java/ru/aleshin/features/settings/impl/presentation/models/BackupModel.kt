@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,9 @@
 package ru.aleshin.features.settings.impl.presentation.models
 
 import kotlinx.serialization.Serializable
-import ru.aleshin.core.domain.entities.categories.Categories
+import ru.aleshin.core.domain.entities.categories.MainCategoryDetails
 import ru.aleshin.core.domain.entities.schedules.Schedule
-import ru.aleshin.core.domain.entities.schedules.UndefinedTask
+import ru.aleshin.core.domain.entities.tasks.UndefinedTask
 import ru.aleshin.core.domain.entities.template.Template
 
 /**
@@ -28,6 +28,6 @@ import ru.aleshin.core.domain.entities.template.Template
 internal data class BackupModel(
     val schedules: List<Schedule>,
     val templates: List<Template>,
-    val categories: List<Categories>,
+    val categories: List<MainCategoryDetails>,
     val undefinedTasks: List<UndefinedTask>,
 )

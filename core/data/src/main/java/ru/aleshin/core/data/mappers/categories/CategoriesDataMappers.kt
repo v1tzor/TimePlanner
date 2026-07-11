@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,45 +15,43 @@
  */
 package ru.aleshin.core.data.mappers.categories
 
-import ru.aleshin.core.data.models.categories.MainCategoryDetails
+import ru.aleshin.core.data.models.categories.MainCategoryDetailsEntity
 import ru.aleshin.core.data.models.categories.MainCategoryEntity
 import ru.aleshin.core.data.models.categories.SubCategoryEntity
-import ru.aleshin.core.domain.entities.categories.Categories
 import ru.aleshin.core.domain.entities.categories.MainCategory
+import ru.aleshin.core.domain.entities.categories.MainCategoryDetails
 import ru.aleshin.core.domain.entities.categories.SubCategory
 
 /**
  * @author Stanislav Aleshin on 15.04.2023.
  */
-fun MainCategoryDetails.mapToDomain() = Categories(
+fun MainCategoryDetailsEntity.mapToDomain() = MainCategoryDetails(
     category = mainCategory.mapToDomain(),
-    subCategories = subCategories.map { subCategory ->
-        subCategory.mapToDomain(mainCategory.mapToDomain())
-    },
+    subCategories = subCategories.map { subCategory -> subCategory.mapToDomain() }
 )
 
 fun MainCategoryEntity.mapToDomain() = MainCategory(
     id = id,
     customName = customName,
-    default = defaultType,
+    default = defaultType
 )
 
 fun MainCategory.mapToData() = MainCategoryEntity(
     id = id,
     customName = customName,
-    defaultType = default,
+    defaultType = default
 )
 
-fun SubCategoryEntity.mapToDomain(mainCategory: MainCategory) = SubCategory(
+fun SubCategoryEntity.mapToDomain() = SubCategory(
     id = id,
-    mainCategory = mainCategory,
+    mainCategoryId = mainCategoryId,
     name = subCategoryName.ifEmpty { null },
-    description = description,
+    description = description
 )
 
 fun SubCategory.mapToData() = SubCategoryEntity(
     id = id,
-    mainCategoryId = mainCategory.id,
+    mainCategoryId = mainCategoryId,
     subCategoryName = name ?: "",
-    description = description,
+    description = description
 )

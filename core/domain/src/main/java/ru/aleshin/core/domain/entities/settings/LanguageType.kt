@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,5 +19,17 @@ package ru.aleshin.core.domain.entities.settings
  * @author Stanislav Aleshin on 17.02.2023.
  */
 enum class LanguageType(val code: String?) {
-    DEFAULT(null), EN("en"), RU("ru"), DE("de"), ES("es"), FA("fa"), FR("fr"), PT_BR("pt-br"), TR("tr"), VN("vn"), PL("pl"), IT("it"), ZH("zh")
+    DEFAULT(null),
+    EN("en"),
+    RU("ru"),
+    DE("de"),
+    ES("es"),
+    FA("fa"),
+    FR("fr"),
+    PT_BR("pt-br"),
+    TR("tr"),
+    VN("vn"),
+    PL("pl"),
+    IT("it"),
+    ZH("zh")
 }

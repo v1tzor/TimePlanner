@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ import androidx.compose.ui.Modifier
 import com.arkivanov.decompose.ExperimentalDecomposeApi
 import com.arkivanov.decompose.defaultComponentContext
 import com.arkivanov.decompose.extensions.compose.experimental.stack.ChildStack
-import ru.aleshin.core.ui.theme.TimePlannerTheme
+import ru.aleshin.timeplanner.core.ui.theme.TimePlannerTheme
 import ru.aleshin.core.utils.architecture.store.compose.stateAsState
 import ru.aleshin.core.utils.managers.rememberDrawerManager
 import ru.aleshin.core.utils.navigation.backAnimation

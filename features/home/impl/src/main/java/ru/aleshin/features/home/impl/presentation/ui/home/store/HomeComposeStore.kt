@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -106,8 +106,7 @@ internal class HomeComposeStore @Inject constructor(
                 scheduleWorkProcessor.work(shiftDownCommand).collectAndHandleWork()
             }
             is HomeEvent.ChangeTaskDoneStateButton -> launchBackgroundWork(BackgroundKey.DATA_ACTION) {
-                val date = checkNotNull(state().selectedDate)
-                val changeStatusCommand = ChangeTaskDoneState(date, event.timeTask.key)
+                val changeStatusCommand = ChangeTaskDoneState(event.timeTask)
                 scheduleWorkProcessor.work(changeStatusCommand).collectAndHandleWork()
             }
             is HomeEvent.PressViewToggleButton -> launchBackgroundWork(BackgroundKey.DATA_ACTION) {
@@ -140,20 +139,13 @@ internal class HomeComposeStore @Inject constructor(
         action: HomeAction,
         currentState: HomeState,
     ) = when (action) {
-        is HomeAction.Navigate -> currentState.copy()
-        is HomeAction.SetupSettings -> currentState.copy(
+        is HomeAction.UpdateSettings -> currentState.copy(
             taskViewStatus = action.settings.taskViewStatus,
             calendarButtonBehavior = action.settings.calendarButtonBehavior,
         )
-        is HomeAction.SetEmptySchedule -> currentState.copy(
-            timeTasks = emptyList(),
-            selectedDate = action.date,
-            dateStatus = action.status,
-        )
         is HomeAction.UpdateSchedule -> currentState.copy(
-            timeTasks = action.schedule.timeTasks,
-            selectedDate = action.schedule.date,
-            dateStatus = action.schedule.dateStatus,
+            schedule = action.schedule,
+            selectedDate = action.date
         )
     }
 

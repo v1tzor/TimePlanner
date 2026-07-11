@@ -49,7 +49,6 @@ class TimeTaskAlarmReceiver : BroadcastReceiver() {
     companion object {
         private val SUPPORTED_ACTIONS = listOf(
             Constants.Alarm.ALARM_NOTIFICATION_ACTION,
-            Constants.Alarm.MARK_DONE_NOTIFICATION_ACTION,
         )
     }
 }

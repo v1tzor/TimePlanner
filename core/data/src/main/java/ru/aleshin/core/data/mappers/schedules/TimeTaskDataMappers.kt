@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,10 @@
 package ru.aleshin.core.data.mappers.schedules
 
 import ru.aleshin.core.data.mappers.categories.mapToDomain
-import ru.aleshin.core.data.models.tasks.TimeTaskDetails
+import ru.aleshin.core.data.models.tasks.TimeTaskDetailsEntity
 import ru.aleshin.core.data.models.tasks.TimeTaskEntity
-import ru.aleshin.core.domain.entities.schedules.TaskNotifications
-import ru.aleshin.core.domain.entities.schedules.TaskPriority
-import ru.aleshin.core.domain.entities.schedules.TimeTask
+import ru.aleshin.core.domain.entities.tasks.TaskNotifications
+import ru.aleshin.core.domain.entities.tasks.TimeTask
 import ru.aleshin.core.utils.extensions.isCurrentDay
 import ru.aleshin.core.utils.extensions.mapToDate
 import ru.aleshin.core.utils.extensions.shiftDay
@@ -29,19 +28,16 @@ import ru.aleshin.core.utils.functional.TimeRange
 /**
  * @author Stanislav Aleshin on 25.02.2023.
  */
-fun TimeTaskDetails.mapToDomain() = TimeTask(
+fun TimeTaskDetailsEntity.mapToDomain() = TimeTask(
     key = timeTask.key,
     date = timeTask.dailyScheduleDate.mapToDate(),
     timeRange = TimeRange(timeTask.startTime.mapToDate(), timeTask.endTime.mapToDate()),
     createdAt = timeTask.createdAt?.mapToDate(),
     category = mainCategory.mainCategory.mapToDomain(),
-    subCategory = subCategory?.mapToDomain(mainCategory.mainCategory.mapToDomain()),
+    subCategory = subCategory?.mapToDomain(),
+    linkedTemplateId = timeTask.linkedTemplateId,
     isCompleted = timeTask.isCompleted,
-    priority = when {
-        timeTask.isImportantMax -> TaskPriority.MAX
-        timeTask.isImportantMedium -> TaskPriority.MEDIUM
-        else -> TaskPriority.STANDARD
-    },
+    priority = timeTask.priority,
     isEnableNotification = timeTask.isEnableNotification,
     taskNotifications = TaskNotifications(
         fifteenMinutesBefore = timeTask.fifteenMinutesBeforeNotify,
@@ -64,9 +60,9 @@ fun TimeTask.mapToData() = TimeTaskEntity(
     createdAt = createdAt?.time,
     mainCategoryId = category.id,
     subCategoryId = subCategory?.id,
+    linkedTemplateId = linkedTemplateId,
     isCompleted = isCompleted,
-    isImportantMedium = priority == TaskPriority.MEDIUM,
-    isImportantMax = priority == TaskPriority.MAX,
+    priority = priority,
     isEnableNotification = isEnableNotification,
     fifteenMinutesBeforeNotify = taskNotifications.fifteenMinutesBefore,
     oneHourBeforeNotify = taskNotifications.oneHourBefore,

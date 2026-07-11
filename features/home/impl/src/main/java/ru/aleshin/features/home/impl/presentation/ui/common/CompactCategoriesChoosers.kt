@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,13 +41,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import ru.aleshin.core.ui.mappers.mapToIconPainter
-import ru.aleshin.core.ui.theme.TimePlannerRes
-import ru.aleshin.core.ui.views.ExpandedIcon
-import ru.aleshin.features.home.impl.presentation.models.categories.CategoriesUi
-import ru.aleshin.features.home.impl.presentation.models.categories.MainCategoryUi
-import ru.aleshin.features.home.impl.presentation.models.categories.SubCategoryUi
+import ru.aleshin.core.presentation.mappers.mapToIconPainter
+import ru.aleshin.core.presentation.models.categories.MainCategoryDetailsUi
+import ru.aleshin.core.presentation.models.categories.MainCategoryUi
+import ru.aleshin.core.presentation.models.categories.SubCategoryUi
 import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
+import ru.aleshin.timeplanner.core.ui.theme.TimePlannerRes
+import ru.aleshin.timeplanner.core.ui.views.ExpandedIcon
 
 /**
  * @author Stanislav Aleshin on 02.11.2023.
@@ -55,7 +55,7 @@ import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
 @Composable
 internal fun CompactCategoryChooser(
     modifier: Modifier = Modifier,
-    allCategories: List<CategoriesUi>,
+    allCategories: List<MainCategoryDetailsUi>,
     selectedCategory: MainCategoryUi,
     onCategoryChange: (MainCategoryUi) -> Unit,
 ) {
@@ -126,7 +126,7 @@ internal fun MainCategoriesChooseMenu(
                         if (category.defaultType != null) {
                             Icon(
                                 modifier = Modifier.size(18.dp),
-                                painter = category.defaultType.mapToIconPainter(),
+                                painter = category.defaultType!!.mapToIconPainter(),
                                 contentDescription = null,
                                 tint = MaterialTheme.colorScheme.primary,
                             )
@@ -156,7 +156,7 @@ internal fun MainCategoriesChooseMenu(
 @Composable
 internal fun CompactSubCategoryChooser(
     modifier: Modifier = Modifier,
-    allCategories: List<CategoriesUi>,
+    allCategories: List<MainCategoryDetailsUi>,
     selectedMainCategory: MainCategoryUi,
     selectedSubCategory: SubCategoryUi?,
     onSubCategoryChange: (SubCategoryUi?) -> Unit,
@@ -192,7 +192,9 @@ internal fun CompactSubCategoryChooser(
             SubCategoriesChooseMenu(
                 isExpanded = isSubCategoryMenuOpen,
                 subCategories = remember(subCategories) {
-                    subCategories.toMutableList().apply { add(SubCategoryUi()) }
+                    subCategories.toMutableList().apply {
+                        add(SubCategoryUi(mainCategoryId = selectedMainCategory.id))
+                    }
                 },
                 onDismiss = { isSubCategoryMenuOpen = false },
                 onChoose = { subCategory ->
@@ -228,7 +230,7 @@ internal fun SubCategoriesChooseMenu(
         subCategories.forEach { subCategory ->
             key(subCategory) {
                 DropdownMenuItem(
-                    onClick = { if (subCategory.id == 0) onChoose(null) else onChoose(subCategory) },
+                    onClick = { if (subCategory.id == 0L) onChoose(null) else onChoose(subCategory) },
                     text = {
                         Text(
                             text = subCategory.name ?: TimePlannerRes.strings.categoryEmptyTitle,

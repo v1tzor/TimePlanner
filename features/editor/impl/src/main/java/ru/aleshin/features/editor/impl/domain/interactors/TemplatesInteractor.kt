@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,10 +15,10 @@
  */
 package ru.aleshin.features.editor.impl.domain.interactors
 
-import kotlinx.coroutines.flow.first
 import ru.aleshin.core.domain.entities.template.Template
 import ru.aleshin.core.domain.repository.TemplatesRepository
 import ru.aleshin.core.utils.functional.DomainResult
+import ru.aleshin.core.utils.functional.FlowDomainResult
 import ru.aleshin.features.editor.impl.domain.common.EditorEitherWrapper
 import ru.aleshin.features.editor.impl.domain.entites.EditorFailures
 import javax.inject.Inject
@@ -28,29 +28,29 @@ import javax.inject.Inject
  */
 internal interface TemplatesInteractor {
 
-    suspend fun fetchTemplates(): DomainResult<EditorFailures, List<Template>>
-    suspend fun updateTemplate(template: Template): DomainResult<EditorFailures, Unit>
-    suspend fun addTemplate(template: Template): DomainResult<EditorFailures, Int>
-    suspend fun deleteTemplateById(id: Int): DomainResult<EditorFailures, Unit>
+    suspend fun addOrUpdateTemplate(template: Template): DomainResult<EditorFailures, Long>
+    suspend fun fetchAllTemplates(): FlowDomainResult<EditorFailures, List<Template>>
+    suspend fun fetchTemplateById(templateId: Long): DomainResult<EditorFailures, Template?>
+    suspend fun deleteTemplateById(id: Long): DomainResult<EditorFailures, Unit>
 
     class Base @Inject constructor(
         private val eitherWrapper: EditorEitherWrapper,
         private val templatesRepository: TemplatesRepository,
     ) : TemplatesInteractor {
 
-        override suspend fun fetchTemplates() = eitherWrapper.wrap {
-            templatesRepository.fetchAllTemplates().first()
+        override suspend fun addOrUpdateTemplate(template: Template) = eitherWrapper.wrap {
+            templatesRepository.addOrUpdateTemplate(template)
         }
 
-        override suspend fun updateTemplate(template: Template) = eitherWrapper.wrap {
-            templatesRepository.updateTemplate(template)
+        override suspend fun fetchAllTemplates() = eitherWrapper.wrapFlow {
+            templatesRepository.fetchAllTemplates()
         }
 
-        override suspend fun addTemplate(template: Template) = eitherWrapper.wrap {
-            templatesRepository.addTemplate(template)
+        override suspend fun fetchTemplateById(templateId: Long) = eitherWrapper.wrap {
+            templatesRepository.fetchTemplatesByIdOnce(templateId)
         }
 
-        override suspend fun deleteTemplateById(id: Int) = eitherWrapper.wrap {
+        override suspend fun deleteTemplateById(id: Long) = eitherWrapper.wrap {
             templatesRepository.deleteTemplateById(id)
         }
     }

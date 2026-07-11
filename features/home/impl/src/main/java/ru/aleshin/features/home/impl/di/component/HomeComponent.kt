@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ import dagger.Component
 import ru.aleshin.core.utils.di.FeatureScope
 import ru.aleshin.features.home.api.HomeFeatureApi
 import ru.aleshin.features.home.impl.di.HomeFeatureDependencies
-import ru.aleshin.features.home.impl.di.modules.DataModule
 import ru.aleshin.features.home.impl.di.modules.DomainModule
 import ru.aleshin.features.home.impl.di.modules.PresentationModule
 
@@ -29,7 +28,6 @@ import ru.aleshin.features.home.impl.di.modules.PresentationModule
 @FeatureScope
 @Component(
     modules = [
-        DataModule::class,
         DomainModule::class,
         PresentationModule::class
     ],

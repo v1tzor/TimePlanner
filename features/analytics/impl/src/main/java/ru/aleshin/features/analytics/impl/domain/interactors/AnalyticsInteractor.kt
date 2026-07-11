@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,11 +18,10 @@ package ru.aleshin.features.analytics.impl.domain.interactors
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
-import ru.aleshin.core.domain.entities.categories.Categories
-import ru.aleshin.core.domain.entities.categories.SubCategory
+import ru.aleshin.core.domain.entities.categories.MainCategoryDetails
 import ru.aleshin.core.domain.entities.schedules.Schedule
-import ru.aleshin.core.domain.entities.schedules.TimeTask
-import ru.aleshin.core.domain.repository.CategoriesRepository
+import ru.aleshin.core.domain.entities.tasks.TimeTask
+import ru.aleshin.core.domain.repository.MainCategoryRepository
 import ru.aleshin.core.domain.repository.ScheduleRepository
 import ru.aleshin.core.utils.extensions.countMonthByDays
 import ru.aleshin.core.utils.extensions.countWeeksByDays
@@ -32,7 +31,6 @@ import ru.aleshin.core.utils.extensions.extractAllItem
 import ru.aleshin.core.utils.extensions.fetchMonth
 import ru.aleshin.core.utils.extensions.isCurrentDay
 import ru.aleshin.core.utils.extensions.isIncludeTime
-import ru.aleshin.core.utils.extensions.mapToDate
 import ru.aleshin.core.utils.extensions.shiftDay
 import ru.aleshin.core.utils.extensions.startThisDay
 import ru.aleshin.core.utils.functional.Constants
@@ -60,7 +58,7 @@ internal interface AnalyticsInteractor {
 
     class Base @Inject constructor(
         private val scheduleRepository: ScheduleRepository,
-        private val categoriesRepository: CategoriesRepository,
+        private val mainCategoryRepository: MainCategoryRepository,
         private val dateManager: DateManager,
         private val hourlyWorkLoadCalculator: HourlyWorkLoadCalculator,
         private val eitherWrapper: AnalyticsEitherWrapper,
@@ -72,12 +70,12 @@ internal interface AnalyticsInteractor {
         @OptIn(ExperimentalCoroutinesApi::class)
         override suspend fun fetchAnalytics(period: TimePeriod) = eitherWrapper.wrapFlow {
             scheduleRepository.fetchSchedulesByRange(null).flatMapLatest { allSchedules ->
-                categoriesRepository.fetchCategories().map { allCategories ->
+                mainCategoryRepository.fetchAllCategoriesDetails().map { allCategories ->
                     val shiftAmount = period.convertToDays()
                     val startDate = currentDate.startThisDay().shiftDay(-shiftAmount)
                     val globalTimeRange = TimeRange(from = startDate, to = currentDate)
 
-                    val periodSchedules = allSchedules.filter { globalTimeRange.isIncludeTime(it.date.mapToDate()) }
+                    val periodSchedules = allSchedules.filter { globalTimeRange.isIncludeTime(it.date) }
                     val timeTasks = mutableListOf<TimeTask>().apply {
                         periodSchedules.forEach { schedule ->
                             addAll(schedule.timeTasks.filter { it.isConsiderInStatistics })
@@ -148,16 +146,13 @@ internal interface AnalyticsInteractor {
         }
 
         private fun countCategoriesAnalytic(
-            categories: List<Categories>,
+            categories: List<MainCategoryDetails>,
             timeTasks: List<TimeTask>,
         ) = mutableListOf<CategoryAnalytic>().let { analytics ->
             categories.onEach { categories ->
-                val subCategories = categories.subCategories.toMutableList().apply {
-                    add(SubCategory(mainCategory = categories.category))
-                }
                 val categoriesAnalytic = CategoryAnalytic(
                     mainCategory = categories.category,
-                    subCategoriesInfo = subCategories.map { SubCategoryAnalytic(subCategory = it) },
+                    subCategoriesInfo = categories.subCategories.map { SubCategoryAnalytic(subCategory = it) },
                 )
                 analytics.add(categoriesAnalytic)
             }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,15 +38,15 @@ import androidx.glance.text.FontWeight
 import androidx.glance.text.TextDefaults
 import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
-import ru.aleshin.core.ui.theme.material.ColorsUiType
-import ru.aleshin.core.ui.theme.tokens.LocalTimePlannerElevations
-import ru.aleshin.core.ui.theme.tokens.LocalTimePlannerIcons
-import ru.aleshin.core.ui.theme.tokens.LocalTimePlannerLanguage
-import ru.aleshin.core.ui.theme.tokens.LocalTimePlannerStrings
-import ru.aleshin.core.ui.theme.tokens.fetchAppElevations
-import ru.aleshin.core.ui.theme.tokens.fetchCoreIcons
-import ru.aleshin.core.ui.theme.tokens.fetchCoreLanguage
-import ru.aleshin.core.ui.theme.tokens.fetchCoreStrings
+import ru.aleshin.timeplanner.core.ui.theme.material.ColorsUiType
+import ru.aleshin.timeplanner.core.ui.theme.tokens.LocalTimePlannerElevations
+import ru.aleshin.timeplanner.core.ui.theme.tokens.LocalTimePlannerIcons
+import ru.aleshin.timeplanner.core.ui.theme.tokens.LocalTimePlannerLanguage
+import ru.aleshin.timeplanner.core.ui.theme.tokens.LocalTimePlannerStrings
+import ru.aleshin.timeplanner.core.ui.theme.tokens.fetchAppElevations
+import ru.aleshin.timeplanner.core.ui.theme.tokens.fetchCoreIcons
+import ru.aleshin.timeplanner.core.ui.theme.tokens.fetchCoreLanguage
+import ru.aleshin.timeplanner.core.ui.theme.tokens.fetchCoreStrings
 import ru.aleshin.core.utils.extensions.fetchLocale
 import ru.aleshin.timeplanner.R
 import ru.aleshin.timeplanner.presentation.widgets.WidgetGlanceColorScheme.fetchColorScheme

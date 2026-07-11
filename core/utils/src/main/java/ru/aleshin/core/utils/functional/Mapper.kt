@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,10 +18,10 @@ package ru.aleshin.core.utils.functional
 /**
  * @author Stanislav Aleshin on 14.02.2023.
  */
-interface Mapper<I, O> {
+fun interface Mapper<I, O> {
     fun map(input: I): O
 }
 
-interface ParameterizedMapper<I, O, P> {
+fun interface ParameterizedMapper<I, O, P> {
     fun map(input: I, parameter: P): O
 }

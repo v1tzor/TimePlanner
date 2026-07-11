@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 package ru.aleshin.features.editor.impl.domain.common
 
 import ru.aleshin.core.utils.handlers.ErrorHandler
-import ru.aleshin.core.utils.managers.TimeOverlayException
+import ru.aleshin.core.domain.common.TimeOverlayException
 import ru.aleshin.features.editor.impl.domain.entites.EditorFailures
 import javax.inject.Inject
 

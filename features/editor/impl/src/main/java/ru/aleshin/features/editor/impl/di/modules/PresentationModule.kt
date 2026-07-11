@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,11 +22,11 @@ import ru.aleshin.core.utils.di.FeatureScope
 import ru.aleshin.features.editor.api.EditorContentProviderFactory
 import ru.aleshin.features.editor.impl.navigation.DefaultEditorContentProviderFactory
 import ru.aleshin.features.editor.impl.presentation.ui.editor.contract.EditorState
-import ru.aleshin.features.editor.impl.presentation.ui.editor.processors.EditorWorkProcessor
-import ru.aleshin.features.editor.impl.presentation.ui.editor.processors.TimeTaskWorkProcessor
-import ru.aleshin.features.editor.impl.presentation.ui.editor.store.CategoryValidator
+import ru.aleshin.features.editor.impl.presentation.ui.editor.store.EditorWorkProcessor
+import ru.aleshin.features.editor.impl.presentation.ui.editor.store.TimeTaskWorkProcessor
+import ru.aleshin.features.editor.impl.presentation.ui.editor.validators.CategoryValidator
 import ru.aleshin.features.editor.impl.presentation.ui.editor.store.EditorComposeStore
-import ru.aleshin.features.editor.impl.presentation.ui.editor.store.TimeRangeValidator
+import ru.aleshin.features.editor.impl.presentation.ui.editor.validators.TimeRangeValidator
 
 /**
  * @author Stanislav Aleshin on 08.03.2023.

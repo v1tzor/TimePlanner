@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,9 +31,9 @@ import androidx.glance.layout.padding
 import androidx.glance.layout.size
 import androidx.glance.text.Text
 import androidx.glance.unit.ColorProvider
-import ru.aleshin.core.ui.theme.material.badgePriorityMax
-import ru.aleshin.core.ui.theme.material.badgePriorityMedium
-import ru.aleshin.core.ui.views.MonogramPriority
+import ru.aleshin.timeplanner.core.ui.theme.material.badgePriorityMax
+import ru.aleshin.timeplanner.core.ui.theme.material.badgePriorityMedium
+import ru.aleshin.timeplanner.core.ui.views.MonogramPriority
 import ru.aleshin.timeplanner.presentation.widgets.compatCornerBackground
 import ru.aleshin.timeplanner.presentation.widgets.typography
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,25 +18,23 @@ package ru.aleshin.features.home.impl.presentation.ui.templates.store
 import kotlinx.coroutines.flow.flow
 import ru.aleshin.core.domain.entities.template.RepeatTime
 import ru.aleshin.core.domain.entities.template.Template
-import ru.aleshin.core.ui.notifications.TemplatesAlarmManager
-import ru.aleshin.core.ui.notifications.TimeTaskAlarmManager
+import ru.aleshin.core.presentation.mappers.mapToDomain
+import ru.aleshin.core.presentation.mappers.mapToUi
+import ru.aleshin.core.presentation.models.templates.TemplateUi
+import ru.aleshin.core.presentation.notifications.TemplatesAlarmManager
+import ru.aleshin.core.presentation.notifications.TimeTaskAlarmManager
 import ru.aleshin.core.utils.architecture.component.EmptyOutput
 import ru.aleshin.core.utils.architecture.store.work.ActionResult
 import ru.aleshin.core.utils.architecture.store.work.EffectResult
 import ru.aleshin.core.utils.architecture.store.work.FlowWorkProcessor
 import ru.aleshin.core.utils.architecture.store.work.WorkCommand
-import ru.aleshin.core.utils.extensions.duration
 import ru.aleshin.core.utils.functional.Either
 import ru.aleshin.core.utils.functional.collectAndHandle
 import ru.aleshin.core.utils.functional.handle
-import ru.aleshin.features.home.impl.domain.interactors.CategoriesInteractor
+import ru.aleshin.features.home.impl.domain.entities.TemplatesSortedType
+import ru.aleshin.features.home.impl.domain.interactors.MainCategoriesInteractor
 import ru.aleshin.features.home.impl.domain.interactors.RepeatTaskInteractor
 import ru.aleshin.features.home.impl.domain.interactors.TemplatesInteractor
-import ru.aleshin.features.home.impl.presentation.mapppers.categories.mapToUi
-import ru.aleshin.features.home.impl.presentation.mapppers.templates.mapToDomain
-import ru.aleshin.features.home.impl.presentation.mapppers.templates.mapToUi
-import ru.aleshin.features.home.impl.presentation.models.templates.TemplateUi
-import ru.aleshin.features.home.impl.presentation.models.templates.TemplatesSortedType
 import ru.aleshin.features.home.impl.presentation.ui.templates.contract.TemplatesAction
 import ru.aleshin.features.home.impl.presentation.ui.templates.contract.TemplatesEffect
 import javax.inject.Inject
@@ -50,7 +48,7 @@ internal interface TemplatesWorkProcessor :
     class Base @Inject constructor(
         private val templatesInteractor: TemplatesInteractor,
         private val repeatTaskInteractor: RepeatTaskInteractor,
-        private val categoriesInteractor: CategoriesInteractor,
+        private val categoriesInteractor: MainCategoriesInteractor,
         private val timeTaskAlarmManager: TimeTaskAlarmManager,
         private val templatesAlarmManager: TemplatesAlarmManager,
     ) : TemplatesWorkProcessor {
@@ -68,38 +66,62 @@ internal interface TemplatesWorkProcessor :
         }
 
         private fun loadTemplatesWork(sortedType: TemplatesSortedType) = flow {
-            templatesInteractor.fetchTemplates().collectAndHandle(
+            templatesInteractor.fetchTemplates(sortedType).collectAndHandle(
                 onLeftAction = { emit(EffectResult(TemplatesEffect.ShowError(it))) },
                 onRightAction = { templates ->
-                    val sortedTemplates = when (sortedType) {
-                        TemplatesSortedType.DATE -> templates.sortedBy { it.startTime }
-                        TemplatesSortedType.CATEGORIES -> templates.sortedBy { it.category.id }
-                        TemplatesSortedType.DURATION -> templates.sortedBy { duration(it.startTime, it.endTime) }
-                    }
-                    emit(ActionResult(TemplatesAction.UpdateTemplates(sortedTemplates.map { it.mapToUi() })))
+                    emit(ActionResult(TemplatesAction.UpdateTemplates(templates.map { it.mapToUi() })))
                 },
             )
         }
 
-        private fun updateTemplate(oldTemplate: TemplateUi, newTemplate: TemplateUi) = flow {
-            val oldDomainModel = oldTemplate.mapToDomain()
-            val newDomainModel = newTemplate.mapToDomain()
-            templatesInteractor.updateTemplate(newDomainModel).handle(
+        private fun loadCategories() = flow {
+            categoriesInteractor.fetchCategories().collectAndHandle(
                 onLeftAction = { emit(EffectResult(TemplatesEffect.ShowError(it))) },
-                onRightAction = {
-                    if (newTemplate.repeatEnabled) {
-                        repeatTaskInteractor.updateRepeatTemplate(oldDomainModel, newDomainModel).handle(
+                onRightAction = { categories ->
+                    emit(ActionResult(TemplatesAction.UpdateCategories(categories.map { it.mapToUi() })))
+                },
+            )
+        }
+
+        private fun addTemplate(template: TemplateUi) = flow {
+            templatesInteractor.addOrUpdateTemplate(template.mapToDomain()).handle(
+                onLeftAction = { emit(EffectResult(TemplatesEffect.ShowError(it))) },
+                onRightAction = { id ->
+                    val savedTemplate = template.copy(templateId = id)
+                    if (savedTemplate.repeatEnabled && savedTemplate.repeatTimes.isNotEmpty()) {
+                        repeatTaskInteractor.addRepeatsTemplate(
+                            template = savedTemplate.mapToDomain(),
+                            repeatTimes = savedTemplate.repeatTimes,
+                        ).handle(
                             onLeftAction = { emit(EffectResult(TemplatesEffect.ShowError(it))) },
-                            onRightAction = { updateNotifications(oldDomainModel, newDomainModel) },
+                            onRightAction = { addNotifications(savedTemplate) }
                         )
                     }
                 },
             )
         }
 
-        private fun addTemplate(template: TemplateUi) = flow {
-            templatesInteractor.addTemplate(template.mapToDomain()).handle(
-                onLeftAction = { emit(EffectResult(TemplatesEffect.ShowError(it))) }
+        private fun updateTemplate(oldTemplate: TemplateUi, newTemplate: TemplateUi) = flow {
+            val oldDomainModel = oldTemplate.mapToDomain()
+            templatesInteractor.addOrUpdateTemplate(newTemplate.mapToDomain()).handle(
+                onLeftAction = { emit(EffectResult(TemplatesEffect.ShowError(it))) },
+                onRightAction = {
+                    val newTemplate = newTemplate.mapToDomain()
+                    if (oldTemplate.repeatEnabled || newTemplate.repeatEnabled) {
+                        repeatTaskInteractor.updateRepeatTemplate(
+                            oldTemplate = oldDomainModel,
+                            template = newTemplate,
+                        ).handle(
+                            onLeftAction = { emit(EffectResult(TemplatesEffect.ShowError(it))) },
+                            onRightAction = { timeTasks ->
+                                timeTasks.forEach { timeTask -> timeTaskAlarmManager.deleteNotifyAlarm(timeTask) }
+                                updateNotifications(oldDomainModel, newTemplate)
+                            }
+                        )
+                    } else {
+                        updateNotifications(oldDomainModel, newTemplate)
+                    }
+                }
             )
         }
 
@@ -114,107 +136,107 @@ internal interface TemplatesWorkProcessor :
                     is Either.Right -> deleteRepeatsResult.data.forEach { timeTaskAlarmManager.deleteNotifyAlarm(it) }
                 }
             }
-            deleteNotifications(template, template.repeatTimes)
+            deleteNotifications(template)
             templatesInteractor.deleteTemplate(template.templateId).handle(
                 onLeftAction = { emit(EffectResult(TemplatesEffect.ShowError(it))) }
-            )
-        }
-
-        private fun loadCategories() = flow {
-            categoriesInteractor.fetchCategories().collectAndHandle(
-                onLeftAction = { emit(EffectResult(TemplatesEffect.ShowError(it))) },
-                onRightAction = { categories ->
-                    emit(ActionResult(TemplatesAction.UpdateCategories(categories.map { it.mapToUi() })))
-                },
             )
         }
 
         private fun addRepeatTemplate(repeatTime: RepeatTime, template: TemplateUi) = flow {
             val newRepeatTimes = template.repeatTimes.toMutableList().apply { add(repeatTime) }
             val newTemplate = template.copy(repeatTimes = newRepeatTimes)
-            templatesInteractor.updateTemplate(newTemplate.mapToDomain()).handle(
+
+            templatesInteractor.addOrUpdateTemplate(newTemplate.mapToDomain()).handle(
                 onLeftAction = { emit(EffectResult(TemplatesEffect.ShowError(it))) },
                 onRightAction = {
-                    val repeat = listOf(repeatTime)
-                    if (template.repeatEnabled) {
-                        repeatTaskInteractor.addRepeatsTemplate(template.mapToDomain(), repeat).handle(
+                    if (newTemplate.repeatEnabled) {
+                        val repeatTimes = listOf(repeatTime)
+                        repeatTaskInteractor.addRepeatsTemplate(newTemplate.mapToDomain(), repeatTimes).handle(
                             onLeftAction = { emit(EffectResult(TemplatesEffect.ShowError(it))) },
-                            onRightAction = { addNotifications(template, repeat) },
+                            onRightAction = {
+                                updateNotifications(template.mapToDomain(), newTemplate.mapToDomain())
+                            }
                         )
                     }
-                },
+                }
             )
         }
 
         private fun deleteRepeatTemplate(repeatTime: RepeatTime, template: TemplateUi) = flow {
             val newRepeatTimes = template.repeatTimes.toMutableList().apply { remove(repeatTime) }
             val newTemplate = template.copy(repeatTimes = newRepeatTimes)
-            templatesInteractor.updateTemplate(newTemplate.mapToDomain()).handle(
+
+            templatesInteractor.addOrUpdateTemplate(newTemplate.mapToDomain()).handle(
                 onLeftAction = { emit(EffectResult(TemplatesEffect.ShowError(it))) },
                 onRightAction = {
-                    val repeat = listOf(repeatTime)
+                    val repeatTimes = listOf(repeatTime)
                     if (template.repeatEnabled) {
-                        repeatTaskInteractor.deleteRepeatsTemplates(template.mapToDomain(), repeat).handle(
+                        repeatTaskInteractor.deleteRepeatsTemplates(template.mapToDomain(), repeatTimes).handle(
                             onLeftAction = { emit(EffectResult(TemplatesEffect.ShowError(it))) },
-                            onRightAction = { deleteNotifications(template, repeat) },
+                            onRightAction = { timeTasks ->
+                                timeTasks.forEach { timeTask -> timeTaskAlarmManager.deleteNotifyAlarm(timeTask) }
+                                updateNotifications(template.mapToDomain(), newTemplate.mapToDomain())
+                            }
                         )
                     }
-                },
+                }
             )
         }
 
         private fun restartRepeatWork(template: TemplateUi) = flow {
             val newTemplate = template.copy(repeatEnabled = true)
-            templatesInteractor.updateTemplate(newTemplate.mapToDomain()).handle(
+
+            templatesInteractor.addOrUpdateTemplate(newTemplate.mapToDomain()).handle(
                 onLeftAction = { emit(EffectResult(TemplatesEffect.ShowError(it))) },
                 onRightAction = {
                     repeatTaskInteractor.deleteRepeatsTemplates(template.mapToDomain(), template.repeatTimes).handle(
                         onLeftAction = { emit(EffectResult(TemplatesEffect.ShowError(it))) },
-                        onRightAction = { oldTasks ->
-                            oldTasks.forEach { timeTaskAlarmManager.deleteNotifyAlarm(it) }
-                        },
+                        onRightAction = { timeTasks ->
+                            timeTasks.forEach { timeTask -> timeTaskAlarmManager.deleteNotifyAlarm(timeTask) }
+
+                            repeatTaskInteractor.addRepeatsTemplate(newTemplate.mapToDomain(), newTemplate.repeatTimes).handle(
+                                onLeftAction = { emit(EffectResult(TemplatesEffect.ShowError(it))) },
+                                onRightAction = {
+                                    updateNotifications(template.mapToDomain(), newTemplate.mapToDomain())
+                                }
+                            )
+                        }
                     )
-                    repeatTaskInteractor.addRepeatsTemplate(template.mapToDomain(), template.repeatTimes).handle(
-                        onLeftAction = { emit(EffectResult(TemplatesEffect.ShowError(it))) },
-                        onRightAction = { addNotifications(template, template.repeatTimes) },
-                    )
-                },
+                }
             )
         }
 
         private fun stopRepeatWork(template: TemplateUi) = flow {
             val newTemplate = template.copy(repeatEnabled = false)
-            templatesInteractor.updateTemplate(newTemplate.mapToDomain()).handle(
+            templatesInteractor.addOrUpdateTemplate(newTemplate.mapToDomain()).handle(
                 onLeftAction = { emit(EffectResult(TemplatesEffect.ShowError(it))) },
                 onRightAction = {
                     repeatTaskInteractor.deleteRepeatsTemplates(template.mapToDomain(), template.repeatTimes).handle(
                         onLeftAction = { emit(EffectResult(TemplatesEffect.ShowError(it))) },
-                        onRightAction = { deleteNotifications(template, template.repeatTimes) },
+                        onRightAction = { timeTasks ->
+                            timeTasks.forEach { timeTask -> timeTaskAlarmManager.deleteNotifyAlarm(timeTask) }
+                            updateNotifications(template.mapToDomain(), newTemplate.mapToDomain())
+                        }
                     )
-                },
+                }
             )
         }
-        
-        private fun addNotifications(template: TemplateUi, repeatTimes: List<RepeatTime>) {
-            if (template.isEnableNotification) {
-                repeatTimes.forEach { repeatTime ->
-                    templatesAlarmManager.addOrUpdateNotifyAlarm(template.mapToDomain(), repeatTime)
-                }
+
+        private fun addNotifications(template: TemplateUi) {
+            if (template.repeatEnabled && template.isEnableNotification) {
+                templatesAlarmManager.addOrUpdateNotifyAlarm(template.mapToDomain())
             }
         }
 
-        private fun deleteNotifications(template: TemplateUi, repeatTimes: List<RepeatTime>) {
-            repeatTimes.forEach { repeatTime ->
-                templatesAlarmManager.deleteNotifyAlarm(template.mapToDomain(), repeatTime)
-            }
+        private fun deleteNotifications(template: TemplateUi) {
+            templatesAlarmManager.deleteNotifyAlarm(template.mapToDomain())
         }
 
         private fun updateNotifications(oldTemplate: Template, newTemplate: Template) {
-            newTemplate.repeatTimes.forEach { repeatTime ->
-                templatesAlarmManager.deleteNotifyAlarm(oldTemplate, repeatTime)
-                if (newTemplate.isEnableNotification) {
-                    templatesAlarmManager.addOrUpdateNotifyAlarm(newTemplate, repeatTime)
-                }
+            if (newTemplate.repeatEnabled && newTemplate.isEnableNotification) {
+                templatesAlarmManager.addOrUpdateNotifyAlarm(newTemplate)
+            } else {
+                templatesAlarmManager.deleteNotifyAlarm(oldTemplate)
             }
         }
     }

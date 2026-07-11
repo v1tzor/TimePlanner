@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 package ru.aleshin.features.home.impl.domain.interactors
 
 import kotlinx.coroutines.flow.first
-import ru.aleshin.core.domain.entities.schedules.TimeTask
+import ru.aleshin.core.domain.entities.tasks.TimeTask
 import ru.aleshin.core.domain.repository.ScheduleRepository
 import ru.aleshin.core.domain.repository.TemplatesRepository
 import ru.aleshin.core.domain.repository.TimeTaskRepository
@@ -30,7 +30,6 @@ import ru.aleshin.core.utils.functional.TimeShiftException
 import ru.aleshin.features.home.impl.domain.common.HomeEitherWrapper
 import ru.aleshin.features.home.impl.domain.entities.HomeFailures
 import ru.aleshin.features.home.impl.domain.entities.TimeTaskImportanceException
-import java.util.Date
 import javax.inject.Inject
 
 /**
@@ -58,30 +57,28 @@ internal interface TimeShiftInteractor {
             val allTimeTasks = schedules.map { it.timeTasks }.extractAllItem().sortedBy { it.timeRange.from }
 
             val nextTimeTask = allTimeTasks.firstOrNull { it.timeRange.from >= task.timeRange.to }
-            val nextTimeTaskTemplate = templatesRepository.fetchAllTemplates().first().find { template ->
-                nextTimeTask?.let { template.equalsIsTemplate(it) } ?: false
-            }
+            val nextTimeTaskIsRepeat = nextTimeTask?.linkedTemplateId != null
 
             val nextTime = nextTimeTask?.timeRange
             val shiftTime = task.timeRange.to.shiftMinutes(shiftValue)
 
             return@wrap if (nextTime == null || nextTime.from.time - shiftTime.time >= shiftValue) {
                 when (shiftTime.isCurrentDay(task.timeRange.to)) {
-                    true -> listOf(task.copy(timeRange = task.timeRange.copy(to = shiftTime))).apply {
-                        timeTaskRepository.updateTimeTaskList(this)
+                    true -> listOf(task.copy(timeRange = task.timeRange.copy(to = shiftTime), linkedTemplateId = null)).apply {
+                        timeTaskRepository.addOrUpdateTimeTasks(this)
                     }
                     false -> throw TimeShiftException()
                 }
             } else {
                 when (nextTime.to.time - shiftTime.time > 0) {
                     true -> {
-                        if (nextTimeTask.priority.isImportant() || nextTimeTaskTemplate?.checkDateIsRepeat(Date()) == true) {
+                        if (nextTimeTask.priority.isImportant() || nextTimeTaskIsRepeat) {
                             throw TimeTaskImportanceException()
                         }
-                        val shiftTask = task.copy(timeRange = task.timeRange.copy(to = shiftTime))
+                        val shiftTask = task.copy(timeRange = task.timeRange.copy(to = shiftTime), linkedTemplateId = null)
                         val nextShiftTask = nextTimeTask.copy(timeRange = nextTimeTask.timeRange.copy(from = shiftTime))
                         val updatedTasks = listOf(shiftTask, nextShiftTask)
-                        timeTaskRepository.updateTimeTaskList(updatedTasks)
+                        timeTaskRepository.addOrUpdateTimeTasks(updatedTasks)
                         return@wrap updatedTasks
                     }
                     false -> throw TimeShiftException()
@@ -96,8 +93,8 @@ internal interface TimeShiftInteractor {
             val shiftTime = task.timeRange.to.shiftMinutes(-shiftValue)
             if (shiftTime.time - task.timeRange.from.time > 0) {
                 val timeRanges = task.timeRange.copy(to = shiftTime)
-                val shiftTask = task.copy(timeRange = timeRanges)
-                timeTaskRepository.updateTimeTask(shiftTask)
+                val shiftTask = task.copy(timeRange = timeRanges, linkedTemplateId = null)
+                timeTaskRepository.addOrUpdateTimeTask(shiftTask)
                 return@wrap shiftTask
             } else {
                 throw TimeShiftException()

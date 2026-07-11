@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,12 +23,9 @@ import ru.aleshin.core.utils.architecture.store.BaseSimpleComposeStore
 import ru.aleshin.core.utils.di.FeatureScope
 import ru.aleshin.features.home.api.HomeContentProviderFactory
 import ru.aleshin.features.home.impl.navigation.DefaultHomeContentProviderFactory
-import ru.aleshin.features.home.impl.presentation.common.TimeTaskStatusController
-import ru.aleshin.features.home.impl.presentation.mapppers.schedules.ScheduleDomainToUiMapper
-import ru.aleshin.features.home.impl.presentation.mapppers.schedules.TimeTaskDomainToUiMapper
 import ru.aleshin.features.home.impl.presentation.ui.categories.contract.CategoriesState
-import ru.aleshin.features.home.impl.presentation.ui.categories.screenmodel.CategoriesComposeStore
-import ru.aleshin.features.home.impl.presentation.ui.categories.screenmodel.CategoriesWorkProcessor
+import ru.aleshin.features.home.impl.presentation.ui.categories.store.CategoriesComposeStore
+import ru.aleshin.features.home.impl.presentation.ui.categories.store.CategoriesWorkProcessor
 import ru.aleshin.features.home.impl.presentation.ui.details.contract.DetailsState
 import ru.aleshin.features.home.impl.presentation.ui.details.store.DetailsComposeStore
 import ru.aleshin.features.home.impl.presentation.ui.details.store.DetailsWorkProcessor
@@ -53,10 +50,6 @@ internal interface PresentationModule {
     @FeatureScope
     fun bindHomeContentProviderFactory(factory: DefaultHomeContentProviderFactory): HomeContentProviderFactory
 
-    @Binds
-    @FeatureScope
-    fun bindTimeTaskStatusController(controller: TimeTaskStatusController.Base): TimeTaskStatusController
-
     // Overview
 
     @Binds
@@ -65,8 +58,8 @@ internal interface PresentationModule {
 
     @Binds
     @FeatureScope
-    fun bindOverviewWorkProcessor(processor: OverviewWorkProcessor.Base): OverviewWorkProcessor 
-    
+    fun bindOverviewWorkProcessor(processor: OverviewWorkProcessor.Base): OverviewWorkProcessor
+
     // Details
 
     @Binds
@@ -90,14 +83,6 @@ internal interface PresentationModule {
     @Binds
     @FeatureScope
     fun bindNavigationWorkProcessor(processor: NavigationWorkProcessor.Base): NavigationWorkProcessor
-
-    @Binds
-    @FeatureScope
-    fun bindTimeTaskDomainToUiMapper(mapper: TimeTaskDomainToUiMapper.Base): TimeTaskDomainToUiMapper
-
-    @Binds
-    @FeatureScope
-    fun bindScheduleDomainToUiMapper(mapper: ScheduleDomainToUiMapper.Base): ScheduleDomainToUiMapper
 
     // Templates
 

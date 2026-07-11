@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,13 +36,11 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
-import ru.aleshin.core.ui.views.ErrorSnackbar
+import ru.aleshin.core.presentation.models.tasks.UndefinedTaskUi
 import ru.aleshin.core.utils.architecture.store.compose.handleEffects
 import ru.aleshin.core.utils.architecture.store.compose.stateAsState
-import ru.aleshin.core.utils.extensions.isIncludeTime
 import ru.aleshin.core.utils.managers.LocalDrawerManager
 import ru.aleshin.features.home.impl.presentation.mapppers.mapToMessage
-import ru.aleshin.features.home.impl.presentation.models.schedules.UndefinedTaskUi
 import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
 import ru.aleshin.features.home.impl.presentation.ui.overview.contract.OverviewEffect
 import ru.aleshin.features.home.impl.presentation.ui.overview.contract.OverviewEvent
@@ -51,8 +49,9 @@ import ru.aleshin.features.home.impl.presentation.ui.overview.store.OverviewComp
 import ru.aleshin.features.home.impl.presentation.ui.overview.views.CurrentTimeTaskSection
 import ru.aleshin.features.home.impl.presentation.ui.overview.views.OverviewTopAppBar
 import ru.aleshin.features.home.impl.presentation.ui.overview.views.SchedulesSection
-import ru.aleshin.features.home.impl.presentation.ui.overview.views.UndefinedTasksBatchEditorDialog
 import ru.aleshin.features.home.impl.presentation.ui.overview.views.UndefinedTaskSection
+import ru.aleshin.features.home.impl.presentation.ui.overview.views.UndefinedTasksBatchEditorDialog
+import ru.aleshin.timeplanner.core.ui.views.ErrorSnackbar
 import java.util.Date
 
 /**
@@ -102,11 +101,9 @@ internal fun OverviewContent(
     if (sharedTextTasks != null) {
         UndefinedTasksBatchEditorDialog(
             tasks = sharedTextTasks,
-            categories = state.sharedTextCategories,
+            categories = state.categories,
             onDismiss = { store.dispatchEvent(OverviewEvent.DismissBatchUndefinedTasks) },
-            onConfirm = {
-                store.dispatchEvent(OverviewEvent.ConfirmBatchUndefinedTasks(it))
-            },
+            onConfirm = { store.dispatchEvent(OverviewEvent.ConfirmBatchUndefinedTasks(it)) }
         )
     }
 
@@ -141,7 +138,7 @@ private fun BaseOverviewContent(
         modifier = modifier,
         state = refreshState,
         onRefresh = onRefresh,
-        isRefreshing = state.currentDate == null && state.schedules.isEmpty(),
+        isRefreshing = state.isLoading,
     ) {
         Column(
             modifier = Modifier.verticalScroll(state = scrollState, enabled = !state.isLoading),
@@ -149,17 +146,15 @@ private fun BaseOverviewContent(
         ) {
             SchedulesSection(
                 isLoading = state.isLoading,
-                currentSchedule = state.currentSchedule,
+                currentDate = state.currentDate,
                 schedules = state.schedules,
                 onOpenSchedule = { onOpenSchedule(it.date) },
                 onOpenAllSchedules = onOpenAllSchedules,
             )
             CurrentTimeTaskSection(
                 isLoading = state.isLoading,
-                task = state.currentSchedule?.timeTasks?.find {
-                    it.timeToTimeRange().isIncludeTime(Date())
-                },
-                onOpenTask = { onOpenSchedule(null) },
+                task = state.currentTask,
+                onOpenTask = { onOpenSchedule(it.date) },
             )
             UndefinedTaskSection(
                 isLoading = state.isLoading,

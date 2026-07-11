@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import ru.aleshin.core.domain.entities.schedules.TaskPriority
+import ru.aleshin.core.domain.entities.tasks.TaskPriority
 import ru.aleshin.features.home.impl.presentation.mapppers.mapToString
 import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
 

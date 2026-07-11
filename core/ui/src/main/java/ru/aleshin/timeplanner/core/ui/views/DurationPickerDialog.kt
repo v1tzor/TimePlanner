@@ -1,0 +1,245 @@
+/*
+ * Copyright 2026 Stanislav Aleshin
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package ru.aleshin.timeplanner.core.ui.views
+
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.AssistChip
+import androidx.compose.material3.BasicAlertDialog
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import ru.aleshin.timeplanner.core.ui.theme.TimePlannerRes
+import ru.aleshin.core.utils.extensions.hoursToMillis
+import ru.aleshin.core.utils.extensions.minutesToMillis
+import ru.aleshin.core.utils.extensions.toHorses
+import ru.aleshin.core.utils.extensions.toMinutesInHours
+import ru.aleshin.core.utils.extensions.toStringOrEmpty
+import ru.aleshin.core.utils.functional.Constants
+import java.util.Calendar
+import java.util.Date
+
+@Composable
+@OptIn(ExperimentalMaterial3Api::class)
+fun DurationPickerDialog(
+    modifier: Modifier = Modifier,
+    headerTitle: String,
+    startTime: Date,
+    duration: Long,
+    durationPresets: List<Long> = Constants.Date.DEFAULT_DURATION_PRESETS.split(",").map { it.toInt().minutesToMillis() },
+    onDismissRequest: () -> Unit,
+    onSelectedTime: (Long) -> Unit,
+    onManagePresetsClick: (() -> Unit)? = null,
+) {
+    val startTimeCalendar = Calendar.getInstance().apply { time = startTime }
+    val maxHours = Constants.Date.HOURS_IN_DAY.toInt() - startTimeCalendar.get(Calendar.HOUR_OF_DAY) - 1
+    val maxMinutes = Constants.Date.MINUTES_IN_HOUR.toInt() - startTimeCalendar.get(Calendar.MINUTE) - 1
+
+    var hours by rememberSaveable { mutableStateOf<Int?>(duration.toHorses().toInt()) }
+    var minutes by rememberSaveable { mutableStateOf<Int?>(duration.toMinutesInHours().toInt()) }
+
+    BasicAlertDialog(onDismissRequest = onDismissRequest) {
+        Surface(
+            modifier = modifier.width(243.dp),
+            color = MaterialTheme.colorScheme.surfaceContainer,
+            shape = MaterialTheme.shapes.extraLarge,
+        ) {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(20.dp),
+                horizontalAlignment = Alignment.End,
+            ) {
+                TimePickerHeader(title = headerTitle)
+                Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                    DurationPickerHourMinuteSelector(
+                        hours = hours.toStringOrEmpty(),
+                        minutes = minutes.toStringOrEmpty(),
+                        isEnableSupportText = true,
+                        onMinutesChanges = { value ->
+                            if (value.isEmpty()) {
+                                hours = null
+                            } else if (value.toIntOrNull() != null && value.length <= 2) {
+                                hours = value.toIntOrNull()
+                            }
+                        },
+                        onHoursChanges = { value ->
+                            if (value.isEmpty()) {
+                                minutes = null
+                            } else if (value.toIntOrNull() != null && value.length <= 2) {
+                                minutes = value.toIntOrNull()
+                            }
+                        },
+                    )
+                    LazyRow(
+                        modifier = Modifier.height(32.dp),
+                        contentPadding = PaddingValues(horizontal = 24.dp),
+                        horizontalArrangement = Arrangement.spacedBy(10.dp),
+                    ) {
+                        items(durationPresets) { preset ->
+                            AssistChip(
+                                onClick = {
+                                    hours = preset.toHorses().toInt()
+                                    minutes = preset.toMinutesInHours().toInt()
+                                },
+                                label = {
+                                    Text(text = preset.toMinutesOrHoursTitle())
+                                },
+                                border = BorderStroke(
+                                    1.dp,
+                                    color = MaterialTheme.colorScheme.outlineVariant,
+                                ),
+                            )
+                        }
+                        if (onManagePresetsClick != null) {
+                            item {
+                                IconButton(
+                                    modifier = Modifier.size(32.dp),
+                                    onClick = onManagePresetsClick,
+                                ) {
+                                    Icon(imageVector = Icons.Filled.Settings, contentDescription = null)
+                                }
+                            }
+                        }
+                    }
+                }
+                TimePickerActions(
+                    enabledConfirm = hours != null && minutes != null && hours!! < 24,
+                    onDismissClick = onDismissRequest,
+                    onCurrentTimeChoose = {
+                        hours = maxHours
+                        minutes = maxMinutes
+                    },
+                    onConfirmClick = {
+                        val hoursInMillis = checkNotNull(hours).hoursToMillis()
+                        val time = hoursInMillis + checkNotNull(minutes).minutesToMillis()
+                        onSelectedTime.invoke(time)
+                    },
+                )
+            }
+        }
+    }
+}
+
+@Composable
+internal fun DurationPickerHourMinuteSelector(
+    modifier: Modifier = Modifier,
+    hours: String,
+    minutes: String,
+    isEnableSupportText: Boolean = false,
+    isRequestInitialFocus: Boolean = true,
+    onMinutesChanges: (String) -> Unit,
+    onHoursChanges: (String) -> Unit,
+) = Row(
+    modifier = modifier.padding(horizontal = 24.dp),
+    verticalAlignment = Alignment.CenterVertically,
+) {
+    var isRequestedFirstFocus by rememberSaveable { mutableStateOf(false) }
+    val hourRequester = remember { FocusRequester() }
+    val minuteRequester = remember { FocusRequester() }
+
+    OutlinedTextField(
+        modifier = Modifier.weight(1f).focusRequester(hourRequester),
+        value = hours,
+        textStyle = MaterialTheme.typography.displayMedium.copy(textAlign = TextAlign.Center),
+        onValueChange = { value ->
+            onMinutesChanges(value)
+            if (value.length == 2 && value.toIntOrNull() in 0..23) minuteRequester.requestFocus()
+        },
+        supportingText = if (isEnableSupportText) {
+            {
+                Text(TimePlannerRes.strings.hoursTitle)
+            }
+        } else {
+            null
+        },
+        singleLine = true,
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+        shape = MaterialTheme.shapes.large,
+        colors = OutlinedTextFieldDefaults.colors(
+            focusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+            focusedBorderColor = MaterialTheme.colorScheme.primary,
+            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+            unfocusedBorderColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+        ),
+    )
+    Text(
+        modifier = Modifier.width(24.dp),
+        text = TimePlannerRes.strings.separator,
+        textAlign = TextAlign.Center,
+        style = MaterialTheme.typography.displayLarge,
+        color = MaterialTheme.colorScheme.onSurface,
+    )
+    OutlinedTextField(
+        modifier = Modifier.weight(1f).focusRequester(minuteRequester),
+        value = minutes,
+        textStyle = MaterialTheme.typography.displayMedium.copy(textAlign = TextAlign.Center),
+        onValueChange = onHoursChanges,
+        supportingText = if (isEnableSupportText) {
+            {
+                Text(TimePlannerRes.strings.minutesTitle)
+            }
+        } else {
+            null
+        },
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+        singleLine = true,
+        shape = MaterialTheme.shapes.large,
+        colors = OutlinedTextFieldDefaults.colors(
+            focusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+            focusedBorderColor = MaterialTheme.colorScheme.primary,
+            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+            unfocusedBorderColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+        ),
+    )
+    LaunchedEffect(Unit) {
+        if (isRequestInitialFocus && !isRequestedFirstFocus) {
+            hourRequester.requestFocus()
+            isRequestedFirstFocus = true
+        }
+    }
+}

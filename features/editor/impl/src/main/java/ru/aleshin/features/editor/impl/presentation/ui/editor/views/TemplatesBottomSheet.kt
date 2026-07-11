@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,18 +54,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import ru.aleshin.core.domain.entities.template.RepeatTime
-import ru.aleshin.core.ui.mappers.mapToIconPainter
-import ru.aleshin.core.ui.mappers.mapToString
-import ru.aleshin.core.ui.theme.TimePlannerRes
-import ru.aleshin.core.ui.views.CategoryIconMonogram
-import ru.aleshin.core.ui.views.CategoryTextMonogram
-import ru.aleshin.core.ui.views.ExpandedIcon
-import ru.aleshin.core.ui.views.NoneItemsView
-import ru.aleshin.core.ui.views.toMinutesOrHoursTitle
+import ru.aleshin.core.presentation.mappers.mapToIconPainter
+import ru.aleshin.core.presentation.models.categories.MainCategoryUi
+import ru.aleshin.core.presentation.models.categories.SubCategoryUi
+import ru.aleshin.core.presentation.models.templates.TemplateUi
+import ru.aleshin.timeplanner.core.ui.mappers.mapToString
+import ru.aleshin.timeplanner.core.ui.theme.TimePlannerRes
+import ru.aleshin.timeplanner.core.ui.views.CategoryIconMonogram
+import ru.aleshin.timeplanner.core.ui.views.CategoryTextMonogram
+import ru.aleshin.timeplanner.core.ui.views.ExpandedIcon
+import ru.aleshin.timeplanner.core.ui.views.NoneItemsView
+import ru.aleshin.timeplanner.core.ui.views.toMinutesOrHoursTitle
 import ru.aleshin.core.utils.extensions.duration
-import ru.aleshin.features.editor.impl.presentation.models.categories.MainCategoryUi
-import ru.aleshin.features.editor.impl.presentation.models.categories.SubCategoryUi
-import ru.aleshin.features.editor.impl.presentation.models.template.TemplateUi
 import ru.aleshin.features.editor.impl.presentation.theme.EditorThemeRes
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -79,7 +79,7 @@ internal fun TemplatesBottomSheet(
     modifier: Modifier = Modifier,
     isShow: Boolean,
     templates: List<TemplateUi>?,
-    currentTemplateId: Int?,
+    currentTemplateId: Long?,
     onDismiss: () -> Unit,
     onControlClick: () -> Unit,
     onChooseTemplate: (TemplateUi) -> Unit,

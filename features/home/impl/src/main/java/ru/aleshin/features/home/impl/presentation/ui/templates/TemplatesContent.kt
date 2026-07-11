@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,17 +55,17 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import ru.aleshin.core.domain.entities.template.RepeatTime
-import ru.aleshin.core.ui.views.ErrorSnackbar
-import ru.aleshin.core.ui.views.ExpandedIcon
-import ru.aleshin.core.ui.views.Scaffold
+import ru.aleshin.timeplanner.core.ui.views.ErrorSnackbar
+import ru.aleshin.timeplanner.core.ui.views.ExpandedIcon
+import ru.aleshin.timeplanner.core.ui.views.Scaffold
 import ru.aleshin.core.utils.architecture.store.compose.handleEffects
 import ru.aleshin.core.utils.architecture.store.compose.stateAsState
 import ru.aleshin.core.utils.managers.LocalDrawerManager
 import ru.aleshin.features.home.impl.presentation.mapppers.mapToMessage
-import ru.aleshin.features.home.impl.presentation.mapppers.templates.mapToString
-import ru.aleshin.features.home.impl.presentation.models.categories.CategoriesUi
-import ru.aleshin.features.home.impl.presentation.models.templates.TemplateUi
-import ru.aleshin.features.home.impl.presentation.models.templates.TemplatesSortedType
+import ru.aleshin.features.home.impl.presentation.mapppers.mapToString
+import ru.aleshin.core.presentation.models.categories.MainCategoryDetailsUi
+import ru.aleshin.core.presentation.models.templates.TemplateUi
+import ru.aleshin.features.home.impl.domain.entities.TemplatesSortedType
 import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
 import ru.aleshin.features.home.impl.presentation.ui.home.views.EmptyDateView
 import ru.aleshin.features.home.impl.presentation.ui.templates.contract.TemplatesEffect
@@ -192,7 +192,7 @@ private fun BaseTemplatesContent(
 internal fun TemplatesLazyColumn(
     modifier: Modifier = Modifier,
     templates: List<TemplateUi>?,
-    categories: List<CategoriesUi>,
+    categories: List<MainCategoryDetailsUi>,
     onUpdateTemplate: (TemplateUi) -> Unit,
     onRestartRepeat: (TemplateUi) -> Unit,
     onStopRepeat: (TemplateUi) -> Unit,

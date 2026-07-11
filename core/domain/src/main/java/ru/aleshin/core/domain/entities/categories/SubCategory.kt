@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,8 +22,8 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class SubCategory(
-    val id: Int = 0,
-    val mainCategory: MainCategory = MainCategory(),
+    val id: Long = 0,
+    val mainCategoryId: Long,
     val name: String? = null,
     val description: String? = null,
 )

@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,9 +35,10 @@ import ru.aleshin.core.utils.managers.CoroutineManager
 import ru.aleshin.core.utils.managers.DrawerManager
 import ru.aleshin.features.home.api.HomeConfig
 import ru.aleshin.features.home.api.HomeOutput
+import ru.aleshin.features.home.impl.presentation.ui.categories.contract.CategoriesInput
 import ru.aleshin.features.home.impl.presentation.ui.categories.contract.CategoriesOutput
-import ru.aleshin.features.home.impl.presentation.ui.categories.screenmodel.CategoriesComponent
-import ru.aleshin.features.home.impl.presentation.ui.categories.screenmodel.CategoriesComposeStore
+import ru.aleshin.features.home.impl.presentation.ui.categories.store.CategoriesComponent
+import ru.aleshin.features.home.impl.presentation.ui.categories.store.CategoriesComposeStore
 import ru.aleshin.features.home.impl.presentation.ui.details.contract.DetailsOutput
 import ru.aleshin.features.home.impl.presentation.ui.details.store.DetailsComponent
 import ru.aleshin.features.home.impl.presentation.ui.details.store.DetailsComposeStore
@@ -173,6 +174,7 @@ internal abstract class InternalHomeFeatureComponent(
                     component = CategoriesComponent.Default(
                         storeFactory = categoriesStoreFactory,
                         componentContext = componentContext,
+                        inputData = CategoriesInput(config.mainCategoryId),
                         outputConsumer = categoriesOutputConsumer(),
                     )
                 )
@@ -204,8 +206,9 @@ internal abstract class InternalHomeFeatureComponent(
             when (output) {
                 is HomeScreenOutput.NavigateToEditor -> {
                     val config = HomeOutput.NavigateToEditor(
-                        timeTask = output.config.timeTask,
-                        template = output.config.template,
+                        timeTaskId = output.config.timeTaskId,
+                        date = output.config.date,
+                        timeRange = output.config.timeRange,
                         undefinedTaskId = output.config.undefinedTaskId,
                     )
                     outputConsumer.consume(config)
@@ -235,8 +238,9 @@ internal abstract class InternalHomeFeatureComponent(
             when (output) {
                 is OverviewOutput.NavigateToEditor -> {
                     val config = HomeOutput.NavigateToEditor(
-                        timeTask = output.config.timeTask,
-                        template = output.config.template,
+                        timeTaskId = output.config.timeTaskId,
+                        date = output.config.date,
+                        timeRange = output.config.timeRange,
                         undefinedTaskId = output.config.undefinedTaskId,
                     )
                     outputConsumer.consume(config)

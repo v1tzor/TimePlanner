@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ import ru.aleshin.core.domain.entities.categories.DefaultCategoryType
  */
 @Entity(tableName = "mainCategories")
 data class MainCategoryEntity(
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
     @ColumnInfo("custom_name") val customName: String?,
     @ColumnInfo("default_category_type") val defaultType: DefaultCategoryType?,
 )

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,10 +15,9 @@
  */
 package ru.aleshin.features.home.impl.domain.interactors
 
-import kotlinx.coroutines.flow.Flow
 import ru.aleshin.core.domain.entities.settings.TasksSettings
 import ru.aleshin.core.domain.repository.TasksSettingsRepository
-import ru.aleshin.core.utils.functional.DomainResult
+import ru.aleshin.core.utils.functional.FlowDomainResult
 import ru.aleshin.core.utils.functional.UnitDomainResult
 import ru.aleshin.features.home.impl.domain.common.HomeEitherWrapper
 import ru.aleshin.features.home.impl.domain.entities.HomeFailures
@@ -29,7 +28,7 @@ import javax.inject.Inject
  */
 internal interface SettingsInteractor {
 
-    suspend fun fetchTasksSettings(): Flow<DomainResult<HomeFailures, TasksSettings>>
+    suspend fun fetchTasksSettings(): FlowDomainResult<HomeFailures, TasksSettings>
     suspend fun updateTasksSettings(settings: TasksSettings): UnitDomainResult<HomeFailures>
 
     class Base @Inject constructor(

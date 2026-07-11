@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ import ru.aleshin.core.domain.entities.settings.ThemeType
  */
 @Entity(tableName = "ThemeSettings")
 data class ThemeSettingsEntity(
-    @PrimaryKey(autoGenerate = false) val id: Int = 0,
+    @PrimaryKey(autoGenerate = false) val id: Long = 0,
     @ColumnInfo("language") val language: LanguageType = LanguageType.DEFAULT,
     @ColumnInfo("theme_colors") val themeColors: ThemeType = ThemeType.DEFAULT,
     @ColumnInfo("colors_type") val colorsType: ColorsType = ColorsType.PINK,

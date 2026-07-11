@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,8 @@
 package ru.aleshin.features.home.impl.domain.interactors
 
 import ru.aleshin.core.domain.entities.categories.SubCategory
-import ru.aleshin.core.domain.repository.SubCategoriesRepository
+import ru.aleshin.core.domain.repository.SubCategoryRepository
+import ru.aleshin.core.utils.functional.DomainResult
 import ru.aleshin.core.utils.functional.UnitDomainResult
 import ru.aleshin.features.home.impl.domain.common.HomeEitherWrapper
 import ru.aleshin.features.home.impl.domain.entities.HomeFailures
@@ -27,25 +28,20 @@ import javax.inject.Inject
  */
 internal interface SubCategoriesInteractor {
 
-    suspend fun addSubCategory(subCategory: SubCategory): UnitDomainResult<HomeFailures>
-    suspend fun updateSubCategory(subCategory: SubCategory): UnitDomainResult<HomeFailures>
-    suspend fun deleteSubCategory(subCategory: SubCategory): UnitDomainResult<HomeFailures>
+    suspend fun addOrUpdateSubCategory(subCategory: SubCategory): DomainResult<HomeFailures, Long>
+    suspend fun deleteSubCategoryById(subCategoryId: Long): UnitDomainResult<HomeFailures>
 
     class Base @Inject constructor(
-        private val subCategoriesRepository: SubCategoriesRepository,
+        private val subCategoryRepository: SubCategoryRepository,
         private val eitherWrapper: HomeEitherWrapper,
     ) : SubCategoriesInteractor {
 
-        override suspend fun addSubCategory(subCategory: SubCategory) = eitherWrapper.wrap {
-            subCategoriesRepository.addSubCategories(listOf(subCategory))
+        override suspend fun addOrUpdateSubCategory(subCategory: SubCategory) = eitherWrapper.wrap {
+            subCategoryRepository.addOrUpdateSubCategory(subCategory)
         }
 
-        override suspend fun deleteSubCategory(subCategory: SubCategory) = eitherWrapper.wrap {
-            subCategoriesRepository.deleteSubCategory(subCategory)
-        }
-
-        override suspend fun updateSubCategory(subCategory: SubCategory) = eitherWrapper.wrap {
-            subCategoriesRepository.updateSubCategory(subCategory)
+        override suspend fun deleteSubCategoryById(subCategoryId: Long) = eitherWrapper.wrap {
+            subCategoryRepository.deleteSubCategoryById(subCategoryId)
         }
     }
 }

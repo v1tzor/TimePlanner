@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,17 +42,17 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import ru.aleshin.core.domain.entities.template.RepeatTime
-import ru.aleshin.core.ui.mappers.mapToIconPainter
-import ru.aleshin.core.ui.mappers.mapToString
-import ru.aleshin.core.ui.theme.TimePlannerRes
-import ru.aleshin.core.ui.views.CategoryIconMonogram
-import ru.aleshin.core.ui.views.CategoryTextMonogram
-import ru.aleshin.core.ui.views.WarningDeleteDialog
-import ru.aleshin.core.ui.views.toMinutesOrHoursTitle
+import ru.aleshin.core.presentation.mappers.mapToIconPainter
+import ru.aleshin.core.presentation.models.categories.MainCategoryDetailsUi
+import ru.aleshin.core.presentation.models.templates.TemplateUi
 import ru.aleshin.core.utils.extensions.duration
-import ru.aleshin.features.home.impl.presentation.models.categories.CategoriesUi
-import ru.aleshin.features.home.impl.presentation.models.templates.TemplateUi
 import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
+import ru.aleshin.timeplanner.core.ui.mappers.mapToString
+import ru.aleshin.timeplanner.core.ui.theme.TimePlannerRes
+import ru.aleshin.timeplanner.core.ui.views.CategoryIconMonogram
+import ru.aleshin.timeplanner.core.ui.views.CategoryTextMonogram
+import ru.aleshin.timeplanner.core.ui.views.WarningDeleteDialog
+import ru.aleshin.timeplanner.core.ui.views.toMinutesOrHoursTitle
 import java.text.SimpleDateFormat
 import java.util.Date
 
@@ -62,7 +62,7 @@ import java.util.Date
 @Composable
 internal fun TemplatesItem(
     modifier: Modifier = Modifier,
-    categories: List<CategoriesUi>,
+    categories: List<MainCategoryDetailsUi>,
     model: TemplateUi,
     onAddRepeat: (RepeatTime) -> Unit,
     onUpdate: (TemplateUi) -> Unit = {},
@@ -106,7 +106,7 @@ internal fun TemplatesItem(
                 }
                 Text(
                     text = when (model.subCategory != null) {
-                        true -> TimePlannerRes.strings.splitFormat.format(categoryName, model.subCategory.name)
+                        true -> TimePlannerRes.strings.splitFormat.format(categoryName, model.subCategory!!.name)
                         false -> categoryName
                     },
                     color = MaterialTheme.colorScheme.onSurface,

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,17 +15,18 @@
  */
 package ru.aleshin.core.domain.repository
 
-import ru.aleshin.core.domain.entities.schedules.TimeTask
-import java.util.*
+import kotlinx.coroutines.flow.Flow
+import ru.aleshin.core.domain.entities.tasks.TimeTask
+import java.util.Date
 
 /**
  * @author Stanislav Aleshin on 10.03.2023.
  */
 interface TimeTaskRepository {
-    suspend fun addTimeTasks(timeTasks: List<TimeTask>)
-    suspend fun fetchAllTimeTaskByDate(date: Date): List<TimeTask>
-    suspend fun fetchTimeTaskByKey(key: Long): TimeTask?
-    suspend fun updateTimeTaskList(timeTaskList: List<TimeTask>)
-    suspend fun updateTimeTask(timeTask: TimeTask)
-    suspend fun deleteTimeTasks(keys: List<Long>)
+    suspend fun addOrUpdateTimeTask(timeTask: TimeTask): Long
+    suspend fun addOrUpdateTimeTasks(timeTasks: List<TimeTask>)
+    suspend fun fetchAllTimeTasksByDate(date: Date): Flow<List<TimeTask>>
+    suspend fun fetchTimeTaskById(id: Long): TimeTask?
+    suspend fun fetchTimeTaskByTemplate(templateId: Long, date: Date): TimeTask?
+    suspend fun deleteTimeTasksByIds(ids: List<Long>)
 }

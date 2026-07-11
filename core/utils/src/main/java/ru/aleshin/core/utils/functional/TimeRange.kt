@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,8 @@ package ru.aleshin.core.utils.functional
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
+import ru.aleshin.core.utils.extensions.setStartDay
+import java.util.Calendar
 import java.util.Date
 
 /**
@@ -28,4 +30,29 @@ import java.util.Date
 data class TimeRange(
     @Serializable(DateSerializer::class) val from: Date,
     @Serializable(DateSerializer::class) val to: Date,
-) : Parcelable
+) : Parcelable {
+
+    fun periodDates(): List<Date> {
+        if (from.after(to)) return emptyList()
+
+        val startCalendar = from.startOfDayCalendar()
+        val endCalendar = to.startOfDayCalendar()
+        val dates = mutableListOf<Date>()
+
+        while (!startCalendar.after(endCalendar)) {
+            dates.add(startCalendar.time)
+            startCalendar.add(Calendar.DAY_OF_YEAR, 1)
+        }
+
+        return dates
+    }
+
+    private fun Date.startOfDayCalendar(): Calendar {
+        return Calendar.getInstance().apply {
+            time = this@startOfDayCalendar
+            setStartDay()
+        }
+    }
+}
+
+infix fun Date.toRange(dateTo: Date): TimeRange = TimeRange(this, dateTo)

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import androidx.room.PrimaryKey
  */
 @Entity(tableName = "TasksSettings")
 data class TasksSettingsEntity(
-    @PrimaryKey val id: Int = 0,
+    @PrimaryKey(autoGenerate = false) val id: Long = 0,
     @ColumnInfo("task_view_status") val taskViewStatus: String = "COMPACT",
     @ColumnInfo("task_analytics_range") val taskAnalyticsRange: String = "WEEK",
     @ColumnInfo("calendar_button_behavior") val calendarButtonBehavior: String = "SET_CURRENT_DATE",

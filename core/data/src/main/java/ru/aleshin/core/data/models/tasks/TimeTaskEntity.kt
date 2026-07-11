@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,8 @@ import androidx.room.*
 import ru.aleshin.core.data.models.categories.MainCategoryEntity
 import ru.aleshin.core.data.models.categories.SubCategoryEntity
 import ru.aleshin.core.data.models.schedules.DailyScheduleEntity
+import ru.aleshin.core.data.models.template.TemplateEntity
+import ru.aleshin.core.domain.entities.tasks.TaskPriority
 
 /**
  * @author Stanislav Aleshin on 21.02.2023.
@@ -44,6 +46,12 @@ import ru.aleshin.core.data.models.schedules.DailyScheduleEntity
             childColumns = arrayOf("sub_category_id"),
             onDelete = ForeignKey.SET_NULL,
         ),
+        ForeignKey(
+            entity = TemplateEntity::class,
+            parentColumns = arrayOf("id"),
+            childColumns = arrayOf("linked_template_id"),
+            onDelete = ForeignKey.SET_NULL,
+        ),
     ],
 )
 data class TimeTaskEntity(
@@ -53,11 +61,11 @@ data class TimeTaskEntity(
     @ColumnInfo("start_time") val startTime: Long,
     @ColumnInfo("end_time") val endTime: Long,
     @ColumnInfo("created_at") val createdAt: Long? = null,
-    @ColumnInfo("main_category_id", index = true) val mainCategoryId: Int,
-    @ColumnInfo("sub_category_id", index = true) val subCategoryId: Int?,
+    @ColumnInfo("main_category_id", index = true) val mainCategoryId: Long,
+    @ColumnInfo("sub_category_id", index = true) val subCategoryId: Long?,
+    @ColumnInfo("linked_template_id", index = true) val linkedTemplateId: Long?,
     @ColumnInfo("is_completed", defaultValue = "1") val isCompleted: Boolean,
-    @ColumnInfo("is_important") val isImportantMax: Boolean,
-    @ColumnInfo("is_medium_important", defaultValue = "0") val isImportantMedium: Boolean,
+    @ColumnInfo("priority") val priority: TaskPriority,
     @ColumnInfo("is_enable_notification") val isEnableNotification: Boolean,
     @ColumnInfo("fifteen_minutes_before_notify", defaultValue = "0") val fifteenMinutesBeforeNotify: Boolean = false,
     @ColumnInfo("one_hour_before_notify", defaultValue = "0") val oneHourBeforeNotify: Boolean = false,

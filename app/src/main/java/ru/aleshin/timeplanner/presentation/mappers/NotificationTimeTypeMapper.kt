@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,14 +15,14 @@
  */
 package ru.aleshin.timeplanner.presentation.mappers
 
-import ru.aleshin.core.ui.models.NotificationTimeType
-import ru.aleshin.core.ui.theme.tokens.TimePlannerStrings
+import ru.aleshin.core.presentation.models.NotificationTimeTypeUi
+import ru.aleshin.timeplanner.core.ui.theme.tokens.TimePlannerStrings
 
 /**
  * @author Stanislav Aleshin on 10.11.2023.
  */
-fun NotificationTimeType.mapToString(strings: TimePlannerStrings) = when (this) {
-    NotificationTimeType.BEFORE_TASK -> strings.beforeTaskNotifyText
-    NotificationTimeType.START_TASK -> strings.startTaskNotifyText
-    NotificationTimeType.AFTER_TASK -> strings.afterTaskNotifyText
+fun NotificationTimeTypeUi.mapToString(strings: TimePlannerStrings) = when (this) {
+    NotificationTimeTypeUi.BEFORE_TASK -> strings.beforeTaskNotifyText
+    NotificationTimeTypeUi.START_TASK -> strings.startTaskNotifyText
+    NotificationTimeTypeUi.AFTER_TASK -> strings.afterTaskNotifyText
 }

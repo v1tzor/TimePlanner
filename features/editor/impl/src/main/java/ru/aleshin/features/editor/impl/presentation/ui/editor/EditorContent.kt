@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,24 +57,22 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import ru.aleshin.core.ui.theme.TimePlannerRes
-import ru.aleshin.core.ui.views.CustomLargeTextField
+import ru.aleshin.core.presentation.models.categories.MainCategoryDetailsUi
+import ru.aleshin.core.presentation.models.categories.MainCategoryUi
+import ru.aleshin.core.presentation.models.categories.SubCategoryUi
 import ru.aleshin.core.utils.extensions.fetchHourOfDay
 import ru.aleshin.core.utils.extensions.shiftDay
 import ru.aleshin.core.utils.extensions.shiftMillis
 import ru.aleshin.core.utils.functional.Constants
 import ru.aleshin.core.utils.functional.TimeRange
+import ru.aleshin.features.editor.impl.presentation.mappers.convertToItem
 import ru.aleshin.features.editor.impl.presentation.mappers.convertToModel
-import ru.aleshin.features.editor.impl.presentation.mappers.convertToParameter
-import ru.aleshin.features.editor.impl.presentation.models.PriorityParameters
-import ru.aleshin.features.editor.impl.presentation.models.categories.CategoriesUi
-import ru.aleshin.features.editor.impl.presentation.models.categories.MainCategoryUi
-import ru.aleshin.features.editor.impl.presentation.models.categories.SubCategoryUi
-import ru.aleshin.features.editor.impl.presentation.models.editmodel.EditParametersUi
+import ru.aleshin.features.editor.impl.presentation.models.tasks.TaskPriorityItemUi
+import ru.aleshin.features.editor.impl.presentation.models.tasks.TimeTaskEditParametersUi
 import ru.aleshin.features.editor.impl.presentation.theme.EditorThemeRes
 import ru.aleshin.features.editor.impl.presentation.ui.editor.contract.EditorState
-import ru.aleshin.features.editor.impl.presentation.ui.editor.store.CategoryValidateError
-import ru.aleshin.features.editor.impl.presentation.ui.editor.store.TimeRangeError
+import ru.aleshin.features.editor.impl.presentation.ui.editor.validators.CategoryValidateError
+import ru.aleshin.features.editor.impl.presentation.ui.editor.validators.TimeRangeError
 import ru.aleshin.features.editor.impl.presentation.ui.editor.views.DurationTitle
 import ru.aleshin.features.editor.impl.presentation.ui.editor.views.EndTimeField
 import ru.aleshin.features.editor.impl.presentation.ui.editor.views.MainCategoryChooser
@@ -83,6 +81,8 @@ import ru.aleshin.features.editor.impl.presentation.ui.editor.views.SegmentedPar
 import ru.aleshin.features.editor.impl.presentation.ui.editor.views.StartTimeField
 import ru.aleshin.features.editor.impl.presentation.ui.editor.views.SubCategoryChooser
 import ru.aleshin.features.editor.impl.presentation.ui.editor.views.TaskNotificationsMenu
+import ru.aleshin.timeplanner.core.ui.theme.TimePlannerRes
+import ru.aleshin.timeplanner.core.ui.views.CustomLargeTextField
 
 /**
  * @author Stanislav Aleshin on 25.02.2023.
@@ -95,10 +95,11 @@ internal fun EditorContent(
     onNoteChange: (String?) -> Unit,
     onAddSubCategory: (String) -> Unit,
     onTimeRangeChange: (TimeRange) -> Unit,
-    onChangeParameters: (EditParametersUi) -> Unit,
+    onChangeParameters: (TimeTaskEditParametersUi) -> Unit,
     onDurationPresetsChange: (List<Long>) -> Unit,
     onEditCategory: (MainCategoryUi) -> Unit,
     onEditSubCategory: (SubCategoryUi) -> Unit,
+    onUnlinkTemplate: () -> Unit,
     onControlTemplate: () -> Unit,
     onCreateTemplate: () -> Unit,
     onSaveClick: () -> Unit,
@@ -120,7 +121,7 @@ internal fun EditorContent(
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                 ) {
                     CategoriesSection(
-                        enabledCategories = !state.editModel.checkDateIsRepeat(),
+                        enabledCategories = state.editModel.linkedTemplateId == null,
                         isMainCategoryValidError = state.categoryValid is CategoryValidateError.EmptyCategoryError,
                         mainCategory = state.editModel.mainCategory,
                         subCategory = state.editModel.subCategory,
@@ -134,7 +135,7 @@ internal fun EditorContent(
                     )
                     HorizontalDivider(Modifier.padding(horizontal = 32.dp))
                     DateTimeSection(
-                        enabled = !state.editModel.checkDateIsRepeat(),
+                        enabled = state.editModel.linkedTemplateId == null,
                         isTimeValidError = state.timeRangeValid is TimeRangeError.DurationError,
                         timeRanges = state.editModel.timeRange,
                         duration = state.editModel.duration,
@@ -146,18 +147,17 @@ internal fun EditorContent(
                     )
                     HorizontalDivider(Modifier.padding(horizontal = 32.dp))
                     ParametersSection(
-                        enabled = !state.editModel.checkDateIsRepeat(),
+                        enabled = state.editModel.linkedTemplateId == null,
                         parameters = state.editModel.parameters,
                         onChangeParameters = onChangeParameters,
                     )
                 }
                 ActionButtonsSection(
-                    enableTemplateSelector = state.editModel.key != 0L,
-                    isRepeatTemplate = state.editModel.checkDateIsRepeat(),
-                    isTemplateSelect = state.editModel.templateId != null,
-                    onCancelClick = onCancelClick,
-                    onControl = onControlTemplate,
+                    isTemplate = state.editModel.linkedTemplateId != null,
+                    onUnlinkTemplate = onUnlinkTemplate,
+                    onControlTemplate = onControlTemplate,
                     onCreateTemplate = onCreateTemplate,
+                    onCancelClick = onCancelClick,
                     onSaveClick = onSaveClick,
                 )
             }
@@ -173,7 +173,7 @@ internal fun CategoriesSection(
     isMainCategoryValidError: Boolean,
     mainCategory: MainCategoryUi?,
     subCategory: SubCategoryUi?,
-    allCategories: List<CategoriesUi>,
+    allCategories: List<MainCategoryDetailsUi>,
     note: String?,
     onEditCategory: (MainCategoryUi) -> Unit,
     onEditSubCategory: (SubCategoryUi) -> Unit,
@@ -274,7 +274,7 @@ internal fun DateTimeSection(
     isTimeValidError: Boolean,
     timeRanges: TimeRange,
     duration: Long,
-    durationPresets: List<Long>,
+    durationPresets: List<Long>?,
     onTimeRangeChange: (TimeRange) -> Unit,
     onDurationPresetsChange: (List<Long>) -> Unit,
 ) {
@@ -333,8 +333,8 @@ internal fun DateTimeSection(
 internal fun ParametersSection(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    parameters: EditParametersUi,
-    onChangeParameters: (EditParametersUi) -> Unit,
+    parameters: TimeTaskEditParametersUi,
+    onChangeParameters: (TimeTaskEditParametersUi) -> Unit,
 ) {
     var openTaskNotificationMenu by remember { mutableStateOf(false) }
     Column(
@@ -387,8 +387,8 @@ internal fun ParametersSection(
         )
         SegmentedParametersChooser(
             enabled = enabled,
-            parameters = PriorityParameters.entries.toTypedArray(),
-            selected = parameters.priority.convertToParameter(),
+            parameters = TaskPriorityItemUi.entries.toTypedArray(),
+            selected = parameters.priority.convertToItem(),
             leadingIcon = painterResource(id = EditorThemeRes.icons.priority),
             title = EditorThemeRes.strings.priorityParameterTitle,
             onChangeSelected = { priority ->
@@ -401,10 +401,9 @@ internal fun ParametersSection(
 @Composable
 internal fun ActionButtonsSection(
     modifier: Modifier = Modifier,
-    enableTemplateSelector: Boolean,
-    isRepeatTemplate: Boolean,
-    isTemplateSelect: Boolean,
-    onControl: () -> Unit,
+    isTemplate: Boolean,
+    onUnlinkTemplate: () -> Unit,
+    onControlTemplate: () -> Unit,
     onCreateTemplate: () -> Unit,
     onCancelClick: () -> Unit,
     onSaveClick: () -> Unit,
@@ -428,14 +427,12 @@ internal fun ActionButtonsSection(
                 content = { Text(text = EditorThemeRes.strings.saveTaskButtonTitle) },
             )
             Spacer(modifier = Modifier.weight(1f))
-            if (enableTemplateSelector) {
-                TemplateSelector(
-                    isSelect = isTemplateSelect,
-                    isRepeat = isRepeatTemplate,
-                    onControl = onControl,
-                    onCreateTemplate = onCreateTemplate,
-                )
-            }
+            TemplateSelector(
+                isTemplate = isTemplate,
+                onUnlink = onUnlinkTemplate,
+                onControl = onControlTemplate,
+                onCreateTemplate = onCreateTemplate,
+            )
         }
     }
 }
@@ -444,34 +441,54 @@ internal fun ActionButtonsSection(
 internal fun TemplateSelector(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    isSelect: Boolean,
-    isRepeat: Boolean,
+    isTemplate: Boolean,
+    onUnlink: () -> Unit,
     onControl: () -> Unit,
     onCreateTemplate: () -> Unit,
 ) {
-    IconButton(
-        onClick = { if (isSelect) onControl() else onCreateTemplate() },
-        modifier = modifier
-            .size(40.dp)
-            .background(
-                color = MaterialTheme.colorScheme.primaryContainer,
-                shape = RoundedCornerShape(40.dp),
-            ),
-        enabled = enabled,
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        val templatesButton = when (isSelect) {
-            true -> when (isRepeat) {
-                true -> EditorThemeRes.icons.repeat
-                false -> TimePlannerRes.icons.enabledSettingsIcon
+        if (isTemplate) {
+            IconButton(
+                onClick = onUnlink,
+                modifier = Modifier
+                    .size(40.dp)
+                    .background(
+                        color = MaterialTheme.colorScheme.secondaryContainer,
+                        shape = RoundedCornerShape(40.dp),
+                    ),
+                enabled = enabled,
+            ) {
+                Icon(
+                    painter = painterResource(EditorThemeRes.icons.unlink),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSecondaryContainer,
+                )
             }
-
-            false -> EditorThemeRes.icons.unFavorite
         }
-        Icon(
-            painter = painterResource(id = templatesButton),
-            contentDescription = EditorThemeRes.strings.templateIconDesc,
-            tint = MaterialTheme.colorScheme.onPrimaryContainer,
-        )
+        IconButton(
+            onClick = { if (isTemplate) onControl() else onCreateTemplate() },
+            modifier = Modifier
+                .size(40.dp)
+                .background(
+                    color = MaterialTheme.colorScheme.primaryContainer,
+                    shape = RoundedCornerShape(40.dp),
+                ),
+            enabled = enabled,
+        ) {
+            val templatesButton = when (isTemplate) {
+                true -> TimePlannerRes.icons.enabledSettingsIcon
+                false -> EditorThemeRes.icons.unFavorite
+            }
+            Icon(
+                painter = painterResource(id = templatesButton),
+                contentDescription = EditorThemeRes.strings.templateIconDesc,
+                tint = MaterialTheme.colorScheme.onPrimaryContainer,
+            )
+        }
     }
 }
 

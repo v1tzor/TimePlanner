@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -70,13 +70,13 @@ internal class DetailsComposeStore @Inject constructor(
         action: DetailsAction,
         currentState: DetailsState,
     ) = when (action) {
-        is DetailsAction.UpdateSchedules -> currentState.copy(
-            isLoading = false,
-            currentSchedule = action.schedules.find { it.date == action.date },
-            schedules = action.schedules,
-        )
         is DetailsAction.UpdateLoading -> currentState.copy(
             isLoading = action.isLoading,
+        )
+        is DetailsAction.UpdateSchedules -> currentState.copy(
+            isLoading = false,
+            currentDate = action.date,
+            schedules = action.schedules,
         )
     }
 

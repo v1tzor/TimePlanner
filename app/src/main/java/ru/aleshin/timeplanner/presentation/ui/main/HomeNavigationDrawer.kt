@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,9 +27,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
-import ru.aleshin.core.ui.theme.TimePlannerRes
-import ru.aleshin.core.ui.views.DrawerItems
-import ru.aleshin.core.ui.views.DrawerLogoSection
+import ru.aleshin.timeplanner.core.ui.theme.TimePlannerRes
+import ru.aleshin.timeplanner.core.ui.views.DrawerItems
+import ru.aleshin.timeplanner.core.ui.views.DrawerLogoSection
 import ru.aleshin.core.utils.managers.DrawerItem
 import ru.aleshin.core.utils.managers.DrawerManager
 import ru.aleshin.core.utils.managers.LocalDrawerManager

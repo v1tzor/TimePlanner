@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 package ru.aleshin.timeplanner.presentation.ui.main.store
 
 import kotlinx.coroutines.delay
-import ru.aleshin.core.domain.entities.schedules.TimeTask
 import ru.aleshin.core.utils.architecture.store.work.ActionResult
 import ru.aleshin.core.utils.architecture.store.work.OutputResult
 import ru.aleshin.core.utils.architecture.store.work.WorkCommand
@@ -60,9 +59,8 @@ interface NavigationWorkProcessor : WorkProcessor<NavWorkCommand, MainAction, Ma
                 val currentTime = dateManager.fetchCurrentDate()
                 val currentDate = dateManager.fetchBeginningCurrentDay()
                 val timeRange = TimeRange(currentTime, currentTime)
-                val timeTask = TimeTask(date = currentDate, createdAt = currentTime, timeRange = timeRange)
 
-                val config = EditorConfig.Editor(timeTask, null)
+                val config = EditorConfig.Editor(date = currentDate, timeRange = timeRange)
                 OutputResult(MainOutput.NavigateToEditor(config))
             } else {
                 ActionResult(MainAction.Navigate)
@@ -70,7 +68,8 @@ interface NavigationWorkProcessor : WorkProcessor<NavWorkCommand, MainAction, Ma
         }
 
         private fun processShare(shareTarget: ShareTarget): NavWorkResult {
-            return OutputResult(MainOutput.NavigateToHome(HomeConfig.Overview(shareTarget.text, generateUniqueKey())))
+            val config = HomeConfig.Overview(shareTarget.text, generateUniqueKey())
+            return OutputResult(MainOutput.NavigateToHome(config))
         }
     }
 }

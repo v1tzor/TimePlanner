@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,14 +51,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import ru.aleshin.core.ui.mappers.mapToIconPainter
-import ru.aleshin.core.ui.mappers.mapToUi
-import ru.aleshin.core.ui.views.CategoryIconMonogram
-import ru.aleshin.core.ui.views.CategoryTextMonogram
-import ru.aleshin.core.ui.views.NoneItemsView
-import ru.aleshin.core.ui.views.toDaysTitle
+import ru.aleshin.core.presentation.mappers.mapToIconPainter
+import ru.aleshin.core.presentation.models.tasks.UndefinedTaskUi
+import ru.aleshin.timeplanner.core.ui.mappers.mapToUi
+import ru.aleshin.timeplanner.core.ui.views.CategoryIconMonogram
+import ru.aleshin.timeplanner.core.ui.views.CategoryTextMonogram
+import ru.aleshin.timeplanner.core.ui.views.NoneItemsView
+import ru.aleshin.timeplanner.core.ui.views.toDaysTitle
 import ru.aleshin.core.utils.extensions.alphaByEnabled
-import ru.aleshin.features.editor.impl.presentation.models.tasks.UndefinedTaskUi
 import ru.aleshin.features.editor.impl.presentation.theme.EditorThemeRes
 import java.util.Date
 
@@ -182,7 +182,7 @@ internal fun UndefinedTaskBottomSheetItem(
                     )
                     if (model.subCategory != null) {
                         Text(
-                            text = model.subCategory.name ?: "",
+                            text = model.subCategory!!.name ?: "",
                             modifier = Modifier.padding(top = 2.dp),
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             style = MaterialTheme.typography.bodyMedium,
@@ -191,14 +191,14 @@ internal fun UndefinedTaskBottomSheetItem(
                 }
                 Spacer(modifier = Modifier.weight(1f))
                 if (model.deadline != null) {
-                    DeadlineView(deadline = model.deadline)
+                    DeadlineView(deadline = model.deadline!!)
                 }
             }
             if (!model.note.isNullOrEmpty()) {
                 UndefinedTaskNoteView(
                     modifier = Modifier.padding(vertical = 8.dp, horizontal = 12.dp),
                     onClick = { expandedNote = !expandedNote },
-                    text = model.note,
+                    text = model.note!!,
                     expanded = expandedNote,
                     container = MaterialTheme.colorScheme.surfaceVariant,
                     content = MaterialTheme.colorScheme.onSurfaceVariant,

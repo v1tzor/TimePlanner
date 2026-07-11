@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import ru.aleshin.core.data.datasources.settings.TasksSettingsLocalDataSource
 import ru.aleshin.core.data.mappers.settings.mapToData
 import ru.aleshin.core.data.mappers.settings.mapToDomain
 import ru.aleshin.core.domain.entities.settings.TasksSettings
+import ru.aleshin.core.domain.repository.TasksSettingsRepository
 import javax.inject.Inject
 
 /**
@@ -28,7 +29,7 @@ import javax.inject.Inject
  */
 class TasksSettingsRepositoryImpl @Inject constructor(
     private val localDataSource: TasksSettingsLocalDataSource,
-) : ru.aleshin.core.domain.repository.TasksSettingsRepository {
+) : TasksSettingsRepository {
 
     override fun fetchSettings(): Flow<TasksSettings> {
         return localDataSource.fetchSettings().map { it.mapToDomain() }

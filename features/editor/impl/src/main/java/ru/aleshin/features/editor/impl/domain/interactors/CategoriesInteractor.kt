@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,12 +15,13 @@
  */
 package ru.aleshin.features.editor.impl.domain.interactors
 
-import kotlinx.coroutines.flow.first
-import ru.aleshin.core.domain.entities.categories.Categories
+import kotlinx.coroutines.flow.map
+import ru.aleshin.core.domain.entities.categories.MainCategoryDetails
 import ru.aleshin.core.domain.entities.categories.SubCategory
-import ru.aleshin.core.domain.repository.CategoriesRepository
-import ru.aleshin.core.domain.repository.SubCategoriesRepository
+import ru.aleshin.core.domain.repository.MainCategoryRepository
+import ru.aleshin.core.domain.repository.SubCategoryRepository
 import ru.aleshin.core.utils.functional.DomainResult
+import ru.aleshin.core.utils.functional.FlowDomainResult
 import ru.aleshin.features.editor.impl.domain.common.EditorEitherWrapper
 import ru.aleshin.features.editor.impl.domain.entites.EditorFailures
 import javax.inject.Inject
@@ -30,21 +31,23 @@ import javax.inject.Inject
  */
 internal interface CategoriesInteractor {
 
-    suspend fun fetchCategories(): DomainResult<EditorFailures, List<Categories>>
+    suspend fun fetchCategories(): FlowDomainResult<EditorFailures, List<MainCategoryDetails>>
     suspend fun addSubCategory(subCategory: SubCategory): DomainResult<EditorFailures, Unit>
 
     class Base @Inject constructor(
-        private val categoriesRepository: CategoriesRepository,
-        private val subCategoriesRepository: SubCategoriesRepository,
+        private val mainCategoryRepository: MainCategoryRepository,
+        private val subCategoryRepository: SubCategoryRepository,
         private val eitherWrapper: EditorEitherWrapper,
     ) : CategoriesInteractor {
 
-        override suspend fun fetchCategories() = eitherWrapper.wrap {
-            categoriesRepository.fetchCategories().first().sortedBy { it.category.id != 0 }
+        override suspend fun fetchCategories() = eitherWrapper.wrapFlow {
+            mainCategoryRepository.fetchAllCategoriesDetails().map { categories ->
+                categories.sortedBy { it.category.id != 0L }
+            }
         }
 
         override suspend fun addSubCategory(subCategory: SubCategory) = eitherWrapper.wrap {
-            subCategoriesRepository.addSubCategories(listOf(subCategory))
+            subCategoryRepository.addOrUpdateSubCategories(listOf(subCategory))
         }
     }
 }

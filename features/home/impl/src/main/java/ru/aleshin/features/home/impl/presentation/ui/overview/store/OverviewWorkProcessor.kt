@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,16 +15,17 @@
  */
 package ru.aleshin.features.home.impl.presentation.ui.overview.store
 
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.onStart
+import ru.aleshin.core.presentation.mappers.mapToDomain
+import ru.aleshin.core.presentation.mappers.mapToUi
+import ru.aleshin.core.presentation.models.tasks.UndefinedTaskUi
 import ru.aleshin.core.utils.architecture.store.work.ActionResult
 import ru.aleshin.core.utils.architecture.store.work.EffectResult
 import ru.aleshin.core.utils.architecture.store.work.FlowWorkProcessor
 import ru.aleshin.core.utils.architecture.store.work.OutputResult
 import ru.aleshin.core.utils.architecture.store.work.WorkCommand
 import ru.aleshin.core.utils.architecture.store.work.WorkResult
-import ru.aleshin.core.utils.extensions.isIncludeTime
-import ru.aleshin.core.utils.extensions.mapToDate
 import ru.aleshin.core.utils.extensions.shiftDay
 import ru.aleshin.core.utils.extensions.startThisDay
 import ru.aleshin.core.utils.functional.TimeRange
@@ -32,16 +33,10 @@ import ru.aleshin.core.utils.functional.collectAndHandle
 import ru.aleshin.core.utils.functional.handle
 import ru.aleshin.core.utils.managers.DateManager
 import ru.aleshin.features.editor.api.EditorConfig
-import ru.aleshin.features.home.impl.domain.interactors.CategoriesInteractor
+import ru.aleshin.features.home.impl.domain.interactors.MainCategoriesInteractor
 import ru.aleshin.features.home.impl.domain.interactors.ScheduleInteractor
 import ru.aleshin.features.home.impl.domain.interactors.ShareTextInteractor
 import ru.aleshin.features.home.impl.domain.interactors.UndefinedTasksInteractor
-import ru.aleshin.features.home.impl.presentation.mapppers.categories.mapToUi
-import ru.aleshin.features.home.impl.presentation.mapppers.schedules.ScheduleDomainToUiMapper
-import ru.aleshin.features.home.impl.presentation.mapppers.schedules.mapToDomain
-import ru.aleshin.features.home.impl.presentation.mapppers.schedules.mapToUi
-import ru.aleshin.features.home.impl.presentation.models.schedules.UndefinedTaskUi
-import ru.aleshin.features.home.impl.presentation.models.schedules.convertToTimeTask
 import ru.aleshin.features.home.impl.presentation.ui.overview.contract.OverviewAction
 import ru.aleshin.features.home.impl.presentation.ui.overview.contract.OverviewEffect
 import ru.aleshin.features.home.impl.presentation.ui.overview.contract.OverviewOutput
@@ -56,10 +51,9 @@ internal interface OverviewWorkProcessor :
 
     class Base @Inject constructor(
         private val scheduleInteractor: ScheduleInteractor,
-        private val categoriesInteractor: CategoriesInteractor,
+        private val categoriesInteractor: MainCategoriesInteractor,
         private val undefinedTasksInteractor: UndefinedTasksInteractor,
         private val shareTextInteractor: ShareTextInteractor,
-        private val schedulesUiMapper: ScheduleDomainToUiMapper,
         private val dateManager: DateManager,
     ) : OverviewWorkProcessor {
 
@@ -67,26 +61,30 @@ internal interface OverviewWorkProcessor :
             is OverviewWorkCommand.LoadSchedules -> loadSchedulesWork()
             is OverviewWorkCommand.LoadUndefinedTasks -> loadUndefinedTasks()
             is OverviewWorkCommand.LoadCategories -> loadCategoriesWork()
+            is OverviewWorkCommand.LoadCurrentTask -> loadCurrentTaskWork()
             is OverviewWorkCommand.CreateOrUpdateUndefinedTasks -> createOrUpdateTasksWork(command.tasks)
             is OverviewWorkCommand.PrepareSharedTextImport -> prepareSharedTextImportWork(command.text)
             is OverviewWorkCommand.ExecuteUndefinedTask -> executeUndefinedTaskWork(command.data, command.task)
             is OverviewWorkCommand.DeleteUndefinedTask -> deleteUndefinedTaskWork(command.task)
         }
 
-        private fun loadSchedulesWork() = flow {
+        private fun loadSchedulesWork() = flow<OverviewWorkResult> {
             val currentDate = dateManager.fetchBeginningCurrentDay()
-            val previewTimeRange = TimeRange(currentDate.shiftDay(-1), currentDate.shiftDay(2))
-            scheduleInteractor.fetchOverviewSchedules().handle(
+            val previewTimeRange = TimeRange(
+                from = currentDate.shiftDay(-1),
+                to = currentDate.shiftDay(2)
+            )
+
+            scheduleInteractor.fetchOverviewSchedules(previewTimeRange).collectAndHandle(
                 onLeftAction = { emit(EffectResult(OverviewEffect.ShowError(it))) },
                 onRightAction = { schedules ->
-                    val previewSchedules = schedules.filter {
-                        previewTimeRange.isIncludeTime(it.date.mapToDate())
-                    }.map {
-                        schedulesUiMapper.map(it)
-                    }
-                    emit(ActionResult(OverviewAction.UpdateSchedules(currentDate, previewSchedules)))
-                },
+                    val schedules = schedules.map { it.mapToUi() }
+                    emit(ActionResult(OverviewAction.UpdateSchedules(currentDate, schedules)))
+                    emit(ActionResult(OverviewAction.UpdateLoading(false)))
+                }
             )
+        }.onStart {
+            emit(ActionResult(OverviewAction.UpdateLoading(true)))
         }
 
         private fun loadUndefinedTasks() = flow {
@@ -107,6 +105,15 @@ internal interface OverviewWorkProcessor :
             )
         }
 
+        private fun loadCurrentTaskWork() = flow {
+            scheduleInteractor.fetchActiveTimeTaskDetails().collectAndHandle(
+                onLeftAction = { emit(EffectResult(OverviewEffect.ShowError(it))) },
+                onRightAction = { timeTask ->
+                    emit(ActionResult(OverviewAction.UpdateCurrentTask(timeTask?.mapToUi())))
+                },
+            )
+        }
+
         private fun createOrUpdateTasksWork(tasks: List<UndefinedTaskUi>) = flow {
             undefinedTasksInteractor.addOrUpdateUndefinedTasks(tasks.map { it.mapToDomain() }).handle(
                 onLeftAction = { emit(EffectResult(OverviewEffect.ShowError(it))) },
@@ -114,36 +121,27 @@ internal interface OverviewWorkProcessor :
         }
 
         private fun prepareSharedTextImportWork(text: String) = flow {
-            categoriesInteractor.fetchCategories().first().handle(
+            shareTextInteractor.fetchSharedTextTasks(text).handle(
                 onLeftAction = { emit(EffectResult(OverviewEffect.ShowError(it))) },
-                onRightAction = { categories ->
-                    shareTextInteractor.fetchSharedTextTasks(text, categories).handle(
-                        onLeftAction = { emit(EffectResult(OverviewEffect.ShowError(it))) },
-                        onRightAction = { tasks ->
-                            if (tasks.isNotEmpty()) {
-                                val tasksUi = tasks.map { it.mapToUi() }
-                                val categoriesUi = categories.map { it.mapToUi() }
-                                emit(ActionResult(OverviewAction.UpdateSharedTextTasks(tasksUi, categoriesUi)))
-                            }
-                        },
-                    )
-                },
+                onRightAction = { tasks ->
+                    val tasks = tasks.map { it.mapToUi() }
+                    emit(ActionResult(OverviewAction.UpdateSharedTextTasks(tasks)))
+                }
             )
         }
 
         private fun executeUndefinedTaskWork(date: Date, task: UndefinedTaskUi) = flow<OverviewWorkResult> {
             val targetTime = dateManager.setCurrentHMS(date)
-            val timeTask = task.convertToTimeTask(date.startThisDay(), TimeRange(targetTime, targetTime))
             val config = EditorConfig.Editor(
-                timeTask = timeTask.mapToDomain(), 
-                template = null, 
+                date = date.startThisDay(),
+                timeRange = TimeRange(targetTime, targetTime),
                 undefinedTaskId = task.id,
             )
             emit(OutputResult(OverviewOutput.NavigateToEditor(config)))
         }
 
         private fun deleteUndefinedTaskWork(task: UndefinedTaskUi) = flow {
-            undefinedTasksInteractor.deleteUndefinedTask(task.mapToDomain()).handle(
+            undefinedTasksInteractor.deleteUndefinedTaskById(task.id).handle(
                 onLeftAction = { emit(EffectResult(OverviewEffect.ShowError(it))) },
             )
         }
@@ -154,6 +152,7 @@ internal sealed class OverviewWorkCommand : WorkCommand {
     data object LoadSchedules : OverviewWorkCommand()
     data object LoadUndefinedTasks : OverviewWorkCommand()
     data object LoadCategories : OverviewWorkCommand()
+    data object LoadCurrentTask : OverviewWorkCommand()
     data class CreateOrUpdateUndefinedTasks(val tasks: List<UndefinedTaskUi>) : OverviewWorkCommand()
     data class PrepareSharedTextImport(val text: String) : OverviewWorkCommand()
     data class ExecuteUndefinedTask(val data: Date, val task: UndefinedTaskUi) : OverviewWorkCommand()

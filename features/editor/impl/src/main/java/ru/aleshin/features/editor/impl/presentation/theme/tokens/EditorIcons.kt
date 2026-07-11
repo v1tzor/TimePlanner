@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,6 +40,7 @@ internal data class EditorIcons(
     val statistics: Int,
     val notifications: Int,
     val priority: Int,
+    val unlink: Int,
 )
 
 internal val baseHomeIcons = EditorIcons(
@@ -61,6 +62,7 @@ internal val baseHomeIcons = EditorIcons(
     statistics = R.drawable.ic_chart_check,
     notifications = R.drawable.ic_notifications_outline,
     priority = R.drawable.ic_priority_high,
+    unlink = R.drawable.ic_link_off,
 )
 
 internal val LocalEditorIcons = staticCompositionLocalOf<EditorIcons> {

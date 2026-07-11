@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,11 @@
 package ru.aleshin.features.home.impl.presentation.ui.home.contract
 
 import kotlinx.serialization.Serializable
-import ru.aleshin.core.domain.entities.schedules.DailyScheduleStatus
 import ru.aleshin.core.domain.entities.settings.CalendarButtonBehavior
 import ru.aleshin.core.domain.entities.settings.TasksSettings
 import ru.aleshin.core.domain.entities.settings.ViewToggleStatus
+import ru.aleshin.core.presentation.models.schedules.ScheduleDetailsUi
+import ru.aleshin.core.presentation.models.tasks.TimeTaskDetailsUi
 import ru.aleshin.core.utils.architecture.component.BaseInput
 import ru.aleshin.core.utils.architecture.component.BaseOutput
 import ru.aleshin.core.utils.architecture.store.contract.StoreAction
@@ -29,8 +30,6 @@ import ru.aleshin.core.utils.architecture.store.contract.StoreState
 import ru.aleshin.core.utils.functional.DateSerializer
 import ru.aleshin.features.editor.api.EditorConfig
 import ru.aleshin.features.home.impl.domain.entities.HomeFailures
-import ru.aleshin.features.home.impl.presentation.models.schedules.ScheduleUi
-import ru.aleshin.features.home.impl.presentation.models.schedules.TimeTaskUi
 import java.util.Date
 
 /**
@@ -40,10 +39,9 @@ import java.util.Date
 internal data class HomeState(
     @Serializable(DateSerializer::class)
     val selectedDate: Date? = null,
-    val dateStatus: DailyScheduleStatus? = null,
+    val schedule: ScheduleDetailsUi? = null,
     val taskViewStatus: ViewToggleStatus = ViewToggleStatus.COMPACT,
     val calendarButtonBehavior: CalendarButtonBehavior = CalendarButtonBehavior.SET_CURRENT_DATE,
-    val timeTasks: List<TimeTaskUi> = emptyList(),
 ) : StoreState
 
 internal sealed class HomeEvent : StoreEvent {
@@ -53,10 +51,10 @@ internal sealed class HomeEvent : StoreEvent {
     data object SelectedCurrentDate : HomeEvent()
     data class LoadSchedule(val date: Date?) : HomeEvent()
     data class PressAddTimeTaskButton(val startTime: Date, val endTime: Date) : HomeEvent()
-    data class PressEditTimeTaskButton(val timeTask: TimeTaskUi) : HomeEvent()
-    data class ChangeTaskDoneStateButton(val timeTask: TimeTaskUi) : HomeEvent()
-    data class TimeTaskShiftUp(val timeTask: TimeTaskUi) : HomeEvent()
-    data class TimeTaskShiftDown(val timeTask: TimeTaskUi) : HomeEvent()
+    data class PressEditTimeTaskButton(val timeTask: TimeTaskDetailsUi) : HomeEvent()
+    data class ChangeTaskDoneStateButton(val timeTask: TimeTaskDetailsUi) : HomeEvent()
+    data class TimeTaskShiftUp(val timeTask: TimeTaskDetailsUi) : HomeEvent()
+    data class TimeTaskShiftDown(val timeTask: TimeTaskDetailsUi) : HomeEvent()
     data class PressViewToggleButton(val status: ViewToggleStatus) : HomeEvent()
 }
 
@@ -65,10 +63,8 @@ internal sealed class HomeEffect : StoreEffect {
 }
 
 internal sealed class HomeAction : StoreAction {
-    object Navigate : HomeAction()
-    data class SetupSettings(val settings: TasksSettings) : HomeAction()
-    data class UpdateSchedule(val schedule: ScheduleUi) : HomeAction()
-    data class SetEmptySchedule(val date: Date, val status: DailyScheduleStatus?) : HomeAction()
+    data class UpdateSettings(val settings: TasksSettings) : HomeAction()
+    data class UpdateSchedule(val date: Date, val schedule: ScheduleDetailsUi?) : HomeAction()
 }
 
 internal sealed class HomeOutput : BaseOutput {

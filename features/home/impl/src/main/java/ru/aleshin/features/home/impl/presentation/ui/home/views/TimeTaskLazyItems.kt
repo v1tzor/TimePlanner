@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,12 +43,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import ru.aleshin.core.ui.mappers.mapToIconPainter
-import ru.aleshin.core.ui.views.toMinutesOrHoursTitle
+import ru.aleshin.core.presentation.mappers.mapToIconPainter
+import ru.aleshin.core.presentation.models.tasks.TimeTaskDetailsUi
 import ru.aleshin.core.utils.extensions.duration
 import ru.aleshin.core.utils.functional.Constants
-import ru.aleshin.features.home.impl.presentation.models.schedules.TimeTaskUi
 import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
+import ru.aleshin.timeplanner.core.ui.views.toMinutesOrHoursTitle
 import java.text.SimpleDateFormat
 import java.util.Date
 
@@ -58,7 +58,7 @@ import java.util.Date
 @Composable
 internal fun LazyItemScope.PlannedTimeTaskItem(
     modifier: Modifier = Modifier,
-    model: TimeTaskUi,
+    model: TimeTaskDetailsUi,
     isCompactView: Boolean = true,
     onItemClick: (Long) -> Unit,
 ) {
@@ -107,7 +107,7 @@ internal fun LazyItemScope.PlannedTimeTaskItem(
 @Composable
 internal fun LazyItemScope.CompletedTimeTaskItem(
     modifier: Modifier = Modifier,
-    model: TimeTaskUi,
+    model: TimeTaskDetailsUi,
     isCompactView: Boolean = true,
     onItemClick: (Long) -> Unit,
     onDoneChange: () -> Unit,
@@ -160,7 +160,7 @@ internal fun LazyItemScope.CompletedTimeTaskItem(
 @Composable
 internal fun LazyItemScope.RunningTimeTaskItem(
     modifier: Modifier = Modifier,
-    model: TimeTaskUi,
+    model: TimeTaskDetailsUi,
     onMoreButtonClick: (Long) -> Unit,
     onIncreaseTime: () -> Unit,
     onReduceTime: () -> Unit,
@@ -260,7 +260,7 @@ internal fun LazyItemScope.AddTimeTaskViewItem(
 }
 
 @Composable
-fun StartTaskTimeTitle(
+internal fun StartTaskTimeTitle(
     modifier: Modifier = Modifier,
     time: Date,
     color: Color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -275,7 +275,7 @@ fun StartTaskTimeTitle(
 }
 
 @Composable
-fun EndTaskTimeTitle(
+internal fun EndTaskTimeTitle(
     modifier: Modifier = Modifier,
     isVisible: Boolean,
     time: Date,

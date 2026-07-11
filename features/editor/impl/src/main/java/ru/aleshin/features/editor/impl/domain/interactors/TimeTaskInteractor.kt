@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,11 @@
 package ru.aleshin.features.editor.impl.domain.interactors
 
 import kotlinx.coroutines.flow.first
-import ru.aleshin.core.domain.common.ScheduleStatusChecker
-import ru.aleshin.core.domain.entities.schedules.Schedule
-import ru.aleshin.core.domain.entities.schedules.TimeTask
+import ru.aleshin.core.domain.common.TimeOverlayException
+import ru.aleshin.core.domain.common.TimeOverlayManager
+import ru.aleshin.core.domain.entities.schedules.BaseDailySchedule
+import ru.aleshin.core.domain.entities.schedules.convertToDetails
+import ru.aleshin.core.domain.entities.tasks.TimeTask
 import ru.aleshin.core.domain.repository.ScheduleRepository
 import ru.aleshin.core.domain.repository.TimeTaskRepository
 import ru.aleshin.core.utils.extensions.extractAllItem
@@ -26,9 +28,6 @@ import ru.aleshin.core.utils.extensions.generateUniqueKey
 import ru.aleshin.core.utils.extensions.shiftDay
 import ru.aleshin.core.utils.functional.DomainResult
 import ru.aleshin.core.utils.functional.TimeRange
-import ru.aleshin.core.utils.managers.DateManager
-import ru.aleshin.core.utils.managers.TimeOverlayException
-import ru.aleshin.core.utils.managers.TimeOverlayManager
 import ru.aleshin.features.editor.impl.domain.common.EditorEitherWrapper
 import ru.aleshin.features.editor.impl.domain.entites.EditorFailures
 import javax.inject.Inject
@@ -39,28 +38,25 @@ import javax.inject.Inject
 internal interface TimeTaskInteractor {
 
     suspend fun addTimeTask(timeTask: TimeTask): DomainResult<EditorFailures, Long>
+    suspend fun fetchTimeTaskById(timeTaskId: Long): DomainResult<EditorFailures, TimeTask?>
     suspend fun updateTimeTask(timeTask: TimeTask): DomainResult<EditorFailures, Long>
-    suspend fun deleteTimeTask(key: Long): DomainResult<EditorFailures, Unit>
+    suspend fun deleteTimeTaskById(key: Long): DomainResult<EditorFailures, Unit>
 
     class Base @Inject constructor(
         private val scheduleRepository: ScheduleRepository,
         private val timeTaskRepository: TimeTaskRepository,
-        private val statusChecker: ScheduleStatusChecker,
         private val overlayManager: TimeOverlayManager,
-        private val dateManager: DateManager,
         private val eitherWrapper: EditorEitherWrapper,
     ) : TimeTaskInteractor {
 
         override suspend fun addTimeTask(timeTask: TimeTask) = eitherWrapper.wrap {
             val timeRange = TimeRange(timeTask.date.shiftDay(-1), timeTask.date.shiftDay(1))
-            val schedules = scheduleRepository.fetchSchedulesByRange(timeRange).first().let { schedules ->
-                if (schedules.find { it.date == timeTask.date.time } == null) {
-                    val createdSchedule = Schedule(
-                        date = timeTask.date.time,
-                        status = statusChecker.fetchState(timeTask.date, dateManager.fetchBeginningCurrentDay()),
-                    )
-                    scheduleRepository.createSchedules(listOf(createdSchedule))
-                    listOf(createdSchedule)
+            val fetchedSchedules = scheduleRepository.fetchSchedulesByRange(timeRange).first()
+            val schedules = fetchedSchedules.let { schedules ->
+                if (schedules.none { schedule -> schedule.date == timeTask.date }) {
+                    val createdSchedule = BaseDailySchedule(date = timeTask.date)
+                    scheduleRepository.addOrUpdateSchedule(createdSchedule)
+                    schedules + createdSchedule.convertToDetails()
                 } else {
                     schedules
                 }
@@ -69,9 +65,13 @@ internal interface TimeTaskInteractor {
             val key = generateUniqueKey()
 
             checkIsOverlay(allTimeTask.map { it.timeRange }, timeTask.timeRange) {
-                timeTaskRepository.addTimeTasks(listOf(timeTask.copy(key = key)))
+                timeTaskRepository.addOrUpdateTimeTasks(listOf(timeTask.copy(key = key, linkedTemplateId = null)))
             }
             return@wrap key
+        }
+
+        override suspend fun fetchTimeTaskById(timeTaskId: Long) = eitherWrapper.wrap {
+            timeTaskRepository.fetchTimeTaskById(timeTaskId)
         }
 
         override suspend fun updateTimeTask(timeTask: TimeTask) = eitherWrapper.wrap {
@@ -82,13 +82,13 @@ internal interface TimeTaskInteractor {
             }
 
             checkIsOverlay(allTimeTask.map { it.timeRange }, timeTask.timeRange) {
-                timeTaskRepository.updateTimeTask(timeTask)
+                timeTaskRepository.addOrUpdateTimeTask(timeTask)
             }
             return@wrap timeTask.key
         }
 
-        override suspend fun deleteTimeTask(key: Long) = eitherWrapper.wrap {
-            timeTaskRepository.deleteTimeTasks(listOf(key))
+        override suspend fun deleteTimeTaskById(key: Long) = eitherWrapper.wrap {
+            timeTaskRepository.deleteTimeTasksByIds(listOf(key))
         }
 
         private suspend fun checkIsOverlay(

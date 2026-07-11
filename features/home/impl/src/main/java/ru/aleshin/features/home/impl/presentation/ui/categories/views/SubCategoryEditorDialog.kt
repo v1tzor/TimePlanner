@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,10 +42,10 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import ru.aleshin.core.ui.theme.TimePlannerRes
-import ru.aleshin.core.ui.views.DialogButtons
-import ru.aleshin.features.home.impl.presentation.models.categories.MainCategoryUi
-import ru.aleshin.features.home.impl.presentation.models.categories.SubCategoryUi
+import ru.aleshin.timeplanner.core.ui.theme.TimePlannerRes
+import ru.aleshin.timeplanner.core.ui.views.DialogButtons
+import ru.aleshin.core.presentation.models.categories.MainCategoryUi
+import ru.aleshin.core.presentation.models.categories.SubCategoryUi
 import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
 
 /**

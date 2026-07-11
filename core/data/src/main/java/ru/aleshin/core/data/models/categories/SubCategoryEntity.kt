@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,11 +32,11 @@ import androidx.room.PrimaryKey
             childColumns = arrayOf("main_category_id"),
             onDelete = ForeignKey.CASCADE,
         ),
-    ],
+    ]
 )
 data class SubCategoryEntity(
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    @ColumnInfo("main_category_id", index = true) val mainCategoryId: Int,
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    @ColumnInfo("main_category_id", index = true) val mainCategoryId: Long,
     @ColumnInfo("sub_category_name") val subCategoryName: String,
     @ColumnInfo("sub_description") val description: String?,
 )

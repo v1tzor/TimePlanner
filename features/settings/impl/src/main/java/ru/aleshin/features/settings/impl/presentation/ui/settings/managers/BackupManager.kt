@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@ package ru.aleshin.features.settings.impl.presentation.ui.settings.managers
 
 import android.content.Context
 import android.net.Uri
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import ru.aleshin.core.utils.functional.Constants
 import ru.aleshin.core.utils.functional.Either
@@ -58,7 +57,7 @@ internal interface BackupManager {
                             // TODO: Not work with old model
                             val backup = Json.decodeFromString<BackupModel>(jsonString)
                             return@wrap backup.copy(
-                                categories = backup.categories.filter { it.category.id != 0 },
+                                categories = backup.categories.filter { it.category.id != 0L },
                             )
                         }
                     }

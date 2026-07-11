@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,14 +24,15 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
-import ru.aleshin.core.ui.theme.tokens.TimePlannerStrings
-import ru.aleshin.core.ui.theme.tokens.fetchCoreLanguage
-import ru.aleshin.core.ui.theme.tokens.fetchCoreStrings
 import ru.aleshin.core.utils.extensions.fetchLocale
 import ru.aleshin.core.utils.functional.Constants
 import ru.aleshin.core.utils.notifications.NotificationCreator
+import ru.aleshin.core.utils.notifications.parameters.LockScreenVisibility
 import ru.aleshin.core.utils.notifications.parameters.NotificationDefaults
 import ru.aleshin.core.utils.notifications.parameters.NotificationImportance
+import ru.aleshin.timeplanner.core.ui.theme.tokens.TimePlannerStrings
+import ru.aleshin.timeplanner.core.ui.theme.tokens.fetchCoreLanguage
+import ru.aleshin.timeplanner.core.ui.theme.tokens.fetchCoreStrings
 import ru.aleshin.timeplanner.di.component.AppComponent
 import ru.aleshin.timeplanner.presentation.notifications.NotificationAlarmHandler
 import javax.inject.Inject
@@ -75,6 +76,7 @@ class TimePlannerApp : BaseFlavorApplication(), CoroutineScope {
         channelId = Constants.Notification.CHANNEL_ID_NEW,
         channelName = coreStrings.timeTaskChannelName,
         importance = NotificationImportance.MAX,
+        lockscreenVisibility = LockScreenVisibility.PUBLIC,
         defaults = NotificationDefaults(isSound = true, isVibrate = true, isLights = true),
     )
 
@@ -83,6 +85,7 @@ class TimePlannerApp : BaseFlavorApplication(), CoroutineScope {
         channelId = Constants.Notification.CHANNEL_ID_ONGOING,
         channelName = coreStrings.ongoingTaskNotifyText,
         importance = NotificationImportance.LOW,
+        lockscreenVisibility = LockScreenVisibility.PUBLIC,
         defaults = NotificationDefaults(),
     )
 

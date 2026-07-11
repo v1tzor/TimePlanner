@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,16 +19,17 @@ import android.os.Parcelable
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
-import ru.aleshin.core.utils.extensions.fetchDay
 import ru.aleshin.core.utils.extensions.fetchDayNumberByMax
-import ru.aleshin.core.utils.extensions.fetchMonth
 import ru.aleshin.core.utils.extensions.fetchWeekDay
 import ru.aleshin.core.utils.extensions.fetchWeekNumber
+import ru.aleshin.core.utils.extensions.isYearDayOccurrence
 import ru.aleshin.core.utils.extensions.setTimeWithoutDate
 import ru.aleshin.core.utils.functional.Month
 import ru.aleshin.core.utils.functional.WeekDay
 import java.util.Calendar
 import java.util.Date
+
+private const val MAX_NEXT_DATE_LOOK_AHEAD_DAYS = 366 * 5
 
 /**
  * @author Stanislav Aleshin on 03.08.2023.
@@ -84,65 +85,34 @@ sealed class RepeatTime : Parcelable {
         is WeekDays -> date.fetchWeekDay() == day
         is WeekDayInMonth -> date.fetchWeekDay() == day && date.fetchWeekNumber() == weekNumber
         is MonthDay -> date.fetchDayNumberByMax(dayNumber) == dayNumber
-        is YearDay -> date.fetchDayNumberByMax(dayNumber) == dayNumber && date.fetchMonth() == month
+        is YearDay -> date.isYearDayOccurrence(month, dayNumber)
     }
 
     fun nextDateOrCurrent(startTime: Date, current: Date = Date()): Date {
-        val currentDate = Calendar.getInstance().apply {
-            time = current
-            setTimeWithoutDate(startTime)
-        }.time
-        return if (checkDateIsRepeat(currentDate) && currentDate > current) {
-            currentDate
-        } else {
-            nextDate(startTime, current)
-        }
+        return nextDate(startTime, current)
     }
 
     fun nextDate(startTime: Date, current: Date = Date()): Date {
-        val calendar = Calendar.getInstance()
-        val firstDay = calendar.firstDayOfWeek
-        when (this) {
-            is WeekDays -> {
-                calendar.time = current
-                if (current.fetchWeekDay().priorityByFirstDayOfWeek(firstDay) >=
-                    day.priorityByFirstDayOfWeek(firstDay)
-                ) {
-                    calendar.add(Calendar.DAY_OF_WEEK_IN_MONTH, 1)
-                }
-                calendar.set(Calendar.DAY_OF_WEEK, day.number)
-            }
+        val calendar = Calendar.getInstance().apply { time = current }
 
-            is MonthDay -> {
-                calendar.time = current
-                if (current.fetchDay() >= dayNumber) {
-                    calendar.set(Calendar.DAY_OF_MONTH, 1)
-                    calendar.add(Calendar.MONTH, 1)
-                }
-                calendar.set(Calendar.DAY_OF_MONTH, dayNumber)
-            }
+        repeat(MAX_NEXT_DATE_LOOK_AHEAD_DAYS) {
+            val candidate = Calendar.getInstance().apply {
+                time = calendar.time
+                setTimeWithoutDate(startTime)
+            }.time
+            if (checkDateIsRepeat(candidate) && candidate > current) return candidate
 
-            is YearDay -> {
-                calendar.time = current
-                if (current.fetchMonth().number >= month.number && current.fetchDay() > dayNumber) {
-                    calendar.add(Calendar.YEAR, 1)
-                }
-                calendar.set(Calendar.MONTH, month.number)
-                calendar.set(Calendar.DAY_OF_MONTH, dayNumber)
-            }
-
-            is WeekDayInMonth -> {
-                calendar.time = current
-                if (current.fetchWeekNumber() >= weekNumber &&
-                    current.fetchWeekDay().priorityByFirstDayOfWeek(firstDay) > day.priorityByFirstDayOfWeek(firstDay)
-                ) {
-                    calendar.add(Calendar.MONTH, 1)
-                }
-                calendar.set(Calendar.DAY_OF_WEEK, day.number)
-                calendar.set(Calendar.DAY_OF_WEEK_IN_MONTH, weekNumber)
-            }
+            calendar.add(Calendar.DAY_OF_YEAR, 1)
         }
-        calendar.setTimeWithoutDate(startTime)
-        return calendar.time
+
+        error("Unable to find next repeat date for $this")
     }
+
+    fun toAlarmKey() = when (this) {
+        is RepeatTime.WeekDays -> "${repeatType.name}:${day.name}"
+        is RepeatTime.WeekDayInMonth -> "${repeatType.name}:${day.name}:$weekNumber"
+        is RepeatTime.MonthDay -> "${repeatType.name}:$dayNumber"
+        is RepeatTime.YearDay -> "${repeatType.name}:${month.name}:$dayNumber"
+    }
+
 }

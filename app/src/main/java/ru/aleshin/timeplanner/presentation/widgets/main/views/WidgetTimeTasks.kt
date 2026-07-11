@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,9 +37,9 @@ import androidx.glance.layout.size
 import androidx.glance.layout.width
 import androidx.glance.text.Text
 import androidx.glance.unit.ColorProvider
-import ru.aleshin.core.domain.entities.schedules.TaskPriority
-import ru.aleshin.core.ui.mappers.mapToUi
-import ru.aleshin.core.ui.theme.TimePlannerRes
+import ru.aleshin.core.domain.entities.tasks.TaskPriority
+import ru.aleshin.timeplanner.core.ui.mappers.mapToUi
+import ru.aleshin.timeplanner.core.ui.theme.TimePlannerRes
 import ru.aleshin.timeplanner.R
 import ru.aleshin.timeplanner.presentation.widgets.compatCornerBackground
 import ru.aleshin.timeplanner.presentation.widgets.surfaceColorAtElevation

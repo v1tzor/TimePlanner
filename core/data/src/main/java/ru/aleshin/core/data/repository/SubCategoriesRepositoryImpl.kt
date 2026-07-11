@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,40 +15,41 @@
  */
 package ru.aleshin.core.data.repository
 
-import ru.aleshin.core.data.datasources.subcategories.SubCategoriesLocalDataSource
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+import ru.aleshin.core.data.datasources.subcategories.SubCategoryLocalDataSource
 import ru.aleshin.core.data.mappers.categories.mapToData
 import ru.aleshin.core.data.mappers.categories.mapToDomain
-import ru.aleshin.core.domain.entities.categories.MainCategory
 import ru.aleshin.core.domain.entities.categories.SubCategory
-import ru.aleshin.core.domain.repository.SubCategoriesRepository
+import ru.aleshin.core.domain.repository.SubCategoryRepository
 import javax.inject.Inject
 
 /**
  * @author Stanislav Aleshin on 07.03.2023.
  */
 class SubCategoriesRepositoryImpl @Inject constructor(
-    private val localDataSource: SubCategoriesLocalDataSource,
-) : SubCategoriesRepository {
+    private val localDataSource: SubCategoryLocalDataSource,
+) : SubCategoryRepository {
 
-    override suspend fun addSubCategories(categories: List<SubCategory>) {
-        localDataSource.addSubCategories(categories.map { it.mapToData() })
+    override suspend fun addOrUpdateSubCategory(category: SubCategory): Long {
+        return localDataSource.addOrUpdateSubCategory(category.mapToData())
     }
 
-    override suspend fun fetchSubCategories(type: MainCategory): List<SubCategory> {
-        return localDataSource.fetchSubCategoriesByType(type).map { subCategory ->
-            subCategory.mapToDomain(type)
+    override suspend fun addOrUpdateSubCategories(categories: List<SubCategory>) {
+        localDataSource.addOrUpdateSubCategories(categories.map { it.mapToData() })
+    }
+
+    override suspend fun fetchSubCategoriesByMain(mainCategoryId: Long): Flow<List<SubCategory>> {
+        return localDataSource.fetchSubCategoriesByMain(mainCategoryId).map { categories ->
+            categories.map { it.mapToDomain() }
         }
     }
 
-    override suspend fun updateSubCategory(category: SubCategory) {
-        localDataSource.updateSubCategory(category.mapToData())
-    }
-
-    override suspend fun deleteSubCategory(category: SubCategory) {
-        localDataSource.removeSubCategory(category.id)
+    override suspend fun deleteSubCategoryById(categoryId: Long) {
+        localDataSource.deleteSubCategoryById(categoryId)
     }
 
     override suspend fun deleteAllSubCategories() {
-        localDataSource.removeAllSubCategories()
+        localDataSource.deleteAllSubCategories()
     }
 }

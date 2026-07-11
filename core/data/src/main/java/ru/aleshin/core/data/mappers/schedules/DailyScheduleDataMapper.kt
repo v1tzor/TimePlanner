@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,20 @@
 package ru.aleshin.core.data.mappers.schedules
 
 import ru.aleshin.core.data.models.schedules.DailyScheduleEntity
+import ru.aleshin.core.data.models.schedules.ScheduleDetailsEntity
+import ru.aleshin.core.domain.entities.schedules.BaseDailySchedule
 import ru.aleshin.core.domain.entities.schedules.Schedule
+import ru.aleshin.core.utils.extensions.mapToDate
 
 /**
  * @author Stanislav Aleshin on 25.02.2023.
  */
-fun Schedule.mapToData() = DailyScheduleEntity(date = date)
+fun BaseDailySchedule.mapToData() = DailyScheduleEntity(
+    date = date.time
+)
+
+fun ScheduleDetailsEntity.mapToDomain() = Schedule(
+    date = dailySchedule.date.mapToDate(),
+    timeTasks = timeTasks.map { it.mapToDomain() },
+    overlayTimeTasks = overlayTimeTasks.map { it.mapToDomain() }
+)

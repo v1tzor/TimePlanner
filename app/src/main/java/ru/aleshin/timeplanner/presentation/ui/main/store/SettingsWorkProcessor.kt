@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,11 @@
 package ru.aleshin.timeplanner.presentation.ui.main.store
 
 import kotlinx.coroutines.flow.flow
+import ru.aleshin.core.presentation.mappers.mapToUi
 import ru.aleshin.core.utils.architecture.store.work.ActionResult
 import ru.aleshin.core.utils.architecture.store.work.FlowWorkProcessor
 import ru.aleshin.core.utils.architecture.store.work.WorkCommand
 import ru.aleshin.core.utils.functional.handle
-import ru.aleshin.features.settings.impl.presentation.mappers.mapToUi
 import ru.aleshin.timeplanner.domain.interactors.SettingsInteractor
 import ru.aleshin.timeplanner.presentation.ui.main.contract.MainAction
 import ru.aleshin.timeplanner.presentation.ui.main.contract.MainEffect

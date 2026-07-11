@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,15 +19,15 @@ import androidx.compose.runtime.Composable
 import androidx.glance.color.ColorProviders
 import androidx.glance.color.DynamicThemeColorProviders
 import androidx.glance.material3.ColorProviders
-import ru.aleshin.core.ui.theme.material.ColorsUiType
-import ru.aleshin.core.ui.theme.material.blueDarkColorScheme
-import ru.aleshin.core.ui.theme.material.blueLightColorScheme
-import ru.aleshin.core.ui.theme.material.pinkDarkColorScheme
-import ru.aleshin.core.ui.theme.material.pinkLightColorScheme
-import ru.aleshin.core.ui.theme.material.purpleDarkColorScheme
-import ru.aleshin.core.ui.theme.material.purpleLightColorScheme
-import ru.aleshin.core.ui.theme.material.redDarkColorScheme
-import ru.aleshin.core.ui.theme.material.redLightColorScheme
+import ru.aleshin.timeplanner.core.ui.theme.material.ColorsUiType
+import ru.aleshin.timeplanner.core.ui.theme.material.blueDarkColorScheme
+import ru.aleshin.timeplanner.core.ui.theme.material.blueLightColorScheme
+import ru.aleshin.timeplanner.core.ui.theme.material.pinkDarkColorScheme
+import ru.aleshin.timeplanner.core.ui.theme.material.pinkLightColorScheme
+import ru.aleshin.timeplanner.core.ui.theme.material.purpleDarkColorScheme
+import ru.aleshin.timeplanner.core.ui.theme.material.purpleLightColorScheme
+import ru.aleshin.timeplanner.core.ui.theme.material.redDarkColorScheme
+import ru.aleshin.timeplanner.core.ui.theme.material.redLightColorScheme
 
 /**
  * @author Stanislav Aleshin on 28.04.2024.

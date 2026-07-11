@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,10 +17,12 @@ package ru.aleshin.timeplanner.presentation.receiver
 
 import android.content.Context
 import android.content.Intent
-import ru.aleshin.core.domain.entities.schedules.TaskNotificationType
+import android.net.Uri
+import ru.aleshin.core.domain.entities.tasks.TaskNotificationType
 import ru.aleshin.core.domain.entities.template.RepeatTime
-import ru.aleshin.core.ui.models.NotificationTimeType
-import ru.aleshin.core.ui.notifications.AlarmReceiverProvider
+import ru.aleshin.core.presentation.models.NotificationTimeTypeUi
+import ru.aleshin.core.presentation.notifications.AlarmKeyFactory
+import ru.aleshin.core.presentation.notifications.AlarmReceiverProvider
 import ru.aleshin.core.utils.functional.Constants
 import java.util.Date
 import javax.inject.Inject
@@ -30,6 +32,7 @@ import javax.inject.Inject
  */
 class AlarmReceiverProviderImpl @Inject constructor(
     private val context: Context,
+    private val alarmKeyFactory: AlarmKeyFactory,
 ) : AlarmReceiverProvider {
 
     override fun provideReceiverIntent(
@@ -41,11 +44,21 @@ class AlarmReceiverProviderImpl @Inject constructor(
         timeTaskId: Long?,
         taskNotificationType: TaskNotificationType?,
         time: Date?,
-        templateId: Int?,
+        templateNotificationTriggerTime: Date?,
+        templateId: Long?,
         repeatTime: RepeatTime?,
-        timeType: NotificationTimeType,
+        timeType: NotificationTimeTypeUi,
     ) = Intent(context, TimeTaskAlarmReceiver::class.java).apply {
         action = Constants.Alarm.ALARM_NOTIFICATION_ACTION
+        data = when {
+            timeTaskId != null && taskNotificationType != null -> createAlarmData(
+                alarmKeyFactory.fetchTimeTaskAlarmTag(timeTaskId, taskNotificationType),
+            )
+            templateId != null -> createAlarmData(
+                alarmKeyFactory.fetchTemplateAlarmTag(templateId),
+            )
+            else -> null
+        }
         putExtra(Constants.Alarm.NOTIFICATION_TIME_TYPE, timeType.toString())
         putExtra(Constants.Alarm.NOTIFICATION_CATEGORY, category)
         putExtra(Constants.Alarm.NOTIFICATION_SUBCATEGORY, subCategory)
@@ -55,6 +68,9 @@ class AlarmReceiverProviderImpl @Inject constructor(
         if (timeTaskId != null) putExtra(Constants.Alarm.TIME_TASK_ID, timeTaskId)
         if (taskNotificationType != null) putExtra(Constants.Alarm.TIME_TASK_NOTIFICATION_TYPE, taskNotificationType.name)
         if (time != null) putExtra(Constants.Alarm.REPEAT_TIME, time.time)
+        if (templateNotificationTriggerTime != null) {
+            putExtra(Constants.Alarm.TEMPLATE_NOTIFICATION_TRIGGER_TIME, templateNotificationTriggerTime.time)
+        }
         if (repeatTime != null) putExtra(Constants.Alarm.REPEAT_TYPE, repeatTime.repeatType.name)
         if (templateId != null) putExtra(Constants.Alarm.TEMPLATE_ID, templateId)
         when (repeatTime) {
@@ -74,5 +90,18 @@ class AlarmReceiverProviderImpl @Inject constructor(
             }
             null -> {}
         }
+    }
+
+    private fun createAlarmData(alarmTag: String): Uri {
+        return Uri.Builder()
+            .scheme(ALARM_DATA_SCHEME)
+            .authority(ALARM_DATA_AUTHORITY)
+            .appendPath(alarmTag)
+            .build()
+    }
+
+    private companion object {
+        const val ALARM_DATA_SCHEME = "timeplanner"
+        const val ALARM_DATA_AUTHORITY = "alarm"
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,11 +18,16 @@ package ru.aleshin.core.domain.entities.template
 import kotlinx.serialization.Serializable
 import ru.aleshin.core.domain.entities.categories.MainCategory
 import ru.aleshin.core.domain.entities.categories.SubCategory
-import ru.aleshin.core.domain.entities.schedules.TaskPriority
-import ru.aleshin.core.domain.entities.schedules.TimeTask
+import ru.aleshin.core.domain.entities.tasks.TaskPriority
+import ru.aleshin.core.domain.entities.tasks.TimeTask
+import ru.aleshin.core.utils.extensions.changeDay
 import ru.aleshin.core.utils.extensions.compareByHoursAndMinutes
+import ru.aleshin.core.utils.extensions.generateUniqueKey
+import ru.aleshin.core.utils.extensions.isCurrentDay
+import ru.aleshin.core.utils.extensions.shiftDay
 import ru.aleshin.core.utils.functional.DateSerializer
 import ru.aleshin.core.utils.functional.Mapper
+import ru.aleshin.core.utils.functional.TimeRange
 import java.util.Collections.emptyList
 import java.util.Date
 
@@ -31,7 +36,7 @@ import java.util.Date
  */
 @Serializable
 data class Template(
-    val templateId: Int,
+    val templateId: Long = 0,
     @Serializable(DateSerializer::class)
     val startTime: Date,
     @Serializable(DateSerializer::class)
@@ -59,3 +64,23 @@ data class Template(
             isEnableNotification == timeTask.isEnableNotification &&
             isConsiderInStatistics == timeTask.isConsiderInStatistics
 }
+
+fun Template.convertToTimeTask(
+    date: Date,
+    key: Long = generateUniqueKey(),
+    createdAt: Date? = Date(),
+) = TimeTask(
+    key = key,
+    date = date,
+    timeRange = TimeRange(
+        from = startTime.changeDay(date),
+        to = if (endTime.isCurrentDay(startTime)) endTime.changeDay(date) else endTime.changeDay(date.shiftDay(1)),
+    ),
+    createdAt = createdAt,
+    category = category,
+    linkedTemplateId = templateId,
+    subCategory = subCategory,
+    priority = priority,
+    isEnableNotification = isEnableNotification,
+    isConsiderInStatistics = isConsiderInStatistics,
+)

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,10 +42,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import ru.aleshin.core.domain.entities.categories.DefaultCategoryType
-import ru.aleshin.core.ui.theme.TimePlannerRes
+import ru.aleshin.timeplanner.core.ui.theme.TimePlannerRes
 import ru.aleshin.core.utils.extensions.alphaByEnabled
-import ru.aleshin.features.home.impl.presentation.models.categories.MainCategoryUi
-import ru.aleshin.features.home.impl.presentation.models.categories.SubCategoryUi
+import ru.aleshin.core.presentation.models.categories.MainCategoryUi
+import ru.aleshin.core.presentation.models.categories.SubCategoryUi
 import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
 
 /**

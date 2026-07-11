@@ -15,7 +15,7 @@
  */
 package ru.aleshin.features.analytics.impl.domain.common
 
-import ru.aleshin.core.domain.entities.schedules.TimeTask
+import ru.aleshin.core.domain.entities.tasks.TimeTask
 import ru.aleshin.core.utils.functional.Constants
 import ru.aleshin.core.utils.functional.TimeRange
 import ru.aleshin.features.analytics.impl.domain.entities.HourlyWorkLoadAnalytic

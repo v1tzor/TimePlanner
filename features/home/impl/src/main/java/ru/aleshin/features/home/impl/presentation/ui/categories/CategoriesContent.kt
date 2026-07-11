@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,18 +48,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
-import ru.aleshin.core.ui.views.Scaffold
+import ru.aleshin.timeplanner.core.ui.views.Scaffold
 import ru.aleshin.core.utils.architecture.store.compose.handleEffects
 import ru.aleshin.core.utils.architecture.store.compose.stateAsState
 import ru.aleshin.core.utils.managers.LocalDrawerManager
 import ru.aleshin.features.home.impl.presentation.mapppers.mapToMessage
-import ru.aleshin.features.home.impl.presentation.models.categories.MainCategoryUi
-import ru.aleshin.features.home.impl.presentation.models.categories.SubCategoryUi
+import ru.aleshin.core.presentation.models.categories.MainCategoryUi
+import ru.aleshin.core.presentation.models.categories.SubCategoryUi
 import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
 import ru.aleshin.features.home.impl.presentation.ui.categories.contract.CategoriesEffect
 import ru.aleshin.features.home.impl.presentation.ui.categories.contract.CategoriesEvent
 import ru.aleshin.features.home.impl.presentation.ui.categories.contract.CategoriesState
-import ru.aleshin.features.home.impl.presentation.ui.categories.screenmodel.CategoriesComponent
+import ru.aleshin.features.home.impl.presentation.ui.categories.store.CategoriesComponent
 import ru.aleshin.features.home.impl.presentation.ui.categories.views.CategoriesTopAppBar
 import ru.aleshin.features.home.impl.presentation.ui.categories.views.MainCategoriesHorizontalList
 import ru.aleshin.features.home.impl.presentation.ui.categories.views.MainCategoryEditorDialog

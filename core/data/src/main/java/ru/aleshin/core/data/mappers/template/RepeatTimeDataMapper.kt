@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import ru.aleshin.core.domain.entities.template.RepeatTimeType
 /**
  * @author Stanislav Aleshin on 03.08.2023.
  */
-fun RepeatTime.mapToData(templateId: Int) = when (this) {
+fun RepeatTime.mapToData(templateId: Long) = when (this) {
     is RepeatTime.MonthDay -> mapToData(templateId)
     is RepeatTime.WeekDays -> mapToData(templateId)
     is RepeatTime.WeekDayInMonth -> mapToData(templateId)
@@ -54,26 +54,26 @@ fun RepeatTimeEntity.mapToYearRepeatTime() = RepeatTime.YearDay(
     dayNumber = checkNotNull(dayNumber),
 )
 
-fun RepeatTime.WeekDays.mapToData(templateId: Int) = RepeatTimeEntity(
+fun RepeatTime.WeekDays.mapToData(templateId: Long) = RepeatTimeEntity(
     templateId = templateId,
     type = RepeatTimeType.WEEK_DAY,
     day = day,
 )
 
-fun RepeatTime.WeekDayInMonth.mapToData(templateId: Int) = RepeatTimeEntity(
+fun RepeatTime.WeekDayInMonth.mapToData(templateId: Long) = RepeatTimeEntity(
     templateId = templateId,
     type = RepeatTimeType.WEEK_DAY_IN_MONTH,
     day = day,
     weekNumber = weekNumber,
 )
 
-fun RepeatTime.MonthDay.mapToData(templateId: Int) = RepeatTimeEntity(
+fun RepeatTime.MonthDay.mapToData(templateId: Long) = RepeatTimeEntity(
     templateId = templateId,
     type = RepeatTimeType.MONTH_DAY,
     dayNumber = dayNumber,
 )
 
-fun RepeatTime.YearDay.mapToData(templateId: Int) = RepeatTimeEntity(
+fun RepeatTime.YearDay.mapToData(templateId: Long) = RepeatTimeEntity(
     templateId = templateId,
     type = RepeatTimeType.YEAR_DAY,
     month = month,

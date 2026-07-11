@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,7 +53,6 @@ internal class OverviewComposeStore @Inject constructor(
     ) {
         when (event) {
             is OverviewEvent.Init -> {
-                sendAction(OverviewAction.UpdateLoading(true))
                 launchBackgroundWork(BackgroundKey.LOAD_SCHEDULES) {
                     val schedulesCommand = OverviewWorkCommand.LoadSchedules
                     workProcessor.work(schedulesCommand).collectAndHandleWork()
@@ -66,6 +65,10 @@ internal class OverviewComposeStore @Inject constructor(
                     val categoriesCommand = OverviewWorkCommand.LoadCategories
                     workProcessor.work(categoriesCommand).collectAndHandleWork()
                 }
+                launchBackgroundWork(BackgroundKey.LOAD_TASK) {
+                    val categoriesCommand = OverviewWorkCommand.LoadCurrentTask
+                    workProcessor.work(categoriesCommand).collectAndHandleWork()
+                }
                 if (!event.isRestore && event.input.sharedText != null) {
                     launchBackgroundWork(BackgroundKey.SHARE_IMPORT) {
                         val command = OverviewWorkCommand.PrepareSharedTextImport(event.input.sharedText)
@@ -74,7 +77,6 @@ internal class OverviewComposeStore @Inject constructor(
                 }
             }
             is OverviewEvent.Refresh -> {
-                sendAction(OverviewAction.UpdateLoading(true))
                 launchBackgroundWork(BackgroundKey.LOAD_SCHEDULES) {
                     val schedulesCommand = OverviewWorkCommand.LoadSchedules
                     workProcessor.work(schedulesCommand).collectAndHandleWork()
@@ -85,6 +87,10 @@ internal class OverviewComposeStore @Inject constructor(
                 }
                 launchBackgroundWork(BackgroundKey.LOAD_CATEGORIES) {
                     val categoriesCommand = OverviewWorkCommand.LoadCategories
+                    workProcessor.work(categoriesCommand).collectAndHandleWork()
+                }
+                launchBackgroundWork(BackgroundKey.LOAD_TASK) {
+                    val categoriesCommand = OverviewWorkCommand.LoadCurrentTask
                     workProcessor.work(categoriesCommand).collectAndHandleWork()
                 }
             }
@@ -126,14 +132,12 @@ internal class OverviewComposeStore @Inject constructor(
         action: OverviewAction,
         currentState: OverviewState,
     ) = when (action) {
-        is OverviewAction.Navigate -> currentState
         is OverviewAction.UpdateLoading -> currentState.copy(
             isLoading = action.isLoading,
         )
         is OverviewAction.UpdateSchedules -> currentState.copy(
             isLoading = false,
             currentDate = action.date,
-            currentSchedule = action.schedules.find { it.date == action.date },
             schedules = action.schedules,
         )
         is OverviewAction.UpdateUndefinedTasks -> currentState.copy(
@@ -142,18 +146,19 @@ internal class OverviewComposeStore @Inject constructor(
         is OverviewAction.UpdateCategories -> currentState.copy(
             categories = action.categories,
         )
+        is OverviewAction.UpdateCurrentTask -> currentState.copy(
+            currentTask = action.timeTask,
+        )
         is OverviewAction.UpdateSharedTextTasks -> currentState.copy(
             sharedTextTasks = action.tasks,
-            sharedTextCategories = action.categories,
         )
         is OverviewAction.ClearSharedTextTasks -> currentState.copy(
-            sharedTextTasks = null,
-            sharedTextCategories = emptyList(),
+            sharedTextTasks = null
         )
     }
 
     enum class BackgroundKey : BackgroundWorkKey {
-        LOAD_SCHEDULES, LOAD_UNDEFINED_TASKS, LOAD_CATEGORIES, TASK_ACTION, SHARE_IMPORT
+        LOAD_SCHEDULES, LOAD_UNDEFINED_TASKS, LOAD_CATEGORIES, LOAD_TASK, TASK_ACTION, SHARE_IMPORT
     }
 
     class Factory @Inject constructor(

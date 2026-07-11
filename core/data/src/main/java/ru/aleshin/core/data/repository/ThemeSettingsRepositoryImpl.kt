@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,11 +30,11 @@ class ThemeSettingsRepositoryImpl @Inject constructor(
     private val localDataSource: ThemeSettingsLocalDataSource,
 ) : ru.aleshin.core.domain.repository.ThemeSettingsRepository {
 
-    override fun fetchSettingsFlow(): Flow<ThemeSettings> {
+    override fun fetchSettings(): Flow<ThemeSettings> {
         return localDataSource.fetchSettingsFlow().map { it.mapToDomain() }
     }
 
-    override suspend fun fetchSettings(): ThemeSettings {
+    override suspend fun fetchSettingsOnce(): ThemeSettings {
         return localDataSource.fetchSettings().mapToDomain()
     }
 

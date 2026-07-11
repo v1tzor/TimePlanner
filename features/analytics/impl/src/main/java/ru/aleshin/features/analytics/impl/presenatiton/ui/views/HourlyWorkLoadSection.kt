@@ -35,7 +35,7 @@ import androidx.compose.ui.unit.dp
 import com.himanshoe.charty.bar.BarChart
 import com.himanshoe.charty.bar.model.BarData
 import com.himanshoe.charty.common.axis.AxisConfig
-import ru.aleshin.core.ui.views.toMinutesOrHoursTitle
+import ru.aleshin.timeplanner.core.ui.views.toMinutesOrHoursTitle
 import ru.aleshin.core.utils.extensions.toMinutes
 import ru.aleshin.core.utils.functional.TimePeriod
 import ru.aleshin.features.analytics.impl.presenatiton.models.analytics.HourlyWorkLoadAnalyticUi

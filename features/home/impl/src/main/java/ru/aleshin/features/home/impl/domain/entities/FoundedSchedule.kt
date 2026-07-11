@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,13 +15,13 @@
  */
 package ru.aleshin.features.home.impl.domain.entities
 
-import ru.aleshin.core.domain.entities.schedules.Schedule
+import ru.aleshin.core.domain.entities.schedules.BaseDailySchedule
 import ru.aleshin.core.domain.entities.template.Template
 import ru.aleshin.core.utils.functional.Either
 
 /**
  * @author Stanislav Aleshin on 04.08.2023.
  */
-internal typealias FoundedSchedule = Either<List<FoundedPlannedTemplates>, Schedule>
+internal typealias FoundedSchedule = Either<List<FoundedPlannedTemplates>, BaseDailySchedule>
 
 internal typealias FoundedPlannedTemplates = Template

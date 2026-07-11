@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -70,17 +70,17 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
-import ru.aleshin.core.domain.entities.schedules.TaskPriority
-import ru.aleshin.core.ui.mappers.mapToIconPainter
-import ru.aleshin.core.ui.theme.material.badgePriorityMax
-import ru.aleshin.core.ui.theme.material.badgePriorityMedium
-import ru.aleshin.core.ui.views.MonogramBadge
-import ru.aleshin.core.ui.views.PlaceholderBox
-import ru.aleshin.core.ui.views.toDaysTitle
+import ru.aleshin.core.domain.entities.tasks.TaskPriority
+import ru.aleshin.core.presentation.mappers.mapToIconPainter
+import ru.aleshin.core.presentation.models.categories.MainCategoryDetailsUi
+import ru.aleshin.core.presentation.models.tasks.UndefinedTaskUi
 import ru.aleshin.core.utils.functional.Constants
-import ru.aleshin.features.home.impl.presentation.models.categories.CategoriesUi
-import ru.aleshin.features.home.impl.presentation.models.schedules.UndefinedTaskUi
 import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
+import ru.aleshin.timeplanner.core.ui.theme.material.badgePriorityMax
+import ru.aleshin.timeplanner.core.ui.theme.material.badgePriorityMedium
+import ru.aleshin.timeplanner.core.ui.views.MonogramBadge
+import ru.aleshin.timeplanner.core.ui.views.PlaceholderBox
+import ru.aleshin.timeplanner.core.ui.views.toDaysTitle
 import java.util.Date
 
 /**
@@ -90,7 +90,7 @@ import java.util.Date
 internal fun UndefinedTaskSection(
     modifier: Modifier = Modifier,
     isLoading: Boolean,
-    categories: List<CategoriesUi>,
+    categories: List<MainCategoryDetailsUi>,
     tasks: List<UndefinedTaskUi>,
     onAddOrUpdateTask: (UndefinedTaskUi) -> Unit,
     onDeleteTask: (UndefinedTaskUi) -> Unit,
@@ -135,7 +135,7 @@ internal fun UndefinedTaskSection(
 internal fun UndefinedTaskSectionLazyRow(
     modifier: Modifier = Modifier,
     state: LazyListState = rememberLazyListState(),
-    categories: List<CategoriesUi>,
+    categories: List<MainCategoryDetailsUi>,
     tasks: List<UndefinedTaskUi>,
     onAddOrUpdateTask: (UndefinedTaskUi) -> Unit,
     onDeleteIconClick: (UndefinedTaskUi) -> Unit,
@@ -248,7 +248,7 @@ internal fun UndefinedTaskItem(
             ) {
                 if (model.mainCategory.defaultType != null) {
                     Icon(
-                        painter = model.mainCategory.defaultType.mapToIconPainter(),
+                        painter = model.mainCategory.defaultType!!.mapToIconPainter(),
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.primary,
                     )
@@ -263,7 +263,7 @@ internal fun UndefinedTaskItem(
                 }
                 Spacer(modifier = Modifier.weight(1f))
                 if (model.deadline != null) {
-                    DeadlineView(deadline = model.deadline)
+                    DeadlineView(deadline = model.deadline!!)
                 }
                 if (model.note != null) {
                     TooltipBox(
@@ -272,7 +272,7 @@ internal fun UndefinedTaskItem(
                         tooltip = {
                             RichTooltip(
                                 title = { Text(text = HomeThemeRes.strings.noteTitle) },
-                                text = { Text(text = model.note) },
+                                text = { Text(text = model.note!!) },
                             )
                         },
                     ) {

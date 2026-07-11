@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,26 +16,21 @@
 package ru.aleshin.core.data.mappers.schedules
 
 import ru.aleshin.core.data.mappers.categories.mapToDomain
-import ru.aleshin.core.data.models.tasks.UndefinedTaskDetails
+import ru.aleshin.core.data.models.tasks.UndefinedTaskDetailsEntity
 import ru.aleshin.core.data.models.tasks.UndefinedTaskEntity
-import ru.aleshin.core.domain.entities.schedules.TaskPriority
-import ru.aleshin.core.domain.entities.schedules.UndefinedTask
+import ru.aleshin.core.domain.entities.tasks.UndefinedTask
 import ru.aleshin.core.utils.extensions.mapToDate
 
 /**
  * @author Stanislav Aleshin on 02.11.2023.
  */
-fun UndefinedTaskDetails.mapToDomain() = UndefinedTask(
+fun UndefinedTaskDetailsEntity.mapToDomain() = UndefinedTask(
     id = task.key,
     createdAt = task.createdAt?.mapToDate(),
     deadline = task.deadline?.mapToDate(),
     mainCategory = mainCategory.mapToDomain(),
-    subCategory = subCategory?.mapToDomain(mainCategory.mapToDomain()),
-    priority = when {
-        task.isImportantMax -> TaskPriority.MAX
-        task.isImportantMedium -> TaskPriority.MEDIUM
-        else -> TaskPriority.STANDARD
-    },
+    subCategory = subCategory?.mapToDomain(),
+    priority = task.priority,
     note = task.note,
 )
 
@@ -45,7 +40,6 @@ fun UndefinedTask.mapToData() = UndefinedTaskEntity(
     deadline = deadline?.time,
     mainCategoryId = mainCategory.id,
     subCategoryId = subCategory?.id,
-    isImportantMedium = priority == TaskPriority.MEDIUM,
-    isImportantMax = priority == TaskPriority.MAX,
+    priority = priority,
     note = note,
 )

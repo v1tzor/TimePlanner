@@ -39,12 +39,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import ru.aleshin.core.ui.theme.TimePlannerRes
-import ru.aleshin.core.ui.views.DialogButtons
-import ru.aleshin.features.home.impl.presentation.models.categories.CategoriesUi
-import ru.aleshin.features.home.impl.presentation.models.categories.MainCategoryUi
-import ru.aleshin.features.home.impl.presentation.models.categories.SubCategoryUi
-import ru.aleshin.features.home.impl.presentation.models.schedules.UndefinedTaskUi
+import ru.aleshin.timeplanner.core.ui.theme.TimePlannerRes
+import ru.aleshin.timeplanner.core.ui.views.DialogButtons
+import ru.aleshin.core.presentation.models.categories.MainCategoryDetailsUi
+import ru.aleshin.core.presentation.models.categories.MainCategoryUi
+import ru.aleshin.core.presentation.models.categories.SubCategoryUi
+import ru.aleshin.core.presentation.models.tasks.UndefinedTaskUi
 import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
 import ru.aleshin.features.home.impl.presentation.ui.common.CompactCategoryChooser
 import ru.aleshin.features.home.impl.presentation.ui.common.CompactSubCategoryChooser
@@ -58,12 +58,12 @@ import java.util.Date
 internal fun UndefinedTasksBatchEditorDialog(
     modifier: Modifier = Modifier,
     tasks: List<UndefinedTaskUi>,
-    categories: List<CategoriesUi>,
+    categories: List<MainCategoryDetailsUi>,
     onDismiss: () -> Unit,
     onConfirm: (List<UndefinedTaskUi>) -> Unit,
 ) {
     var editTasks by remember(tasks) { mutableStateOf(tasks) }
-    val isEnabled = editTasks.isNotEmpty() && editTasks.all { it.mainCategory.id != 0 }
+    val isEnabled = editTasks.isNotEmpty() && editTasks.all { it.mainCategory.id != 0L }
 
     BasicAlertDialog(onDismissRequest = onDismiss) {
         Surface(
@@ -88,7 +88,7 @@ internal fun UndefinedTasksBatchEditorDialog(
                                 editTasks = editTasks.changeTask(task) {
                                     copy(
                                         mainCategory = category,
-                                        subCategory = subCategory?.takeIf { it.mainCategory.id == category.id },
+                                        subCategory = subCategory?.takeIf { it.mainCategoryId == category.id },
                                     )
                                 }
                             },
@@ -143,7 +143,7 @@ internal fun UndefinedTasksBatchEditorHeader(
 internal fun UndefinedTasksBatchEditorItem(
     modifier: Modifier = Modifier,
     task: UndefinedTaskUi,
-    categories: List<CategoriesUi>,
+    categories: List<MainCategoryDetailsUi>,
     onCategoryChange: (MainCategoryUi) -> Unit,
     onSubCategoryChange: (SubCategoryUi?) -> Unit,
     onDeadlineChange: (Date?) -> Unit,

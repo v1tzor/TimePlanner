@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,7 +42,7 @@ interface SettingsInteractor {
 
         @OptIn(ExperimentalCoroutinesApi::class)
         override suspend fun fetchSettings() = eitherWrapper.wrapFlow {
-            themeRepository.fetchSettingsFlow().flatMapLatest { themeSettings ->
+            themeRepository.fetchSettings().flatMapLatest { themeSettings ->
                 tasksRepository.fetchSettings().map { tasksSettings ->
                     Settings(themeSettings, tasksSettings)
                 }

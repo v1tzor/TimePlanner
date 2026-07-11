@@ -15,10 +15,9 @@
  */
 package ru.aleshin.features.editor.impl.domain.interactors
 
-import kotlinx.coroutines.flow.first
 import ru.aleshin.core.domain.entities.settings.TasksSettings
 import ru.aleshin.core.domain.repository.TasksSettingsRepository
-import ru.aleshin.core.utils.functional.DomainResult
+import ru.aleshin.core.utils.functional.FlowDomainResult
 import ru.aleshin.core.utils.functional.UnitDomainResult
 import ru.aleshin.features.editor.impl.domain.common.EditorEitherWrapper
 import ru.aleshin.features.editor.impl.domain.entites.EditorFailures
@@ -29,7 +28,7 @@ import javax.inject.Inject
  */
 internal interface SettingsInteractor {
 
-    suspend fun fetchTasksSettings(): DomainResult<EditorFailures, TasksSettings>
+    suspend fun fetchTasksSettings(): FlowDomainResult<EditorFailures, TasksSettings>
 
     suspend fun updateTasksSettings(settings: TasksSettings): UnitDomainResult<EditorFailures>
 
@@ -38,8 +37,8 @@ internal interface SettingsInteractor {
         private val eitherWrapper: EditorEitherWrapper,
     ) : SettingsInteractor {
 
-        override suspend fun fetchTasksSettings() = eitherWrapper.wrap {
-            settingsRepository.fetchSettings().first()
+        override suspend fun fetchTasksSettings() = eitherWrapper.wrapFlow {
+            settingsRepository.fetchSettings()
         }
 
         override suspend fun updateTasksSettings(settings: TasksSettings) = eitherWrapper.wrap {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,695 +15,218 @@
  */
 package ru.aleshin.features.editor.impl.domain
 
-import android.database.sqlite.SQLiteException
-import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
-import ru.aleshin.core.domain.common.ScheduleStatusChecker
+import ru.aleshin.core.domain.common.TimeOverlayManager
 import ru.aleshin.core.domain.entities.categories.MainCategory
-import ru.aleshin.core.domain.entities.schedules.DailyScheduleStatus
+import ru.aleshin.core.domain.entities.schedules.BaseDailySchedule
 import ru.aleshin.core.domain.entities.schedules.Schedule
-import ru.aleshin.core.domain.entities.schedules.TimeTask
+import ru.aleshin.core.domain.entities.tasks.TimeTask
 import ru.aleshin.core.domain.repository.ScheduleRepository
 import ru.aleshin.core.domain.repository.TimeTaskRepository
-import ru.aleshin.core.utils.extensions.endThisDay
+import ru.aleshin.core.utils.extensions.setHoursAndMinutes
 import ru.aleshin.core.utils.extensions.setStartDay
-import ru.aleshin.core.utils.extensions.shiftMinutes
+import ru.aleshin.core.utils.extensions.shiftDay
 import ru.aleshin.core.utils.extensions.startThisDay
-import ru.aleshin.core.utils.extensions.toMinutes
 import ru.aleshin.core.utils.functional.Either
 import ru.aleshin.core.utils.functional.TimeRange
-import ru.aleshin.core.utils.managers.DateManager
-import ru.aleshin.core.utils.managers.TimeOverlayManager
 import ru.aleshin.features.editor.impl.domain.common.EditorEitherWrapper
 import ru.aleshin.features.editor.impl.domain.common.EditorErrorHandler
-import ru.aleshin.features.editor.impl.domain.entites.EditorFailures
 import ru.aleshin.features.editor.impl.domain.interactors.TimeTaskInteractor
-import java.lang.NullPointerException
 import java.util.Calendar
 import java.util.Date
 
 /**
- * @author Stanislav Aleshin on 27.05.2023.
+ * @author Stanislav Aleshin on 07.07.2026.
  */
 internal class TimeTaskInteractorTest {
 
-    private lateinit var timeTaskInteractor: TimeTaskInteractor
+    private lateinit var interactor: TimeTaskInteractor
     private lateinit var timeTaskRepository: FakeTimeTaskRepository
     private lateinit var scheduleRepository: FakeScheduleRepository
-    private lateinit var overlayManager: TimeOverlayManager
-    private lateinit var dateManager: FakeDateManager
-    private lateinit var eitherWrapper: EditorEitherWrapper
-    private lateinit var errorHandler: EditorErrorHandler
-    private lateinit var statusChecker: ScheduleStatusChecker
+    private lateinit var currentDate: Date
 
     @Before
     fun setUp() {
+        currentDate = Calendar.getInstance().apply {
+            set(2026, Calendar.JUNE, 30)
+            setStartDay()
+        }.time
         timeTaskRepository = FakeTimeTaskRepository()
-        scheduleRepository = FakeScheduleRepository()
-        errorHandler = EditorErrorHandler.Base()
-        eitherWrapper = EditorEitherWrapper.Base(errorHandler = errorHandler)
-        overlayManager = TimeOverlayManager.Base()
-        statusChecker = ScheduleStatusChecker.Base()
-        dateManager = FakeDateManager()
-
-        timeTaskInteractor = TimeTaskInteractor.Base(
+        scheduleRepository = FakeScheduleRepository(timeTaskRepository)
+        interactor = TimeTaskInteractor.Base(
             scheduleRepository = scheduleRepository,
             timeTaskRepository = timeTaskRepository,
-            eitherWrapper = eitherWrapper,
-            statusChecker = statusChecker,
-            dateManager = dateManager,
-            overlayManager = overlayManager,
+            overlayManager = TimeOverlayManager.Base(),
+            eitherWrapper = EditorEitherWrapper.Base(EditorErrorHandler.Base()),
         )
     }
 
     @Test
-    fun test_add_first_time_task() = runBlocking {
-        timeTaskRepository.timeTasksList.clear()
+    fun updateLinkedTaskDetachesItFromTemplate() = runBlocking {
+        val task = task(key = 1L, linkedTemplateId = 12L)
+        scheduleRepository.schedules.add(currentDate.time)
+        timeTaskRepository.tasks.add(task)
 
-        val calendar = Calendar.getInstance().apply { setStartDay() }
-        val fakeTime = calendar.time
+        val result = interactor.updateTimeTask(task.copy(timeRange = TimeRange(currentDate.at(11, 0), currentDate.at(12, 0))))
 
-        val fakeTask = TimeTask(
+        assertTrue(result is Either.Right)
+        assertNull(timeTaskRepository.tasks.first().linkedTemplateId)
+    }
+
+    @Test
+    fun deleteLinkedTaskRemovesOnlyTaskAndKeepsScheduleMarker() = runBlocking {
+        val task = task(key = 1L, linkedTemplateId = 12L)
+        scheduleRepository.schedules.add(currentDate.time)
+        timeTaskRepository.tasks.add(task)
+
+        val result = interactor.deleteTimeTaskById(task.key)
+
+        assertTrue(result is Either.Right)
+        assertEquals(emptyList<TimeTask>(), timeTaskRepository.tasks)
+        assertTrue(scheduleRepository.schedules.contains(currentDate.time))
+    }
+
+    @Test
+    fun addTimeTaskStoresTaskAsDetached() = runBlocking {
+        scheduleRepository.schedules.add(currentDate.time)
+
+        val result = interactor.addTimeTask(task(key = 0L, linkedTemplateId = 12L))
+
+        assertTrue(result is Either.Right)
+        assertEquals(1, timeTaskRepository.tasks.size)
+        assertNull(timeTaskRepository.tasks.first().linkedTemplateId)
+    }
+
+    @Test
+    fun addTimeTaskChecksOverlayAgainstNeighborSchedulesWhenTargetScheduleIsMissing() = runBlocking {
+        val previousDate = currentDate.shiftDay(-1)
+        val overnightTask = task(
+            key = 1L,
+            date = previousDate,
+            timeRange = TimeRange(previousDate.at(23, 30), currentDate.at(1, 0)),
+            linkedTemplateId = null,
+        )
+        val newTask = task(
             key = 0L,
-            date = fakeTime,
-            timeRange = TimeRange(fakeTime.startThisDay(), fakeTime.endThisDay()),
-            category = MainCategory(),
+            date = currentDate,
+            timeRange = TimeRange(currentDate.at(0, 30), currentDate.at(0, 45)),
+            linkedTemplateId = 12L,
         )
+        scheduleRepository.schedules.add(previousDate.time)
+        timeTaskRepository.tasks.add(overnightTask)
 
-        val result = timeTaskInteractor.addTimeTask(fakeTask)
+        val result = interactor.addTimeTask(newTask)
 
-        assertEquals(true, result.isRight)
-
-        assertEquals(1, scheduleRepository.fetchSchedulesCount)
-        assertEquals(1, timeTaskRepository.addedTaskCount)
-        assertEquals(1, scheduleRepository.createdScheduleCount)
-
-        assertEquals(1, timeTaskRepository.timeTasksList.size)
-        // Interactor replace key on new unique value
-        assertEquals(
-            fakeTask.copy(key = timeTaskRepository.timeTasksList[0].key),
-            timeTaskRepository.timeTasksList[0],
-        )
-        assertEquals(
-            fakeTime.time,
-            scheduleRepository.scheduleList[0].date,
-        )
+        assertTrue(result is Either.Left)
+        assertEquals(listOf(overnightTask), timeTaskRepository.tasks)
+        assertTrue(scheduleRepository.schedules.contains(currentDate.time))
     }
 
-    @Test
-    fun test_add_first_time_task_with_error() = runBlocking {
-        val calendar = Calendar.getInstance().apply { setStartDay() }
-        val fakeTime = calendar.time
-
-        timeTaskRepository.errorWhileAction = true
-        timeTaskRepository.timeTasksList.clear()
-        scheduleRepository.scheduleList.add(
-            Schedule(
-                date = fakeTime.time,
-                status = DailyScheduleStatus.ACCOMPLISHMENT,
-            )
-        )
-
-        val fakeTask = TimeTask(
-            key = 0L,
-            date = fakeTime,
-            timeRange = TimeRange(fakeTime.startThisDay(), fakeTime.endThisDay()),
-            category = MainCategory(),
-        )
-
-        val result = timeTaskInteractor.addTimeTask(fakeTask)
-
-        assertEquals(true, result.isLeft)
-
-        assertEquals(0, timeTaskRepository.timeTasksList.size)
-
-        assertEquals(1, timeTaskRepository.addedTaskCount)
-        assertEquals(1, scheduleRepository.fetchSchedulesCount)
-        assertEquals(0, scheduleRepository.createdScheduleCount)
-    }
-
-    @Test
-    fun test_add_time_task_with_start_overlay() = runBlocking {
-        val calendar = Calendar.getInstance().apply { setStartDay() }
-        val fakeTime = calendar.time
-
-        scheduleRepository.scheduleList.add(
-            Schedule(
-                date = fakeTime.time,
-                status = DailyScheduleStatus.ACCOMPLISHMENT,
-                timeTasks = listOf(
-                    TimeTask(
-                        key = 100L,
-                        date = fakeTime,
-                        timeRange = TimeRange(from = fakeTime, to = fakeTime.shiftMinutes(10)),
-                        category = MainCategory(),
-                    ),
-                )
-            )
-        )
-        // TimeTask first -> 00:00 - 00:10
-        timeTaskRepository.timeTasksList.add(
-            TimeTask(
-                key = 100L,
-                date = fakeTime,
-                timeRange = TimeRange(from = fakeTime, to = fakeTime.shiftMinutes(10)),
-                category = MainCategory(),
-            ),
-        )
-
-        // TimeTask first -> 00:08 - 23:59
-        val fakeTask = TimeTask(
-            key = 0L,
-            date = fakeTime,
-            timeRange = TimeRange(from = fakeTime.shiftMinutes(8), to = fakeTime.endThisDay()),
-            category = MainCategory(),
-        )
-
-        val actual = timeTaskInteractor.addTimeTask(fakeTask)
-        val expected = EditorFailures.TimeOverlayError(
-            startOverlay = fakeTime.shiftMinutes(10),
-            endOverlay = null,
-        )
-
-        assertEquals(true, actual.isLeft)
-        assertEquals(expected, (actual as Either.Left).data)
-
-        assertEquals(0, timeTaskRepository.addedTaskCount)
-        assertEquals(1, scheduleRepository.fetchSchedulesCount)
-        assertEquals(0, scheduleRepository.createdScheduleCount)
-
-        assertEquals(1, timeTaskRepository.timeTasksList.size)
-        assertEquals(1, scheduleRepository.scheduleList[0].timeTasks.size)
-    }
-
-    @Test
-    fun test_add_time_task_with_end_overlay() = runBlocking {
-        val calendar = Calendar.getInstance().apply { setStartDay() }
-        val fakeTime = calendar.time
-
-        scheduleRepository.scheduleList.add(
-            Schedule(
-                date = fakeTime.time,
-                status = DailyScheduleStatus.ACCOMPLISHMENT,
-                timeTasks = listOf(
-                    TimeTask(
-                        key = 100L,
-                        date = fakeTime,
-                        timeRange = TimeRange(from = fakeTime.shiftMinutes(10), to = fakeTime.endThisDay()),
-                        category = MainCategory(),
-                    ),
-                )
-            )
-        )
-        // TimeTask first -> 00:10 - 23:59
-        timeTaskRepository.timeTasksList.add(
-            TimeTask(
-                key = 100L,
-                date = fakeTime,
-                timeRange = TimeRange(from = fakeTime.shiftMinutes(10), to = fakeTime.endThisDay()),
-                category = MainCategory(),
-            ),
-        )
-
-        // TimeTask added -> 00:00 - 00:12
-        val fakeTask = TimeTask(
-            key = 0L,
-            date = fakeTime,
-            timeRange = TimeRange(from = fakeTime, to = fakeTime.shiftMinutes(12)),
-            category = MainCategory(),
-        )
-
-        val actual = timeTaskInteractor.addTimeTask(fakeTask)
-        val expected = EditorFailures.TimeOverlayError(
-            startOverlay = null,
-            endOverlay = fakeTime.shiftMinutes(10),
-        )
-
-        assertEquals(true, actual.isLeft)
-        assertEquals(expected, (actual as Either.Left).data)
-
-        assertEquals(0, timeTaskRepository.addedTaskCount)
-        assertEquals(1, scheduleRepository.fetchSchedulesCount)
-        assertEquals(0, scheduleRepository.createdScheduleCount)
-
-        assertEquals(1, timeTaskRepository.timeTasksList.size)
-        assertEquals(1, scheduleRepository.scheduleList[0].timeTasks.size)
-    }
-
-    @Test
-    fun test_add_time_task_with_overlay() = runBlocking {
-        val calendar = Calendar.getInstance().apply { setStartDay() }
-        val fakeTime = calendar.time
-
-        scheduleRepository.scheduleList.add(
-            Schedule(
-                date = fakeTime.time,
-                status = DailyScheduleStatus.ACCOMPLISHMENT,
-                timeTasks = listOf(
-                    TimeTask(
-                        key = 100L,
-                        date = fakeTime,
-                        timeRange = TimeRange(from = fakeTime, to = fakeTime.shiftMinutes(10)),
-                        category = MainCategory(),
-                    ),
-                    TimeTask(
-                        key = 200L,
-                        date = fakeTime,
-                        timeRange = TimeRange(from = fakeTime.shiftMinutes(20), to = fakeTime.endThisDay()),
-                        category = MainCategory(),
-                    ),
-                )
-            )
-        )
-        // TimeTask first -> 00:00 - 00:10
-        timeTaskRepository.timeTasksList.add(
-            TimeTask(
-                key = 100L,
-                date = fakeTime,
-                timeRange = TimeRange(from = fakeTime, to = fakeTime.shiftMinutes(10)),
-                category = MainCategory(),
-            ),
-        )
-        // TimeTask second -> 00:20 - 23:59
-        timeTaskRepository.timeTasksList.add(
-            TimeTask(
-                key = 200L,
-                date = fakeTime,
-                timeRange = TimeRange(from = fakeTime.shiftMinutes(20), to = fakeTime.endThisDay()),
-                category = MainCategory(),
-            ),
-        )
-
-        // TimeTask added -> 00:00 - 00:30
-        val fakeTask = TimeTask(
-            key = 0L,
-            date = fakeTime,
-            timeRange = TimeRange(from = fakeTime, to = fakeTime.shiftMinutes(30)),
-            category = MainCategory(),
-        )
-
-        val actual = timeTaskInteractor.addTimeTask(fakeTask)
-        val expected = EditorFailures.TimeOverlayError(
-            startOverlay = fakeTime.shiftMinutes(10),
-            endOverlay = fakeTime.shiftMinutes(20),
-        )
-
-        assertEquals(true, actual.isLeft)
-        assertEquals(expected, (actual as Either.Left).data)
-
-        assertEquals(0, timeTaskRepository.addedTaskCount)
-        assertEquals(1, scheduleRepository.fetchSchedulesCount)
-        assertEquals(0, scheduleRepository.createdScheduleCount)
-
-        assertEquals(2, timeTaskRepository.timeTasksList.size)
-        assertEquals(2, scheduleRepository.scheduleList[0].timeTasks.size)
-    }
-
-    @Test
-    fun test_add_time_task_with_same_end_nested_overlay() = runBlocking {
-        val calendar = Calendar.getInstance().apply { setStartDay() }
-        val fakeTime = calendar.time
-
-        scheduleRepository.scheduleList.add(
-            Schedule(
-                date = fakeTime.time,
-                status = DailyScheduleStatus.ACCOMPLISHMENT,
-                timeTasks = listOf(
-                    TimeTask(
-                        key = 100L,
-                        date = fakeTime,
-                        timeRange = TimeRange(from = fakeTime.shiftMinutes(540), to = fakeTime.shiftMinutes(1020)),
-                        category = MainCategory(),
-                    ),
-                )
-            )
-        )
-        timeTaskRepository.timeTasksList.add(
-            TimeTask(
-                key = 100L,
-                date = fakeTime,
-                timeRange = TimeRange(from = fakeTime.shiftMinutes(540), to = fakeTime.shiftMinutes(1020)),
-                category = MainCategory(),
-            ),
-        )
-
-        val fakeTask = TimeTask(
-            key = 0L,
-            date = fakeTime,
-            timeRange = TimeRange(from = fakeTime.shiftMinutes(900), to = fakeTime.shiftMinutes(1020)),
-            category = MainCategory(),
-        )
-
-        val actual = timeTaskInteractor.addTimeTask(fakeTask)
-        val expected = EditorFailures.TimeOverlayError(
-            startOverlay = fakeTime.shiftMinutes(1020),
-            endOverlay = null,
-        )
-
-        assertEquals(true, actual.isLeft)
-        assertEquals(expected, (actual as Either.Left).data)
-
-        assertEquals(0, timeTaskRepository.addedTaskCount)
-        assertEquals(1, scheduleRepository.fetchSchedulesCount)
-        assertEquals(0, scheduleRepository.createdScheduleCount)
-
-        assertEquals(1, timeTaskRepository.timeTasksList.size)
-        assertEquals(1, scheduleRepository.scheduleList[0].timeTasks.size)
-    }
-
-    @Test
-    fun test_update_time_task() = runBlocking {
-        val calendar = Calendar.getInstance().apply { setStartDay() }
-        val fakeTime = calendar.time
-
-        scheduleRepository.scheduleList.add(
-            Schedule(
-                date = fakeTime.time,
-                status = DailyScheduleStatus.ACCOMPLISHMENT,
-                timeTasks = listOf(
-                    TimeTask(
-                        key = 100L,
-                        date = fakeTime,
-                        timeRange = TimeRange(from = fakeTime, to = fakeTime.shiftMinutes(10)),
-                        category = MainCategory(),
-                    ),
-                    TimeTask(
-                        key = 200L,
-                        date = fakeTime,
-                        timeRange = TimeRange(
-                            from = fakeTime.shiftMinutes(10),
-                            to = fakeTime.shiftMinutes(20)
-                        ),
-                        category = MainCategory(),
-                    ),
-                )
-            )
-        )
-        // TimeTask first -> 00:00 - 00:10
-        timeTaskRepository.timeTasksList.add(
-            TimeTask(
-                key = 100L,
-                date = fakeTime,
-                timeRange = TimeRange(from = fakeTime, to = fakeTime.shiftMinutes(10)),
-                category = MainCategory(),
-            ),
-        )
-        // TimeTask second -> 00:10 - 00:20
-        timeTaskRepository.timeTasksList.add(
-            TimeTask(
-                key = 200L,
-                date = fakeTime,
-                timeRange = TimeRange(
-                    from = fakeTime.shiftMinutes(10),
-                    to = fakeTime.shiftMinutes(20)
-                ),
-                category = MainCategory(),
-            ),
-        )
-
-        // TimeTask updated(200) -> 00:10 - 00:30
-        val fakeTask = TimeTask(
-            key = 200L,
-            date = fakeTime,
-            timeRange = TimeRange(from = fakeTime.shiftMinutes(20), to = fakeTime.shiftMinutes(30)),
-            category = MainCategory(),
-        )
-
-        val actual = timeTaskInteractor.updateTimeTask(fakeTask)
-
-        assertEquals(true, actual.isRight)
-
-        assertEquals(1, scheduleRepository.fetchSchedulesCount)
-        assertEquals(0, scheduleRepository.createdScheduleCount)
-        assertEquals(1, timeTaskRepository.updateTaskCount)
-
-        assertEquals(2, timeTaskRepository.timeTasksList.size)
-        assertEquals(2, scheduleRepository.scheduleList[0].timeTasks.size)
-        assertEquals(fakeTask, timeTaskRepository.timeTasksList[1])
-    }
-
-    @Test
-    fun test_update_time_task_with_overlay() = runBlocking {
-        val calendar = Calendar.getInstance().apply { setStartDay() }
-        val fakeTime = calendar.time
-
-        scheduleRepository.scheduleList.add(
-            Schedule(
-                date = fakeTime.time,
-                status = DailyScheduleStatus.ACCOMPLISHMENT,
-                timeTasks = listOf(
-                    TimeTask(
-                        key = 100L,
-                        date = fakeTime,
-                        timeRange = TimeRange(from = fakeTime, to = fakeTime.shiftMinutes(10)),
-                        category = MainCategory(),
-                    ),
-                    TimeTask(
-                        key = 200L,
-                        date = fakeTime,
-                        timeRange = TimeRange(from = fakeTime.shiftMinutes(20), to = fakeTime.endThisDay()),
-                        category = MainCategory(),
-                    ),
-                    TimeTask(
-                        key = 300L,
-                        date = fakeTime,
-                        timeRange = TimeRange(
-                            from = fakeTime.shiftMinutes(10),
-                            to = fakeTime.shiftMinutes(20)
-                        ),
-                        category = MainCategory(),
-                    ),
-                )
-            )
-        )
-        // TimeTask first -> 00:00 - 00:10
-        timeTaskRepository.timeTasksList.add(
-            TimeTask(
-                key = 100L,
-                date = fakeTime,
-                timeRange = TimeRange(from = fakeTime, to = fakeTime.shiftMinutes(10)),
-                category = MainCategory(),
-            ),
-        )
-        // TimeTask second -> 00:20 - 23:59
-        timeTaskRepository.timeTasksList.add(
-            TimeTask(
-                key = 200L,
-                date = fakeTime,
-                timeRange = TimeRange(from = fakeTime.shiftMinutes(20), to = fakeTime.endThisDay()),
-                category = MainCategory(),
-            ),
-        )
-        // TimeTask thirty -> 00:10 - 00:20
-        timeTaskRepository.timeTasksList.add(
-            TimeTask(
-                key = 300L,
-                date = fakeTime,
-                timeRange = TimeRange(
-                    from = fakeTime.shiftMinutes(10),
-                    to = fakeTime.shiftMinutes(20)
-                ),
-                category = MainCategory(),
-            ),
-        )
-
-        // TimeTask updated(300) -> 00:00 - 00:30
-        val fakeTask = TimeTask(
-            key = 300L,
-            date = fakeTime,
-            timeRange = TimeRange(from = fakeTime, to = fakeTime.shiftMinutes(30)),
-            category = MainCategory(),
-        )
-
-        val actual = timeTaskInteractor.updateTimeTask(fakeTask)
-        val expected = EditorFailures.TimeOverlayError(
-            startOverlay = fakeTime.shiftMinutes(10),
-            endOverlay = fakeTime.shiftMinutes(20),
-        )
-
-        assertEquals(true, actual.isLeft)
-        assertEquals(expected, (actual as Either.Left).data)
-
-        assertEquals(1, scheduleRepository.fetchSchedulesCount)
-        assertEquals(0, scheduleRepository.createdScheduleCount)
-        assertEquals(0, timeTaskRepository.updateTaskCount)
-
-        assertEquals(3, scheduleRepository.scheduleList[0].timeTasks.size)
-        assertEquals(3, timeTaskRepository.timeTasksList.size)
-    }
-
-    @Test
-    fun test_delete_time_task() = runBlocking {
-        val calendar = Calendar.getInstance().apply { setStartDay() }
-        val fakeTime = calendar.time
-        timeTaskRepository.timeTasksList.add(
-            TimeTask(
-                key = 100L,
-                date = fakeTime,
-                timeRange = TimeRange(from = fakeTime, to = fakeTime.endThisDay()),
-                category = MainCategory(),
-            ),
-        )
-
-        val result = timeTaskInteractor.deleteTimeTask(100L)
-
-        assertEquals(true, result.isRight)
-
-        assertEquals(1, timeTaskRepository.deleteTaskCount)
-        assertEquals(0, timeTaskRepository.timeTasksList.size)
-    }
+    private fun task(
+        key: Long,
+        linkedTemplateId: Long?,
+        date: Date = currentDate,
+        timeRange: TimeRange = TimeRange(currentDate.at(9, 0), currentDate.at(10, 0)),
+    ) = TimeTask(
+        key = key,
+        date = date,
+        timeRange = timeRange,
+        category = MainCategory(id = 1L),
+        linkedTemplateId = linkedTemplateId,
+    )
 }
 
 private class FakeTimeTaskRepository : TimeTaskRepository {
 
-    val timeTasksList = mutableListOf<TimeTask>()
+    val tasks = mutableListOf<TimeTask>()
 
-    var addedTaskCount = 0
-    var fetchTaskCount = 0
-    var updateTaskCount = 0
-    var deleteTaskCount = 0
+    override suspend fun addOrUpdateTimeTask(timeTask: TimeTask): Long {
+        tasks.removeAll { it.key == timeTask.key }
+        tasks.add(timeTask)
+        return timeTask.key
+    }
 
-    var errorWhileAction = false
+    override suspend fun addOrUpdateTimeTasks(timeTasks: List<TimeTask>) {
+        timeTasks.forEach { addOrUpdateTimeTask(it) }
+    }
 
-    override suspend fun addTimeTasks(timeTasks: List<TimeTask>) {
-        addedTaskCount++
-        if (!errorWhileAction) {
-            timeTasksList.addAll(timeTasks)
-        } else {
-            throw SQLiteException()
+    override suspend fun fetchAllTimeTasksByDate(date: Date): Flow<List<TimeTask>> {
+        return flowOf(tasks.filter { it.date.startThisDay() == date.startThisDay() })
+    }
+
+    override suspend fun fetchTimeTaskById(id: Long): TimeTask? {
+        return tasks.find { it.key == id }
+    }
+
+    override suspend fun fetchTimeTaskByTemplate(templateId: Long, date: Date): TimeTask? {
+        return tasks.find { task ->
+            task.linkedTemplateId == templateId && task.date.startThisDay() == date.startThisDay()
         }
     }
 
-    override suspend fun fetchAllTimeTaskByDate(date: Date): List<TimeTask> {
-        fetchTaskCount++
-        return if (!errorWhileAction) {
-            timeTasksList
-        } else {
-            throw NullPointerException()
-        }
-    }
-
-    override suspend fun fetchTimeTaskByKey(key: Long): TimeTask? {
-        return timeTasksList.find { timeTask -> timeTask.key == key }
-    }
-
-    override suspend fun updateTimeTaskList(timeTaskList: List<TimeTask>) {
-        updateTaskCount++
-        if (!errorWhileAction) {
-            timeTaskList.forEach { timeTask ->
-                val index = timeTasksList.indexOfFirst { it.key == timeTask.key }
-                timeTasksList[index] = timeTask
-            }
-        } else {
-            throw SQLiteException()
-        }
-    }
-
-    override suspend fun updateTimeTask(timeTask: TimeTask) {
-        updateTaskCount++
-        if (!errorWhileAction) {
-            val index = timeTasksList.indexOfFirst { it.key == timeTask.key }
-            timeTasksList[index] = timeTask
-        } else {
-            throw SQLiteException()
-        }
-    }
-
-    override suspend fun deleteTimeTasks(keys: List<Long>) {
-        deleteTaskCount++
-        if (!errorWhileAction) {
-            keys.forEach { key ->
-                timeTasksList.removeAt(timeTasksList.indexOfFirst { it.key == key })
-            }
-        } else {
-            throw SQLiteException()
-        }
+    override suspend fun deleteTimeTasksByIds(ids: List<Long>) {
+        tasks.removeAll { it.key in ids }
     }
 }
 
-private class FakeScheduleRepository : ScheduleRepository {
+private fun Date.at(hour: Int, minute: Int): Date {
+    return Calendar.getInstance().apply {
+        time = this@at
+        setHoursAndMinutes(hour, minute)
+    }.time
+}
 
-    val scheduleList = mutableListOf<Schedule>()
+private class FakeScheduleRepository(
+    private val timeTaskRepository: FakeTimeTaskRepository,
+) : ScheduleRepository {
 
-    var createdScheduleCount = 0
-    var fetchSchedulesCount = 0
-    var updateScheduleCount = 0
-    var deleteScheduleCount = 0
+    val schedules = mutableSetOf<Long>()
 
-    var errorWhileAction = false
+    override suspend fun addOrUpdateSchedule(schedule: BaseDailySchedule): Long {
+        schedules.add(schedule.date.time)
+        return schedule.date.time
+    }
 
-    override suspend fun createSchedules(schedules: List<Schedule>) {
-        createdScheduleCount++
-        scheduleList.addAll(schedules)
+    override suspend fun addOrUpdateSchedules(schedules: List<BaseDailySchedule>) {
+        schedules.forEach { addOrUpdateSchedule(it) }
     }
 
     override suspend fun fetchSchedulesByRange(timeRange: TimeRange?): Flow<List<Schedule>> {
-        fetchSchedulesCount++
-        return if (timeRange == null) {
-            flowOf(scheduleList)
-        } else {
-            val fondedSchedules = mutableListOf<Schedule>().apply {
-                scheduleList.forEach {
-                    if (it.date >= timeRange.from.time && it.date <= timeRange.to.time) add(it)
-                }
-            }
-            flowOf(fondedSchedules)
-        }
+        val range = timeRange ?: TimeRange(Date(Long.MIN_VALUE), Date(Long.MAX_VALUE))
+        return flowOf(
+            schedules
+                .filter { it in range.from.time..range.to.time }
+                .map { date ->
+                    val scheduleDate = Date(date)
+                    Schedule(
+                        date = scheduleDate,
+                        timeTasks = timeTaskRepository.tasks.filter { task -> task.date.startThisDay() == scheduleDate },
+                    )
+                },
+        )
     }
 
-    override fun fetchScheduleByDate(date: Long): Flow<Schedule?> {
-        fetchSchedulesCount++
-        return flowOf(scheduleList.find { it.date == date })
-    }
-
-    override suspend fun updateSchedule(schedule: Schedule) {
-        updateScheduleCount++
-        val index = scheduleList.indexOfFirst { it.date == schedule.date }.takeIf { it != -1 }
-        scheduleList[index!!] = schedule
+    override suspend fun fetchScheduleByDate(date: Date): Flow<Schedule?> {
+        return flowOf(
+            schedules.find { it == date.time }?.let {
+                Schedule(
+                    date = date,
+                    timeTasks = timeTaskRepository.tasks.filter { task -> task.date.startThisDay() == date.startThisDay() },
+                )
+            },
+        )
     }
 
     override suspend fun deleteAllSchedules(): List<Schedule> {
-        deleteScheduleCount++
-        return scheduleList.apply { scheduleList.clear() }
-    }
-}
-
-private class FakeDateManager : DateManager {
-
-    var currentDate: Date = Calendar.getInstance().time
-
-    override fun fetchCurrentDate() = currentDate
-
-    override fun fetchBeginningCurrentDay() = currentDate.startThisDay()
-
-    override fun fetchEndCurrentDay() = currentDate.endThisDay()
-
-    override fun calculateLeftTime(endTime: Date) = endTime.time - currentDate.time
-
-    override fun calculateProgress(startTime: Date, endTime: Date): Float {
-        val currentTime = fetchCurrentDate().time
-        val pastTime = ((currentTime - startTime.time).toMinutes()).toFloat()
-        val duration = ((endTime.time - startTime.time).toMinutes()).toFloat()
-        val progress = pastTime / duration
-
-        return if (progress < 0f) 0f else if (progress > 1f) 1f else progress
-    }
-
-    override fun setCurrentHMS(date: Date): Date {
-        val currentCalendar = Calendar.getInstance().apply {
-            time = currentDate
-        }
-        val targetCalendar = Calendar.getInstance().apply {
-            time = date
-            set(Calendar.HOUR_OF_DAY, currentCalendar.get(Calendar.HOUR_OF_DAY))
-            set(Calendar.MINUTE, currentCalendar.get(Calendar.MINUTE))
-            set(Calendar.SECOND, currentCalendar.get(Calendar.SECOND))
-            set(Calendar.MILLISECOND, currentCalendar.get(Calendar.MILLISECOND))
-        }
-        return targetCalendar.time
+        val deleted = schedules.map { Schedule(Date(it)) }
+        schedules.clear()
+        return deleted
     }
 }

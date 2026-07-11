@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,9 +22,9 @@ import ru.aleshin.core.utils.architecture.store.contract.StoreEffect
 import ru.aleshin.core.utils.architecture.store.contract.StoreEvent
 import ru.aleshin.core.utils.architecture.store.contract.StoreState
 import ru.aleshin.features.home.impl.domain.entities.HomeFailures
-import ru.aleshin.features.home.impl.presentation.models.categories.CategoriesUi
-import ru.aleshin.features.home.impl.presentation.models.templates.TemplateUi
-import ru.aleshin.features.home.impl.presentation.models.templates.TemplatesSortedType
+import ru.aleshin.core.presentation.models.categories.MainCategoryDetailsUi
+import ru.aleshin.core.presentation.models.templates.TemplateUi
+import ru.aleshin.features.home.impl.domain.entities.TemplatesSortedType
 
 /**
  * @author Stanislav Aleshin on 08.05.2023.
@@ -32,7 +32,7 @@ import ru.aleshin.features.home.impl.presentation.models.templates.TemplatesSort
 @Serializable
 internal data class TemplatesState(
     val templates: List<TemplateUi>? = null,
-    val categories: List<CategoriesUi> = emptyList(),
+    val categories: List<MainCategoryDetailsUi> = emptyList(),
     val sortedType: TemplatesSortedType = TemplatesSortedType.DATE,
 ) : StoreState
 
@@ -53,7 +53,7 @@ internal sealed class TemplatesEffect : StoreEffect {
 }
 
 internal sealed class TemplatesAction : StoreAction {
-    data class UpdateCategories(val categories: List<CategoriesUi>) : TemplatesAction()
+    data class UpdateCategories(val categories: List<MainCategoryDetailsUi>) : TemplatesAction()
     data class UpdateTemplates(val templates: List<TemplateUi>) : TemplatesAction()
     data class ChangeSortedType(val type: TemplatesSortedType) : TemplatesAction()
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,9 +17,9 @@ package ru.aleshin.timeplanner.presentation.ui.main.contract
 
 import androidx.compose.runtime.Immutable
 import kotlinx.serialization.Serializable
-import ru.aleshin.core.ui.theme.material.ColorsUiType
-import ru.aleshin.core.ui.theme.material.ThemeUiType
-import ru.aleshin.core.ui.theme.tokens.LanguageUiType
+import ru.aleshin.timeplanner.core.ui.theme.material.ColorsUiType
+import ru.aleshin.timeplanner.core.ui.theme.material.ThemeUiType
+import ru.aleshin.timeplanner.core.ui.theme.tokens.LanguageUiType
 import ru.aleshin.core.utils.architecture.component.BaseInput
 import ru.aleshin.core.utils.architecture.component.BaseOutput
 import ru.aleshin.core.utils.architecture.store.contract.StoreAction

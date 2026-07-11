@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@ package ru.aleshin.core.data.repository
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import ru.aleshin.core.data.datasources.templates.TemplatesLocalDataSource
+import ru.aleshin.core.data.datasources.templates.TemplateLocalDataSource
 import ru.aleshin.core.data.mappers.template.mapToData
 import ru.aleshin.core.data.mappers.template.mapToDomain
 import ru.aleshin.core.domain.entities.template.Template
@@ -28,32 +28,28 @@ import javax.inject.Inject
  * @author Stanislav Aleshin on 08.03.2023.
  */
 class TemplatesRepositoryImpl @Inject constructor(
-    private val localDataSource: TemplatesLocalDataSource,
+    private val localDataSource: TemplateLocalDataSource,
 ) : TemplatesRepository {
 
-    override suspend fun addTemplate(template: Template): Int {
-        return localDataSource.createTemplates(listOf(template.mapToData()))[0].toInt()
+    override suspend fun addOrUpdateTemplate(template: Template): Long {
+        return localDataSource.addOrUpdateTemplate(template.mapToData())
     }
 
-    override suspend fun addTemplates(templates: List<Template>) {
-        localDataSource.createTemplates(templates.map { it.mapToData() })
+    override suspend fun addOrUpdateTemplates(templates: List<Template>) {
+        localDataSource.addOrUpdateTemplates(templates.map { it.mapToData() })
     }
 
-    override suspend fun fetchTemplatesById(templateId: Int): Template? {
+    override suspend fun fetchTemplatesByIdOnce(templateId: Long): Template? {
         return localDataSource.fetchTemplatesById(templateId)?.mapToDomain()
     }
 
-    override fun fetchAllTemplates(): Flow<List<Template>> {
+    override suspend fun fetchAllTemplates(): Flow<List<Template>> {
         return localDataSource.fetchAllTemplates().map { templates ->
-            templates.map { template -> template.mapToDomain() }
+            templates.map { it.mapToDomain() }
         }
     }
 
-    override suspend fun updateTemplate(template: Template) {
-        localDataSource.updateTemplate(template.mapToData())
-    }
-
-    override suspend fun deleteTemplateById(id: Int) {
+    override suspend fun deleteTemplateById(id: Long) {
         localDataSource.deleteTemplateById(id)
     }
 

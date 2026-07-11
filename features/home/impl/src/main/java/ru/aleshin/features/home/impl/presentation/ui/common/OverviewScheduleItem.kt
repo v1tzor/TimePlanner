@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,11 +39,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import ru.aleshin.core.domain.entities.schedules.DailyScheduleStatus
-import ru.aleshin.core.ui.theme.TimePlannerRes
+import ru.aleshin.core.presentation.models.schedules.OverviewScheduleUi
 import ru.aleshin.core.utils.extensions.alphaByEnabled
 import ru.aleshin.core.utils.extensions.isCurrentDay
-import ru.aleshin.features.home.impl.presentation.models.schedules.ScheduleUi
 import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
+import ru.aleshin.timeplanner.core.ui.theme.TimePlannerRes
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -53,7 +53,7 @@ import java.util.Locale
 @Composable
 internal fun OverviewScheduleItem(
     modifier: Modifier = Modifier,
-    model: ScheduleUi,
+    model: OverviewScheduleUi,
     onClick: () -> Unit,
 ) {
     val dateFormat = remember { SimpleDateFormat("EEE, d MMM", Locale.getDefault()) }
@@ -113,28 +113,21 @@ internal fun OverviewScheduleItem(
                 ShortInfoView(
                     modifier = Modifier.weight(1f),
                     enabled = model.dateStatus != DailyScheduleStatus.PLANNED,
-                    text = remember(model.timeTasks) {
-                        model.timeTasks.count { !it.isCompleted }.toString() // TODO: Move logic to domain
-                    },
+                    text = model.unexecutedTask.toString(),
                     icon = painterResource(id = HomeThemeRes.icons.unexecutedTask),
                 )
                 ShortInfoView(
                     modifier = Modifier.weight(1f),
                     enabled = model.dateStatus != DailyScheduleStatus.PLANNED,
-                    text = remember(model.timeTasks) {
-                        model.timeTasks.count { it.progress == 1f && it.isCompleted }.toString() // TODO: Move logic to domain
-                    },
+                    text = model.completedTask.toString(),
                     icon = painterResource(id = HomeThemeRes.icons.completedTask),
                 )
-                val plannedTimeTasks = remember(model.timeTasks) {
-                    model.timeTasks.count { it.progress < 1f } // TODO: Move logic to domain
-                }
                 ShortInfoView(
                     modifier = Modifier.weight(1f),
                     enabled = model.dateStatus != DailyScheduleStatus.REALIZED,
-                    text = plannedTimeTasks.toString(),
+                    text = model.plannedTask.toString(),
                     icon = painterResource(id = TimePlannerRes.icons.plannedTask),
-                    color = if (plannedTimeTasks == 0) {
+                    color = if (model.plannedTask == 0) {
                         MaterialTheme.colorScheme.onSurfaceVariant
                     } else {
                         MaterialTheme.colorScheme.primary

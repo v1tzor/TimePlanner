@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 package ru.aleshin.features.analytics.impl.presenatiton.mappers
 
+import ru.aleshin.core.presentation.mappers.mapToUi
 import ru.aleshin.features.analytics.impl.domain.entities.CategoryAnalytic
 import ru.aleshin.features.analytics.impl.domain.entities.HourlyWorkLoadAnalytic
 import ru.aleshin.features.analytics.impl.domain.entities.PlanningAnalytic

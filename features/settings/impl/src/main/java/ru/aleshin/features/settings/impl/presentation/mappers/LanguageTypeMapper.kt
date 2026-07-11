@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,14 @@
 package ru.aleshin.features.settings.impl.presentation.mappers
 
 import androidx.compose.runtime.Composable
-import ru.aleshin.core.ui.theme.tokens.LanguageUiType
 import ru.aleshin.features.settings.impl.presentation.theme.SettingsThemeRes
+import ru.aleshin.timeplanner.core.ui.theme.tokens.LanguageUiType
 
 /**
  * @author Stanislav Aleshin on 21.03.2023.
  */
 @Composable
-fun LanguageUiType.toLanguageName(): String = when (this) {
+public fun LanguageUiType.toLanguageName(): String = when (this) {
     LanguageUiType.DEFAULT -> SettingsThemeRes.strings.defaultLanguageTitle
     LanguageUiType.EN -> SettingsThemeRes.strings.engLanguageTitle
     LanguageUiType.RU -> SettingsThemeRes.strings.rusLanguageTitle

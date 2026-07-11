@@ -28,7 +28,6 @@ compose-material = "1.13.0"
 compose-material3 = "1.3.2"
 compose-adaptive = "1.1.0"
 compose-plugin = "1.8.2"
-voyager = "1.0.1"
 decompose = "3.4.0-alpha03"
 essenty = "2.5.0"
 chartsMahu = "0.3.5"
@@ -43,6 +42,7 @@ mytracker = "3.5.0"
 leakcanary = "3.0-alpha-8"
 jUnit = "4.13.2"
 jUnitExt = "1.1.4"
+androidTestRunner = "1.5.2"
 turbine = "0.12.1"
 coroutinesTest = "1.10.2"
 fragmentTest = "1.5.5"
@@ -75,10 +75,6 @@ compose-material3-adaptive = { module = "androidx.compose.material3.adaptive:ada
 compose-material3-adaptive-layout = { module = "androidx.compose.material3.adaptive:adaptive-layout", version.ref = "compose-adaptive" }
 compose-placeholder = { module = "com.google.accompanist:accompanist-placeholder-material", version.ref = "accompanist" }
 compose-swiperefresh = { module = "com.google.accompanist:accompanist-swiperefresh", version.ref = "accompanist" }
-voyager-navigator = { module = "cafe.adriel.voyager:voyager-navigator", version.ref = "voyager" }
-voyager-screenModel = { module = "cafe.adriel.voyager:voyager-screenmodel", version.ref = "voyager" }
-voyager-transitions = { module = "cafe.adriel.voyager:voyager-transitions", version.ref = "voyager" }
-voyager-kodein = { module = "cafe.adriel.voyager:voyager-kodein", version.ref = "voyager" }
 charts-mahu = { module = "ma.hu:compose-charts", version.ref = "chartsMahu" }
 charts-himanshoe = { module = "com.himanshoe:charty", version.ref = "chartsHimanshoe" }
 decompose-core = { module = "com.arkivanov.decompose:decompose", version.ref = "decompose" }
@@ -91,6 +87,7 @@ dagger-ksp = { module = "com.google.dagger:dagger-compiler", version.ref = "dagg
 room-core = { module = "androidx.room:room-runtime", version.ref = "room" }
 room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
 room-ksp = { module = "androidx.room:room-compiler", version.ref = "room" }
+room-testing = { module = "androidx.room:room-testing", version.ref = "room" }
 rustore-universalpush-hms = { module = "ru.rustore.sdk:universalhms" }
 
 tracer-plugin = { module = "ru.ok.tracer:tracer-plugin", version.ref = "tracer" }
@@ -106,6 +103,7 @@ mytracker-core = { module = "com.my.tracker:mytracker-sdk", version.ref = "mytra
 jUnit = { module = "junit:junit", version.ref = "jUnit" }
 composeJUnit = { module = "androidx.compose.ui:ui-test-junit4", version.ref = "compose" }
 jUnitExt = { module = "androidx.test.ext:junit", version.ref = "jUnitExt" }
+androidTestRunner = { module = "androidx.test:runner", version.ref = "androidTestRunner" }
 coroutinesTest = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutinesTest" }
 turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 espresso = { module = "androidx.test.espresso:espresso-core", version.ref = "espresso" }
@@ -114,7 +112,6 @@ leakcanary = { module = "com.squareup.leakcanary:leakcanary-android", version.re
 
 [bundles]
 compose = ["androidx-activity-compose", 'compose-ui', "compose-foundation", "compose-foundation-layout", "compose-placeholder", "compose-swiperefresh", "compose-material", "compose-material3", "compose-material3-adaptive", "compose-material3-adaptive-layout", "androidx-systemUiController"]
-voyager = ["voyager-navigator", "voyager-screenModel", "voyager-transitions", "voyager-kodein"]
 decompose = ["decompose-core", "decompose-compose", "decompose-compose-experimental", "decompose-lifecycle-coroutines"]
 tracer = ["tracer-crashReport", "tracer-crashReportNative", "tracer-heapDumps", "tracer-diskUsage", "tracer-samplingProfiler", "tracer-systraceProfiler"]
 

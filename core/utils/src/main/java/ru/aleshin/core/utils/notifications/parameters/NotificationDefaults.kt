@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@
  */
 package ru.aleshin.core.utils.notifications.parameters
 
+import androidx.core.app.NotificationCompat
+
 /**
  * @author Stanislav Aleshin on 28.03.2023.
  */
@@ -22,4 +24,22 @@ data class NotificationDefaults(
     val isSound: Boolean = false,
     val isVibrate: Boolean = false,
     val isLights: Boolean = false,
-)
+) {
+    fun toCompatDefaults(): Int {
+        var defaults = 0
+
+        if (isVibrate) {
+            defaults = defaults or NotificationCompat.DEFAULT_VIBRATE
+        }
+
+        if (isSound) {
+            defaults = defaults or NotificationCompat.DEFAULT_SOUND
+        }
+
+        if (isLights) {
+            defaults = defaults or NotificationCompat.DEFAULT_LIGHTS
+        }
+
+        return defaults
+    }
+}

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,9 @@ package ru.aleshin.features.settings.impl.domain.interactors
 
 import kotlinx.coroutines.flow.first
 import ru.aleshin.core.domain.entities.schedules.Schedule
+import ru.aleshin.core.domain.entities.schedules.mapToBase
 import ru.aleshin.core.domain.repository.ScheduleRepository
+import ru.aleshin.core.domain.repository.TimeTaskRepository
 import ru.aleshin.core.utils.functional.DomainResult
 import ru.aleshin.core.utils.functional.UnitDomainResult
 import ru.aleshin.features.settings.impl.domain.common.SettingsEitherWrapper
@@ -29,25 +31,27 @@ import javax.inject.Inject
  */
 internal interface ScheduleInteractor {
 
-    suspend fun removeAllSchedules(): DomainResult<SettingsFailures, List<Schedule>>
+    suspend fun addOrUpdateSchedules(schedules: List<Schedule>): UnitDomainResult<SettingsFailures>
     suspend fun fetchAllSchedules(): DomainResult<SettingsFailures, List<Schedule>>
-    suspend fun addSchedules(schedules: List<Schedule>): UnitDomainResult<SettingsFailures>
+    suspend fun deleteAllSchedules(): DomainResult<SettingsFailures, List<Schedule>>
 
     class Base @Inject constructor(
         private val scheduleRepository: ScheduleRepository,
+        private val timeTaskRepository: TimeTaskRepository,
         private val eitherWrapper: SettingsEitherWrapper,
     ) : ScheduleInteractor {
 
-        override suspend fun removeAllSchedules() = eitherWrapper.wrap {
-            scheduleRepository.deleteAllSchedules()
+        override suspend fun addOrUpdateSchedules(schedules: List<Schedule>) = eitherWrapper.wrap {
+            scheduleRepository.addOrUpdateSchedules(schedules.map { it.mapToBase() })
+            timeTaskRepository.addOrUpdateTimeTasks(schedules.flatMap { it.timeTasks })
         }
 
         override suspend fun fetchAllSchedules() = eitherWrapper.wrap {
             scheduleRepository.fetchSchedulesByRange(null).first()
         }
 
-        override suspend fun addSchedules(schedules: List<Schedule>) = eitherWrapper.wrap {
-            scheduleRepository.createSchedules(schedules)
+        override suspend fun deleteAllSchedules() = eitherWrapper.wrap {
+            scheduleRepository.deleteAllSchedules()
         }
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,16 +47,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import ru.aleshin.core.ui.theme.tokens.LanguageUiType
-import ru.aleshin.core.ui.views.DialogButtons
 import ru.aleshin.features.settings.impl.presentation.mappers.toLanguageName
 import ru.aleshin.features.settings.impl.presentation.theme.SettingsThemeRes
+import ru.aleshin.timeplanner.core.ui.theme.tokens.LanguageUiType
+import ru.aleshin.timeplanner.core.ui.views.DialogButtons
 
 /**
  * @author Stanislav Aleshin on 21.03.2023.
  */
 @Composable
-fun LanguageChooser(
+internal fun LanguageChooser(
     modifier: Modifier = Modifier,
     language: LanguageUiType,
     onLanguageChanged: (LanguageUiType) -> Unit,
@@ -99,7 +99,7 @@ fun LanguageChooser(
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun LanguageDialogChooser(
+internal fun LanguageDialogChooser(
     modifier: Modifier = Modifier,
     openDialog: Boolean,
     initialLanguage: LanguageUiType,

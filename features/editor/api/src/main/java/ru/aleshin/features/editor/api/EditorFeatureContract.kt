@@ -16,9 +16,10 @@
 package ru.aleshin.features.editor.api
 
 import kotlinx.serialization.Serializable
-import ru.aleshin.core.domain.entities.schedules.TimeTask
-import ru.aleshin.core.domain.entities.template.Template
 import ru.aleshin.core.utils.architecture.component.BaseOutput
+import ru.aleshin.core.utils.functional.DateSerializer
+import ru.aleshin.core.utils.functional.TimeRange
+import java.util.Date
 
 /**
  * @author Stanislav Aleshin on 01.07.2026.
@@ -28,8 +29,9 @@ public sealed interface EditorConfig {
 
     @Serializable
     public data class Editor(
-        val timeTask: TimeTask,
-        val template: Template?,
+        val timeTaskId: Long? = null,
+        val timeRange: TimeRange? = null,
+        @Serializable(DateSerializer::class) val date: Date? = null,
         val undefinedTaskId: Long? = null,
     ) : EditorConfig
 }
@@ -38,7 +40,7 @@ public sealed interface EditorConfig {
  * @author Stanislav Aleshin on 01.07.2026.
  */
 public sealed interface EditorOutput : BaseOutput {
-    public data class NavigateToCategories(val categoryId: Int) : EditorOutput
+    public data class NavigateToCategories(val categoryId: Long) : EditorOutput
     public data object NavigateToTemplates : EditorOutput
     public data object NavigateToBack : EditorOutput
 }

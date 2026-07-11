@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,9 @@
 package ru.aleshin.features.settings.impl.domain.interactors
 
 import kotlinx.coroutines.flow.first
-import ru.aleshin.core.domain.entities.categories.Categories
-import ru.aleshin.core.domain.repository.CategoriesRepository
-import ru.aleshin.core.domain.repository.SubCategoriesRepository
+import ru.aleshin.core.domain.entities.categories.MainCategoryDetails
+import ru.aleshin.core.domain.repository.MainCategoryRepository
+import ru.aleshin.core.domain.repository.SubCategoryRepository
 import ru.aleshin.core.utils.extensions.extractAllItem
 import ru.aleshin.core.utils.functional.DomainResult
 import ru.aleshin.core.utils.functional.UnitDomainResult
@@ -31,29 +31,28 @@ import javax.inject.Inject
  */
 internal interface CategoriesInteractor {
 
-    suspend fun removeAllCategories(): UnitDomainResult<SettingsFailures>
-    suspend fun fetchAllCategories(): DomainResult<SettingsFailures, List<Categories>>
-    suspend fun addCategories(categories: List<Categories>): UnitDomainResult<SettingsFailures>
+    suspend fun addOrUpdateCategories(categories: List<MainCategoryDetails>): UnitDomainResult<SettingsFailures>
+    suspend fun fetchAllCategories(): DomainResult<SettingsFailures, List<MainCategoryDetails>>
+    suspend fun deleteAllCategories(): UnitDomainResult<SettingsFailures>
 
     class Base @Inject constructor(
-        private val categoriesRepository: CategoriesRepository,
-        private val subCategoriesRepository: SubCategoriesRepository,
+        private val mainCategoryRepository: MainCategoryRepository,
+        private val subCategoryRepository: SubCategoryRepository,
         private val eitherWrapper: SettingsEitherWrapper,
     ) : CategoriesInteractor {
 
-        override suspend fun removeAllCategories() = eitherWrapper.wrap {
-            categoriesRepository.deleteAllCategories()
-            subCategoriesRepository.deleteAllSubCategories()
+        override suspend fun addOrUpdateCategories(categories: List<MainCategoryDetails>) = eitherWrapper.wrap {
+            val subCategories = categories.map { it.subCategories }.extractAllItem()
+            mainCategoryRepository.addOrUpdateCategories(categories.map { it.category })
+            subCategoryRepository.addOrUpdateSubCategories(subCategories)
         }
 
         override suspend fun fetchAllCategories() = eitherWrapper.wrap {
-            categoriesRepository.fetchCategories().first()
+            mainCategoryRepository.fetchAllCategoriesDetails().first()
         }
 
-        override suspend fun addCategories(categories: List<Categories>) = eitherWrapper.wrap {
-            val subCategories = categories.map { it.subCategories }.extractAllItem()
-            categoriesRepository.addMainCategories(categories.map { it.category })
-            subCategoriesRepository.addSubCategories(subCategories)
+        override suspend fun deleteAllCategories() = eitherWrapper.wrap {
+            mainCategoryRepository.deleteAllCategories()
         }
     }
 }

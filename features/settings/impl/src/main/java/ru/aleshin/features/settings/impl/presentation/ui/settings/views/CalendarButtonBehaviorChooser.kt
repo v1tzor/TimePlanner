@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,9 +28,9 @@ import androidx.compose.ui.unit.dp
 import ru.aleshin.core.domain.entities.settings.CalendarButtonBehavior
 import ru.aleshin.core.domain.entities.settings.CalendarButtonBehavior.OPEN_CALENDAR
 import ru.aleshin.core.domain.entities.settings.CalendarButtonBehavior.SET_CURRENT_DATE
-import ru.aleshin.core.ui.views.SegmentedButtonItem
-import ru.aleshin.core.ui.views.SegmentedButtons
 import ru.aleshin.features.settings.impl.presentation.theme.SettingsThemeRes
+import ru.aleshin.timeplanner.core.ui.views.SegmentedButtonItem
+import ru.aleshin.timeplanner.core.ui.views.SegmentedButtons
 
 /**
  * @author Stanislav Aleshin on 23.10.2023.

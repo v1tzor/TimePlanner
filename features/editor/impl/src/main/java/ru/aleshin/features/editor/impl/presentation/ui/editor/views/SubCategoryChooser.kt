@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,16 +59,16 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import ru.aleshin.core.ui.theme.TimePlannerRes
-import ru.aleshin.core.ui.views.BaseSelectorBottomSheet
-import ru.aleshin.core.ui.views.SelectorAddItemView
-import ru.aleshin.core.ui.views.SelectorNotSelectedItemView
-import ru.aleshin.core.ui.views.SelectorSwipeItemView
-import ru.aleshin.core.ui.views.SelectorTextField
-import ru.aleshin.core.ui.views.SwipeToDismissBackground
+import ru.aleshin.core.presentation.models.categories.MainCategoryUi
+import ru.aleshin.core.presentation.models.categories.SubCategoryUi
+import ru.aleshin.timeplanner.core.ui.theme.TimePlannerRes
+import ru.aleshin.timeplanner.core.ui.views.BaseSelectorBottomSheet
+import ru.aleshin.timeplanner.core.ui.views.SelectorAddItemView
+import ru.aleshin.timeplanner.core.ui.views.SelectorNotSelectedItemView
+import ru.aleshin.timeplanner.core.ui.views.SelectorSwipeItemView
+import ru.aleshin.timeplanner.core.ui.views.SelectorTextField
+import ru.aleshin.timeplanner.core.ui.views.SwipeToDismissBackground
 import ru.aleshin.core.utils.functional.Constants
-import ru.aleshin.features.editor.impl.presentation.models.categories.MainCategoryUi
-import ru.aleshin.features.editor.impl.presentation.models.categories.SubCategoryUi
 import ru.aleshin.features.editor.impl.presentation.theme.EditorThemeRes
 
 /**
@@ -237,7 +237,7 @@ internal fun SubCategorySelectorBottomSheet(
                     } else {
                         SelectorAddItemView(
                             text = EditorThemeRes.strings.subCategoryDialogAddedTitle,
-                            enabled = mainCategory?.id != 0 && mainCategory != null,
+                            enabled = mainCategory?.id != 0L && mainCategory != null,
                             onClick = { isEdited = true },
                         )
                     }

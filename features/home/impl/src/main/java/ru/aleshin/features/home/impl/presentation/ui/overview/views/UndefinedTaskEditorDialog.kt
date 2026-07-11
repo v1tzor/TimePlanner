@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,14 +49,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import ru.aleshin.core.domain.entities.schedules.TaskPriority
-import ru.aleshin.core.ui.theme.TimePlannerRes
-import ru.aleshin.core.ui.views.DialogButtons
+import ru.aleshin.core.domain.entities.tasks.TaskPriority
+import ru.aleshin.timeplanner.core.ui.theme.TimePlannerRes
+import ru.aleshin.timeplanner.core.ui.views.DialogButtons
 import ru.aleshin.core.utils.extensions.generateUniqueKey
 import ru.aleshin.core.utils.functional.Constants
-import ru.aleshin.features.home.impl.presentation.models.categories.CategoriesUi
-import ru.aleshin.features.home.impl.presentation.models.categories.MainCategoryUi
-import ru.aleshin.features.home.impl.presentation.models.schedules.UndefinedTaskUi
+import ru.aleshin.core.presentation.models.categories.MainCategoryDetailsUi
+import ru.aleshin.core.presentation.models.categories.MainCategoryUi
+import ru.aleshin.core.presentation.models.tasks.UndefinedTaskUi
 import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
 import ru.aleshin.features.home.impl.presentation.ui.common.CompactCategoryChooser
 import ru.aleshin.features.home.impl.presentation.ui.common.CompactSubCategoryChooser
@@ -70,7 +70,7 @@ import java.util.Date
 @OptIn(ExperimentalMaterial3Api::class)
 internal fun UndefinedTaskEditorDialog(
     modifier: Modifier = Modifier,
-    categories: List<CategoriesUi>,
+    categories: List<MainCategoryDetailsUi>,
     model: UndefinedTaskUi?,
     onDismiss: () -> Unit,
     onConfirm: (UndefinedTaskUi) -> Unit,
@@ -123,7 +123,7 @@ internal fun UndefinedTaskEditorDialog(
                     )
                 }
 
-                val isEnabled = mainCategory.id != 0
+                val isEnabled = mainCategory.id != 0L
                 DialogButtons(
                     enabledConfirm = isEnabled,
                     confirmTitle = when (model != null) {

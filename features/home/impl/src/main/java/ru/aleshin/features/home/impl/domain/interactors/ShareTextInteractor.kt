@@ -15,10 +15,12 @@
  */
 package ru.aleshin.features.home.impl.domain.interactors
 
-import ru.aleshin.core.domain.entities.categories.Categories
+import kotlinx.coroutines.flow.first
+import ru.aleshin.core.domain.entities.categories.MainCategoryDetails
 import ru.aleshin.core.domain.entities.categories.DefaultCategoryType
 import ru.aleshin.core.domain.entities.categories.MainCategory
-import ru.aleshin.core.domain.entities.schedules.UndefinedTask
+import ru.aleshin.core.domain.entities.tasks.UndefinedTask
+import ru.aleshin.core.domain.repository.MainCategoryRepository
 import ru.aleshin.core.utils.extensions.generateUniqueKey
 import ru.aleshin.core.utils.functional.Constants
 import ru.aleshin.core.utils.functional.DomainResult
@@ -32,22 +34,18 @@ import javax.inject.Inject
  */
 internal interface ShareTextInteractor {
 
-    suspend fun fetchSharedTextTasks(
-        text: String,
-        categories: List<Categories>,
-    ): DomainResult<HomeFailures, List<UndefinedTask>>
+    suspend fun fetchSharedTextTasks(text: String): DomainResult<HomeFailures, List<UndefinedTask>>
 
     class Base @Inject constructor(
+        private val categoryRepository: MainCategoryRepository,
         private val dateManager: DateManager,
         private val eitherWrapper: HomeEitherWrapper,
     ) : ShareTextInteractor {
 
         private val taskPrefixRegex = Regex("""^\s*(?:(?:[-*•])|(?:\[(?: |x|X)])|(?:\d+[\.)]))\s*""")
 
-        override suspend fun fetchSharedTextTasks(
-            text: String,
-            categories: List<Categories>,
-        ) = eitherWrapper.wrap {
+        override suspend fun fetchSharedTextTasks(text: String) = eitherWrapper.wrap {
+            val categories = categoryRepository.fetchAllCategoriesDetails().first()
             val defaultCategory = fetchDefaultCategory(categories)
             text.lineSequence().mapNotNull { line ->
                 val note = line.parseTaskNote()
@@ -62,7 +60,7 @@ internal interface ShareTextInteractor {
             }.toList()
         }
 
-        private fun fetchDefaultCategory(categories: List<Categories>): MainCategory {
+        private fun fetchDefaultCategory(categories: List<MainCategoryDetails>): MainCategory {
             return categories.find { it.category.default == DefaultCategoryType.OTHER }?.category
                 ?: categories.find { it.category.default == DefaultCategoryType.EMPTY }?.category
                 ?: categories.firstOrNull()?.category

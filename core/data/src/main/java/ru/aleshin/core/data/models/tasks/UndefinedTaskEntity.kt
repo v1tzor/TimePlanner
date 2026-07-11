@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 import ru.aleshin.core.data.models.categories.MainCategoryEntity
 import ru.aleshin.core.data.models.categories.SubCategoryEntity
+import ru.aleshin.core.domain.entities.tasks.TaskPriority
 
 /**
  * @author Stanislav Aleshin on 02.11.2023.
@@ -46,9 +47,8 @@ data class UndefinedTaskEntity(
     @PrimaryKey(autoGenerate = false) val key: Long = 0L,
     @ColumnInfo("created_at") val createdAt: Long? = null,
     @ColumnInfo("deadline") val deadline: Long? = null,
-    @ColumnInfo("main_category_id", index = true) val mainCategoryId: Int,
-    @ColumnInfo("sub_category_id", index = true) val subCategoryId: Int?,
-    @ColumnInfo("is_important") val isImportantMax: Boolean,
-    @ColumnInfo("is_medium_important", defaultValue = "0") val isImportantMedium: Boolean,
+    @ColumnInfo("main_category_id", index = true) val mainCategoryId: Long,
+    @ColumnInfo("sub_category_id", index = true) val subCategoryId: Long?,
+    @ColumnInfo("priority") val priority: TaskPriority,
     @ColumnInfo("note") val note: String? = null,
 )

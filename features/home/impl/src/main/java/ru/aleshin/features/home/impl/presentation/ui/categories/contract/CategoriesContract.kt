@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +16,16 @@
 package ru.aleshin.features.home.impl.presentation.ui.categories.contract
 
 import kotlinx.serialization.Serializable
+import ru.aleshin.core.utils.architecture.component.BaseInput
 import ru.aleshin.core.utils.architecture.component.BaseOutput
 import ru.aleshin.core.utils.architecture.store.contract.StoreAction
 import ru.aleshin.core.utils.architecture.store.contract.StoreEffect
 import ru.aleshin.core.utils.architecture.store.contract.StoreEvent
 import ru.aleshin.core.utils.architecture.store.contract.StoreState
 import ru.aleshin.features.home.impl.domain.entities.HomeFailures
-import ru.aleshin.features.home.impl.presentation.models.categories.CategoriesUi
-import ru.aleshin.features.home.impl.presentation.models.categories.MainCategoryUi
-import ru.aleshin.features.home.impl.presentation.models.categories.SubCategoryUi
+import ru.aleshin.core.presentation.models.categories.MainCategoryDetailsUi
+import ru.aleshin.core.presentation.models.categories.MainCategoryUi
+import ru.aleshin.core.presentation.models.categories.SubCategoryUi
 
 /**
  * @author Stanislav Aleshin on 05.04.2023.
@@ -32,12 +33,11 @@ import ru.aleshin.features.home.impl.presentation.models.categories.SubCategoryU
 @Serializable
 internal data class CategoriesState(
     val selectedMainCategory: MainCategoryUi? = null,
-    val categories: List<CategoriesUi> = emptyList(),
+    val categories: List<MainCategoryDetailsUi> = emptyList(),
 ) : StoreState
 
 internal sealed class CategoriesEvent : StoreEvent {
-    data object Init : CategoriesEvent()
-    data object CheckSelectedCategory : CategoriesEvent()
+    data class Init(val input: CategoriesInput, val isRestore: Boolean) : CategoriesEvent()
     data object RestoreDefaultCategories : CategoriesEvent()
     data class AddSubCategory(val name: String, val mainCategory: MainCategoryUi) : CategoriesEvent()
     data class AddMainCategory(val name: String) : CategoriesEvent()
@@ -53,8 +53,8 @@ internal sealed class CategoriesEffect : StoreEffect {
 }
 
 internal sealed class CategoriesAction : StoreAction {
-    data class SetUp(val categories: List<CategoriesUi>, val selected: MainCategoryUi?) : CategoriesAction()
-    data class UpdateCategories(val categories: List<CategoriesUi>) : CategoriesAction()
+    data class SetUp(val categories: List<MainCategoryDetailsUi>, val selected: MainCategoryUi?) : CategoriesAction()
+    data class UpdateCategories(val categories: List<MainCategoryDetailsUi>) : CategoriesAction()
     data class ChangeMainCategory(val category: MainCategoryUi) : CategoriesAction()
 }
 
@@ -62,3 +62,7 @@ internal sealed class CategoriesAction : StoreAction {
 internal sealed class CategoriesOutput : BaseOutput {
     data object NavigateToBack : CategoriesOutput()
 }
+
+internal data class CategoriesInput(
+    val mainCategoryId: Long?
+) : BaseInput

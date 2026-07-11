@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,13 +42,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import ru.aleshin.core.ui.views.ErrorSnackbar
-import ru.aleshin.core.ui.views.PlaceholderBox
+import ru.aleshin.core.presentation.models.schedules.OverviewScheduleUi
 import ru.aleshin.core.utils.architecture.store.compose.handleEffects
 import ru.aleshin.core.utils.architecture.store.compose.stateAsState
 import ru.aleshin.core.utils.functional.Constants
 import ru.aleshin.features.home.impl.presentation.mapppers.mapToMessage
-import ru.aleshin.features.home.impl.presentation.models.schedules.ScheduleUi
 import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
 import ru.aleshin.features.home.impl.presentation.ui.common.OverviewScheduleItem
 import ru.aleshin.features.home.impl.presentation.ui.details.contract.DetailsEffect
@@ -56,6 +54,8 @@ import ru.aleshin.features.home.impl.presentation.ui.details.contract.DetailsEve
 import ru.aleshin.features.home.impl.presentation.ui.details.contract.DetailsState
 import ru.aleshin.features.home.impl.presentation.ui.details.store.DetailsComponent
 import ru.aleshin.features.home.impl.presentation.ui.details.views.DetailsTopAppBar
+import ru.aleshin.timeplanner.core.ui.views.ErrorSnackbar
+import ru.aleshin.timeplanner.core.ui.views.PlaceholderBox
 
 /**
  * @author Stanislav Aleshin on 06.11.2023.
@@ -108,7 +108,7 @@ internal fun DetailsContent(
 private fun BaseDetailsContent(
     modifier: Modifier = Modifier,
     state: DetailsState,
-    onOpenSchedule: (ScheduleUi) -> Unit,
+    onOpenSchedule: (OverviewScheduleUi) -> Unit,
 ) {
     AnimatedContent(
         modifier = modifier,
@@ -120,15 +120,14 @@ private fun BaseDetailsContent(
             )
         },
     ) { loading ->
-        val currentSchedule = state.currentSchedule
-        val schedules = state.schedules
-
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            if (!loading && currentSchedule != null) {
-                val currentScheduleIndex = schedules.indexOf(currentSchedule)
-                val gridState = rememberLazyGridState(
-                    initialFirstVisibleItemIndex = if (currentScheduleIndex == -1) 0 else currentScheduleIndex,
-                )
+            val schedules = state.schedules
+            if (!loading) {
+                val firstVisibleItemIndex = remember(schedules) {
+                    schedules.indexOfFirst { it.date == state.currentDate }.takeIf { it != -1 } ?: 0
+                }
+                val gridState = rememberLazyGridState(firstVisibleItemIndex)
+
                 SchedulesSectionGridView(
                     state = gridState,
                     schedules = schedules,
@@ -145,8 +144,8 @@ private fun BaseDetailsContent(
 internal fun SchedulesSectionGridView(
     modifier: Modifier = Modifier,
     state: LazyGridState = rememberLazyGridState(),
-    schedules: List<ScheduleUi>,
-    onScheduleClick: (ScheduleUi) -> Unit,
+    schedules: List<OverviewScheduleUi>,
+    onScheduleClick: (OverviewScheduleUi) -> Unit,
     flingBehavior: FlingBehavior = ScrollableDefaults.flingBehavior(),
     userScrollEnabled: Boolean = true,
 ) {

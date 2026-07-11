@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,8 @@
 package ru.aleshin.features.settings.impl.domain.interactors
 
 import kotlinx.coroutines.flow.first
-import ru.aleshin.core.domain.entities.schedules.UndefinedTask
-import ru.aleshin.core.domain.repository.UndefinedTasksRepository
+import ru.aleshin.core.domain.entities.tasks.UndefinedTask
+import ru.aleshin.core.domain.repository.UndefinedTaskRepository
 import ru.aleshin.core.utils.functional.DomainResult
 import ru.aleshin.core.utils.functional.UnitDomainResult
 import ru.aleshin.features.settings.impl.domain.common.SettingsEitherWrapper
@@ -34,20 +34,20 @@ internal interface UndefinedTasksInteractor {
     suspend fun removeAllUndefinedTask(): UnitDomainResult<SettingsFailures>
 
     class Base @Inject constructor(
-        private val undefinedTasksRepository: UndefinedTasksRepository,
+        private val undefinedTaskRepository: UndefinedTaskRepository,
         private val eitherWrapper: SettingsEitherWrapper,
     ) : UndefinedTasksInteractor {
 
         override suspend fun addUndefinedTasks(tasks: List<UndefinedTask>) = eitherWrapper.wrap {
-            undefinedTasksRepository.addOrUpdateUndefinedTasks(tasks)
+            undefinedTaskRepository.addOrUpdateUndefinedTasks(tasks)
         }
 
         override suspend fun fetchAllUndefinedTasks() = eitherWrapper.wrap {
-            undefinedTasksRepository.fetchUndefinedTasks().first()
+            undefinedTaskRepository.fetchUndefinedTasks().first()
         }
 
         override suspend fun removeAllUndefinedTask() = eitherWrapper.wrap {
-            undefinedTasksRepository.removeAllUndefinedTasks()
+            undefinedTaskRepository.deleteAllUndefinedTasks()
         }
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 import ru.aleshin.core.data.models.categories.MainCategoryEntity
 import ru.aleshin.core.data.models.categories.SubCategoryEntity
+import ru.aleshin.core.domain.entities.tasks.TaskPriority
 
 /**
  * @author Stanislav Aleshin on 08.03.2023.
@@ -43,13 +44,12 @@ import ru.aleshin.core.data.models.categories.SubCategoryEntity
     ],
 )
 data class TemplateEntity(
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
     @ColumnInfo("start_time") val startTime: Long,
     @ColumnInfo("end_time") val endTime: Long,
-    @ColumnInfo("main_category_id", index = true) val categoryId: Int,
-    @ColumnInfo("sub_category_id", index = true) val subCategoryId: Int? = null,
-    @ColumnInfo("is_important") val isImportantMax: Boolean,
-    @ColumnInfo("is_medium_important", defaultValue = "0") val isImportantMedium: Boolean,
+    @ColumnInfo("main_category_id", index = true) val categoryId: Long,
+    @ColumnInfo("sub_category_id", index = true) val subCategoryId: Long? = null,
+    @ColumnInfo("priority") val priority: TaskPriority,
     @ColumnInfo("is_enable_notification") val isEnableNotification: Boolean,
     @ColumnInfo("is_consider_in_statistics") val isConsiderInStatistics: Boolean,
     @ColumnInfo("repeat_enabled", defaultValue = "0") val repeatEnabled: Boolean = false,

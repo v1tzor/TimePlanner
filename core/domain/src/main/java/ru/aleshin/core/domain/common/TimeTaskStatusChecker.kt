@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,9 +15,9 @@
  */
 package ru.aleshin.core.domain.common
 
-import ru.aleshin.core.domain.entities.schedules.TimeTaskStatus
+import ru.aleshin.core.domain.entities.tasks.TimeTaskStatus
 import ru.aleshin.core.utils.functional.TimeRange
-import java.util.*
+import ru.aleshin.core.utils.managers.DateManager
 import javax.inject.Inject
 
 /**
@@ -25,17 +25,19 @@ import javax.inject.Inject
  */
 interface TimeTaskStatusChecker {
 
-    fun fetchStatus(timeRange: TimeRange, currentDate: Date): TimeTaskStatus
+    fun fetchStatus(timeRange: TimeRange): TimeTaskStatus
 
-    class Base @Inject constructor() : TimeTaskStatusChecker {
+    class Base @Inject constructor(
+        private val dateManager: DateManager,
+    ) : TimeTaskStatusChecker {
 
-        override fun fetchStatus(timeRange: TimeRange, currentDate: Date): TimeTaskStatus {
-            return if (currentDate.time > timeRange.from.time && currentDate.time < timeRange.to.time) {
-                TimeTaskStatus.RUNNING
-            } else if (currentDate.time > timeRange.to.time) {
-                TimeTaskStatus.COMPLETED
-            } else {
-                TimeTaskStatus.PLANNED
+        override fun fetchStatus(timeRange: TimeRange): TimeTaskStatus {
+            val currentTime = dateManager.fetchCurrentDate()
+
+            return when {
+                currentTime.time >= timeRange.to.time -> TimeTaskStatus.COMPLETED
+                currentTime.time >= timeRange.from.time -> TimeTaskStatus.RUNNING
+                else -> TimeTaskStatus.PLANNED
             }
         }
     }

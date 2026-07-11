@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,16 +15,16 @@
  */
 package ru.aleshin.features.editor.impl.domain.common
 
-import ru.aleshin.core.utils.wrappers.EitherWrapper
+import ru.aleshin.core.utils.wrappers.FlowEitherWrapper
 import ru.aleshin.features.editor.impl.domain.entites.EditorFailures
 import javax.inject.Inject
 
 /**
  * @author Stanislav Aleshin on 08.03.2023.
  */
-internal interface EditorEitherWrapper : EitherWrapper<EditorFailures> {
+internal interface EditorEitherWrapper : FlowEitherWrapper<EditorFailures> {
 
     class Base @Inject constructor(
         errorHandler: EditorErrorHandler,
-    ) : EditorEitherWrapper, EitherWrapper.Abstract<EditorFailures>(errorHandler)
+    ) : EditorEitherWrapper, FlowEitherWrapper.Abstract<EditorFailures>(errorHandler)
 }

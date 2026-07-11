@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,18 +15,14 @@
  */
 package ru.aleshin.features.home.impl.presentation.ui.home.store
 
-import ru.aleshin.core.domain.entities.categories.MainCategory
-import ru.aleshin.core.domain.entities.schedules.TimeTask
+import ru.aleshin.core.presentation.models.tasks.TimeTaskDetailsUi
 import ru.aleshin.core.utils.architecture.store.work.OutputResult
 import ru.aleshin.core.utils.architecture.store.work.WorkCommand
 import ru.aleshin.core.utils.architecture.store.work.WorkProcessor
 import ru.aleshin.core.utils.architecture.store.work.WorkResult
 import ru.aleshin.core.utils.functional.TimeRange
-import ru.aleshin.core.utils.functional.rightOrElse
 import ru.aleshin.features.editor.api.EditorConfig
 import ru.aleshin.features.home.impl.domain.interactors.TemplatesInteractor
-import ru.aleshin.features.home.impl.presentation.mapppers.schedules.mapToDomain
-import ru.aleshin.features.home.impl.presentation.models.schedules.TimeTaskUi
 import ru.aleshin.features.home.impl.presentation.ui.home.contract.HomeAction
 import ru.aleshin.features.home.impl.presentation.ui.home.contract.HomeEffect
 import ru.aleshin.features.home.impl.presentation.ui.home.contract.HomeOutput
@@ -53,15 +49,13 @@ internal interface NavigationWorkProcessor :
             return OutputResult(HomeOutput.NavigateToOverview)
         }
 
-        private suspend fun navigateToEditor(timeTask: TimeTaskUi): NavigationWorkResult {
-            val template = templatesInteractor.checkIsTemplate(timeTask.mapToDomain()).rightOrElse(null)
-            val config = EditorConfig.Editor(timeTask.mapToDomain(), template)
+        private suspend fun navigateToEditor(timeTask: TimeTaskDetailsUi): NavigationWorkResult {
+            val config = EditorConfig.Editor(timeTaskId = timeTask.key)
             return OutputResult(HomeOutput.NavigateToEditor(config))
         }
 
         private fun navigateToEditorCreator(date: Date, timeRange: TimeRange): NavigationWorkResult {
-            val timeTask = TimeTask(date = date, category = MainCategory(), createdAt = Date(), timeRange = timeRange)
-            val config = EditorConfig.Editor(timeTask, null)
+            val config = EditorConfig.Editor(date = date, timeRange = timeRange)
             return OutputResult(HomeOutput.NavigateToEditor(config))
         }
     }
@@ -69,7 +63,7 @@ internal interface NavigationWorkProcessor :
 
 internal sealed class NavigationWorkCommand : WorkCommand {
     object NavigateToOverview : NavigationWorkCommand()
-    data class NavigateToEditor(val timeTask: TimeTaskUi) : NavigationWorkCommand()
+    data class NavigateToEditor(val timeTask: TimeTaskDetailsUi) : NavigationWorkCommand()
     data class NavigateToEditorCreator(val currentDate: Date, val timeRange: TimeRange) : NavigationWorkCommand()
 }
 

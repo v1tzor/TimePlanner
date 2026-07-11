@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,16 +16,18 @@
 package ru.aleshin.core.domain.repository
 
 import kotlinx.coroutines.flow.Flow
+import ru.aleshin.core.domain.entities.schedules.BaseDailySchedule
 import ru.aleshin.core.domain.entities.schedules.Schedule
 import ru.aleshin.core.utils.functional.TimeRange
+import java.util.Date
 
 /**
  * @author Stanislav Aleshin on 25.02.2023.
  */
 interface ScheduleRepository {
-    suspend fun createSchedules(schedules: List<Schedule>)
+    suspend fun addOrUpdateSchedule(schedule: BaseDailySchedule): Long
+    suspend fun addOrUpdateSchedules(schedules: List<BaseDailySchedule>)
     suspend fun fetchSchedulesByRange(timeRange: TimeRange?): Flow<List<Schedule>>
-    fun fetchScheduleByDate(date: Long): Flow<Schedule?>
-    suspend fun updateSchedule(schedule: Schedule)
+    suspend fun fetchScheduleByDate(date: Date): Flow<Schedule?>
     suspend fun deleteAllSchedules(): List<Schedule>
 }

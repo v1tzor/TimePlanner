@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import ru.aleshin.core.ui.views.ErrorSnackbar
 import ru.aleshin.core.utils.architecture.store.compose.handleEffects
 import ru.aleshin.core.utils.architecture.store.compose.stateAsState
 import ru.aleshin.core.utils.functional.TimeRange
@@ -42,6 +41,7 @@ import ru.aleshin.features.editor.impl.presentation.ui.editor.store.InternalEdit
 import ru.aleshin.features.editor.impl.presentation.ui.editor.views.EditorTopAppBar
 import ru.aleshin.features.editor.impl.presentation.ui.editor.views.TemplatesBottomSheet
 import ru.aleshin.features.editor.impl.presentation.ui.editor.views.UndefinedTasksBottomSheet
+import ru.aleshin.timeplanner.core.ui.views.ErrorSnackbar
 
 /**
  * @author Stanislav Aleshin on 13.09.2025.
@@ -74,6 +74,7 @@ internal class EditorContentProvider(
                         onDurationPresetsChange = { store.dispatchEvent(EditorEvent.UpdateDurationPresets(it)) },
                         onEditCategory = { store.dispatchEvent(EditorEvent.NavigateToCategoryEditor(it)) },
                         onEditSubCategory = { store.dispatchEvent(EditorEvent.NavigateToSubCategoryEditor(it)) },
+                        onUnlinkTemplate = { store.dispatchEvent(EditorEvent.PressUnlinkTemplateButton) },
                         onControlTemplate = { store.dispatchEvent(EditorEvent.PressControlTemplateButton) },
                         onCreateTemplate = { store.dispatchEvent(EditorEvent.CreateTemplate) },
                         onSaveClick = { store.dispatchEvent(EditorEvent.PressSaveButton) },
@@ -82,7 +83,7 @@ internal class EditorContentProvider(
                 },
                 topBar = {
                     EditorTopAppBar(
-                        actionsEnabled = !(state.editModel?.checkDateIsRepeat() ?: false),
+                        actionsEnabled = state.editModel?.linkedTemplateId == null,
                         countUndefinedTasks = state.undefinedTasks?.size ?: 0,
                         onBackIconClick = { store.dispatchEvent(EditorEvent.PressBackButton) },
                         onDeleteActionClick = { store.dispatchEvent(EditorEvent.PressDeleteButton) },
@@ -104,9 +105,11 @@ internal class EditorContentProvider(
             TemplatesBottomSheet(
                 isShow = isTemplatesSheetOpen,
                 templates = state.templates,
-                currentTemplateId = state.editModel?.templateId,
+                currentTemplateId = state.editModel?.linkedTemplateId,
                 onDismiss = { isTemplatesSheetOpen = false },
-                onControlClick = { store.dispatchEvent(EditorEvent.PressControlTemplateButton) },
+                onControlClick = {
+                    store.dispatchEvent(EditorEvent.PressControlTemplateButton)
+                },
                 onChooseTemplate = { template ->
                     store.dispatchEvent(EditorEvent.ApplyTemplate(template))
                     isTemplatesSheetOpen = false

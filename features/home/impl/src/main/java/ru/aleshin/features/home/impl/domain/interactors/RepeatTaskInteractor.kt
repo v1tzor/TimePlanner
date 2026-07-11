@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,21 +16,24 @@
 package ru.aleshin.features.home.impl.domain.interactors
 
 import kotlinx.coroutines.flow.first
+import ru.aleshin.core.domain.common.TimeOverlayManager
+import ru.aleshin.core.domain.entities.schedules.BaseDailySchedule
 import ru.aleshin.core.domain.entities.schedules.Schedule
-import ru.aleshin.core.domain.entities.schedules.TimeTask
 import ru.aleshin.core.domain.entities.schedules.fetchAllTimeTasks
+import ru.aleshin.core.domain.entities.tasks.TimeTask
 import ru.aleshin.core.domain.entities.template.RepeatTime
 import ru.aleshin.core.domain.entities.template.Template
+import ru.aleshin.core.domain.entities.template.convertToTimeTask
 import ru.aleshin.core.domain.repository.ScheduleRepository
 import ru.aleshin.core.domain.repository.TimeTaskRepository
 import ru.aleshin.core.utils.extensions.generateUniqueKey
-import ru.aleshin.core.utils.extensions.mapToDate
+import ru.aleshin.core.utils.extensions.shiftDay
 import ru.aleshin.core.utils.extensions.startThisDay
+import ru.aleshin.core.utils.functional.Constants.Date.NEXT_REPEAT_LIMIT_DAYS
 import ru.aleshin.core.utils.functional.DomainResult
+import ru.aleshin.core.utils.functional.toRange
 import ru.aleshin.core.utils.managers.DateManager
-import ru.aleshin.core.utils.managers.TimeOverlayManager
 import ru.aleshin.features.home.impl.domain.common.HomeEitherWrapper
-import ru.aleshin.features.home.impl.domain.common.convertToTimeTask
 import ru.aleshin.features.home.impl.domain.entities.HomeFailures
 import javax.inject.Inject
 
@@ -39,8 +42,8 @@ import javax.inject.Inject
  */
 internal interface RepeatTaskInteractor {
 
-    suspend fun updateRepeatTemplate(oldTemplate: Template, template: Template): DomainResult<HomeFailures, List<TimeTask>>
     suspend fun addRepeatsTemplate(template: Template, repeatTimes: List<RepeatTime>): DomainResult<HomeFailures, List<TimeTask>>
+    suspend fun updateRepeatTemplate(oldTemplate: Template, template: Template): DomainResult<HomeFailures, List<TimeTask>>
     suspend fun deleteRepeatsTemplates(template: Template, repeatTimes: List<RepeatTime>): DomainResult<HomeFailures, List<TimeTask>>
 
     class Base @Inject constructor(
@@ -51,94 +54,168 @@ internal interface RepeatTaskInteractor {
         private val dateManager: DateManager,
     ) : RepeatTaskInteractor {
 
+        override suspend fun addRepeatsTemplate(
+            template: Template,
+            repeatTimes: List<RepeatTime>,
+        ) = eitherWrapper.wrap {
+            if (!template.repeatEnabled || repeatTimes.isEmpty()) return@wrap emptyList()
+
+            val repeatScheduleScope = fetchOrCreateRepeatSchedules(repeatTimes)
+            val repeatTimeTasks = createRepeatTasksByTemplate(
+                schedules = repeatScheduleScope.schedules,
+                template = template,
+                repeatTimes = repeatTimes,
+                repeatDates = repeatScheduleScope.repeatDates,
+            )
+
+            if (repeatTimeTasks.isNotEmpty()) {
+                timeTaskRepository.addOrUpdateTimeTasks(repeatTimeTasks)
+            }
+
+            return@wrap repeatTimeTasks
+        }
+
         override suspend fun updateRepeatTemplate(
             oldTemplate: Template,
             template: Template,
         ) = eitherWrapper.wrap {
-            val schedules = filteredSchedules()
-            val updatedTasks = mutableListOf<TimeTask>()
-            val deletableTasksId = mutableListOf<Long>()
-            template.repeatTimes.forEach { repeatTime ->
-                deletableTasksId.addAll(findRepeatTasksByTemplate(schedules, oldTemplate, repeatTime).map { it.key })
-                updatedTasks.addAll(createRepeatTasksByTemplate(schedules, template, repeatTime, deletableTasksId))
+            val schedules = fetchOverlaySchedules()
+            val deletableTasks = findRepeatTasksByTemplate(
+                schedules = schedules,
+                template = oldTemplate,
+                repeatTimes = oldTemplate.repeatTimes,
+            )
+            val repeatScheduleScope = fetchOrCreateRepeatSchedules(template.repeatTimes)
+            val updatedTasks = when {
+                template.repeatEnabled -> createRepeatTasksByTemplate(
+                    schedules = repeatScheduleScope.schedules,
+                    template = template,
+                    repeatTimes = template.repeatTimes,
+                    repeatDates = repeatScheduleScope.repeatDates,
+                    replaceableTasks = deletableTasks,
+                )
+                else -> emptyList()
             }
-            return@wrap updatedTasks.apply {
-                timeTaskRepository.deleteTimeTasks(deletableTasksId)
-                timeTaskRepository.addTimeTasks(this)
-            }
-        }
 
-        override suspend fun addRepeatsTemplate(
-            template: Template, 
-            repeatTimes: List<RepeatTime>,
-        ) = eitherWrapper.wrap {
-            val repeatTimeTasks = mutableListOf<TimeTask>()
-            repeatTimes.forEach { repeatTime ->
-                val timeTasks = createRepeatTasksByTemplate(filteredSchedules(), template, repeatTime).apply {
-                    timeTaskRepository.addTimeTasks(this)
-                }
-                repeatTimeTasks.addAll(timeTasks)
+            if (deletableTasks.isNotEmpty()) {
+                timeTaskRepository.deleteTimeTasksByIds(deletableTasks.map { timeTask -> timeTask.key })
             }
-            return@wrap repeatTimeTasks
+            if (updatedTasks.isNotEmpty()) {
+                timeTaskRepository.addOrUpdateTimeTasks(updatedTasks)
+            }
+
+            return@wrap deletableTasks + updatedTasks
         }
 
         override suspend fun deleteRepeatsTemplates(
-            template: Template, 
+            template: Template,
             repeatTimes: List<RepeatTime>,
         ) = eitherWrapper.wrap {
-            val repeatTimeTasks = mutableListOf<TimeTask>()
-            repeatTimes.forEach { repeatTime ->
-                val timeTasks = findRepeatTasksByTemplate(filteredSchedules(), template, repeatTime).apply {
-                    timeTaskRepository.deleteTimeTasks(map { timeTask -> timeTask.key })
-                }
-                repeatTimeTasks.addAll(timeTasks)
+            val schedules = fetchOverlaySchedules()
+            val repeatTimeTasks = findRepeatTasksByTemplate(
+                schedules = schedules,
+                template = template,
+                repeatTimes = repeatTimes,
+            )
+
+            if (repeatTimeTasks.isNotEmpty()) {
+                timeTaskRepository.deleteTimeTasksByIds(repeatTimeTasks.map { timeTask -> timeTask.key })
             }
+
             return@wrap repeatTimeTasks
         }
-        
-        private suspend fun filteredSchedules(): List<Schedule> {
+
+        private suspend fun fetchOrCreateRepeatSchedules(repeatTimes: List<RepeatTime>): RepeatScheduleScope {
+            if (repeatTimes.isEmpty()) return RepeatScheduleScope(emptyList(), emptySet())
+
             val currentDate = dateManager.fetchBeginningCurrentDay()
-            return scheduleRepository.fetchSchedulesByRange(null).first().filter { schedule ->
-                schedule.date >= currentDate.time
+            val repeatDates = (0..NEXT_REPEAT_LIMIT_DAYS.toInt())
+                .map { shift -> currentDate.shiftDay(shift).startThisDay() }
+                .filter { date -> repeatTimes.any { repeatTime -> repeatTime.checkDateIsRepeat(date) } }
+            val repeatDateKeys = repeatDates.map { date -> date.time }.toSet()
+
+            val schedules = fetchOverlaySchedules()
+            val schedulesByDate = schedules.associateBy { schedule -> schedule.date.startThisDay().time }
+            val missingSchedules = repeatDates
+                .filter { date -> schedulesByDate[date.time] == null }
+                .map { date -> BaseDailySchedule(date) }
+
+            if (missingSchedules.isNotEmpty()) {
+                scheduleRepository.addOrUpdateSchedules(missingSchedules)
             }
+
+            val actualSchedules = when (missingSchedules.isNotEmpty()) {
+                true -> fetchOverlaySchedules()
+                false -> schedules
+            }
+            return RepeatScheduleScope(actualSchedules, repeatDateKeys)
+        }
+
+        private suspend fun fetchOverlaySchedules(): List<Schedule> {
+            val currentDate = dateManager.fetchBeginningCurrentDay()
+            val startDate = currentDate
+            val endDate = currentDate.shiftDay(NEXT_REPEAT_LIMIT_DAYS.toInt() + 1)
+            return scheduleRepository.fetchSchedulesByRange(startDate toRange endDate).first()
         }
 
         private fun findRepeatTasksByTemplate(
             schedules: List<Schedule>,
             template: Template,
-            repeatTime: RepeatTime,
-        ) = mutableListOf<TimeTask>().apply {
-            schedules.fetchAllTimeTasks().filter { timeTask ->
-                repeatTime.checkDateIsRepeat(timeTask.date) 
-            }.forEach { timeTask ->
-                if (template.equalsIsTemplate(timeTask)) add(timeTask)
+            repeatTimes: List<RepeatTime>,
+        ): List<TimeTask> {
+            val currentTime = dateManager.fetchCurrentDate()
+            val existingTasks = schedules.fetchAllTimeTasks().distinctBy { timeTask -> timeTask.key }
+
+            return existingTasks.filter { timeTask ->
+                timeTask.timeRange.from > currentTime &&
+                timeTask.linkedTemplateId == template.templateId &&
+                (repeatTimes.isEmpty() || repeatTimes.any { repeatTime -> repeatTime.checkDateIsRepeat(timeTask.date) })
             }
         }
 
         private fun createRepeatTasksByTemplate(
             schedules: List<Schedule>,
             template: Template,
-            repeatTime: RepeatTime,
-            keyList: List<Long> = emptyList(),
-        ) = mutableListOf<TimeTask>().apply {
-            schedules.forEach { schedule ->
-                val nextSchedule = schedules.getOrNull(schedules.indexOf(schedule) + 1)
-                val scheduleTimeTasks = schedule.timeTasks + (nextSchedule?.timeTasks ?: emptyList())
-                val scheduleDate = schedule.date.mapToDate().startThisDay()
+            repeatTimes: List<RepeatTime>,
+            repeatDates: Set<Long>,
+            replaceableTasks: List<TimeTask> = emptyList(),
+        ): List<TimeTask> {
+            val currentTime = dateManager.fetchCurrentDate()
 
-                if (repeatTime.checkDateIsRepeat(scheduleDate)) {
-                    val existedTimeTask = schedule.timeTasks.find { keyList.contains(it.key) }
-                    val timeTaskKey = when (existedTimeTask != null) {
-                        true -> existedTimeTask.key
-                        false -> generateUniqueKey()
-                    }
-                    val repeatTimeTask = template.convertToTimeTask(scheduleDate, timeTaskKey, scheduleDate)
-                    val scheduleTimeRanges = scheduleTimeTasks.filter { !keyList.contains(it.key) }.map { it.timeRange }
-                    overlayManager.isOverlay(repeatTimeTask.timeRange, scheduleTimeRanges).let { overlayResult ->
-                        if (!overlayResult.isOverlay) add(repeatTimeTask)
-                    }
+            val replaceableKeys = replaceableTasks.map { timeTask -> timeTask.key }.toSet()
+            val replaceableTasksByDate = replaceableTasks.associateBy { timeTask -> timeTask.date.startThisDay().time }
+
+            val existingTasks = schedules.fetchAllTimeTasks().distinctBy { timeTask -> timeTask.key }
+
+            val createdTasks = mutableListOf<TimeTask>()
+
+            schedules.forEach { schedule ->
+                val scheduleDate = schedule.date.startThisDay()
+                if (scheduleDate.time !in repeatDates) return@forEach
+                if (repeatTimes.none { repeatTime -> repeatTime.checkDateIsRepeat(scheduleDate) }) return@forEach
+
+                val oldTask = replaceableTasksByDate[scheduleDate.time]
+                val repeatTimeTask = template.convertToTimeTask(
+                    date = scheduleDate,
+                    key = oldTask?.key ?: generateUniqueKey(),
+                    createdAt = scheduleDate,
+                )
+                if (repeatTimeTask.timeRange.from < currentTime) return@forEach
+                val overlayRanges = existingTasks
+                    .filter { timeTask -> timeTask.key !in replaceableKeys }
+                    .map { timeTask -> timeTask.timeRange } + createdTasks.map { timeTask -> timeTask.timeRange }
+
+                if (!overlayManager.isOverlay(repeatTimeTask.timeRange, overlayRanges).isOverlay) {
+                    createdTasks.add(repeatTimeTask)
                 }
             }
+
+            return createdTasks
         }
+
+        private data class RepeatScheduleScope(
+            val schedules: List<Schedule>,
+            val repeatDates: Set<Long>,
+        )
     }
 }

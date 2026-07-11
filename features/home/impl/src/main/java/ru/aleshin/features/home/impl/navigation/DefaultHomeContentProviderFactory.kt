@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import ru.aleshin.core.utils.managers.CoroutineManager
 import ru.aleshin.features.home.api.HomeConfig
 import ru.aleshin.features.home.api.HomeContentProviderFactory
 import ru.aleshin.features.home.api.HomeOutput
-import ru.aleshin.features.home.impl.presentation.ui.categories.screenmodel.CategoriesComposeStore
+import ru.aleshin.features.home.impl.presentation.ui.categories.store.CategoriesComposeStore
 import ru.aleshin.features.home.impl.presentation.ui.details.store.DetailsComposeStore
 import ru.aleshin.features.home.impl.presentation.ui.home.store.HomeComposeStore
 import ru.aleshin.features.home.impl.presentation.ui.overview.store.OverviewComposeStore

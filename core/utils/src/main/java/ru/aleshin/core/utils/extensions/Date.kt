@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -63,10 +63,13 @@ fun Date.shiftMillis(amount: Int, locale: Locale = Locale.getDefault()): Date {
 }
 
 fun Date.isCurrentDay(date: Date = Date()): Boolean {
-    val currentDate = Calendar.getInstance().apply { time = date }.get(Calendar.DAY_OF_YEAR)
-    val compareDate = Calendar.getInstance().apply { time = this@isCurrentDay }.get(Calendar.DAY_OF_YEAR)
+    val currentDate = Calendar.getInstance().apply { time = date }
+    val compareDate = Calendar.getInstance().apply { time = this@isCurrentDay }
 
-    return currentDate == compareDate
+    val dayCompare = currentDate.get(Calendar.DAY_OF_YEAR) == compareDate.get(Calendar.DAY_OF_YEAR)
+    val yearCompare = currentDate.get(Calendar.YEAR) == compareDate.get(Calendar.YEAR)
+
+    return yearCompare && dayCompare
 }
 
 fun Date.isCurrentMonth(date: Date = Date()): Boolean {
@@ -74,6 +77,17 @@ fun Date.isCurrentMonth(date: Date = Date()): Boolean {
     val compareMonth = Calendar.getInstance().apply { time = this@isCurrentMonth }.get(Calendar.MONTH)
 
     return currentMonth == compareMonth
+}
+
+fun Date.isYearDayOccurrence(month: Month, dayNumber: Int): Boolean {
+    val actualCalendar = Calendar.getInstance().apply { time = this@isYearDayOccurrence }
+    val expectedCalendar = Calendar.getInstance().apply {
+        clear()
+        set(actualCalendar.get(Calendar.YEAR), month.number, dayNumber)
+    }
+
+    return actualCalendar.get(Calendar.YEAR) == expectedCalendar.get(Calendar.YEAR) &&
+            actualCalendar.get(Calendar.DAY_OF_YEAR) == expectedCalendar.get(Calendar.DAY_OF_YEAR)
 }
 
 fun Date.compareByHoursAndMinutes(compareDate: Date): Boolean {
@@ -318,16 +332,33 @@ fun Date.fetchWeekNumber(): Int {
     return calendar.get(Calendar.DAY_OF_WEEK_IN_MONTH)
 }
 
+
 fun Date.fetchDayNumberByMax(dayNumber: Int): Int {
-    val calendar = Calendar.getInstance().apply { time = this@fetchDayNumberByMax }
-    val currentDayNumber = calendar.get(Calendar.DAY_OF_MONTH)
-    val previousMonthDaysCount = calendar.setPreviousMonth().getActualMaximum(Calendar.DAY_OF_MONTH)
-    return if (dayNumber > previousMonthDaysCount) currentDayNumber + dayNumber else currentDayNumber
+    val currentCalendar = Calendar.getInstance().apply { time = this@fetchDayNumberByMax }
+    val currentDayNumber = currentCalendar.get(Calendar.DAY_OF_MONTH)
+
+    val previousCalendar = currentCalendar.clone() as Calendar
+    previousCalendar.add(Calendar.MONTH, -1)
+
+    val previousMonthDaysCount = previousCalendar.getActualMaximum(Calendar.DAY_OF_MONTH)
+    val overflowDayNumber = dayNumber - previousMonthDaysCount
+
+    return if (dayNumber > previousMonthDaysCount && currentDayNumber == overflowDayNumber) {
+        dayNumber
+    } else {
+        currentDayNumber
+    }
 }
 
 fun Date.fetchDay(): Int {
     val calendar = Calendar.getInstance().apply { time = this@fetchDay }
     val currentDayNumber = calendar.get(Calendar.DAY_OF_MONTH)
+    return currentDayNumber
+}
+
+fun Date.fetchYearDay(): Int {
+    val calendar = Calendar.getInstance().apply { time = this@fetchYearDay }
+    val currentDayNumber = calendar.get(Calendar.DAY_OF_YEAR)
     return currentDayNumber
 }
 

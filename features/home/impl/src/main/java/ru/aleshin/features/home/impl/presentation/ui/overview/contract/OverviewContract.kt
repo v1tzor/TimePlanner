@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Stanislav Aleshin
+ * Copyright 2026 Stanislav Aleshin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,10 @@
 package ru.aleshin.features.home.impl.presentation.ui.overview.contract
 
 import kotlinx.serialization.Serializable
+import ru.aleshin.core.presentation.models.categories.MainCategoryDetailsUi
+import ru.aleshin.core.presentation.models.schedules.OverviewScheduleUi
+import ru.aleshin.core.presentation.models.tasks.TimeTaskDetailsUi
+import ru.aleshin.core.presentation.models.tasks.UndefinedTaskUi
 import ru.aleshin.core.utils.architecture.component.BaseInput
 import ru.aleshin.core.utils.architecture.component.BaseOutput
 import ru.aleshin.core.utils.architecture.store.contract.StoreAction
@@ -26,9 +30,6 @@ import ru.aleshin.core.utils.functional.DateSerializer
 import ru.aleshin.features.editor.api.EditorConfig
 import ru.aleshin.features.home.api.HomeConfig
 import ru.aleshin.features.home.impl.domain.entities.HomeFailures
-import ru.aleshin.features.home.impl.presentation.models.categories.CategoriesUi
-import ru.aleshin.features.home.impl.presentation.models.schedules.ScheduleUi
-import ru.aleshin.features.home.impl.presentation.models.schedules.UndefinedTaskUi
 import java.util.Date
 
 /**
@@ -39,17 +40,12 @@ internal data class OverviewState(
     val isLoading: Boolean = true,
     @Serializable(DateSerializer::class)
     val currentDate: Date? = null,
-    val currentSchedule: ScheduleUi? = null,
-    val schedules: List<ScheduleUi> = emptyList(),
-    val categories: List<CategoriesUi> = emptyList(),
+    val currentTask: TimeTaskDetailsUi? = null,
+    val schedules: List<OverviewScheduleUi> = emptyList(),
+    val categories: List<MainCategoryDetailsUi> = emptyList(),
     val undefinedTasks: List<UndefinedTaskUi> = emptyList(),
     val sharedTextTasks: List<UndefinedTaskUi>? = null,
-    val sharedTextCategories: List<CategoriesUi> = emptyList(),
 ) : StoreState
-
-internal data class OverviewInput(
-    val sharedText: String?,
-) : BaseInput
 
 internal sealed class OverviewEvent : StoreEvent {
     data class Init(val input: OverviewInput, val isRestore: Boolean) : OverviewEvent()
@@ -69,15 +65,12 @@ internal sealed class OverviewEffect : StoreEffect {
 }
 
 internal sealed class OverviewAction : StoreAction {
-    object Navigate : OverviewAction()
     data class UpdateLoading(val isLoading: Boolean) : OverviewAction()
-    data class UpdateSchedules(val date: Date, val schedules: List<ScheduleUi>) : OverviewAction()
+    data class UpdateSchedules(val date: Date, val schedules: List<OverviewScheduleUi>) : OverviewAction()
+    data class UpdateCurrentTask(val timeTask: TimeTaskDetailsUi?) : OverviewAction()
     data class UpdateUndefinedTasks(val tasks: List<UndefinedTaskUi>) : OverviewAction()
-    data class UpdateCategories(val categories: List<CategoriesUi>) : OverviewAction()
-    data class UpdateSharedTextTasks(
-        val tasks: List<UndefinedTaskUi>,
-        val categories: List<CategoriesUi>,
-    ) : OverviewAction()
+    data class UpdateCategories(val categories: List<MainCategoryDetailsUi>) : OverviewAction()
+    data class UpdateSharedTextTasks(val tasks: List<UndefinedTaskUi>) : OverviewAction()
     data object ClearSharedTextTasks : OverviewAction()
 }
 
@@ -87,3 +80,8 @@ internal sealed class OverviewOutput : BaseOutput {
     data object NavigateToDetails : OverviewOutput()
     data class NavigateToEditor(val config: EditorConfig.Editor) : OverviewOutput()
 }
+
+
+internal data class OverviewInput(
+    val sharedText: String?,
+) : BaseInput
