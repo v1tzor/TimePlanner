@@ -22,13 +22,11 @@ import com.arkivanov.decompose.router.stack.bringToFront
 import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.value.Value
-import com.arkivanov.essenty.backhandler.BackCallback
 import kotlinx.serialization.Serializable
 import ru.aleshin.core.utils.architecture.component.BaseOutput
 import ru.aleshin.core.utils.architecture.component.ChildComponent
 import ru.aleshin.core.utils.architecture.component.OutputConsumer
 import ru.aleshin.core.utils.inject.FeatureContentProvider
-import ru.aleshin.core.utils.inject.StartFeatureConfig
 import ru.aleshin.features.analytics.api.AnalyticsConfig
 import ru.aleshin.features.analytics.api.AnalyticsDecomposeFeatureFactory
 import ru.aleshin.features.analytics.api.AnalyticsOutput
@@ -36,9 +34,12 @@ import ru.aleshin.features.editor.api.EditorConfig
 import ru.aleshin.features.home.api.HomeConfig
 import ru.aleshin.features.home.api.HomeDecomposeFeatureFactory
 import ru.aleshin.features.home.api.HomeOutput
-import ru.aleshin.features.settings.api.SettingsConfig
-import ru.aleshin.features.settings.api.SettingsDecomposeFeatureFactory
-import ru.aleshin.features.settings.api.SettingsOutput
+import ru.aleshin.features.overview.api.OverviewConfig
+import ru.aleshin.features.overview.api.OverviewDecomposeFeatureFactory
+import ru.aleshin.features.overview.api.OverviewOutput
+import ru.aleshin.features.templates.api.TemplatesConfig
+import ru.aleshin.features.templates.api.TemplatesDecomposeFeatureFactory
+import ru.aleshin.features.templates.api.TemplatesOutput
 
 /**
  * @author Stanislav Aleshin on 12.09.2025.
@@ -52,40 +53,47 @@ abstract class TabNavigationComponent(
     abstract val stack: Value<ChildStack<*, TabNavigationChild>>
 
     abstract fun clickHomeTab()
+    abstract fun clickOverviewTab()
+    abstract fun clickTemplatesTab()
     abstract fun clickAnalyticsTab()
-    abstract fun clickSettingsTab()
 
     sealed class TabNavigationChild {
         data class HomeChild(val contentProvider: FeatureContentProvider) : TabNavigationChild()
+        data class OverviewChild(val contentProvider: FeatureContentProvider) : TabNavigationChild()
+        data class TemplatesChild(val contentProvider: FeatureContentProvider) : TabNavigationChild()
         data class AnalyticsChild(val contentProvider: FeatureContentProvider) : TabNavigationChild()
-        data class SettingsChild(val contentProvider: FeatureContentProvider) : TabNavigationChild()
     }
 
     @Serializable
     sealed class TabNavigationConfig {
 
         @Serializable
-        data object Home : TabNavigationConfig()
+        data class Home(val startConfig: HomeConfig = HomeConfig.Home()) : TabNavigationConfig()
 
         @Serializable
-        data object Analytics : TabNavigationConfig()
+        data class Overview(val startConfig: OverviewConfig = OverviewConfig.Overview()) : TabNavigationConfig()
 
         @Serializable
-        data object Settings : TabNavigationConfig()
+        data class Templates(val startConfig: TemplatesConfig = TemplatesConfig.Templates) : TabNavigationConfig()
+
+        @Serializable
+        data class Analytics(val startConfig: AnalyticsConfig = AnalyticsConfig.Analytics) : TabNavigationConfig()
     }
 
     sealed class TabNavigationOutput : BaseOutput {
         data class NavigateToEditor(val config: EditorConfig) : TabNavigationOutput()
+        data object NavigateToSettings : TabNavigationOutput()
         data object NavigateToBack : TabNavigationOutput()
     }
 
     class Default(
         componentContext: ComponentContext,
-        startConfig: StartFeatureConfig<TabNavigationConfig>,
+        startConfig: TabNavigationConfig,
         private val outputConsumer: OutputConsumer<TabNavigationOutput>,
         private val homeFeatureFactory: HomeDecomposeFeatureFactory,
+        private val overviewFeatureFactory: OverviewDecomposeFeatureFactory,
+        private val templatesFeatureFactory: TemplatesDecomposeFeatureFactory,
         private val analyticsFeatureFactory: AnalyticsDecomposeFeatureFactory,
-        private val settingsFeatureFactory: SettingsDecomposeFeatureFactory,
     ) : TabNavigationComponent(
         componentContext = componentContext,
     ) {
@@ -95,37 +103,32 @@ abstract class TabNavigationComponent(
         override val stack = childStack(
             source = stackNavigation,
             serializer = TabNavigationConfig.serializer(),
-            initialStack = { startConfig.backstack ?: listOf(TabNavigationConfig.Home) },
+            initialConfiguration = startConfig,
             key = STACK_KEY,
-            handleBackButton = false,
+            handleBackButton = true,
             childFactory = ::childFactory
         )
-
-        private val backCallback = BackCallback {
-            stackNavigation.pop { isPop ->
-                if (!isPop) outputConsumer.consume(TabNavigationOutput.NavigateToBack)
-            }
-        }
 
         private companion object {
             const val STACK_KEY = "TABS_STACK"
         }
 
-        init {
-            backHandler.register(backCallback)
+        override fun clickHomeTab() {
+            stackNavigation.bringToFront(TabNavigationConfig.Home())
         }
 
-        override fun clickHomeTab() {
-            stackNavigation.bringToFront(TabNavigationConfig.Home)
+        override fun clickOverviewTab() {
+            stackNavigation.bringToFront(TabNavigationConfig.Overview())
+        }
+
+        override fun clickTemplatesTab() {
+            stackNavigation.bringToFront(TabNavigationConfig.Templates())
         }
 
         override fun clickAnalyticsTab() {
-            stackNavigation.bringToFront(TabNavigationConfig.Analytics)
+            stackNavigation.bringToFront(TabNavigationConfig.Analytics())
         }
 
-        override fun clickSettingsTab() {
-            stackNavigation.bringToFront(TabNavigationConfig.Settings)
-        }
 
         private fun childFactory(
             config: TabNavigationConfig,
@@ -136,7 +139,7 @@ abstract class TabNavigationComponent(
                     val api = homeFeatureFactory.createOrGetFeature(componentContext)
                     val provider = api.contentProviderFactory().createProvider(
                         componentContext = componentContext,
-                        startConfig = StartFeatureConfig<HomeConfig>(null),
+                        startConfig = HomeConfig.Home(),
                         outputConsumer = homeOutputConsumer()
                     )
                     TabNavigationChild.HomeChild(contentProvider = provider)
@@ -145,27 +148,36 @@ abstract class TabNavigationComponent(
                     val api = analyticsFeatureFactory.createOrGetFeature(componentContext)
                     val provider = api.contentProviderFactory().createProvider(
                         componentContext = componentContext,
-                        startConfig = StartFeatureConfig<AnalyticsConfig>(null),
+                        startConfig = AnalyticsConfig.Analytics,
                         outputConsumer = analyticsOutputConsumer()
                     )
                     TabNavigationChild.AnalyticsChild(contentProvider = provider)
                 }
-                is TabNavigationConfig.Settings -> {
-                    val api = settingsFeatureFactory.createOrGetFeature(componentContext)
+                is TabNavigationConfig.Overview -> {
+                    val api = overviewFeatureFactory.createOrGetFeature(componentContext)
                     val provider = api.contentProviderFactory().createProvider(
                         componentContext = componentContext,
-                        startConfig = StartFeatureConfig<SettingsConfig>(null),
-                        outputConsumer = settingsOutputConsumer()
+                        startConfig = OverviewConfig.Overview(),
+                        outputConsumer = overviewOutputConsumer()
                     )
-                    TabNavigationChild.SettingsChild(contentProvider = provider)
+                    TabNavigationChild.OverviewChild(contentProvider = provider)
+                }
+                is TabNavigationConfig.Templates -> {
+                    val api = templatesFeatureFactory.createOrGetFeature(componentContext)
+                    val provider = api.contentProviderFactory().createProvider(
+                        componentContext = componentContext,
+                        startConfig = TemplatesConfig.Templates,
+                        outputConsumer = templatesOutputConsumer()
+                    )
+                    TabNavigationChild.TemplatesChild(contentProvider = provider)
                 }
             }
         }
 
         private fun homeOutputConsumer() = OutputConsumer<HomeOutput> { output ->
             when (output) {
-                is HomeOutput.NavigateToEditor -> {
-                    val config = EditorConfig.Editor(
+                is HomeOutput.NavigateToTaskEditor -> {
+                    val config = EditorConfig.Task(
                         timeTaskId = output.timeTaskId,
                         timeRange = output.timeRange,
                         date = output.date,
@@ -176,6 +188,7 @@ abstract class TabNavigationComponent(
                 is HomeOutput.NavigateToBack -> {
                     stackNavigation.pop()
                 }
+                is HomeOutput.NavigateToSettings -> outputConsumer.consume(TabNavigationOutput.NavigateToSettings)
             }
         }
 
@@ -187,9 +200,30 @@ abstract class TabNavigationComponent(
             }
         }
 
-        private fun settingsOutputConsumer() = OutputConsumer<SettingsOutput> { output ->
+        private fun overviewOutputConsumer() = OutputConsumer<OverviewOutput> { output ->
             when (output) {
-                is SettingsOutput.NavigateToBack -> {
+                is OverviewOutput.NavigateToBack -> {
+                    stackNavigation.pop()
+                }
+                is OverviewOutput.NavigateToHome -> {
+                    val config = HomeConfig.Home(output.scheduleDate)
+                    stackNavigation.bringToFront(TabNavigationConfig.Home(config))
+                }
+                is OverviewOutput.NavigateToTaskEditor -> {
+                    val config = EditorConfig.Task(
+                        timeTaskId = output.timeTaskId,
+                        timeRange = output.timeRange,
+                        date = output.date,
+                        undefinedTaskId = output.undefinedTaskId,
+                    )
+                    outputConsumer.consume(TabNavigationOutput.NavigateToEditor(config))
+                }
+            }
+        }
+
+        private fun templatesOutputConsumer() = OutputConsumer<TemplatesOutput> { output ->
+            when (output) {
+                is TemplatesOutput.NavigateToBack -> {
                     stackNavigation.pop()
                 }
             }

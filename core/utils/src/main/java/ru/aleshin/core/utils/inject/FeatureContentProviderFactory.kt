@@ -26,7 +26,7 @@ import ru.aleshin.core.utils.architecture.component.OutputConsumer
 interface FeatureContentProviderFactory<Config, Output : BaseOutput> {
     fun createProvider(
         componentContext: ComponentContext,
-        startConfig: StartFeatureConfig<Config>,
+        startConfig: Config,
         outputConsumer: OutputConsumer<Output>
     ): FeatureContentProvider
 }

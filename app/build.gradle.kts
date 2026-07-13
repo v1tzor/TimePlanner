@@ -156,6 +156,10 @@ dependencies {
 
     implementation(project(":features:home:api"))
     implementation(project(":features:home:impl"))
+    implementation(project(":features:overview:api"))
+    implementation(project(":features:overview:impl"))
+    implementation(project(":features:templates:api"))
+    implementation(project(":features:templates:impl"))
     implementation(project(":features:editor:api"))
     implementation(project(":features:editor:impl"))
     implementation(project(":features:analytics:api"))

@@ -47,7 +47,7 @@ internal data class HomeState(
 internal sealed class HomeEvent : StoreEvent {
     data class Init(val input: HomeInput, val isRestore: Boolean) : HomeEvent()
     data object CreateSchedule : HomeEvent()
-    data object PressOverviewButton : HomeEvent()
+    data object PressSettingsButton : HomeEvent()
     data object SelectedCurrentDate : HomeEvent()
     data class LoadSchedule(val date: Date?) : HomeEvent()
     data class PressAddTimeTaskButton(val startTime: Date, val endTime: Date) : HomeEvent()
@@ -68,8 +68,8 @@ internal sealed class HomeAction : StoreAction {
 }
 
 internal sealed class HomeOutput : BaseOutput {
-    data object NavigateToOverview : HomeOutput()
-    data class NavigateToEditor(val config: EditorConfig.Editor) : HomeOutput()
+    data object NavigateToSettings : HomeOutput()
+    data class NavigateToEditor(val config: EditorConfig.Task) : HomeOutput()
 }
 
 internal data class HomeInput(val scheduleDate: Date? = null) : BaseInput

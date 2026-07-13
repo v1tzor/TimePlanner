@@ -18,7 +18,8 @@ package ru.aleshin.timeplanner.presentation.ui.main.store
 
 import com.arkivanov.decompose.ComponentContext
 import ru.aleshin.features.editor.api.EditorDecomposeFeatureFactory
-import ru.aleshin.features.home.api.HomeDecomposeFeatureFactory
+import ru.aleshin.features.settings.api.SettingsDecomposeFeatureFactory
+import ru.aleshin.features.templates.api.TemplatesDecomposeFeatureFactory
 import ru.aleshin.timeplanner.presentation.ui.main.contract.DeepLinkTarget
 import ru.aleshin.timeplanner.presentation.ui.main.contract.ShareTarget
 import ru.aleshin.timeplanner.presentation.ui.tabs.store.TabNavigationComponentFactory
@@ -37,9 +38,10 @@ interface MainComponentFactory {
 
     class Default @Inject constructor(
         private val mainStoreFactory: MainComposeStore.Factory,
-        private val homeFeatureFactory: HomeDecomposeFeatureFactory,
         private val navigationComponentFactory: TabNavigationComponentFactory,
         private val editorFeatureFactory: EditorDecomposeFeatureFactory,
+        private val settingsFeatureFactory: SettingsDecomposeFeatureFactory,
+        private val templatesFeatureFactory: TemplatesDecomposeFeatureFactory,
     ) : MainComponentFactory {
 
         override fun createComponent(
@@ -52,9 +54,10 @@ interface MainComponentFactory {
                 componentContext = componentContext,
                 initialDeepLinkTarget = initialDeepLinkTarget,
                 initialShareTarget = initialShareTarget,
-                homeFeatureFactory = homeFeatureFactory,
                 navigationComponentFactory = navigationComponentFactory,
                 editorFeatureFactory = editorFeatureFactory,
+                settingsFeatureFactory = settingsFeatureFactory,
+                templatesFeatureFactory = templatesFeatureFactory,
             )
         }
     }

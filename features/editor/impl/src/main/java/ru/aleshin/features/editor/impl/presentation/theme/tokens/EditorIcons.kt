@@ -23,16 +23,12 @@ import ru.aleshin.features.editor.impl.R
  */
 internal data class EditorIcons(
     val add: Int,
-    val more: Int,
     val showDialog: Int,
-    val close: Int,
     val startTime: Int,
     val endTime: Int,
     val templates: Int,
     val delete: Int,
-    val favorite: Int,
     val unFavorite: Int,
-    val repeat: Int,
     val notes: Int,
     val deadline: Int,
     val subCategory: Int,
@@ -43,18 +39,14 @@ internal data class EditorIcons(
     val unlink: Int,
 )
 
-internal val baseHomeIcons = EditorIcons(
+internal val baseEditorIcons = EditorIcons(
     add = R.drawable.ic_add,
-    more = R.drawable.ic_more,
     showDialog = R.drawable.ic_arrow_righ,
-    close = R.drawable.ic_close,
     startTime = R.drawable.ic_start_time,
     endTime = R.drawable.ic_end_time,
     templates = R.drawable.ic_task,
     delete = R.drawable.ic_delete,
-    favorite = R.drawable.ic_favorite,
     unFavorite = R.drawable.ic_favorite_border,
-    repeat = R.drawable.ic_repeat,
     notes = R.drawable.ic_notes,
     deadline = R.drawable.ic_timer,
     subCategory = R.drawable.ic_sub_category,
@@ -66,7 +58,7 @@ internal val baseHomeIcons = EditorIcons(
 )
 
 internal val LocalEditorIcons = staticCompositionLocalOf<EditorIcons> {
-    error("Home Icons is not provided")
+    error("Editor Icons is not provided")
 }
 
-internal fun fetchEditorIcons() = baseHomeIcons
+internal fun fetchEditorIcons() = baseEditorIcons

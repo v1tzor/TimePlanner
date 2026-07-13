@@ -53,14 +53,16 @@ fun TabNavigationContent(
                         is TabNavigationComponent.TabNavigationChild.HomeChild -> {
                             instance.contentProvider.invoke(Modifier)
                         }
-
+                        is TabNavigationComponent.TabNavigationChild.OverviewChild -> {
+                            instance.contentProvider.invoke(Modifier)
+                        }
+                        is TabNavigationComponent.TabNavigationChild.TemplatesChild -> {
+                            instance.contentProvider.invoke(Modifier)
+                        }
                         is TabNavigationComponent.TabNavigationChild.AnalyticsChild -> {
                             instance.contentProvider.invoke(Modifier)
                         }
 
-                        is TabNavigationComponent.TabNavigationChild.SettingsChild -> {
-                            instance.contentProvider.invoke(Modifier)
-                        }
                     }
                 }
                 TabsBottomNavigationBar(
@@ -72,16 +74,17 @@ fun TabNavigationContent(
                             TabsBottomBarItems.HOME -> {
                                 tabNavigationComponent.clickHomeTab()
                             }
-
+                            TabsBottomBarItems.OVERVIEW -> {
+                                tabNavigationComponent.clickOverviewTab()
+                            }
+                            TabsBottomBarItems.TEMPLATES -> {
+                                tabNavigationComponent.clickTemplatesTab()
+                            }
                             TabsBottomBarItems.ANALYTICS -> {
                                 tabNavigationComponent.clickAnalyticsTab()
                             }
-
-                            TabsBottomBarItems.SETTINGS -> {
-                                tabNavigationComponent.clickSettingsTab()
-                            }
                         }
-                    },
+                    }
                 )
             }
         }

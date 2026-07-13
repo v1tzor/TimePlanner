@@ -18,10 +18,10 @@ package ru.aleshin.timeplanner.presentation.ui.tabs.store
 
 import com.arkivanov.decompose.ComponentContext
 import ru.aleshin.core.utils.architecture.component.OutputConsumer
-import ru.aleshin.core.utils.inject.StartFeatureConfig
 import ru.aleshin.features.analytics.api.AnalyticsDecomposeFeatureFactory
 import ru.aleshin.features.home.api.HomeDecomposeFeatureFactory
-import ru.aleshin.features.settings.api.SettingsDecomposeFeatureFactory
+import ru.aleshin.features.overview.api.OverviewDecomposeFeatureFactory
+import ru.aleshin.features.templates.api.TemplatesDecomposeFeatureFactory
 import ru.aleshin.timeplanner.presentation.ui.tabs.store.TabNavigationComponent.TabNavigationConfig
 import ru.aleshin.timeplanner.presentation.ui.tabs.store.TabNavigationComponent.TabNavigationOutput
 import javax.inject.Inject
@@ -33,19 +33,20 @@ interface TabNavigationComponentFactory {
 
     fun createComponent(
         componentContext: ComponentContext,
-        startConfig: StartFeatureConfig<TabNavigationConfig>,
+        startConfig: TabNavigationConfig,
         outputConsumer: OutputConsumer<TabNavigationOutput>
     ): TabNavigationComponent
 
     class Default @Inject constructor(
         private val homeFeatureFactory: HomeDecomposeFeatureFactory,
         private val analyticsFeatureFactory: AnalyticsDecomposeFeatureFactory,
-        private val settingsFeatureFactory: SettingsDecomposeFeatureFactory,
+        private val overviewFeatureFactory: OverviewDecomposeFeatureFactory,
+        private val templatesFeatureFactory: TemplatesDecomposeFeatureFactory,
     ) : TabNavigationComponentFactory {
 
         override fun createComponent(
             componentContext: ComponentContext,
-            startConfig: StartFeatureConfig<TabNavigationConfig>,
+            startConfig: TabNavigationConfig,
             outputConsumer: OutputConsumer<TabNavigationOutput>
         ): TabNavigationComponent {
             return TabNavigationComponent.Default(
@@ -53,8 +54,9 @@ interface TabNavigationComponentFactory {
                 startConfig = startConfig,
                 outputConsumer = outputConsumer,
                 homeFeatureFactory = homeFeatureFactory,
+                overviewFeatureFactory = overviewFeatureFactory,
+                templatesFeatureFactory = templatesFeatureFactory,
                 analyticsFeatureFactory = analyticsFeatureFactory,
-                settingsFeatureFactory = settingsFeatureFactory,
             )
         }
     }

@@ -20,7 +20,9 @@ import dagger.Module
 import ru.aleshin.features.analytics.impl.di.AnalyticsFeatureDependencies
 import ru.aleshin.features.editor.impl.di.EditorFeatureDependencies
 import ru.aleshin.features.home.impl.di.HomeFeatureDependencies
+import ru.aleshin.features.overview.impl.di.OverviewFeatureDependencies
 import ru.aleshin.features.settings.impl.di.SettingsFeatureDependencies
+import ru.aleshin.features.templates.impl.di.TemplatesFeatureDependencies
 import ru.aleshin.timeplanner.di.component.AppComponent
 
 /**
@@ -40,4 +42,10 @@ interface DependenciesModule {
 
     @Binds
     fun bindSettingsFeatureDependencies(component: AppComponent): SettingsFeatureDependencies
+
+    @Binds
+    fun bindOverviewFeatureDependencies(component: AppComponent): OverviewFeatureDependencies
+
+    @Binds
+    fun bindTemplatesFeatureDependencies(component: AppComponent): TemplatesFeatureDependencies
 }

@@ -25,7 +25,6 @@ import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.backhandler.BackCallback
 import ru.aleshin.core.utils.architecture.component.FeatureComponent
 import ru.aleshin.core.utils.architecture.component.OutputConsumer
-import ru.aleshin.core.utils.inject.StartFeatureConfig
 import ru.aleshin.features.settings.api.SettingsConfig
 import ru.aleshin.features.settings.api.SettingsOutput
 import ru.aleshin.features.settings.impl.presentation.ui.donate.contract.DonateOutput
@@ -39,13 +38,9 @@ import ru.aleshin.features.settings.impl.presentation.ui.settings.contract.Setti
  * @author Stanislav Aleshin on 13.09.2025.
  */
 internal abstract class InternalSettingsFeatureComponent(
-    componentContext: ComponentContext,
-    startConfig: StartFeatureConfig<SettingsConfig>,
-    outputConsumer: OutputConsumer<SettingsOutput>,
+    componentContext: ComponentContext
 ) : FeatureComponent<SettingsConfig, SettingsOutput>(
-    componentContext = componentContext,
-    startConfig = startConfig,
-    outputConsumer = outputConsumer,
+    componentContext = componentContext
 ) {
 
     abstract val stack: Value<ChildStack<*, Child>>
@@ -56,15 +51,13 @@ internal abstract class InternalSettingsFeatureComponent(
     }
 
     class Default(
-        startConfig: StartFeatureConfig<SettingsConfig>,
+        startConfig: SettingsConfig,
         componentContext: ComponentContext,
-        outputConsumer: OutputConsumer<SettingsOutput>,
+        private val outputConsumer: OutputConsumer<SettingsOutput>,
         private val settingsStoreFactory: SettingsComposeStore.Factory,
         private val donateStoreFactory: DonateComposeStore.Factory,
     ) : InternalSettingsFeatureComponent(
-        componentContext = componentContext,
-        startConfig = startConfig,
-        outputConsumer = outputConsumer,
+        componentContext = componentContext
     ) {
         private val backCallback = BackCallback { navigateToBack() }
 
@@ -73,18 +66,14 @@ internal abstract class InternalSettingsFeatureComponent(
         override val stack: Value<ChildStack<*, Child>> = childStack(
             source = stackNavigation,
             serializer = SettingsConfig.serializer(),
-            initialStack = { startConfig.backstack ?: listOf(SettingsConfig.Settings) },
+            initialConfiguration = startConfig,
             key = STACK_KEY,
-            handleBackButton = false,
+            handleBackButton = true,
             childFactory = ::createChild,
         )
 
         private companion object {
             const val STACK_KEY = "SETTINGS_ROOT_STACK"
-        }
-
-        init {
-            backHandler.register(backCallback)
         }
 
         override fun navigateToBack() {

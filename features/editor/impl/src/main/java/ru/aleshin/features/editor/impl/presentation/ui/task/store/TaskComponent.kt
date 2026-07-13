@@ -1,0 +1,55 @@
+/*
+ * Copyright 2026 Stanislav Aleshin
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package ru.aleshin.features.editor.impl.presentation.ui.task.store
+
+import com.arkivanov.decompose.ComponentContext
+import ru.aleshin.core.utils.architecture.component.ChildComponent
+import ru.aleshin.core.utils.architecture.component.OutputConsumer
+import ru.aleshin.core.utils.architecture.component.saveableStore
+import ru.aleshin.features.editor.impl.presentation.ui.task.contract.TaskInput
+import ru.aleshin.features.editor.impl.presentation.ui.task.contract.TaskOutput
+import ru.aleshin.features.editor.impl.presentation.ui.task.contract.TaskState
+
+/**
+ * @author Stanislav Aleshin on 13.07.2026
+ */
+internal abstract class TaskComponent(
+    componentContext: ComponentContext
+) : ChildComponent(componentContext) {
+
+    abstract val store: TaskComposeStore
+
+    class Default(
+        inputData: TaskInput,
+        storeFactory: TaskComposeStore.Factory,
+        componentContext: ComponentContext,
+        outputConsumer: OutputConsumer<TaskOutput>,
+    ) : TaskComponent(componentContext) {
+
+        private companion object Companion {
+            const val COMPONENT_KEY = "TASK_STORE_KEY"
+        }
+
+        override val store by saveableStore(
+            storeFactory = storeFactory,
+            defaultState = TaskState(),
+            input = inputData,
+            stateSerializer = TaskState.serializer(),
+            outputConsumer = outputConsumer,
+            storeKey = COMPONENT_KEY,
+        )
+    }
+}

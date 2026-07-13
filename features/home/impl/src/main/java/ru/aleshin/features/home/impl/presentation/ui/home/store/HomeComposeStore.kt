@@ -128,8 +128,8 @@ internal class HomeComposeStore @Inject constructor(
                 )
                 navigationWorkProcessor.work(navCommand).handleWork()
             }
-            is HomeEvent.PressOverviewButton -> {
-                val navCommand = NavigationWorkCommand.NavigateToOverview
+            is HomeEvent.PressSettingsButton -> {
+                val navCommand = NavigationWorkCommand.NavigateToSettings
                 navigationWorkProcessor.work(navCommand).handleWork()
             }
         }

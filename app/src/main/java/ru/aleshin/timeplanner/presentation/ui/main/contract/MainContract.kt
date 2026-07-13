@@ -17,9 +17,6 @@ package ru.aleshin.timeplanner.presentation.ui.main.contract
 
 import androidx.compose.runtime.Immutable
 import kotlinx.serialization.Serializable
-import ru.aleshin.timeplanner.core.ui.theme.material.ColorsUiType
-import ru.aleshin.timeplanner.core.ui.theme.material.ThemeUiType
-import ru.aleshin.timeplanner.core.ui.theme.tokens.LanguageUiType
 import ru.aleshin.core.utils.architecture.component.BaseInput
 import ru.aleshin.core.utils.architecture.component.BaseOutput
 import ru.aleshin.core.utils.architecture.store.contract.StoreAction
@@ -27,7 +24,9 @@ import ru.aleshin.core.utils.architecture.store.contract.StoreEffect
 import ru.aleshin.core.utils.architecture.store.contract.StoreEvent
 import ru.aleshin.core.utils.architecture.store.contract.StoreState
 import ru.aleshin.features.editor.api.EditorConfig
-import ru.aleshin.features.home.api.HomeConfig
+import ru.aleshin.timeplanner.core.ui.theme.material.ColorsUiType
+import ru.aleshin.timeplanner.core.ui.theme.material.ThemeUiType
+import ru.aleshin.timeplanner.core.ui.theme.tokens.LanguageUiType
 
 /**
  * @author Stanislav Aleshin on 14.02.2023.
@@ -72,6 +71,6 @@ sealed class MainAction : StoreAction {
 
 sealed class MainOutput : BaseOutput {
     data class NavigateToEditor(val config: EditorConfig) : MainOutput()
-    data class NavigateToHome(val config: HomeConfig) : MainOutput()
+    data class NavigateToOverview(val sharedText: String, val sharedKey: Long) : MainOutput()
     data object NavigateToTabNavigation : MainOutput()
 }

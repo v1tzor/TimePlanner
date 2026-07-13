@@ -21,9 +21,9 @@ import ru.aleshin.core.utils.architecture.store.BaseOnlyOutComposeStore
 import ru.aleshin.core.utils.di.FeatureScope
 import ru.aleshin.features.analytics.api.AnalyticsContentProviderFactory
 import ru.aleshin.features.analytics.impl.navigation.DefaultAnalyticsContentProviderFactory
-import ru.aleshin.features.analytics.impl.presenatiton.ui.contract.AnalyticsState
-import ru.aleshin.features.analytics.impl.presenatiton.ui.store.AnalyticsComposeStore
-import ru.aleshin.features.analytics.impl.presenatiton.ui.store.AnalyticsWorkProcessor
+import ru.aleshin.features.analytics.impl.presentation.ui.analytics.contract.AnalyticsState
+import ru.aleshin.features.analytics.impl.presentation.ui.analytics.store.AnalyticsComposeStore
+import ru.aleshin.features.analytics.impl.presentation.ui.analytics.store.AnalyticsWorkProcessor
 
 /**
  * @author Stanislav Aleshin on 30.03.2023.

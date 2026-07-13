@@ -18,34 +18,36 @@ package ru.aleshin.features.editor.impl.navigation
 import com.arkivanov.decompose.ComponentContext
 import ru.aleshin.core.utils.architecture.component.OutputConsumer
 import ru.aleshin.core.utils.inject.FeatureContentProvider
-import ru.aleshin.core.utils.inject.StartFeatureConfig
 import ru.aleshin.features.editor.api.EditorConfig
 import ru.aleshin.features.editor.api.EditorContentProviderFactory
 import ru.aleshin.features.editor.api.EditorOutput
-import ru.aleshin.features.editor.impl.presentation.ui.editor.EditorContentProvider
-import ru.aleshin.features.editor.impl.presentation.ui.editor.store.EditorComposeStore
-import ru.aleshin.features.editor.impl.presentation.ui.editor.store.InternalEditorFeatureComponent
+import ru.aleshin.features.editor.impl.presentation.ui.categories.store.CategoriesComposeStore
+import ru.aleshin.features.editor.impl.presentation.ui.root.EditorContentProvider
+import ru.aleshin.features.editor.impl.presentation.ui.root.InternalEditorFeatureComponent
+import ru.aleshin.features.editor.impl.presentation.ui.task.store.TaskComposeStore
 import javax.inject.Inject
 
 /**
  * @author Stanislav Aleshin on 01.07.2026.
  */
 internal class DefaultEditorContentProviderFactory @Inject constructor(
-    private val editorStoreFactory: EditorComposeStore.Factory,
+    private val taskStoreFactory: TaskComposeStore.Factory,
+    private val categoriesStoreFactory: CategoriesComposeStore.Factory,
 ) : EditorContentProviderFactory {
 
     override fun createProvider(
         componentContext: ComponentContext,
-        startConfig: StartFeatureConfig<EditorConfig>,
+        startConfig: EditorConfig,
         outputConsumer: OutputConsumer<EditorOutput>
     ): FeatureContentProvider {
         val component = InternalEditorFeatureComponent.Default(
             componentContext = componentContext,
             startConfig = startConfig,
             outputConsumer = outputConsumer,
-            editorStoreFactory = editorStoreFactory,
+            taskStoreFactory = taskStoreFactory,
+            categoriesStoreFactory = categoriesStoreFactory,
         )
 
-        return EditorContentProvider(editorComponent = component)
+        return EditorContentProvider(component = component)
     }
 }

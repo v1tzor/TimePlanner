@@ -19,15 +19,9 @@ import dagger.Binds
 import dagger.Module
 import ru.aleshin.features.home.impl.domain.common.HomeEitherWrapper
 import ru.aleshin.features.home.impl.domain.common.HomeErrorHandler
-import ru.aleshin.features.home.impl.domain.interactors.MainCategoriesInteractor
-import ru.aleshin.features.home.impl.domain.interactors.RepeatTaskInteractor
 import ru.aleshin.features.home.impl.domain.interactors.ScheduleInteractor
 import ru.aleshin.features.home.impl.domain.interactors.SettingsInteractor
-import ru.aleshin.features.home.impl.domain.interactors.ShareTextInteractor
-import ru.aleshin.features.home.impl.domain.interactors.SubCategoriesInteractor
-import ru.aleshin.features.home.impl.domain.interactors.TemplatesInteractor
 import ru.aleshin.features.home.impl.domain.interactors.TimeShiftInteractor
-import ru.aleshin.features.home.impl.domain.interactors.UndefinedTasksInteractor
 
 /**
  * @author Stanislav Aleshin on 18.02.2023.
@@ -39,25 +33,7 @@ internal interface DomainModule {
     fun bindScheduleInteractor(interactor: ScheduleInteractor.Base): ScheduleInteractor
 
     @Binds
-    fun bindUndefinedTasksInteractor(interactor: UndefinedTasksInteractor.Base): UndefinedTasksInteractor
-
-    @Binds
-    fun bindShareTextInteractor(interactor: ShareTextInteractor.Base): ShareTextInteractor
-
-    @Binds
-    fun bindCategoriesInteractor(interactor: MainCategoriesInteractor.Base): MainCategoriesInteractor
-
-    @Binds
-    fun bindSubCategoriesInteractor(interactor: SubCategoriesInteractor.Base): SubCategoriesInteractor
-
-    @Binds
     fun bindTimeTaskInteractor(interactor: TimeShiftInteractor.Base): TimeShiftInteractor
-
-    @Binds
-    fun bindTemplatesInteractor(interactor: TemplatesInteractor.Base): TemplatesInteractor
-
-    @Binds
-    fun bindRepeatTaskInteractor(interactor: RepeatTaskInteractor.Base): RepeatTaskInteractor
 
     @Binds
     fun bindSettingsInteractor(interactor: SettingsInteractor.Base): SettingsInteractor

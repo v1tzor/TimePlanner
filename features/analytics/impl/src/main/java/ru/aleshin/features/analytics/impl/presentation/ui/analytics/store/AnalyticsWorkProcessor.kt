@@ -1,0 +1,100 @@
+/*
+ * Copyright 2026 Stanislav Aleshin
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package ru.aleshin.features.analytics.impl.presentation.ui.analytics.store
+
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.onStart
+import ru.aleshin.core.utils.architecture.component.EmptyOutput
+import ru.aleshin.core.utils.architecture.store.work.ActionResult
+import ru.aleshin.core.utils.architecture.store.work.EffectResult
+import ru.aleshin.core.utils.architecture.store.work.FlowWorkProcessor
+import ru.aleshin.core.utils.architecture.store.work.WorkCommand
+import ru.aleshin.core.utils.architecture.store.work.WorkResult
+import ru.aleshin.core.utils.functional.Constants
+import ru.aleshin.core.utils.functional.TimePeriod
+import ru.aleshin.core.utils.functional.collectAndHandle
+import ru.aleshin.core.utils.functional.handle
+import ru.aleshin.core.utils.functional.rightOrNull
+import ru.aleshin.features.analytics.impl.domain.interactors.AnalyticsInteractor
+import ru.aleshin.features.analytics.impl.domain.interactors.SettingsInteractor
+import ru.aleshin.features.analytics.impl.presentation.mappers.mapToUi
+import ru.aleshin.features.analytics.impl.presentation.ui.analytics.contract.AnalyticsAction
+import ru.aleshin.features.analytics.impl.presentation.ui.analytics.contract.AnalyticsEffect
+import javax.inject.Inject
+
+/**
+ * @author Stanislav Aleshin on 22.04.2023.
+ */
+internal interface AnalyticsWorkProcessor :
+    FlowWorkProcessor<AnalyticsWorkCommand, AnalyticsAction, AnalyticsEffect, EmptyOutput> {
+
+    class Base @Inject constructor(
+        private val analyticsInteractor: AnalyticsInteractor,
+        private val settingsInteractor: SettingsInteractor,
+    ) : AnalyticsWorkProcessor {
+
+        override suspend fun work(command: AnalyticsWorkCommand) = when (command) {
+            is AnalyticsWorkCommand.LoadSettings -> loadSettingWork()
+            is AnalyticsWorkCommand.UpdateTimePeriod -> updateTimePeriodWork(command.period)
+            is AnalyticsWorkCommand.LoadAnalytics -> loadAnalyticsWork(command.period)
+        }
+
+        private fun loadSettingWork() = flow {
+            settingsInteractor.fetchTasksSettings().handle(
+                onLeftAction = {
+                    emit(EffectResult(AnalyticsEffect.ShowFailure(it)))
+                },
+                onRightAction = { settings ->
+                    emit(ActionResult(AnalyticsAction.UpdateTimePeriod(settings.taskAnalyticsRange)))
+                },
+            )
+        }
+
+        private fun updateTimePeriodWork(period: TimePeriod) = flow {
+            val oldSettings = settingsInteractor.fetchTasksSettings().rightOrNull {
+                emit(EffectResult(AnalyticsEffect.ShowFailure(it)))
+            }
+            val newSettings = oldSettings?.copy(taskAnalyticsRange = period) ?: return@flow
+            settingsInteractor.updateTasksSettings(newSettings).handle(
+                onLeftAction = { emit(EffectResult(AnalyticsEffect.ShowFailure(it))) },
+                onRightAction = { emit(ActionResult(AnalyticsAction.UpdateTimePeriod(period))) },
+            )
+        }
+
+        private fun loadAnalyticsWork(period: TimePeriod) = flow<AnalyticsWorkResult> {
+            delay(Constants.Delay.LOAD_ANIMATION)
+            analyticsInteractor.fetchAnalytics(period).collectAndHandle(
+                onLeftAction = {
+                    emit(EffectResult(AnalyticsEffect.ShowFailure(it)))
+                },
+                onRightAction = { analytics ->
+                    emit(ActionResult(AnalyticsAction.UpdateAnalytics(analytics.mapToUi())))
+                },
+            )
+        }.onStart {
+            emit(ActionResult(AnalyticsAction.UpdateLoading(true)))
+        }
+    }
+}
+
+internal sealed class AnalyticsWorkCommand : WorkCommand {
+    data object LoadSettings : AnalyticsWorkCommand()
+    data class UpdateTimePeriod(val period: TimePeriod) : AnalyticsWorkCommand()
+    data class LoadAnalytics(val period: TimePeriod) : AnalyticsWorkCommand()
+}
+
+internal typealias AnalyticsWorkResult = WorkResult<AnalyticsAction, AnalyticsEffect, EmptyOutput>

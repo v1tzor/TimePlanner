@@ -18,15 +18,19 @@ package ru.aleshin.features.editor.impl.di.modules
 import dagger.Binds
 import dagger.Module
 import ru.aleshin.core.utils.architecture.store.BaseComposeStore
+import ru.aleshin.core.utils.architecture.store.BaseOnlyOutComposeStore
 import ru.aleshin.core.utils.di.FeatureScope
 import ru.aleshin.features.editor.api.EditorContentProviderFactory
 import ru.aleshin.features.editor.impl.navigation.DefaultEditorContentProviderFactory
-import ru.aleshin.features.editor.impl.presentation.ui.editor.contract.EditorState
-import ru.aleshin.features.editor.impl.presentation.ui.editor.store.EditorWorkProcessor
-import ru.aleshin.features.editor.impl.presentation.ui.editor.store.TimeTaskWorkProcessor
-import ru.aleshin.features.editor.impl.presentation.ui.editor.validators.CategoryValidator
-import ru.aleshin.features.editor.impl.presentation.ui.editor.store.EditorComposeStore
-import ru.aleshin.features.editor.impl.presentation.ui.editor.validators.TimeRangeValidator
+import ru.aleshin.features.editor.impl.presentation.ui.categories.contract.CategoriesState
+import ru.aleshin.features.editor.impl.presentation.ui.categories.store.CategoriesComposeStore
+import ru.aleshin.features.editor.impl.presentation.ui.categories.store.CategoriesWorkProcessor
+import ru.aleshin.features.editor.impl.presentation.ui.task.contract.TaskState
+import ru.aleshin.features.editor.impl.presentation.ui.task.store.EditorWorkProcessor
+import ru.aleshin.features.editor.impl.presentation.ui.task.store.TaskComposeStore
+import ru.aleshin.features.editor.impl.presentation.ui.task.store.TimeTaskWorkProcessor
+import ru.aleshin.features.editor.impl.presentation.ui.task.validators.CategoryValidator
+import ru.aleshin.features.editor.impl.presentation.ui.task.validators.TimeRangeValidator
 
 /**
  * @author Stanislav Aleshin on 08.03.2023.
@@ -40,7 +44,15 @@ internal interface PresentationModule {
 
     @Binds
     @FeatureScope
-    fun bindEditorStoreFactory(factory: EditorComposeStore.Factory): BaseComposeStore.Factory<EditorComposeStore, EditorState>
+    fun bindEditorStoreFactory(factory: TaskComposeStore.Factory): BaseComposeStore.Factory<TaskComposeStore, TaskState>
+
+    @Binds
+    @FeatureScope
+    fun bindCategoriesStoreFactory(factory: CategoriesComposeStore.Factory): BaseOnlyOutComposeStore.Factory<CategoriesComposeStore, CategoriesState>
+
+    @Binds
+    @FeatureScope
+    fun bindCategoriesWorkProcessor(processor: CategoriesWorkProcessor.Base): CategoriesWorkProcessor
 
     @Binds
     @FeatureScope

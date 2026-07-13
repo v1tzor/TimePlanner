@@ -38,7 +38,7 @@ internal class DefaultSettingsContentProviderFactory @Inject constructor(
 
     override fun createProvider(
         componentContext: ComponentContext,
-        startConfig: StartFeatureConfig<SettingsConfig>,
+        startConfig: SettingsConfig,
         outputConsumer: OutputConsumer<SettingsOutput>
     ): FeatureContentProvider {
         val component = InternalSettingsFeatureComponent.Default(

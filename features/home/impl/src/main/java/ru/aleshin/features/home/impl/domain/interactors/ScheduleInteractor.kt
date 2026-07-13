@@ -16,7 +16,6 @@
 package ru.aleshin.features.home.impl.domain.interactors
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
@@ -28,15 +27,10 @@ import ru.aleshin.core.domain.common.ScheduleStatusChecker
 import ru.aleshin.core.domain.common.TimeOverlayManager
 import ru.aleshin.core.domain.common.TimeTaskStatusChecker
 import ru.aleshin.core.domain.entities.schedules.BaseDailySchedule
-import ru.aleshin.core.domain.entities.schedules.OverviewSchedule
-import ru.aleshin.core.domain.entities.schedules.Schedule
 import ru.aleshin.core.domain.entities.schedules.ScheduleDetails
 import ru.aleshin.core.domain.entities.schedules.convertToDetails
-import ru.aleshin.core.domain.entities.schedules.convertToOverview
 import ru.aleshin.core.domain.entities.schedules.fetchAllTimeTasks
-import ru.aleshin.core.domain.entities.schedules.isCompleted
 import ru.aleshin.core.domain.entities.tasks.TimeTask
-import ru.aleshin.core.domain.entities.tasks.TimeTaskDetails
 import ru.aleshin.core.domain.entities.tasks.TimeTaskStatus
 import ru.aleshin.core.domain.entities.tasks.mapToDetails
 import ru.aleshin.core.domain.entities.template.Template
@@ -63,11 +57,9 @@ import javax.inject.Inject
  */
 internal interface ScheduleInteractor {
 
-    suspend fun createSchedule(requiredDay: Date): DomainResult<HomeFailures, Long>
     suspend fun addOrUpdateTimeTask(timeTask: TimeTask): DomainResult<HomeFailures, Long>
+    suspend fun createSchedule(requiredDay: Date): DomainResult<HomeFailures, Long>
     suspend fun fetchScheduleDetailsByDate(date: Long): FlowDomainResult<HomeFailures, ScheduleDetails?>
-    suspend fun fetchOverviewSchedules(timeRange: TimeRange): FlowDomainResult<HomeFailures, List<OverviewSchedule>>
-    suspend fun fetchActiveTimeTaskDetails(): FlowDomainResult<HomeFailures, TimeTaskDetails?>
 
     class Base @Inject constructor(
         private val scheduleRepository: ScheduleRepository,
@@ -134,68 +126,6 @@ internal interface ScheduleInteractor {
                     !schedule.isCompleted()
                 }
             }
-        }
-
-        @OptIn(ExperimentalCoroutinesApi::class)
-        override suspend fun fetchOverviewSchedules(timeRange: TimeRange) = eitherWrapper.wrapFlow {
-            val overviewDates = timeRange.periodDates()
-
-            scheduleRepository.fetchSchedulesByRange(timeRange).onStart {
-                createMissingRecurringSchedules(overviewDates, fetchRepeatTemplates())
-            }.flatMapLatest { schedules ->
-                dateManager.fetchTicker().map {
-                    val schedulesByDate = schedules.associateBy { schedule -> schedule.date.time }
-
-                    overviewDates.map { date ->
-                        val schedule = schedulesByDate[date.time] ?: Schedule(date = date)
-                        val timeTasks = schedule.allTimeTasks
-                        val taskStatuses = timeTasks.map { timeTask ->
-                            timeTask to timeTaskStatusChecker.fetchStatus(timeTask.timeRange)
-                        }
-
-                        schedule.convertToOverview(
-                            dateStatus = scheduleStatusChecker.fetchStatus(date),
-                            unexecutedTask = timeTasks.count { timeTask -> !timeTask.isCompleted },
-                            completedTask = taskStatuses.count { (timeTask, status) ->
-                                status == TimeTaskStatus.COMPLETED && timeTask.isCompleted
-                            },
-                            plannedTask = taskStatuses.count { (_, status) ->
-                                status != TimeTaskStatus.COMPLETED
-                            },
-                            progress = scheduleStatusChecker.fetchProgress(timeTasks),
-                        )
-                    }
-                }.distinctUntilChanged().transformWhile { schedule ->
-                    emit(schedule)
-                    !schedule.isCompleted()
-                }
-            }
-        }
-
-        override suspend fun fetchActiveTimeTaskDetails() = eitherWrapper.wrapFlow {
-            val currentDate = dateManager.fetchCurrentDate()
-            val timeRange = TimeRange(
-                from = currentDate.startThisDay().shiftDay(-1),
-                to = currentDate.startThisDay().shiftDay(1),
-            )
-
-            combine(
-                scheduleRepository.fetchSchedulesByRange(timeRange),
-                dateManager.fetchTicker(),
-            ) { schedules, ticker ->
-                val timeTask = schedules
-                    .asSequence()
-                    .flatMap { schedule -> schedule.allTimeTasks.asSequence() }
-                    .distinctBy { timeTask -> timeTask.key }
-                    .filter { timeTask -> timeTask.isRunning(ticker) }
-                    .minByOrNull { timeTask -> timeTask.timeRange.to.time }
-
-                timeTask?.mapToDetails(
-                    executionStatus = TimeTaskStatus.RUNNING,
-                    progress = dateManager.calculateProgress(timeTask.timeRange.from, timeTask.timeRange.to),
-                    leftTime = dateManager.calculateLeftTime(timeTask.timeRange.to),
-                )
-            }.distinctUntilChanged()
         }
 
         private suspend fun fetchRepeatTemplates(): List<Template> {

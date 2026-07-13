@@ -27,10 +27,15 @@
             <option value="$PROJECT_DIR$/features/home" />
             <option value="$PROJECT_DIR$/features/home/api" />
             <option value="$PROJECT_DIR$/features/home/impl" />
+            <option value="$PROJECT_DIR$/features/overview" />
+            <option value="$PROJECT_DIR$/features/overview/api" />
+            <option value="$PROJECT_DIR$/features/overview/impl" />
             <option value="$PROJECT_DIR$/features/settings" />
             <option value="$PROJECT_DIR$/features/settings/api" />
             <option value="$PROJECT_DIR$/features/settings/impl" />
-            <option value="$PROJECT_DIR$/module-injector" />
+            <option value="$PROJECT_DIR$/features/templates" />
+            <option value="$PROJECT_DIR$/features/templates/api" />
+            <option value="$PROJECT_DIR$/features/templates/impl" />
           </set>
         </option>
       </GradleProjectSettings>

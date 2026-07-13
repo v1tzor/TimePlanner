@@ -18,27 +18,13 @@ package ru.aleshin.features.home.impl.di.modules
 import dagger.Binds
 import dagger.Module
 import ru.aleshin.core.utils.architecture.store.BaseComposeStore
-import ru.aleshin.core.utils.architecture.store.BaseOnlyOutComposeStore
-import ru.aleshin.core.utils.architecture.store.BaseSimpleComposeStore
 import ru.aleshin.core.utils.di.FeatureScope
 import ru.aleshin.features.home.api.HomeContentProviderFactory
 import ru.aleshin.features.home.impl.navigation.DefaultHomeContentProviderFactory
-import ru.aleshin.features.home.impl.presentation.ui.categories.contract.CategoriesState
-import ru.aleshin.features.home.impl.presentation.ui.categories.store.CategoriesComposeStore
-import ru.aleshin.features.home.impl.presentation.ui.categories.store.CategoriesWorkProcessor
-import ru.aleshin.features.home.impl.presentation.ui.details.contract.DetailsState
-import ru.aleshin.features.home.impl.presentation.ui.details.store.DetailsComposeStore
-import ru.aleshin.features.home.impl.presentation.ui.details.store.DetailsWorkProcessor
 import ru.aleshin.features.home.impl.presentation.ui.home.contract.HomeState
 import ru.aleshin.features.home.impl.presentation.ui.home.store.HomeComposeStore
 import ru.aleshin.features.home.impl.presentation.ui.home.store.NavigationWorkProcessor
 import ru.aleshin.features.home.impl.presentation.ui.home.store.ScheduleWorkProcessor
-import ru.aleshin.features.home.impl.presentation.ui.overview.contract.OverviewState
-import ru.aleshin.features.home.impl.presentation.ui.overview.store.OverviewComposeStore
-import ru.aleshin.features.home.impl.presentation.ui.overview.store.OverviewWorkProcessor
-import ru.aleshin.features.home.impl.presentation.ui.templates.contract.TemplatesState
-import ru.aleshin.features.home.impl.presentation.ui.templates.store.TemplatesComposeStore
-import ru.aleshin.features.home.impl.presentation.ui.templates.store.TemplatesWorkProcessor
 
 /**
  * @author Stanislav Aleshin on 18.02.2023.
@@ -49,28 +35,6 @@ internal interface PresentationModule {
     @Binds
     @FeatureScope
     fun bindHomeContentProviderFactory(factory: DefaultHomeContentProviderFactory): HomeContentProviderFactory
-
-    // Overview
-
-    @Binds
-    @FeatureScope
-    fun bindOverviewStoreFactory(factory: OverviewComposeStore.Factory): BaseComposeStore.Factory<OverviewComposeStore, OverviewState>
-
-    @Binds
-    @FeatureScope
-    fun bindOverviewWorkProcessor(processor: OverviewWorkProcessor.Base): OverviewWorkProcessor
-
-    // Details
-
-    @Binds
-    @FeatureScope
-    fun bindDetailsStoreFactory(factory: DetailsComposeStore.Factory): BaseOnlyOutComposeStore.Factory<DetailsComposeStore, DetailsState>
-
-    @Binds
-    @FeatureScope
-    fun binDetailsWorkProcessor(processor: DetailsWorkProcessor.Base): DetailsWorkProcessor
-
-    // Home ScreenModel
 
     @Binds
     @FeatureScope
@@ -84,23 +48,4 @@ internal interface PresentationModule {
     @FeatureScope
     fun bindNavigationWorkProcessor(processor: NavigationWorkProcessor.Base): NavigationWorkProcessor
 
-    // Templates
-
-    @Binds
-    @FeatureScope
-    fun bindTemplatesStoreFactory(factory: TemplatesComposeStore.Factory): BaseSimpleComposeStore.Factory<TemplatesComposeStore, TemplatesState>
-
-    @Binds
-    @FeatureScope
-    fun bindTemplatesWorkProcessor(processor: TemplatesWorkProcessor.Base): TemplatesWorkProcessor
-
-    // Categories
-
-    @Binds
-    @FeatureScope
-    fun bindCategoriesStoreFactory(factory: CategoriesComposeStore.Factory): BaseOnlyOutComposeStore.Factory<CategoriesComposeStore, CategoriesState>
-
-    @Binds
-    @FeatureScope
-    fun bindCategoriesWorkProcessor(processor: CategoriesWorkProcessor.Base): CategoriesWorkProcessor
 }

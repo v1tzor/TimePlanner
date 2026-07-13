@@ -97,6 +97,7 @@ interface NotificationAlarmHandler {
             val templates = templatesRepository.fetchAllTemplates().first()
             val repeatTemplates = templates.filter { template -> template.repeatEnabled && template.isEnableNotification }
             repeatTemplates.forEach(templatesAlarmManager::addOrUpdateNotifyAlarm)
+
             val repeatTimesMap = repeatTemplates.associate { Pair(it.templateId, it.repeatTimes) }
             val currentDay = dateManager.fetchBeginningCurrentDay()
             val timeRange = TimeRange(

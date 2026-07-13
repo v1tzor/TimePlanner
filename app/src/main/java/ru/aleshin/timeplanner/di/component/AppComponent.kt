@@ -26,6 +26,8 @@ import ru.aleshin.core.utils.di.module.CoreUtilsModule
 import ru.aleshin.features.analytics.impl.di.AnalyticsFeatureDependencies
 import ru.aleshin.features.editor.impl.di.EditorFeatureDependencies
 import ru.aleshin.features.home.impl.di.HomeFeatureDependencies
+import ru.aleshin.features.overview.impl.di.OverviewFeatureDependencies
+import ru.aleshin.features.templates.impl.di.TemplatesFeatureDependencies
 import ru.aleshin.features.settings.impl.di.SettingsFeatureDependencies
 import ru.aleshin.timeplanner.application.TimePlannerApp
 import ru.aleshin.timeplanner.di.PlatformServicesModule
@@ -61,7 +63,9 @@ interface AppComponent :
     HomeFeatureDependencies,
     SettingsFeatureDependencies,
     EditorFeatureDependencies,
-    AnalyticsFeatureDependencies {
+    AnalyticsFeatureDependencies,
+    OverviewFeatureDependencies,
+    TemplatesFeatureDependencies {
 
     fun fetchTimeTaskInteractor(): TimeTaskInteractor
     fun fetchSettingsInteractor(): SettingsInteractor

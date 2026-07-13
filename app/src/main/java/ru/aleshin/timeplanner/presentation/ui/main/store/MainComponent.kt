@@ -28,13 +28,16 @@ import ru.aleshin.core.utils.architecture.component.BaseComponent
 import ru.aleshin.core.utils.architecture.component.OutputConsumer
 import ru.aleshin.core.utils.architecture.component.saveableStore
 import ru.aleshin.core.utils.inject.FeatureContentProvider
-import ru.aleshin.core.utils.inject.StartFeatureConfig
 import ru.aleshin.features.editor.api.EditorConfig
 import ru.aleshin.features.editor.api.EditorDecomposeFeatureFactory
 import ru.aleshin.features.editor.api.EditorOutput
-import ru.aleshin.features.home.api.HomeConfig
-import ru.aleshin.features.home.api.HomeDecomposeFeatureFactory
-import ru.aleshin.features.home.api.HomeOutput
+import ru.aleshin.features.overview.api.OverviewConfig
+import ru.aleshin.features.settings.api.SettingsConfig
+import ru.aleshin.features.settings.api.SettingsDecomposeFeatureFactory
+import ru.aleshin.features.settings.api.SettingsOutput
+import ru.aleshin.features.templates.api.TemplatesConfig
+import ru.aleshin.features.templates.api.TemplatesDecomposeFeatureFactory
+import ru.aleshin.features.templates.api.TemplatesOutput
 import ru.aleshin.timeplanner.presentation.ui.main.contract.DeepLinkTarget
 import ru.aleshin.timeplanner.presentation.ui.main.contract.MainEvent
 import ru.aleshin.timeplanner.presentation.ui.main.contract.MainInput
@@ -71,30 +74,35 @@ abstract class MainComponent(
         data object Splash : Config
 
         @Serializable
-        data class TabNavigation(val startConfig: StartFeatureConfig<TabNavigationConfig>) : Config
+        data class TabNavigation(val startConfig: TabNavigationConfig) : Config
 
         @Serializable
-        data class Home(val config: StartFeatureConfig<HomeConfig>?) : Config
+        data class Editor(val startConfig: EditorConfig) : Config
 
         @Serializable
-        data class Editor(val startConfig: StartFeatureConfig<EditorConfig>) : Config
+        data class Settings(val startConfig: SettingsConfig) : Config
+
+        @Serializable
+        data class Templates(val startConfig: TemplatesConfig) : Config
     }
 
     sealed interface Child {
         data object SplashChild : Child
-        data class HomeChild(val contentProvider: FeatureContentProvider) : Child
         data class TabNavigationChild(val component: TabNavigationComponent) : Child
         data class EditorChild(val contentProvider: FeatureContentProvider) : Child
+        data class SettingsChild(val contentProvider: FeatureContentProvider) : Child
+        data class TemplatesChild(val contentProvider: FeatureContentProvider) : Child
     }
 
     class Base(
         componentContext: ComponentContext,
-        private val initialDeepLinkTarget: DeepLinkTarget?,
-        private val initialShareTarget: ShareTarget?,
-        private val mainStoreFactory: MainComposeStore.Factory,
-        private val homeFeatureFactory: HomeDecomposeFeatureFactory,
+        initialDeepLinkTarget: DeepLinkTarget?,
+        initialShareTarget: ShareTarget?,
+        mainStoreFactory: MainComposeStore.Factory,
         private val navigationComponentFactory: TabNavigationComponentFactory,
         private val editorFeatureFactory: EditorDecomposeFeatureFactory,
+        private val settingsFeatureFactory: SettingsDecomposeFeatureFactory,
+        private val templatesFeatureFactory: TemplatesDecomposeFeatureFactory,
     ) : MainComponent(componentContext) {
 
         companion object {
@@ -154,14 +162,23 @@ abstract class MainComponent(
                     )
                     EditorChild(contentProvider = provider)
                 }
-                is Config.Home -> {
-                    val api = homeFeatureFactory.createOrGetFeature(componentContext)
+                is Config.Settings -> {
+                    val api = settingsFeatureFactory.createOrGetFeature(componentContext)
                     val provider = api.contentProviderFactory().createProvider(
                         componentContext = componentContext,
-                        startConfig = config.config ?: StartFeatureConfig(null),
-                        outputConsumer = homeOutputConsumer()
+                        startConfig = config.startConfig,
+                        outputConsumer = settingsOutputConsumer(),
                     )
-                    Child.HomeChild(contentProvider = provider)
+                    Child.SettingsChild(provider)
+                }
+                is Config.Templates -> {
+                    val api = templatesFeatureFactory.createOrGetFeature(componentContext)
+                    val provider = api.contentProviderFactory().createProvider(
+                        componentContext = componentContext,
+                        startConfig = config.startConfig,
+                        outputConsumer = templatesOutputConsumer(),
+                    )
+                    Child.TemplatesChild(provider)
                 }
             }
         }
@@ -169,50 +186,15 @@ abstract class MainComponent(
         private fun mainOutputConsumer() = OutputConsumer<MainOutput> { output ->
             when (output) {
                 is MainOutput.NavigateToEditor -> {
-                    val config = StartFeatureConfig(listOf(output.config))
-                    stackNavigation.pushToFront(Config.Editor(config))
+                    stackNavigation.pushToFront(Config.Editor(output.config))
                 }
-                is MainOutput.NavigateToHome -> {
-                    val config = StartFeatureConfig(listOf(output.config))
-                    stackNavigation.pushToFront(Config.Home(config))
-                }
-                is MainOutput.NavigateToTabNavigation -> {
-                    val config = StartFeatureConfig<TabNavigationConfig>(null)
+                is MainOutput.NavigateToOverview -> {
+                    val config = TabNavigationConfig.Overview(OverviewConfig.Overview(output.sharedText, output.sharedKey))
                     stackNavigation.replaceAll(Config.TabNavigation(config))
                 }
-            }
-        }
-
-        private fun homeOutputConsumer() = OutputConsumer<HomeOutput> { output ->
-            when (output) {
-                is HomeOutput.NavigateToEditor -> {
-                    val config = EditorConfig.Editor(
-                        timeTaskId = output.timeTaskId,
-                        timeRange = output.timeRange,
-                        date = output.date,
-                        undefinedTaskId = output.undefinedTaskId,
-                    )
-                    val startConfig = StartFeatureConfig<EditorConfig>(listOf(config))
-                    stackNavigation.pushToFront(Config.Editor(startConfig))
-                }
-                is HomeOutput.NavigateToBack -> {
-                    stackNavigation.pop()
-                }
-            }
-        }
-
-        private fun editorOutputConsumer() = OutputConsumer<EditorOutput> { output ->
-            when (output) {
-                is EditorOutput.NavigateToCategories -> {
-                    val homeConfig = StartFeatureConfig<HomeConfig>(listOf(HomeConfig.Categories(output.categoryId)))
-                    stackNavigation.pushToFront(Config.Home(homeConfig))
-                }
-                is EditorOutput.NavigateToTemplates -> {
-                    val homeConfig = StartFeatureConfig<HomeConfig>(listOf(HomeConfig.Templates))
-                    stackNavigation.pushToFront(Config.Home(homeConfig))
-                }
-                is EditorOutput.NavigateToBack -> {
-                    navigateToBack()
+                is MainOutput.NavigateToTabNavigation -> {
+                    val config = TabNavigationConfig.Home()
+                    stackNavigation.replaceAll(Config.TabNavigation(config))
                 }
             }
         }
@@ -220,12 +202,37 @@ abstract class MainComponent(
         private fun tabNavigationOutputConsumer() = OutputConsumer<TabNavigationOutput> { output ->
             when (output) {
                 is TabNavigationOutput.NavigateToEditor -> {
-                    val config = StartFeatureConfig(listOf(output.config))
-                    stackNavigation.pushToFront(Config.Editor(config))
+                    stackNavigation.pushToFront(Config.Editor(output.config))
+                }
+                is TabNavigationOutput.NavigateToSettings -> {
+                    stackNavigation.pushToFront(Config.Settings(SettingsConfig.Settings))
                 }
                 is TabNavigationOutput.NavigateToBack -> {
                     navigateToBack()
                 }
+            }
+        }
+
+        private fun editorOutputConsumer() = OutputConsumer<EditorOutput> { output ->
+            when (output) {
+                is EditorOutput.NavigateToTemplates -> {
+                    stackNavigation.pushToFront(Config.Templates(TemplatesConfig.Templates))
+                }
+                is EditorOutput.NavigateToBack -> {
+                    navigateToBack()
+                }
+            }
+        }
+
+        private fun settingsOutputConsumer() = OutputConsumer<SettingsOutput> { output ->
+            when (output) {
+                is SettingsOutput.NavigateToBack -> navigateToBack()
+            }
+        }
+
+        private fun templatesOutputConsumer() = OutputConsumer<TemplatesOutput> { output ->
+            when (output) {
+                is TemplatesOutput.NavigateToBack -> navigateToBack()
             }
         }
     }

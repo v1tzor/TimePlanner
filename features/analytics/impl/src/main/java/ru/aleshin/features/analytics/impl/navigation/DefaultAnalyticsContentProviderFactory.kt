@@ -18,13 +18,12 @@ package ru.aleshin.features.analytics.impl.navigation
 import com.arkivanov.decompose.ComponentContext
 import ru.aleshin.core.utils.architecture.component.OutputConsumer
 import ru.aleshin.core.utils.inject.FeatureContentProvider
-import ru.aleshin.core.utils.inject.StartFeatureConfig
 import ru.aleshin.features.analytics.api.AnalyticsConfig
 import ru.aleshin.features.analytics.api.AnalyticsContentProviderFactory
 import ru.aleshin.features.analytics.api.AnalyticsOutput
-import ru.aleshin.features.analytics.impl.presenatiton.ui.AnalyticsContentProvider
-import ru.aleshin.features.analytics.impl.presenatiton.ui.store.AnalyticsComposeStore
-import ru.aleshin.features.analytics.impl.presenatiton.ui.store.InternalAnalyticsFeatureComponent
+import ru.aleshin.features.analytics.impl.presentation.ui.analytics.store.AnalyticsComposeStore
+import ru.aleshin.features.analytics.impl.presentation.ui.root.AnalyticsContentProvider
+import ru.aleshin.features.analytics.impl.presentation.ui.root.InternalAnalyticsFeatureComponent
 import javax.inject.Inject
 
 /**
@@ -36,7 +35,7 @@ internal class DefaultAnalyticsContentProviderFactory @Inject constructor(
 
     override fun createProvider(
         componentContext: ComponentContext,
-        startConfig: StartFeatureConfig<AnalyticsConfig>,
+        startConfig: AnalyticsConfig,
         outputConsumer: OutputConsumer<AnalyticsOutput>
     ): FeatureContentProvider {
         val component = InternalAnalyticsFeatureComponent.Default(
@@ -46,6 +45,6 @@ internal class DefaultAnalyticsContentProviderFactory @Inject constructor(
             analyticsStoreFactory = analyticsStoreFactory,
         )
 
-        return AnalyticsContentProvider(analyticsComponent = component)
+        return AnalyticsContentProvider(component = component)
     }
 }

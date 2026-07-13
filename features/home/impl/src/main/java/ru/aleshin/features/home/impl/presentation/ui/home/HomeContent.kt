@@ -134,7 +134,7 @@ internal fun HomeContent(
             HomeTopAppBar(
                 calendarIconBehavior = state.calendarButtonBehavior,
                 onMenuIconClick = { scope.launch { drawerManager?.openDrawer() } },
-                onOverviewIconClick = { store.dispatchEvent(HomeEvent.PressOverviewButton) },
+                onSettingsIconClick = { store.dispatchEvent(HomeEvent.PressSettingsButton) },
                 onOpenCalendar = { isDateDialogShow = true },
                 onGoToToday = { store.dispatchEvent(HomeEvent.SelectedCurrentDate) },
             )

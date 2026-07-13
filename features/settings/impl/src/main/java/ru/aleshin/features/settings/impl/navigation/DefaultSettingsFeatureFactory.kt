@@ -32,9 +32,7 @@ public class DefaultSettingsFeatureFactory(
 
     override fun createOrGetFeature(context: ComponentContext): SettingsFeatureApi {
         return context.instanceKeeper.getOrCreate(key = SETTINGS_FEATURE_CONTROLLER_KEY) {
-            SettingsFeatureController(
-                component = SettingsComponent.create(dependenciesFactory())
-            )
+            SettingsFeatureController(component = SettingsComponent.create(dependenciesFactory()))
         }.fetchApi()
     }
 

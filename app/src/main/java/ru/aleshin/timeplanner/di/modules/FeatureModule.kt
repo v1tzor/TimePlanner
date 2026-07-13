@@ -26,9 +26,15 @@ import ru.aleshin.features.editor.impl.navigation.DefaultEditorFeatureFactory
 import ru.aleshin.features.home.api.HomeDecomposeFeatureFactory
 import ru.aleshin.features.home.impl.di.HomeFeatureDependencies
 import ru.aleshin.features.home.impl.navigation.DefaultHomeFeatureFactory
+import ru.aleshin.features.overview.api.OverviewDecomposeFeatureFactory
+import ru.aleshin.features.overview.impl.di.OverviewFeatureDependencies
+import ru.aleshin.features.overview.impl.navigation.DefaultOverviewFeatureFactory
 import ru.aleshin.features.settings.api.SettingsDecomposeFeatureFactory
 import ru.aleshin.features.settings.impl.di.SettingsFeatureDependencies
 import ru.aleshin.features.settings.impl.navigation.DefaultSettingsFeatureFactory
+import ru.aleshin.features.templates.api.TemplatesDecomposeFeatureFactory
+import ru.aleshin.features.templates.impl.di.TemplatesFeatureDependencies
+import ru.aleshin.features.templates.impl.navigation.DefaultTemplatesFeatureFactory
 import javax.inject.Provider
 
 /**
@@ -38,38 +44,40 @@ import javax.inject.Provider
 class FeatureModule {
 
     @Provides
+    fun provideOverviewFeatureFactory(dependencies: Provider<OverviewFeatureDependencies>): OverviewDecomposeFeatureFactory {
+        return DefaultOverviewFeatureFactory { dependencies.get() }
+    }
+
+    @Provides
+    fun provideTemplatesFeatureFactory(dependencies: Provider<TemplatesFeatureDependencies>): TemplatesDecomposeFeatureFactory {
+        return DefaultTemplatesFeatureFactory { dependencies.get() }
+    }
+
+    @Provides
     fun provideHomeFeatureFactory(
         dependencies: Provider<HomeFeatureDependencies>,
     ): HomeDecomposeFeatureFactory {
-        return DefaultHomeFeatureFactory(
-            dependenciesFactory = { dependencies.get() }
-        )
+        return DefaultHomeFeatureFactory { dependencies.get() }
     }
 
     @Provides
     fun provideAnalyticsFeatureFactory(
         dependencies: Provider<AnalyticsFeatureDependencies>,
     ): AnalyticsDecomposeFeatureFactory {
-        return DefaultAnalyticsFeatureFactory(
-            dependenciesFactory = { dependencies.get() }
-        )
+        return DefaultAnalyticsFeatureFactory { dependencies.get() }
     }
 
     @Provides
     fun provideEditorFeatureFactory(
         dependencies: Provider<EditorFeatureDependencies>,
     ): EditorDecomposeFeatureFactory {
-        return DefaultEditorFeatureFactory(
-            dependenciesFactory = { dependencies.get() }
-        )
+        return DefaultEditorFeatureFactory { dependencies.get() }
     }
 
     @Provides
     fun provideSettingsFeatureFactory(
         dependencies: Provider<SettingsFeatureDependencies>,
     ): SettingsDecomposeFeatureFactory {
-        return DefaultSettingsFeatureFactory(
-            dependenciesFactory = { dependencies.get() }
-        )
+        return DefaultSettingsFeatureFactory { dependencies.get() }
     }
 }

@@ -41,7 +41,7 @@ import javax.inject.Inject
 interface TimeTaskAlarmManager {
 
     fun addOrUpdateNotifyAlarm(timeTask: TimeTask)
-    fun deleteNotifyAlarm(timeTask: TimeTask)
+    fun deleteNotifyAlarm(timeTask: TimeTask, withOngoing: Boolean = true)
 
     class Base @Inject constructor(
         private val context: Context,
@@ -80,15 +80,19 @@ interface TimeTaskAlarmManager {
             }
         }
 
-        override fun deleteNotifyAlarm(timeTask: TimeTask) {
+        override fun deleteNotifyAlarm(timeTask: TimeTask, withOngoing: Boolean) {
             TaskNotificationType.entries.forEach { type ->
-                val id = alarmKeyFactory.fetchTimeTaskAlarmId(timeTask.key, type)
-                val alarmIntent = createAlarmIntent(timeTask.key, timeTask.category, timeTask.subCategory, id, type)
-                val pendingAlarmIntent = createPendingAlarmIntent(alarmIntent, id)
-                cancelAlarm(pendingAlarmIntent)
-                cancelLegacyAlarm(alarmIntent, id)
+                if (withOngoing || type != TaskNotificationType.END_ONGOING) {
+                    val id = alarmKeyFactory.fetchTimeTaskAlarmId(timeTask.key, type)
+                    val alarmIntent = createAlarmIntent(timeTask.key, timeTask.category, timeTask.subCategory, id, type)
+                    val pendingAlarmIntent = createPendingAlarmIntent(alarmIntent, id)
+                    cancelAlarm(pendingAlarmIntent)
+                    cancelLegacyAlarm(alarmIntent, id)
+                }
             }
-            ongoingNotificationManager.delete(timeTask)
+            if (withOngoing) {
+                ongoingNotificationManager.delete(timeTask)
+            }
         }
 
         private fun createAlarmIntent(

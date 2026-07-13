@@ -26,7 +26,6 @@ import ru.aleshin.core.utils.functional.Constants
 import ru.aleshin.core.utils.functional.TimeRange
 import ru.aleshin.core.utils.managers.DateManager
 import ru.aleshin.features.editor.api.EditorConfig
-import ru.aleshin.features.home.api.HomeConfig
 import ru.aleshin.timeplanner.presentation.ui.main.contract.DeepLinkTarget
 import ru.aleshin.timeplanner.presentation.ui.main.contract.MainAction
 import ru.aleshin.timeplanner.presentation.ui.main.contract.MainEffect
@@ -60,7 +59,7 @@ interface NavigationWorkProcessor : WorkProcessor<NavWorkCommand, MainAction, Ma
                 val currentDate = dateManager.fetchBeginningCurrentDay()
                 val timeRange = TimeRange(currentTime, currentTime)
 
-                val config = EditorConfig.Editor(date = currentDate, timeRange = timeRange)
+                val config = EditorConfig.Task(date = currentDate, timeRange = timeRange)
                 OutputResult(MainOutput.NavigateToEditor(config))
             } else {
                 ActionResult(MainAction.Navigate)
@@ -68,8 +67,7 @@ interface NavigationWorkProcessor : WorkProcessor<NavWorkCommand, MainAction, Ma
         }
 
         private fun processShare(shareTarget: ShareTarget): NavWorkResult {
-            val config = HomeConfig.Overview(shareTarget.text, generateUniqueKey())
-            return OutputResult(MainOutput.NavigateToHome(config))
+            return OutputResult(MainOutput.NavigateToOverview(shareTarget.text, generateUniqueKey()))
         }
     }
 }

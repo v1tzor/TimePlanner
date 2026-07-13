@@ -28,24 +28,10 @@ import java.util.Date
 public sealed class HomeConfig {
 
     @Serializable
-    public data class Overview(
-        val sharedText: String? = null,
-        val sharedKey: Long = 0L,
-    ) : HomeConfig()
-
-    @Serializable
     public data class Home(
         @Serializable(DateSerializer::class) val scheduleDate: Date? = null
     ) : HomeConfig()
 
-    @Serializable
-    public data object Details : HomeConfig()
-
-    @Serializable
-    public data object Templates : HomeConfig()
-
-    @Serializable
-    public data class Categories(val mainCategoryId: Long? = null) : HomeConfig()
 }
 
 /**
@@ -54,8 +40,9 @@ public sealed class HomeConfig {
 public sealed class HomeOutput : BaseOutput {
 
     public data object NavigateToBack : HomeOutput()
+    public data object NavigateToSettings : HomeOutput()
 
-    public data class NavigateToEditor(
+    public data class NavigateToTaskEditor(
         val timeTaskId: Long? = null,
         val timeRange: TimeRange? = null,
         val date: Date? = null,

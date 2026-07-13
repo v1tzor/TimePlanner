@@ -63,8 +63,6 @@ android {
 }
 
 dependencies {
-    api(project(":module-injector"))
-
     api(libs.androidx.core.ktx)
     api(libs.androidx.appcompat)
     api(libs.androidx.lifecycle.viewmodel)

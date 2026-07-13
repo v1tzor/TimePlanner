@@ -26,19 +26,16 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.material3.DrawerValue
-import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import com.arkivanov.decompose.ExperimentalDecomposeApi
 import com.arkivanov.decompose.defaultComponentContext
 import com.arkivanov.decompose.extensions.compose.experimental.stack.ChildStack
-import ru.aleshin.timeplanner.core.ui.theme.TimePlannerTheme
 import ru.aleshin.core.utils.architecture.store.compose.stateAsState
-import ru.aleshin.core.utils.managers.rememberDrawerManager
 import ru.aleshin.core.utils.navigation.backAnimation
 import ru.aleshin.timeplanner.application.fetchApp
+import ru.aleshin.timeplanner.core.ui.theme.TimePlannerTheme
 import ru.aleshin.timeplanner.presentation.ui.main.contract.DeepLinkTarget
 import ru.aleshin.timeplanner.presentation.ui.main.contract.ShareTarget
 import ru.aleshin.timeplanner.presentation.ui.main.store.MainComponent
@@ -90,44 +87,40 @@ class MainActivity : AppCompatActivity() {
                 colors = state.colors,
                 dynamicColor = state.isEnableDynamicColors,
             ) {
-                val drawerState = rememberDrawerState(DrawerValue.Closed)
-                val drawerManager = rememberDrawerManager(drawerState)
-
-                HomeNavigationDrawer(
-                    drawerState = drawerState,
-                    drawerManager = drawerManager,
-                ) {
-                    ChildStack(
-                        stack = mainComponent.childStack,
-                        animation = backAnimation(
-                            backHandler = mainComponent.backHandler,
-                            onBack = mainComponent::navigateToBack
-                        )
-                    ) { child ->
-                        when (val instance = child.instance) {
-                            is MainComponent.Child.SplashChild -> {
-                                SplashContent()
+                ChildStack(
+                    stack = mainComponent.childStack,
+                    animation = backAnimation(
+                        backHandler = mainComponent.backHandler,
+                        onBack = mainComponent::navigateToBack
+                    )
+                ) { child ->
+                    when (val instance = child.instance) {
+                        is MainComponent.Child.SplashChild -> {
+                            SplashContent()
+                        }
+                        is MainComponent.Child.TabNavigationChild -> {
+                            TabNavigationContent(instance.component)
+                            LaunchedEffect(Unit) {
+                                getNotificationPermission()
                             }
-                            is MainComponent.Child.TabNavigationChild -> {
-                                TabNavigationContent(instance.component)
-                                LaunchedEffect(Unit) {
-                                    getNotificationPermission()
-                                }
-                            }
-                            is MainComponent.Child.EditorChild -> {
-                                instance.contentProvider.invoke(Modifier)
-                            }
-                            is MainComponent.Child.HomeChild -> {
-                                instance.contentProvider.invoke(Modifier)
-                            }
+                        }
+                        is MainComponent.Child.EditorChild -> {
+                            instance.contentProvider.invoke(Modifier)
+                        }
+                        is MainComponent.Child.SettingsChild -> {
+                            instance.contentProvider.invoke(Modifier)
+                        }
+                        is MainComponent.Child.TemplatesChild -> {
+                            instance.contentProvider.invoke(Modifier)
                         }
                     }
+                }
 
-                    LaunchedEffect(key1 = state.secureMode) {
-                        when (state.secureMode) {
-                            true -> window.setFlags(FLAG_SECURE, FLAG_SECURE)
-                            false -> window.clearFlags(FLAG_SECURE)
-                        }
+
+                LaunchedEffect(key1 = state.secureMode) {
+                    when (state.secureMode) {
+                        true -> window.setFlags(FLAG_SECURE, FLAG_SECURE)
+                        false -> window.clearFlags(FLAG_SECURE)
                     }
                 }
             }
@@ -137,8 +130,10 @@ class MainActivity : AppCompatActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent)
+
         val target = DeepLinkTarget.byIntent(intent)
         if (target != null && ::mainComponent.isInitialized) mainComponent.onDeepLink(target)
+
         val shareTarget = ShareTarget.byIntent(intent)
         if (shareTarget != null && ::mainComponent.isInitialized) mainComponent.onShare(shareTarget)
     }

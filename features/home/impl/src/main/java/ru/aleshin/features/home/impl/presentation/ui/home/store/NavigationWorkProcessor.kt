@@ -22,7 +22,6 @@ import ru.aleshin.core.utils.architecture.store.work.WorkProcessor
 import ru.aleshin.core.utils.architecture.store.work.WorkResult
 import ru.aleshin.core.utils.functional.TimeRange
 import ru.aleshin.features.editor.api.EditorConfig
-import ru.aleshin.features.home.impl.domain.interactors.TemplatesInteractor
 import ru.aleshin.features.home.impl.presentation.ui.home.contract.HomeAction
 import ru.aleshin.features.home.impl.presentation.ui.home.contract.HomeEffect
 import ru.aleshin.features.home.impl.presentation.ui.home.contract.HomeOutput
@@ -35,34 +34,32 @@ import javax.inject.Inject
 internal interface NavigationWorkProcessor :
     WorkProcessor<NavigationWorkCommand, HomeAction, HomeEffect, HomeOutput> {
 
-    class Base @Inject constructor(
-        private val templatesInteractor: TemplatesInteractor,
-    ) : NavigationWorkProcessor {
+    class Base @Inject constructor() : NavigationWorkProcessor {
 
         override suspend fun work(command: NavigationWorkCommand) = when (command) {
-            is NavigationWorkCommand.NavigateToOverview -> navigateToOverviewWork()
+            is NavigationWorkCommand.NavigateToSettings -> navigateToSettingsWork()
             is NavigationWorkCommand.NavigateToEditorCreator -> navigateToEditorCreator(command.currentDate, command.timeRange)
             is NavigationWorkCommand.NavigateToEditor -> navigateToEditor(command.timeTask)
         }
 
-        private fun navigateToOverviewWork(): NavigationWorkResult {
-            return OutputResult(HomeOutput.NavigateToOverview)
+        private fun navigateToSettingsWork(): NavigationWorkResult {
+            return OutputResult(HomeOutput.NavigateToSettings)
         }
 
         private suspend fun navigateToEditor(timeTask: TimeTaskDetailsUi): NavigationWorkResult {
-            val config = EditorConfig.Editor(timeTaskId = timeTask.key)
+            val config = EditorConfig.Task(timeTaskId = timeTask.key)
             return OutputResult(HomeOutput.NavigateToEditor(config))
         }
 
         private fun navigateToEditorCreator(date: Date, timeRange: TimeRange): NavigationWorkResult {
-            val config = EditorConfig.Editor(date = date, timeRange = timeRange)
+            val config = EditorConfig.Task(date = date, timeRange = timeRange)
             return OutputResult(HomeOutput.NavigateToEditor(config))
         }
     }
 }
 
 internal sealed class NavigationWorkCommand : WorkCommand {
-    object NavigateToOverview : NavigationWorkCommand()
+    object NavigateToSettings : NavigationWorkCommand()
     data class NavigateToEditor(val timeTask: TimeTaskDetailsUi) : NavigationWorkCommand()
     data class NavigateToEditorCreator(val currentDate: Date, val timeRange: TimeRange) : NavigationWorkCommand()
 }

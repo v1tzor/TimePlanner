@@ -28,7 +28,10 @@ import java.util.Date
 public sealed interface EditorConfig {
 
     @Serializable
-    public data class Editor(
+    public data class Categories(val mainCategoryId: Long?) : EditorConfig
+
+    @Serializable
+    public data class Task(
         val timeTaskId: Long? = null,
         val timeRange: TimeRange? = null,
         @Serializable(DateSerializer::class) val date: Date? = null,
@@ -40,7 +43,6 @@ public sealed interface EditorConfig {
  * @author Stanislav Aleshin on 01.07.2026.
  */
 public sealed interface EditorOutput : BaseOutput {
-    public data class NavigateToCategories(val categoryId: Long) : EditorOutput
     public data object NavigateToTemplates : EditorOutput
     public data object NavigateToBack : EditorOutput
 }

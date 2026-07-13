@@ -18,18 +18,12 @@ package ru.aleshin.features.home.impl.navigation
 import com.arkivanov.decompose.ComponentContext
 import ru.aleshin.core.utils.architecture.component.OutputConsumer
 import ru.aleshin.core.utils.inject.FeatureContentProvider
-import ru.aleshin.core.utils.inject.StartFeatureConfig
-import ru.aleshin.core.utils.managers.CoroutineManager
 import ru.aleshin.features.home.api.HomeConfig
 import ru.aleshin.features.home.api.HomeContentProviderFactory
 import ru.aleshin.features.home.api.HomeOutput
-import ru.aleshin.features.home.impl.presentation.ui.categories.store.CategoriesComposeStore
-import ru.aleshin.features.home.impl.presentation.ui.details.store.DetailsComposeStore
 import ru.aleshin.features.home.impl.presentation.ui.home.store.HomeComposeStore
-import ru.aleshin.features.home.impl.presentation.ui.overview.store.OverviewComposeStore
 import ru.aleshin.features.home.impl.presentation.ui.root.HomeContentProvider
 import ru.aleshin.features.home.impl.presentation.ui.root.InternalHomeFeatureComponent
-import ru.aleshin.features.home.impl.presentation.ui.templates.store.TemplatesComposeStore
 import javax.inject.Inject
 
 /**
@@ -37,16 +31,11 @@ import javax.inject.Inject
  */
 internal class DefaultHomeContentProviderFactory @Inject constructor(
     private val homeStoreFactory: HomeComposeStore.Factory,
-    private val overviewStoreFactory: OverviewComposeStore.Factory,
-    private val categoriesStoreFactory: CategoriesComposeStore.Factory,
-    private val templatesStoreFactory: TemplatesComposeStore.Factory,
-    private val detailsStoreFactory: DetailsComposeStore.Factory,
-    private val coroutineManager: CoroutineManager,
 ) : HomeContentProviderFactory {
 
     override fun createProvider(
         componentContext: ComponentContext,
-        startConfig: StartFeatureConfig<HomeConfig>,
+        startConfig: HomeConfig,
         outputConsumer: OutputConsumer<HomeOutput>
     ): FeatureContentProvider {
         val component = InternalHomeFeatureComponent.Default(
@@ -54,13 +43,8 @@ internal class DefaultHomeContentProviderFactory @Inject constructor(
             startConfig = startConfig,
             outputConsumer = outputConsumer,
             homeStoreFactory = homeStoreFactory,
-            overviewStoreFactory = overviewStoreFactory,
-            categoriesStoreFactory = categoriesStoreFactory,
-            templatesStoreFactory = templatesStoreFactory,
-            detailsStoreFactory = detailsStoreFactory,
-            coroutineManager = coroutineManager,
         )
 
-        return HomeContentProvider(homeComponent = component)
+        return HomeContentProvider(component = component)
     }
 }

@@ -48,6 +48,7 @@ internal data class TimeTaskEditUi(
     val isCompleted: Boolean = true,
     val parameters: TimeTaskEditParametersUi = TimeTaskEditParametersUi(),
     val linkedTemplateId: Long? = null,
+    val isRepeat: Boolean = false,
     val undefinedTaskId: Long? = null,
     val note: String? = null,
 ) {
@@ -66,7 +67,9 @@ internal data class TimeTaskEditUi(
     }
 }
 
-internal fun TimeTaskUi.convertToEditModel() = TimeTaskEditUi(
+internal fun TimeTaskUi.convertToEditModel(
+    isRepeat: Boolean,
+) = TimeTaskEditUi(
     key = key,
     date = date,
     timeRange = timeRanges,
@@ -81,6 +84,7 @@ internal fun TimeTaskUi.convertToEditModel() = TimeTaskEditUi(
         isConsiderInStatistics = isConsiderInStatistics,
     ),
     linkedTemplateId = linkedTemplateId,
+    isRepeat = isRepeat,
     undefinedTaskId = null,
     note = note,
 )
@@ -99,6 +103,7 @@ internal fun UndefinedTaskUi.convertToEditModel(
         priority = priority,
     ),
     undefinedTaskId = id,
+    isRepeat = false,
     note = note,
 )
 
@@ -125,6 +130,7 @@ internal fun TemplateUi.convertToEditModel(
         isConsiderInStatistics = isConsiderInStatistics,
     ),
     linkedTemplateId = templateId,
+    isRepeat = repeatEnabled && repeatTimes.any { it.checkDateIsRepeat(scheduleDate) },
     undefinedTaskId = null,
 )
 
