@@ -15,9 +15,15 @@
  */
 package ru.aleshin.timeplanner.core.ui.views
 
-import androidx.compose.material3.*
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import ru.aleshin.timeplanner.core.ui.theme.TimePlannerRes
@@ -35,7 +41,7 @@ fun <Item : BottomBarItem> BottomNavigationBar(
 ) {
     NavigationBar(
         modifier = modifier,
-        containerColor = MaterialTheme.colorScheme.background,
+        containerColor = selectedItem.containerColor,
         tonalElevation = TimePlannerRes.elevations.levelZero,
     ) {
         items.forEach { item ->
@@ -102,4 +108,5 @@ interface BottomBarItem {
     val label: String @Composable get
     val enabledIcon: Int @Composable get
     val disabledIcon: Int @Composable get
+    val containerColor: Color @Composable get() = MaterialTheme.colorScheme.background
 }

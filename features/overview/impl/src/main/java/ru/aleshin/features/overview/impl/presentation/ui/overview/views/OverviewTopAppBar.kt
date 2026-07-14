@@ -21,10 +21,8 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import ru.aleshin.features.overview.impl.presentation.theme.OverviewThemeRes
-import ru.aleshin.timeplanner.core.ui.views.TopAppBarButton
 import ru.aleshin.timeplanner.core.ui.views.TopAppBarEmptyButton
 import ru.aleshin.timeplanner.core.ui.views.TopAppBarTitle
 
@@ -40,6 +38,12 @@ internal fun OverviewTopAppBar(
                 text = OverviewThemeRes.strings.topAppBarOverviewTitle,
                 textAlign = TextAlign.Center
             )
+        },
+        navigationIcon = {
+            TopAppBarEmptyButton()
+        },
+        actions = {
+            TopAppBarEmptyButton()
         },
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.background,

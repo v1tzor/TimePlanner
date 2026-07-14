@@ -16,8 +16,10 @@
 package ru.aleshin.timeplanner.presentation.ui.tabs.views
 
 import androidx.compose.foundation.layout.height
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import ru.aleshin.timeplanner.core.ui.theme.TimePlannerRes
 import ru.aleshin.timeplanner.core.ui.views.BottomBarItem
@@ -54,6 +56,7 @@ enum class TabsBottomBarItems : BottomBarItem {
         override val label: String @Composable get() = TimePlannerRes.strings.homeTabTitle
         override val enabledIcon: Int @Composable get() = TimePlannerRes.icons.enabledHomeIcon
         override val disabledIcon: Int @Composable get() = TimePlannerRes.icons.disabledHomeIcon
+        override val containerColor: Color @Composable get() = MaterialTheme.colorScheme.surfaceContainerLow
     },
     OVERVIEW {
         override val label: String @Composable get() = TimePlannerRes.strings.overviewDrawerTitle

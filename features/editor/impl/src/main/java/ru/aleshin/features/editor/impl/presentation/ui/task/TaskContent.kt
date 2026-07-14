@@ -479,6 +479,7 @@ internal fun ParametersSection(
                 {
                     Box {
                         IconButton(
+                            enabled = enabled,
                             modifier = Modifier.size(32.dp),
                             onClick = { openTaskNotificationMenu = true },
                             colors = IconButtonDefaults.iconButtonColors(

@@ -22,9 +22,9 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
+import ru.aleshin.features.analytics.impl.presentation.theme.AnalyticsThemeRes
 import ru.aleshin.timeplanner.core.ui.views.TopAppBarEmptyButton
 import ru.aleshin.timeplanner.core.ui.views.TopAppBarTitle
-import ru.aleshin.features.analytics.impl.presentation.theme.AnalyticsThemeRes
 
 /**
  * @author Stanislav Aleshin on 30.03.2023.
@@ -41,6 +41,9 @@ internal fun AnalyticsTopAppBar(
                 text = AnalyticsThemeRes.strings.topAppBarTitle,
                 textAlign = TextAlign.Center,
             )
+        },
+        navigationIcon = {
+            TopAppBarEmptyButton()
         },
         actions = {
             TopAppBarEmptyButton()

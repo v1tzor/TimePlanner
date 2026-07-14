@@ -44,10 +44,11 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import ru.aleshin.timeplanner.core.ui.theme.TimePlannerRes
 import ru.aleshin.core.utils.extensions.mapToDate
 import ru.aleshin.core.utils.extensions.startThisDay
 import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
+import ru.aleshin.timeplanner.core.ui.theme.TimePlannerRes
+import ru.aleshin.timeplanner.core.ui.theme.full
 import java.util.Date
 
 /**
@@ -63,9 +64,9 @@ internal fun DateChooser(
     onChooseDate: () -> Unit,
 ) {
     Surface(
-        modifier = modifier.height(36.dp),
-        shape = MaterialTheme.shapes.large,
-        color = MaterialTheme.colorScheme.surfaceContainerLow,
+        modifier = modifier.height(38.dp),
+        shape = MaterialTheme.shapes.full,
+        color = MaterialTheme.colorScheme.surfaceContainerHigh,
     ) {
         Row(modifier = Modifier.fillMaxHeight(), verticalAlignment = Alignment.CenterVertically) {
             DateChooserIcon(
@@ -100,12 +101,12 @@ internal fun DateChooserIcon(
 ) {
     IconButton(
         onClick = onClick,
-        modifier = modifier.size(36.dp),
+        modifier = modifier.size(38.dp),
         enabled = enabled,
     ) {
         Icon(
             modifier = Modifier
-                .size(12.dp)
+                .size(14.dp)
                 .graphicsLayer(alpha = if (enabled) 1f else 0.5f),
             painter = icon,
             contentDescription = description,

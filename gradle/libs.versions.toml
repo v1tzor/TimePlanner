@@ -37,7 +37,6 @@ dagger = "2.60.1"
 room = "2.8.4"
 
 tracer = "1.4.0"
-mytracker = "3.5.0"
 
 leakcanary = "2.14"
 jUnit = "4.13.2"
@@ -98,7 +97,6 @@ tracer-heapDumps = { module = "ru.ok.tracer:tracer-heap-dumps" }
 tracer-diskUsage = { module = "ru.ok.tracer:tracer-disk-usage" }
 tracer-samplingProfiler = { module = "ru.ok.tracer:tracer-profiler-sampling" }
 tracer-systraceProfiler = { module = "ru.ok.tracer:tracer-profiler-systrace" }
-mytracker-core = { module = "com.my.tracker:mytracker-sdk", version.ref = "mytracker" }
 
 jUnit = { module = "junit:junit", version.ref = "jUnit" }
 composeJUnit = { module = "androidx.compose.ui:ui-test-junit4", version.ref = "compose" }

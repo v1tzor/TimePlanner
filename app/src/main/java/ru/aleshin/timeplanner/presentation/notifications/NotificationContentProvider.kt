@@ -100,7 +100,7 @@ interface NotificationContentProvider {
         }
 
         private fun TimeTask.fetchCategoryName(strings: TimePlannerStrings): String {
-            return (category.customName ?: category.default?.mapToString(strings).orEmpty()).trim()
+            return (category.customName.takeIf { !it.isNullOrEmpty() && it != "null" } ?: category.default?.mapToString(strings).orEmpty()).trim()
         }
 
         private fun String.withContext(context: String?, strings: TimePlannerStrings): String {

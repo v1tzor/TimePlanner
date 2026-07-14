@@ -16,8 +16,6 @@
 package ru.aleshin.features.templates.impl.presentation.ui.templates.views
 
 import androidx.compose.foundation.background
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TopAppBar
@@ -25,10 +23,9 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
-import ru.aleshin.timeplanner.core.ui.views.TopAppBarButton
+import ru.aleshin.features.templates.impl.presentation.theme.TemplatesThemeRes
 import ru.aleshin.timeplanner.core.ui.views.TopAppBarEmptyButton
 import ru.aleshin.timeplanner.core.ui.views.TopAppBarTitle
-import ru.aleshin.features.templates.impl.presentation.theme.TemplatesThemeRes
 
 /**
  * @author Stanislav Aleshin on 08.05.2023.
@@ -45,6 +42,12 @@ internal fun TemplatesTopAppBar(
                 text = TemplatesThemeRes.strings.topAppBarTemplatesTitle,
                 textAlign = TextAlign.Center,
             )
+        },
+        navigationIcon = {
+            TopAppBarEmptyButton()
+        },
+        actions = {
+            TopAppBarEmptyButton()
         },
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.background,

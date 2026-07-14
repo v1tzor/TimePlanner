@@ -33,6 +33,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -50,20 +51,19 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.launch
 import ru.aleshin.core.domain.entities.schedules.DailyScheduleStatus
 import ru.aleshin.core.domain.entities.settings.ViewToggleStatus
 import ru.aleshin.core.domain.entities.tasks.TimeTaskStatus
@@ -89,6 +89,7 @@ import ru.aleshin.features.home.impl.presentation.ui.home.views.HomeTopAppBar
 import ru.aleshin.features.home.impl.presentation.ui.home.views.PlannedTimeTaskItem
 import ru.aleshin.features.home.impl.presentation.ui.home.views.RunningTimeTaskItem
 import ru.aleshin.timeplanner.core.ui.theme.TimePlannerRes
+import ru.aleshin.timeplanner.core.ui.theme.topSide
 import ru.aleshin.timeplanner.core.ui.views.ErrorSnackbar
 import ru.aleshin.timeplanner.core.ui.views.ViewToggle
 import java.text.SimpleDateFormat
@@ -115,7 +116,6 @@ internal fun HomeContent(
             BaseHomeContent(
                 state = state,
                 modifier = Modifier.padding(paddingValues),
-                onChangeDate = { date -> store.dispatchEvent(HomeEvent.LoadSchedule(date)) },
                 onTimeTaskEdit = { store.dispatchEvent(HomeEvent.PressEditTimeTaskButton(it)) },
                 onTaskDoneChange = { store.dispatchEvent(HomeEvent.ChangeTaskDoneStateButton(it)) },
                 onTimeTaskAdd = { start, end ->
@@ -124,7 +124,6 @@ internal fun HomeContent(
                 onCreateSchedule = { store.dispatchEvent(HomeEvent.CreateSchedule) },
                 onTimeTaskIncrease = { store.dispatchEvent(HomeEvent.TimeTaskShiftUp(it)) },
                 onTimeTaskReduce = { store.dispatchEvent(HomeEvent.TimeTaskShiftDown(it)) },
-                onChangeToggleStatus = { store.dispatchEvent(HomeEvent.PressViewToggleButton(it)) },
             )
         },
         topBar = {
@@ -133,6 +132,14 @@ internal fun HomeContent(
                 onSettingsIconClick = { store.dispatchEvent(HomeEvent.PressSettingsButton) },
                 onOpenCalendar = { isDateDialogShow = true },
                 onGoToToday = { store.dispatchEvent(HomeEvent.SelectedCurrentDate) },
+            )
+        },
+        bottomBar = {
+            DateChooserSection(
+                selectedDate = state.selectedDate,
+                toggleState = state.taskViewStatus,
+                onChangeDate = { date -> store.dispatchEvent(HomeEvent.LoadSchedule(date)) },
+                onChangeToggleStatus = { store.dispatchEvent(HomeEvent.PressViewToggleButton(it)) }
             )
         },
         snackbarHost = {
@@ -165,24 +172,16 @@ internal fun HomeContent(
 private fun BaseHomeContent(
     state: HomeState,
     modifier: Modifier = Modifier,
-    onChangeDate: (Date) -> Unit,
     onCreateSchedule: () -> Unit,
     onTimeTaskEdit: (TimeTaskDetailsUi) -> Unit,
     onTaskDoneChange: (TimeTaskDetailsUi) -> Unit,
     onTimeTaskAdd: (startTime: Date, endTime: Date) -> Unit,
     onTimeTaskIncrease: (TimeTaskDetailsUi) -> Unit,
     onTimeTaskReduce: (TimeTaskDetailsUi) -> Unit,
-    onChangeToggleStatus: (ViewToggleStatus) -> Unit,
 ) {
     Column(modifier = modifier.fillMaxSize()) {
-        DateChooserSection(
-            visible = state.selectedDate != null,
-            selectedDate = state.selectedDate,
-            toggleState = state.taskViewStatus,
-            onChangeDate = onChangeDate,
-            onChangeToggleStatus = onChangeToggleStatus,
-        )
         TimeTasksSection(
+            modifier = Modifier.weight(1f),
             selectedDate = state.selectedDate,
             dateStatus = state.schedule?.dateStatus,
             timeTasks = state.schedule?.timeTasks ?: emptyList(),
@@ -200,25 +199,24 @@ private fun BaseHomeContent(
 @Composable
 internal fun DateChooserSection(
     modifier: Modifier = Modifier,
-    visible: Boolean = true,
     selectedDate: Date?,
     toggleState: ViewToggleStatus,
     onChangeDate: (Date) -> Unit,
     onChangeToggleStatus: (ViewToggleStatus) -> Unit,
 ) {
-    AnimatedVisibility(
-        visible = visible,
-        enter = fadeIn() + slideInVertically(),
-        exit = fadeOut(),
+    Surface(
+        modifier = modifier.fillMaxWidth(),
+        shape = MaterialTheme.shapes.extraLarge.topSide,
+        color = MaterialTheme.colorScheme.surfaceContainerLow,
     ) {
         Row(
-            modifier = modifier.padding(start = 16.dp, end = 8.dp, top = 8.dp, bottom = 8.dp),
+            modifier = Modifier.padding(start = 16.dp, end = 8.dp, top = 12.dp, bottom = 10.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(24.dp),
         ) {
             HomeDateChooser(
                 modifier = Modifier.width(202.dp),
-                currentDate = selectedDate,
+                selectedDate = selectedDate,
                 onChangeDate = onChangeDate,
             )
             Spacer(modifier = Modifier.weight(1f))
@@ -234,7 +232,7 @@ internal fun DateChooserSection(
 internal fun HomeDateChooser(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    currentDate: Date?,
+    selectedDate: Date?,
     onChangeDate: (Date) -> Unit,
 ) {
     val dateFormat = remember { SimpleDateFormat("EEE, d MMM", Locale.getDefault()) }
@@ -243,11 +241,11 @@ internal fun HomeDateChooser(
     DateChooser(
         modifier = modifier,
         enabled = enabled,
-        dateTitle = remember(currentDate) {
-            currentDate?.let { dateFormat.format(it) } ?: ""
+        dateTitle = remember(selectedDate) {
+            selectedDate?.let { dateFormat.format(it) } ?: ""
         },
-        onNext = { currentDate?.let { onChangeDate.invoke(it.shiftDay(amount = 1)) } },
-        onPrevious = { currentDate?.let { onChangeDate.invoke(it.shiftDay(amount = -1)) } },
+        onNext = { selectedDate?.let { onChangeDate.invoke(it.shiftDay(amount = 1)) } },
+        onPrevious = { selectedDate?.let { onChangeDate.invoke(it.shiftDay(amount = -1)) } },
         onChooseDate = { isDateDialogShow.value = true },
     )
 
@@ -294,7 +292,7 @@ internal fun TimeTasksSection(
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             if (visibleFirstAdd) {
-                item {
+                item(key = "visibleFirstAdd:$selectedDate") {
                     val startTime = checkNotNull(selectedDate)
                     val endTime = remember(timeTasks) { timeTasks[0].startTime }
 
@@ -365,7 +363,7 @@ internal fun TimeTasksSection(
                     }
                 }
             }
-            item {
+            item(key = "lastAdd:$selectedDate") {
                 val startTime = remember(timeTasks, selectedDate) {
                     when (timeTasks.isEmpty()) {
                         true -> checkNotNull(selectedDate)
@@ -460,6 +458,7 @@ internal fun LazyItemScope.TimeTaskViewItem(
                 isCompactView = isCompactView,
             )
         }
+
         TimeTaskStatus.RUNNING -> {
             RunningTimeTaskItem(
                 modifier = modifier,
@@ -470,6 +469,7 @@ internal fun LazyItemScope.TimeTaskViewItem(
                 isCompactView = isCompactView,
             )
         }
+
         TimeTaskStatus.COMPLETED -> {
             CompletedTimeTaskItem(
                 modifier = modifier,

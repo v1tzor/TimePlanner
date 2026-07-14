@@ -104,13 +104,9 @@ android {
         }
         create("rustore") {
             dimension = libs.versions.productionDimension.get()
-            val myTrackerKey = localProperties.getProperty("myTrackerKey")
-            buildConfigField("String", "MY_TRACKER_KEY", "\"$myTrackerKey\"")
         }
         create("huawei") {
             dimension = libs.versions.productionDimension.get()
-            val myTrackerKey = localProperties.getProperty("myTrackerKey")
-            buildConfigField("String", "MY_TRACKER_KEY", "\"$myTrackerKey\"")
         }
     }
 
@@ -186,11 +182,9 @@ dependencies {
 
     rustoreImplementation(platform(libs.tracer.bom))
     rustoreImplementation(libs.bundles.tracer)
-    rustoreImplementation(libs.mytracker.core)
 
     huaweiImplementation(platform(libs.tracer.bom))
     huaweiImplementation(libs.bundles.tracer)
-    huaweiImplementation(libs.mytracker.core)
 }
 
 if (hasRustore || hasHuawei) {
