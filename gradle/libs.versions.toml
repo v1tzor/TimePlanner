@@ -10,43 +10,42 @@ testInstrumentRunner = "androidx.test.runner.AndroidJUnitRunner"
 consumerProguardFiles = "consumer-rules.pro"
 jvmTarget = "17"
 
-agp = "8.10.0"
-ksp = "2.1.20-2.0.0"
-kotlin = "2.1.20"
+agp = "8.12.1"
+ksp = "2.1.21-2.0.2"
+kotlin = "2.1.21"
 kotlin-coroutines = "1.10.2"
-kotlin-serialization = "1.8.0"
+kotlin-serialization = "1.8.1"
 
-coreKtx = "1.17.0"
+coreKtx = "1.18.0"
 appcompat = "1.7.1"
 accompanist = "0.36.0"
-lifecycle = "2.9.3"
+lifecycle = "2.10.0"
 glance = "1.1.1"
-activityCompose = "1.11.0"
+activityCompose = "1.13.0"
 
-compose = "1.9.1"
-compose-material = "1.13.0"
-compose-material3 = "1.3.2"
-compose-adaptive = "1.1.0"
-compose-plugin = "1.8.2"
-decompose = "3.4.0-alpha03"
+compose = "1.11.4"
+compose-icons = "1.7.8"
+compose-material = "1.14.0"
+compose-material3 = "1.4.0"
+compose-adaptive = "1.2.0"
+decompose = "3.5.0"
 essenty = "2.5.0"
 chartsMahu = "0.3.5"
 chartsHimanshoe = "1.0.1"
 
-dagger = "2.57.1"
-room = "2.8.0"
+dagger = "2.60.1"
+room = "2.8.4"
 
-tracer = "1.1.3"
+tracer = "1.4.0"
 mytracker = "3.5.0"
 
-leakcanary = "3.0-alpha-8"
+leakcanary = "2.14"
 jUnit = "4.13.2"
-jUnitExt = "1.1.4"
-androidTestRunner = "1.5.2"
-turbine = "0.12.1"
+jUnitExt = "1.3.0"
+androidTestRunner = "1.7.0"
+turbine = "1.2.1"
 coroutinesTest = "1.10.2"
-fragmentTest = "1.5.5"
-espresso = "3.5.0"
+espresso = "3.7.0"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -69,6 +68,7 @@ compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview"
 compose-ui-testmanifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "compose" }
 compose-foundation = { module = "androidx.compose.foundation:foundation", version.ref = "compose" }
 compose-foundation-layout = { module = "androidx.compose.foundation:foundation-layout", version.ref = "compose" }
+compose-icons = { module = "androidx.compose.material:material-icons-core", version.ref = "compose-icons" }
 compose-material = { group = "com.google.android.material", name = "material", version.ref = "compose-material" }
 compose-material3 = { module = "androidx.compose.material3:material3", version.ref = "compose-material3" }
 compose-material3-adaptive = { module = "androidx.compose.material3.adaptive:adaptive", version.ref = "compose-adaptive" }
@@ -111,7 +111,7 @@ espresso = { module = "androidx.test.espresso:espresso-core", version.ref = "esp
 leakcanary = { module = "com.squareup.leakcanary:leakcanary-android", version.ref = "leakcanary" }
 
 [bundles]
-compose = ["androidx-activity-compose", 'compose-ui', "compose-foundation", "compose-foundation-layout", "compose-placeholder", "compose-swiperefresh", "compose-material", "compose-material3", "compose-material3-adaptive", "compose-material3-adaptive-layout", "androidx-systemUiController"]
+compose = ["androidx-activity-compose", 'compose-ui', "compose-foundation", "compose-foundation-layout", "compose-icons", "compose-placeholder", "compose-swiperefresh", "compose-material", "compose-material3", "compose-material3-adaptive", "compose-material3-adaptive-layout", "androidx-systemUiController"]
 decompose = ["decompose-core", "decompose-compose", "decompose-compose-experimental", "decompose-lifecycle-coroutines"]
 tracer = ["tracer-crashReport", "tracer-crashReportNative", "tracer-heapDumps", "tracer-diskUsage", "tracer-samplingProfiler", "tracer-systraceProfiler"]
 
@@ -121,7 +121,6 @@ androidLibrary = { id = "com.android.library", version.ref = "agp" }
 kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
-compose = { id = "org.jetbrains.compose", version.ref = "compose-plugin" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 room = { id = "androidx.room", version.ref = "room" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
