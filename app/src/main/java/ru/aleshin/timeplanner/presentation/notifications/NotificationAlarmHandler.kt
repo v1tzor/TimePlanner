@@ -132,7 +132,7 @@ interface NotificationAlarmHandler {
                 defaultId = alarmKeyFactory.fetchTimeTaskAlarmId(timeTask.key, notificationType)
             )
             showNotification(
-                content = notificationContentProvider.fetchContent(timeTask, notificationType, coreStrings),
+                content = notificationContentProvider.fetchAlertContent(timeTask, notificationType, coreStrings),
                 icon = timeTask.category.default?.mapToIcon(coreIcons),
                 appIcon = coreIcons.logo,
                 notificationTag = alarmKeyFactory.fetchTimeTaskAlarmTag(timeTask.key, notificationType),
@@ -156,7 +156,7 @@ interface NotificationAlarmHandler {
 
             if (timeTask != null && timeTask.isEnableNotification) {
                 showNotification(
-                    content = notificationContentProvider.fetchContent(
+                    content = notificationContentProvider.fetchAlertContent(
                         timeTask = timeTask,
                         notificationType = TaskNotificationType.START,
                         strings = coreStrings,
@@ -197,7 +197,9 @@ interface NotificationAlarmHandler {
                 priority = NotificationPriority.MAX,
                 contentIntent = contentIntent,
                 notificationDefaults = NotificationDefaults(true, true, true),
-                style = content.text.takeIf { it.isNotBlank() }?.let { NotificationStyles.BigTextStyle(it) },
+                style = (content.expandedText ?: content.text)
+                    .takeIf { it.isNotBlank() }
+                    ?.let { NotificationStyles.BigTextStyle(it) },
                 color = ContextCompat.getColor(context, R.color.notification_icon),
             )
             notificationCreator.showNotify(notification, notificationTag, notificationId)

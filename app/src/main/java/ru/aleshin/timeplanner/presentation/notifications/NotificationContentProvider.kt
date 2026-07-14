@@ -17,17 +17,9 @@ package ru.aleshin.timeplanner.presentation.notifications
 
 import ru.aleshin.core.domain.entities.tasks.TaskNotificationType
 import ru.aleshin.core.domain.entities.tasks.TimeTask
-import ru.aleshin.core.domain.entities.template.RepeatTime
-import ru.aleshin.core.domain.entities.template.Template
 import ru.aleshin.core.presentation.mappers.mapToString
-import ru.aleshin.core.presentation.models.NotificationTimeTypeUi
-import ru.aleshin.core.utils.extensions.changeDay
-import ru.aleshin.core.utils.extensions.isCurrentDay
-import ru.aleshin.core.utils.extensions.shiftDay
-import ru.aleshin.core.utils.functional.Constants
 import ru.aleshin.timeplanner.core.ui.theme.tokens.TimePlannerStrings
 import java.text.DateFormat
-import java.util.Date
 import javax.inject.Inject
 
 /**
@@ -35,109 +27,88 @@ import javax.inject.Inject
  */
 interface NotificationContentProvider {
 
-    fun fetchContent(
+    fun fetchAlertContent(
         timeTask: TimeTask,
         notificationType: TaskNotificationType,
         strings: TimePlannerStrings,
     ): NotificationContent
 
-    fun fetchContent(
-        template: Template,
-        repeatTime: RepeatTime,
-        timeType: NotificationTimeTypeUi,
-        currentDate: Date,
+    fun fetchOngoingContent(
+        timeTask: TimeTask,
         strings: TimePlannerStrings,
     ): NotificationContent
 
     class Base @Inject constructor() : NotificationContentProvider {
 
-        override fun fetchContent(
+        override fun fetchAlertContent(
             timeTask: TimeTask,
             notificationType: TaskNotificationType,
             strings: TimePlannerStrings,
         ): NotificationContent {
             val timeFormat = DateFormat.getTimeInstance(DateFormat.SHORT)
-            val title = timeTask.category.default?.mapToString(strings) ?: timeTask.category.customName.orEmpty()
-            val categoryTitle = title.ifBlank { Constants.App.NAME }.withSubCategory(timeTask.subCategory?.name, strings)
             val timeRange = timeTask.timeRange.format(strings, timeFormat)
-            if (notificationType == TaskNotificationType.END_ONGOING) {
-                return NotificationContent(
-                    title = strings.splitFormat.format(strings.ongoingTaskNotifyText, categoryTitle),
-                    text = buildOngoingText(timeRange, timeTask.note),
-                )
+            val displayName = timeTask.fetchDisplayName(strings)
+            val categoryContext = timeTask.fetchCategoryName(strings).takeIf {
+                it.isNotBlank() &&
+                    timeTask.subCategory?.name?.isNotBlank() == true &&
+                    !it.equals(displayName, ignoreCase = true)
             }
-            if (notificationType == TaskNotificationType.AFTER_START_BEFORE_END) {
-                return NotificationContent(
-                    title = strings.notificationEndsSoonText,
-                    text = strings.notificationDetailsFormat.format(categoryTitle, timeRange),
-                )
-            }
-            val details = when (notificationType) {
-                TaskNotificationType.START, TaskNotificationType.END_ONGOING -> timeRange
-                TaskNotificationType.AFTER_START_BEFORE_END -> strings.notificationEndsSoonText
+            val state = when (notificationType) {
+                TaskNotificationType.START -> strings.startTaskNotifyText
                 TaskNotificationType.FIFTEEN_MINUTES_BEFORE -> strings.notificationBeforeFifteenMinutesText
                 TaskNotificationType.ONE_HOUR_BEFORE -> strings.notificationBeforeOneHourText
                 TaskNotificationType.THREE_HOUR_BEFORE -> strings.notificationBeforeThreeHoursText
                 TaskNotificationType.ONE_DAY_BEFORE -> strings.notificationBeforeOneDayText
                 TaskNotificationType.ONE_WEEK_BEFORE -> strings.notificationBeforeOneWeekText
+                TaskNotificationType.AFTER_START_BEFORE_END -> strings.notificationEndsSoonText
+                TaskNotificationType.END_ONGOING -> throw IllegalArgumentException()
             }
-            val text = when (notificationType) {
-                TaskNotificationType.START, TaskNotificationType.END_ONGOING -> timeTask.note.orEmpty()
-                else -> ""
-            }
+            val text = timeRange.withContext(categoryContext, strings)
+
             return NotificationContent(
-                title = strings.notificationDetailsFormat.format(categoryTitle, details),
+                title = strings.notificationTitleFormat.format(displayName, state),
                 text = text,
+                expandedText = text.withNote(timeTask.note),
             )
         }
 
-        override fun fetchContent(
-            template: Template,
-            repeatTime: RepeatTime,
-            timeType: NotificationTimeTypeUi,
-            currentDate: Date,
+        override fun fetchOngoingContent(
+            timeTask: TimeTask,
             strings: TimePlannerStrings,
         ): NotificationContent {
             val timeFormat = DateFormat.getTimeInstance(DateFormat.SHORT)
-            val title = template.category.default?.mapToString(strings) ?: template.category.customName.orEmpty()
-            val categoryTitle = title.ifBlank { Constants.App.NAME }.withSubCategory(template.subCategory?.name, strings)
-            val startTime = repeatTime.fetchCurrentOccurrenceStartTime(template.startTime, currentDate)
-            val endTime = when (template.endTime.isCurrentDay(template.startTime)) {
-                true -> template.endTime.changeDay(startTime)
-                false -> template.endTime.changeDay(startTime.shiftDay(1))
+            val timeRange = timeTask.timeRange.format(strings, timeFormat)
+            val displayName = timeTask.fetchDisplayName(strings)
+            val categoryContext = timeTask.fetchCategoryName(strings).takeIf {
+                it.isNotBlank() &&
+                    timeTask.subCategory?.name?.isNotBlank() == true &&
+                    !it.equals(displayName, ignoreCase = true)
             }
-            val details = when (timeType) {
-                NotificationTimeTypeUi.START_TASK -> strings.notificationTimeRangeFormat.format(
-                    timeFormat.format(startTime),
-                    timeFormat.format(endTime),
-                )
-                NotificationTimeTypeUi.BEFORE_TASK -> strings.beforeTaskNotifyText
-                NotificationTimeTypeUi.AFTER_TASK -> strings.notificationEndsSoonText
-            }
+            val text = timeRange.withContext(categoryContext, strings)
+
             return NotificationContent(
-                title = strings.notificationDetailsFormat.format(categoryTitle, details),
-                text = "",
+                title = strings.notificationTitleFormat.format(displayName, strings.ongoingTaskNotifyText),
+                text = text,
+                expandedText = text.withNote(timeTask.note),
             )
         }
 
-        private fun String.withSubCategory(subCategory: String?, strings: TimePlannerStrings): String {
-            return when (subCategory.isNullOrBlank()) {
-                true -> this
-                false -> strings.splitFormat.format(this, subCategory)
-            }
+        private fun TimeTask.fetchDisplayName(strings: TimePlannerStrings): String {
+            return subCategory?.name?.trim().takeUnless { it.isNullOrBlank() }
+                ?: fetchCategoryName(strings).takeIf { it.isNotBlank() }
+                ?: strings.appName
         }
 
-        private fun buildOngoingText(timeRange: String, note: String?): String {
-            return listOf(timeRange, note.orEmpty()).filter { it.isNotBlank() }.joinToString(separator = "\n")
+        private fun TimeTask.fetchCategoryName(strings: TimePlannerStrings): String {
+            return (category.customName ?: category.default?.mapToString(strings).orEmpty()).trim()
         }
 
-        private fun RepeatTime.fetchCurrentOccurrenceStartTime(startTime: Date, currentDate: Date): Date {
-            val currentStartTime = startTime.changeDay(currentDate)
-            return if (checkDateIsRepeat(currentStartTime)) {
-                currentStartTime
-            } else {
-                nextDateOrCurrent(startTime, currentDate)
-            }
+        private fun String.withContext(context: String?, strings: TimePlannerStrings): String {
+            return context?.let { strings.notificationContextFormat.format(this, it) } ?: this
+        }
+
+        private fun String.withNote(note: String?): String? {
+            return note?.trim()?.takeIf { it.isNotBlank() }?.let { "$this\n$it" }
         }
 
         private fun ru.aleshin.core.utils.functional.TimeRange.format(
@@ -155,4 +126,5 @@ interface NotificationContentProvider {
 data class NotificationContent(
     val title: String,
     val text: String,
+    val expandedText: String? = null,
 )

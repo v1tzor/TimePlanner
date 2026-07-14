@@ -66,12 +66,12 @@ class OngoingTimeTaskNotificationManagerImpl @Inject constructor(
         val notificationTag = alarmKeyFactory.fetchTimeTaskAlarmTag(timeTask.key, TaskNotificationType.END_ONGOING)
 
         if (!timeTask.isRunning(currentDate)) {
+            delete(timeTask)
             return
         }
 
-        val content = notificationContentProvider.fetchContent(
+        val content = notificationContentProvider.fetchOngoingContent(
             timeTask = timeTask,
-            notificationType = TaskNotificationType.END_ONGOING,
             strings = coreStrings,
         )
 
@@ -99,7 +99,7 @@ class OngoingTimeTaskNotificationManagerImpl @Inject constructor(
             timeoutAfterMillis = timeTask.timeRange.to.time
                 .minus(currentDate.time)
                 .coerceAtLeast(0L),
-            style = content.text
+            style = (content.expandedText ?: content.text)
                 .takeIf(String::isNotBlank)
                 ?.let(NotificationStyles::BigTextStyle),
             color = ContextCompat.getColor(context, R.color.notification_icon),
