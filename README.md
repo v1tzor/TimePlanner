@@ -1,4 +1,4 @@
-<div align="center">
+<div align="start">
   <br />
   <img
     src="https://github.com/v1tzor/TimePlanner/assets/116388544/b1b73712-0b71-431f-94fa-c5b5631b8109"
@@ -6,15 +6,8 @@
     alt="TimePlanner logo"
   />
 
-  <h1>⏱️ TimePlanner</h1>
-
-  <p>
-    <strong>Convenient and fast task planning for the day</strong>
-  </p>
-  <p>
-    <strong>Maximum privacy and security 🛡️</strong>
-  </p>
-
+  <h1>TimePlanner</h1>
+  
   <p>
     <img alt="Kotlin" src="https://img.shields.io/badge/Kotlin-2.1.21-7F52FF?logo=kotlin&logoColor=white&style=for-the-badge" />
     <img alt="Android API" src="https://img.shields.io/badge/Android-API%2024%2B-3DDC84?logo=android&logoColor=black&style=for-the-badge" />
@@ -22,7 +15,7 @@
     <img alt="License" src="https://img.shields.io/github/license/v1tzor/TimePlanner?style=for-the-badge" />
   </p>
 
-  <p align="center">
+  <p align="start">
   <a href="https://github.com/v1tzor/TimePlanner/releases">
     <img
       alt="Latest release"
