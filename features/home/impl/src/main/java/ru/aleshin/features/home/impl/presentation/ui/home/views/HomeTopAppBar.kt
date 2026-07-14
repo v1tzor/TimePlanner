@@ -15,6 +15,7 @@
  */
 package ru.aleshin.features.home.impl.presentation.ui.home.views
 
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
@@ -31,6 +32,7 @@ import ru.aleshin.core.domain.entities.settings.CalendarButtonBehavior
 import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
 import ru.aleshin.timeplanner.core.ui.theme.TimePlannerRes
 import ru.aleshin.timeplanner.core.ui.views.TopAppBarButton
+import ru.aleshin.timeplanner.core.ui.views.TopAppBarEmptyButton
 import ru.aleshin.timeplanner.core.ui.views.TopAppBarTitle
 
 /**
@@ -40,7 +42,6 @@ import ru.aleshin.timeplanner.core.ui.views.TopAppBarTitle
 @OptIn(ExperimentalMaterial3Api::class)
 internal fun HomeTopAppBar(
     calendarIconBehavior: CalendarButtonBehavior,
-    onMenuIconClick: () -> Unit,
     onSettingsIconClick: () -> Unit,
     onOpenCalendar: () -> Unit,
     onGoToToday: () -> Unit,
@@ -53,12 +54,10 @@ internal fun HomeTopAppBar(
             )
         },
         navigationIcon = {
-            TopAppBarButton(
-                modifier = Modifier.padding(end = 48.dp),
-                imageVector = Icons.Default.Menu,
-                imageDescription = HomeThemeRes.strings.topAppBarMenuIconDesc,
-                onButtonClick = onMenuIconClick,
-            )
+            Row {
+                TopAppBarEmptyButton()
+                TopAppBarEmptyButton()
+            }
         },
         actions = {
             TopAppBarButton(

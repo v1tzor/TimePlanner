@@ -44,6 +44,8 @@ fun Schedule.convertToDetails(
 ) = ScheduleDetails(
     date = date,
     dateStatus = dateStatus,
-    timeTasks = (timeTasks + overlayTimeTasks).map(timeTaskMapper),
+    timeTasks = (timeTasks + overlayTimeTasks).map(timeTaskMapper).sortedBy { timeTask ->
+        timeTask.timeRange.from
+    },
     progress = progress,
 )

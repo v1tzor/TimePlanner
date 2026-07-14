@@ -42,6 +42,7 @@ internal sealed class SettingsEvent : StoreEvent {
     data object PressResetButton : SettingsEvent()
     data object PressClearDataButton : SettingsEvent()
     data object PressDonateButton : SettingsEvent()
+    data object PressBackIcon : SettingsEvent()
     data class PressSaveBackupData(val uri: Uri) : SettingsEvent()
     data class PressRestoreBackupData(val uri: Uri) : SettingsEvent()
     data class ChangedThemeSettings(val themeSettings: ThemeSettingsUi) : SettingsEvent()

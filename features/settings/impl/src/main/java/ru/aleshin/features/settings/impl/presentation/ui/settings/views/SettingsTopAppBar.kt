@@ -15,15 +15,19 @@
  */
 package ru.aleshin.features.settings.impl.presentation.ui.settings.views
 
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import ru.aleshin.features.settings.impl.presentation.theme.SettingsThemeRes
 import ru.aleshin.timeplanner.core.ui.theme.TimePlannerRes
 import ru.aleshin.timeplanner.core.ui.views.TopAppBarAction
+import ru.aleshin.timeplanner.core.ui.views.TopAppBarButton
 import ru.aleshin.timeplanner.core.ui.views.TopAppBarMoreActions
 import ru.aleshin.timeplanner.core.ui.views.TopAppBarTitle
 
@@ -33,13 +37,23 @@ import ru.aleshin.timeplanner.core.ui.views.TopAppBarTitle
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 internal fun SettingsTopAppBar(
+    modifier: Modifier = Modifier,
     onResetToDefaultClick: () -> Unit,
+    onBackIconClick: () -> Unit,
 ) {
     TopAppBar(
+        modifier = modifier,
         title = {
             TopAppBarTitle(
                 text = SettingsThemeRes.strings.settingsTitle,
                 textAlign = TextAlign.Center,
+            )
+        },
+        navigationIcon = {
+            TopAppBarButton(
+                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                imageDescription = SettingsThemeRes.strings.backIconDesc,
+                onButtonClick = onBackIconClick,
             )
         },
         actions = {

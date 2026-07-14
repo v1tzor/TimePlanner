@@ -46,6 +46,7 @@ internal sealed class CategoriesEvent : StoreEvent {
     data class UpdateSubCategory(val subCategory: SubCategoryUi) : CategoriesEvent()
     data class DeleteMainCategory(val mainCategory: MainCategoryUi) : CategoriesEvent()
     data class DeleteSubCategory(val subCategory: SubCategoryUi) : CategoriesEvent()
+    data object PressBackIcon : CategoriesEvent()
 }
 
 internal sealed class CategoriesEffect : StoreEffect {

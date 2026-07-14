@@ -172,9 +172,7 @@ internal interface ScheduleInteractor {
                     .filter { template ->
                         template.repeatTimes.any { repeatTime -> repeatTime.checkDateIsRepeat(date) }
                     }
-                    .map { template ->
-                        template.convertToTimeTask(date = date, createdAt = date)
-                    }
+                    .map { template -> template.convertToTimeTask(date = date, createdAt = date) }
                     .sortedBy { timeTask -> timeTask.timeRange.from }
                     .forEach { timeTask ->
                         if (!overlayManager.isOverlay(timeTask.timeRange, timeRanges).isOverlay) {

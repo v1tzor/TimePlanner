@@ -68,6 +68,7 @@ import ru.aleshin.core.presentation.models.categories.MainCategoryUi
 import ru.aleshin.core.presentation.models.categories.SubCategoryUi
 import ru.aleshin.core.utils.architecture.store.compose.handleEffects
 import ru.aleshin.core.utils.architecture.store.compose.stateAsState
+import ru.aleshin.core.utils.extensions.changeDay
 import ru.aleshin.core.utils.extensions.fetchHourOfDay
 import ru.aleshin.core.utils.extensions.shiftDay
 import ru.aleshin.core.utils.extensions.shiftMillis
@@ -99,6 +100,7 @@ import ru.aleshin.features.editor.impl.presentation.ui.task.views.UndefinedTasks
 import ru.aleshin.timeplanner.core.ui.theme.TimePlannerRes
 import ru.aleshin.timeplanner.core.ui.views.CustomLargeTextField
 import ru.aleshin.timeplanner.core.ui.views.ErrorSnackbar
+import java.util.Date
 
 /**
  * @author Stanislav Aleshin on 25.02.2023.
@@ -254,6 +256,7 @@ internal fun BaseEditorContent(
                     DateTimeSection(
                         enabled = state.editModel.linkedTemplateId == null,
                         isTimeValidError = state.timeRangeValid is TimeRangeError.DurationError,
+                        scheduleDate = state.editModel.date,
                         timeRanges = state.editModel.timeRange,
                         duration = state.editModel.duration,
                         durationPresets = state.durationPresets,
@@ -390,6 +393,7 @@ internal fun DateTimeSection(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     isTimeValidError: Boolean,
+    scheduleDate: Date,
     timeRanges: TimeRange,
     duration: Long,
     durationPresets: List<Long>?,
@@ -407,16 +411,12 @@ internal fun DateTimeSection(
             currentTime = timeRanges.from,
             isError = isTimeValidError,
             onChangeTime = { newStartTime ->
-                if (newStartTime.fetchHourOfDay() <= timeRanges.to.fetchHourOfDay()) {
-                    onTimeRangeChange(timeRanges.copy(from = newStartTime))
+                val timeRange = if (newStartTime.fetchHourOfDay() <= timeRanges.to.fetchHourOfDay()) {
+                    timeRanges.copy(from = newStartTime, to = timeRanges.to.changeDay(scheduleDate))
                 } else {
-                    onTimeRangeChange(
-                        timeRanges.copy(
-                            from = newStartTime,
-                            to = timeRanges.to.shiftDay(1)
-                        )
-                    )
+                    timeRanges.copy(from = newStartTime, to = timeRanges.to.changeDay(scheduleDate.shiftDay(1)))
                 }
+                onTimeRangeChange(timeRange)
             },
         )
         EndTimeField(
@@ -425,10 +425,10 @@ internal fun DateTimeSection(
             currentTime = timeRanges.to,
             isError = isTimeValidError,
             onChangeTime = { newEndTime ->
-                val newTime = if (newEndTime.fetchHourOfDay() >= timeRanges.from.fetchHourOfDay()) {
-                    newEndTime
+                val newTime = if (timeRanges.from.fetchHourOfDay() <= newEndTime.fetchHourOfDay()) {
+                    newEndTime.changeDay(scheduleDate)
                 } else {
-                    newEndTime.shiftDay(1)
+                    newEndTime.changeDay(scheduleDate.shiftDay(1))
                 }
                 onTimeRangeChange(timeRanges.copy(to = newTime))
             },

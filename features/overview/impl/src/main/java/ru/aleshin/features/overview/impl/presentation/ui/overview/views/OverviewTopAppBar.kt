@@ -15,49 +15,35 @@
  */
 package ru.aleshin.features.overview.impl.presentation.ui.overview.views
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
-import ru.aleshin.timeplanner.core.ui.views.TopAppBarButton
-import ru.aleshin.timeplanner.core.ui.views.TopAppBarTitle
 import ru.aleshin.features.overview.impl.presentation.theme.OverviewThemeRes
+import ru.aleshin.timeplanner.core.ui.views.TopAppBarButton
+import ru.aleshin.timeplanner.core.ui.views.TopAppBarEmptyButton
+import ru.aleshin.timeplanner.core.ui.views.TopAppBarTitle
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 internal fun OverviewTopAppBar(
-    onMenuIconClick: () -> Unit,
-    onOpenSchedule: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     TopAppBar(
+        modifier = modifier,
         title = {
             TopAppBarTitle(
                 text = OverviewThemeRes.strings.topAppBarOverviewTitle,
-                textAlign = TextAlign.Center,
-            )
-        },
-        navigationIcon = {
-            TopAppBarButton(
-                imageVector = Icons.Default.Menu,
-                imageDescription = OverviewThemeRes.strings.topAppBarMenuIconDesc,
-                onButtonClick = onMenuIconClick,
-            )
-        },
-        actions = {
-            TopAppBarButton(
-                imagePainter = painterResource(id = OverviewThemeRes.icons.schedule),
-                imageDescription = OverviewThemeRes.strings.topAppBarHomeTitle,
-                onButtonClick = onOpenSchedule,
+                textAlign = TextAlign.Center
             )
         },
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.background,
-        ),
+        )
     )
 }
 

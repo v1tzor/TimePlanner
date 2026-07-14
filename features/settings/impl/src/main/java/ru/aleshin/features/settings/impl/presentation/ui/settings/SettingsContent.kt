@@ -112,6 +112,7 @@ internal fun SettingsContent(
         topBar = {
             SettingsTopAppBar(
                 onResetToDefaultClick = { store.dispatchEvent(SettingsEvent.PressResetButton) },
+                onBackIconClick = { store.dispatchEvent(SettingsEvent.PressBackIcon) }
             )
         },
         snackbarHost = {

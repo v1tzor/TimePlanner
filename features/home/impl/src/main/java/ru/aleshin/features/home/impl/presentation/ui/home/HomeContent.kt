@@ -73,7 +73,6 @@ import ru.aleshin.core.utils.architecture.store.compose.stateAsState
 import ru.aleshin.core.utils.extensions.endThisDay
 import ru.aleshin.core.utils.extensions.isCurrentDay
 import ru.aleshin.core.utils.extensions.shiftDay
-import ru.aleshin.core.utils.managers.LocalDrawerManager
 import ru.aleshin.features.home.impl.presentation.mapppers.mapToMessage
 import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
 import ru.aleshin.features.home.impl.presentation.ui.home.contract.HomeEffect
@@ -106,10 +105,8 @@ internal fun HomeContent(
 ) {
     val store = homeComponent.store
     val state by store.stateAsState()
-    val scope = rememberCoroutineScope()
     val snackbarState = remember { SnackbarHostState() }
     var isDateDialogShow by rememberSaveable { mutableStateOf(false) }
-    val drawerManager = LocalDrawerManager.current
     val strings = HomeThemeRes.strings
 
     Scaffold(
@@ -133,7 +130,6 @@ internal fun HomeContent(
         topBar = {
             HomeTopAppBar(
                 calendarIconBehavior = state.calendarButtonBehavior,
-                onMenuIconClick = { scope.launch { drawerManager?.openDrawer() } },
                 onSettingsIconClick = { store.dispatchEvent(HomeEvent.PressSettingsButton) },
                 onOpenCalendar = { isDateDialogShow = true },
                 onGoToToday = { store.dispatchEvent(HomeEvent.SelectedCurrentDate) },

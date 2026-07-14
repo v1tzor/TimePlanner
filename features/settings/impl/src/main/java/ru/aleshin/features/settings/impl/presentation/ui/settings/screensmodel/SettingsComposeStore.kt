@@ -83,6 +83,9 @@ internal class SettingsComposeStore @Inject constructor(
             is SettingsEvent.PressDonateButton -> {
                 consumeOutput(SettingsOutput.NavigateToDonate)
             }
+            is SettingsEvent.PressBackIcon -> {
+                consumeOutput(SettingsOutput.NavigateToBack)
+            }
         }
     }
 

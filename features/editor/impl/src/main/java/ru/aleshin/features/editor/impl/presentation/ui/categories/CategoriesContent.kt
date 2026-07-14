@@ -51,7 +51,6 @@ import kotlinx.coroutines.launch
 import ru.aleshin.timeplanner.core.ui.views.Scaffold
 import ru.aleshin.core.utils.architecture.store.compose.handleEffects
 import ru.aleshin.core.utils.architecture.store.compose.stateAsState
-import ru.aleshin.core.utils.managers.LocalDrawerManager
 import ru.aleshin.core.presentation.models.categories.MainCategoryUi
 import ru.aleshin.core.presentation.models.categories.SubCategoryUi
 import ru.aleshin.features.editor.impl.presentation.theme.EditorTheme
@@ -80,7 +79,6 @@ internal fun CategoriesContent(
     val scope = rememberCoroutineScope()
     val snackbarState = remember { SnackbarHostState() }
     var isShowSubCategoryDialog by rememberSaveable { mutableStateOf(false) }
-    val drawerManager = LocalDrawerManager.current
     val strings = EditorThemeRes.strings
 
     Scaffold(
@@ -101,7 +99,7 @@ internal fun CategoriesContent(
         },
         topBar = {
             CategoriesTopAppBar(
-                onMenuIconClick = { scope.launch { drawerManager?.openDrawer() } },
+                onBackIconClick = { store.dispatchEvent(CategoriesEvent.PressBackIcon) }
             )
         },
         snackbarHost = {

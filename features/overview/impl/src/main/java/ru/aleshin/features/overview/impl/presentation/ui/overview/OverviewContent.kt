@@ -32,14 +32,11 @@ import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.launch
 import ru.aleshin.core.presentation.models.tasks.UndefinedTaskUi
 import ru.aleshin.core.utils.architecture.store.compose.handleEffects
 import ru.aleshin.core.utils.architecture.store.compose.stateAsState
-import ru.aleshin.core.utils.managers.LocalDrawerManager
 import ru.aleshin.features.overview.impl.presentation.mapppers.mapToMessage
 import ru.aleshin.features.overview.impl.presentation.theme.OverviewThemeRes
 import ru.aleshin.features.overview.impl.presentation.ui.overview.contract.OverviewEffect
@@ -64,9 +61,7 @@ internal fun OverviewContent(
 ) {
     val store = overviewComponent.store
     val state by store.stateAsState()
-    val scope = rememberCoroutineScope()
     val snackbarState = remember { SnackbarHostState() }
-    val drawerManager = LocalDrawerManager.current
     val strings = OverviewThemeRes.strings
 
     Scaffold(
@@ -84,10 +79,7 @@ internal fun OverviewContent(
             )
         },
         topBar = {
-            OverviewTopAppBar(
-                onMenuIconClick = { scope.launch { drawerManager?.openDrawer() } },
-                onOpenSchedule = { store.dispatchEvent(OverviewEvent.OpenSchedule(null)) },
-            )
+            OverviewTopAppBar()
         },
         snackbarHost = {
             SnackbarHost(

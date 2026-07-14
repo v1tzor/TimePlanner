@@ -37,7 +37,6 @@ import ru.aleshin.features.templates.impl.presentation.theme.TemplatesThemeRes
 @OptIn(ExperimentalMaterial3Api::class)
 internal fun TemplatesTopAppBar(
     modifier: Modifier = Modifier,
-    onMenuIconClick: () -> Unit,
 ) {
     TopAppBar(
         modifier = modifier.background(MaterialTheme.colorScheme.background),
@@ -46,16 +45,6 @@ internal fun TemplatesTopAppBar(
                 text = TemplatesThemeRes.strings.topAppBarTemplatesTitle,
                 textAlign = TextAlign.Center,
             )
-        },
-        navigationIcon = {
-            TopAppBarButton(
-                imageVector = Icons.Default.Menu,
-                imageDescription = TemplatesThemeRes.strings.topAppBarMenuIconDesc,
-                onButtonClick = onMenuIconClick,
-            )
-        },
-        actions = {
-            TopAppBarEmptyButton()
         },
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.background,

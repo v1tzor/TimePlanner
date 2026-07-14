@@ -220,18 +220,25 @@ internal fun PlanningAnalyticsDayItem(
     analytic: PlanningAnalyticUi,
     onClick: () -> Unit,
 ) {
-    val color = when (analytic.timeTasks.size) {
+    val containerColor = when (analytic.timeTasks.size) {
         0 -> MaterialTheme.colorScheme.surfaceVariant
         1, 2 -> MaterialTheme.colorScheme.primary.copy(alpha = 0.3F)
         3, 4 -> MaterialTheme.colorScheme.primary.copy(alpha = 0.6F)
         5, 6 -> MaterialTheme.colorScheme.primary.copy(alpha = 0.85F)
         else -> MaterialTheme.colorScheme.primary
     }
+    val labelColor = when (analytic.timeTasks.size) {
+        0 -> MaterialTheme.colorScheme.onSurfaceVariant
+        1, 2 -> MaterialTheme.colorScheme.onPrimaryContainer
+        3, 4 -> MaterialTheme.colorScheme.onPrimaryContainer
+        5, 6 -> MaterialTheme.colorScheme.onPrimary
+        else -> MaterialTheme.colorScheme.onPrimary
+    }
     Box(
         modifier = modifier
             .size(20.dp)
             .clip(MaterialTheme.shapes.extraSmall)
-            .background(color)
+            .background(containerColor)
             .clickable(enabled = enabled, onClick = onClick)
             .then(
                 other = if (analytic.date.isCurrentDay()) {
@@ -249,7 +256,7 @@ internal fun PlanningAnalyticsDayItem(
         if (analytic.timeTasks.isNotEmpty()) {
             Text(
                 text = analytic.timeTasks.size.toString(),
-                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                color = labelColor,
                 style = MaterialTheme.typography.labelSmall,
             )
         }

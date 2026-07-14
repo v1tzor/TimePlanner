@@ -59,7 +59,6 @@ import ru.aleshin.core.presentation.models.categories.MainCategoryDetailsUi
 import ru.aleshin.core.presentation.models.templates.TemplateUi
 import ru.aleshin.core.utils.architecture.store.compose.handleEffects
 import ru.aleshin.core.utils.architecture.store.compose.stateAsState
-import ru.aleshin.core.utils.managers.LocalDrawerManager
 import ru.aleshin.features.templates.impl.domain.entities.TemplatesSortedType
 import ru.aleshin.features.templates.impl.presentation.mapppers.mapToMessage
 import ru.aleshin.features.templates.impl.presentation.mapppers.mapToString
@@ -87,10 +86,8 @@ internal fun TemplatesContent(
 ) {
     val store = templatesComponent.store
     val state by store.stateAsState()
-    val scope = rememberCoroutineScope()
     val snackbarState = remember { SnackbarHostState() }
     var isShowTemplateCreator by rememberSaveable { mutableStateOf(false) }
-    val drawerManager = LocalDrawerManager.current
     val strings = TemplatesThemeRes.strings
 
     Scaffold(
@@ -113,9 +110,7 @@ internal fun TemplatesContent(
             )
         },
         topBar = {
-            TemplatesTopAppBar(
-                onMenuIconClick = { scope.launch { drawerManager?.openDrawer() } },
-            )
+            TemplatesTopAppBar()
         },
         snackbarHost = {
             SnackbarHost(hostState = snackbarState) {

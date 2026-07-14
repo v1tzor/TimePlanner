@@ -91,6 +91,9 @@ internal class CategoriesComposeStore @Inject constructor(
                 val command = CategoriesWorkCommand.RestoreDefaultCategories
                 categoriesWorkProcessor.work(command).collectAndHandleWork()
             }
+            is CategoriesEvent.PressBackIcon -> {
+                consumeOutput(CategoriesOutput.NavigateToBack)
+            }
         }
     }
 

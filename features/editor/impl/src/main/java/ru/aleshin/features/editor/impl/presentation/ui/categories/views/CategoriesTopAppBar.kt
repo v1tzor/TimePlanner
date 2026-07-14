@@ -17,6 +17,8 @@ package ru.aleshin.features.editor.impl.presentation.ui.categories.views
 
 import androidx.compose.foundation.background
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -35,7 +37,7 @@ import ru.aleshin.features.editor.impl.presentation.theme.EditorThemeRes
 @OptIn(ExperimentalMaterial3Api::class)
 internal fun CategoriesTopAppBar(
     modifier: Modifier = Modifier,
-    onMenuIconClick: () -> Unit,
+    onBackIconClick: () -> Unit,
 ) {
     TopAppBar(
         modifier = modifier.background(MaterialTheme.colorScheme.background),
@@ -47,9 +49,9 @@ internal fun CategoriesTopAppBar(
         },
         navigationIcon = {
             TopAppBarButton(
-                imageVector = Icons.Default.Menu,
-                imageDescription = EditorThemeRes.strings.topAppBarMenuIconDesc,
-                onButtonClick = onMenuIconClick,
+                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                imageDescription = EditorThemeRes.strings.topAppBarBackIconDesc,
+                onButtonClick = onBackIconClick,
             )
         },
         actions = {
