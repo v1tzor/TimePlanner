@@ -34,6 +34,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import ru.aleshin.core.presentation.models.tasks.TimeTaskUi
 import ru.aleshin.core.presentation.models.tasks.UndefinedTaskUi
 import ru.aleshin.core.utils.architecture.store.compose.handleEffects
 import ru.aleshin.core.utils.architecture.store.compose.stateAsState
@@ -43,11 +44,11 @@ import ru.aleshin.features.overview.impl.presentation.ui.overview.contract.Overv
 import ru.aleshin.features.overview.impl.presentation.ui.overview.contract.OverviewEvent
 import ru.aleshin.features.overview.impl.presentation.ui.overview.contract.OverviewState
 import ru.aleshin.features.overview.impl.presentation.ui.overview.store.OverviewComponent
-import ru.aleshin.features.overview.impl.presentation.ui.overview.views.CurrentTimeTaskSection
 import ru.aleshin.features.overview.impl.presentation.ui.overview.views.OverviewTopAppBar
-import ru.aleshin.features.overview.impl.presentation.ui.overview.views.SchedulesSection
+import ru.aleshin.features.overview.impl.presentation.ui.overview.views.SelectedDaySection
 import ru.aleshin.features.overview.impl.presentation.ui.overview.views.UndefinedTaskSection
 import ru.aleshin.features.overview.impl.presentation.ui.overview.views.UndefinedTasksBatchEditorDialog
+import ru.aleshin.features.overview.impl.presentation.ui.overview.views.WeekTimelineSection
 import ru.aleshin.timeplanner.core.ui.views.ErrorSnackbar
 import java.util.Date
 
@@ -72,9 +73,9 @@ internal fun OverviewContent(
                 modifier = Modifier.padding(paddingValues),
                 onRefresh = { store.dispatchEvent(OverviewEvent.Refresh) },
                 onOpenSchedule = { store.dispatchEvent(OverviewEvent.OpenSchedule(it)) },
-                onOpenAllSchedules = { store.dispatchEvent(OverviewEvent.OpenAllSchedules) },
+                onSelectSchedule = { store.dispatchEvent(OverviewEvent.SelectSchedule(it)) },
+                onOpenTimeTask = { store.dispatchEvent(OverviewEvent.OpenTimeTask(it)) },
                 onAddOrUpdateTask = { store.dispatchEvent(OverviewEvent.CreateOrUpdateUndefinedTask(it)) },
-                onDeleteTask = { store.dispatchEvent(OverviewEvent.DeleteUndefinedTask(it)) },
                 onExecuteTask = { date, task -> store.dispatchEvent(OverviewEvent.ExecuteUndefinedTask(date, task)) },
             )
         },
@@ -118,13 +119,14 @@ private fun BaseOverviewContent(
     state: OverviewState,
     onRefresh: () -> Unit,
     onOpenSchedule: (Date?) -> Unit,
-    onOpenAllSchedules: () -> Unit,
+    onSelectSchedule: (Date) -> Unit,
+    onOpenTimeTask: (TimeTaskUi) -> Unit,
     onAddOrUpdateTask: (UndefinedTaskUi) -> Unit,
-    onDeleteTask: (UndefinedTaskUi) -> Unit,
     onExecuteTask: (Date, UndefinedTaskUi) -> Unit,
 ) {
     val scrollState = rememberScrollState()
     val refreshState = rememberPullToRefreshState()
+    val weekOverview = state.weekOverview
 
     PullToRefreshBox(
         modifier = modifier,
@@ -133,31 +135,32 @@ private fun BaseOverviewContent(
         isRefreshing = state.isLoading,
     ) {
         Column(
-            modifier = Modifier.verticalScroll(state = scrollState, enabled = !state.isLoading),
+            modifier = Modifier
+                .verticalScroll(state = scrollState, enabled = !state.isLoading)
+                .padding(top = 16.dp),
             verticalArrangement = Arrangement.spacedBy(24.dp),
         ) {
-            SchedulesSection(
+            WeekTimelineSection(
                 isLoading = state.isLoading,
-                currentDate = state.currentDate,
-                schedules = state.schedules,
-                onOpenSchedule = { onOpenSchedule(it.date) },
-                onOpenAllSchedules = onOpenAllSchedules,
+                selectedDate = state.selectedDate,
+                schedules = weekOverview.schedules,
+                weekTasksCount = weekOverview.tasksCount,
+                onSelectSchedule = onSelectSchedule,
             )
-            CurrentTimeTaskSection(
+            SelectedDaySection(
                 isLoading = state.isLoading,
-                task = state.currentTask,
-                onOpenTask = { onOpenSchedule(it.date) },
+                selectedDate = state.selectedDate,
+                schedules = weekOverview.schedules,
+                onOpenTimeTask = onOpenTimeTask,
             )
             UndefinedTaskSection(
                 isLoading = state.isLoading,
                 categories = state.categories,
                 tasks = state.undefinedTasks,
                 onAddOrUpdateTask = onAddOrUpdateTask,
-                onDeleteTask = onDeleteTask,
                 onExecuteTask = onExecuteTask,
             )
             Spacer(modifier = Modifier.height(60.dp))
         }
     }
 }
-

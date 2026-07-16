@@ -13,38 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ru.aleshin.core.domain.entities.schedules
+package ru.aleshin.features.overview.impl.presentation.models.overview
 
+import androidx.compose.runtime.Immutable
 import kotlinx.serialization.Serializable
+import ru.aleshin.core.presentation.models.tasks.TimeTaskUi
 import ru.aleshin.core.utils.functional.DateSerializer
 import java.util.Date
 
 /**
- * @author Stanislav Aleshin on 06.07.2026.
+ * @author Stanislav Aleshin on 16.07.2026.
  */
+@Immutable
 @Serializable
-data class OverviewSchedule(
+internal data class WeekScheduleUi(
     @Serializable(DateSerializer::class) val date: Date,
-    val dateStatus: DailyScheduleStatus,
-    val unexecutedTask: Int,
-    val completedTask: Int,
-    val plannedTask: Int,
-    val progress: Float,
-)
-
-fun List<OverviewSchedule>.isCompleted() = all { schedule -> schedule.plannedTask == 0 }
-
-fun Schedule.convertToOverview(
-    dateStatus: DailyScheduleStatus,
-    unexecutedTask: Int,
-    completedTask: Int,
-    plannedTask: Int,
-    progress: Float,
-) = OverviewSchedule(
-    date = date,
-    dateStatus = dateStatus,
-    unexecutedTask = unexecutedTask,
-    completedTask = completedTask,
-    plannedTask = plannedTask,
-    progress = progress,
+    val timeTasks: List<TimeTaskUi>,
+    val summary: DaySummaryUi = DaySummaryUi(),
 )

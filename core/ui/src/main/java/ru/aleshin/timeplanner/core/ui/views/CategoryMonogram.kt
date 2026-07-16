@@ -33,6 +33,7 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.toUpperCase
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import ru.aleshin.timeplanner.core.ui.theme.material.badgePriorityMax
 import ru.aleshin.timeplanner.core.ui.theme.material.badgePriorityMedium
@@ -41,6 +42,7 @@ import ru.aleshin.timeplanner.core.ui.theme.material.badgePriorityMedium
 fun CategoryIconMonogram(
     modifier: Modifier = Modifier,
     icon: Painter,
+    iconSize: Dp = 24.dp,
     iconDescription: String?,
     iconColor: Color,
     priority: MonogramPriority = MonogramPriority.STANDARD,
@@ -57,7 +59,7 @@ fun CategoryIconMonogram(
         contentAlignment = Alignment.Center,
     ) {
         Icon(
-            modifier = Modifier.size(24.dp),
+            modifier = Modifier.size(iconSize),
             painter = icon,
             contentDescription = iconDescription,
             tint = iconColor,

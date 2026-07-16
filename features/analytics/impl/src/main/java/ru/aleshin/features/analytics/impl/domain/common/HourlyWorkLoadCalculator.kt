@@ -71,4 +71,4 @@ internal interface HourlyWorkLoadCalculator {
     }
 }
 
-private const val HOURLY_WORK_LOAD_BUCKET_SIZE = 2
+private const val HOURLY_WORK_LOAD_BUCKET_SIZE = 3

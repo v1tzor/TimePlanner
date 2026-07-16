@@ -54,23 +54,23 @@ fun TabNavigationComponent.TabNavigationChild.mapToBottomItem() = when (this) {
 enum class TabsBottomBarItems : BottomBarItem {
     HOME {
         override val label: String @Composable get() = TimePlannerRes.strings.homeTabTitle
-        override val enabledIcon: Int @Composable get() = TimePlannerRes.icons.enabledHomeIcon
-        override val disabledIcon: Int @Composable get() = TimePlannerRes.icons.disabledHomeIcon
+        override val enabledIcon: Int @Composable get() = TimePlannerRes.icons.selectedHomeTab
+        override val disabledIcon: Int @Composable get() = TimePlannerRes.icons.homeTab
         override val containerColor: Color @Composable get() = MaterialTheme.colorScheme.surfaceContainerLow
     },
     OVERVIEW {
         override val label: String @Composable get() = TimePlannerRes.strings.overviewDrawerTitle
-        override val enabledIcon: Int @Composable get() = TimePlannerRes.icons.overview
-        override val disabledIcon: Int @Composable get() = TimePlannerRes.icons.overview
+        override val enabledIcon: Int @Composable get() = TimePlannerRes.icons.selectedOverviewTab
+        override val disabledIcon: Int @Composable get() = TimePlannerRes.icons.overviewTab
     },
     TEMPLATES {
         override val label: String @Composable get() = TimePlannerRes.strings.templateDrawerTitle
-        override val enabledIcon: Int @Composable get() = TimePlannerRes.icons.template
-        override val disabledIcon: Int @Composable get() = TimePlannerRes.icons.template
+        override val enabledIcon: Int @Composable get() = TimePlannerRes.icons.selectedTemplateTab
+        override val disabledIcon: Int @Composable get() = TimePlannerRes.icons.templateTab
     },
     ANALYTICS {
         override val label: String @Composable get() = TimePlannerRes.strings.analyticsTabTitle
-        override val enabledIcon: Int @Composable get() = TimePlannerRes.icons.enabledAnalyticsIcon
-        override val disabledIcon: Int @Composable get() = TimePlannerRes.icons.disabledAnalyticsIcon
+        override val enabledIcon: Int @Composable get() = TimePlannerRes.icons.selectedAnalyticsTab
+        override val disabledIcon: Int @Composable get() = TimePlannerRes.icons.analyticsTab
     },
 }

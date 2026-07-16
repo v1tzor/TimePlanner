@@ -15,6 +15,7 @@
  */
 package ru.aleshin.features.overview.impl.presentation.ui.overview.store
 
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onStart
 import ru.aleshin.core.presentation.mappers.mapToDomain
@@ -26,8 +27,8 @@ import ru.aleshin.core.utils.architecture.store.work.FlowWorkProcessor
 import ru.aleshin.core.utils.architecture.store.work.OutputResult
 import ru.aleshin.core.utils.architecture.store.work.WorkCommand
 import ru.aleshin.core.utils.architecture.store.work.WorkResult
-import ru.aleshin.core.utils.extensions.shiftDay
 import ru.aleshin.core.utils.extensions.startThisDay
+import ru.aleshin.core.utils.functional.Constants
 import ru.aleshin.core.utils.functional.TimeRange
 import ru.aleshin.core.utils.functional.collectAndHandle
 import ru.aleshin.core.utils.functional.handle
@@ -37,6 +38,7 @@ import ru.aleshin.features.overview.impl.domain.interactors.MainCategoriesIntera
 import ru.aleshin.features.overview.impl.domain.interactors.ScheduleInteractor
 import ru.aleshin.features.overview.impl.domain.interactors.ShareTextInteractor
 import ru.aleshin.features.overview.impl.domain.interactors.UndefinedTasksInteractor
+import ru.aleshin.features.overview.impl.presentation.mapppers.mapToUi
 import ru.aleshin.features.overview.impl.presentation.ui.overview.contract.OverviewAction
 import ru.aleshin.features.overview.impl.presentation.ui.overview.contract.OverviewEffect
 import ru.aleshin.features.overview.impl.presentation.ui.overview.contract.OverviewOutput
@@ -61,25 +63,17 @@ internal interface OverviewWorkProcessor :
             is OverviewWorkCommand.LoadSchedules -> loadSchedulesWork()
             is OverviewWorkCommand.LoadUndefinedTasks -> loadUndefinedTasks()
             is OverviewWorkCommand.LoadCategories -> loadCategoriesWork()
-            is OverviewWorkCommand.LoadCurrentTask -> loadCurrentTaskWork()
             is OverviewWorkCommand.CreateOrUpdateUndefinedTasks -> createOrUpdateTasksWork(command.tasks)
             is OverviewWorkCommand.PrepareSharedTextImport -> prepareSharedTextImportWork(command.text)
             is OverviewWorkCommand.ExecuteUndefinedTask -> executeUndefinedTaskWork(command.data, command.task)
-            is OverviewWorkCommand.DeleteUndefinedTask -> deleteUndefinedTaskWork(command.task)
         }
 
         private fun loadSchedulesWork() = flow<OverviewWorkResult> {
-            val currentDate = dateManager.fetchBeginningCurrentDay()
-            val previewTimeRange = TimeRange(
-                from = currentDate.shiftDay(-1),
-                to = currentDate.shiftDay(2)
-            )
-
-            scheduleInteractor.fetchOverviewSchedules(previewTimeRange).collectAndHandle(
+            scheduleInteractor.fetchWeekOverview().collectAndHandle(
                 onLeftAction = { emit(EffectResult(OverviewEffect.ShowError(it))) },
-                onRightAction = { schedules ->
-                    val schedules = schedules.map { it.mapToUi() }
-                    emit(ActionResult(OverviewAction.UpdateSchedules(currentDate, schedules)))
+                onRightAction = { weekOverview ->
+                    emit(ActionResult(OverviewAction.UpdateWeekOverview(weekOverview.mapToUi())))
+                    delay(Constants.Delay.OVERVIEW)
                     emit(ActionResult(OverviewAction.UpdateLoading(false)))
                 }
             )
@@ -91,7 +85,7 @@ internal interface OverviewWorkProcessor :
             undefinedTasksInteractor.fetchAllUndefinedTasks().collectAndHandle(
                 onLeftAction = { emit(EffectResult(OverviewEffect.ShowError(it))) },
                 onRightAction = { tasks ->
-                    emit(ActionResult(OverviewAction.UpdateUndefinedTasks(tasks.map { it.mapToUi() })))
+                    emit(ActionResult(OverviewAction.UpdateUndefinedTasks(tasks.map { task -> task.mapToUi() })))
                 },
             )
         }
@@ -101,15 +95,6 @@ internal interface OverviewWorkProcessor :
                 onLeftAction = { emit(EffectResult(OverviewEffect.ShowError(it))) },
                 onRightAction = { categories ->
                     emit(ActionResult(OverviewAction.UpdateCategories(categories.map { it.mapToUi() })))
-                },
-            )
-        }
-
-        private fun loadCurrentTaskWork() = flow {
-            scheduleInteractor.fetchActiveTimeTaskDetails().collectAndHandle(
-                onLeftAction = { emit(EffectResult(OverviewEffect.ShowError(it))) },
-                onRightAction = { timeTask ->
-                    emit(ActionResult(OverviewAction.UpdateCurrentTask(timeTask?.mapToUi())))
                 },
             )
         }
@@ -140,11 +125,6 @@ internal interface OverviewWorkProcessor :
             emit(OutputResult(OverviewOutput.NavigateToEditor(config)))
         }
 
-        private fun deleteUndefinedTaskWork(task: UndefinedTaskUi) = flow {
-            undefinedTasksInteractor.deleteUndefinedTaskById(task.id).handle(
-                onLeftAction = { emit(EffectResult(OverviewEffect.ShowError(it))) },
-            )
-        }
     }
 }
 
@@ -152,12 +132,9 @@ internal sealed class OverviewWorkCommand : WorkCommand {
     data object LoadSchedules : OverviewWorkCommand()
     data object LoadUndefinedTasks : OverviewWorkCommand()
     data object LoadCategories : OverviewWorkCommand()
-    data object LoadCurrentTask : OverviewWorkCommand()
     data class CreateOrUpdateUndefinedTasks(val tasks: List<UndefinedTaskUi>) : OverviewWorkCommand()
     data class PrepareSharedTextImport(val text: String) : OverviewWorkCommand()
     data class ExecuteUndefinedTask(val data: Date, val task: UndefinedTaskUi) : OverviewWorkCommand()
-    data class DeleteUndefinedTask(val task: UndefinedTaskUi) : OverviewWorkCommand()
 }
 
 internal typealias OverviewWorkResult = WorkResult<OverviewAction, OverviewEffect, OverviewOutput>
-

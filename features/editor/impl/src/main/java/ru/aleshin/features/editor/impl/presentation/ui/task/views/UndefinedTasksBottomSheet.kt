@@ -53,7 +53,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import ru.aleshin.core.presentation.mappers.mapToIconPainter
 import ru.aleshin.core.presentation.models.tasks.UndefinedTaskUi
-import ru.aleshin.timeplanner.core.ui.mappers.mapToUi
+import ru.aleshin.timeplanner.core.ui.mappers.mapToMonogram
 import ru.aleshin.timeplanner.core.ui.views.CategoryIconMonogram
 import ru.aleshin.timeplanner.core.ui.views.CategoryTextMonogram
 import ru.aleshin.timeplanner.core.ui.views.NoneItemsView
@@ -162,14 +162,14 @@ internal fun UndefinedTaskBottomSheetItem(
                             icon = categoryIcon,
                             iconDescription = null,
                             iconColor = MaterialTheme.colorScheme.primary,
-                            priority = model.priority.mapToUi(),
+                            priority = model.priority.mapToMonogram(),
                             backgroundColor = MaterialTheme.colorScheme.primaryContainer,
                         )
                     } else {
                         CategoryTextMonogram(
                             text = model.mainCategory.customName?.first().toString(),
                             textColor = MaterialTheme.colorScheme.primary,
-                            priority = model.priority.mapToUi(),
+                            priority = model.priority.mapToMonogram(),
                             backgroundColor = MaterialTheme.colorScheme.primaryContainer,
                         )
                     }

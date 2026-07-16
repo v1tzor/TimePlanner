@@ -77,6 +77,7 @@ object Constants {
 
     object Delay {
         const val LOAD_ANIMATION = 400L
+        const val OVERVIEW = 350L
         const val SPLASH_NAV = 1800L
         const val SPLASH_LOGO = 300L
         const val SPLASH_TEXT = 600L

@@ -20,15 +20,11 @@ import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.router.stack.pop
-import com.arkivanov.decompose.router.stack.pushToFront
 import com.arkivanov.decompose.value.Value
 import ru.aleshin.core.utils.architecture.component.FeatureComponent
 import ru.aleshin.core.utils.architecture.component.OutputConsumer
 import ru.aleshin.features.overview.api.OverviewConfig
 import ru.aleshin.features.overview.api.OverviewOutput
-import ru.aleshin.features.overview.impl.presentation.ui.details.contract.DetailsOutput
-import ru.aleshin.features.overview.impl.presentation.ui.details.store.DetailsComponent
-import ru.aleshin.features.overview.impl.presentation.ui.details.store.DetailsComposeStore
 import ru.aleshin.features.overview.impl.presentation.ui.overview.contract.OverviewInput
 import ru.aleshin.features.overview.impl.presentation.ui.overview.store.OverviewComponent
 import ru.aleshin.features.overview.impl.presentation.ui.overview.store.OverviewComposeStore
@@ -47,7 +43,6 @@ internal abstract class InternalOverviewFeatureComponent(
 
     sealed class Child {
         data class OverviewChild(val component: OverviewComponent) : Child()
-        data class DetailsChild(val component: DetailsComponent) : Child()
     }
 
     class Default(
@@ -55,7 +50,6 @@ internal abstract class InternalOverviewFeatureComponent(
         componentContext: ComponentContext,
         private val outputConsumer: OutputConsumer<OverviewOutput>,
         private val overviewStoreFactory: OverviewComposeStore.Factory,
-        private val detailsStoreFactory: DetailsComposeStore.Factory,
     ) : InternalOverviewFeatureComponent(
         componentContext = componentContext
     ) {
@@ -96,21 +90,11 @@ internal abstract class InternalOverviewFeatureComponent(
                         outputConsumer = overviewOutputConsumer(),
                     )
                 )
-                is OverviewConfig.Details -> Child.DetailsChild(
-                    component = DetailsComponent.Default(
-                        storeFactory = detailsStoreFactory,
-                        componentContext = componentContext,
-                        outputConsumer = detailsOutputConsumer(),
-                    )
-                )
             }
         }
 
         private fun overviewOutputConsumer() = OutputConsumer<OverviewScreenOutput> { output ->
             when (output) {
-                is OverviewScreenOutput.NavigateToDetails -> {
-                    stackNavigation.pushToFront(output.config)
-                }
                 is OverviewScreenOutput.NavigateToHome -> {
                     outputConsumer.consume(OverviewOutput.NavigateToHome(output.config.scheduleDate))
                 }
@@ -123,15 +107,6 @@ internal abstract class InternalOverviewFeatureComponent(
                     )
                     outputConsumer.consume(data)
                 }
-            }
-        }
-
-        private fun detailsOutputConsumer() = OutputConsumer<DetailsOutput> { output ->
-            when (output) {
-                is DetailsOutput.NavigateToHome -> {
-                    outputConsumer.consume(OverviewOutput.NavigateToHome(output.config.scheduleDate))
-                }
-                is DetailsOutput.NavigateToBack -> navigateToBack()
             }
         }
     }

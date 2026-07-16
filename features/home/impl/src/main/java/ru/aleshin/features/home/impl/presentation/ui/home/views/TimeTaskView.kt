@@ -51,11 +51,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import ru.aleshin.core.domain.entities.tasks.TaskPriority
-import ru.aleshin.timeplanner.core.ui.mappers.mapToUi
+import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
+import ru.aleshin.timeplanner.core.ui.mappers.mapToMonogram
 import ru.aleshin.timeplanner.core.ui.views.CategoryIconMonogram
 import ru.aleshin.timeplanner.core.ui.views.CategoryTextMonogram
 import ru.aleshin.timeplanner.core.ui.views.ExpandedIcon
-import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
 
 /**
  * @author Stanislav Aleshin on 22.02.2023.
@@ -95,14 +95,14 @@ internal fun PlannedTimeTask(
                             icon = categoryIcon,
                             iconDescription = taskTitle,
                             iconColor = MaterialTheme.colorScheme.primary,
-                            priority = priority.mapToUi(),
+                            priority = priority.mapToMonogram(),
                             backgroundColor = MaterialTheme.colorScheme.primaryContainer,
                         )
                     } else {
                         CategoryTextMonogram(
                             text = taskTitle.first().toString(),
                             textColor = MaterialTheme.colorScheme.primary,
-                            priority = priority.mapToUi(),
+                            priority = priority.mapToMonogram(),
                             backgroundColor = MaterialTheme.colorScheme.primaryContainer,
                         )
                     }
@@ -179,7 +179,7 @@ internal fun RunningTimeTask(
                             icon = categoryIcon,
                             iconDescription = taskTitle,
                             iconColor = MaterialTheme.colorScheme.onPrimary,
-                            priority = priority.mapToUi(),
+                            priority = priority.mapToMonogram(),
                             backgroundColor = MaterialTheme.colorScheme.primary,
                         )
                     } else {
@@ -187,7 +187,7 @@ internal fun RunningTimeTask(
                             text = taskTitle.first().toString(),
                             textColor = MaterialTheme.colorScheme.onPrimary,
                             backgroundColor = MaterialTheme.colorScheme.primary,
-                            priority = priority.mapToUi(),
+                            priority = priority.mapToMonogram(),
                         )
                     }
                 }

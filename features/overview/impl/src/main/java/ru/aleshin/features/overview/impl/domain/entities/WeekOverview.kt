@@ -16,7 +16,9 @@
 package ru.aleshin.features.overview.impl.domain.entities
 
 /**
- * @author Stanislav Aleshin on 16.05.2023.
+ * @author Stanislav Aleshin on 16.07.2026.
  */
-internal class TimeTaskImportanceException : Exception()
-
+internal data class WeekOverview(
+    val tasksCount: Int,
+    val schedules: List<WeekSchedule>,
+)

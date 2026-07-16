@@ -49,13 +49,14 @@ import hu.ma.charts.legend.data.LegendPosition
 import hu.ma.charts.pie.PieChart
 import hu.ma.charts.pie.data.PieChartData
 import hu.ma.charts.pie.data.PieChartEntry
-import ru.aleshin.timeplanner.core.ui.theme.TimePlannerRes
-import ru.aleshin.timeplanner.core.ui.views.toMinutesAndHoursTitle
+import ru.aleshin.core.utils.charts.CategoryColorsDefaults
 import ru.aleshin.core.utils.charts.fetchPieColorByTop
 import ru.aleshin.core.utils.functional.TimePeriod
 import ru.aleshin.features.analytics.impl.presentation.models.analytics.CategoriesAnalyticsUi
 import ru.aleshin.features.analytics.impl.presentation.models.analytics.CategoryAnalyticUi
 import ru.aleshin.features.analytics.impl.presentation.theme.AnalyticsThemeRes
+import ru.aleshin.timeplanner.core.ui.theme.TimePlannerRes
+import ru.aleshin.timeplanner.core.ui.views.toMinutesAndHoursTitle
 
 private const val TOP_CATEGORIES_COUNT = 5
 
@@ -143,12 +144,12 @@ internal fun CategoriesAnalyticsChart(
     val otherList = remember(analytics) { analytics.drop(TOP_CATEGORIES_COUNT) }
     val pieDataList = remember(topList, otherList) {
         mutableListOf<PieChartEntry>().apply {
-            topList.forEachIndexed { index, analytic ->
+            topList.forEach { analytic ->
                 val label = analytic.mainCategory.fetchName(coreStrings) ?: "*"
                 val data = PieChartEntry(
                     value = analytic.duration.toFloat() + 1f,
                     label = AnnotatedString(label),
-                    color = fetchPieColorByTop(index),
+                    color = CategoryColorsDefaults.fetchColor(analytic.mainCategory.id),
                 )
                 add(data)
             }

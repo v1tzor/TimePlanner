@@ -69,7 +69,7 @@ internal class HomeComposeStore @Inject constructor(
                     val setupCommand = ScheduleWorkCommand.SetupSettings
                     scheduleWorkProcessor.work(setupCommand).collectAndHandleWork()
                 }
-                if (!isRestore) {
+                if (!isRestore || state.selectedDate == null) {
                     launchBackgroundWork(BackgroundKey.LOAD_SCHEDULE) {
                         val date = input.scheduleDate ?: dateManager.fetchBeginningCurrentDay()
                         val command = LoadScheduleByDate(date)

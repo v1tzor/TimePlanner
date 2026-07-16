@@ -21,7 +21,7 @@ import ru.aleshin.timeplanner.core.ui.views.MonogramPriority
 /**
  * @author Stanislav Aleshin on 16.01.2024.
  */
-fun TaskPriority.mapToUi() = when (this) {
+fun TaskPriority.mapToMonogram() = when (this) {
     TaskPriority.STANDARD -> MonogramPriority.STANDARD
     TaskPriority.MEDIUM -> MonogramPriority.MEDIUM
     TaskPriority.MAX -> MonogramPriority.MAX

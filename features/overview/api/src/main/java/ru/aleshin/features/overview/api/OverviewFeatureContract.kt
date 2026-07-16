@@ -21,9 +21,6 @@ public sealed class OverviewConfig {
         val sharedText: String? = null,
         val sharedKey: Long = 0L
     ) : OverviewConfig()
-
-    @Serializable
-    public data object Details : OverviewConfig()
 }
 
 public sealed class OverviewOutput : BaseOutput {

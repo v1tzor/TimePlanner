@@ -53,6 +53,17 @@ internal data class OverviewStrings(
     val sharedTasksDialogTitle: String,
     val sharedTasksDialogDesc: String,
     val sharedTasksCountFormat: String,
+    val weekTimelineTitle: String,
+    val freeTimeTitle: String,
+    val workloadTitle: String,
+    val tasksCountFormat: String,
+    val openDayTitle: String,
+    val showAllTasksTitle: String,
+    val showLessTasksTitle: String,
+    val noDeadlineTitle: String,
+    val noScheduledTasksTitle: String,
+    val selectedDayHeaderFormat: String,
+    val metadataDivider: String,
 )
 
 internal val russianOverviewString = OverviewStrings(
@@ -74,7 +85,7 @@ internal val russianOverviewString = OverviewStrings(
     realizedScheduleTitle = "Выполненное",
     accomplishmentScheduleTitle = "Текущее",
     plannedScheduleTitle = "В планах",
-    undefinedTasksHeader = "Не распределённые задачи",
+    undefinedTasksHeader = "Без времени",
     executeUndefinedTasksTitle = "Выполнить",
     currentTaskHeader = "Текущая задача",
     noneTitle = "Нету",
@@ -87,6 +98,17 @@ internal val russianOverviewString = OverviewStrings(
     sharedTasksDialogTitle = "Импорт задач",
     sharedTasksDialogDesc = "Проверьте задачи перед добавлением",
     sharedTasksCountFormat = "Задач: %s",
+    weekTimelineTitle = "Неделя",
+    freeTimeTitle = "Свободно",
+    workloadTitle = "Загрузка",
+    tasksCountFormat = "%s задач",
+    openDayTitle = "Открыть день",
+    showAllTasksTitle = "Показать все",
+    showLessTasksTitle = "Свернуть",
+    noDeadlineTitle = "Без дедлайна",
+    noScheduledTasksTitle = "На этот день задач нет",
+    selectedDayHeaderFormat = "%s · %s",
+    metadataDivider = "·",
 )
 
 internal val englishOverviewString = OverviewStrings(
@@ -108,7 +130,7 @@ internal val englishOverviewString = OverviewStrings(
     realizedScheduleTitle = "Completed",
     accomplishmentScheduleTitle = "Current",
     plannedScheduleTitle = "Planned",
-    undefinedTasksHeader = "Undistributed tasks",
+    undefinedTasksHeader = "Unscheduled",
     executeUndefinedTasksTitle = "Execute",
     currentTaskHeader = "Current task",
     noneTitle = "None",
@@ -121,6 +143,17 @@ internal val englishOverviewString = OverviewStrings(
     sharedTasksDialogTitle = "Import tasks",
     sharedTasksDialogDesc = "Review shared tasks before adding them",
     sharedTasksCountFormat = "Tasks: %s",
+    weekTimelineTitle = "Week timeline",
+    freeTimeTitle = "Free time",
+    workloadTitle = "Workload",
+    tasksCountFormat = "%s tasks",
+    openDayTitle = "Open day",
+    showAllTasksTitle = "Show all",
+    showLessTasksTitle = "Show less",
+    noDeadlineTitle = "No deadline",
+    noScheduledTasksTitle = "No tasks planned for this day",
+    selectedDayHeaderFormat = "%s · %s",
+    metadataDivider = "·",
 )
 
 internal val persianOverviewString = OverviewStrings(
@@ -155,6 +188,17 @@ internal val persianOverviewString = OverviewStrings(
     sharedTasksDialogTitle = "وارد کردن کارها",
     sharedTasksDialogDesc = "کارهای اشتراک‌گذاری‌شده را پیش از افزودن بررسی کنید",
     sharedTasksCountFormat = "کارها: %s",
+    weekTimelineTitle = "نمای هفتگی",
+    freeTimeTitle = "زمان آزاد",
+    workloadTitle = "بار کاری",
+    tasksCountFormat = "%s کار",
+    openDayTitle = "باز کردن روز",
+    showAllTasksTitle = "نمایش همه",
+    showLessTasksTitle = "نمایش کمتر",
+    noDeadlineTitle = "بدون مهلت",
+    noScheduledTasksTitle = "برای این روز کاری برنامه‌ریزی نشده است",
+    selectedDayHeaderFormat = "%s · %s",
+    metadataDivider = "·",
 )
 
 internal val germanOverviewString = OverviewStrings(
@@ -189,6 +233,17 @@ internal val germanOverviewString = OverviewStrings(
     sharedTasksDialogTitle = "Aufgaben importieren",
     sharedTasksDialogDesc = "Prüfe die geteilten Aufgaben vor dem Hinzufügen",
     sharedTasksCountFormat = "Aufgaben: %s",
+    weekTimelineTitle = "Wochenübersicht",
+    freeTimeTitle = "Freie Zeit",
+    workloadTitle = "Auslastung",
+    tasksCountFormat = "%s Aufgaben",
+    openDayTitle = "Tag öffnen",
+    showAllTasksTitle = "Alle anzeigen",
+    showLessTasksTitle = "Weniger anzeigen",
+    noDeadlineTitle = "Keine Frist",
+    noScheduledTasksTitle = "Keine Aufgaben für diesen Tag geplant",
+    selectedDayHeaderFormat = "%s · %s",
+    metadataDivider = "·",
 )
 
 internal val spanishOverviewString = OverviewStrings(
@@ -223,6 +278,17 @@ internal val spanishOverviewString = OverviewStrings(
     sharedTasksDialogTitle = "Importar tareas",
     sharedTasksDialogDesc = "Revisa las tareas compartidas antes de añadirlas",
     sharedTasksCountFormat = "Tareas: %s",
+    weekTimelineTitle = "Semana",
+    freeTimeTitle = "Tiempo libre",
+    workloadTitle = "Carga",
+    tasksCountFormat = "%s tareas",
+    openDayTitle = "Abrir día",
+    showAllTasksTitle = "Mostrar todas",
+    showLessTasksTitle = "Mostrar menos",
+    noDeadlineTitle = "Sin fecha límite",
+    noScheduledTasksTitle = "No hay tareas planificadas para este día",
+    selectedDayHeaderFormat = "%s · %s",
+    metadataDivider = "·",
 )
 
 internal val frenchOverviewString = OverviewStrings(
@@ -257,6 +323,17 @@ internal val frenchOverviewString = OverviewStrings(
     sharedTasksDialogTitle = "Importer des tâches",
     sharedTasksDialogDesc = "Vérifiez les tâches partagées avant de les ajouter",
     sharedTasksCountFormat = "Tâches : %s",
+    weekTimelineTitle = "Semaine",
+    freeTimeTitle = "Temps libre",
+    workloadTitle = "Charge",
+    tasksCountFormat = "%s tâches",
+    openDayTitle = "Ouvrir le jour",
+    showAllTasksTitle = "Tout afficher",
+    showLessTasksTitle = "Afficher moins",
+    noDeadlineTitle = "Sans échéance",
+    noScheduledTasksTitle = "Aucune tâche prévue pour ce jour",
+    selectedDayHeaderFormat = "%s · %s",
+    metadataDivider = "·",
 )
 internal val brazilianPortugueseOverviewString = OverviewStrings(
     topAppBarHomeTitle = "Horário",
@@ -290,6 +367,17 @@ internal val brazilianPortugueseOverviewString = OverviewStrings(
     sharedTasksDialogTitle = "Importar tarefas",
     sharedTasksDialogDesc = "Revise as tarefas compartilhadas antes de adicionar",
     sharedTasksCountFormat = "Tarefas: %s",
+    weekTimelineTitle = "Semana",
+    freeTimeTitle = "Tempo livre",
+    workloadTitle = "Carga",
+    tasksCountFormat = "%s tarefas",
+    openDayTitle = "Abrir dia",
+    showAllTasksTitle = "Mostrar todas",
+    showLessTasksTitle = "Mostrar menos",
+    noDeadlineTitle = "Sem prazo",
+    noScheduledTasksTitle = "Nenhuma tarefa planejada para este dia",
+    selectedDayHeaderFormat = "%s · %s",
+    metadataDivider = "·",
 )
 
 internal val turkishOverviewString = OverviewStrings(
@@ -324,6 +412,17 @@ internal val turkishOverviewString = OverviewStrings(
     sharedTasksDialogTitle = "Görevleri içe aktar",
     sharedTasksDialogDesc = "Eklemeden önce paylaşılan görevleri gözden geçir",
     sharedTasksCountFormat = "Görevler: %s",
+    weekTimelineTitle = "Hafta",
+    freeTimeTitle = "Boş zaman",
+    workloadTitle = "Yoğunluk",
+    tasksCountFormat = "%s görev",
+    openDayTitle = "Günü aç",
+    showAllTasksTitle = "Tümünü göster",
+    showLessTasksTitle = "Daha az göster",
+    noDeadlineTitle = "Son tarih yok",
+    noScheduledTasksTitle = "Bu gün için planlanmış görev yok",
+    selectedDayHeaderFormat = "%s · %s",
+    metadataDivider = "·",
 )
 
 internal val vietnameseOverviewString = OverviewStrings(
@@ -358,6 +457,17 @@ internal val vietnameseOverviewString = OverviewStrings(
     sharedTasksDialogTitle = "Nhập nhiệm vụ",
     sharedTasksDialogDesc = "Kiểm tra nhiệm vụ được chia sẻ trước khi thêm",
     sharedTasksCountFormat = "Nhiệm vụ: %s",
+    weekTimelineTitle = "Tuần",
+    freeTimeTitle = "Thời gian rảnh",
+    workloadTitle = "Khối lượng",
+    tasksCountFormat = "%s nhiệm vụ",
+    openDayTitle = "Mở ngày",
+    showAllTasksTitle = "Hiển thị tất cả",
+    showLessTasksTitle = "Thu gọn",
+    noDeadlineTitle = "Không có hạn chót",
+    noScheduledTasksTitle = "Không có nhiệm vụ nào được lên lịch cho ngày này",
+    selectedDayHeaderFormat = "%s · %s",
+    metadataDivider = "·",
 )
 
 internal val polishOverviewString = OverviewStrings(
@@ -392,6 +502,17 @@ internal val polishOverviewString = OverviewStrings(
     sharedTasksDialogTitle = "Importuj zadania",
     sharedTasksDialogDesc = "Sprawdź udostępnione zadania przed dodaniem",
     sharedTasksCountFormat = "Zadania: %s",
+    weekTimelineTitle = "Tydzień",
+    freeTimeTitle = "Wolny czas",
+    workloadTitle = "Obciążenie",
+    tasksCountFormat = "%s zadań",
+    openDayTitle = "Otwórz dzień",
+    showAllTasksTitle = "Pokaż wszystkie",
+    showLessTasksTitle = "Pokaż mniej",
+    noDeadlineTitle = "Bez terminu",
+    noScheduledTasksTitle = "Brak zadań zaplanowanych na ten dzień",
+    selectedDayHeaderFormat = "%s · %s",
+    metadataDivider = "·",
 )
 
 internal val italianOverviewString = OverviewStrings(
@@ -426,6 +547,17 @@ internal val italianOverviewString = OverviewStrings(
     sharedTasksDialogTitle = "Importa attività",
     sharedTasksDialogDesc = "Controlla le attività condivise prima di aggiungerle",
     sharedTasksCountFormat = "Attività: %s",
+    weekTimelineTitle = "Settimana",
+    freeTimeTitle = "Tempo libero",
+    workloadTitle = "Carico",
+    tasksCountFormat = "%s attività",
+    openDayTitle = "Apri giorno",
+    showAllTasksTitle = "Mostra tutte",
+    showLessTasksTitle = "Mostra meno",
+    noDeadlineTitle = "Nessuna scadenza",
+    noScheduledTasksTitle = "Nessuna attività pianificata per questo giorno",
+    selectedDayHeaderFormat = "%s · %s",
+    metadataDivider = "·",
 )
 
 
@@ -461,6 +593,17 @@ internal val chineseOverviewString = OverviewStrings(
     sharedTasksDialogTitle = "导入任务",
     sharedTasksDialogDesc = "添加前请检查分享的任务",
     sharedTasksCountFormat = "任务数：%s",
+    weekTimelineTitle = "本周",
+    freeTimeTitle = "空闲时间",
+    workloadTitle = "负荷",
+    tasksCountFormat = "%s 个任务",
+    openDayTitle = "打开当天",
+    showAllTasksTitle = "显示全部",
+    showLessTasksTitle = "收起",
+    noDeadlineTitle = "无截止时间",
+    noScheduledTasksTitle = "当天没有计划任务",
+    selectedDayHeaderFormat = "%s · %s",
+    metadataDivider = "·",
 )
 
 internal val LocalOverviewStrings = staticCompositionLocalOf<OverviewStrings> {

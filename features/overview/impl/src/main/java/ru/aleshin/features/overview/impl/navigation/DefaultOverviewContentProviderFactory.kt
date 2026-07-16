@@ -21,7 +21,6 @@ import ru.aleshin.core.utils.inject.FeatureContentProvider
 import ru.aleshin.features.overview.api.OverviewConfig
 import ru.aleshin.features.overview.api.OverviewContentProviderFactory
 import ru.aleshin.features.overview.api.OverviewOutput
-import ru.aleshin.features.overview.impl.presentation.ui.details.store.DetailsComposeStore
 import ru.aleshin.features.overview.impl.presentation.ui.overview.store.OverviewComposeStore
 import ru.aleshin.features.overview.impl.presentation.ui.root.InternalOverviewFeatureComponent
 import ru.aleshin.features.overview.impl.presentation.ui.root.OverviewContentProvider
@@ -31,8 +30,7 @@ import javax.inject.Inject
  * @author Stanislav Aleshin on 01.07.2026.
  */
 internal class DefaultOverviewContentProviderFactory @Inject constructor(
-    private val overviewStoreFactory: OverviewComposeStore.Factory,
-    private val detailsStoreFactory: DetailsComposeStore.Factory,
+    private val overviewStoreFactory: OverviewComposeStore.Factory
 ) : OverviewContentProviderFactory {
 
     override fun createProvider(
@@ -44,8 +42,7 @@ internal class DefaultOverviewContentProviderFactory @Inject constructor(
             componentContext = componentContext,
             startConfig = startConfig,
             outputConsumer = outputConsumer,
-            overviewStoreFactory = overviewStoreFactory,
-            detailsStoreFactory = detailsStoreFactory,
+            overviewStoreFactory = overviewStoreFactory
         )
 
         return OverviewContentProvider(component = component)

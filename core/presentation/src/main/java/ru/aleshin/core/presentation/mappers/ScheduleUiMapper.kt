@@ -15,10 +15,8 @@
  */
 package ru.aleshin.core.presentation.mappers
 
-import ru.aleshin.core.domain.entities.schedules.OverviewSchedule
 import ru.aleshin.core.domain.entities.schedules.Schedule
 import ru.aleshin.core.domain.entities.schedules.ScheduleDetails
-import ru.aleshin.core.presentation.models.schedules.OverviewScheduleUi
 import ru.aleshin.core.presentation.models.schedules.ScheduleDetailsUi
 
 /**
@@ -28,15 +26,6 @@ fun ScheduleDetails.mapToUi() = ScheduleDetailsUi(
     date = date,
     dateStatus = dateStatus,
     timeTasks = timeTasks.map { it.mapToUi() },
-    progress = progress
-)
-
-fun OverviewSchedule.mapToUi() = OverviewScheduleUi(
-    date = date,
-    dateStatus = dateStatus,
-    unexecutedTask = unexecutedTask,
-    completedTask = completedTask,
-    plannedTask = plannedTask,
     progress = progress
 )
 

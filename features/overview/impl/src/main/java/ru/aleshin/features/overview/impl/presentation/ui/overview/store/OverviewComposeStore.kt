@@ -21,6 +21,7 @@ import ru.aleshin.core.utils.architecture.store.communicators.StateCommunicator
 import ru.aleshin.core.utils.architecture.store.work.BackgroundWorkKey
 import ru.aleshin.core.utils.architecture.store.work.WorkScope
 import ru.aleshin.core.utils.managers.CoroutineManager
+import ru.aleshin.features.editor.api.EditorConfig
 import ru.aleshin.features.home.api.HomeConfig
 import ru.aleshin.features.overview.impl.presentation.ui.overview.contract.OverviewAction
 import ru.aleshin.features.overview.impl.presentation.ui.overview.contract.OverviewEffect
@@ -65,10 +66,6 @@ internal class OverviewComposeStore @Inject constructor(
                     val categoriesCommand = OverviewWorkCommand.LoadCategories
                     workProcessor.work(categoriesCommand).collectAndHandleWork()
                 }
-                launchBackgroundWork(BackgroundKey.LOAD_TASK) {
-                    val categoriesCommand = OverviewWorkCommand.LoadCurrentTask
-                    workProcessor.work(categoriesCommand).collectAndHandleWork()
-                }
                 if (!event.isRestore && event.input.sharedText != null) {
                     launchBackgroundWork(BackgroundKey.SHARE_IMPORT) {
                         val command = OverviewWorkCommand.PrepareSharedTextImport(event.input.sharedText)
@@ -89,10 +86,6 @@ internal class OverviewComposeStore @Inject constructor(
                     val categoriesCommand = OverviewWorkCommand.LoadCategories
                     workProcessor.work(categoriesCommand).collectAndHandleWork()
                 }
-                launchBackgroundWork(BackgroundKey.LOAD_TASK) {
-                    val categoriesCommand = OverviewWorkCommand.LoadCurrentTask
-                    workProcessor.work(categoriesCommand).collectAndHandleWork()
-                }
             }
             is OverviewEvent.CreateOrUpdateUndefinedTask -> launchBackgroundWork(BackgroundKey.TASK_ACTION) {
                 val command = OverviewWorkCommand.CreateOrUpdateUndefinedTasks(listOf(event.task))
@@ -110,20 +103,18 @@ internal class OverviewComposeStore @Inject constructor(
                 val command = OverviewWorkCommand.ExecuteUndefinedTask(event.scheduleDate, event.task)
                 workProcessor.work(command).collectAndHandleWork()
             }
-            is OverviewEvent.DeleteUndefinedTask -> launchBackgroundWork(BackgroundKey.TASK_ACTION) {
-                val command = OverviewWorkCommand.DeleteUndefinedTask(event.task)
-                workProcessor.work(command).collectAndHandleWork()
-            }
             is OverviewEvent.OpenSchedule -> {
                 val config = HomeConfig.Home(event.scheduleDate)
                 consumeOutput(OverviewOutput.NavigateToHome(config))
             }
-            is OverviewEvent.OpenAllSchedules -> {
-                consumeOutput(OverviewOutput.NavigateToDetails())
+            is OverviewEvent.SelectSchedule -> {
+                sendAction(OverviewAction.UpdateSelectedDate(event.scheduleDate))
             }
-            is OverviewEvent.PressScheduleButton -> {
-                val config = HomeConfig.Home(null)
-                consumeOutput(OverviewOutput.NavigateToHome(config))
+            is OverviewEvent.OpenTimeTask -> {
+                val config = EditorConfig.Task(
+                    timeTaskId = event.timeTask.key,
+                )
+                consumeOutput(OverviewOutput.NavigateToEditor(config))
             }
         }
     }
@@ -135,19 +126,18 @@ internal class OverviewComposeStore @Inject constructor(
         is OverviewAction.UpdateLoading -> currentState.copy(
             isLoading = action.isLoading,
         )
-        is OverviewAction.UpdateSchedules -> currentState.copy(
-            isLoading = false,
-            currentDate = action.date,
-            schedules = action.schedules,
+        is OverviewAction.UpdateWeekOverview -> currentState.copy(
+            selectedDate = currentState.selectedDate ?: action.weekOverview.schedules.first().date,
+            weekOverview = action.weekOverview,
+        )
+        is OverviewAction.UpdateSelectedDate -> currentState.copy(
+            selectedDate = action.date,
         )
         is OverviewAction.UpdateUndefinedTasks -> currentState.copy(
             undefinedTasks = action.tasks,
         )
         is OverviewAction.UpdateCategories -> currentState.copy(
             categories = action.categories,
-        )
-        is OverviewAction.UpdateCurrentTask -> currentState.copy(
-            currentTask = action.timeTask,
         )
         is OverviewAction.UpdateSharedTextTasks -> currentState.copy(
             sharedTextTasks = action.tasks,
@@ -158,7 +148,7 @@ internal class OverviewComposeStore @Inject constructor(
     }
 
     enum class BackgroundKey : BackgroundWorkKey {
-        LOAD_SCHEDULES, LOAD_UNDEFINED_TASKS, LOAD_CATEGORIES, LOAD_TASK, TASK_ACTION, SHARE_IMPORT
+        LOAD_SCHEDULES, LOAD_UNDEFINED_TASKS, LOAD_CATEGORIES, TASK_ACTION, SHARE_IMPORT
     }
 
     class Factory @Inject constructor(

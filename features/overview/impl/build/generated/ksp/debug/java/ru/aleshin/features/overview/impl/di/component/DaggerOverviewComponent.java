@@ -30,10 +30,6 @@ import ru.aleshin.features.overview.impl.domain.interactors.UndefinedTasksIntera
 import ru.aleshin.features.overview.impl.domain.interactors.UndefinedTasksInteractor_Base_Factory;
 import ru.aleshin.features.overview.impl.navigation.DefaultOverviewContentProviderFactory;
 import ru.aleshin.features.overview.impl.navigation.DefaultOverviewContentProviderFactory_Factory;
-import ru.aleshin.features.overview.impl.presentation.ui.details.store.DetailsComposeStore;
-import ru.aleshin.features.overview.impl.presentation.ui.details.store.DetailsComposeStore_Factory_Factory;
-import ru.aleshin.features.overview.impl.presentation.ui.details.store.DetailsWorkProcessor;
-import ru.aleshin.features.overview.impl.presentation.ui.details.store.DetailsWorkProcessor_Base_Factory;
 import ru.aleshin.features.overview.impl.presentation.ui.overview.store.OverviewComposeStore;
 import ru.aleshin.features.overview.impl.presentation.ui.overview.store.OverviewComposeStore_Factory_Factory;
 import ru.aleshin.features.overview.impl.presentation.ui.overview.store.OverviewWorkProcessor;
@@ -116,12 +112,6 @@ public final class DaggerOverviewComponent {
 
     Provider<OverviewComposeStore.Factory> factoryProvider;
 
-    Provider<DetailsWorkProcessor.Base> baseProvider7;
-
-    Provider<DetailsWorkProcessor> bindDetailsProcessorProvider;
-
-    Provider<DetailsComposeStore.Factory> factoryProvider2;
-
     Provider<DefaultOverviewContentProviderFactory> defaultOverviewContentProviderFactoryProvider;
 
     Provider<OverviewContentProviderFactory> bindContentProviderFactoryProvider;
@@ -152,10 +142,7 @@ public final class DaggerOverviewComponent {
       this.bindOverviewProcessorProvider = DoubleCheck.provider((Provider) (baseProvider6));
       this.getCoroutineManagerProvider = new GetCoroutineManagerProvider(overviewFeatureDependenciesParam);
       this.factoryProvider = OverviewComposeStore_Factory_Factory.create(bindOverviewProcessorProvider, getCoroutineManagerProvider);
-      this.baseProvider7 = DetailsWorkProcessor_Base_Factory.create(((Provider) (baseProvider2)), getDateMangerProvider);
-      this.bindDetailsProcessorProvider = DoubleCheck.provider((Provider) (baseProvider7));
-      this.factoryProvider2 = DetailsComposeStore_Factory_Factory.create(bindDetailsProcessorProvider, getCoroutineManagerProvider);
-      this.defaultOverviewContentProviderFactoryProvider = DefaultOverviewContentProviderFactory_Factory.create(factoryProvider, factoryProvider2);
+      this.defaultOverviewContentProviderFactoryProvider = DefaultOverviewContentProviderFactory_Factory.create(factoryProvider);
       this.bindContentProviderFactoryProvider = DoubleCheck.provider((Provider) (defaultOverviewContentProviderFactoryProvider));
     }
 

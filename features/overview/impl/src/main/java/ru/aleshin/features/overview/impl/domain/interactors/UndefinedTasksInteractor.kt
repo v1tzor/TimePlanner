@@ -15,6 +15,7 @@
  */
 package ru.aleshin.features.overview.impl.domain.interactors
 
+import kotlinx.coroutines.flow.map
 import ru.aleshin.core.domain.entities.tasks.UndefinedTask
 import ru.aleshin.core.domain.repository.UndefinedTaskRepository
 import ru.aleshin.core.utils.functional.FlowDomainResult
@@ -42,7 +43,13 @@ internal interface UndefinedTasksInteractor {
         }
 
         override suspend fun fetchAllUndefinedTasks() = eitherWrapper.wrapFlow {
-            undefinedTaskRepository.fetchUndefinedTasks()
+            undefinedTaskRepository.fetchUndefinedTasks().map { tasks ->
+                tasks.sortedWith(
+                    comparator = compareBy<UndefinedTask> { task -> task.deadline == null }
+                        .thenBy { task -> task.deadline?.time ?: Long.MAX_VALUE }
+                        .thenByDescending { task -> task.priority.ordinal },
+                )
+            }
         }
 
         override suspend fun deleteUndefinedTaskById(taskId: Long) = eitherWrapper.wrap {
@@ -50,4 +57,3 @@ internal interface UndefinedTasksInteractor {
         }
     }
 }
-

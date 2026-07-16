@@ -38,7 +38,7 @@ import androidx.glance.layout.width
 import androidx.glance.text.Text
 import androidx.glance.unit.ColorProvider
 import ru.aleshin.core.domain.entities.tasks.TaskPriority
-import ru.aleshin.timeplanner.core.ui.mappers.mapToUi
+import ru.aleshin.timeplanner.core.ui.mappers.mapToMonogram
 import ru.aleshin.timeplanner.core.ui.theme.TimePlannerRes
 import ru.aleshin.timeplanner.R
 import ru.aleshin.timeplanner.presentation.widgets.compatCornerBackground
@@ -135,14 +135,14 @@ internal fun PlannedWidgetTimeTask(
                     icon = categoryIcon,
                     iconDescription = taskTitle,
                     iconColor = GlanceTheme.colors.primary,
-                    priority = priority.mapToUi(),
+                    priority = priority.mapToMonogram(),
                     backgroundColor = GlanceTheme.colors.primaryContainer,
                 )
             } else {
                 CategoryWidgetTextMonogram(
                     text = taskTitle.first().toString(),
                     textColor = GlanceTheme.colors.primary,
-                    priority = priority.mapToUi(),
+                    priority = priority.mapToMonogram(),
                     backgroundColor = GlanceTheme.colors.primaryContainer,
                 )
             }
@@ -188,14 +188,14 @@ internal fun RunningWidgetTimeTask(
                     icon = categoryIcon,
                     iconDescription = taskTitle,
                     iconColor = GlanceTheme.colors.onPrimary,
-                    priority = priority.mapToUi(),
+                    priority = priority.mapToMonogram(),
                     backgroundColor = GlanceTheme.colors.primary,
                 )
             } else {
                 CategoryWidgetTextMonogram(
                     text = taskTitle.first().toString(),
                     textColor = GlanceTheme.colors.onPrimary,
-                    priority = priority.mapToUi(),
+                    priority = priority.mapToMonogram(),
                     backgroundColor = GlanceTheme.colors.primary,
                 )
             }

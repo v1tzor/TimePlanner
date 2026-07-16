@@ -15,23 +15,17 @@
  */
 package ru.aleshin.features.overview.impl.domain.interactors
 
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
-import kotlinx.coroutines.flow.transformWhile
 import ru.aleshin.core.domain.common.ScheduleStatusChecker
 import ru.aleshin.core.domain.common.TimeOverlayManager
 import ru.aleshin.core.domain.common.TimeTaskStatusChecker
 import ru.aleshin.core.domain.entities.schedules.BaseDailySchedule
-import ru.aleshin.core.domain.entities.schedules.OverviewSchedule
 import ru.aleshin.core.domain.entities.schedules.Schedule
-import ru.aleshin.core.domain.entities.schedules.convertToOverview
 import ru.aleshin.core.domain.entities.schedules.fetchAllTimeTasks
-import ru.aleshin.core.domain.entities.schedules.isCompleted
 import ru.aleshin.core.domain.entities.tasks.TimeTask
 import ru.aleshin.core.domain.entities.tasks.TimeTaskDetails
 import ru.aleshin.core.domain.entities.tasks.TimeTaskStatus
@@ -47,16 +41,21 @@ import ru.aleshin.core.utils.functional.FlowDomainResult
 import ru.aleshin.core.utils.functional.TimeRange
 import ru.aleshin.core.utils.managers.DateManager
 import ru.aleshin.features.overview.impl.domain.common.OverviewEitherWrapper
+import ru.aleshin.features.overview.impl.domain.entities.DaySummary
 import ru.aleshin.features.overview.impl.domain.entities.OverviewFailures
+import ru.aleshin.features.overview.impl.domain.entities.WeekOverview
+import ru.aleshin.features.overview.impl.domain.entities.WeekSchedule
 import java.util.Date
 import javax.inject.Inject
+import kotlin.math.max
+import kotlin.math.min
 
 /**
  * @author Stanislav Aleshin on 25.02.2023.
  */
 internal interface ScheduleInteractor {
 
-    suspend fun fetchOverviewSchedules(timeRange: TimeRange): FlowDomainResult<OverviewFailures, List<OverviewSchedule>>
+    suspend fun fetchWeekOverview(): FlowDomainResult<OverviewFailures, WeekOverview>
     suspend fun fetchActiveTimeTaskDetails(): FlowDomainResult<OverviewFailures, TimeTaskDetails?>
 
     class Base @Inject constructor(
@@ -70,40 +69,82 @@ internal interface ScheduleInteractor {
         private val eitherWrapper: OverviewEitherWrapper,
     ) : ScheduleInteractor {
 
-        @OptIn(ExperimentalCoroutinesApi::class)
-        override suspend fun fetchOverviewSchedules(timeRange: TimeRange) = eitherWrapper.wrapFlow {
+
+        override suspend fun fetchWeekOverview() = eitherWrapper.wrapFlow {
+            val currentDate = dateManager.fetchBeginningCurrentDay()
+            val timeRange = TimeRange(
+                from = currentDate,
+                to = currentDate.shiftDay(WEEK_DAYS_COUNT - 1),
+            )
             val overviewDates = timeRange.periodDates()
 
-            scheduleRepository.fetchSchedulesByRange(timeRange).onStart {
-                createMissingRecurringSchedules(overviewDates, fetchRepeatTemplates())
-            }.flatMapLatest { schedules ->
-                dateManager.fetchTicker().map {
-                    val schedulesByDate = schedules.associateBy { schedule -> schedule.date.time }
+            combine(
+                fetchSchedules(timeRange),
+                dateManager.fetchTicker(),
+            ) { schedules, _ ->
+                val schedulesByDate = schedules.associateBy { schedule -> schedule.date.time }
+                val weekSchedules = overviewDates.map { date ->
+                    val schedule = schedulesByDate[date.time] ?: Schedule(date = date)
+                    val timeTasks = schedule.allTimeTasks
+                        .distinctBy { timeTask -> timeTask.key }
+                        .sortedBy { timeTask -> timeTask.timeRange.from }
 
-                    overviewDates.map { date ->
-                        val schedule = schedulesByDate[date.time] ?: Schedule(date = date)
-                        val timeTasks = schedule.allTimeTasks
-                        val taskStatuses = timeTasks.map { timeTask ->
-                            timeTask to timeTaskStatusChecker.fetchStatus(timeTask.timeRange)
-                        }
-
-                        schedule.convertToOverview(
-                            dateStatus = scheduleStatusChecker.fetchStatus(date),
-                            unexecutedTask = timeTasks.count { timeTask -> !timeTask.isCompleted },
-                            completedTask = taskStatuses.count { (timeTask, status) ->
-                                status == TimeTaskStatus.COMPLETED && timeTask.isCompleted
-                            },
-                            plannedTask = taskStatuses.count { (_, status) ->
-                                status != TimeTaskStatus.COMPLETED
-                            },
-                            progress = scheduleStatusChecker.fetchProgress(timeTasks),
-                        )
-                    }
-                }.distinctUntilChanged().transformWhile { schedule ->
-                    emit(schedule)
-                    !schedule.isCompleted()
+                    WeekSchedule(
+                        date = date,
+                        timeTasks = timeTasks,
+                        summary = fetchDaySummary(date, timeTasks),
+                    )
                 }
+
+                WeekOverview(
+                    tasksCount = weekSchedules
+                        .flatMap { schedule -> schedule.timeTasks }
+                        .distinctBy { timeTask -> timeTask.key }
+                        .size,
+                    schedules = weekSchedules,
+                )
+            }.distinctUntilChanged()
+        }
+
+        private fun fetchDaySummary(
+            date: Date,
+            timeTasks: List<TimeTask>,
+        ): DaySummary {
+            val dayStart = date.startThisDay()
+            val dayEnd = dayStart.shiftDay(1)
+            val workload = timeTasks.fetchWorkload(dayStart, dayEnd)
+
+            return DaySummary(
+                freeTime = (dayEnd.time - dayStart.time - workload).coerceAtLeast(0L),
+                workload = workload,
+                progress = scheduleStatusChecker.fetchProgress(timeTasks),
+            )
+        }
+
+        private fun List<TimeTask>.fetchWorkload(
+            dayStart: Date,
+            dayEnd: Date,
+        ): Long {
+            val intervals = mapNotNull { timeTask -> timeTask.fetchIntersection(dayStart, dayEnd) }
+                .sortedBy { interval -> interval.first }
+            var workload = 0L
+            var currentEnd = dayStart.time
+
+            intervals.forEach { interval ->
+                workload += when {
+                    interval.second <= currentEnd -> 0L
+                    interval.first < currentEnd -> interval.second - currentEnd
+                    else -> interval.second - interval.first
+                }
+                currentEnd = max(currentEnd, interval.second)
             }
+            return workload
+        }
+
+        private fun TimeTask.fetchIntersection(from: Date, to: Date): Pair<Long, Long>? {
+            val start = max(timeRange.from.time, from.time)
+            val end = min(timeRange.to.time, to.time)
+            return if (start < end) start to end else null
         }
 
         override suspend fun fetchActiveTimeTaskDetails() = eitherWrapper.wrapFlow {
@@ -130,6 +171,12 @@ internal interface ScheduleInteractor {
                     leftTime = dateManager.calculateLeftTime(timeTask.timeRange.to),
                 )
             }.distinctUntilChanged()
+        }
+
+        private suspend fun fetchSchedules(timeRange: TimeRange): Flow<List<Schedule>> {
+            return scheduleRepository.fetchSchedulesByRange(timeRange).onStart {
+                createMissingRecurringSchedules(timeRange.periodDates(), fetchRepeatTemplates())
+            }
         }
 
         private suspend fun fetchRepeatTemplates(): List<Template> {
@@ -198,3 +245,4 @@ internal interface ScheduleInteractor {
     }
 }
 
+private const val WEEK_DAYS_COUNT = 7
