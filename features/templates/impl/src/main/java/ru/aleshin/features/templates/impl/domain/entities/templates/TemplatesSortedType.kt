@@ -13,19 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ru.aleshin.features.templates.impl.presentation.mapppers
+package ru.aleshin.features.templates.impl.domain.entities.templates
 
-import androidx.compose.runtime.Composable
-import ru.aleshin.features.templates.impl.domain.entities.templates.TemplatesSortedType
-import ru.aleshin.features.templates.impl.presentation.theme.TemplatesThemeRes
+import kotlinx.serialization.Serializable
 
 /**
  * @author Stanislav Aleshin on 08.05.2023.
  */
-@Composable
-internal fun TemplatesSortedType.mapToString() = when (this) {
-    TemplatesSortedType.DATE -> TemplatesThemeRes.strings.sortedTypeDate
-    TemplatesSortedType.CATEGORIES -> TemplatesThemeRes.strings.sortedTypeCategories
-    TemplatesSortedType.DURATION -> TemplatesThemeRes.strings.sortedTypeDuration
+@Serializable
+internal enum class TemplatesSortedType {
+    CATEGORIES, DATE, DURATION
 }
-

@@ -18,8 +18,10 @@ package ru.aleshin.features.templates.impl.presentation.theme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import ru.aleshin.features.templates.impl.presentation.theme.tokens.LocalTemplatesIcons
+import ru.aleshin.features.templates.impl.presentation.theme.tokens.LocalTemplatesPatternStrings
 import ru.aleshin.features.templates.impl.presentation.theme.tokens.LocalTemplatesStrings
 import ru.aleshin.features.templates.impl.presentation.theme.tokens.fetchTemplatesIcons
+import ru.aleshin.features.templates.impl.presentation.theme.tokens.fetchTemplatesPatternStrings
 import ru.aleshin.features.templates.impl.presentation.theme.tokens.fetchTemplatesStrings
 import ru.aleshin.timeplanner.core.ui.theme.TimePlannerRes
 
@@ -29,12 +31,13 @@ import ru.aleshin.timeplanner.core.ui.theme.TimePlannerRes
 @Composable
 internal fun TemplatesTheme(content: @Composable () -> Unit) {
     val strings = fetchTemplatesStrings(TimePlannerRes.language)
+    val patternStrings = fetchTemplatesPatternStrings(TimePlannerRes.language)
     val icons = fetchTemplatesIcons()
 
     CompositionLocalProvider(
         LocalTemplatesStrings provides strings,
+        LocalTemplatesPatternStrings provides patternStrings,
         LocalTemplatesIcons provides icons,
         content = content,
     )
 }
-

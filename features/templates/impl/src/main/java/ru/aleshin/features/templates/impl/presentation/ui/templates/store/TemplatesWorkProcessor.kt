@@ -31,10 +31,12 @@ import ru.aleshin.core.utils.architecture.store.work.WorkCommand
 import ru.aleshin.core.utils.functional.Either
 import ru.aleshin.core.utils.functional.collectAndHandle
 import ru.aleshin.core.utils.functional.handle
-import ru.aleshin.features.templates.impl.domain.entities.TemplatesSortedType
+import ru.aleshin.features.templates.impl.domain.entities.templates.TemplatesPatternFilter
+import ru.aleshin.features.templates.impl.domain.entities.templates.TemplatesSortedType
 import ru.aleshin.features.templates.impl.domain.interactors.MainCategoriesInteractor
 import ru.aleshin.features.templates.impl.domain.interactors.RepeatTaskInteractor
 import ru.aleshin.features.templates.impl.domain.interactors.TemplatesInteractor
+import ru.aleshin.features.templates.impl.presentation.mapppers.mapToUi
 import ru.aleshin.features.templates.impl.presentation.ui.templates.contract.TemplatesAction
 import ru.aleshin.features.templates.impl.presentation.ui.templates.contract.TemplatesEffect
 import javax.inject.Inject
@@ -54,7 +56,7 @@ internal interface TemplatesWorkProcessor :
     ) : TemplatesWorkProcessor {
 
         override suspend fun work(command: TemplatesWorkCommand) = when (command) {
-            is TemplatesWorkCommand.LoadTemplates -> loadTemplatesWork(command.sortedType)
+            is TemplatesWorkCommand.LoadTemplates -> loadTemplatesWork(command.sortedType, command.patternFilter)
             is TemplatesWorkCommand.LoadCategories -> loadCategories()
             is TemplatesWorkCommand.AddTemplate -> addTemplate(command.template)
             is TemplatesWorkCommand.DeleteTemplate -> deleteTemplateWork(command.template)
@@ -65,11 +67,11 @@ internal interface TemplatesWorkProcessor :
             is TemplatesWorkCommand.StopRepeat -> stopRepeatWork(command.template)
         }
 
-        private fun loadTemplatesWork(sortedType: TemplatesSortedType) = flow {
-            templatesInteractor.fetchTemplates(sortedType).collectAndHandle(
+        private fun loadTemplatesWork(sortedType: TemplatesSortedType, patternFilter: TemplatesPatternFilter) = flow {
+            templatesInteractor.fetchTemplatesData(sortedType, patternFilter).collectAndHandle(
                 onLeftAction = { emit(EffectResult(TemplatesEffect.ShowError(it))) },
-                onRightAction = { templates ->
-                    emit(ActionResult(TemplatesAction.UpdateTemplates(templates.map { it.mapToUi() })))
+                onRightAction = { templatesData ->
+                    emit(ActionResult(TemplatesAction.UpdateTemplatesData(templatesData.mapToUi())))
                 },
             )
         }
@@ -253,7 +255,7 @@ internal interface TemplatesWorkProcessor :
 
 internal sealed class TemplatesWorkCommand : WorkCommand {
     data object LoadCategories : TemplatesWorkCommand()
-    data class LoadTemplates(val sortedType: TemplatesSortedType) : TemplatesWorkCommand()
+    data class LoadTemplates(val sortedType: TemplatesSortedType, val patternFilter: TemplatesPatternFilter) : TemplatesWorkCommand()
     data class DeleteTemplate(val template: TemplateUi) : TemplatesWorkCommand()
     data class AddTemplate(val template: TemplateUi) : TemplatesWorkCommand()
     data class UpdateTemplate(val oldTemplate: TemplateUi, val newTemplate: TemplateUi) : TemplatesWorkCommand()
@@ -262,4 +264,3 @@ internal sealed class TemplatesWorkCommand : WorkCommand {
     data class AddRepeatTemplate(val time: RepeatTime, val template: TemplateUi) : TemplatesWorkCommand()
     data class DeleteRepeatTemplate(val time: RepeatTime, val template: TemplateUi) : TemplatesWorkCommand()
 }
-

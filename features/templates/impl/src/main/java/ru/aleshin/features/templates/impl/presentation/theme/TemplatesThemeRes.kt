@@ -19,7 +19,9 @@ import androidx.compose.runtime.Composable
 import ru.aleshin.features.templates.impl.presentation.theme.tokens.LocalTemplatesIcons
 import ru.aleshin.features.templates.impl.presentation.theme.tokens.LocalTemplatesStrings
 import ru.aleshin.features.templates.impl.presentation.theme.tokens.TemplatesIcons
+import ru.aleshin.features.templates.impl.presentation.theme.tokens.TemplatesPatternStrings
 import ru.aleshin.features.templates.impl.presentation.theme.tokens.TemplatesStrings
+import ru.aleshin.features.templates.impl.presentation.theme.tokens.LocalTemplatesPatternStrings
 
 /**
  * @author Stanislav Aleshin on 18.02.2023.
@@ -29,7 +31,9 @@ internal object TemplatesThemeRes {
     val strings: TemplatesStrings
         @Composable get() = LocalTemplatesStrings.current
 
+    val patternStrings: TemplatesPatternStrings
+        @Composable get() = LocalTemplatesPatternStrings.current
+
     val icons: TemplatesIcons
         @Composable get() = LocalTemplatesIcons.current
 }
-

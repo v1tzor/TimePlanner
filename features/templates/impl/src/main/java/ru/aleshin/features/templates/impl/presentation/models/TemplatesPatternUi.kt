@@ -13,14 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ru.aleshin.features.templates.impl.domain.entities
+package ru.aleshin.features.templates.impl.presentation.models
 
+import androidx.compose.runtime.Immutable
 import kotlinx.serialization.Serializable
 
 /**
- * @author Stanislav Aleshin on 08.05.2023.
+ * @author Stanislav Aleshin on 16.07.2026.
  */
+@Immutable
 @Serializable
-internal enum class TemplatesSortedType {
-    CATEGORIES, DATE, DURATION
-}
+internal data class TemplatesPatternUi(
+    val templatesCount: Int,
+    val repeatsCount: Int,
+    val days: List<TemplatePatternDayUi>,
+)

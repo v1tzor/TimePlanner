@@ -51,13 +51,16 @@ internal class TemplatesComposeStore @Inject constructor(
         event: TemplatesEvent,
     ) {
         when (event) {
-            is TemplatesEvent.Init -> {
+            is TemplatesEvent.Init -> with(state) {
                 launchBackgroundWork(BackgroundKey.LOAD_CATEGORIES) {
                     val command = TemplatesWorkCommand.LoadCategories
                     templatesWorkProcessor.work(command).collectAndHandleWork()
                 }
                 launchBackgroundWork(BackgroundKey.LOAD_TEMPLATES) {
-                    val command = TemplatesWorkCommand.LoadTemplates(state().sortedType)
+                    val command = TemplatesWorkCommand.LoadTemplates(
+                        sortedType = sortedType,
+                        patternFilter = patternFilter,
+                    )
                     templatesWorkProcessor.work(command).collectAndHandleWork()
                 }
             }
@@ -66,36 +69,51 @@ internal class TemplatesComposeStore @Inject constructor(
                 templatesWorkProcessor.work(command).collectAndHandleWork()
             }
             is TemplatesEvent.UpdateTemplate -> launchBackgroundWork(BackgroundKey.TEMPLATE_ACTION) {
-                val oldModel = state().templates?.find { it.templateId == event.template.templateId }!!
-                val command = TemplatesWorkCommand.UpdateTemplate(oldModel, event.template)
+                val command = TemplatesWorkCommand.UpdateTemplate(event.oldTemplate, event.newTemplate)
                 templatesWorkProcessor.work(command).collectAndHandleWork()
             }
             is TemplatesEvent.DeleteTemplate -> launchBackgroundWork(BackgroundKey.TEMPLATE_ACTION) {
                 val command = TemplatesWorkCommand.DeleteTemplate(event.template)
                 templatesWorkProcessor.work(command).collectAndHandleWork()
             }
-            is TemplatesEvent.RestartTemplateRepeat -> launchBackgroundWork(BackgroundKey.REPEAT_ACTION) {
+            is TemplatesEvent.RestartTemplateRepeat -> launchBackgroundWork(BackgroundKey.TEMPLATE_ACTION) {
                 val command = TemplatesWorkCommand.RestartRepeat(event.template)
                 templatesWorkProcessor.work(command).collectAndHandleWork()
             }
-            is TemplatesEvent.StopTemplateRepeat -> launchBackgroundWork(BackgroundKey.REPEAT_ACTION) {
+            is TemplatesEvent.StopTemplateRepeat -> launchBackgroundWork(BackgroundKey.TEMPLATE_ACTION) {
                 val command = TemplatesWorkCommand.StopRepeat(event.template)
                 templatesWorkProcessor.work(command).collectAndHandleWork()
             }
-            is TemplatesEvent.AddRepeatTemplate -> launchBackgroundWork(BackgroundKey.REPEAT_ACTION) {
+            is TemplatesEvent.AddRepeatTemplate -> launchBackgroundWork(BackgroundKey.TEMPLATE_ACTION) {
                 val command = TemplatesWorkCommand.AddRepeatTemplate(event.time, event.template)
                 templatesWorkProcessor.work(command).collectAndHandleWork()
             }
-            is TemplatesEvent.DeleteRepeatTemplate -> launchBackgroundWork(BackgroundKey.REPEAT_ACTION) {
+            is TemplatesEvent.DeleteRepeatTemplate -> launchBackgroundWork(BackgroundKey.TEMPLATE_ACTION) {
                 val command = TemplatesWorkCommand.DeleteRepeatTemplate(event.time, event.template)
                 templatesWorkProcessor.work(command).collectAndHandleWork()
             }
             is TemplatesEvent.UpdatedSortedType -> {
                 sendAction(TemplatesAction.ChangeSortedType(event.type))
                 launchBackgroundWork(BackgroundKey.LOAD_TEMPLATES) {
-                    val command = TemplatesWorkCommand.LoadTemplates(event.type)
+                    val command = TemplatesWorkCommand.LoadTemplates(
+                        sortedType = event.type,
+                        patternFilter = state().patternFilter,
+                    )
                     templatesWorkProcessor.work(command).collectAndHandleWork()
                 }
+            }
+            is TemplatesEvent.UpdatedPatternFilter -> {
+                sendAction(TemplatesAction.ChangePatternFilter(event.filter))
+                launchBackgroundWork(BackgroundKey.LOAD_TEMPLATES) {
+                    val command = TemplatesWorkCommand.LoadTemplates(
+                        sortedType = state().sortedType,
+                        patternFilter = event.filter,
+                    )
+                    templatesWorkProcessor.work(command).collectAndHandleWork()
+                }
+            }
+            is TemplatesEvent.UpdatedPatternView -> {
+                sendAction(TemplatesAction.ChangePatternView(event.view))
             }
         }
     }
@@ -104,11 +122,17 @@ internal class TemplatesComposeStore @Inject constructor(
         action: TemplatesAction,
         currentState: TemplatesState,
     ) = when (action) {
-        is TemplatesAction.UpdateTemplates -> currentState.copy(
-            templates = action.templates,
+        is TemplatesAction.UpdateTemplatesData -> currentState.copy(
+            templatesData = action.templatesData,
         )
         is TemplatesAction.ChangeSortedType -> currentState.copy(
             sortedType = action.type,
+        )
+        is TemplatesAction.ChangePatternFilter -> currentState.copy(
+            patternFilter = action.filter,
+        )
+        is TemplatesAction.ChangePatternView -> currentState.copy(
+            patternView = action.view,
         )
         is TemplatesAction.UpdateCategories -> currentState.copy(
             categories = action.categories,
@@ -116,7 +140,7 @@ internal class TemplatesComposeStore @Inject constructor(
     }
 
     enum class BackgroundKey : BackgroundWorkKey {
-        LOAD_TEMPLATES, LOAD_CATEGORIES, TEMPLATE_ACTION, REPEAT_ACTION
+        LOAD_TEMPLATES, LOAD_CATEGORIES, TEMPLATE_ACTION
     }
 
     class Factory @Inject constructor(
@@ -134,4 +158,3 @@ internal class TemplatesComposeStore @Inject constructor(
         }
     }
 }
-

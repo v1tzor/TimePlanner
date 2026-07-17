@@ -17,34 +17,41 @@ package ru.aleshin.features.templates.impl.presentation.ui.templates.contract
 
 import kotlinx.serialization.Serializable
 import ru.aleshin.core.domain.entities.template.RepeatTime
+import ru.aleshin.core.presentation.models.categories.MainCategoryDetailsUi
+import ru.aleshin.core.presentation.models.templates.TemplateUi
 import ru.aleshin.core.utils.architecture.store.contract.StoreAction
 import ru.aleshin.core.utils.architecture.store.contract.StoreEffect
 import ru.aleshin.core.utils.architecture.store.contract.StoreEvent
 import ru.aleshin.core.utils.architecture.store.contract.StoreState
 import ru.aleshin.features.templates.impl.domain.entities.TemplatesFailures
-import ru.aleshin.core.presentation.models.categories.MainCategoryDetailsUi
-import ru.aleshin.core.presentation.models.templates.TemplateUi
-import ru.aleshin.features.templates.impl.domain.entities.TemplatesSortedType
+import ru.aleshin.features.templates.impl.domain.entities.templates.TemplatesPatternFilter
+import ru.aleshin.features.templates.impl.domain.entities.templates.TemplatesSortedType
+import ru.aleshin.features.templates.impl.presentation.models.TemplatesDataUi
+import ru.aleshin.features.templates.impl.presentation.models.TemplatesPatternViewUi
 
 /**
  * @author Stanislav Aleshin on 08.05.2023.
  */
 @Serializable
 internal data class TemplatesState(
-    val templates: List<TemplateUi>? = null,
+    val templatesData: TemplatesDataUi? = null,
     val categories: List<MainCategoryDetailsUi> = emptyList(),
     val sortedType: TemplatesSortedType = TemplatesSortedType.DATE,
+    val patternFilter: TemplatesPatternFilter = TemplatesPatternFilter.ACTIVE,
+    val patternView: TemplatesPatternViewUi = TemplatesPatternViewUi.WEEK,
 ) : StoreState
 
 internal sealed class TemplatesEvent : StoreEvent {
-    object Init : TemplatesEvent()
+    data object Init : TemplatesEvent()
     data class AddTemplate(val template: TemplateUi) : TemplatesEvent()
-    data class UpdateTemplate(val template: TemplateUi) : TemplatesEvent()
+    data class UpdateTemplate(val oldTemplate: TemplateUi, val newTemplate: TemplateUi) : TemplatesEvent()
     data class RestartTemplateRepeat(val template: TemplateUi) : TemplatesEvent()
     data class StopTemplateRepeat(val template: TemplateUi) : TemplatesEvent()
     data class AddRepeatTemplate(val time: RepeatTime, val template: TemplateUi) : TemplatesEvent()
     data class DeleteRepeatTemplate(val time: RepeatTime, val template: TemplateUi) : TemplatesEvent()
     data class UpdatedSortedType(val type: TemplatesSortedType) : TemplatesEvent()
+    data class UpdatedPatternFilter(val filter: TemplatesPatternFilter) : TemplatesEvent()
+    data class UpdatedPatternView(val view: TemplatesPatternViewUi) : TemplatesEvent()
     data class DeleteTemplate(val template: TemplateUi) : TemplatesEvent()
 }
 
@@ -54,7 +61,8 @@ internal sealed class TemplatesEffect : StoreEffect {
 
 internal sealed class TemplatesAction : StoreAction {
     data class UpdateCategories(val categories: List<MainCategoryDetailsUi>) : TemplatesAction()
-    data class UpdateTemplates(val templates: List<TemplateUi>) : TemplatesAction()
+    data class UpdateTemplatesData(val templatesData: TemplatesDataUi) : TemplatesAction()
     data class ChangeSortedType(val type: TemplatesSortedType) : TemplatesAction()
+    data class ChangePatternFilter(val filter: TemplatesPatternFilter) : TemplatesAction()
+    data class ChangePatternView(val view: TemplatesPatternViewUi) : TemplatesAction()
 }
-

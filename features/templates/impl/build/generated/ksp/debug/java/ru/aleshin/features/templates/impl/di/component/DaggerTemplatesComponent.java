@@ -75,6 +75,8 @@ public final class DaggerTemplatesComponent {
 
     Provider<TemplatesRepository> getTemplatesRepositoryProvider;
 
+    Provider<DateManager> getDateMangerProvider;
+
     Provider<HomeEitherWrapper.Base> baseProvider;
 
     Provider<TemplatesInteractor.Base> baseProvider2;
@@ -84,8 +86,6 @@ public final class DaggerTemplatesComponent {
     Provider<ScheduleRepository> getSchedulesRepositoryProvider;
 
     Provider<TimeOverlayManager> getTimeOverlayManagerProvider;
-
-    Provider<DateManager> getDateMangerProvider;
 
     Provider<RepeatTaskInteractor.Base> baseProvider3;
 
@@ -118,12 +118,12 @@ public final class DaggerTemplatesComponent {
     @SuppressWarnings("unchecked")
     private void initialize(final TemplatesFeatureDependencies templatesFeatureDependenciesParam) {
       this.getTemplatesRepositoryProvider = new GetTemplatesRepositoryProvider(templatesFeatureDependenciesParam);
+      this.getDateMangerProvider = new GetDateMangerProvider(templatesFeatureDependenciesParam);
       this.baseProvider = HomeEitherWrapper_Base_Factory.create(((Provider) (HomeErrorHandler_Base_Factory.create())));
-      this.baseProvider2 = TemplatesInteractor_Base_Factory.create(getTemplatesRepositoryProvider, ((Provider) (baseProvider)));
+      this.baseProvider2 = TemplatesInteractor_Base_Factory.create(getTemplatesRepositoryProvider, getDateMangerProvider, ((Provider) (baseProvider)));
       this.getTimeTaskRepositoryProvider = new GetTimeTaskRepositoryProvider(templatesFeatureDependenciesParam);
       this.getSchedulesRepositoryProvider = new GetSchedulesRepositoryProvider(templatesFeatureDependenciesParam);
       this.getTimeOverlayManagerProvider = new GetTimeOverlayManagerProvider(templatesFeatureDependenciesParam);
-      this.getDateMangerProvider = new GetDateMangerProvider(templatesFeatureDependenciesParam);
       this.baseProvider3 = RepeatTaskInteractor_Base_Factory.create(getTimeTaskRepositoryProvider, getSchedulesRepositoryProvider, ((Provider) (baseProvider)), getTimeOverlayManagerProvider, getDateMangerProvider);
       this.getMainCategoryRepositoryProvider = new GetMainCategoryRepositoryProvider(templatesFeatureDependenciesParam);
       this.baseProvider4 = MainCategoriesInteractor_Base_Factory.create(getMainCategoryRepositoryProvider, ((Provider) (baseProvider)));
@@ -152,6 +152,19 @@ public final class DaggerTemplatesComponent {
       @Override
       public TemplatesRepository get() {
         return Preconditions.checkNotNullFromComponent(templatesFeatureDependencies.getTemplatesRepository());
+      }
+    }
+
+    private static final class GetDateMangerProvider implements Provider<DateManager> {
+      private final TemplatesFeatureDependencies templatesFeatureDependencies;
+
+      GetDateMangerProvider(TemplatesFeatureDependencies templatesFeatureDependencies) {
+        this.templatesFeatureDependencies = templatesFeatureDependencies;
+      }
+
+      @Override
+      public DateManager get() {
+        return Preconditions.checkNotNullFromComponent(templatesFeatureDependencies.getDateManger());
       }
     }
 
@@ -191,19 +204,6 @@ public final class DaggerTemplatesComponent {
       @Override
       public TimeOverlayManager get() {
         return Preconditions.checkNotNullFromComponent(templatesFeatureDependencies.getTimeOverlayManager());
-      }
-    }
-
-    private static final class GetDateMangerProvider implements Provider<DateManager> {
-      private final TemplatesFeatureDependencies templatesFeatureDependencies;
-
-      GetDateMangerProvider(TemplatesFeatureDependencies templatesFeatureDependencies) {
-        this.templatesFeatureDependencies = templatesFeatureDependencies;
-      }
-
-      @Override
-      public DateManager get() {
-        return Preconditions.checkNotNullFromComponent(templatesFeatureDependencies.getDateManger());
       }
     }
 

@@ -65,28 +65,24 @@ internal fun RepeatTimeMenu(
                 onAddRepeat = onAddRepeat,
                 onDeleteRepeat = onDeleteRepeat,
             )
-
             RepeatTimeType.WEEK_DAY_IN_MONTH -> WeekDayInMonthMenuItems(
                 selectedTimes = selectedTimes,
                 onBackClick = { repeatCategory = null },
                 onAddRepeat = onAddRepeat,
                 onDeleteRepeat = onDeleteRepeat,
             )
-
             RepeatTimeType.MONTH_DAY -> MonthDayMenuItems(
                 selectedTimes = selectedTimes,
                 onBackClick = { repeatCategory = null },
                 onAddRepeat = onAddRepeat,
                 onDeleteRepeat = onDeleteRepeat,
             )
-
             RepeatTimeType.YEAR_DAY -> YearDayMenuItems(
                 selectedTimes = selectedTimes,
                 onBackClick = { repeatCategory = null },
                 onAddRepeat = onAddRepeat,
                 onDeleteRepeat = onDeleteRepeat,
             )
-
             null -> RepeatTimeType.entries.forEach { type ->
                 NavMenuItem(text = type.mapToString(), onClick = { repeatCategory = type })
             }

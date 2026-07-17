@@ -36,6 +36,7 @@ internal data class TemplatesIcons(
     val repeat: Int,
     val updateRepeat: Int,
     val repeatVariant: Int,
+    val pattern: Int,
     val stop: Int,
     val start: Int,
 )
@@ -55,6 +56,7 @@ internal val baseTemplatesIcons = TemplatesIcons(
     repeat = R.drawable.ic_repeat,
     updateRepeat = R.drawable.ic_update_repeat,
     repeatVariant = R.drawable.ic_repeat_variant,
+    pattern = R.drawable.ic_pattern,
     stop = R.drawable.ic_stop,
     start = R.drawable.ic_play,
 )

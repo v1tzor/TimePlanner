@@ -13,10 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ru.aleshin.features.templates.impl.domain.entities
+package ru.aleshin.features.templates.impl.domain.entities.templates
 
 /**
- * @author Stanislav Aleshin on 16.05.2023.
+ * @author Stanislav Aleshin on 16.07.2026.
  */
-internal class TimeTaskImportanceException : Exception()
-
+internal data class TemplatesPattern(
+    val templatesCount: Int,
+    val repeatsCount: Int,
+    val days: List<TemplatePatternDay>,
+)

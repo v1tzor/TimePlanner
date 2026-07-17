@@ -15,21 +15,34 @@
  */
 package ru.aleshin.features.templates.impl.presentation.ui.templates.views
 
-import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -38,8 +51,11 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import ru.aleshin.core.domain.entities.template.RepeatTime
 import ru.aleshin.core.presentation.mappers.mapToIconPainter
@@ -47,14 +63,14 @@ import ru.aleshin.core.presentation.models.categories.MainCategoryDetailsUi
 import ru.aleshin.core.presentation.models.templates.TemplateUi
 import ru.aleshin.core.utils.extensions.duration
 import ru.aleshin.features.templates.impl.presentation.theme.TemplatesThemeRes
+import ru.aleshin.features.templates.impl.presentation.theme.tokens.TemplatesCategoryColors
+import ru.aleshin.features.templates.impl.presentation.theme.tokens.fetchTemplatesCategoryColors
 import ru.aleshin.timeplanner.core.ui.mappers.mapToString
-import ru.aleshin.timeplanner.core.ui.theme.TimePlannerRes
 import ru.aleshin.timeplanner.core.ui.views.CategoryIconMonogram
 import ru.aleshin.timeplanner.core.ui.views.CategoryTextMonogram
 import ru.aleshin.timeplanner.core.ui.views.WarningDeleteDialog
 import ru.aleshin.timeplanner.core.ui.views.toMinutesOrHoursTitle
 import java.text.SimpleDateFormat
-import java.util.Date
 
 /**
  * @author Stanislav Aleshin on 08.05.2023.
@@ -65,7 +81,7 @@ internal fun TemplatesItem(
     categories: List<MainCategoryDetailsUi>,
     model: TemplateUi,
     onAddRepeat: (RepeatTime) -> Unit,
-    onUpdate: (TemplateUi) -> Unit = {},
+    onUpdate: (TemplateUi) -> Unit,
     onRestartRepeat: () -> Unit,
     onStopRepeat: () -> Unit,
     onDeleteRepeat: (RepeatTime) -> Unit,
@@ -73,61 +89,78 @@ internal fun TemplatesItem(
 ) {
     var isShowTemplateEditor by rememberSaveable { mutableStateOf(false) }
     var isShowDeleteDialog by rememberSaveable { mutableStateOf(false) }
-    val categoryIcon = model.category.defaultType?.mapToIconPainter()
-    val categoryName = model.category.fetchName() ?: "*"
+
+    val categoryTitle = model.category.fetchName() ?: TemplatesThemeRes.strings.subCategoryEmptyTitle
+    val subCategoryTitle = model.subCategory?.name?.takeIf { title -> title.isNotBlank() }
+    val title = subCategoryTitle ?: categoryTitle
+    val subtitle = categoryTitle.takeIf { subCategoryTitle != null }
+    val categoryColors = fetchTemplatesCategoryColors(model.category.id)
 
     Surface(
         onClick = { isShowTemplateEditor = true },
-        modifier = modifier.fillMaxWidth().animateContentSize(),
+        modifier = modifier.fillMaxWidth().height(TEMPLATE_CARD_HEIGHT),
         shape = MaterialTheme.shapes.large,
-        color = MaterialTheme.colorScheme.surfaceContainerLow,
+        color = when (model.repeatEnabled) {
+            true -> MaterialTheme.colorScheme.surfaceContainerLow
+            false -> MaterialTheme.colorScheme.surfaceContainerLowest
+        },
+        border = when (model.repeatEnabled) {
+            true -> null
+            false -> BorderStroke(1.dp, MaterialTheme.colorScheme.surfaceContainerHighest)
+        },
     ) {
-        Row(
-            modifier = Modifier.padding(start = 16.dp, end = 8.dp, top = 16.dp, bottom = 16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Column(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-            ) {
-                if (categoryIcon != null) {
-                    CategoryIconMonogram(
-                        icon = categoryIcon,
-                        iconDescription = categoryName,
-                        iconColor = MaterialTheme.colorScheme.primary,
-                        backgroundColor = MaterialTheme.colorScheme.primaryContainer,
-                    )
-                } else {
-                    CategoryTextMonogram(
-                        text = categoryName.first().toString(),
-                        textColor = MaterialTheme.colorScheme.primary,
-                        backgroundColor = MaterialTheme.colorScheme.primaryContainer,
-                    )
-                }
-                Text(
-                    text = when (model.subCategory != null) {
-                        true -> TimePlannerRes.strings.splitFormat.format(categoryName, model.subCategory!!.name)
-                        false -> categoryName
-                    },
-                    color = MaterialTheme.colorScheme.onSurface,
-                    style = MaterialTheme.typography.titleMedium,
-                )
-                TemplateItemInfo(
-                    startTime = model.startTime,
-                    endTime = model.endTime,
-                    isEnableNotification = model.isEnableNotification,
-                    isConsiderInStatistics = model.isConsiderInStatistics,
-                    repeatTimes = model.repeatTimes,
-                )
-            }
-            TemplateItemControlButtons(
+        Column {
+            TemplateItemHeader(
+                title = title,
+                categoryTitle = categoryTitle,
+                categoryColors = categoryColors,
+                categoryIcon = model.category.defaultType?.mapToIconPainter(),
                 repeatEnabled = model.repeatEnabled,
                 repeatTimes = model.repeatTimes,
-                onDeleteTemplate = { isShowDeleteDialog = true },
                 onAddRepeat = onAddRepeat,
                 onDeleteRepeat = onDeleteRepeat,
                 onRestartRepeat = onRestartRepeat,
                 onStopRepeat = onStopRepeat,
+                onDeleteTemplate = { isShowDeleteDialog = true },
+            )
+            Column(modifier = Modifier.padding(horizontal = 12.dp)) {
+                val timeFormat = remember { SimpleDateFormat.getTimeInstance(SimpleDateFormat.SHORT) }
+                val durationTitle = remember(model) { duration(model.startTime, model.endTime) }.toMinutesOrHoursTitle()
+
+                Text(
+                    text = title,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    style = MaterialTheme.typography.titleMedium,
+                )
+                if (subtitle != null) {
+                    Text(
+                        text = subtitle,
+                        color = categoryColors.accent,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        style = MaterialTheme.typography.labelLarge,
+                    )
+                } else {
+                    Spacer(modifier = Modifier.height(2.dp))
+                }
+                Text(
+                    modifier = modifier.padding(top = 2.dp),
+                    text = "${timeFormat.format(model.startTime)}–${timeFormat.format(model.endTime)} • $durationTitle",
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    style = MaterialTheme.typography.bodySmall,
+                )
+            }
+            Spacer(modifier = Modifier.weight(1f))
+            HorizontalDivider(color = MaterialTheme.colorScheme.surfaceContainerHighest)
+            RepeatLabels(
+                repeatTimes = model.repeatTimes,
+                categoryColors = categoryColors,
+                onAddRepeat = onAddRepeat,
+                onDeleteRepeat = onDeleteRepeat,
             )
         }
     }
@@ -160,154 +193,273 @@ internal fun TemplatesItem(
 }
 
 @Composable
-internal fun TemplateItemInfo(
+private fun TemplateItemHeader(
     modifier: Modifier = Modifier,
-    startTime: Date,
-    endTime: Date,
-    isEnableNotification: Boolean,
-    isConsiderInStatistics: Boolean,
-    repeatTimes: List<RepeatTime>,
-) {
-    val timeFormat = remember { SimpleDateFormat.getTimeInstance(SimpleDateFormat.SHORT) }
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Row(modifier = modifier, horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                TemplateInfoIcon(
-                    icon = painterResource(TemplatesThemeRes.icons.time),
-                    title = "${timeFormat.format(startTime)} - ${timeFormat.format(endTime)}",
-                )
-                TemplateInfoIcon(
-                    icon = painterResource(TemplatesThemeRes.icons.duration),
-                    title = duration(startTime, endTime).toMinutesOrHoursTitle(),
-                )
-            }
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                TemplateInfoIcon(
-                    icon = painterResource(TemplatesThemeRes.icons.statistics),
-                    title = when (isConsiderInStatistics) {
-                        true -> TemplatesThemeRes.strings.statisticsActiveTitle
-                        false -> TemplatesThemeRes.strings.statisticsDisabledTitle
-                    },
-                )
-                TemplateInfoIcon(
-                    icon = painterResource(TemplatesThemeRes.icons.notification),
-                    title = when (isEnableNotification) {
-                        true -> TemplatesThemeRes.strings.notificationEnabledTitle
-                        false -> TemplatesThemeRes.strings.notificationDisabledTitle
-                    },
-                )
-            }
-        }
-        if (repeatTimes.isNotEmpty()) {
-            TemplateInfoIcon(
-                icon = painterResource(TemplatesThemeRes.icons.repeatVariant),
-                title = "${repeatTimes.first().repeatType.mapToString()} (${repeatTimes.size})",
-            )
-        }
-    }
-}
-
-@Composable
-internal fun TemplateInfoIcon(
-    modifier: Modifier = Modifier,
-    icon: Painter,
     title: String,
-) {
-    Row(modifier = modifier, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-        Icon(
-            modifier = Modifier.size(18.dp),
-            painter = icon,
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-        Text(
-            text = title,
-            color = MaterialTheme.colorScheme.onSurface,
-            style = MaterialTheme.typography.labelMedium,
-        )
-    }
-}
-
-@Composable
-internal fun TemplateItemControlButtons(
-    modifier: Modifier = Modifier,
+    categoryTitle: String,
+    categoryColors: TemplatesCategoryColors,
+    categoryIcon: androidx.compose.ui.graphics.painter.Painter?,
     repeatEnabled: Boolean,
     repeatTimes: List<RepeatTime>,
-    onDeleteTemplate: () -> Unit,
     onAddRepeat: (RepeatTime) -> Unit,
     onDeleteRepeat: (RepeatTime) -> Unit,
     onRestartRepeat: () -> Unit,
     onStopRepeat: () -> Unit,
+    onDeleteTemplate: () -> Unit,
 ) {
-    var isShowRepeatTimesMenu by rememberSaveable { mutableStateOf(false) }
-
-    Column(
-        modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(start = 12.dp, end = 8.dp, top = 12.dp, bottom = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
     ) {
-        if (repeatTimes.isEmpty()) {
-            IconButton(onClick = { isShowRepeatTimesMenu = true }) {
-                Icon(
-                    modifier = Modifier.size(24.dp),
-                    painter = painterResource(id = TemplatesThemeRes.icons.repeat),
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
-            IconButton(onClick = onDeleteTemplate) {
-                Icon(
-                    modifier = Modifier.size(24.dp),
-                    imageVector = Icons.Default.Delete,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
+        if (categoryIcon != null) {
+            CategoryIconMonogram(
+                icon = categoryIcon,
+                iconDescription = categoryTitle,
+                iconColor = categoryColors.accent,
+                backgroundColor = categoryColors.container,
+            )
         } else {
-            IconButton(onClick = { isShowRepeatTimesMenu = true }) {
-                Icon(
-                    modifier = Modifier.size(24.dp),
-                    painter = painterResource(id = TemplatesThemeRes.icons.updateRepeat),
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
-            if (repeatEnabled) {
-                IconButton(onClick = onStopRepeat) {
-                    Icon(
-                        modifier = Modifier.size(24.dp),
-                        painter = painterResource(id = TemplatesThemeRes.icons.stop),
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                }
-            } else {
-                IconButton(onClick = onRestartRepeat) {
-                    Icon(
-                        modifier = Modifier.size(24.dp),
-                        painter = painterResource(id = TemplatesThemeRes.icons.start),
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.error,
-                    )
-                }
-            }
-            IconButton(onClick = onDeleteTemplate) {
-                Icon(
-                    modifier = Modifier.size(24.dp),
-                    imageVector = Icons.Default.Delete,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            CategoryTextMonogram(
+                text = title.fetchMonogram(),
+                textColor = categoryColors.accent,
+                backgroundColor = categoryColors.container,
+            )
+        }
+        Spacer(modifier = Modifier.weight(1f))
+        if (!repeatEnabled && repeatTimes.isNotEmpty()) {
+            Surface(
+                shape = MaterialTheme.shapes.small,
+                color = MaterialTheme.colorScheme.errorContainer,
+            ) {
+                Text(
+                    modifier = Modifier.padding(horizontal = 7.dp, vertical = 3.dp),
+                    text = TemplatesThemeRes.patternStrings.pausedTitle,
+                    color = MaterialTheme.colorScheme.onErrorContainer,
+                    style = MaterialTheme.typography.labelSmall,
                 )
             }
         }
+        TemplateActionsMenu(
+            repeatEnabled = repeatEnabled,
+            repeatTimes = repeatTimes,
+            onAddRepeat = onAddRepeat,
+            onDeleteRepeat = onDeleteRepeat,
+            onRestartRepeat = onRestartRepeat,
+            onStopRepeat = onStopRepeat,
+            onDeleteTemplate = onDeleteTemplate,
+        )
     }
-    Box(contentAlignment = Alignment.TopEnd) {
+}
+
+@Composable
+private fun TemplateActionsMenu(
+    modifier: Modifier = Modifier,
+    repeatEnabled: Boolean,
+    repeatTimes: List<RepeatTime>,
+    onAddRepeat: (RepeatTime) -> Unit,
+    onDeleteRepeat: (RepeatTime) -> Unit,
+    onRestartRepeat: () -> Unit,
+    onStopRepeat: () -> Unit,
+    onDeleteTemplate: () -> Unit,
+) {
+    var isExpanded by rememberSaveable { mutableStateOf(false) }
+    var isRepeatMenuExpanded by rememberSaveable { mutableStateOf(false) }
+    val strings = TemplatesThemeRes.patternStrings
+
+    Box(modifier = modifier) {
+        IconButton(
+            modifier = Modifier.size(32.dp),
+            onClick = { isExpanded = true },
+        ) {
+            Icon(
+                modifier = Modifier.size(24.dp),
+                imageVector = Icons.Default.MoreVert,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+        DropdownMenu(
+            expanded = isExpanded,
+            onDismissRequest = { isExpanded = false },
+            shape = MaterialTheme.shapes.large,
+            offset = DpOffset(0.dp, 4.dp),
+        ) {
+            DropdownMenuItem(
+                onClick = {
+                    isExpanded = false
+                    isRepeatMenuExpanded = true
+                },
+                leadingIcon = {
+                    Icon(
+                        painter = painterResource(TemplatesThemeRes.icons.updateRepeat),
+                        contentDescription = null,
+                    )
+                },
+                text = { Text(text = strings.repeatSettingsTitle) },
+            )
+            if (repeatTimes.isNotEmpty()) {
+                DropdownMenuItem(
+                    onClick = {
+                        isExpanded = false
+                        if (repeatEnabled) onStopRepeat() else onRestartRepeat()
+                    },
+                    leadingIcon = {
+                        Icon(
+                            painter = painterResource(
+                                id = when (repeatEnabled) {
+                                    true -> TemplatesThemeRes.icons.stop
+                                    false -> TemplatesThemeRes.icons.start
+                                },
+                            ),
+                            contentDescription = null,
+                        )
+                    },
+                    text = {
+                        Text(
+                            text = when (repeatEnabled) {
+                                true -> strings.stopRepeatTitle
+                                false -> strings.restartRepeatTitle
+                            },
+                        )
+                    },
+                )
+            }
+            DropdownMenuItem(
+                onClick = {
+                    isExpanded = false
+                    onDeleteTemplate()
+                },
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = null,
+                    )
+                },
+                text = { Text(text = strings.deleteTitle) },
+            )
+        }
         RepeatTimeMenu(
-            isExpanded = isShowRepeatTimesMenu,
+            isExpanded = isRepeatMenuExpanded,
             selectedTimes = repeatTimes,
-            onDismiss = { isShowRepeatTimesMenu = false },
+            onDismiss = { isRepeatMenuExpanded = false },
             onAddRepeat = onAddRepeat,
             onDeleteRepeat = onDeleteRepeat,
         )
     }
 }
 
+@Composable
+private fun RepeatLabels(
+    modifier: Modifier = Modifier,
+    repeatTimes: List<RepeatTime>,
+    categoryColors: TemplatesCategoryColors,
+    onAddRepeat: (RepeatTime) -> Unit,
+    onDeleteRepeat: (RepeatTime) -> Unit,
+) {
+    Box(modifier = modifier.padding(start = 12.dp, end = 12.dp, top = 8.dp, bottom = 12.dp)) {
+        var isRepeatMenuExpanded by rememberSaveable { mutableStateOf(false) }
+
+        if (repeatTimes.isEmpty()) {
+            Box(
+                modifier = Modifier
+                    .clip(MaterialTheme.shapes.small)
+                    .clickable(
+                        onClick = { isRepeatMenuExpanded = true },
+                        interactionSource = remember { MutableInteractionSource() },
+                        role = Role.Button,
+                        indication = ripple()
+                    )
+                    .background(
+                        color = MaterialTheme.colorScheme.primaryContainer,
+                        shape = MaterialTheme.shapes.small
+                    )
+            ) {
+                Row(
+                    modifier = Modifier
+                        .height(28.dp)
+                        .padding(horizontal = 8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Icon(
+                        modifier = Modifier.size(15.dp),
+                        painter = painterResource(TemplatesThemeRes.icons.updateRepeat),
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                    )
+                    Text(
+                        text = TemplatesThemeRes.patternStrings.addRepeatTitle,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                        maxLines = 1,
+                        style = MaterialTheme.typography.labelSmall,
+                    )
+                }
+            }
+        } else {
+            LazyRow(
+                modifier = modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+            ) {
+                items(
+                    items = repeatTimes,
+                    key = { repeatTime -> repeatTime.toAlarmKey() },
+                ) { repeatTime ->
+                    Box(
+                        modifier = Modifier
+                            .clip(MaterialTheme.shapes.small)
+                            .clickable(
+                                onClick = { isRepeatMenuExpanded = true },
+                                interactionSource = remember { MutableInteractionSource() },
+                                role = Role.Button,
+                                indication = ripple()
+                            )
+                            .border(
+                                border = BorderStroke(1.dp, categoryColors.accent),
+                                shape = MaterialTheme.shapes.small
+                            )
+                            .background(
+                                color = MaterialTheme.colorScheme.surface,
+                                shape = MaterialTheme.shapes.small
+                            )
+                    ) {
+                        Box(
+                            modifier = Modifier.size(28.dp),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            Text(
+                                text = repeatTime.fetchShortLabel(),
+                                color = categoryColors.accent,
+                                maxLines = 1,
+                                style = MaterialTheme.typography.labelMedium,
+                            )
+                        }
+                    }
+                }
+            }
+        }
+        RepeatTimeMenu(
+            isExpanded = isRepeatMenuExpanded,
+            selectedTimes = repeatTimes,
+            onDismiss = { isRepeatMenuExpanded = false },
+            onAddRepeat = onAddRepeat,
+            onDeleteRepeat = onDeleteRepeat,
+        )
+    }
+}
+
+@Composable
+private fun RepeatTime.fetchShortLabel() = when (this) {
+    is RepeatTime.WeekDays -> day.mapToString().take(1)
+    is RepeatTime.WeekDayInMonth -> day.mapToString().take(1)
+    is RepeatTime.MonthDay -> dayNumber.toString()
+    is RepeatTime.YearDay -> dayNumber.toString()
+}
+
+private fun String.fetchMonogram(): String {
+    return filter { char -> char.isLetterOrDigit() }.take(2).ifEmpty { "*" }
+}
+
+private val TEMPLATE_CARD_HEIGHT = 170.dp
