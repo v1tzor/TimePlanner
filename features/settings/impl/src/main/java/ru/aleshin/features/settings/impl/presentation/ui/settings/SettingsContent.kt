@@ -16,6 +16,7 @@
 package ru.aleshin.features.settings.impl.presentation.ui.settings
 
 import android.net.Uri
+import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Arrangement
@@ -27,11 +28,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
+import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -48,12 +54,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import ru.aleshin.core.domain.entities.settings.CalendarButtonBehavior
-import ru.aleshin.timeplanner.core.ui.theme.material.ColorsUiType
-import ru.aleshin.timeplanner.core.ui.theme.material.ThemeUiType
-import ru.aleshin.timeplanner.core.ui.theme.tokens.LanguageUiType
-import ru.aleshin.timeplanner.core.ui.views.WarningDeleteDialog
 import ru.aleshin.core.utils.architecture.store.compose.handleEffects
 import ru.aleshin.core.utils.architecture.store.compose.stateAsState
 import ru.aleshin.core.utils.extensions.openNetworkUri
@@ -75,8 +78,14 @@ import ru.aleshin.features.settings.impl.presentation.ui.settings.views.ColorsTy
 import ru.aleshin.features.settings.impl.presentation.ui.settings.views.DonateButton
 import ru.aleshin.features.settings.impl.presentation.ui.settings.views.DynamicColorChooser
 import ru.aleshin.features.settings.impl.presentation.ui.settings.views.LanguageChooser
+import ru.aleshin.features.settings.impl.presentation.ui.settings.views.SettingsItemDivider
+import ru.aleshin.features.settings.impl.presentation.ui.settings.views.SettingsItemIcon
 import ru.aleshin.features.settings.impl.presentation.ui.settings.views.SettingsTopAppBar
 import ru.aleshin.features.settings.impl.presentation.ui.settings.views.ThemeColorsChooser
+import ru.aleshin.timeplanner.core.ui.theme.material.ColorsUiType
+import ru.aleshin.timeplanner.core.ui.theme.material.ThemeUiType
+import ru.aleshin.timeplanner.core.ui.theme.tokens.LanguageUiType
+import ru.aleshin.timeplanner.core.ui.views.WarningDeleteDialog
 
 /**
  * @author Stanislav Aleshin on 17.02.2023.
@@ -144,13 +153,18 @@ private fun BaseSettingsContent(
     val scrollState = rememberScrollState()
     val context = LocalContext.current
 
-    Column(modifier = modifier.fillMaxSize().verticalScroll(scrollState)) {
-        if (state.themeSettings != null && state.tasksSettings != null) {
-            Column(
-                modifier = Modifier.padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
+    Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
+        Column(
+            modifier = Modifier
+                .widthIn(max = 600.dp)
+                .fillMaxWidth()
+                .verticalScroll(scrollState)
+                .padding(horizontal = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(24.dp),
+        ) {
+            if (state.themeSettings != null && state.tasksSettings != null) {
                 MainSettingsSection(
+                    modifier = Modifier.padding(top = 16.dp),
                     languageType = state.themeSettings.language,
                     themeColors = state.themeSettings.themeColors,
                     colorsType = state.themeSettings.colorsType,
@@ -168,48 +182,24 @@ private fun BaseSettingsContent(
                         onUpdateThemeSettings(state.themeSettings.copy(isDynamicColorEnable = it))
                     },
                 )
-                HorizontalDivider(modifier = Modifier.padding(top = 8.dp))
-            }
-            Column(
-                modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
                 InterfaceSettingsSection(
                     calendarButtonBehavior = state.tasksSettings.calendarButtonBehavior,
                     onUpdateCalendarBehavior = {
                         onUpdateTasksSettings(state.tasksSettings.copy(calendarButtonBehavior = it))
                     },
                 )
-                HorizontalDivider(modifier = Modifier.padding(top = 8.dp))
-            }
-            Column(
-                modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
                 SecureSettingsSection(
                     secureMode = state.tasksSettings.secureMode,
                     onUpdateSecureMode = {
                         onUpdateTasksSettings(state.tasksSettings.copy(secureMode = it))
                     },
                 )
-                HorizontalDivider(modifier = Modifier.padding(top = 8.dp))
-            }
-            Column(
-                modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
                 DataSettingsSection(
                     onClear = onClearData,
                     isLoading = state.isBackupLoading,
                     onBackupData = onBackupData,
                     onRestoreData = onRestoreData,
                 )
-                HorizontalDivider(modifier = Modifier.padding(top = 8.dp))
-            }
-            Column(
-                modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
                 AboutAppSection(
                     onOpenGit = { context.openNetworkUri(Constants.App.GITHUB_URI) },
                     onOpenIssues = { context.openNetworkUri(Constants.App.ISSUES_URI) },
@@ -219,8 +209,8 @@ private fun BaseSettingsContent(
                     onClick = onDonateButtonClick,
                 )
             }
+            Spacer(modifier = Modifier.height(90.dp))
         }
-        Spacer(modifier = Modifier.height(90.dp))
     }
 }
 
@@ -236,29 +226,46 @@ internal fun MainSettingsSection(
     onColorsTypeUpdate: (ColorsUiType) -> Unit,
     onDynamicColorsChange: (Boolean) -> Unit,
 ) {
-    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(16.dp)) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
         Text(
             text = SettingsThemeRes.strings.mainSettingsTitle,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.primary,
+            style = MaterialTheme.typography.titleMedium,
         )
-        ThemeColorsChooser(
+        Surface(
             modifier = Modifier.fillMaxWidth(),
-            themeColors = themeColors,
-            onThemeColorUpdate = onThemeColorUpdate,
-        )
-        ColorsTypeChooser(
-            colorsType = colorsType,
-            onChoose = onColorsTypeUpdate,
-        )
-        DynamicColorChooser(
-            dynamicColor = dynamicColor,
-            onChange = onDynamicColorsChange,
-        )
-        LanguageChooser(
-            language = languageType,
-            onLanguageChanged = onLanguageChange,
-        )
+            shape = MaterialTheme.shapes.extraLarge,
+            color = MaterialTheme.colorScheme.surfaceContainerLow,
+        ) {
+            Column {
+                ThemeColorsChooser(
+                    modifier = Modifier.fillMaxWidth(),
+                    themeColors = themeColors,
+                    onThemeColorUpdate = onThemeColorUpdate,
+                )
+                SettingsItemDivider()
+                ColorsTypeChooser(
+                    modifier = Modifier.fillMaxWidth(),
+                    colorsType = colorsType,
+                    onChoose = onColorsTypeUpdate,
+                )
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    SettingsItemDivider()
+                    DynamicColorChooser(
+                        dynamicColor = dynamicColor,
+                        onChange = onDynamicColorsChange,
+                    )
+                }
+                SettingsItemDivider()
+                LanguageChooser(
+                    language = languageType,
+                    onLanguageChanged = onLanguageChange,
+                )
+            }
+        }
     }
 }
 
@@ -268,16 +275,22 @@ internal fun InterfaceSettingsSection(
     calendarButtonBehavior: CalendarButtonBehavior,
     onUpdateCalendarBehavior: (CalendarButtonBehavior) -> Unit,
 ) {
-    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(16.dp)) {
+    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Text(
             text = SettingsThemeRes.strings.interfaceSectionHeader,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.primary,
+            style = MaterialTheme.typography.titleMedium,
         )
-        CalendarButtonBehaviorChooser(
-            calendarButtonBehavior = calendarButtonBehavior,
-            onUpdateCalendarBehavior = onUpdateCalendarBehavior,
-        )
+        Surface(
+            modifier = Modifier.fillMaxWidth(),
+            shape = MaterialTheme.shapes.extraLarge,
+            color = MaterialTheme.colorScheme.surfaceContainerLow,
+        ) {
+            CalendarButtonBehaviorChooser(
+                calendarButtonBehavior = calendarButtonBehavior,
+                onUpdateCalendarBehavior = onUpdateCalendarBehavior,
+            )
+        }
     }
 }
 
@@ -287,23 +300,27 @@ internal fun SecureSettingsSection(
     secureMode: Boolean,
     onUpdateSecureMode: (Boolean) -> Unit,
 ) {
-    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(16.dp)) {
+    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Text(
             text = SettingsThemeRes.strings.secureSectionHeader,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.primary,
+            style = MaterialTheme.typography.titleMedium,
         )
         Surface(
-            modifier = modifier.fillMaxWidth(),
-            shape = MaterialTheme.shapes.medium,
-            color = MaterialTheme.colorScheme.surfaceContainer,
+            modifier = Modifier.fillMaxWidth(),
+            shape = MaterialTheme.shapes.extraLarge,
+            color = MaterialTheme.colorScheme.surfaceContainerLow,
         ) {
             Row(
-                modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp),
+                modifier = Modifier.padding(vertical = 16.dp, horizontal = 16.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
+                SettingsItemIcon(
+                    icon = SettingsThemeRes.icons.lock,
+                    contentDescription = null,
+                )
                 Text(
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier.padding(start = 16.dp).weight(1f),
                     text = SettingsThemeRes.strings.secureModeTitle,
                     color = MaterialTheme.colorScheme.onSurface,
                     style = MaterialTheme.typography.titleMedium,
@@ -322,18 +339,30 @@ internal fun DataSettingsSection(
     onBackupData: (uri: Uri) -> Unit,
     onClear: () -> Unit,
 ) {
-    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(16.dp)) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
         Text(
             text = SettingsThemeRes.strings.dataSectionHeader,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.primary,
+            style = MaterialTheme.typography.titleMedium,
         )
-        ClearDataView(onClear = onClear)
-        BackupDataView(
-            isLoading = isLoading,
-            onBackupData = onBackupData,
-            onRestoreData = onRestoreData,
-        )
+        Surface(
+            modifier = Modifier.fillMaxWidth(),
+            shape = MaterialTheme.shapes.extraLarge,
+            color = MaterialTheme.colorScheme.surfaceContainerLow,
+        ) {
+            Column {
+                BackupDataView(
+                    isLoading = isLoading,
+                    onBackupData = onBackupData,
+                    onRestoreData = onRestoreData,
+                )
+                SettingsItemDivider()
+                ClearDataView(onClear = onClear)
+            }
+        }
     }
 }
 
@@ -344,23 +373,32 @@ internal fun ClearDataView(
 ) {
     var isOpenDialog by rememberSaveable { mutableStateOf(false) }
     Surface(
+        onClick = { isOpenDialog = true },
         modifier = modifier.fillMaxWidth(),
-        shape = MaterialTheme.shapes.medium,
-        color = MaterialTheme.colorScheme.surfaceContainer,
+        color = MaterialTheme.colorScheme.surfaceContainerLow,
     ) {
         Row(
-            modifier = Modifier.padding(vertical = 12.dp, horizontal = 16.dp),
+            modifier = Modifier.padding(vertical = 16.dp, horizontal = 16.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
+            SettingsItemIcon(
+                icon = SettingsThemeRes.icons.delete,
+                contentDescription = null,
+                iconColor = MaterialTheme.colorScheme.error,
+                containerColor = MaterialTheme.colorScheme.errorContainer,
+            )
             Text(
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.padding(start = 16.dp).weight(1f),
                 text = SettingsThemeRes.strings.clearDataTitle,
-                color = MaterialTheme.colorScheme.onSurface,
+                color = MaterialTheme.colorScheme.error,
                 style = MaterialTheme.typography.titleMedium,
             )
-            Button(onClick = { isOpenDialog = true }) {
-                Text(text = SettingsThemeRes.strings.clearDataButtonTitle)
-            }
+            Icon(
+                modifier = Modifier.size(24.dp),
+                painter = painterResource(SettingsThemeRes.icons.chevronRight),
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.error,
+            )
         }
     }
     if (isOpenDialog) {
@@ -388,41 +426,105 @@ internal fun BackupDataView(
     val saveBackupLauncher = rememberLauncherForActivityResult(SaveBackupContract) { uri ->
         if (uri != null) onBackupData(uri)
     }
+    var isOpenDialog by rememberSaveable { mutableStateOf(false) }
     Surface(
+        onClick = { isOpenDialog = true },
         modifier = modifier.fillMaxWidth().animateContentSize(),
-        shape = MaterialTheme.shapes.medium,
-        color = MaterialTheme.colorScheme.surfaceContainer,
+        enabled = !isLoading,
+        color = MaterialTheme.colorScheme.surfaceContainerLow,
     ) {
         Row(
-            modifier = Modifier.padding(vertical = 12.dp, horizontal = 16.dp),
+            modifier = Modifier.padding(vertical = 16.dp, horizontal = 16.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(24.dp),
         ) {
+            SettingsItemIcon(
+                icon = SettingsThemeRes.icons.cloudUpload,
+                contentDescription = null,
+            )
             Text(
-                modifier = Modifier.weight(0.4f),
+                modifier = Modifier.padding(start = 16.dp).weight(1f),
                 text = SettingsThemeRes.strings.backupDataTitle,
                 color = MaterialTheme.colorScheme.onSurface,
                 style = MaterialTheme.typography.titleMedium,
             )
             if (!isLoading) {
-                Column(
-                    modifier = Modifier.weight(0.6f),
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
-                    Button(
-                        modifier = Modifier.height(40.dp).fillMaxWidth(),
-                        onClick = { saveBackupLauncher.launch() },
-                        content = { Text(text = SettingsThemeRes.strings.backupDataButtonTitle) },
-                    )
-                    Button(
-                        modifier = Modifier.height(40.dp).fillMaxWidth(),
-                        onClick = { restoreBackupLauncher.launch() },
-                        content = { Text(text = SettingsThemeRes.strings.restoreDataButtonTitle) },
-                    )
-                }
+                Icon(
+                    modifier = Modifier.size(24.dp),
+                    painter = painterResource(SettingsThemeRes.icons.chevronRight),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
             } else {
-                Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.CenterEnd) {
-                    CircularProgressIndicator()
+                CircularProgressIndicator(modifier = Modifier.size(32.dp))
+            }
+        }
+    }
+    BackupDataDialog(
+        openDialog = isOpenDialog,
+        onCloseDialog = { isOpenDialog = false },
+        onBackupData = {
+            isOpenDialog = false
+            saveBackupLauncher.launch()
+        },
+        onRestoreData = {
+            isOpenDialog = false
+            restoreBackupLauncher.launch()
+        },
+    )
+}
+
+
+@Composable
+@OptIn(ExperimentalMaterial3Api::class)
+internal fun BackupDataDialog(
+    modifier: Modifier = Modifier,
+    openDialog: Boolean,
+    onCloseDialog: () -> Unit,
+    onBackupData: () -> Unit,
+    onRestoreData: () -> Unit,
+) {
+    if (openDialog) {
+        BasicAlertDialog(onDismissRequest = onCloseDialog) {
+            Surface(
+                modifier = modifier.width(280.dp),
+                shape = MaterialTheme.shapes.extraLarge,
+                color = MaterialTheme.colorScheme.surfaceContainer,
+            ) {
+                Column(
+                    modifier = Modifier.padding(24.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                ) {
+                    Text(
+                        text = SettingsThemeRes.strings.backupDataTitle,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        style = MaterialTheme.typography.headlineSmall,
+                    )
+                    FilledTonalButton(
+                        modifier = Modifier.fillMaxWidth(),
+                        onClick = onBackupData,
+                    ) {
+                        Icon(
+                            painter = painterResource(SettingsThemeRes.icons.cloudUpload),
+                            contentDescription = null,
+                        )
+                        Text(
+                            modifier = Modifier.padding(start = 8.dp),
+                            text = SettingsThemeRes.strings.backupDataButtonTitle,
+                        )
+                    }
+                    FilledTonalButton(
+                        modifier = Modifier.fillMaxWidth(),
+                        onClick = onRestoreData,
+                    ) {
+                        Icon(
+                            painter = painterResource(SettingsThemeRes.icons.cloudDownload),
+                            contentDescription = null,
+                        )
+                        Text(
+                            modifier = Modifier.padding(start = 8.dp),
+                            text = SettingsThemeRes.strings.restoreDataButtonTitle,
+                        )
+                    }
                 }
             }
         }

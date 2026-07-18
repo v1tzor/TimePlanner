@@ -20,7 +20,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -39,23 +38,21 @@ internal fun DynamicColorChooser(
     onChange: (Boolean) -> Unit,
 ) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-        Surface(
-            modifier = modifier.fillMaxWidth(),
-            shape = MaterialTheme.shapes.medium,
-            color = MaterialTheme.colorScheme.surfaceContainer,
+        Row(
+            modifier = modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 16.dp),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            Row(
-                modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    modifier = Modifier.weight(1f),
-                    text = SettingsThemeRes.strings.mainSettingsDynamicColorTitle,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    style = MaterialTheme.typography.titleMedium,
-                )
-                Switch(checked = dynamicColor, onCheckedChange = onChange)
-            }
+            SettingsItemIcon(
+                icon = SettingsThemeRes.icons.waterDrop,
+                contentDescription = null,
+            )
+            Text(
+                modifier = Modifier.padding(start = 16.dp).weight(1f),
+                text = SettingsThemeRes.strings.mainSettingsDynamicColorTitle,
+                color = MaterialTheme.colorScheme.onSurface,
+                style = MaterialTheme.typography.titleMedium,
+            )
+            Switch(checked = dynamicColor, onCheckedChange = onChange)
         }
     }
 }

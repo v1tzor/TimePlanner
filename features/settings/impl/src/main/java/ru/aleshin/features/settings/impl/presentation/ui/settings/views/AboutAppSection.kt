@@ -48,17 +48,29 @@ internal fun AboutAppSection(
     onOpenGit: () -> Unit,
     onOpenIssues: () -> Unit,
 ) {
-    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(16.dp)) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
         Text(
             text = SettingsThemeRes.strings.aboutAppHeader,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.primary,
+            style = MaterialTheme.typography.titleMedium,
         )
-        AboutAppSectionVersion()
-        AboutAppSectionDevelopment(
-            onOpenGit = onOpenGit,
-            onOpenIssues = onOpenIssues,
-        )
+        Surface(
+            modifier = Modifier.fillMaxWidth(),
+            shape = MaterialTheme.shapes.extraLarge,
+            color = MaterialTheme.colorScheme.surfaceContainerLow,
+        ) {
+            Column {
+                AboutAppSectionVersion()
+                SettingsItemDivider()
+                AboutAppSectionDevelopment(
+                    onOpenGit = onOpenGit,
+                    onOpenIssues = onOpenIssues,
+                )
+            }
+        }
     }
 }
 
@@ -66,20 +78,22 @@ internal fun AboutAppSection(
 internal fun AboutAppSectionVersion(
     modifier: Modifier = Modifier,
 ) {
-    Surface(
-        modifier = modifier,
-        shape = MaterialTheme.shapes.large,
-        color = MaterialTheme.colorScheme.surfaceContainer,
+    Row(
+        modifier = modifier.padding(horizontal = 16.dp, vertical = 16.dp),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        Row(
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
-            verticalAlignment = Alignment.CenterVertically,
+        SettingsItemIcon(
+            icon = SettingsThemeRes.icons.info,
+            contentDescription = null,
+        )
+        Column(
+            modifier = Modifier.padding(start = 16.dp).weight(1f),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             InfoView(
                 title = SettingsThemeRes.strings.versionNameTitle,
                 text = BuildConfig.VERSION_NAME,
             )
-            Spacer(modifier = Modifier.weight(1f))
             InfoView(
                 title = SettingsThemeRes.strings.versionCodeTitle,
                 text = BuildConfig.VERSION_CODE,
@@ -94,63 +108,57 @@ internal fun AboutAppSectionDevelopment(
     onOpenGit: () -> Unit,
     onOpenIssues: () -> Unit,
 ) {
-    Surface(
-        modifier = modifier,
-        shape = MaterialTheme.shapes.large,
-        color = MaterialTheme.colorScheme.surfaceContainer,
+    Column(
+        modifier = modifier.padding(horizontal = 16.dp, vertical = 12.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        Column(
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                InfoView(
-                    modifier = Modifier.fillMaxWidth(),
-                    title = SettingsThemeRes.strings.developerTitle,
-                    spaceInside = true,
-                    text = Constants.App.DEVELOPER,
-                )
-                InfoView(
-                    modifier = Modifier.fillMaxWidth(),
-                    title = SettingsThemeRes.strings.licenseTitle,
-                    spaceInside = true,
-                    text = Constants.App.LICENCE,
-                )
-            }
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                FilterChip(
-                    modifier = Modifier.weight(1f),
-                    selected = true,
-                    onClick = onOpenIssues,
-                    label = {
-                        Text(
-                            modifier = Modifier.fillMaxWidth(),
-                            text = SettingsThemeRes.strings.askQuestionTitle,
-                            textAlign = TextAlign.Center,
-                        )
-                    },
-                    colors = FilterChipDefaults.filterChipSurfaceVariantColors(),
-                )
-                FilterChip(
-                    modifier = Modifier.weight(1f),
-                    selected = true,
-                    onClick = onOpenGit,
-                    label = {
-                        Text(
-                            modifier = Modifier.fillMaxWidth(),
-                            text = SettingsThemeRes.strings.githubTitle,
-                            textAlign = TextAlign.Center,
-                        )
-                    },
-                    leadingIcon = {
-                        Icon(
-                            painter = painterResource(SettingsThemeRes.icons.git),
-                            contentDescription = null,
-                        )
-                    },
-                    colors = FilterChipDefaults.filterChipSurfaceVariantColors(),
-                )
-            }
+        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            InfoView(
+                modifier = Modifier.fillMaxWidth(),
+                title = SettingsThemeRes.strings.developerTitle,
+                spaceInside = true,
+                text = Constants.App.DEVELOPER,
+            )
+            InfoView(
+                modifier = Modifier.fillMaxWidth(),
+                title = SettingsThemeRes.strings.licenseTitle,
+                spaceInside = true,
+                text = Constants.App.LICENCE,
+            )
+        }
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            FilterChip(
+                modifier = Modifier.weight(1f),
+                selected = true,
+                onClick = onOpenIssues,
+                label = {
+                    Text(
+                        modifier = Modifier.fillMaxWidth(),
+                        text = SettingsThemeRes.strings.askQuestionTitle,
+                        textAlign = TextAlign.Center,
+                    )
+                },
+                colors = FilterChipDefaults.filterChipSurfaceVariantColors(),
+            )
+            FilterChip(
+                modifier = Modifier.weight(1f),
+                selected = true,
+                onClick = onOpenGit,
+                label = {
+                    Text(
+                        modifier = Modifier.fillMaxWidth(),
+                        text = SettingsThemeRes.strings.githubTitle,
+                        textAlign = TextAlign.Center,
+                    )
+                },
+                leadingIcon = {
+                    Icon(
+                        painter = painterResource(SettingsThemeRes.icons.git),
+                        contentDescription = null,
+                    )
+                },
+                colors = FilterChipDefaults.filterChipSurfaceVariantColors(),
+            )
         }
     }
 }
@@ -171,7 +179,7 @@ internal fun InfoView(
             text = title,
             color = MaterialTheme.colorScheme.onSurface,
             maxLines = 1,
-            style = MaterialTheme.typography.titleMedium,
+            style = MaterialTheme.typography.bodyLarge,
         )
         if (spaceInside) Spacer(modifier = Modifier.weight(1f))
         Text(
@@ -179,7 +187,7 @@ internal fun InfoView(
             color = MaterialTheme.colorScheme.primary,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            style = MaterialTheme.typography.titleMedium,
+            style = MaterialTheme.typography.bodyLarge,
         )
     }
 }

@@ -46,9 +46,9 @@ internal fun DonateButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    shape: Shape = MaterialTheme.shapes.large,
-    colors: ButtonColors = ButtonDefaults.buttonColors(),
-    elevation: ButtonElevation? = ButtonDefaults.buttonElevation(),
+    shape: Shape = MaterialTheme.shapes.extraLarge,
+    colors: ButtonColors = ButtonDefaults.filledTonalButtonColors(),
+    elevation: ButtonElevation? = null,
     contentPadding: PaddingValues = ButtonDefaults.ContentPadding,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
 ) {

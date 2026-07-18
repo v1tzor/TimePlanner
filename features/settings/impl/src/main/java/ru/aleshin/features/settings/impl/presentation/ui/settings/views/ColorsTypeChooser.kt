@@ -15,15 +15,16 @@
  */
 package ru.aleshin.features.settings.impl.presentation.ui.settings.views
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Icon
@@ -33,7 +34,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import ru.aleshin.features.settings.impl.presentation.theme.SettingsThemeRes
 import ru.aleshin.timeplanner.core.ui.theme.material.ColorsUiType
@@ -47,14 +47,18 @@ internal fun ColorsTypeChooser(
     colorsType: ColorsUiType,
     onChoose: (ColorsUiType) -> Unit,
 ) {
-    Surface(
-        modifier = modifier,
-        shape = MaterialTheme.shapes.medium,
-        color = MaterialTheme.colorScheme.surfaceContainer,
+    Row(
+        modifier = modifier.padding(horizontal = 16.dp, vertical = 16.dp),
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
+        SettingsItemIcon(
+            icon = SettingsThemeRes.icons.colorize,
+            contentDescription = null,
+        )
         Column(
-            modifier = Modifier.padding(vertical = 12.dp, horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
+            modifier = Modifier.weight(1f),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             Text(
                 text = SettingsThemeRes.strings.mainSettingsColorsTitle,
@@ -62,12 +66,11 @@ internal fun ColorsTypeChooser(
                 style = MaterialTheme.typography.titleMedium,
             )
             Row(
-                modifier = Modifier.fillMaxWidth().height(48.dp),
+                modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 for (color in ColorsUiType.entries) {
                     ColorTypeItem(
-                        modifier = Modifier.weight(1f),
                         model = color,
                         selected = colorsType == color,
                         onClick = { if (colorsType != color) onChoose(color) },
@@ -88,22 +91,24 @@ internal fun ColorTypeItem(
 ) {
     Surface(
         onClick = onClick,
-        modifier = modifier.height(48.dp).widthIn(max = 80.dp),
+        modifier = modifier.size(44.dp),
         enabled = enabled,
-        shape = MaterialTheme.shapes.medium,
-        color = model.seed(),
+        shape = CircleShape,
+        color = MaterialTheme.colorScheme.surfaceContainerLow,
+        border = if (selected) BorderStroke(2.dp, MaterialTheme.colorScheme.primary) else null,
     ) {
-        if (selected) {
-            Surface(
-                modifier = Modifier.fillMaxSize().padding(horizontal = 12.dp, vertical = 8.dp),
-                shape = MaterialTheme.shapes.medium,
-                color = model.onSeed(),
-            ) {
+        Surface(
+            modifier = Modifier.fillMaxSize().padding(4.dp),
+            shape = CircleShape,
+            color = model.seed(),
+        ) {
+            if (selected) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     Icon(
+                        modifier = Modifier.size(20.dp),
                         imageVector = Icons.Default.Check,
                         contentDescription = null,
-                        tint = Color.White,
+                        tint = model.fetchLightColorScheme().onPrimary,
                     )
                 }
             }

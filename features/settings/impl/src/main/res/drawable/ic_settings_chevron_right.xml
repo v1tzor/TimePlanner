@@ -1,0 +1,26 @@
+<!--
+  Copyright 2026 Stanislav Aleshin
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="960"
+    android:viewportHeight="960"
+    android:tint="?attr/colorControlNormal"
+    android:autoMirrored="true">
+  <path
+      android:fillColor="@android:color/white"
+      android:pathData="M504,480L348,324Q337,313 337,296Q337,279 348,268Q359,257 376,257Q393,257 404,268L588,452Q594,458 596.5,465Q599,472 599,480Q599,488 596.5,495Q594,502 588,508L404,692Q393,703 376,703Q359,703 348,692Q337,681 337,664Q337,647 348,636L504,480Z"/>
+</vector>
