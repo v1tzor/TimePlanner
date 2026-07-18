@@ -39,12 +39,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import ru.aleshin.features.editor.impl.presentation.theme.EditorThemeRes
 import ru.aleshin.timeplanner.core.ui.views.DurationPickerDialog
 import ru.aleshin.timeplanner.core.ui.views.DurationPresetsEditorDialog
 import ru.aleshin.timeplanner.core.ui.views.MultiTimePickerDialog
 import ru.aleshin.timeplanner.core.ui.views.toMinutesAndHoursTitle
-import ru.aleshin.features.editor.impl.presentation.theme.EditorThemeRes
 import java.text.SimpleDateFormat
 import java.util.Date
 
@@ -98,7 +99,7 @@ internal fun BaseTimeField(
                 )
                 Text(
                     text = timeFormat.format(currentTime),
-                    color = textColor,
+                    color = textColor.copy(alpha = if (enabled) 1f else 0.6f),
                     style = MaterialTheme.typography.bodySmall,
                 )
             }
@@ -169,17 +170,20 @@ internal fun DurationTitle(
         true -> MaterialTheme.colorScheme.error
         false -> MaterialTheme.colorScheme.onSurface
     }
+
     Box(
         modifier = modifier
             .clip(MaterialTheme.shapes.small)
             .clickable(enabled) { isOpenDurationDialog = true },
+        contentAlignment = Alignment.Center,
     ) {
         Text(
-            modifier = Modifier.padding(4.dp),
+            modifier = Modifier.padding(4.dp).widthIn(min = 68.dp),
             text = correctDuration.toMinutesAndHoursTitle(),
             style = MaterialTheme.typography.bodyLarge,
             maxLines = 1,
-            color = titleColor,
+            textAlign = TextAlign.Center,
+            color = titleColor.copy(alpha = if (enabled) 1f else 0.6f)
         )
     }
     if (isOpenDurationDialog && durationPresets != null) {
@@ -211,6 +215,8 @@ internal fun DurationTitle(
         )
     }
 }
+
+private const val DURATION_MAX_LENGTH = 8
 
 /* ----------------------- Release Preview -----------------------
 @Composable

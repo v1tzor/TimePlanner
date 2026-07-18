@@ -17,7 +17,7 @@ package ru.aleshin.features.home.impl.presentation.ui.home.store
 
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
@@ -59,8 +59,10 @@ internal interface TimelineWorkProcessor :
             )
         }
 
-        private fun observeCurrentTimeWork() = dateManager.fetchMinuteTicker().map { currentTime ->
-            ActionResult(HomeAction.UpdateCurrentTime(currentTime))
+        private fun observeCurrentTimeWork() = flow {
+            dateManager.fetchMinuteTicker()
+                .onStart { emit(dateManager.fetchCurrentDate()) }
+                .collect { currentTime -> emit(ActionResult(HomeAction.UpdateCurrentTime(currentTime))) }
         }
 
         private fun updateTimeTaskWork(

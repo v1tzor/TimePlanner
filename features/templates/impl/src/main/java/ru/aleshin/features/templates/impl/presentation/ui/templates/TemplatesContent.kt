@@ -15,22 +15,29 @@
  */
 package ru.aleshin.features.templates.impl.presentation.ui.templates
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -76,6 +83,7 @@ import ru.aleshin.features.templates.impl.presentation.ui.templates.views.Templa
 import ru.aleshin.features.templates.impl.presentation.ui.templates.views.TemplatesTopAppBar
 import ru.aleshin.timeplanner.core.ui.views.ErrorSnackbar
 import ru.aleshin.timeplanner.core.ui.views.ExpandedIcon
+import ru.aleshin.timeplanner.core.ui.views.PlaceholderBox
 import ru.aleshin.timeplanner.core.ui.views.Scaffold
 
 /**
@@ -174,31 +182,119 @@ private fun BaseTemplatesContent(
 ) {
     val templatesData = state.templatesData
 
-    if (templatesData == null) {
-        Box(
-            modifier = modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center,
-        ) {
-            CircularProgressIndicator()
+    AnimatedContent(
+        modifier = modifier,
+        targetState = templatesData == null,
+        label = "TemplatesContent",
+        transitionSpec = {
+            fadeIn(animationSpec = tween(600, delayMillis = 90)).togetherWith(
+                fadeOut(animationSpec = tween(300)),
+            )
+        },
+    ) { loading ->
+        if (loading || templatesData == null) {
+            TemplatesGridPlaceholder()
+        } else {
+            TemplatesGrid(
+                templatesData = templatesData,
+                categories = state.categories,
+                sortedType = state.sortedType,
+                patternFilter = state.patternFilter,
+                patternView = state.patternView,
+                onChangeSortedType = onChangeSortedType,
+                onChangePatternFilter = onChangePatternFilter,
+                onChangePatternView = onChangePatternView,
+                onUpdateTemplate = onUpdateTemplate,
+                onRestartRepeat = onRestartRepeat,
+                onStopRepeat = onStopRepeat,
+                onAddRepeatTemplate = onAddRepeatTemplate,
+                onDeleteRepeatTemplate = onDeleteRepeatTemplate,
+                onDeleteTemplate = onDeleteTemplate,
+            )
         }
-    } else {
-        TemplatesGrid(
-            modifier = modifier,
-            templatesData = templatesData,
-            categories = state.categories,
-            sortedType = state.sortedType,
-            patternFilter = state.patternFilter,
-            patternView = state.patternView,
-            onChangeSortedType = onChangeSortedType,
-            onChangePatternFilter = onChangePatternFilter,
-            onChangePatternView = onChangePatternView,
-            onUpdateTemplate = onUpdateTemplate,
-            onRestartRepeat = onRestartRepeat,
-            onStopRepeat = onStopRepeat,
-            onAddRepeatTemplate = onAddRepeatTemplate,
-            onDeleteRepeatTemplate = onDeleteRepeatTemplate,
-            onDeleteTemplate = onDeleteTemplate,
-        )
+    }
+}
+
+@Composable
+private fun TemplatesGridPlaceholder(
+    modifier: Modifier = Modifier,
+) {
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(2),
+        modifier = modifier.fillMaxSize(),
+        contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 12.dp, bottom = 88.dp),
+        horizontalArrangement = Arrangement.spacedBy(10.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+        userScrollEnabled = false,
+    ) {
+        item(span = { GridItemSpan(maxLineSpan) }) {
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                Row(
+                    modifier = Modifier.fillMaxWidth().height(40.dp),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    PlaceholderBox(
+                        modifier = Modifier.weight(1f).height(28.dp),
+                        shape = MaterialTheme.shapes.small,
+                    )
+                    PlaceholderBox(
+                        modifier = Modifier.size(width = 128.dp, height = 40.dp),
+                        shape = CircleShape,
+                    )
+                }
+                PlaceholderBox(
+                    modifier = Modifier.fillMaxWidth().height(120.dp),
+                    shape = MaterialTheme.shapes.large,
+                )
+            }
+        }
+        item(span = { GridItemSpan(maxLineSpan) }) {
+            Row(
+                modifier = Modifier.fillMaxWidth().height(40.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                PlaceholderBox(
+                    modifier = Modifier.width(120.dp).height(28.dp),
+                    shape = MaterialTheme.shapes.small,
+                )
+                Spacer(modifier = Modifier.weight(1f))
+                PlaceholderBox(
+                    modifier = Modifier.width(112.dp).height(32.dp),
+                    shape = MaterialTheme.shapes.small,
+                )
+            }
+        }
+        item(span = { GridItemSpan(maxLineSpan) }) {
+            Row(
+                modifier = Modifier.fillMaxWidth().height(28.dp),
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                PlaceholderBox(
+                    modifier = Modifier.size(width = 5.dp, height = 28.dp),
+                    shape = CircleShape,
+                )
+                PlaceholderBox(
+                    modifier = Modifier.weight(1f).height(24.dp),
+                    shape = MaterialTheme.shapes.small,
+                )
+                PlaceholderBox(
+                    modifier = Modifier.size(24.dp),
+                    shape = CircleShape,
+                )
+            }
+        }
+        items(
+            count = TEMPLATE_PLACEHOLDER_COUNT,
+            key = { index -> "TemplatePlaceholder$index" },
+        ) {
+            PlaceholderBox(
+                modifier = Modifier.fillMaxWidth().height(170.dp),
+                shape = MaterialTheme.shapes.large,
+            )
+        }
     }
 }
 
@@ -464,3 +560,5 @@ internal fun SortedTypeMenu(
         }
     }
 }
+
+private const val TEMPLATE_PLACEHOLDER_COUNT = 4

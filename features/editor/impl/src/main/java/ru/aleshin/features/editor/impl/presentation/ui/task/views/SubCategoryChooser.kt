@@ -61,6 +61,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import ru.aleshin.core.presentation.models.categories.MainCategoryUi
 import ru.aleshin.core.presentation.models.categories.SubCategoryUi
+import ru.aleshin.core.utils.functional.Constants
+import ru.aleshin.features.editor.impl.presentation.theme.EditorThemeRes
 import ru.aleshin.timeplanner.core.ui.theme.TimePlannerRes
 import ru.aleshin.timeplanner.core.ui.views.BaseSelectorBottomSheet
 import ru.aleshin.timeplanner.core.ui.views.SelectorAddItemView
@@ -68,8 +70,6 @@ import ru.aleshin.timeplanner.core.ui.views.SelectorNotSelectedItemView
 import ru.aleshin.timeplanner.core.ui.views.SelectorSwipeItemView
 import ru.aleshin.timeplanner.core.ui.views.SelectorTextField
 import ru.aleshin.timeplanner.core.ui.views.SwipeToDismissBackground
-import ru.aleshin.core.utils.functional.Constants
-import ru.aleshin.features.editor.impl.presentation.theme.EditorThemeRes
 
 /**
  * @author Stanislav Aleshin on 26.02.2023.
@@ -112,7 +112,7 @@ internal fun SubCategoryChooser(
                 )
                 Text(
                     text = mainTitle ?: EditorThemeRes.strings.categoryNotSelectedTitle,
-                    color = MaterialTheme.colorScheme.onSurface,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = if (enabled) 1f else 0.6f),
                     style = MaterialTheme.typography.titleMedium,
                 )
             }
@@ -125,12 +125,14 @@ internal fun SubCategoryChooser(
                 true -> MaterialTheme.colorScheme.onSurface
                 false -> MaterialTheme.colorScheme.surfaceVariant
             }
-            Icon(
-                modifier = Modifier.animateContentSize(),
-                painter = painterResource(icon),
-                contentDescription = EditorThemeRes.strings.chooseCategoryTitle,
-                tint = tint,
-            )
+            if (enabled) {
+                Icon(
+                    modifier = Modifier.animateContentSize(),
+                    painter = painterResource(icon),
+                    contentDescription = EditorThemeRes.strings.chooseCategoryTitle,
+                    tint = tint,
+                )
+            }
         }
     }
     if (openSubCategorySelectorSheet) {

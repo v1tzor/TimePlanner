@@ -32,6 +32,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -96,8 +97,8 @@ import ru.aleshin.features.editor.impl.presentation.ui.task.views.StartTimeField
 import ru.aleshin.features.editor.impl.presentation.ui.task.views.SubCategoryChooser
 import ru.aleshin.features.editor.impl.presentation.ui.task.views.TaskNotificationsMenu
 import ru.aleshin.features.editor.impl.presentation.ui.task.views.TemplatesBottomSheet
+import ru.aleshin.features.editor.impl.presentation.ui.task.views.TimeRangeSlider
 import ru.aleshin.features.editor.impl.presentation.ui.task.views.UndefinedTasksBottomSheet
-import ru.aleshin.timeplanner.core.ui.theme.TimePlannerRes
 import ru.aleshin.timeplanner.core.ui.views.CustomLargeTextField
 import ru.aleshin.timeplanner.core.ui.views.ErrorSnackbar
 import java.util.Date
@@ -400,49 +401,61 @@ internal fun DateTimeSection(
     onTimeRangeChange: (TimeRange) -> Unit,
     onDurationPresetsChange: (List<Long>) -> Unit,
 ) {
-    Row(
-        modifier = modifier.padding(horizontal = 16.dp),
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
-        verticalAlignment = Alignment.CenterVertically,
+    Column(
+        modifier = modifier.padding(horizontal = 8.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
-        StartTimeField(
+        Row(
+            modifier = Modifier.padding(horizontal = 8.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            StartTimeField(
+                enabled = enabled,
+                modifier = Modifier.weight(1f),
+                currentTime = timeRanges.from,
+                isError = isTimeValidError,
+                onChangeTime = { newStartTime ->
+                    val timeRange = if (newStartTime.fetchHourOfDay() <= timeRanges.to.fetchHourOfDay()) {
+                        timeRanges.copy(from = newStartTime, to = timeRanges.to.changeDay(scheduleDate))
+                    } else {
+                        timeRanges.copy(from = newStartTime, to = timeRanges.to.changeDay(scheduleDate.shiftDay(1)))
+                    }
+                    onTimeRangeChange(timeRange)
+                },
+            )
+            EndTimeField(
+                enabled = enabled,
+                modifier = Modifier.weight(1f),
+                currentTime = timeRanges.to,
+                isError = isTimeValidError,
+                onChangeTime = { newEndTime ->
+                    val newTime = if (timeRanges.from.fetchHourOfDay() <= newEndTime.fetchHourOfDay()) {
+                        newEndTime.changeDay(scheduleDate)
+                    } else {
+                        newEndTime.changeDay(scheduleDate.shiftDay(1))
+                    }
+                    onTimeRangeChange(timeRanges.copy(to = newTime))
+                },
+            )
+            DurationTitle(
+                enabled = enabled,
+                duration = duration,
+                startTime = timeRanges.from,
+                durationPresets = durationPresets,
+                isError = isTimeValidError,
+                onChangeDuration = { duration ->
+                    onTimeRangeChange(timeRanges.copy(to = timeRanges.from.shiftMillis(duration.toInt())))
+                },
+                onDurationPresetsChange = onDurationPresetsChange,
+            )
+        }
+        TimeRangeSlider(
             enabled = enabled,
-            modifier = Modifier.weight(1f),
-            currentTime = timeRanges.from,
             isError = isTimeValidError,
-            onChangeTime = { newStartTime ->
-                val timeRange = if (newStartTime.fetchHourOfDay() <= timeRanges.to.fetchHourOfDay()) {
-                    timeRanges.copy(from = newStartTime, to = timeRanges.to.changeDay(scheduleDate))
-                } else {
-                    timeRanges.copy(from = newStartTime, to = timeRanges.to.changeDay(scheduleDate.shiftDay(1)))
-                }
-                onTimeRangeChange(timeRange)
-            },
-        )
-        EndTimeField(
-            enabled = enabled,
-            modifier = Modifier.weight(1f),
-            currentTime = timeRanges.to,
-            isError = isTimeValidError,
-            onChangeTime = { newEndTime ->
-                val newTime = if (timeRanges.from.fetchHourOfDay() <= newEndTime.fetchHourOfDay()) {
-                    newEndTime.changeDay(scheduleDate)
-                } else {
-                    newEndTime.changeDay(scheduleDate.shiftDay(1))
-                }
-                onTimeRangeChange(timeRanges.copy(to = newTime))
-            },
-        )
-        DurationTitle(
-            enabled = enabled,
-            duration = duration,
-            startTime = timeRanges.from,
-            durationPresets = durationPresets,
-            isError = isTimeValidError,
-            onChangeDuration = { duration ->
-                onTimeRangeChange(timeRanges.copy(to = timeRanges.from.shiftMillis(duration.toInt())))
-            },
-            onDurationPresetsChange = onDurationPresetsChange,
+            scheduleDate = scheduleDate,
+            timeRange = timeRanges,
+            onTimeRangeChange = onTimeRangeChange,
         )
     }
 }
@@ -459,14 +472,14 @@ internal fun ParametersSection(
         modifier = modifier.padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        ParameterChooser(
+        SegmentedParametersChooser(
             enabled = enabled,
-            selected = parameters.isConsiderInStatistics,
-            leadingIcon = painterResource(id = EditorThemeRes.icons.statistics),
-            title = EditorThemeRes.strings.statisticsParameterTitle,
-            description = EditorThemeRes.strings.statisticsParameterDesc,
-            onChangeSelected = { isConsider ->
-                onChangeParameters(parameters.copy(isConsiderInStatistics = isConsider))
+            parameters = TaskPriorityItemUi.entries.toTypedArray(),
+            selected = parameters.priority.convertToItem(),
+            leadingIcon = painterResource(id = EditorThemeRes.icons.priority),
+            title = EditorThemeRes.strings.priorityParameterTitle,
+            onChangeSelected = { priority ->
+                onChangeParameters(parameters.copy(priority = priority.convertToModel()))
             },
         )
         ParameterChooser(
@@ -504,14 +517,14 @@ internal fun ParametersSection(
                 onChangeParameters(parameters.copy(isEnableNotification = notification))
             },
         )
-        SegmentedParametersChooser(
+        ParameterChooser(
             enabled = enabled,
-            parameters = TaskPriorityItemUi.entries.toTypedArray(),
-            selected = parameters.priority.convertToItem(),
-            leadingIcon = painterResource(id = EditorThemeRes.icons.priority),
-            title = EditorThemeRes.strings.priorityParameterTitle,
-            onChangeSelected = { priority ->
-                onChangeParameters(parameters.copy(priority = priority.convertToModel()))
+            selected = parameters.isConsiderInStatistics,
+            leadingIcon = painterResource(id = EditorThemeRes.icons.statistics),
+            title = EditorThemeRes.strings.statisticsParameterTitle,
+            description = EditorThemeRes.strings.statisticsParameterDesc,
+            onChangeSelected = { isConsider ->
+                onChangeParameters(parameters.copy(isConsiderInStatistics = isConsider))
             },
         )
     }
@@ -591,23 +604,19 @@ internal fun TemplateSelector(
                 )
             }
         }
-        if (!isCreateMode) {
+        if (!isCreateMode && !isTemplate) {
             IconButton(
-                onClick = { if (isTemplate) onControl() else onCreateTemplate() },
+                onClick = onCreateTemplate,
                 modifier = Modifier
                     .size(40.dp)
                     .background(
                         color = MaterialTheme.colorScheme.primaryContainer,
-                        shape = RoundedCornerShape(40.dp),
+                        shape = CircleShape,
                     ),
                 enabled = enabled,
             ) {
-                val templatesButton = when (isTemplate) {
-                    true -> TimePlannerRes.icons.enabledSettingsIcon
-                    false -> EditorThemeRes.icons.unFavorite
-                }
                 Icon(
-                    painter = painterResource(id = templatesButton),
+                    painter = painterResource(EditorThemeRes.icons.unFavorite),
                     contentDescription = EditorThemeRes.strings.templateIconDesc,
                     tint = MaterialTheme.colorScheme.onPrimaryContainer,
                 )

@@ -30,6 +30,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -246,10 +247,12 @@ private fun UndefinedTaskItem(
 ) {
     val strings = OverviewThemeRes.strings
     val icons = OverviewThemeRes.icons
-    val categoryTitle = model.mainCategory.fetchName() ?: strings.noneTitle
-    val taskTitle = model.note?.takeIf { note -> note.isNotBlank() }
-        ?: model.subCategory?.name
-        ?: categoryTitle
+    val categoryTitle = model.mainCategory.fetchName()
+    val categoryContentDescription = categoryTitle ?: strings.noneTitle
+    val subCategoryTitle = model.subCategory?.name?.takeIf { name -> name.isNotBlank() }
+    val taskTitle = subCategoryTitle ?: categoryTitle ?: strings.noneTitle
+    val taskSubtitle = model.note?.takeIf { note -> note.isNotBlank() }
+        ?: categoryTitle?.takeIf { subCategoryTitle != null }
     val deadlineTitle = model.deadline?.let { deadline ->
         remember(deadline) {
             SimpleDateFormat("d MMM", Locale.getDefault()).format(deadline)
@@ -260,7 +263,7 @@ private fun UndefinedTaskItem(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .height(88.dp)
+            .heightIn(min = 88.dp)
             .clip(MaterialTheme.shapes.large)
             .clickable(onClick = onClick)
             .padding(vertical = 8.dp),
@@ -278,12 +281,14 @@ private fun UndefinedTaskItem(
                 Icon(
                     modifier = Modifier.size(26.dp),
                     painter = model.mainCategory.defaultType!!.mapToIconPainter(),
-                    contentDescription = categoryTitle,
+                    contentDescription = categoryContentDescription,
                     tint = categoryColors.accent,
                 )
             } else {
                 Text(
-                    text = remember(categoryTitle) { categoryTitle.fetchMonogram() },
+                    text = remember(categoryContentDescription) {
+                        categoryContentDescription.fetchMonogram()
+                    },
                     color = categoryColors.accent,
                     style = MaterialTheme.typography.titleMedium,
                 )
@@ -293,34 +298,32 @@ private fun UndefinedTaskItem(
             modifier = Modifier.weight(1f),
             verticalArrangement = Arrangement.spacedBy(2.dp),
         ) {
-            Text(
-                text = taskTitle,
-                color = MaterialTheme.colorScheme.onSurface,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                style = MaterialTheme.typography.titleMedium,
-            )
             Row(
-                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
                     modifier = Modifier.weight(1f),
-                    text = categoryTitle,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    text = taskTitle,
+                    color = MaterialTheme.colorScheme.onSurface,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-                Text(
-                    text = strings.metadataDivider,
-                    color = MaterialTheme.colorScheme.outline,
-                    style = MaterialTheme.typography.bodyMedium,
+                    style = MaterialTheme.typography.titleMedium,
                 )
                 Text(
                     text = deadlineTitle,
                     color = MaterialTheme.colorScheme.primary,
                     maxLines = 1,
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            }
+            if (taskSubtitle != null) {
+                Text(
+                    text = taskSubtitle,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 3,
+                    overflow = TextOverflow.Ellipsis,
                     style = MaterialTheme.typography.bodyMedium,
                 )
             }

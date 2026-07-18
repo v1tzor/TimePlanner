@@ -136,15 +136,17 @@ internal fun MainCategoryChooser(
                 )
                 Text(
                     text = categoryName ?: EditorThemeRes.strings.categoryNotSelectedTitle,
-                    color = categoryNameColor,
+                    color = categoryNameColor.copy(alpha = if (enabled) 1f else 0.6f),
                     style = MaterialTheme.typography.titleMedium,
                 )
             }
-            Icon(
-                painter = painterResource(EditorThemeRes.icons.showDialog),
-                contentDescription = EditorThemeRes.strings.chooseCategoryTitle,
-                tint = categoryNameColor,
-            )
+            if (enabled) {
+                Icon(
+                    painter = painterResource(EditorThemeRes.icons.showDialog),
+                    contentDescription = EditorThemeRes.strings.chooseCategoryTitle,
+                    tint = categoryNameColor,
+                )
+            }
         }
     }
     if (openSubCategorySelectorSheet && currentCategory != null) {

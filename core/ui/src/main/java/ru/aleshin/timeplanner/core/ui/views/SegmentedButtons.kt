@@ -15,11 +15,22 @@
  */
 package ru.aleshin.timeplanner.core.ui.views
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material3.*
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.Modifier
@@ -95,6 +106,7 @@ fun SegmentedButton(
         modifier = modifier.height(SegmentedButtonDefaults.height),
         enabled = enabled,
         contentPadding = SegmentedButtonDefaults.contentPadding(),
+        border = SegmentedButtonDefaults.outlinedButtonBorder(),
         colors = SegmentedButtonDefaults.buttonColors(isSelected = isSelected),
         shape = shape,
     ) {
@@ -110,7 +122,11 @@ fun SegmentedButton(
         Text(
             text = title,
             style = MaterialTheme.typography.titleSmall,
-            color = MaterialTheme.colorScheme.onPrimaryContainer,
+            color = if (isSelected) {
+                MaterialTheme.colorScheme.onPrimaryContainer
+            } else {
+                MaterialTheme.colorScheme.onSurface
+            },
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             textAlign = TextAlign.Center,
@@ -150,19 +166,18 @@ object SegmentedButtonDefaults {
     ) = PaddingValues(horizontal = horizontal, vertical = vertical)
 
     @Composable
-    fun selectedButtonColors(): ButtonColors = ButtonDefaults.filledTonalButtonColors(
-        containerColor = MaterialTheme.colorScheme.primaryContainer,
-        contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-    )
-
-    @Composable
-    fun defaultButtonColors(): ButtonColors = ButtonDefaults.outlinedButtonColors()
-
-    @Composable
     fun buttonColors(isSelected: Boolean): ButtonColors = if (isSelected) {
         selectedButtonColors()
     } else {
         defaultButtonColors()
+    }
+
+    @Composable
+    fun outlinedButtonBorder(): BorderStroke {
+        return BorderStroke(
+            width = 1.dp,
+            color = MaterialTheme.colorScheme.outlineVariant
+        )
     }
 
     @Composable
@@ -176,4 +191,15 @@ object SegmentedButtonDefaults {
     @Composable
     fun lastButtonShape(corner: Dp = shapeCorner): RoundedCornerShape =
         SegmentedButtonCornerShape(cornerEnd = corner)
+
+    @Composable
+    private fun selectedButtonColors(): ButtonColors = ButtonDefaults.filledTonalButtonColors(
+        containerColor = MaterialTheme.colorScheme.primaryContainer,
+        contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+        disabledContainerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.12f),
+        disabledContentColor = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.38f),
+    )
+
+    @Composable
+    private fun defaultButtonColors(): ButtonColors = ButtonDefaults.outlinedButtonColors()
 }

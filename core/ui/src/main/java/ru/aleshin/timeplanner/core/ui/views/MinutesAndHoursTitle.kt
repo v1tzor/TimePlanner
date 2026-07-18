@@ -17,10 +17,10 @@ package ru.aleshin.timeplanner.core.ui.views
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import ru.aleshin.timeplanner.core.ui.theme.TimePlannerRes
 import ru.aleshin.core.utils.extensions.toDaysString
 import ru.aleshin.core.utils.extensions.toMinutesAndHoursString
 import ru.aleshin.core.utils.extensions.toMinutesOrHoursString
+import ru.aleshin.timeplanner.core.ui.theme.TimePlannerRes
 
 /**
  * @author Stanislav Aleshin on 08.03.2023.
