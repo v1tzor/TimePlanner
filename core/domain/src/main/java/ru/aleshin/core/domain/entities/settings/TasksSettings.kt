@@ -24,6 +24,7 @@ import ru.aleshin.core.utils.functional.Constants
  */
 data class TasksSettings(
     val taskViewStatus: ViewToggleStatus = ViewToggleStatus.COMPACT,
+    val homeViewMode: HomeViewMode = HomeViewMode.AGENDA,
     val taskAnalyticsRange: TimePeriod = TimePeriod.WEEK,
     val calendarButtonBehavior: CalendarButtonBehavior = CalendarButtonBehavior.SET_CURRENT_DATE,
     val secureMode: Boolean = false,

@@ -33,7 +33,9 @@ import ru.aleshin.features.home.impl.presentation.ui.home.contract.HomeState
 import ru.aleshin.features.home.impl.presentation.ui.home.store.NavigationWorkCommand.NavigateToEditor
 import ru.aleshin.features.home.impl.presentation.ui.home.store.NavigationWorkCommand.NavigateToEditorCreator
 import ru.aleshin.features.home.impl.presentation.ui.home.store.ScheduleWorkCommand.ChangeTaskDoneState
+import ru.aleshin.features.home.impl.presentation.ui.home.store.ScheduleWorkCommand.ChangeTimelineTaskDoneState
 import ru.aleshin.features.home.impl.presentation.ui.home.store.ScheduleWorkCommand.ChangeTaskViewStatus
+import ru.aleshin.features.home.impl.presentation.ui.home.store.ScheduleWorkCommand.ChangeHomeViewMode
 import ru.aleshin.features.home.impl.presentation.ui.home.store.ScheduleWorkCommand.CreateSchedule
 import ru.aleshin.features.home.impl.presentation.ui.home.store.ScheduleWorkCommand.LoadScheduleByDate
 import ru.aleshin.features.home.impl.presentation.ui.home.store.ScheduleWorkCommand.TimeTaskShiftDown
@@ -46,6 +48,7 @@ import javax.inject.Inject
 internal class HomeComposeStore @Inject constructor(
     private val scheduleWorkProcessor: ScheduleWorkProcessor,
     private val navigationWorkProcessor: NavigationWorkProcessor,
+    private val timelineWorkProcessor: TimelineWorkProcessor,
     private val dateManager: DateManager,
     stateCommunicator: StateCommunicator<HomeState>,
     effectCommunicator: EffectCommunicator<HomeEffect>,
@@ -65,6 +68,10 @@ internal class HomeComposeStore @Inject constructor(
     ) {
         when (event) {
             is HomeEvent.Init -> with(event) {
+                launchBackgroundWork(BackgroundKey.CURRENT_TIME) {
+                    val command = TimelineWorkCommand.ObserveCurrentTime
+                    timelineWorkProcessor.work(command).collectAndHandleWork()
+                }
                 launchBackgroundWork(BackgroundKey.SETUP_SETTINGS) {
                     val setupCommand = ScheduleWorkCommand.SetupSettings
                     scheduleWorkProcessor.work(setupCommand).collectAndHandleWork()
@@ -109,6 +116,10 @@ internal class HomeComposeStore @Inject constructor(
                 val changeStatusCommand = ChangeTaskDoneState(event.timeTask)
                 scheduleWorkProcessor.work(changeStatusCommand).collectAndHandleWork()
             }
+            is HomeEvent.ChangeTimelineTaskDoneStateButton -> launchBackgroundWork(BackgroundKey.DATA_ACTION) {
+                val changeStatusCommand = ChangeTimelineTaskDoneState(event.timeTask)
+                scheduleWorkProcessor.work(changeStatusCommand).collectAndHandleWork()
+            }
             is HomeEvent.PressViewToggleButton -> launchBackgroundWork(BackgroundKey.DATA_ACTION) {
                 val status = when (event.status) {
                     ViewToggleStatus.EXPANDED -> ViewToggleStatus.COMPACT
@@ -117,14 +128,36 @@ internal class HomeComposeStore @Inject constructor(
                 val changeCommand = ChangeTaskViewStatus(status)
                 scheduleWorkProcessor.work(changeCommand).collectAndHandleWork()
             }
+            is HomeEvent.ChangeHomeViewMode -> launchBackgroundWork(BackgroundKey.SETTINGS_ACTION) {
+                val command = ChangeHomeViewMode(event.mode)
+                scheduleWorkProcessor.work(command).collectAndHandleWork()
+            }
+            is HomeEvent.UpdateTimelineTimeTask -> launchBackgroundWork(BackgroundKey.DATA_ACTION) {
+                val command = TimelineWorkCommand.UpdateTimeTask(
+                    timeTaskId = event.timeTaskId,
+                    timeRange = event.timeRange,
+                )
+                timelineWorkProcessor.work(command).collectAndHandleWork()
+            }
             is HomeEvent.PressEditTimeTaskButton -> {
-                val navCommand = NavigateToEditor(timeTask = event.timeTask)
+                val navCommand = NavigateToEditor(timeTaskId = event.timeTask.key)
+                navigationWorkProcessor.work(navCommand).handleWork()
+            }
+            is HomeEvent.PressEditTimelineTimeTaskButton -> {
+                val navCommand = NavigateToEditor(timeTaskId = event.timeTaskId)
                 navigationWorkProcessor.work(navCommand).handleWork()
             }
             is HomeEvent.PressAddTimeTaskButton -> {
                 val navCommand = NavigateToEditorCreator(
                     currentDate = checkNotNull(state().selectedDate),
                     timeRange = TimeRange(event.startTime, event.endTime),
+                )
+                navigationWorkProcessor.work(navCommand).handleWork()
+            }
+            is HomeEvent.PressAddTimeTaskFab -> {
+                val navCommand = NavigateToEditorCreator(
+                    currentDate = checkNotNull(state().selectedDate),
+                    timeRange = null,
                 )
                 navigationWorkProcessor.work(navCommand).handleWork()
             }
@@ -141,21 +174,27 @@ internal class HomeComposeStore @Inject constructor(
     ) = when (action) {
         is HomeAction.UpdateSettings -> currentState.copy(
             taskViewStatus = action.settings.taskViewStatus,
+            homeViewMode = action.settings.homeViewMode,
             calendarButtonBehavior = action.settings.calendarButtonBehavior,
+        )
+        is HomeAction.UpdateCurrentTime -> currentState.copy(
+            currentTime = action.currentTime,
         )
         is HomeAction.UpdateSchedule -> currentState.copy(
             schedule = action.schedule,
+            timelineSchedule = action.timelineSchedule,
             selectedDate = action.date
         )
     }
 
     enum class BackgroundKey : BackgroundWorkKey {
-        LOAD_SCHEDULE, SETUP_SETTINGS, CREATE_SCHEDULE, DATA_ACTION
+        LOAD_SCHEDULE, SETUP_SETTINGS, SETTINGS_ACTION, CREATE_SCHEDULE, DATA_ACTION, CURRENT_TIME
     }
 
      class Factory @Inject constructor(
          private val scheduleWorkProcessor: ScheduleWorkProcessor,
          private val navigationWorkProcessor: NavigationWorkProcessor,
+         private val timelineWorkProcessor: TimelineWorkProcessor,
          private val dateManager: DateManager,
          private val coroutineManager: CoroutineManager,
      ) : BaseComposeStore.Factory<HomeComposeStore, HomeState> {
@@ -165,6 +204,7 @@ internal class HomeComposeStore @Inject constructor(
                  dateManager = dateManager,
                  scheduleWorkProcessor = scheduleWorkProcessor,
                  navigationWorkProcessor = navigationWorkProcessor,
+                 timelineWorkProcessor = timelineWorkProcessor,
                  stateCommunicator = StateCommunicator.Default(savedState),
                  effectCommunicator = EffectCommunicator.Default(),
                  coroutineManager = coroutineManager,

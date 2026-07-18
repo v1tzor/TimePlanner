@@ -25,6 +25,7 @@ import ru.aleshin.features.home.impl.presentation.ui.home.contract.HomeState
 import ru.aleshin.features.home.impl.presentation.ui.home.store.HomeComposeStore
 import ru.aleshin.features.home.impl.presentation.ui.home.store.NavigationWorkProcessor
 import ru.aleshin.features.home.impl.presentation.ui.home.store.ScheduleWorkProcessor
+import ru.aleshin.features.home.impl.presentation.ui.home.store.TimelineWorkProcessor
 
 /**
  * @author Stanislav Aleshin on 18.02.2023.
@@ -47,5 +48,9 @@ internal interface PresentationModule {
     @Binds
     @FeatureScope
     fun bindNavigationWorkProcessor(processor: NavigationWorkProcessor.Base): NavigationWorkProcessor
+
+    @Binds
+    @FeatureScope
+    fun bindTimelineWorkProcessor(processor: TimelineWorkProcessor.Base): TimelineWorkProcessor
 
 }

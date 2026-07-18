@@ -197,6 +197,10 @@ private class FakeDateManager(
         return flowOf(currentDate)
     }
 
+    override fun fetchMinuteTicker(): Flow<Date> {
+        return flowOf(currentDate)
+    }
+
     override fun calculateLeftTime(endTime: Date): Long {
         return endTime.time - currentDate.time
     }

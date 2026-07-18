@@ -194,7 +194,7 @@ internal fun RunningTimeTask(
                 TimeTaskTitles(
                     modifier = Modifier.weight(1f),
                     title = taskTitle,
-                    titleColor = MaterialTheme.colorScheme.onSurface,
+                    titleColor = MaterialTheme.colorScheme.onPrimaryContainer,
                     subTitle = taskSubTitle,
                 )
                 Box(
@@ -203,7 +203,7 @@ internal fun RunningTimeTask(
                 ) {
                     ExpandedIcon(
                         isExpanded = expandedTask,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer,
                         description = null,
                     )
                 }
@@ -256,6 +256,7 @@ internal fun RunningTimeTask(
                         Icon(
                             painter = painterResource(HomeThemeRes.icons.more),
                             contentDescription = HomeThemeRes.strings.timeTaskMoreIconDesc,
+                            tint = MaterialTheme.colorScheme.onPrimaryContainer
                         )
                     }
                 }
@@ -308,7 +309,7 @@ internal fun CompletedTimeTask(
             TimeTaskTitles(
                 modifier = Modifier.weight(1f),
                 title = taskTitle,
-                titleColor = MaterialTheme.colorScheme.onSurface,
+                titleColor = MaterialTheme.colorScheme.onTertiaryContainer,
                 subTitle = taskSubTitle,
             )
             IconButton(
@@ -320,14 +321,14 @@ internal fun CompletedTimeTask(
                         modifier = Modifier.size(24.dp),
                         painter = painterResource(HomeThemeRes.icons.check),
                         contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        tint = MaterialTheme.colorScheme.onTertiaryContainer,
                     )
                 } else {
                     Icon(
                         modifier = Modifier.size(24.dp),
                         painter = painterResource(HomeThemeRes.icons.cancel),
                         contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onSurface,
+                        tint = MaterialTheme.colorScheme.onTertiaryContainer,
                     )
                 }
             }

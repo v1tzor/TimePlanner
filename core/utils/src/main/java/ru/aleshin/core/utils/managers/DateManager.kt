@@ -22,6 +22,7 @@ import kotlinx.coroutines.flow.flowOn
 import ru.aleshin.core.utils.extensions.setEndDay
 import ru.aleshin.core.utils.extensions.setStartDay
 import ru.aleshin.core.utils.extensions.toMinutes
+import ru.aleshin.core.utils.functional.Constants
 import java.util.Calendar
 import java.util.Date
 import javax.inject.Inject
@@ -35,6 +36,7 @@ interface DateManager {
     fun fetchBeginningCurrentDay(): Date
     fun fetchEndCurrentDay(): Date
     fun fetchTicker(): Flow<Date>
+    fun fetchMinuteTicker(): Flow<Date>
     fun calculateLeftTime(endTime: Date): Long
     fun calculateProgress(startTime: Date, endTime: Date): Float
     fun setCurrentHMS(date: Date): Date
@@ -47,6 +49,16 @@ interface DateManager {
             while (true) {
                 emit(fetchCurrentDate())
                 delay(1000L)
+            }
+        }.flowOn(workDispatchersProvider.defaultDispatcher)
+
+        private val minuteTicker = flow {
+            while (true) {
+                val currentDate = fetchCurrentDate()
+                emit(currentDate)
+
+                val passedMinuteTime = Math.floorMod(currentDate.time, Constants.Date.MILLIS_IN_MINUTE)
+                delay(Constants.Date.MILLIS_IN_MINUTE - passedMinuteTime)
             }
         }.flowOn(workDispatchersProvider.defaultDispatcher)
 
@@ -64,6 +76,10 @@ interface DateManager {
 
         override fun fetchTicker(): Flow<Date> {
             return ticker
+        }
+
+        override fun fetchMinuteTicker(): Flow<Date> {
+            return minuteTicker
         }
 
         override fun calculateLeftTime(endTime: Date): Long {

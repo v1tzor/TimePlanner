@@ -21,6 +21,7 @@ import ru.aleshin.features.home.impl.domain.common.HomeEitherWrapper
 import ru.aleshin.features.home.impl.domain.common.HomeErrorHandler
 import ru.aleshin.features.home.impl.domain.interactors.ScheduleInteractor
 import ru.aleshin.features.home.impl.domain.interactors.SettingsInteractor
+import ru.aleshin.features.home.impl.domain.interactors.TimelineInteractor
 import ru.aleshin.features.home.impl.domain.interactors.TimeShiftInteractor
 
 /**
@@ -37,6 +38,9 @@ internal interface DomainModule {
 
     @Binds
     fun bindSettingsInteractor(interactor: SettingsInteractor.Base): SettingsInteractor
+
+    @Binds
+    fun bindTimelineInteractor(interactor: TimelineInteractor.Base): TimelineInteractor
 
     @Binds
     fun bindHomeEitherWrapper(wrapper: HomeEitherWrapper.Base): HomeEitherWrapper

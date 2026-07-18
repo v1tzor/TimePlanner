@@ -15,6 +15,7 @@
  */
 package ru.aleshin.features.home.impl.presentation.ui.home
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.VisibilityThreshold
@@ -23,7 +24,10 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
@@ -65,14 +69,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import ru.aleshin.core.domain.entities.schedules.DailyScheduleStatus
+import ru.aleshin.core.domain.entities.settings.HomeViewMode
 import ru.aleshin.core.domain.entities.settings.ViewToggleStatus
 import ru.aleshin.core.domain.entities.tasks.TimeTaskStatus
 import ru.aleshin.core.presentation.models.tasks.TimeTaskDetailsUi
+import ru.aleshin.core.presentation.models.tasks.TimeTaskUi
 import ru.aleshin.core.utils.architecture.store.compose.handleEffects
 import ru.aleshin.core.utils.architecture.store.compose.stateAsState
 import ru.aleshin.core.utils.extensions.endThisDay
 import ru.aleshin.core.utils.extensions.isCurrentDay
 import ru.aleshin.core.utils.extensions.shiftDay
+import ru.aleshin.core.utils.functional.TimeRange
 import ru.aleshin.features.home.impl.presentation.mapppers.mapToMessage
 import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
 import ru.aleshin.features.home.impl.presentation.ui.home.contract.HomeEffect
@@ -86,8 +93,11 @@ import ru.aleshin.features.home.impl.presentation.ui.home.views.EmptyDateView
 import ru.aleshin.features.home.impl.presentation.ui.home.views.EmptyItem
 import ru.aleshin.features.home.impl.presentation.ui.home.views.HomeDatePicker
 import ru.aleshin.features.home.impl.presentation.ui.home.views.HomeTopAppBar
+import ru.aleshin.features.home.impl.presentation.ui.home.views.HomeViewTabs
 import ru.aleshin.features.home.impl.presentation.ui.home.views.PlannedTimeTaskItem
 import ru.aleshin.features.home.impl.presentation.ui.home.views.RunningTimeTaskItem
+import ru.aleshin.features.home.impl.presentation.ui.home.views.agenda.AgendaTab
+import ru.aleshin.features.home.impl.presentation.ui.home.views.timeline.TimelineTab
 import ru.aleshin.timeplanner.core.ui.theme.TimePlannerRes
 import ru.aleshin.timeplanner.core.ui.theme.topSide
 import ru.aleshin.timeplanner.core.ui.views.ErrorSnackbar
@@ -118,12 +128,23 @@ internal fun HomeContent(
                 modifier = Modifier.padding(paddingValues),
                 onTimeTaskEdit = { store.dispatchEvent(HomeEvent.PressEditTimeTaskButton(it)) },
                 onTaskDoneChange = { store.dispatchEvent(HomeEvent.ChangeTaskDoneStateButton(it)) },
+                onTimelineTimeTaskEdit = {
+                    store.dispatchEvent(HomeEvent.PressEditTimelineTimeTaskButton(it))
+                },
+                onTimelineTaskDoneChange = {
+                    store.dispatchEvent(HomeEvent.ChangeTimelineTaskDoneStateButton(it))
+                },
                 onTimeTaskAdd = { start, end ->
                     store.dispatchEvent(HomeEvent.PressAddTimeTaskButton(start, end))
                 },
                 onCreateSchedule = { store.dispatchEvent(HomeEvent.CreateSchedule) },
                 onTimeTaskIncrease = { store.dispatchEvent(HomeEvent.TimeTaskShiftUp(it)) },
                 onTimeTaskReduce = { store.dispatchEvent(HomeEvent.TimeTaskShiftDown(it)) },
+                onHomeViewModeChange = { store.dispatchEvent(HomeEvent.ChangeHomeViewMode(it)) },
+                onTimelineTimeTaskUpdate = { timeTaskId, timeRange ->
+                    store.dispatchEvent(HomeEvent.UpdateTimelineTimeTask(timeTaskId, timeRange))
+                },
+                onTimeTaskFabAdd = { store.dispatchEvent(HomeEvent.PressAddTimeTaskFab) },
             )
         },
         topBar = {
@@ -138,6 +159,7 @@ internal fun HomeContent(
             DateChooserSection(
                 selectedDate = state.selectedDate,
                 toggleState = state.taskViewStatus,
+                isToggleVisible = state.homeViewMode == HomeViewMode.AGENDA,
                 onChangeDate = { date -> store.dispatchEvent(HomeEvent.LoadSchedule(date)) },
                 onChangeToggleStatus = { store.dispatchEvent(HomeEvent.PressViewToggleButton(it)) }
             )
@@ -175,24 +197,63 @@ private fun BaseHomeContent(
     onCreateSchedule: () -> Unit,
     onTimeTaskEdit: (TimeTaskDetailsUi) -> Unit,
     onTaskDoneChange: (TimeTaskDetailsUi) -> Unit,
+    onTimelineTimeTaskEdit: (Long) -> Unit,
+    onTimelineTaskDoneChange: (TimeTaskUi) -> Unit,
     onTimeTaskAdd: (startTime: Date, endTime: Date) -> Unit,
     onTimeTaskIncrease: (TimeTaskDetailsUi) -> Unit,
     onTimeTaskReduce: (TimeTaskDetailsUi) -> Unit,
+    onHomeViewModeChange: (HomeViewMode) -> Unit,
+    onTimelineTimeTaskUpdate: (Long, TimeRange) -> Unit,
+    onTimeTaskFabAdd: () -> Unit,
 ) {
     Column(modifier = modifier.fillMaxSize()) {
-        TimeTasksSection(
-            modifier = Modifier.weight(1f),
-            selectedDate = state.selectedDate,
-            dateStatus = state.schedule?.dateStatus,
-            timeTasks = state.schedule?.timeTasks ?: emptyList(),
-            timeTaskViewStatus = state.taskViewStatus,
-            onCreateSchedule = onCreateSchedule,
-            onTimeTaskEdit = onTimeTaskEdit,
-            onTaskDoneChange = onTaskDoneChange,
-            onTimeTaskAdd = onTimeTaskAdd,
-            onTimeTaskIncrease = onTimeTaskIncrease,
-            onTimeTaskReduce = onTimeTaskReduce,
+        HomeViewTabs(
+            selectedMode = state.homeViewMode,
+            onModeChange = onHomeViewModeChange,
         )
+        AnimatedContent(
+            modifier = Modifier.weight(1f),
+            targetState = state.homeViewMode to state.selectedDate?.time,
+            transitionSpec = {
+                val direction = when {
+                    targetState.first != initialState.first -> {
+                        if (targetState.first.ordinal > initialState.first.ordinal) 1 else -1
+                    }
+                    else -> if (
+                        (targetState.second ?: 0L) > (initialState.second ?: 0L)
+                    ) 1 else -1
+                }
+                (fadeIn() + slideInHorizontally { width -> width / 6 * direction }).togetherWith(
+                    fadeOut() + slideOutHorizontally { width -> -width / 6 * direction },
+                )
+            },
+            label = "HomeContent",
+        ) { (mode, _) ->
+            when (mode) {
+                HomeViewMode.AGENDA -> AgendaTab(
+                    modifier = Modifier.fillMaxSize(),
+                    state = state,
+                    onCreateSchedule = onCreateSchedule,
+                    onTimeTaskEdit = onTimeTaskEdit,
+                    onTaskDoneChange = onTaskDoneChange,
+                    onTimeTaskAdd = onTimeTaskAdd,
+                    onTimeTaskIncrease = onTimeTaskIncrease,
+                    onTimeTaskReduce = onTimeTaskReduce,
+                )
+                HomeViewMode.TIMELINE -> state.timelineSchedule?.let { timelineSchedule ->
+                    TimelineTab(
+                        modifier = Modifier.fillMaxSize(),
+                        schedule = timelineSchedule,
+                        currentTime = state.currentTime,
+                        onTimeTaskEdit = onTimelineTimeTaskEdit,
+                        onTaskDoneChange = onTimelineTaskDoneChange,
+                        onTimeTaskAdd = onTimeTaskAdd,
+                        onTimeTaskUpdate = onTimelineTimeTaskUpdate,
+                        onAddClick = onTimeTaskFabAdd,
+                    )
+                }
+            }
+        }
     }
 }
 
@@ -201,6 +262,7 @@ internal fun DateChooserSection(
     modifier: Modifier = Modifier,
     selectedDate: Date?,
     toggleState: ViewToggleStatus,
+    isToggleVisible: Boolean = true,
     onChangeDate: (Date) -> Unit,
     onChangeToggleStatus: (ViewToggleStatus) -> Unit,
 ) {
@@ -220,10 +282,16 @@ internal fun DateChooserSection(
                 onChangeDate = onChangeDate,
             )
             Spacer(modifier = Modifier.weight(1f))
-            ViewToggle(
-                status = toggleState,
-                onStatusChange = onChangeToggleStatus,
-            )
+            AnimatedVisibility(
+                visible = isToggleVisible,
+                enter = fadeIn() + scaleIn(),
+                exit = fadeOut(),
+            ) {
+                ViewToggle(
+                    status = toggleState,
+                    onStatusChange = onChangeToggleStatus,
+                )
+            }
         }
     }
 }

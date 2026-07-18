@@ -33,6 +33,10 @@ internal data class HomeIcons(
     val cancel: Int,
     val notes: Int,
     val offNotifications: Int,
+    val agenda: Int,
+    val timeline: Int,
+    val dragIndicator: Int,
+    val close: Int,
 )
 
 internal val baseHomeIcons = HomeIcons(
@@ -47,6 +51,10 @@ internal val baseHomeIcons = HomeIcons(
     cancel = R.drawable.ic_cancel,
     notes = R.drawable.ic_notes,
     offNotifications = R.drawable.ic_bell_off,
+    agenda = R.drawable.ic_agenda,
+    timeline = R.drawable.ic_timeline,
+    dragIndicator = R.drawable.ic_drag_indicator,
+    close = R.drawable.ic_close,
 )
 
 internal val LocalHomeIcons = staticCompositionLocalOf<HomeIcons> {

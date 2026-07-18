@@ -30,7 +30,7 @@ import ru.aleshin.core.data.models.settings.ThemeSettingsEntity
  * @author Stanislav Aleshin on 17.02.2023.
  */
 @Database(
-    version = 7,
+    version = 8,
     entities = [ThemeSettingsEntity::class, TasksSettingsEntity::class],
     exportSchema = true,
 )
@@ -165,6 +165,15 @@ abstract class SettingsDataBase : RoomDatabase() {
             }
         }
 
+        val MIGRATION_7_8 = object : Migration(7, 8) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL(
+                    "ALTER TABLE TasksSettings " +
+                        "ADD COLUMN home_view_mode TEXT NOT NULL DEFAULT 'AGENDA'",
+                )
+            }
+        }
+
         fun create(context: Context) = Room.databaseBuilder(
             context = context,
             klass = SettingsDataBase::class.java,
@@ -176,6 +185,7 @@ abstract class SettingsDataBase : RoomDatabase() {
             .addMigrations(MIGRATION_4_5)
             .addMigrations(MIGRATION_5_6)
             .addMigrations(MIGRATION_6_7)
+            .addMigrations(MIGRATION_7_8)
             .build()
     }
 }

@@ -17,6 +17,7 @@ package ru.aleshin.core.data.mappers.settings
 
 import ru.aleshin.core.data.models.settings.TasksSettingsEntity
 import ru.aleshin.core.domain.entities.settings.CalendarButtonBehavior
+import ru.aleshin.core.domain.entities.settings.HomeViewMode
 import ru.aleshin.core.domain.entities.settings.TasksSettings
 import ru.aleshin.core.domain.entities.settings.ViewToggleStatus
 import ru.aleshin.core.utils.extensions.minutesToMillis
@@ -30,6 +31,7 @@ import ru.aleshin.core.utils.functional.TimePeriod
 fun TasksSettings.mapToData() = TasksSettingsEntity(
     id = 0,
     taskViewStatus = taskViewStatus.toString(),
+    homeViewMode = homeViewMode.toString(),
     taskAnalyticsRange = taskAnalyticsRange.toString(),
     calendarButtonBehavior = calendarButtonBehavior.toString(),
     secureMode = secureMode,
@@ -38,6 +40,7 @@ fun TasksSettings.mapToData() = TasksSettingsEntity(
 
 fun TasksSettingsEntity.mapToDomain() = TasksSettings(
     taskViewStatus = ViewToggleStatus.valueOf(taskViewStatus),
+    homeViewMode = HomeViewMode.valueOf(homeViewMode),
     taskAnalyticsRange = TimePeriod.valueOf(taskAnalyticsRange),
     calendarButtonBehavior = CalendarButtonBehavior.valueOf(calendarButtonBehavior),
     secureMode = secureMode,

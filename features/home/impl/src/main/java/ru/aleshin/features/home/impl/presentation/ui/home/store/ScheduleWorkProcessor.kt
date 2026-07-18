@@ -18,10 +18,12 @@ package ru.aleshin.features.home.impl.presentation.ui.home.store
 import kotlinx.coroutines.flow.flow
 import ru.aleshin.core.domain.common.TimeTaskProgressManager
 import ru.aleshin.core.domain.entities.settings.ViewToggleStatus
+import ru.aleshin.core.domain.entities.settings.HomeViewMode
 import ru.aleshin.core.domain.entities.tasks.TimeTask
 import ru.aleshin.core.presentation.mappers.mapToDomain
 import ru.aleshin.core.presentation.mappers.mapToUi
 import ru.aleshin.core.presentation.models.tasks.TimeTaskDetailsUi
+import ru.aleshin.core.presentation.models.tasks.TimeTaskUi
 import ru.aleshin.core.presentation.notifications.TimeTaskAlarmManager
 import ru.aleshin.core.utils.architecture.store.work.ActionResult
 import ru.aleshin.core.utils.architecture.store.work.EffectResult
@@ -35,6 +37,8 @@ import ru.aleshin.core.utils.managers.DateManager
 import ru.aleshin.features.home.impl.domain.interactors.ScheduleInteractor
 import ru.aleshin.features.home.impl.domain.interactors.SettingsInteractor
 import ru.aleshin.features.home.impl.domain.interactors.TimeShiftInteractor
+import ru.aleshin.features.home.impl.domain.interactors.TimelineInteractor
+import ru.aleshin.features.home.impl.presentation.mapppers.mapToUi
 import ru.aleshin.features.home.impl.presentation.ui.home.contract.HomeAction
 import ru.aleshin.features.home.impl.presentation.ui.home.contract.HomeEffect
 import ru.aleshin.features.home.impl.presentation.ui.home.contract.HomeOutput
@@ -51,6 +55,7 @@ internal interface ScheduleWorkProcessor :
         private val scheduleInteractor: ScheduleInteractor,
         private val timeShiftInteractor: TimeShiftInteractor,
         private val settingsInteractor: SettingsInteractor,
+        private val timelineInteractor: TimelineInteractor,
         private val statusController: TimeTaskProgressManager,
         private val dateManager: DateManager,
         private val timeTaskAlarmManager: TimeTaskAlarmManager,
@@ -61,9 +66,13 @@ internal interface ScheduleWorkProcessor :
             is ScheduleWorkCommand.LoadScheduleByDate -> loadScheduleByDateWork(command.date)
             is ScheduleWorkCommand.CreateSchedule -> createScheduleWork(command.date)
             is ScheduleWorkCommand.ChangeTaskDoneState -> changeTaskDoneStateWork(command.timeTask)
+            is ScheduleWorkCommand.ChangeTimelineTaskDoneState -> {
+                changeTimelineTaskDoneStateWork(command.timeTask)
+            }
             is ScheduleWorkCommand.TimeTaskShiftDown -> shiftDownTimeWork(command.timeTask)
             is ScheduleWorkCommand.TimeTaskShiftUp -> shiftUpTimeWork(command.timeTask)
             is ScheduleWorkCommand.ChangeTaskViewStatus -> changeTaskViewStatus(command.status)
+            is ScheduleWorkCommand.ChangeHomeViewMode -> changeHomeViewMode(command.mode)
         }
 
         private fun setupSettings() = flow {
@@ -79,7 +88,19 @@ internal interface ScheduleWorkProcessor :
             scheduleInteractor.fetchScheduleDetailsByDate(scheduleDate.time).collectAndHandle(
                 onLeftAction = { emit(EffectResult(HomeEffect.ShowError(it))) },
                 onRightAction = { schedule ->
-                    emit(ActionResult(HomeAction.UpdateSchedule(scheduleDate, schedule?.mapToUi())))
+                    val timelineSchedule = timelineInteractor.fetchTimelineSchedule(
+                        date = scheduleDate,
+                        schedule = schedule,
+                    )
+                    emit(
+                        ActionResult(
+                            HomeAction.UpdateSchedule(
+                                date = scheduleDate,
+                                schedule = schedule?.mapToUi(),
+                                timelineSchedule = timelineSchedule.mapToUi(),
+                            ),
+                        ),
+                    )
                 }
             )
         }
@@ -91,6 +112,13 @@ internal interface ScheduleWorkProcessor :
         }
 
         private fun changeTaskDoneStateWork(timeTask: TimeTaskDetailsUi) = flow {
+            val newTimeTask = timeTask.copy(isCompleted = !timeTask.isCompleted)
+            scheduleInteractor.addOrUpdateTimeTask(newTimeTask.mapToDomain()).handle(
+                onLeftAction = { emit(EffectResult(HomeEffect.ShowError(it))) },
+            )
+        }
+
+        private fun changeTimelineTaskDoneStateWork(timeTask: TimeTaskUi) = flow {
             val newTimeTask = timeTask.copy(isCompleted = !timeTask.isCompleted)
             scheduleInteractor.addOrUpdateTimeTask(newTimeTask.mapToDomain()).handle(
                 onLeftAction = { emit(EffectResult(HomeEffect.ShowError(it))) },
@@ -123,6 +151,16 @@ internal interface ScheduleWorkProcessor :
             )
         }
 
+        private fun changeHomeViewMode(mode: HomeViewMode) = flow {
+            val oldSettings = settingsInteractor.fetchTasksSettings().firstRightOrNull {
+                emit(EffectResult(HomeEffect.ShowError(it)))
+            }
+            val newSettings = oldSettings?.copy(homeViewMode = mode) ?: return@flow
+            settingsInteractor.updateTasksSettings(newSettings).handle(
+                onLeftAction = { emit(EffectResult(HomeEffect.ShowError(it))) },
+            )
+        }
+
         private fun notifyUpdate(timeTask: TimeTask) {
             if (timeTask.isEnableNotification) {
                 timeTaskAlarmManager.deleteNotifyAlarm(timeTask)
@@ -137,7 +175,9 @@ internal sealed class ScheduleWorkCommand : WorkCommand {
     data class LoadScheduleByDate(val date: Date?) : ScheduleWorkCommand()
     data class CreateSchedule(val date: Date) : ScheduleWorkCommand()
     data class ChangeTaskDoneState(val timeTask: TimeTaskDetailsUi) : ScheduleWorkCommand()
+    data class ChangeTimelineTaskDoneState(val timeTask: TimeTaskUi) : ScheduleWorkCommand()
     data class TimeTaskShiftUp(val timeTask: TimeTaskDetailsUi) : ScheduleWorkCommand()
     data class TimeTaskShiftDown(val timeTask: TimeTaskDetailsUi) : ScheduleWorkCommand()
     data class ChangeTaskViewStatus(val status: ViewToggleStatus) : ScheduleWorkCommand()
+    data class ChangeHomeViewMode(val mode: HomeViewMode) : ScheduleWorkCommand()
 }

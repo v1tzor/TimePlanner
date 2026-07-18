@@ -1,0 +1,111 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 8,
+    "identityHash": "87c88e063b199fe4429e103e0c65d9c8",
+    "entities": [
+      {
+        "tableName": "ThemeSettings",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `language` TEXT NOT NULL, `theme_colors` TEXT NOT NULL, `colors_type` TEXT NOT NULL, `dynamic_color` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "language",
+            "columnName": "language",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "themeColors",
+            "columnName": "theme_colors",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "colorsType",
+            "columnName": "colors_type",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isDynamicColorEnable",
+            "columnName": "dynamic_color",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        }
+      },
+      {
+        "tableName": "TasksSettings",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `task_view_status` TEXT NOT NULL, `home_view_mode` TEXT NOT NULL DEFAULT 'AGENDA', `task_analytics_range` TEXT NOT NULL, `calendar_button_behavior` TEXT NOT NULL, `secure_mode` INTEGER NOT NULL, `duration_presets` TEXT NOT NULL DEFAULT '10,15,30,45,60,120', PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "taskViewStatus",
+            "columnName": "task_view_status",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "homeViewMode",
+            "columnName": "home_view_mode",
+            "affinity": "TEXT",
+            "notNull": true,
+            "defaultValue": "'AGENDA'"
+          },
+          {
+            "fieldPath": "taskAnalyticsRange",
+            "columnName": "task_analytics_range",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "calendarButtonBehavior",
+            "columnName": "calendar_button_behavior",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "secureMode",
+            "columnName": "secure_mode",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "durationPresets",
+            "columnName": "duration_presets",
+            "affinity": "TEXT",
+            "notNull": true,
+            "defaultValue": "'10,15,30,45,60,120'"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        }
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '87c88e063b199fe4429e103e0c65d9c8')"
+    ]
+  }
+}
