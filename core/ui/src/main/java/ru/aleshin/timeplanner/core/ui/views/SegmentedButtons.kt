@@ -176,7 +176,7 @@ object SegmentedButtonDefaults {
     fun outlinedButtonBorder(): BorderStroke {
         return BorderStroke(
             width = 1.dp,
-            color = MaterialTheme.colorScheme.outlineVariant
+            color = MaterialTheme.colorScheme.outline
         )
     }
 

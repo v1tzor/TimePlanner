@@ -26,6 +26,12 @@ interface TasksSettingsLocalDataSource {
 
     fun fetchSettings(): Flow<TasksSettingsEntity>
     suspend fun updateSettings(settings: TasksSettingsEntity)
+    suspend fun updateAnalyticsRange(
+        period: String,
+        anchorDate: Long?,
+        customDateFrom: Long?,
+        customDateTo: Long?,
+    )
 
     class Base @Inject constructor(
         private val settingsDao: TasksSettingsDao,
@@ -37,6 +43,15 @@ interface TasksSettingsLocalDataSource {
 
         override suspend fun updateSettings(settings: TasksSettingsEntity) {
             settingsDao.updateSettings(settings)
+        }
+
+        override suspend fun updateAnalyticsRange(
+            period: String,
+            anchorDate: Long?,
+            customDateFrom: Long?,
+            customDateTo: Long?,
+        ) {
+            settingsDao.updateAnalyticsRange(period, anchorDate, customDateFrom, customDateTo)
         }
     }
 }

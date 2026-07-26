@@ -69,15 +69,16 @@ internal class TimeTaskInteractorTest {
     }
 
     @Test
-    fun updateLinkedTaskDetachesItFromTemplate() = runBlocking {
+    fun updateLinkedTaskNotePreservesTemplateLink() = runBlocking {
         val task = task(key = 1L, linkedTemplateId = 12L)
         scheduleRepository.schedules.add(currentDate.time)
         timeTaskRepository.tasks.add(task)
 
-        val result = interactor.updateTimeTask(task.copy(timeRange = TimeRange(currentDate.at(11, 0), currentDate.at(12, 0))))
+        val result = interactor.updateTimeTask(task.copy(note = "Updated note"))
 
         assertTrue(result is Either.Right)
-        assertNull(timeTaskRepository.tasks.first().linkedTemplateId)
+        assertEquals(12L, timeTaskRepository.tasks.first().linkedTemplateId)
+        assertEquals("Updated note", timeTaskRepository.tasks.first().note)
     }
 
     @Test
@@ -94,10 +95,21 @@ internal class TimeTaskInteractorTest {
     }
 
     @Test
-    fun addTimeTaskStoresTaskAsDetached() = runBlocking {
+    fun addTimeTaskFromTemplatePreservesTemplateLink() = runBlocking {
         scheduleRepository.schedules.add(currentDate.time)
 
         val result = interactor.addTimeTask(task(key = 0L, linkedTemplateId = 12L))
+
+        assertTrue(result is Either.Right)
+        assertEquals(1, timeTaskRepository.tasks.size)
+        assertEquals(12L, timeTaskRepository.tasks.first().linkedTemplateId)
+    }
+
+    @Test
+    fun addDetachedTimeTaskKeepsNullTemplateLink() = runBlocking {
+        scheduleRepository.schedules.add(currentDate.time)
+
+        val result = interactor.addTimeTask(task(key = 0L, linkedTemplateId = null))
 
         assertTrue(result is Either.Right)
         assertEquals(1, timeTaskRepository.tasks.size)
@@ -159,6 +171,10 @@ private class FakeTimeTaskRepository : TimeTaskRepository {
 
     override suspend fun fetchAllTimeTasksByDate(date: Date): Flow<List<TimeTask>> {
         return flowOf(tasks.filter { it.date.startThisDay() == date.startThisDay() })
+    }
+
+    override suspend fun fetchTimeTasksByScheduleDateRange(timeRange: TimeRange): Flow<List<TimeTask>> {
+        return flowOf(tasks.filter { it.date.time in timeRange.from.time..timeRange.to.time })
     }
 
     override suspend fun fetchTimeTaskById(id: Long): TimeTask? {

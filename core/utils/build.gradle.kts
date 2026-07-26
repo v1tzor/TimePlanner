@@ -75,8 +75,6 @@ dependencies {
     implementation(libs.decompose.compose.experimental)
 
     implementation(libs.bundles.compose)
-    implementation(libs.charts.mahu)
-    implementation(libs.charts.himanshoe)
 
     api(libs.dagger.core)
     ksp(libs.dagger.ksp)

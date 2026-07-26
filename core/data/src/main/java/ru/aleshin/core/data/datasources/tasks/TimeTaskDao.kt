@@ -43,6 +43,16 @@ interface TimeTaskDao {
     fun fetchAllTimeTasksDetailsByDate(date: Long): Flow<List<TimeTaskDetailsEntity>>
 
     @Transaction
+    @Query(
+        """
+        SELECT * FROM timeTasks
+        WHERE daily_schedule_date >= :from AND daily_schedule_date <= :to
+        ORDER BY daily_schedule_date, start_time, key
+        """
+    )
+    fun fetchTimeTasksByScheduleDateRange(from: Long, to: Long): Flow<List<TimeTaskDetailsEntity>>
+
+    @Transaction
     @Query("SELECT * FROM timeTasks WHERE key = :id")
     suspend fun fetchTimeTaskDetailsById(id: Long): TimeTaskDetailsEntity?
 

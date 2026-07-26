@@ -17,6 +17,9 @@ package ru.aleshin.core.domain.repository
 
 import kotlinx.coroutines.flow.Flow
 import ru.aleshin.core.domain.entities.settings.TasksSettings
+import ru.aleshin.core.utils.functional.TimePeriod
+import ru.aleshin.core.utils.functional.TimeRange
+import java.util.Date
 
 /**
  * @author Stanislav Aleshin on 15.09.2023.
@@ -24,4 +27,5 @@ import ru.aleshin.core.domain.entities.settings.TasksSettings
 interface TasksSettingsRepository {
     fun fetchSettings(): Flow<TasksSettings>
     suspend fun updateSettings(settings: TasksSettings)
+    suspend fun updateAnalyticsRange(period: TimePeriod, anchorDate: Date?, customRange: TimeRange?)
 }

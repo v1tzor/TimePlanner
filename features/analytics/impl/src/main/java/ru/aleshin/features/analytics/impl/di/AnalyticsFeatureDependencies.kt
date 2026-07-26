@@ -16,8 +16,9 @@
 package ru.aleshin.features.analytics.impl.di
 
 import ru.aleshin.core.domain.repository.MainCategoryRepository
-import ru.aleshin.core.domain.repository.ScheduleRepository
 import ru.aleshin.core.domain.repository.TasksSettingsRepository
+import ru.aleshin.core.domain.repository.ThemeSettingsRepository
+import ru.aleshin.core.domain.repository.TimeTaskRepository
 import ru.aleshin.core.utils.inject.BaseFeatureDependencies
 import ru.aleshin.core.utils.managers.CoroutineManager
 import ru.aleshin.core.utils.managers.DateManager
@@ -26,8 +27,9 @@ import ru.aleshin.core.utils.managers.DateManager
  * @author Stanislav Aleshin on 30.03.2023.
  */
 public interface AnalyticsFeatureDependencies : BaseFeatureDependencies {
-    public val scheduleRepository: ScheduleRepository
     public val tasksSettingsRepository: TasksSettingsRepository
+    public val themeSettingsRepository: ThemeSettingsRepository
+    public val timeTaskRepository: TimeTaskRepository
     public val mainCategoryRepository: MainCategoryRepository
     public val coroutineManager: CoroutineManager
     public val dateManager: DateManager

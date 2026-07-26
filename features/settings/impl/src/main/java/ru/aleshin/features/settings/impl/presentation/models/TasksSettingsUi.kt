@@ -18,8 +18,12 @@ package ru.aleshin.features.settings.impl.presentation.models
 import androidx.compose.runtime.Immutable
 import kotlinx.serialization.Serializable
 import ru.aleshin.core.domain.entities.settings.CalendarButtonBehavior
+import ru.aleshin.core.domain.entities.settings.HomeViewMode
 import ru.aleshin.core.domain.entities.settings.ViewToggleStatus
+import ru.aleshin.core.utils.functional.DateSerializer
 import ru.aleshin.core.utils.functional.TimePeriod
+import ru.aleshin.core.utils.functional.TimeRange
+import java.util.Date
 
 /**
  * @author Stanislav Aleshin on 15.09.2023.
@@ -28,7 +32,11 @@ import ru.aleshin.core.utils.functional.TimePeriod
 @Serializable
 internal data class TasksSettingsUi(
     val taskViewStatus: ViewToggleStatus = ViewToggleStatus.COMPACT,
+    val homeViewMode: HomeViewMode = HomeViewMode.AGENDA,
     val taskAnalyticsRange: TimePeriod = TimePeriod.WEEK,
+    @Serializable(DateSerializer::class)
+    val taskAnalyticsAnchorDate: Date? = null,
+    val customAnalyticsDateRange: TimeRange? = null,
     val calendarButtonBehavior: CalendarButtonBehavior = CalendarButtonBehavior.SET_CURRENT_DATE,
     val secureMode: Boolean = false,
     val durationPresets: List<Long> = emptyList(),

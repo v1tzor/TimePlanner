@@ -32,6 +32,10 @@ android {
         testInstrumentationRunner = libs.versions.testInstrumentRunner.get()
     }
 
+    testOptions {
+        targetSdk = libs.versions.targetSdkVersion.get().toIntOrNull()
+    }
+
     buildTypes {
         getByName("release") {
             isMinifyEnabled = false
@@ -70,17 +74,16 @@ kotlin {
 dependencies {
 
     implementation(project(":core:utils"))
-    implementation(project(":core:data"))
     implementation(project(":core:domain"))
     implementation(project(":core:presentation"))
 
     implementation(project(":features:analytics:api"))
 
-    implementation(libs.charts.mahu)
     implementation(libs.charts.himanshoe)
     ksp(libs.dagger.ksp)
 
     testImplementation(libs.jUnit)
+    testImplementation(libs.coroutinesTest)
     androidTestImplementation(libs.jUnitExt)
     androidTestImplementation(libs.espresso)
     androidTestImplementation(libs.composeJUnit)

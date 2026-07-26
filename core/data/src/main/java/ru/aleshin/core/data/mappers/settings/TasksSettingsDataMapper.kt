@@ -24,6 +24,8 @@ import ru.aleshin.core.utils.extensions.minutesToMillis
 import ru.aleshin.core.utils.extensions.toMinutes
 import ru.aleshin.core.utils.functional.Constants
 import ru.aleshin.core.utils.functional.TimePeriod
+import ru.aleshin.core.utils.functional.TimeRange
+import java.util.Date
 
 /**
  * @author Stanislav Aleshin on 15.09.2023.
@@ -33,6 +35,9 @@ fun TasksSettings.mapToData() = TasksSettingsEntity(
     taskViewStatus = taskViewStatus.toString(),
     homeViewMode = homeViewMode.toString(),
     taskAnalyticsRange = taskAnalyticsRange.toString(),
+    taskAnalyticsAnchorDate = taskAnalyticsAnchorDate?.time,
+    customAnalyticsDateFrom = customAnalyticsDateRange?.from?.time,
+    customAnalyticsDateTo = customAnalyticsDateRange?.to?.time,
     calendarButtonBehavior = calendarButtonBehavior.toString(),
     secureMode = secureMode,
     durationPresets = durationPresets.mapToData(),
@@ -41,11 +46,19 @@ fun TasksSettings.mapToData() = TasksSettingsEntity(
 fun TasksSettingsEntity.mapToDomain() = TasksSettings(
     taskViewStatus = ViewToggleStatus.valueOf(taskViewStatus),
     homeViewMode = HomeViewMode.valueOf(homeViewMode),
-    taskAnalyticsRange = TimePeriod.valueOf(taskAnalyticsRange),
+    taskAnalyticsRange = TimePeriod.entries.find { it.name == taskAnalyticsRange } ?: TimePeriod.WEEK,
+    taskAnalyticsAnchorDate = taskAnalyticsAnchorDate?.let(::Date),
+    customAnalyticsDateRange = mapCustomAnalyticsDateRange(),
     calendarButtonBehavior = CalendarButtonBehavior.valueOf(calendarButtonBehavior),
     secureMode = secureMode,
     durationPresets = durationPresets.mapToDomain(),
 )
+
+private fun TasksSettingsEntity.mapCustomAnalyticsDateRange(): TimeRange? {
+    val dateFrom = customAnalyticsDateFrom ?: return null
+    val dateTo = customAnalyticsDateTo ?: return null
+    return TimeRange(Date(dateFrom), Date(dateTo))
+}
 
 private fun List<Long>.mapToData(): String {
     return map { it.toMinutes() }.distinct().sorted().joinToString(separator = ",")

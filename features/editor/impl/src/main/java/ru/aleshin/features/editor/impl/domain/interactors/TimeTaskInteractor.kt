@@ -65,7 +65,7 @@ internal interface TimeTaskInteractor {
             val key = generateUniqueKey()
 
             checkIsOverlay(allTimeTask.map { it.timeRange }, timeTask.timeRange) {
-                timeTaskRepository.addOrUpdateTimeTasks(listOf(timeTask.copy(key = key, linkedTemplateId = null)))
+                timeTaskRepository.addOrUpdateTimeTasks(listOf(timeTask.copy(key = key)))
             }
             return@wrap key
         }

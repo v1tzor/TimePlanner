@@ -86,6 +86,7 @@ internal fun SubCategoryChooser(
     onAddSubCategory: (String) -> Unit,
 ) {
     var openSubCategorySelectorSheet by rememberSaveable { mutableStateOf(false) }
+
     Surface(
         enabled = enabled,
         onClick = { openSubCategorySelectorSheet = true },
@@ -160,7 +161,7 @@ internal fun SubCategorySelectorBottomSheet(
     onEditSubCategory: (SubCategoryUi) -> Unit,
     onAddCategory: (String) -> Unit,
 ) {
-    var selectedSubCategory by rememberSaveable { mutableStateOf(initCategory) }
+    var selectedSubCategory by remember { mutableStateOf(initCategory) }
     var searchQuery by rememberSaveable { mutableStateOf<String?>(null) }
     var isEdited by remember { mutableStateOf(false) }
     var editableSubCategory by remember { mutableStateOf("") }

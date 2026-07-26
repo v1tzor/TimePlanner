@@ -22,6 +22,7 @@ import ru.aleshin.core.data.mappers.schedules.mapToData
 import ru.aleshin.core.data.mappers.schedules.mapToDomain
 import ru.aleshin.core.domain.entities.tasks.TimeTask
 import ru.aleshin.core.domain.repository.TimeTaskRepository
+import ru.aleshin.core.utils.functional.TimeRange
 import java.util.Date
 import javax.inject.Inject
 
@@ -42,6 +43,12 @@ class TimeTaskRepositoryImpl @Inject constructor(
 
     override suspend fun fetchAllTimeTasksByDate(date: Date): Flow<List<TimeTask>> {
         return localDataSource.fetchAllTimeTasksDetailsByDate(date).map { timeTasks ->
+            timeTasks.map { it.mapToDomain() }
+        }
+    }
+
+    override suspend fun fetchTimeTasksByScheduleDateRange(timeRange: TimeRange): Flow<List<TimeTask>> {
+        return localDataSource.fetchTimeTasksByScheduleDateRange(timeRange).map { timeTasks ->
             timeTasks.map { it.mapToDomain() }
         }
     }

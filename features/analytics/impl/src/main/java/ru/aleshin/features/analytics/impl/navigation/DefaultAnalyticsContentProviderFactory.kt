@@ -22,6 +22,7 @@ import ru.aleshin.features.analytics.api.AnalyticsConfig
 import ru.aleshin.features.analytics.api.AnalyticsContentProviderFactory
 import ru.aleshin.features.analytics.api.AnalyticsOutput
 import ru.aleshin.features.analytics.impl.presentation.ui.analytics.store.AnalyticsComposeStore
+import ru.aleshin.features.analytics.impl.presentation.ui.category.store.CategoryComposeStore
 import ru.aleshin.features.analytics.impl.presentation.ui.root.AnalyticsContentProvider
 import ru.aleshin.features.analytics.impl.presentation.ui.root.InternalAnalyticsFeatureComponent
 import javax.inject.Inject
@@ -31,6 +32,7 @@ import javax.inject.Inject
  */
 internal class DefaultAnalyticsContentProviderFactory @Inject constructor(
     private val analyticsStoreFactory: AnalyticsComposeStore.Factory,
+    private val categoryStoreFactory: CategoryComposeStore.Factory,
 ) : AnalyticsContentProviderFactory {
 
     override fun createProvider(
@@ -43,6 +45,7 @@ internal class DefaultAnalyticsContentProviderFactory @Inject constructor(
             startConfig = startConfig,
             outputConsumer = outputConsumer,
             analyticsStoreFactory = analyticsStoreFactory,
+            categoryStoreFactory = categoryStoreFactory,
         )
 
         return AnalyticsContentProvider(component = component)

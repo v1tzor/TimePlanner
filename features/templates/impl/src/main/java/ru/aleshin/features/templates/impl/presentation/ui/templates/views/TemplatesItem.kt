@@ -236,7 +236,7 @@ private fun TemplateItemHeader(
             ) {
                 Text(
                     modifier = Modifier.padding(horizontal = 7.dp, vertical = 3.dp),
-                    text = TemplatesThemeRes.patternStrings.pausedTitle,
+                    text = TemplatesThemeRes.strings.pausedTitle,
                     color = MaterialTheme.colorScheme.onErrorContainer,
                     style = MaterialTheme.typography.labelSmall,
                 )
@@ -267,7 +267,7 @@ private fun TemplateActionsMenu(
 ) {
     var isExpanded by rememberSaveable { mutableStateOf(false) }
     var isRepeatMenuExpanded by rememberSaveable { mutableStateOf(false) }
-    val strings = TemplatesThemeRes.patternStrings
+    val strings = TemplatesThemeRes.strings
 
     Box(modifier = modifier) {
         IconButton(
@@ -391,7 +391,7 @@ private fun RepeatLabels(
                         tint = MaterialTheme.colorScheme.primary,
                     )
                     Text(
-                        text = TemplatesThemeRes.patternStrings.addRepeatTitle,
+                        text = TemplatesThemeRes.strings.addRepeatTitle,
                         color = MaterialTheme.colorScheme.onPrimaryContainer,
                         maxLines = 1,
                         style = MaterialTheme.typography.labelSmall,

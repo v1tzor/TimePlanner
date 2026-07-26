@@ -15,86 +15,141 @@
  */
 package ru.aleshin.features.analytics.impl.presentation.ui.analytics.store
 
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.onStart
-import ru.aleshin.core.utils.architecture.component.EmptyOutput
 import ru.aleshin.core.utils.architecture.store.work.ActionResult
 import ru.aleshin.core.utils.architecture.store.work.EffectResult
 import ru.aleshin.core.utils.architecture.store.work.FlowWorkProcessor
 import ru.aleshin.core.utils.architecture.store.work.WorkCommand
 import ru.aleshin.core.utils.architecture.store.work.WorkResult
-import ru.aleshin.core.utils.functional.Constants
 import ru.aleshin.core.utils.functional.TimePeriod
 import ru.aleshin.core.utils.functional.collectAndHandle
 import ru.aleshin.core.utils.functional.handle
-import ru.aleshin.core.utils.functional.rightOrNull
-import ru.aleshin.features.analytics.impl.domain.interactors.AnalyticsInteractor
-import ru.aleshin.features.analytics.impl.domain.interactors.SettingsInteractor
+import ru.aleshin.core.utils.functional.handleAndGet
+import ru.aleshin.features.analytics.impl.domain.common.AnalyticsRangeCalculator
+import ru.aleshin.features.analytics.impl.domain.entities.AnalyticsCategorySort
+import ru.aleshin.features.analytics.impl.domain.entities.AnalyticsCivilDateRange
+import ru.aleshin.features.analytics.impl.domain.interactors.AnalyticsOverviewInteractor
+import ru.aleshin.features.analytics.impl.domain.interactors.AnalyticsRangeInteractor
 import ru.aleshin.features.analytics.impl.presentation.mappers.mapToUi
+import ru.aleshin.features.analytics.impl.presentation.models.analytics.AnalyticsRangeUi
 import ru.aleshin.features.analytics.impl.presentation.ui.analytics.contract.AnalyticsAction
 import ru.aleshin.features.analytics.impl.presentation.ui.analytics.contract.AnalyticsEffect
+import ru.aleshin.features.analytics.impl.presentation.ui.analytics.contract.AnalyticsOutput
 import javax.inject.Inject
 
 /**
- * @author Stanislav Aleshin on 22.04.2023.
+ * @author Stanislav Aleshin on 21.07.2026.
  */
 internal interface AnalyticsWorkProcessor :
-    FlowWorkProcessor<AnalyticsWorkCommand, AnalyticsAction, AnalyticsEffect, EmptyOutput> {
+    FlowWorkProcessor<AnalyticsWorkCommand, AnalyticsAction, AnalyticsEffect, AnalyticsOutput> {
 
     class Base @Inject constructor(
-        private val analyticsInteractor: AnalyticsInteractor,
-        private val settingsInteractor: SettingsInteractor,
+        private val rangeInteractor: AnalyticsRangeInteractor,
+        private val overviewInteractor: AnalyticsOverviewInteractor,
+        private val rangeCalculator: AnalyticsRangeCalculator,
     ) : AnalyticsWorkProcessor {
 
         override suspend fun work(command: AnalyticsWorkCommand) = when (command) {
-            is AnalyticsWorkCommand.LoadSettings -> loadSettingWork()
-            is AnalyticsWorkCommand.UpdateTimePeriod -> updateTimePeriodWork(command.period)
-            is AnalyticsWorkCommand.LoadAnalytics -> loadAnalyticsWork(command.period)
-        }
-
-        private fun loadSettingWork() = flow {
-            settingsInteractor.fetchTasksSettings().handle(
-                onLeftAction = {
-                    emit(EffectResult(AnalyticsEffect.ShowFailure(it)))
-                },
-                onRightAction = { settings ->
-                    emit(ActionResult(AnalyticsAction.UpdateTimePeriod(settings.taskAnalyticsRange)))
-                },
+            is AnalyticsWorkCommand.ObserveAnalytics -> observeAnalyticsWork(
+                categorySort = command.categorySort,
+                currentRange = command.currentRange,
+                hasOverview = command.hasOverview,
+            )
+            is AnalyticsWorkCommand.SelectPeriod -> selectPeriodWork(command.period)
+            is AnalyticsWorkCommand.ShiftRange -> shiftRangeWork(command.direction)
+            is AnalyticsWorkCommand.MoveToCurrent -> moveToCurrentWork()
+            is AnalyticsWorkCommand.ConfirmCustomRange -> confirmCustomRangeWork(
+                fromPickerToken = command.fromPickerToken,
+                toPickerToken = command.toPickerToken,
             )
         }
 
-        private fun updateTimePeriodWork(period: TimePeriod) = flow {
-            val oldSettings = settingsInteractor.fetchTasksSettings().rightOrNull {
-                emit(EffectResult(AnalyticsEffect.ShowFailure(it)))
+        @OptIn(ExperimentalCoroutinesApi::class)
+        private suspend fun observeAnalyticsWork(
+            categorySort: AnalyticsCategorySort,
+            currentRange: AnalyticsRangeUi?,
+            hasOverview: Boolean,
+        ): Flow<AnalyticsWorkResult> {
+            var displayedRange = currentRange
+            var isOverviewAvailable = hasOverview
+            return rangeInteractor.fetchRangeSelection().flatMapLatest { result ->
+                result.handleAndGet(
+                    onLeftAction = { failure ->
+                        flow {
+                            emit(ActionResult(AnalyticsAction.UpdateLoading(isLoading = false, isError = !isOverviewAvailable)))
+                            emit(EffectResult(AnalyticsEffect.ShowFailure(failure)))
+                        }
+                    },
+                    onRightAction = { selection ->
+                        val range = selection.mapToUi()
+                        val shouldSetupRange = displayedRange != range || !isOverviewAvailable
+                        displayedRange = range
+                        flow {
+                            if (shouldSetupRange) {
+                                isOverviewAvailable = false
+                                emit(ActionResult(AnalyticsAction.SetupRange(range = range)))
+                            }
+                            overviewInteractor.fetchOverview(selection = selection, categorySort = categorySort).collectAndHandle(
+                                onLeftAction = { failure ->
+                                    emit(ActionResult(AnalyticsAction.UpdateLoading(isLoading = false, isError = !isOverviewAvailable)))
+                                    emit(EffectResult(AnalyticsEffect.ShowFailure(failure)))
+                                },
+                                onRightAction = { overview ->
+                                    isOverviewAvailable = true
+                                    val overview = overview.mapToUi()
+                                    emit(ActionResult(AnalyticsAction.UpdateAnalytics(categorySort = categorySort, overview = overview)))
+                                },
+                            )
+                        }
+                    },
+                )
             }
-            val newSettings = oldSettings?.copy(taskAnalyticsRange = period) ?: return@flow
-            settingsInteractor.updateTasksSettings(newSettings).handle(
+        }
+
+        private fun selectPeriodWork(period: TimePeriod) = flow {
+            rangeInteractor.selectPeriod(period).handle(
                 onLeftAction = { emit(EffectResult(AnalyticsEffect.ShowFailure(it))) },
-                onRightAction = { emit(ActionResult(AnalyticsAction.UpdateTimePeriod(period))) },
             )
         }
 
-        private fun loadAnalyticsWork(period: TimePeriod) = flow<AnalyticsWorkResult> {
-            delay(Constants.Delay.LOAD_ANIMATION)
-            analyticsInteractor.fetchAnalytics(period).collectAndHandle(
-                onLeftAction = {
-                    emit(EffectResult(AnalyticsEffect.ShowFailure(it)))
-                },
-                onRightAction = { analytics ->
-                    emit(ActionResult(AnalyticsAction.UpdateAnalytics(analytics.mapToUi())))
-                },
+        private fun shiftRangeWork(direction: Int) = flow {
+            rangeInteractor.shiftRange(direction).handle(
+                onLeftAction = { emit(EffectResult(AnalyticsEffect.ShowFailure(it))) }
             )
-        }.onStart {
-            emit(ActionResult(AnalyticsAction.UpdateLoading(true)))
+        }
+
+        private fun moveToCurrentWork() = flow {
+            rangeInteractor.moveToCurrent().handle(
+                onLeftAction = { emit(EffectResult(AnalyticsEffect.ShowFailure(it))) }
+            )
+        }
+
+        private fun confirmCustomRangeWork(fromPickerToken: Long, toPickerToken: Long) = flow {
+            val range = AnalyticsCivilDateRange(
+                from = rangeCalculator.pickerTokenToCivilToken(fromPickerToken),
+                to = rangeCalculator.pickerTokenToCivilToken(toPickerToken),
+            )
+
+            rangeInteractor.confirmCustomRange(range).handle(
+                onLeftAction = { emit(EffectResult(AnalyticsEffect.ShowFailure(it))) }
+            )
         }
     }
 }
 
 internal sealed class AnalyticsWorkCommand : WorkCommand {
-    data object LoadSettings : AnalyticsWorkCommand()
-    data class UpdateTimePeriod(val period: TimePeriod) : AnalyticsWorkCommand()
-    data class LoadAnalytics(val period: TimePeriod) : AnalyticsWorkCommand()
+    data class ObserveAnalytics(
+        val categorySort: AnalyticsCategorySort,
+        val currentRange: AnalyticsRangeUi?,
+        val hasOverview: Boolean,
+    ) : AnalyticsWorkCommand()
+    data class SelectPeriod(val period: TimePeriod) : AnalyticsWorkCommand()
+    data class ShiftRange(val direction: Int) : AnalyticsWorkCommand()
+    data object MoveToCurrent : AnalyticsWorkCommand()
+    data class ConfirmCustomRange(val fromPickerToken: Long, val toPickerToken: Long) : AnalyticsWorkCommand()
 }
 
-internal typealias AnalyticsWorkResult = WorkResult<AnalyticsAction, AnalyticsEffect, EmptyOutput>
+internal typealias AnalyticsWorkResult = WorkResult<AnalyticsAction, AnalyticsEffect, AnalyticsOutput>

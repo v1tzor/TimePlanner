@@ -322,7 +322,9 @@ internal fun CategoriesSection(
                 modifier = Modifier.fillMaxWidth(),
                 isError = isMainCategoryValidError,
                 currentCategory = mainCategory,
-                allCategories = allCategories.map { it.mainCategory },
+                allCategories = remember(allCategories) {
+                    allCategories.map { it.mainCategory }
+                },
                 onEditCategory = onEditCategory,
                 onChangeCategory = { newMainCategory ->
                     onCategoriesChange(newMainCategory, null)
@@ -336,7 +338,9 @@ internal fun CategoriesSection(
                 )
             }
         }
-        val findCategories = allCategories.find { it.mainCategory == mainCategory }
+        val findCategories = remember(allCategories, mainCategory) {
+            allCategories.find { it.mainCategory == mainCategory }
+        }
         SubCategoryChooser(
             enabled = enabledCategories,
             modifier = Modifier.fillMaxWidth(),

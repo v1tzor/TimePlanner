@@ -30,8 +30,7 @@ compose-material3 = "1.4.0"
 compose-adaptive = "1.2.0"
 decompose = "3.5.0"
 essenty = "2.5.0"
-chartsMahu = "0.3.5"
-chartsHimanshoe = "1.0.1"
+chartsHimanshoe = "3.0.0-rc01"
 
 dagger = "2.60.1"
 room = "2.8.4"
@@ -74,7 +73,6 @@ compose-material3-adaptive = { module = "androidx.compose.material3.adaptive:ada
 compose-material3-adaptive-layout = { module = "androidx.compose.material3.adaptive:adaptive-layout", version.ref = "compose-adaptive" }
 compose-placeholder = { module = "com.google.accompanist:accompanist-placeholder-material", version.ref = "accompanist" }
 compose-swiperefresh = { module = "com.google.accompanist:accompanist-swiperefresh", version.ref = "accompanist" }
-charts-mahu = { module = "ma.hu:compose-charts", version.ref = "chartsMahu" }
 charts-himanshoe = { module = "com.himanshoe:charty", version.ref = "chartsHimanshoe" }
 decompose-core = { module = "com.arkivanov.decompose:decompose", version.ref = "decompose" }
 decompose-compose = { module = "com.arkivanov.decompose:extensions-compose", version.ref = "decompose" }

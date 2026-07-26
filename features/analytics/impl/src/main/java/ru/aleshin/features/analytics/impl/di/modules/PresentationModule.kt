@@ -17,13 +17,16 @@ package ru.aleshin.features.analytics.impl.di.modules
 
 import dagger.Binds
 import dagger.Module
-import ru.aleshin.core.utils.architecture.store.BaseOnlyOutComposeStore
+import ru.aleshin.core.utils.architecture.store.BaseComposeStore
 import ru.aleshin.core.utils.di.FeatureScope
 import ru.aleshin.features.analytics.api.AnalyticsContentProviderFactory
 import ru.aleshin.features.analytics.impl.navigation.DefaultAnalyticsContentProviderFactory
 import ru.aleshin.features.analytics.impl.presentation.ui.analytics.contract.AnalyticsState
 import ru.aleshin.features.analytics.impl.presentation.ui.analytics.store.AnalyticsComposeStore
 import ru.aleshin.features.analytics.impl.presentation.ui.analytics.store.AnalyticsWorkProcessor
+import ru.aleshin.features.analytics.impl.presentation.ui.category.contract.CategoryState
+import ru.aleshin.features.analytics.impl.presentation.ui.category.store.CategoryComposeStore
+import ru.aleshin.features.analytics.impl.presentation.ui.category.store.CategoryWorkProcessor
 
 /**
  * @author Stanislav Aleshin on 30.03.2023.
@@ -37,9 +40,17 @@ internal interface PresentationModule {
 
     @Binds
     @FeatureScope
-    fun bindAnalyticsStoreFactory(factory: AnalyticsComposeStore.Factory): BaseOnlyOutComposeStore.Factory<AnalyticsComposeStore, AnalyticsState>
+    fun bindAnalyticsStoreFactory(factory: AnalyticsComposeStore.Factory): BaseComposeStore.Factory<AnalyticsComposeStore, AnalyticsState>
 
     @Binds
     @FeatureScope
     fun bindAnalyticsWorkProcessor(workProcessor: AnalyticsWorkProcessor.Base): AnalyticsWorkProcessor
+
+    @Binds
+    @FeatureScope
+    fun bindCategoryStoreFactory(factory: CategoryComposeStore.Factory): BaseComposeStore.Factory<CategoryComposeStore, CategoryState>
+
+    @Binds
+    @FeatureScope
+    fun bindCategoryWorkProcessor(workProcessor: CategoryWorkProcessor.Base): CategoryWorkProcessor
 }

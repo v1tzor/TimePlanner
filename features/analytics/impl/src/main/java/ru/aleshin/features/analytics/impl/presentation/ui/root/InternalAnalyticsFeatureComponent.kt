@@ -20,6 +20,7 @@ import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.router.stack.pop
+import com.arkivanov.decompose.router.stack.pushToFront
 import com.arkivanov.decompose.value.Value
 import ru.aleshin.core.utils.architecture.component.FeatureComponent
 import ru.aleshin.core.utils.architecture.component.OutputConsumer
@@ -27,6 +28,11 @@ import ru.aleshin.features.analytics.api.AnalyticsConfig
 import ru.aleshin.features.analytics.api.AnalyticsOutput
 import ru.aleshin.features.analytics.impl.presentation.ui.analytics.store.AnalyticsComponent
 import ru.aleshin.features.analytics.impl.presentation.ui.analytics.store.AnalyticsComposeStore
+import ru.aleshin.features.analytics.impl.presentation.ui.analytics.contract.AnalyticsOutput as AnalyticsScreenOutput
+import ru.aleshin.features.analytics.impl.presentation.ui.category.contract.CategoryInput
+import ru.aleshin.features.analytics.impl.presentation.ui.category.contract.CategoryOutput
+import ru.aleshin.features.analytics.impl.presentation.ui.category.store.CategoryComponent
+import ru.aleshin.features.analytics.impl.presentation.ui.category.store.CategoryComposeStore
 
 /**
  * @author Stanislav Aleshin on 13.09.2025.
@@ -41,6 +47,7 @@ internal abstract class InternalAnalyticsFeatureComponent(
 
     sealed class Child {
         data class AnalyticsChild(val component: AnalyticsComponent) : Child()
+        data class CategoryChild(val component: CategoryComponent) : Child()
     }
 
     class Default(
@@ -48,6 +55,7 @@ internal abstract class InternalAnalyticsFeatureComponent(
         componentContext: ComponentContext,
         private val outputConsumer: OutputConsumer<AnalyticsOutput>,
         private val analyticsStoreFactory: AnalyticsComposeStore.Factory,
+        private val categoryStoreFactory: CategoryComposeStore.Factory,
     ) : InternalAnalyticsFeatureComponent(
         componentContext = componentContext
     ) {
@@ -82,8 +90,31 @@ internal abstract class InternalAnalyticsFeatureComponent(
                     component = AnalyticsComponent.Default(
                         storeFactory = analyticsStoreFactory,
                         componentContext = componentContext,
+                        outputConsumer = OutputConsumer(::handleAnalyticsOutput),
                     )
                 )
+                is AnalyticsConfig.Category -> Child.CategoryChild(
+                    component = CategoryComponent.Default(
+                        input = CategoryInput(config.mainCategoryId),
+                        storeFactory = categoryStoreFactory,
+                        componentContext = componentContext,
+                        outputConsumer = OutputConsumer(::handleCategoryOutput),
+                    )
+                )
+            }
+        }
+
+        private fun handleAnalyticsOutput(output: AnalyticsScreenOutput) {
+            when (output) {
+                is AnalyticsScreenOutput.NavigateToCategory -> {
+                    stackNavigation.pushToFront(AnalyticsConfig.Category(output.mainCategoryId))
+                }
+            }
+        }
+
+        private fun handleCategoryOutput(output: CategoryOutput) {
+            when (output) {
+                CategoryOutput.NavigateToBack -> navigateToBack()
             }
         }
     }

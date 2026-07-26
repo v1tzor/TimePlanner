@@ -23,6 +23,7 @@ import ru.aleshin.core.utils.inject.FeatureContentProvider
 import ru.aleshin.core.utils.navigation.backAnimation
 import ru.aleshin.features.analytics.impl.presentation.theme.AnalyticsTheme
 import ru.aleshin.features.analytics.impl.presentation.ui.analytics.AnalyticsContent
+import ru.aleshin.features.analytics.impl.presentation.ui.category.CategoryContent
 
 /**
  * @author Stanislav Aleshin on 13.09.2025.
@@ -46,6 +47,9 @@ internal class AnalyticsContentProvider(
                 when (val instance = child.instance) {
                     is InternalAnalyticsFeatureComponent.Child.AnalyticsChild -> {
                         AnalyticsContent(instance.component)
+                    }
+                    is InternalAnalyticsFeatureComponent.Child.CategoryChild -> {
+                        CategoryContent(instance.component)
                     }
                 }
             }

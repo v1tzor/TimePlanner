@@ -17,9 +17,7 @@ package ru.aleshin.features.analytics.impl.presentation.theme
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import ru.aleshin.features.analytics.impl.presentation.theme.tokens.LocalAnalyticsIcons
 import ru.aleshin.features.analytics.impl.presentation.theme.tokens.LocalAnalyticsStrings
-import ru.aleshin.features.analytics.impl.presentation.theme.tokens.fetchAnalyticsIcons
 import ru.aleshin.features.analytics.impl.presentation.theme.tokens.fetchAnalyticsStrings
 import ru.aleshin.timeplanner.core.ui.theme.TimePlannerRes
 
@@ -29,11 +27,9 @@ import ru.aleshin.timeplanner.core.ui.theme.TimePlannerRes
 @Composable
 internal fun AnalyticsTheme(content: @Composable () -> Unit) {
     val strings = fetchAnalyticsStrings(TimePlannerRes.language)
-    val icons = fetchAnalyticsIcons()
 
     CompositionLocalProvider(
         LocalAnalyticsStrings provides strings,
-        LocalAnalyticsIcons provides icons,
         content = content,
     )
 }

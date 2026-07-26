@@ -351,7 +351,7 @@ private fun TemplatesGrid(
                 span = { GridItemSpan(maxLineSpan) },
             ) {
                 TemplatesGroupHeader(
-                    title = TemplatesThemeRes.patternStrings.activeTemplatesTitle,
+                    title = TemplatesThemeRes.strings.activeTemplatesTitle,
                     count = templatesData.activeTemplatesCount,
                     isActive = true,
                 )
@@ -379,7 +379,7 @@ private fun TemplatesGrid(
                 span = { GridItemSpan(maxLineSpan) },
             ) {
                 TemplatesGroupHeader(
-                    title = TemplatesThemeRes.patternStrings.inactiveTemplatesTitle,
+                    title = TemplatesThemeRes.strings.inactiveTemplatesTitle,
                     count = templatesData.inactiveTemplatesCount,
                     isActive = false,
                 )

@@ -19,12 +19,5 @@ package ru.aleshin.core.utils.functional
  * @author Stanislav Aleshin on 22.04.2023.
  */
 enum class TimePeriod {
-    WEEK, MONTH, HALF_YEAR, YEAR;
-
-    fun convertToDays() = when (this) {
-        WEEK -> Constants.Date.DAYS_IN_WEEK
-        MONTH -> Constants.Date.DAYS_IN_MONTH
-        HALF_YEAR -> Constants.Date.DAYS_IN_HALF_YEAR
-        YEAR -> Constants.Date.DAYS_IN_YEAR
-    }
+    LAST_7_DAYS, WEEK, MONTH, HALF_YEAR, YEAR, CUSTOM
 }

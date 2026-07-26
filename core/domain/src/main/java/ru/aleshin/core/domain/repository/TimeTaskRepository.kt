@@ -17,6 +17,7 @@ package ru.aleshin.core.domain.repository
 
 import kotlinx.coroutines.flow.Flow
 import ru.aleshin.core.domain.entities.tasks.TimeTask
+import ru.aleshin.core.utils.functional.TimeRange
 import java.util.Date
 
 /**
@@ -26,6 +27,7 @@ interface TimeTaskRepository {
     suspend fun addOrUpdateTimeTask(timeTask: TimeTask): Long
     suspend fun addOrUpdateTimeTasks(timeTasks: List<TimeTask>)
     suspend fun fetchAllTimeTasksByDate(date: Date): Flow<List<TimeTask>>
+    suspend fun fetchTimeTasksByScheduleDateRange(timeRange: TimeRange): Flow<List<TimeTask>>
     suspend fun fetchTimeTaskById(id: Long): TimeTask?
     suspend fun fetchTimeTaskByTemplate(templateId: Long, date: Date): TimeTask?
     suspend fun deleteTimeTasksByIds(ids: List<Long>)

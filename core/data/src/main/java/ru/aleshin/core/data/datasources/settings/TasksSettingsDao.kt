@@ -32,4 +32,21 @@ interface TasksSettingsDao {
 
     @Update
     suspend fun updateSettings(entity: TasksSettingsEntity)
+
+    @Query(
+        """
+        UPDATE TasksSettings
+        SET task_analytics_range = :period,
+            task_analytics_anchor_date = :anchorDate,
+            custom_analytics_date_from = :customDateFrom,
+            custom_analytics_date_to = :customDateTo
+        WHERE id = 0
+        """
+    )
+    suspend fun updateAnalyticsRange(
+        period: String,
+        anchorDate: Long?,
+        customDateFrom: Long?,
+        customDateTo: Long?,
+    )
 }

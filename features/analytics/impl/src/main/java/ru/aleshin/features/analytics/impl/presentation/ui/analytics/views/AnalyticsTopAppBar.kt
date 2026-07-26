@@ -15,16 +15,16 @@
  */
 package ru.aleshin.features.analytics.impl.presentation.ui.analytics.views
 
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import ru.aleshin.features.analytics.impl.presentation.theme.AnalyticsThemeRes
-import ru.aleshin.timeplanner.core.ui.views.TopAppBarEmptyButton
-import ru.aleshin.timeplanner.core.ui.views.TopAppBarTitle
 
 /**
  * @author Stanislav Aleshin on 30.03.2023.
@@ -34,63 +34,19 @@ import ru.aleshin.timeplanner.core.ui.views.TopAppBarTitle
 internal fun AnalyticsTopAppBar(
     modifier: Modifier = Modifier,
 ) {
-    TopAppBar(
+    CenterAlignedTopAppBar(
         modifier = modifier,
         title = {
-            TopAppBarTitle(
+            Text(
                 text = AnalyticsThemeRes.strings.topAppBarTitle,
                 textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurface,
             )
-        },
-        navigationIcon = {
-            TopAppBarEmptyButton()
-        },
-        actions = {
-            TopAppBarEmptyButton()
         },
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.background,
         ),
     )
 }
-/* ----------------------- Release Preview -----------------------
-@Preview
-@Composable
-internal fun AnalyticsTopAppBar_Light_Preview() {
-    TimePlannerTheme(
-        dynamicColor = false,
-        themeColorsType = ThemeColorsUiType.LIGHT,
-        language = LanguageUiType.RU,
-    ) {
-        AnalyticsTheme {
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                content = { Box(modifier = Modifier.padding(it)) {} },
-                topBar = {
-                    AnalyticsTopAppBar(onMenuButtonClick = {})
-                },
-            )
-        }
-    }
-}
-
-@Preview
-@Composable
-internal fun AnalyticsTopAppBar_Dark_Preview() {
-    TimePlannerTheme(
-        dynamicColor = false,
-        themeColorsType = ThemeColorsUiType.DARK,
-        language = LanguageUiType.RU,
-    ) {
-        AnalyticsTheme {
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                content = { Box(modifier = Modifier.padding(it)) {} },
-                topBar = {
-                    AnalyticsTopAppBar(onMenuButtonClick = {})
-                },
-            )
-        }
-    }
-}
-*/

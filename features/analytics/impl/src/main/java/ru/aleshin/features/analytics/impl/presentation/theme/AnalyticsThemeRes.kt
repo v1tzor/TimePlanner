@@ -16,9 +16,7 @@
 package ru.aleshin.features.analytics.impl.presentation.theme
 
 import androidx.compose.runtime.Composable
-import ru.aleshin.features.analytics.impl.presentation.theme.tokens.AnalyticsIcons
 import ru.aleshin.features.analytics.impl.presentation.theme.tokens.AnalyticsStrings
-import ru.aleshin.features.analytics.impl.presentation.theme.tokens.LocalAnalyticsIcons
 import ru.aleshin.features.analytics.impl.presentation.theme.tokens.LocalAnalyticsStrings
 
 /**
@@ -28,7 +26,4 @@ internal object AnalyticsThemeRes {
 
     val strings: AnalyticsStrings
         @Composable get() = LocalAnalyticsStrings.current
-
-    val icons: AnalyticsIcons
-        @Composable get() = LocalAnalyticsIcons.current
 }

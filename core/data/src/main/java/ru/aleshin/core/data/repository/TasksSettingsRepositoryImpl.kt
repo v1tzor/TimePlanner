@@ -22,6 +22,9 @@ import ru.aleshin.core.data.mappers.settings.mapToData
 import ru.aleshin.core.data.mappers.settings.mapToDomain
 import ru.aleshin.core.domain.entities.settings.TasksSettings
 import ru.aleshin.core.domain.repository.TasksSettingsRepository
+import ru.aleshin.core.utils.functional.TimePeriod
+import ru.aleshin.core.utils.functional.TimeRange
+import java.util.Date
 import javax.inject.Inject
 
 /**
@@ -37,5 +40,18 @@ class TasksSettingsRepositoryImpl @Inject constructor(
 
     override suspend fun updateSettings(settings: TasksSettings) {
         localDataSource.updateSettings(settings.mapToData())
+    }
+
+    override suspend fun updateAnalyticsRange(
+        period: TimePeriod,
+        anchorDate: Date?,
+        customRange: TimeRange?,
+    ) {
+        localDataSource.updateAnalyticsRange(
+            period = period.name,
+            anchorDate = anchorDate?.time,
+            customDateFrom = customRange?.from?.time,
+            customDateTo = customRange?.to?.time,
+        )
     }
 }

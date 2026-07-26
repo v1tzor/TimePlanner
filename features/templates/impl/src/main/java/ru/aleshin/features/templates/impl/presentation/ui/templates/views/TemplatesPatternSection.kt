@@ -115,7 +115,7 @@ private fun TemplatesPatternHeader(
     onChangePatternView: (TemplatesPatternViewUi) -> Unit,
 ) {
     var isExpanded by rememberSaveable { mutableStateOf(false) }
-    val strings = TemplatesThemeRes.patternStrings
+    val strings = TemplatesThemeRes.strings
 
     Row(
         modifier = modifier.fillMaxWidth(),
@@ -187,7 +187,7 @@ private fun PatternFilterToggle(
     patternFilter: TemplatesPatternFilter,
     onChangePatternFilter: (TemplatesPatternFilter) -> Unit,
 ) {
-    val strings = TemplatesThemeRes.patternStrings
+    val strings = TemplatesThemeRes.strings
     Row(
         modifier = modifier
             .size(width = 128.dp, height = 40.dp)
@@ -252,7 +252,7 @@ private fun WeekTemplatesPattern(
     modifier: Modifier = Modifier,
     pattern: TemplatesPatternUi,
 ) {
-    val strings = TemplatesThemeRes.patternStrings
+    val strings = TemplatesThemeRes.strings
 
     Column(
         modifier = modifier.fillMaxWidth(),
@@ -361,7 +361,7 @@ private fun MonthTemplatesPattern(
     modifier: Modifier = Modifier,
     pattern: TemplatesPatternUi,
 ) {
-    val strings = TemplatesThemeRes.patternStrings
+    val strings = TemplatesThemeRes.strings
 
     Column(
         modifier = modifier.fillMaxWidth(),

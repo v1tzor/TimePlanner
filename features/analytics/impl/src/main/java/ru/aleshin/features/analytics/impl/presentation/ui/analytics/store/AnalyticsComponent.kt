@@ -17,7 +17,9 @@ package ru.aleshin.features.analytics.impl.presentation.ui.analytics.store
 
 import com.arkivanov.decompose.ComponentContext
 import ru.aleshin.core.utils.architecture.component.ChildComponent
+import ru.aleshin.core.utils.architecture.component.OutputConsumer
 import ru.aleshin.core.utils.architecture.component.saveableStore
+import ru.aleshin.features.analytics.impl.presentation.ui.analytics.contract.AnalyticsOutput
 import ru.aleshin.features.analytics.impl.presentation.ui.analytics.contract.AnalyticsState
 
 /**
@@ -32,6 +34,7 @@ internal abstract class AnalyticsComponent(
     class Default(
         storeFactory: AnalyticsComposeStore.Factory,
         componentContext: ComponentContext,
+        outputConsumer: OutputConsumer<AnalyticsOutput>,
     ) : AnalyticsComponent(componentContext) {
 
         private companion object Companion {
@@ -42,6 +45,7 @@ internal abstract class AnalyticsComponent(
             storeFactory = storeFactory,
             defaultState = AnalyticsState(),
             stateSerializer = AnalyticsState.serializer(),
+            outputConsumer = outputConsumer,
             storeKey = COMPONENT_KEY,
         )
     }

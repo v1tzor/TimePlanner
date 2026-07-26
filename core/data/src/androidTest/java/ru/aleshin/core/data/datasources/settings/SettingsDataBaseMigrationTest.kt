@@ -62,6 +62,44 @@ class SettingsDataBaseMigrationTest {
         database.close()
     }
 
+    @Test
+    fun migrate8To9AddsAnalyticsDatesAndPreservesRange() {
+        helper.createDatabase(TEST_DB, 8).apply {
+            execSQL(
+                "INSERT INTO `TasksSettings` " +
+                    "(`id`, `task_view_status`, `home_view_mode`, `task_analytics_range`, " +
+                    "`calendar_button_behavior`, `secure_mode`, `duration_presets`) " +
+                    "VALUES (0, 'COMPACT', 'TIMELINE', 'HALF_YEAR', " +
+                    "'OPEN_CALENDAR', 1, '15,45')",
+            )
+            close()
+        }
+
+        val database = helper.runMigrationsAndValidate(
+            TEST_DB,
+            9,
+            true,
+            SettingsDataBase.MIGRATION_8_9,
+        )
+
+        database.query(
+            "SELECT `task_analytics_range`, `task_analytics_anchor_date`, " +
+                "`custom_analytics_date_from`, `custom_analytics_date_to`, " +
+                "`home_view_mode`, `secure_mode`, `duration_presets` " +
+                "FROM `TasksSettings` WHERE `id` = 0",
+        ).use { cursor ->
+            assertTrue(cursor.moveToFirst())
+            assertEquals("HALF_YEAR", cursor.getString(0))
+            assertTrue(cursor.isNull(1))
+            assertTrue(cursor.isNull(2))
+            assertTrue(cursor.isNull(3))
+            assertEquals("TIMELINE", cursor.getString(4))
+            assertEquals(1, cursor.getInt(5))
+            assertEquals("15,45", cursor.getString(6))
+        }
+        database.close()
+    }
+
     companion object {
         private const val TEST_DB = "settings-migration-test"
     }

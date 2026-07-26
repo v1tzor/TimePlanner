@@ -139,7 +139,7 @@ abstract class TabNavigationComponent(
                     val api = homeFeatureFactory.createOrGetFeature(componentContext)
                     val provider = api.contentProviderFactory().createProvider(
                         componentContext = componentContext,
-                        startConfig = HomeConfig.Home(),
+                        startConfig = config.startConfig,
                         outputConsumer = homeOutputConsumer()
                     )
                     TabNavigationChild.HomeChild(contentProvider = provider)
@@ -148,7 +148,7 @@ abstract class TabNavigationComponent(
                     val api = analyticsFeatureFactory.createOrGetFeature(componentContext)
                     val provider = api.contentProviderFactory().createProvider(
                         componentContext = componentContext,
-                        startConfig = AnalyticsConfig.Analytics,
+                        startConfig = config.startConfig,
                         outputConsumer = analyticsOutputConsumer()
                     )
                     TabNavigationChild.AnalyticsChild(contentProvider = provider)
@@ -157,7 +157,7 @@ abstract class TabNavigationComponent(
                     val api = overviewFeatureFactory.createOrGetFeature(componentContext)
                     val provider = api.contentProviderFactory().createProvider(
                         componentContext = componentContext,
-                        startConfig = OverviewConfig.Overview(),
+                        startConfig = config.startConfig,
                         outputConsumer = overviewOutputConsumer()
                     )
                     TabNavigationChild.OverviewChild(contentProvider = provider)
@@ -166,7 +166,7 @@ abstract class TabNavigationComponent(
                     val api = templatesFeatureFactory.createOrGetFeature(componentContext)
                     val provider = api.contentProviderFactory().createProvider(
                         componentContext = componentContext,
-                        startConfig = TemplatesConfig.Templates,
+                        startConfig = config.startConfig,
                         outputConsumer = templatesOutputConsumer()
                     )
                     TabNavigationChild.TemplatesChild(contentProvider = provider)

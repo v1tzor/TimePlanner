@@ -19,6 +19,7 @@ package ru.aleshin.core.data.datasources.tasks
 import kotlinx.coroutines.flow.Flow
 import ru.aleshin.core.data.models.tasks.TimeTaskDetailsEntity
 import ru.aleshin.core.data.models.tasks.TimeTaskEntity
+import ru.aleshin.core.utils.functional.TimeRange
 import java.util.Date
 import javax.inject.Inject
 
@@ -30,6 +31,7 @@ interface TimeTaskLocalDataSource {
     suspend fun addOrUpdateTimeTask(timeTask: TimeTaskEntity): Long
     suspend fun addOrUpdateTimeTasks(timeTasks: List<TimeTaskEntity>)
     suspend fun fetchAllTimeTasksDetailsByDate(date: Date): Flow<List<TimeTaskDetailsEntity>>
+    suspend fun fetchTimeTasksByScheduleDateRange(timeRange: TimeRange): Flow<List<TimeTaskDetailsEntity>>
     suspend fun fetchTimeTaskDetailsById(id: Long): TimeTaskDetailsEntity?
     suspend fun fetchTimeTaskByTemplate(templateId: Long, date: Date): TimeTaskDetailsEntity?
     suspend fun deleteTimeTasksByIds(ids: List<Long>)
@@ -48,6 +50,12 @@ interface TimeTaskLocalDataSource {
 
         override suspend fun fetchAllTimeTasksDetailsByDate(date: Date): Flow<List<TimeTaskDetailsEntity>> {
             return timeTaskDao.fetchAllTimeTasksDetailsByDate(date.time)
+        }
+
+        override suspend fun fetchTimeTasksByScheduleDateRange(
+            timeRange: TimeRange,
+        ): Flow<List<TimeTaskDetailsEntity>> {
+            return timeTaskDao.fetchTimeTasksByScheduleDateRange(timeRange.from.time, timeRange.to.time)
         }
 
         override suspend fun fetchTimeTaskDetailsById(id: Long): TimeTaskDetailsEntity? {

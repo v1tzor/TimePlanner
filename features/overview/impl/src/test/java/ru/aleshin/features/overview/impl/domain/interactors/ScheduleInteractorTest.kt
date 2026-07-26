@@ -160,6 +160,10 @@ private class FakeTimeTaskRepository : TimeTaskRepository {
         return flowOf(emptyList())
     }
 
+    override suspend fun fetchTimeTasksByScheduleDateRange(timeRange: TimeRange): Flow<List<TimeTask>> {
+        return flowOf(emptyList())
+    }
+
     override suspend fun fetchTimeTaskById(id: Long): TimeTask? {
         return null
     }

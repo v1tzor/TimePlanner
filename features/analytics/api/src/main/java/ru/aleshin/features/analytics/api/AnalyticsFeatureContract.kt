@@ -26,6 +26,9 @@ public sealed interface AnalyticsConfig {
 
     @Serializable
     public data object Analytics : AnalyticsConfig
+
+    @Serializable
+    public data class Category(val mainCategoryId: Long) : AnalyticsConfig
 }
 
 /**

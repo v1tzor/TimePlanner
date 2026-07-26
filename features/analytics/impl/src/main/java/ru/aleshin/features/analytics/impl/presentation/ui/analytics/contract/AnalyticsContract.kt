@@ -16,27 +16,45 @@
 package ru.aleshin.features.analytics.impl.presentation.ui.analytics.contract
 
 import kotlinx.serialization.Serializable
+import ru.aleshin.core.utils.architecture.component.BaseOutput
 import ru.aleshin.core.utils.architecture.store.contract.StoreAction
 import ru.aleshin.core.utils.architecture.store.contract.StoreEffect
 import ru.aleshin.core.utils.architecture.store.contract.StoreEvent
 import ru.aleshin.core.utils.architecture.store.contract.StoreState
 import ru.aleshin.core.utils.functional.TimePeriod
+import ru.aleshin.features.analytics.impl.domain.entities.AnalyticsCategorySort
 import ru.aleshin.features.analytics.impl.domain.entities.AnalyticsFailure
-import ru.aleshin.features.analytics.impl.presentation.models.analytics.ScheduleAnalyticsUi
+import ru.aleshin.features.analytics.impl.presentation.models.analytics.AnalyticsOverviewUi
+import ru.aleshin.features.analytics.impl.presentation.models.analytics.AnalyticsRangeUi
 
 /**
- * @author Stanislav Aleshin on 30.03.2023.
+ * @author Stanislav Aleshin on 21.07.2026.
  */
 @Serializable
 internal data class AnalyticsState(
     val isLoading: Boolean = true,
-    val timePeriod: TimePeriod? = null,
-    val scheduleAnalytics: ScheduleAnalyticsUi? = null,
+    val isError: Boolean = false,
+    val range: AnalyticsRangeUi? = null,
+    val overview: AnalyticsOverviewUi? = null,
+    val categorySort: AnalyticsCategorySort = AnalyticsCategorySort.BY_TIME,
+    val isCategoriesExpanded: Boolean = false,
+    val selectedChartKey: Long? = null,
+    val selectedCreationBucketKey: Long? = null,
 ) : StoreState
 
 internal sealed class AnalyticsEvent : StoreEvent {
-    data object Init : AnalyticsEvent()
-    data class ChangeTimePeriod(val period: TimePeriod) : AnalyticsEvent()
+    data class Init(val isRestore: Boolean) : AnalyticsEvent()
+    data object Retry : AnalyticsEvent()
+    data class SelectPeriod(val period: TimePeriod) : AnalyticsEvent()
+    data object PreviousPeriod : AnalyticsEvent()
+    data object NextPeriod : AnalyticsEvent()
+    data object MoveToCurrent : AnalyticsEvent()
+    data class ConfirmCalendar(val fromPickerToken: Long, val toPickerToken: Long) : AnalyticsEvent()
+    data class ChangeCategorySort(val sort: AnalyticsCategorySort) : AnalyticsEvent()
+    data object ToggleCategories : AnalyticsEvent()
+    data class SelectChartItem(val key: Long?) : AnalyticsEvent()
+    data class SelectCreationBucket(val key: Long?) : AnalyticsEvent()
+    data class ClickCategoryItem(val mainCategoryId: Long) : AnalyticsEvent()
 }
 
 internal sealed class AnalyticsEffect : StoreEffect {
@@ -44,7 +62,14 @@ internal sealed class AnalyticsEffect : StoreEffect {
 }
 
 internal sealed class AnalyticsAction : StoreAction {
-    data class UpdateAnalytics(val analytics: ScheduleAnalyticsUi) : AnalyticsAction()
-    data class UpdateTimePeriod(val period: TimePeriod) : AnalyticsAction()
-    data class UpdateLoading(val isLoading: Boolean) : AnalyticsAction()
+    data class UpdateLoading(val isLoading: Boolean, val isError: Boolean) : AnalyticsAction()
+    data class SetupRange(val range: AnalyticsRangeUi) : AnalyticsAction()
+    data class UpdateAnalytics(val categorySort: AnalyticsCategorySort, val overview: AnalyticsOverviewUi) : AnalyticsAction()
+    data class UpdateCategoriesExpanded(val isExpanded: Boolean) : AnalyticsAction()
+    data class UpdateChartItem(val key: Long?) : AnalyticsAction()
+    data class UpdateCreationBucket(val key: Long?) : AnalyticsAction()
+}
+
+internal sealed interface AnalyticsOutput : BaseOutput {
+    data class NavigateToCategory(val mainCategoryId: Long) : AnalyticsOutput
 }
