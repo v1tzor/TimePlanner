@@ -61,11 +61,11 @@ import java.util.TimeZone
  */
 @Composable
 internal fun AnalyticsRegularityCalendar(
+    modifier: Modifier = Modifier,
     range: AnalyticsRangeUi,
     activeDates: List<Date>,
     locale: Locale,
     strings: AnalyticsStrings,
-    modifier: Modifier = Modifier,
     today: Date = Date(),
 ) {
     val firstMonth = remember(range.from, locale) { range.from.toMonthStart(locale) }
@@ -217,10 +217,9 @@ private fun CalendarGrid(
     ) { measurables, constraints ->
         val maxCellPx = MAX_CALENDAR_CELL.roundToPx()
         val maxGapPx = MAX_CALENDAR_GAP.roundToPx()
-        val cellPx = minOf(maxCellPx, (constraints.maxWidth - maxGapPx * (DAYS_IN_WEEK - 1)) / DAYS_IN_WEEK)
-            .coerceAtLeast(1)
-        val gapPx = minOf(maxGapPx, (constraints.maxWidth - cellPx * DAYS_IN_WEEK) / (DAYS_IN_WEEK - 1))
-            .coerceAtLeast(0)
+        val columnWidthPx = constraints.maxWidth / DAYS_IN_WEEK
+        val cellPx = minOf(maxCellPx, columnWidthPx).coerceAtLeast(1)
+        val gapPx = minOf(maxGapPx, cellPx / 4).coerceAtLeast(0)
         val placeables = measurables.map { measurable ->
             measurable.measure(androidx.compose.ui.unit.Constraints.fixed(cellPx, cellPx))
         }
@@ -229,7 +228,13 @@ private fun CalendarGrid(
             placeables.forEachIndexed { index, placeable ->
                 val row = index / DAYS_IN_WEEK
                 val column = index % DAYS_IN_WEEK
-                placeable.placeRelative(column * (cellPx + gapPx), row * (cellPx + gapPx))
+                val columnStart = constraints.maxWidth * column / DAYS_IN_WEEK
+                val columnEnd = constraints.maxWidth * (column + 1) / DAYS_IN_WEEK
+                val horizontalOffset = (columnEnd - columnStart - cellPx) / 2
+                placeable.placeRelative(
+                    x = columnStart + horizontalOffset,
+                    y = row * (cellPx + gapPx),
+                )
             }
         }
     }

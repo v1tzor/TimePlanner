@@ -83,27 +83,42 @@ internal fun UndefinedTasksBottomSheet(
             contentWindowInsets = { WindowInsets(0.dp) },
             onDismissRequest = onDismiss,
         ) {
-            Column(modifier = Modifier.heightIn(min = 350.dp)) {
-                UndefinedTasksBottomSheetHeader(tasksCount = undefinedTasks?.size)
-                HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp))
-                LazyColumn(
-                    modifier = Modifier.padding(horizontal = 16.dp),
-                    verticalArrangement = Arrangement.spacedBy(10.dp),
-                ) {
-                    if (undefinedTasks != null) {
-                        if (undefinedTasks.isNotEmpty()) {
-                            items(items = undefinedTasks, key = { it.id }) { task ->
-                                UndefinedTaskBottomSheetItem(
-                                    enable = task.id != currentUndefinedTaskId,
-                                    model = task,
-                                    onChoose = { onChooseUndefinedTask(task) },
-                                )
-                            }
-                        } else {
-                            item {
-                                NoneItemsView(text = EditorThemeRes.strings.emptyTemplatesTitle)
-                            }
-                        }
+            UndefinedTasksChooserContent(
+                undefinedTasks = undefinedTasks,
+                currentUndefinedTaskId = currentUndefinedTaskId,
+                onChooseUndefinedTask = onChooseUndefinedTask,
+            )
+        }
+    }
+}
+
+@Composable
+@ExperimentalMaterial3Api
+internal fun UndefinedTasksChooserContent(
+    undefinedTasks: List<UndefinedTaskUi>?,
+    currentUndefinedTaskId: Long?,
+    onChooseUndefinedTask: (UndefinedTaskUi) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(modifier = modifier.heightIn(min = 350.dp)) {
+        UndefinedTasksBottomSheetHeader(tasksCount = undefinedTasks?.size)
+        HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp))
+        LazyColumn(
+            modifier = Modifier.padding(horizontal = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp),
+        ) {
+            if (undefinedTasks != null) {
+                if (undefinedTasks.isNotEmpty()) {
+                    items(items = undefinedTasks, key = { it.id }) { task ->
+                        UndefinedTaskBottomSheetItem(
+                            enable = task.id != currentUndefinedTaskId,
+                            model = task,
+                            onChoose = { onChooseUndefinedTask(task) },
+                        )
+                    }
+                } else {
+                    item {
+                        NoneItemsView(text = EditorThemeRes.strings.emptyTemplatesTitle)
                     }
                 }
             }

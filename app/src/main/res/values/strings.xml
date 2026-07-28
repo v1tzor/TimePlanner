@@ -14,5 +14,16 @@
   ~ limitations under the License.
   -->
 <resources>
-    <string name="app_name">TimePlanner</string>
+    <string name="app_name" translatable="false">TimePlanner</string>
+    <string name="shortcut_navigation">Navigation</string>
+    <string name="shortcut_home">Home</string>
+    <string name="shortcut_overview">Overview</string>
+    <string name="shortcut_templates">Templates</string>
+    <string name="shortcut_analytics">Analytics</string>
+    <string name="shortcut_editor">Editor</string>
+    <string name="shortcut_save">Save</string>
+    <string name="widget_refresh_content_description">Refresh schedule</string>
+    <string name="widget_add_task_content_description">Add task</string>
+    <string name="widget_task_completed_content_description">Task completed</string>
+    <string name="widget_task_not_completed_content_description">Task not completed</string>
 </resources>

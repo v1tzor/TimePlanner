@@ -15,7 +15,9 @@
  */
 package ru.aleshin.features.editor.impl.presentation.ui.task.views
 
+import android.view.KeyEvent as AndroidKeyEvent
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
@@ -42,6 +44,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.input.key.type
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.semantics.ProgressBarRangeInfo
@@ -466,6 +471,23 @@ private fun TimeRangeSliderThumb(
     Box(
         modifier = Modifier
             .fillMaxSize()
+            .onKeyEvent { event ->
+                if (!enabled || event.type != KeyEventType.KeyDown) {
+                    return@onKeyEvent false
+                }
+                val direction = when (event.nativeKeyEvent.keyCode) {
+                    AndroidKeyEvent.KEYCODE_DPAD_LEFT,
+                    AndroidKeyEvent.KEYCODE_DPAD_DOWN -> -1
+                    AndroidKeyEvent.KEYCODE_DPAD_RIGHT,
+                    AndroidKeyEvent.KEYCODE_DPAD_UP -> 1
+                    else -> return@onKeyEvent false
+                }
+                val minute = (progress.roundToInt() + direction * SLIDER_MINUTE_STEP)
+                    .coerceIn(0, maximum)
+                onProgressChange(minute)
+                true
+            }
+            .focusable(enabled = enabled)
             .semantics {
                 contentDescription = description
                 stateDescription = timeTitle

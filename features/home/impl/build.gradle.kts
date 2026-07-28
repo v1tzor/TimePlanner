@@ -32,6 +32,10 @@ android {
         testInstrumentationRunner = libs.versions.testInstrumentRunner.get()
     }
 
+    testOptions {
+        targetSdk = libs.versions.targetSdkVersion.get().toIntOrNull()
+    }
+
     buildTypes {
         getByName("release") {
             isMinifyEnabled = false

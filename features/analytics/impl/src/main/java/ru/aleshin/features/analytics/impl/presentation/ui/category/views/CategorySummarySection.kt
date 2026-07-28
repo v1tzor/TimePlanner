@@ -18,6 +18,7 @@ package ru.aleshin.features.analytics.impl.presentation.ui.category.views
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.LinearProgressIndicator
@@ -49,64 +50,84 @@ import kotlin.math.abs
  */
 @Composable
 internal fun CategorySummarySection(
+    modifier: Modifier = Modifier,
     categoryId: Long,
     summary: CategorySummaryUi,
-    modifier: Modifier = Modifier,
+    showTitleInside: Boolean = true,
+    fillAvailableHeight: Boolean = false,
 ) {
     val strings = AnalyticsThemeRes.strings
     val language = TimePlannerRes.language
     val locale = remember(language) { language.fetchAnalyticsLocale() }
     val formatter = rememberAnalyticsValueFormatter()
 
-    AnalyticsSurfaceCard(
+
+    Column(
         modifier = modifier,
-        verticalSpacing = 0.dp,
+        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        AnalyticsSectionTitle(title = strings.categorySummaryTitle)
-        Spacer(modifier = Modifier.height(16.dp))
-        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            Text(
-                text = formatter.formatDuration(
-                    durationMillis = summary.durationMillis,
-                    hourSymbol = strings.hourShort,
-                    minuteSymbol = strings.minuteShort,
-                ),
-                style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary,
+        if (!showTitleInside) {
+            AnalyticsSectionTitle(title = strings.categorySummaryTitle)
+        }
+        AnalyticsSurfaceCard(
+            modifier = Modifier,
+            contentModifier = if (fillAvailableHeight) Modifier.fillMaxHeight() else Modifier,
+            verticalSpacing = 0.dp,
+        ) {
+            if (showTitleInside) {
+                AnalyticsSectionTitle(title = strings.categorySummaryTitle)
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                Text(
+                    text = formatter.formatDuration(
+                        durationMillis = summary.durationMillis,
+                        hourSymbol = strings.hourShort,
+                        minuteSymbol = strings.minuteShort,
+                    ),
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary,
+                )
+                Text(
+                    text = strings.categoryShareFormat.format(
+                        formatter.formatPercent(
+                            value = summary.share,
+                            locale = locale,
+                        )
+                    ),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+            Spacer(
+                modifier = if (fillAvailableHeight) {
+                    Modifier.weight(1f)
+                } else {
+                    Modifier.height(16.dp)
+                },
             )
-            Text(
-                text = strings.categoryShareFormat.format(
-                    formatter.formatPercent(
-                        value = summary.share,
-                        locale = locale,
-                    )
+            LinearProgressIndicator(
+                progress = { summary.share.toFloat().coerceIn(0f, 1f) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(10.dp)
+                    .clip(MaterialTheme.shapes.extraLarge),
+                color = CategoryColorsDefaults.fetchColor(categoryId = categoryId),
+                trackColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+            AnalyticsComparisonLabel(
+                value = summary.formatComparison(
+                    formatter = formatter,
+                    locale = locale,
+                    strings = strings,
                 ),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                directionUp = summary.comparison.changePercent
+                    ?.takeIf { it != 0.0 }
+                    ?.let { it > 0.0 },
             )
         }
-        Spacer(modifier = Modifier.height(16.dp))
-        LinearProgressIndicator(
-            progress = { summary.share.toFloat().coerceIn(0f, 1f) },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(10.dp)
-                .clip(MaterialTheme.shapes.extraLarge),
-            color = CategoryColorsDefaults.fetchColor(categoryId = categoryId),
-            trackColor = MaterialTheme.colorScheme.surfaceContainerHighest,
-        )
-        Spacer(modifier = Modifier.height(12.dp))
-        AnalyticsComparisonLabel(
-            value = summary.formatComparison(
-                formatter = formatter,
-                locale = locale,
-                strings = strings,
-            ),
-            directionUp = summary.comparison.changePercent
-                ?.takeIf { it != 0.0 }
-                ?.let { it > 0.0 },
-        )
     }
 }
 

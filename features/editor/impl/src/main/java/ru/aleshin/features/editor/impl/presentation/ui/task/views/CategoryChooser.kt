@@ -65,6 +65,7 @@ import ru.aleshin.timeplanner.core.ui.theme.TimePlannerRes
 import ru.aleshin.timeplanner.core.ui.views.BaseSelectorBottomSheet
 import ru.aleshin.timeplanner.core.ui.views.CategoryIconMonogram
 import ru.aleshin.timeplanner.core.ui.views.CategoryTextMonogram
+import ru.aleshin.timeplanner.core.ui.views.SelectorAddItemView
 import ru.aleshin.timeplanner.core.ui.views.SelectorSwipeItemView
 import ru.aleshin.timeplanner.core.ui.views.SwipeToDismissBackground
 
@@ -79,6 +80,7 @@ internal fun MainCategoryChooser(
     allCategories: List<MainCategoryUi>,
     currentCategory: MainCategoryUi?,
     onEditCategory: (MainCategoryUi) -> Unit,
+    onAddCategory: () -> Unit,
     onChangeCategory: (MainCategoryUi) -> Unit,
 ) {
     var openSubCategorySelectorSheet by rememberSaveable { mutableStateOf(false) }
@@ -155,6 +157,7 @@ internal fun MainCategoryChooser(
             allCategories = allCategories,
             onDismiss = { openSubCategorySelectorSheet = false },
             onEditCategory = onEditCategory,
+            onAddCategory = onAddCategory,
             onChooseCategory = {
                 onChangeCategory(it)
                 openSubCategorySelectorSheet = false
@@ -172,6 +175,7 @@ internal fun MainCategorySelectorBottomSheet(
     onDismiss: () -> Unit,
     onEditCategory: (MainCategoryUi) -> Unit,
     onChooseCategory: (MainCategoryUi) -> Unit,
+    onAddCategory: () -> Unit,
 ) {
     val coreStrings = TimePlannerRes.strings
     var selectedCategory by remember { mutableStateOf(initCategory) }
@@ -243,6 +247,12 @@ internal fun MainCategorySelectorBottomSheet(
                         )
                     }
                 }
+            )
+        },
+        addItemView = {
+            SelectorAddItemView(
+                text = EditorThemeRes.strings.categoryDialogAddedTitle,
+                onClick = onAddCategory,
             )
         },
         searchBar = {

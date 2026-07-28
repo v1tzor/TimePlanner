@@ -15,14 +15,9 @@
  */
 package ru.aleshin.features.overview.impl.presentation.ui.overview
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -33,62 +28,71 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import ru.aleshin.core.presentation.models.tasks.TimeTaskUi
-import ru.aleshin.core.presentation.models.tasks.UndefinedTaskUi
 import ru.aleshin.core.utils.architecture.store.compose.handleEffects
 import ru.aleshin.core.utils.architecture.store.compose.stateAsState
 import ru.aleshin.features.overview.impl.presentation.mapppers.mapToMessage
 import ru.aleshin.features.overview.impl.presentation.theme.OverviewThemeRes
 import ru.aleshin.features.overview.impl.presentation.ui.overview.contract.OverviewEffect
 import ru.aleshin.features.overview.impl.presentation.ui.overview.contract.OverviewEvent
-import ru.aleshin.features.overview.impl.presentation.ui.overview.contract.OverviewState
 import ru.aleshin.features.overview.impl.presentation.ui.overview.store.OverviewComponent
 import ru.aleshin.features.overview.impl.presentation.ui.overview.views.OverviewTopAppBar
-import ru.aleshin.features.overview.impl.presentation.ui.overview.views.SelectedDaySection
-import ru.aleshin.features.overview.impl.presentation.ui.overview.views.UndefinedTaskSection
 import ru.aleshin.features.overview.impl.presentation.ui.overview.views.UndefinedTasksBatchEditorDialog
-import ru.aleshin.features.overview.impl.presentation.ui.overview.views.WeekTimelineSection
+import ru.aleshin.timeplanner.core.ui.views.AdaptiveLayoutInfo
 import ru.aleshin.timeplanner.core.ui.views.ErrorSnackbar
-import java.util.Date
+import ru.aleshin.timeplanner.core.ui.views.rememberAdaptiveLayoutInfo
 
 /**
  * @author Stanislav Aleshin on 02.11.2023.
  */
 @Composable
+@OptIn(ExperimentalMaterial3Api::class)
 internal fun OverviewContent(
-    overviewComponent: OverviewComponent,
     modifier: Modifier = Modifier,
+    component: OverviewComponent,
+    adaptiveLayoutInfo: AdaptiveLayoutInfo = rememberAdaptiveLayoutInfo(),
 ) {
-    val store = overviewComponent.store
+    val store = component.store
     val state by store.stateAsState()
-    val snackbarState = remember { SnackbarHostState() }
+    val snackbarHostState = remember { SnackbarHostState() }
+    val mainScrollState = rememberScrollState()
+    val supportingScrollState = rememberScrollState()
+    val pullToRefreshState = rememberPullToRefreshState()
     val strings = OverviewThemeRes.strings
+    val layoutMode = OverviewLayoutMode.from(adaptiveLayoutInfo)
 
     Scaffold(
-        modifier = modifier.fillMaxSize(),
-        content = { paddingValues ->
-            BaseOverviewContent(
-                state = state,
-                modifier = Modifier.padding(paddingValues),
-                onRefresh = { store.dispatchEvent(OverviewEvent.Refresh) },
-                onOpenSchedule = { store.dispatchEvent(OverviewEvent.OpenSchedule(it)) },
-                onSelectSchedule = { store.dispatchEvent(OverviewEvent.SelectSchedule(it)) },
-                onOpenTimeTask = { store.dispatchEvent(OverviewEvent.OpenTimeTask(it)) },
-                onAddOrUpdateTask = { store.dispatchEvent(OverviewEvent.CreateOrUpdateUndefinedTask(it)) },
-                onExecuteTask = { date, task -> store.dispatchEvent(OverviewEvent.ExecuteUndefinedTask(date, task)) },
-            )
-        },
+        modifier = modifier,
         topBar = {
-            OverviewTopAppBar()
+            OverviewTopAppBar(
+                isCompact = adaptiveLayoutInfo.isCompactWidth,
+            )
         },
         snackbarHost = {
             SnackbarHost(
-                hostState = snackbarState,
-                snackbar = { ErrorSnackbar(it) },
+                hostState = snackbarHostState,
+                snackbar = { snackbarData -> ErrorSnackbar(snackbarData) },
             )
         },
-    )
+    ) { contentPadding ->
+        PullToRefreshBox(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(contentPadding),
+            state = pullToRefreshState,
+            onRefresh = { store.dispatchEvent(OverviewEvent.Refresh) },
+            isRefreshing = state.isLoading,
+        ) {
+            OverviewLayout(
+                modifier = Modifier.fillMaxSize(),
+                state = state,
+                adaptiveLayoutInfo = adaptiveLayoutInfo,
+                layoutMode = layoutMode,
+                mainScrollState = mainScrollState,
+                supportingScrollState = supportingScrollState,
+                onEvent = store::dispatchEvent,
+            )
+        }
+    }
 
     val sharedTextTasks = state.sharedTextTasks
     if (sharedTextTasks != null) {
@@ -96,71 +100,16 @@ internal fun OverviewContent(
             tasks = sharedTextTasks,
             categories = state.categories,
             onDismiss = { store.dispatchEvent(OverviewEvent.DismissBatchUndefinedTasks) },
-            onConfirm = { store.dispatchEvent(OverviewEvent.ConfirmBatchUndefinedTasks(it)) }
+            onConfirm = { store.dispatchEvent(OverviewEvent.ConfirmBatchUndefinedTasks(it)) },
         )
     }
 
     store.handleEffects { effect ->
         when (effect) {
-            is OverviewEffect.ShowError -> {
-                snackbarState.showSnackbar(
-                    message = effect.failures.mapToMessage(strings),
-                    withDismissAction = true,
-                )
-            }
-        }
-    }
-}
-
-@Composable
-@OptIn(ExperimentalMaterial3Api::class)
-private fun BaseOverviewContent(
-    modifier: Modifier = Modifier,
-    state: OverviewState,
-    onRefresh: () -> Unit,
-    onOpenSchedule: (Date?) -> Unit,
-    onSelectSchedule: (Date) -> Unit,
-    onOpenTimeTask: (TimeTaskUi) -> Unit,
-    onAddOrUpdateTask: (UndefinedTaskUi) -> Unit,
-    onExecuteTask: (Date, UndefinedTaskUi) -> Unit,
-) {
-    val scrollState = rememberScrollState()
-    val refreshState = rememberPullToRefreshState()
-    val weekOverview = state.weekOverview
-
-    PullToRefreshBox(
-        modifier = modifier,
-        state = refreshState,
-        onRefresh = onRefresh,
-        isRefreshing = state.isLoading,
-    ) {
-        Column(
-            modifier = Modifier
-                .verticalScroll(state = scrollState, enabled = !state.isLoading)
-                .padding(top = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(24.dp),
-        ) {
-            WeekTimelineSection(
-                isLoading = state.isLoading,
-                selectedDate = state.selectedDate,
-                schedules = weekOverview.schedules,
-                weekTasksCount = weekOverview.tasksCount,
-                onSelectSchedule = onSelectSchedule,
+            is OverviewEffect.ShowError -> snackbarHostState.showSnackbar(
+                message = effect.failures.mapToMessage(strings),
+                withDismissAction = true,
             )
-            SelectedDaySection(
-                isLoading = state.isLoading,
-                selectedDate = state.selectedDate,
-                schedules = weekOverview.schedules,
-                onOpenTimeTask = onOpenTimeTask,
-            )
-            UndefinedTaskSection(
-                isLoading = state.isLoading,
-                categories = state.categories,
-                tasks = state.undefinedTasks,
-                onAddOrUpdateTask = onAddOrUpdateTask,
-                onExecuteTask = onExecuteTask,
-            )
-            Spacer(modifier = Modifier.height(60.dp))
         }
     }
 }

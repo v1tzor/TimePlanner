@@ -32,10 +32,11 @@ import ru.aleshin.timeplanner.core.ui.theme.TimePlannerRes
  */
 @Composable
 internal fun CategoryDayPartsSection(
+    modifier: Modifier = Modifier,
     categoryId: Long,
     cells: List<CategoryDayPartCellUi>,
     summaries: List<CategoryDayPartSummaryUi>,
-    modifier: Modifier = Modifier,
+    fillAvailableHeight: Boolean = false,
 ) {
     val strings = AnalyticsThemeRes.strings
     val language = TimePlannerRes.language
@@ -44,6 +45,7 @@ internal fun CategoryDayPartsSection(
     CategorySection(
         title = strings.dayPartsTitle,
         modifier = modifier,
+        fillAvailableHeight = fillAvailableHeight,
     ) {
         CategoryDayPartHeatmap(
             modifier = Modifier.fillMaxWidth(),

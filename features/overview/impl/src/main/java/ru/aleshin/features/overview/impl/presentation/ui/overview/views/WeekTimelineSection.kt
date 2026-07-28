@@ -38,6 +38,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -53,6 +54,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import ru.aleshin.features.overview.impl.presentation.models.overview.DaySummaryUi
 import ru.aleshin.features.overview.impl.presentation.models.overview.WeekScheduleUi
@@ -76,6 +78,8 @@ internal fun WeekTimelineSection(
     selectedDate: Date?,
     schedules: List<WeekScheduleUi>,
     weekTasksCount: Int,
+    horizontalPadding: Dp = 16.dp,
+    useCompactSize: Boolean = true,
     onSelectSchedule: (Date) -> Unit,
 ) {
     val daySummary = remember(selectedDate, schedules) {
@@ -83,7 +87,7 @@ internal fun WeekTimelineSection(
     }
 
     Column(
-        modifier = modifier.padding(horizontal = 16.dp),
+        modifier = modifier.padding(horizontal = horizontalPadding),
         verticalArrangement = Arrangement.spacedBy(14.dp),
     ) {
         WeekTimelineHeader(
@@ -94,6 +98,7 @@ internal fun WeekTimelineSection(
         DaySummaryCards(
             isLoading = isLoading,
             daySummary = daySummary,
+            useCompactSummary = useCompactSize,
         )
         AnimatedContent(
             modifier = modifier,
@@ -116,6 +121,7 @@ internal fun WeekTimelineSection(
                 WeekTimeline(
                     selectedDate = selectedDate,
                     schedules = schedules,
+                    useCompactSize = useCompactSize,
                     onSelectSchedule = onSelectSchedule,
                 )
             }
@@ -164,7 +170,15 @@ private fun WeekTimelineHeader(
 private fun DaySummaryCards(
     isLoading: Boolean,
     daySummary: DaySummaryUi?,
+    useCompactSummary: Boolean,
 ) {
+    if (!useCompactSummary) {
+        ExpandedDaySummary(
+            isLoading = isLoading,
+            daySummary = daySummary,
+        )
+        return
+    }
     val strings = OverviewThemeRes.strings
     val icons = OverviewThemeRes.icons
     val showPlaceholder = isLoading || daySummary == null
@@ -205,6 +219,111 @@ private fun DaySummaryCards(
 }
 
 @Composable
+private fun ExpandedDaySummary(
+    isLoading: Boolean,
+    daySummary: DaySummaryUi?,
+) {
+    val strings = OverviewThemeRes.strings
+    val icons = OverviewThemeRes.icons
+    val progressTitle = remember(daySummary?.progress) {
+        daySummary?.progress?.let { progress ->
+            NumberFormat.getPercentInstance().format(progress.coerceIn(0f, 1f))
+        }.orEmpty()
+    }
+
+    AnimatedContent(
+        targetState = isLoading || daySummary == null,
+        label = "ExpandedDaySummary",
+        transitionSpec = {
+            fadeIn(animationSpec = tween(600, delayMillis = 90)).togetherWith(
+                fadeOut(animationSpec = tween(300)),
+            )
+        },
+    ) { loading ->
+        if (loading) {
+            PlaceholderBox(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(64.dp),
+                shape = MaterialTheme.shapes.large,
+            )
+        } else {
+            Surface(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(64.dp),
+                shape = MaterialTheme.shapes.large,
+                color = MaterialTheme.colorScheme.surfaceContainerLow,
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    DaySummaryMetric(
+                        modifier = Modifier.weight(1f),
+                        icon = icons.duration,
+                        iconColor = MaterialTheme.colorScheme.tertiary,
+                        title = strings.freeTimeTitle,
+                        value = daySummary?.freeTime?.toDurationTitle().orEmpty(),
+                    )
+                    VerticalDivider(modifier = Modifier.height(36.dp))
+                    DaySummaryMetric(
+                        modifier = Modifier.weight(1f),
+                        icon = icons.schedule,
+                        iconColor = MaterialTheme.colorScheme.primary,
+                        title = strings.workloadTitle,
+                        value = daySummary?.workload?.toDurationTitle().orEmpty(),
+                    )
+                    VerticalDivider(modifier = Modifier.height(36.dp))
+                    DaySummaryMetric(
+                        modifier = Modifier.weight(1f),
+                        icon = icons.completedTask,
+                        iconColor = MaterialTheme.colorScheme.secondary,
+                        title = strings.progressTitle,
+                        value = progressTitle,
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun DaySummaryMetric(
+    modifier: Modifier = Modifier,
+    icon: Int,
+    iconColor: Color,
+    title: String,
+    value: String,
+) {
+    Row(
+        modifier = modifier.padding(horizontal = 16.dp),
+        horizontalArrangement = Arrangement.spacedBy(10.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Icon(
+            modifier = Modifier.size(20.dp),
+            painter = painterResource(id = icon),
+            contentDescription = title,
+            tint = iconColor,
+        )
+        Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+            Text(
+                text = title,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                style = MaterialTheme.typography.labelMedium,
+            )
+            Text(
+                text = value,
+                color = MaterialTheme.colorScheme.onSurface,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                style = MaterialTheme.typography.titleSmall,
+            )
+        }
+    }
+}
+
+@Composable
 private fun DaySummaryCard(
     modifier: Modifier = Modifier,
     isLoading: Boolean,
@@ -236,7 +355,7 @@ private fun DaySummaryCard(
             ) {
                 Row(
                     modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Icon(
@@ -272,7 +391,9 @@ private fun DaySummaryCard(
 
 @Composable
 private fun WeekTimeline(
+    modifier: Modifier = Modifier,
     selectedDate: Date?,
+    useCompactSize: Boolean,
     schedules: List<WeekScheduleUi>,
     onSelectSchedule: (Date) -> Unit,
 ) {
@@ -289,10 +410,10 @@ private fun WeekTimeline(
     }
 
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .height(TIMELINE_HEADER_HEIGHT + timelineTasksHeight),
-        horizontalArrangement = Arrangement.spacedBy(2.dp),
+        horizontalArrangement = Arrangement.spacedBy(if (useCompactSize) 2.dp else 6.dp),
     ) {
         TimelineHours()
         schedules.forEach { schedule ->

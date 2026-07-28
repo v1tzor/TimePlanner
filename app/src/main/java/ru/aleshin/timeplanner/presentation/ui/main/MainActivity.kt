@@ -20,6 +20,10 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
+import android.view.KeyEvent
+import android.view.KeyboardShortcutGroup
+import android.view.KeyboardShortcutInfo
+import android.view.Menu
 import android.view.WindowManager.LayoutParams.FLAG_SECURE
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
@@ -34,6 +38,7 @@ import com.arkivanov.decompose.defaultComponentContext
 import com.arkivanov.decompose.extensions.compose.experimental.stack.ChildStack
 import ru.aleshin.core.utils.architecture.store.compose.stateAsState
 import ru.aleshin.core.utils.navigation.backAnimation
+import ru.aleshin.timeplanner.R
 import ru.aleshin.timeplanner.application.fetchApp
 import ru.aleshin.timeplanner.core.ui.theme.TimePlannerTheme
 import ru.aleshin.timeplanner.presentation.ui.main.contract.DeepLinkTarget
@@ -42,7 +47,7 @@ import ru.aleshin.timeplanner.presentation.ui.main.store.MainComponent
 import ru.aleshin.timeplanner.presentation.ui.main.store.MainComponentFactory
 import ru.aleshin.timeplanner.presentation.ui.splash.SplashContent
 import ru.aleshin.timeplanner.presentation.ui.tabs.TabNavigationContent
-import ru.aleshin.timeplanner.presentation.widgets.main.MainWidgetReceiver
+import ru.aleshin.timeplanner.presentation.widgets.main.MainWidgetUpdateWorker
 import javax.inject.Inject
 
 /**
@@ -99,10 +104,7 @@ class MainActivity : AppCompatActivity() {
                             SplashContent()
                         }
                         is MainComponent.Child.TabNavigationChild -> {
-                            TabNavigationContent(instance.component)
-                            LaunchedEffect(Unit) {
-                                getNotificationPermission()
-                            }
+                            TabNavigationContent(component = instance.component)
                         }
                         is MainComponent.Child.EditorChild -> {
                             instance.contentProvider.invoke(Modifier)
@@ -116,6 +118,9 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
 
+                LaunchedEffect(Unit) {
+                    getNotificationPermission()
+                }
 
                 LaunchedEffect(key1 = state.secureMode) {
                     when (state.secureMode) {
@@ -140,7 +145,61 @@ class MainActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-        sendBroadcast(MainWidgetReceiver.intent(this))
+        MainWidgetUpdateWorker.enqueue(this)
+    }
+
+    override fun onKeyUp(keyCode: Int, event: KeyEvent?): Boolean {
+        if (keyCode == KeyEvent.KEYCODE_ESCAPE) {
+            onBackPressedDispatcher.onBackPressed()
+            return true
+        }
+        return super.onKeyUp(keyCode, event)
+    }
+
+    override fun onProvideKeyboardShortcuts(
+        data: MutableList<KeyboardShortcutGroup>?,
+        menu: Menu?,
+        deviceId: Int,
+    ) {
+        data?.add(
+            KeyboardShortcutGroup(
+                getString(R.string.shortcut_navigation),
+                listOf(
+                    KeyboardShortcutInfo(
+                        getString(R.string.shortcut_home),
+                        KeyEvent.KEYCODE_1,
+                        KeyEvent.META_ALT_ON,
+                    ),
+                    KeyboardShortcutInfo(
+                        getString(R.string.shortcut_overview),
+                        KeyEvent.KEYCODE_2,
+                        KeyEvent.META_ALT_ON,
+                    ),
+                    KeyboardShortcutInfo(
+                        getString(R.string.shortcut_templates),
+                        KeyEvent.KEYCODE_3,
+                        KeyEvent.META_ALT_ON,
+                    ),
+                    KeyboardShortcutInfo(
+                        getString(R.string.shortcut_analytics),
+                        KeyEvent.KEYCODE_4,
+                        KeyEvent.META_ALT_ON,
+                    ),
+                ),
+            )
+        )
+        data?.add(
+            KeyboardShortcutGroup(
+                getString(R.string.shortcut_editor),
+                listOf(
+                    KeyboardShortcutInfo(
+                        getString(R.string.shortcut_save),
+                        KeyEvent.KEYCODE_S,
+                        KeyEvent.META_CTRL_ON,
+                    ),
+                ),
+            )
+        )
     }
 
     private fun getNotificationPermission() {

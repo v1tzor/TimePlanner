@@ -27,7 +27,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import ru.aleshin.features.analytics.impl.presentation.models.analytics.AnalyticsWeekdayHourLoadUi
 import ru.aleshin.features.analytics.impl.presentation.theme.AnalyticsThemeRes
-import ru.aleshin.features.analytics.impl.presentation.ui.common.views.AnalyticsSurfaceCard
 import ru.aleshin.features.analytics.impl.presentation.ui.common.views.AnalyticsWeekdayHourHeatmap
 
 /**
@@ -38,28 +37,21 @@ import ru.aleshin.features.analytics.impl.presentation.ui.common.views.Analytics
 internal fun AnalyticsHoursSection(
     modifier: Modifier = Modifier,
     weekdayHourLoad: AnalyticsWeekdayHourLoadUi,
+    fillAvailableHeight: Boolean = false,
 ) {
-    Column(
+    AnalyticsSection(
         modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+        title = AnalyticsThemeRes.strings.busiestHoursTitle,
+        fillAvailableHeight = fillAvailableHeight,
     ) {
-        Text(
-            modifier = modifier,
-            text = AnalyticsThemeRes.strings.busiestHoursTitle,
-            style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.Medium,
-            color = MaterialTheme.colorScheme.onSurface,
+        AnalyticsWeekdayHourHeatmap(
+            modifier = Modifier.fillMaxWidth(),
+            weekdayHourLoad = weekdayHourLoad,
         )
-        AnalyticsSurfaceCard {
-            AnalyticsWeekdayHourHeatmap(
-                modifier = Modifier.fillMaxWidth(),
-                weekdayHourLoad = weekdayHourLoad,
-            )
-            Text(
-                text = AnalyticsThemeRes.strings.averagePlannedMinutes,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        }
+        Text(
+            text = AnalyticsThemeRes.strings.averagePlannedMinutes,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
     }
 }

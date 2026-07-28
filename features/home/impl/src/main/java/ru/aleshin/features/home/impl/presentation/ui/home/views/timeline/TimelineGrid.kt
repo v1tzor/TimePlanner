@@ -16,9 +16,9 @@
 package ru.aleshin.features.home.impl.presentation.ui.home.views.timeline
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.MutatePriority
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -48,20 +48,22 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import ru.aleshin.core.presentation.models.tasks.TimeTaskUi
 import ru.aleshin.core.utils.extensions.isCurrentDay
-import ru.aleshin.core.utils.extensions.shiftHours
 import ru.aleshin.core.utils.functional.Constants
 import ru.aleshin.core.utils.functional.TimeRange
 import ru.aleshin.features.home.impl.presentation.models.TimelineScheduleUi
+import ru.aleshin.features.home.impl.presentation.models.TimelineTaskUpdateRequestUi
 import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
 import ru.aleshin.features.home.impl.presentation.theme.tokens.fetchHomeCategoryColors
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
+import java.util.TimeZone
 import kotlin.math.abs
 import kotlin.math.roundToInt
 import kotlin.math.roundToLong
@@ -74,13 +76,16 @@ internal fun TimelineGrid(
     modifier: Modifier = Modifier,
     schedule: TimelineScheduleUi,
     currentTime: Date?,
+    pendingTimeTaskUpdate: TimelineTaskUpdateRequestUi?,
+    failedTimeTaskUpdate: TimelineTaskUpdateRequestUi?,
+    taskMaxWidth: Dp?,
     scrollState: ScrollState,
     viewportHeight: Int,
     gestureState: TimelineGestureState,
     onTimeTaskEdit: (Long) -> Unit,
     onTaskDoneChange: (TimeTaskUi) -> Unit,
     onTimeTaskAdd: (Date, Date) -> Unit,
-    onTimeTaskUpdate: (Long, TimeRange) -> Unit,
+    onTimeTaskUpdate: (TimelineTaskUpdateRequestUi) -> Unit,
     onInitialTimePositioned: (Float) -> Unit,
 ) {
     val density = LocalDensity.current
@@ -89,7 +94,13 @@ internal fun TimelineGrid(
     val gridColor = MaterialTheme.colorScheme.outlineVariant
     val railColor = MaterialTheme.colorScheme.outline
     val nowColor = MaterialTheme.colorScheme.primary
-    val baseLayoutResult = remember(schedule, density) {
+    val taskMaxWidthPx = with(density) {
+        taskMaxWidth?.roundToPx()
+    }
+    val layoutTaskKey = schedule.timeTasks.map { timeTask ->
+        timeTask.timeTask.key to timeTask.visibleTimeRange
+    }
+    val baseLayoutResult = remember(schedule.dayTimeRange, layoutTaskKey, density) {
         with(density) {
             TimelineLayout.calculate(
                 dayTimeRange = schedule.dayTimeRange,
@@ -109,7 +120,16 @@ internal fun TimelineGrid(
     var editLayoutResult by remember(schedule.date) {
         mutableStateOf<TimelineLayoutResult?>(null)
     }
-    val layoutResult = editLayoutResult ?: baseLayoutResult
+    var editLayoutTaskKey by remember(schedule.date) {
+        mutableStateOf<List<Pair<Long, TimeRange>>?>(null)
+    }
+    val isEditLayoutCompatible = isTimelineEditLayoutCompatible(
+        frozenTaskKey = editLayoutTaskKey,
+        currentTaskKey = layoutTaskKey,
+        selectedTimeTaskId = gestureState.selectedTimeTaskId,
+        isDragging = gestureState.taskEdit != null,
+    )
+    val layoutResult = editLayoutResult?.takeIf { isEditLayoutCompatible } ?: baseLayoutResult
     val taskColors = remember(schedule.timeTasks, surfaceColor) {
         schedule.timeTasks.associate { timeTask ->
             timeTask.timeTask.key to fetchHomeCategoryColors(
@@ -119,41 +139,58 @@ internal fun TimelineGrid(
         }
     }
     val hourTimes = remember(schedule.dayTimeRange) {
-        List(HOURS_IN_DAY + 1) { hour -> schedule.dayTimeRange.from.shiftHours(hour) }
+        fetchTimelineHourTimes(schedule.dayTimeRange)
     }
     val baseTaskPositionById = remember(layoutResult) {
         layoutResult.taskPositions.associateBy { position -> position.timeTaskId }
     }
+    val minimumTaskHeight = with(density) { TIMELINE_TASK_MIN_HEIGHT.toPx() }
+    val taskSpace = with(density) { TIMELINE_TASK_SPACE.toPx() }
+    var fixedMoveTaskHeight by remember(schedule.date) {
+        mutableFloatStateOf(Float.NaN)
+    }
     val visibleTaskRanges = schedule.timeTasks.map { timeTask ->
-        if (gestureState.selectedTimeTaskId == timeTask.timeTask.key) {
-            gestureState.fetchTimeRange(timeTask)
-        } else {
-            timeTask.visibleTimeRange
-        }
+        gestureState.fetchTimeRange(timeTask, pendingTimeTaskUpdate)
+            .intersect(schedule.dayTimeRange)
+            ?: timeTask.visibleTimeRange
     }
     val taskPositions = schedule.timeTasks.mapIndexed { index, timeTask ->
         val basePosition = checkNotNull(baseTaskPositionById[timeTask.timeTask.key])
         val isSelected = gestureState.selectedTimeTaskId == timeTask.timeTask.key
-        when {
-            !isSelected || gestureState.lastDragMode == null -> basePosition
-            gestureState.lastDragMode == TimelineTaskDragMode.MOVE -> basePosition.copy(
-                top = layoutResult.scale.fetchOffset(visibleTaskRanges[index].from),
+        val dragMode = gestureState.lastDragMode
+        val hasPreviewRange = visibleTaskRanges[index] != timeTask.visibleTimeRange
+        if ((isSelected && dragMode != null) || hasPreviewRange) {
+            TimelineLayout.calculateEditedTaskPosition(
+                basePosition = basePosition,
+                timeRange = visibleTaskRanges[index],
+                scale = layoutResult.scale,
+                minimumTaskHeight = minimumTaskHeight,
+                dragMode = if (isSelected) dragMode else null,
+                taskSpace = taskSpace,
+                fixedMoveHeight = fixedMoveTaskHeight.takeIf {
+                    isSelected &&
+                        dragMode == TimelineTaskDragMode.MOVE &&
+                        !fixedMoveTaskHeight.isNaN()
+                },
             )
-            else -> {
-                val startOffset = layoutResult.scale.fetchOffset(visibleTaskRanges[index].from)
-                val endOffset = layoutResult.scale.fetchOffset(visibleTaskRanges[index].to)
-                basePosition.copy(
-                    top = startOffset,
-                    height = (endOffset - startOffset).coerceAtLeast(
-                        with(density) { TIMELINE_TASK_MIN_HEIGHT.toPx() },
-                    ),
-                )
-            }
+        } else {
+            basePosition
         }
     }
+    val verticalPadding = with(density) { TIMELINE_VERTICAL_PADDING.toPx() }
+    val timelineHeight = maxOf(
+        layoutResult.scale.height,
+        taskPositions.maxOfOrNull { position ->
+            position.top + position.height + verticalPadding
+        } ?: layoutResult.scale.height,
+    )
     val taskPositionById = taskPositions.associateBy { position -> position.timeTaskId }
-    val taskStartOffsets = taskPositions.map { position -> position.top }
-    val taskEndOffsets = taskPositions.map { position -> position.top + position.height }
+    val taskStartOffsets = visibleTaskRanges.map { timeRange ->
+        layoutResult.scale.fetchOffset(timeRange.from)
+    }
+    val taskEndOffsets = visibleTaskRanges.map { timeRange ->
+        layoutResult.scale.fetchOffset(timeRange.to)
+    }
     val labelMinimumDistance = with(density) { LABEL_MIN_DISTANCE.toPx() }
     val groupEndTaskIndexes = visibleTaskRanges.indices.filter { index ->
         val timeRange = visibleTaskRanges[index]
@@ -176,22 +213,59 @@ internal fun TimelineGrid(
         scale = layoutResult.scale,
         minimumDistance = labelMinimumDistance,
     )
-    var dragPointerPosition by remember { mutableFloatStateOf(Float.NaN) }
+    var dragContentAnchorY by remember { mutableFloatStateOf(Float.NaN) }
+    var displayedScale by remember(schedule.date) {
+        mutableStateOf<TimelineScale?>(null)
+    }
     val selectedTimeTask by rememberUpdatedState(
         schedule.timeTasks.find { timeTask ->
             timeTask.timeTask.key == gestureState.taskEdit?.timeTaskId
         },
     )
+    val currentLayoutResult by rememberUpdatedState(layoutResult)
+    val currentSchedule by rememberUpdatedState(schedule)
+    val currentViewportHeight by rememberUpdatedState(viewportHeight)
+    val currentOnTimeTaskAdd by rememberUpdatedState(onTimeTaskAdd)
+    val isTimeTaskUpdatePending = gestureState.isTimeTaskUpdatePending(
+        pendingTimeTaskUpdate,
+    )
+    val currentIsTimeTaskUpdatePending by rememberUpdatedState(isTimeTaskUpdatePending)
 
-    LaunchedEffect(schedule.timeTasks, gestureState.selectedTimeTaskId) {
-        val timeTask = schedule.timeTasks.find { timeTask ->
-            timeTask.timeTask.key == gestureState.selectedTimeTaskId
-        }
-        if (timeTask != null) {
-            gestureState.synchronize(timeTask)
-        } else if (gestureState.selectedTimeTaskId != null) {
+    LaunchedEffect(isEditLayoutCompatible, layoutTaskKey) {
+        if (!isEditLayoutCompatible) {
             gestureState.exitEditMode()
             editLayoutResult = null
+            editLayoutTaskKey = null
+            fixedMoveTaskHeight = Float.NaN
+        } else if (editLayoutTaskKey != null && editLayoutTaskKey != layoutTaskKey) {
+            editLayoutTaskKey = layoutTaskKey
+        }
+    }
+
+    LaunchedEffect(
+        schedule.timeTasks,
+        gestureState.selectedTimeTaskId,
+        gestureState.taskEdit != null,
+        pendingTimeTaskUpdate,
+        failedTimeTaskUpdate,
+    ) {
+        schedule.timeTasks.forEach { timeTask ->
+            gestureState.synchronize(timeTask, pendingTimeTaskUpdate)
+        }
+        failedTimeTaskUpdate?.let { request ->
+            val timeTask = schedule.timeTasks.find { timeTask ->
+                timeTask.timeTask.key == request.timeTaskId
+            }
+            gestureState.rejectTimeTaskUpdate(request, timeTask)
+        }
+        val selectedTaskExists = schedule.timeTasks.any { timeTask ->
+            timeTask.timeTask.key == gestureState.selectedTimeTaskId
+        }
+        if (!selectedTaskExists && gestureState.selectedTimeTaskId != null) {
+            gestureState.exitEditMode()
+            editLayoutResult = null
+            editLayoutTaskKey = null
+            fixedMoveTaskHeight = Float.NaN
         }
     }
 
@@ -199,36 +273,66 @@ internal fun TimelineGrid(
         onInitialTimePositioned(layoutResult.scale.fetchOffset(schedule.initialTime))
     }
 
-    LaunchedEffect(gestureState.taskEdit?.timeTaskId, viewportHeight, scrollState.maxValue) {
-        while (gestureState.taskEdit != null && viewportHeight > 0) {
+    LaunchedEffect(layoutResult.scale, viewportHeight, scrollState.maxValue) {
+        val previousScale = displayedScale
+        val currentScale = layoutResult.scale
+        if (previousScale != null && previousScale !== currentScale && viewportHeight > 0) {
+            val anchorOffset = scrollState.value + viewportHeight / 2f
+            val anchorTime = previousScale.fetchTime(anchorOffset)
             withFrameNanos { }
-            val pointerPosition = dragPointerPosition
-            val timeTask = selectedTimeTask ?: continue
-            if (pointerPosition.isNaN()) continue
+            val targetOffset = (
+                currentScale.fetchOffset(anchorTime) - viewportHeight / 2f
+                ).roundToInt().coerceIn(0, scrollState.maxValue)
+            scrollState.scrollTo(targetOffset)
+        }
+        displayedScale = currentScale
+    }
 
-            val viewportPosition = pointerPosition - scrollState.value
-            val edgeSize = with(density) { AUTO_SCROLL_EDGE_SIZE.toPx() }
-            val maximumStep = with(density) { AUTO_SCROLL_MAX_STEP.toPx() }
-            val scrollStep = when {
-                viewportPosition < edgeSize -> {
-                    -maximumStep * (1f - viewportPosition.coerceAtLeast(0f) / edgeSize)
-                }
-                viewportPosition > viewportHeight - edgeSize -> {
-                    val edgeProgress = (viewportPosition - viewportHeight + edgeSize) / edgeSize
-                    maximumStep * edgeProgress.coerceIn(0f, 1f)
-                }
-                else -> 0f
-            }
-            if (scrollStep != 0f) {
-                val consumedScroll = scrollState.scrollBy(scrollStep)
-                gestureState.dragTask(
-                    dragAmount = consumedScroll,
-                    timeTask = timeTask,
-                    scale = layoutResult.scale,
-                    freeTimeRanges = schedule.freeTimeRanges,
-                    timeStep = schedule.timeStep,
-                    minimumTaskDuration = schedule.minimumTaskDuration,
+    LaunchedEffect(gestureState.taskEdit?.sessionId, scrollState) {
+        val sessionId = gestureState.taskEdit?.sessionId ?: return@LaunchedEffect
+        val edgeSize = with(density) { AUTO_SCROLL_EDGE_SIZE.toPx() }
+        val maximumSpeed = with(density) { AUTO_SCROLL_MAX_SPEED.toPx() }
+
+        scrollState.scroll(MutatePriority.UserInput) {
+            var previousFrameTime: Long? = null
+            while (gestureState.taskEdit?.sessionId == sessionId) {
+                val frameTime = withFrameNanos { time -> time }
+                val elapsedSeconds = previousFrameTime?.let { previousTime ->
+                    ((frameTime - previousTime) / NANOS_IN_SECOND)
+                        .coerceIn(0f, AUTO_SCROLL_MAX_FRAME_SECONDS)
+                } ?: 0f
+                previousFrameTime = frameTime
+                if (elapsedSeconds == 0f) continue
+
+                val viewportHeight = currentViewportHeight
+                val pointerPosition = dragContentAnchorY
+                val timeTask = selectedTimeTask ?: continue
+                if (pointerPosition.isNaN() || viewportHeight <= 0) continue
+
+                val viewportPosition = pointerPosition - scrollState.value
+                val scrollStep = calculateTimelineAutoScrollStep(
+                    viewportPosition = viewportPosition,
+                    viewportHeight = viewportHeight.toFloat(),
+                    edgeSize = edgeSize,
+                    maximumSpeed = maximumSpeed,
+                    elapsedSeconds = elapsedSeconds,
                 )
+                if (scrollStep != 0f) {
+                    val consumedScroll = scrollBy(scrollStep)
+                    if (consumedScroll == 0f) continue
+
+                    dragContentAnchorY += consumedScroll
+                    val activeLayoutResult = currentLayoutResult
+                    val activeSchedule = currentSchedule
+                    gestureState.dragTask(
+                        dragAmount = consumedScroll,
+                        timeTask = timeTask,
+                        scale = activeLayoutResult.scale,
+                        freeTimeRanges = activeSchedule.freeTimeRanges,
+                        timeStep = activeSchedule.timeStep,
+                        minimumTaskDuration = activeSchedule.minimumTaskDuration,
+                    )
+                }
             }
         }
     }
@@ -244,7 +348,10 @@ internal fun TimelineGrid(
             drawLine(
                 color = railColor.copy(alpha = 0.55f),
                 start = Offset(axisOffset, TIMELINE_VERTICAL_PADDING.toPx()),
-                end = Offset(axisOffset, size.height - TIMELINE_VERTICAL_PADDING.toPx()),
+                end = Offset(
+                    axisOffset,
+                    layoutResult.scale.fetchOffset(schedule.dayTimeRange.to),
+                ),
                 strokeWidth = 1.dp.toPx(),
             )
             hourOffsets.forEachIndexed { index, hourOffset ->
@@ -283,7 +390,7 @@ internal fun TimelineGrid(
     Layout(
         modifier = modifier
             .fillMaxWidth()
-            .height(with(density) { layoutResult.scale.height.toDp() })
+            .height(with(density) { timelineHeight.toDp() })
             .then(drawModifier),
         content = {
             Box(
@@ -298,6 +405,11 @@ internal fun TimelineGrid(
                                 ) {
                                     gestureState.exitEditMode()
                                     editLayoutResult = null
+                                    editLayoutTaskKey = null
+                                    fixedMoveTaskHeight = Float.NaN
+                                    return@detectTapGestures
+                                }
+                                if (currentIsTimeTaskUpdatePending) {
                                     return@detectTapGestures
                                 }
                                 if (offset.x < TIMELINE_AXIS_WIDTH.toPx()) {
@@ -311,7 +423,7 @@ internal fun TimelineGrid(
                                     timeStep = schedule.timeStep,
                                     minimumDuration = schedule.minimumTaskDuration,
                                 ) ?: return@detectTapGestures
-                                onTimeTaskAdd(timeRange.from, timeRange.to)
+                                currentOnTimeTaskAdd(timeRange.from, timeRange.to)
                             },
                         )
                     },
@@ -323,51 +435,72 @@ internal fun TimelineGrid(
                 TimelineTaskCard(
                     modifier = Modifier.zIndex(1f),
                     model = timeTask,
-                    timeRange = gestureState.fetchTimeRange(timeTask),
+                    timeRange = gestureState.fetchTimeRange(timeTask, pendingTimeTaskUpdate),
                     colors = checkNotNull(taskColors[timeTask.timeTask.key]),
                     isSelected = gestureState.selectedTimeTaskId == timeTask.timeTask.key,
                     isDragging = taskEdit != null,
                     onClick = {
-                        gestureState.exitEditMode()
-                        editLayoutResult = null
-                        onTimeTaskEdit(timeTask.timeTask.key)
+                        if (!isTimeTaskUpdatePending) {
+                            gestureState.exitEditMode()
+                            editLayoutResult = null
+                            editLayoutTaskKey = null
+                            fixedMoveTaskHeight = Float.NaN
+                            onTimeTaskEdit(timeTask.timeTask.key)
+                        }
                     },
                     onMoveClick = {
                         if (gestureState.selectedTimeTaskId != timeTask.timeTask.key) {
                             editLayoutResult = baseLayoutResult
+                            editLayoutTaskKey = layoutTaskKey
                         } else if (editLayoutResult == null) {
                             editLayoutResult = baseLayoutResult
+                            editLayoutTaskKey = layoutTaskKey
                         }
-                        gestureState.startEditMode(timeTask)
+                        gestureState.startEditMode(timeTask, pendingTimeTaskUpdate)
                     },
                     onEditModeCancel = {
                         gestureState.exitEditMode()
                         editLayoutResult = null
+                        editLayoutTaskKey = null
+                        fixedMoveTaskHeight = Float.NaN
                     },
-                    onDoneChange = { onTaskDoneChange(timeTask.timeTask) },
+                    onDoneChange = {
+                        if (!isTimeTaskUpdatePending) {
+                            onTaskDoneChange(timeTask.timeTask)
+                        }
+                    },
                     onDragStart = { mode ->
                         if (gestureState.selectedTimeTaskId != timeTask.timeTask.key) {
                             editLayoutResult = baseLayoutResult
+                            editLayoutTaskKey = layoutTaskKey
                         } else if (editLayoutResult == null) {
                             editLayoutResult = baseLayoutResult
+                            editLayoutTaskKey = layoutTaskKey
                         }
-                        gestureState.startEditMode(timeTask)
-                        gestureState.startTaskEdit(timeTask, mode)
+                        gestureState.startEditMode(timeTask, pendingTimeTaskUpdate)
+                        gestureState.startTaskEdit(
+                            timeTask = timeTask,
+                            mode = mode,
+                            externalPendingUpdate = pendingTimeTaskUpdate,
+                        ).also { isStarted ->
+                            if (isStarted) {
+                                val taskPosition = checkNotNull(
+                                    taskPositionById[timeTask.timeTask.key],
+                                )
+                                if (mode == TimelineTaskDragMode.MOVE) {
+                                    fixedMoveTaskHeight = taskPosition.height
+                                }
+                                dragContentAnchorY = fetchDragContentAnchor(
+                                    position = taskPosition,
+                                    mode = mode,
+                                )
+                            }
+                        }
                     },
                     onDrag = { dragAmount ->
-                        val position = taskPositionById[timeTask.timeTask.key]
-                        val currentRange = gestureState.fetchTimeRange(timeTask)
                         val dragMode = gestureState.taskEdit?.mode
-                        dragPointerPosition = when (dragMode) {
-                            TimelineTaskDragMode.MOVE -> {
-                                layoutResult.scale.fetchOffset(currentRange.from) +
-                                    (position?.height ?: 0f) / 2f
-                            }
-                            TimelineTaskDragMode.RESIZE_START -> {
-                                layoutResult.scale.fetchOffset(currentRange.from)
-                            }
-                            TimelineTaskDragMode.RESIZE_END -> layoutResult.scale.fetchOffset(currentRange.to)
-                            null -> position?.top ?: 0f
+                        if (dragMode != null && !dragContentAnchorY.isNaN()) {
+                            dragContentAnchorY += dragAmount
                         }
                         val isChanged = gestureState.dragTask(
                             dragAmount = dragAmount,
@@ -377,7 +510,10 @@ internal fun TimelineGrid(
                             timeStep = schedule.timeStep,
                             minimumTaskDuration = schedule.minimumTaskDuration,
                         )
-                        val updatedRange = gestureState.fetchTimeRange(timeTask)
+                        val updatedRange = gestureState.fetchTimeRange(
+                            timeTask,
+                            pendingTimeTaskUpdate,
+                        )
                         val changedTime = when (dragMode) {
                             TimelineTaskDragMode.RESIZE_END -> updatedRange.to
                             else -> updatedRange.from
@@ -387,13 +523,11 @@ internal fun TimelineGrid(
                         }
                     },
                     onDragEnd = {
-                        dragPointerPosition = Float.NaN
-                        gestureState.finishTaskEdit()?.let { timeRange ->
-                            onTimeTaskUpdate(timeTask.timeTask.key, timeRange)
-                        }
+                        dragContentAnchorY = Float.NaN
+                        gestureState.finishTaskEdit()?.let(onTimeTaskUpdate)
                     },
                     onDragCancel = {
-                        dragPointerPosition = Float.NaN
+                        dragContentAnchorY = Float.NaN
                         gestureState.cancelTaskDrag()
                     },
                 )
@@ -437,14 +571,17 @@ internal fun TimelineGrid(
         val nowLineIndex = endLabelStart + groupEndTaskIndexes.size
         val nowLabelIndex = nowLineIndex + if (visibleCurrentTime != null) 1 else 0
         val taskStartPadding = TIMELINE_TASK_START_PADDING.roundToPx()
-        val taskWidth = (
+        val availableTaskWidth = (
             constraints.maxWidth - axisWidth - taskStartPadding -
                 TIMELINE_TASK_END_PADDING.roundToPx()
             ).coerceAtLeast(0)
+        val taskWidth = taskMaxWidthPx?.let { maximumWidth ->
+            minOf(availableTaskWidth, maximumWidth)
+        } ?: availableTaskWidth
         val backgroundPlaceable = measurables[backgroundIndex].measure(
             Constraints.fixed(
                 width = constraints.maxWidth,
-                height = layoutResult.scale.height.roundToInt(),
+                height = timelineHeight.roundToInt(),
             ),
         )
         val taskPlaceables = schedule.timeTasks.mapIndexed { index, timeTask ->
@@ -466,6 +603,25 @@ internal fun TimelineGrid(
         val endLabelPlaceables = groupEndTaskIndexes.indices.map { index ->
             measurables[endLabelStart + index].measure(labelConstraints)
         }
+        val labelAnchorOffsets = visibleHourTimes.map { hourTime ->
+            layoutResult.scale.fetchOffset(hourTime)
+        } + taskStartOffsets + groupEndTaskIndexes.map { index ->
+            taskEndOffsets[index]
+        }
+        val labelHeights = hourPlaceables.map { placeable ->
+            placeable.height.toFloat()
+        } + startLabelPlaceables.map { placeable ->
+            placeable.height.toFloat()
+        } + endLabelPlaceables.map { placeable ->
+            placeable.height.toFloat()
+        }
+        val labelTopPositions = TimelineLayout.calculateLabelTopPositions(
+            anchorOffsets = labelAnchorOffsets,
+            labelHeights = labelHeights,
+            minimumGap = LABEL_MIN_GAP.toPx(),
+            minimumTop = 0f,
+            maximumBottom = timelineHeight,
+        )
         val nowLinePlaceable = visibleCurrentTime?.let {
             measurables[nowLineIndex].measure(
                 Constraints.fixed(
@@ -480,7 +636,7 @@ internal fun TimelineGrid(
             )
         }
 
-        layout(constraints.maxWidth, layoutResult.scale.height.roundToInt()) {
+        layout(constraints.maxWidth, timelineHeight.roundToInt()) {
             backgroundPlaceable.placeRelative(0, 0)
             schedule.timeTasks.forEachIndexed { index, timeTask ->
                 val position = checkNotNull(taskPositionById[timeTask.timeTask.key])
@@ -491,18 +647,19 @@ internal fun TimelineGrid(
             }
             visibleHourTimes.forEachIndexed { index, hourTime ->
                 val placeable = hourPlaceables[index]
-                val offset = layoutResult.scale.fetchOffset(hourTime) - placeable.height / 2f
-                placeable.placeRelative(0, offset.roundToInt())
+                placeable.placeRelative(0, labelTopPositions[index].roundToInt())
             }
             schedule.timeTasks.forEachIndexed { index, timeTask ->
                 val placeable = startLabelPlaceables[index]
-                val offset = taskStartOffsets[index]
-                placeable.placeRelative(0, (offset + 4.dp.toPx()).roundToInt())
+                val labelIndex = visibleHourTimes.size + index
+                placeable.placeRelative(0, labelTopPositions[labelIndex].roundToInt())
             }
             groupEndTaskIndexes.forEachIndexed { placeableIndex, taskIndex ->
                 val placeable = endLabelPlaceables[placeableIndex]
-                val offset = taskEndOffsets[taskIndex]
-                placeable.placeRelative(0, (offset - placeable.height / 2f).roundToInt())
+                val labelIndex = visibleHourTimes.size +
+                    schedule.timeTasks.size +
+                    placeableIndex
+                placeable.placeRelative(0, labelTopPositions[labelIndex].roundToInt())
             }
             if (nowLinePlaceable != null && nowPlaceable != null) {
                 val nowOffset = layoutResult.scale.fetchOffset(checkNotNull(visibleCurrentTime))
@@ -583,6 +740,89 @@ private fun rememberTimeTitle(time: Date): String {
     return remember(time) { timeFormat.format(time) }
 }
 
+private fun fetchDragContentAnchor(
+    position: TimelineTaskPosition,
+    mode: TimelineTaskDragMode,
+): Float {
+    return when (mode) {
+        TimelineTaskDragMode.MOVE -> position.top + position.height / 2f
+        TimelineTaskDragMode.RESIZE_START -> position.top
+        TimelineTaskDragMode.RESIZE_END -> position.top + position.height
+    }
+}
+
+internal fun calculateTimelineAutoScrollStep(
+    viewportPosition: Float,
+    viewportHeight: Float,
+    edgeSize: Float,
+    maximumSpeed: Float,
+    elapsedSeconds: Float,
+): Float {
+    if (viewportHeight <= 0f || edgeSize <= 0f) return 0f
+
+    val effectiveEdgeSize = minOf(edgeSize, viewportHeight / 2f)
+    val maximumStep = maximumSpeed * elapsedSeconds
+    return when {
+        viewportPosition < effectiveEdgeSize -> {
+            val edgeProgress = 1f -
+                viewportPosition.coerceAtLeast(0f) / effectiveEdgeSize
+            -maximumStep * edgeProgress
+        }
+        viewportPosition > viewportHeight - effectiveEdgeSize -> {
+            val edgeProgress = (viewportPosition - viewportHeight + effectiveEdgeSize) /
+                effectiveEdgeSize
+            maximumStep * edgeProgress.coerceIn(0f, 1f)
+        }
+        else -> 0f
+    }
+}
+
+internal fun isTimelineEditLayoutCompatible(
+    frozenTaskKey: List<Pair<Long, TimeRange>>?,
+    currentTaskKey: List<Pair<Long, TimeRange>>,
+    selectedTimeTaskId: Long?,
+    isDragging: Boolean,
+): Boolean {
+    if (frozenTaskKey == null || frozenTaskKey == currentTaskKey) return true
+    if (isDragging || selectedTimeTaskId == null || frozenTaskKey.size != currentTaskKey.size) {
+        return false
+    }
+
+    val frozenTaskRanges = frozenTaskKey.toMap()
+    val currentTaskRanges = currentTaskKey.toMap()
+    if (frozenTaskRanges.size != frozenTaskKey.size ||
+        currentTaskRanges.size != currentTaskKey.size ||
+        selectedTimeTaskId !in frozenTaskRanges ||
+        selectedTimeTaskId !in currentTaskRanges
+    ) {
+        return false
+    }
+    return currentTaskRanges.all { (timeTaskId, timeRange) ->
+        timeTaskId == selectedTimeTaskId || frozenTaskRanges[timeTaskId] == timeRange
+    }
+}
+
+internal fun fetchTimelineHourTimes(
+    dayTimeRange: TimeRange,
+    timeZone: TimeZone = TimeZone.getDefault(),
+): List<Date> {
+    val hourTimes = mutableListOf(dayTimeRange.from)
+    var currentTime = dayTimeRange.from
+
+    while (currentTime < dayTimeRange.to) {
+        val nextTime = Calendar.getInstance(timeZone).apply {
+            time = currentTime
+            add(Calendar.HOUR_OF_DAY, 1)
+        }.time
+        if (nextTime >= dayTimeRange.to) break
+
+        hourTimes.add(nextTime)
+        currentTime = nextTime
+    }
+    hourTimes.add(dayTimeRange.to)
+    return hourTimes
+}
+
 private fun fetchCreateTimeRange(
     offset: Float,
     scale: TimelineScale,
@@ -617,7 +857,16 @@ private fun Date.isQuarterHour(): Boolean {
         .get(Calendar.MINUTE) % QUARTER_HOUR_MINUTES == 0
 }
 
-private const val HOURS_IN_DAY = 24
+private fun TimeRange.intersect(other: TimeRange): TimeRange? {
+    val startTime = maxOf(from.time, other.from.time)
+    val endTime = minOf(to.time, other.to.time)
+    return if (startTime < endTime) {
+        TimeRange(Date(startTime), Date(endTime))
+    } else {
+        null
+    }
+}
+
 private const val QUARTER_HOUR_MINUTES = 15
 private const val TIMELINE_FREE_TIME_SCALE = 0.64f
 private const val TIMELINE_LONG_TASK_SCALE = 0.5f
@@ -628,14 +877,17 @@ private val TIMELINE_TASK_MIN_HEIGHT = 58.dp
 private val TIMELINE_TASK_MAX_HEIGHT = 720.dp
 private val TIMELINE_FREE_TIME_MIN_HEIGHT = 10.dp
 private val TIMELINE_TASK_SPACE = 2.dp
-private val TIMELINE_VERTICAL_PADDING = 20.dp
+private val TIMELINE_VERTICAL_PADDING = TIMELINE_TASK_MIN_HEIGHT
 private val TIMELINE_AXIS_WIDTH = 68.dp
 private val TIMELINE_LINE_START_GAP = 7.dp
 private val TIMELINE_TASK_START_PADDING = 8.dp
 private val TIMELINE_TASK_END_PADDING = 12.dp
 private val TIMELINE_LABEL_END_PADDING = 6.dp
 private val LABEL_MIN_DISTANCE = 32.dp
+private val LABEL_MIN_GAP = 2.dp
 private val HALF_HOUR_MIN_DISTANCE = 64.dp
 private val AUTO_SCROLL_EDGE_SIZE = 72.dp
-private val AUTO_SCROLL_MAX_STEP = 11.dp
+private val AUTO_SCROLL_MAX_SPEED = 660.dp
 private val NOW_LINE_CONTAINER_HEIGHT = 8.dp
+private const val AUTO_SCROLL_MAX_FRAME_SECONDS = 0.05f
+private const val NANOS_IN_SECOND = 1_000_000_000f

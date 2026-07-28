@@ -27,9 +27,6 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DropdownMenu
@@ -76,7 +73,9 @@ import ru.aleshin.timeplanner.core.ui.views.CategoryTextMonogram
 /**
  * @author Stanislav Aleshin on 23.07.2026.
  */
-internal fun LazyListScope.AnalyticsCategoriesSection(
+@Composable
+internal fun AnalyticsCategoriesSection(
+    modifier: Modifier = Modifier,
     categories: AnalyticsCategoryDistributionUi,
     categorySortType: AnalyticsCategorySort,
     isExpanded: Boolean,
@@ -92,50 +91,43 @@ internal fun LazyListScope.AnalyticsCategoriesSection(
     val hasExpandAction = categories.buckets.size > categories.collapsedBucketCount
     val maximumDuration = rows.maxOfOrNull { it.durationMillis }?.coerceAtLeast(1L) ?: 1L
 
-    item(key = CATEGORIES_HEADER_SECTION_KEY) {
+    Column(modifier = modifier) {
         AnalyticsCategoriesHeader(
             categorySortType = categorySortType,
             onChangeSort = onChangeSort,
         )
-    }
-    itemsIndexed(
-        items = rows,
-        key = { _, row -> row.category?.id?.takeIf { !row.isOther } ?: -1 }
-    ) { index, row ->
-        val isLastRow = index == rows.lastIndex && !hasExpandAction
-        Surface(
-            modifier = Modifier.fillMaxWidth().widthIn(max = 680.dp),
-            shape = categoryRowShape(
-                index = index,
-                rowCount = rows.size,
-                isLastRow = isLastRow,
-                hasExpandAction = hasExpandAction,
-            ),
-            color = MaterialTheme.colorScheme.surfaceContainerLow,
-        ) {
-            Column {
-                AnalyticsCategoryRow(
-                    rank = index + 1,
-                    row = row,
-                    maximumDuration = maximumDuration,
-                    onToggle = onToggle,
-                    onOpenCategory = onOpenCategory,
-                )
-                if (!isLastRow) {
-                    HorizontalDivider()
+        rows.forEachIndexed { index, row ->
+            val isLastRow = index == rows.lastIndex && !hasExpandAction
+            Surface(
+                modifier = Modifier.fillMaxWidth(),
+                shape = categoryRowShape(
+                    index = index,
+                    rowCount = rows.size,
+                    isLastRow = isLastRow,
+                    hasExpandAction = hasExpandAction,
+                ),
+                color = MaterialTheme.colorScheme.surfaceContainerLow,
+            ) {
+                Column {
+                    AnalyticsCategoryRow(
+                        rank = index + 1,
+                        row = row,
+                        maximumDuration = maximumDuration,
+                        onToggle = onToggle,
+                        onOpenCategory = onOpenCategory,
+                    )
+                    if (!isLastRow) {
+                        HorizontalDivider()
+                    }
                 }
             }
         }
-    }
-    if (hasExpandAction) {
-        item(key = CATEGORIES_EXPANDED_KEY) {
+        if (hasExpandAction) {
             AnalyticsCategoriesExpandButton(
                 isExpanded = isExpanded,
                 onToggle = onToggle,
             )
-        }
-    } else {
-        item {
+        } else {
             Spacer(modifier = Modifier.height(24.dp))
         }
     }
@@ -152,7 +144,6 @@ private fun AnalyticsCategoriesHeader(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .widthIn(max = 680.dp)
             .padding(bottom = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -332,7 +323,6 @@ private fun AnalyticsCategoriesExpandButton(
     Surface(
         modifier = Modifier
             .fillMaxWidth()
-            .widthIn(max = 680.dp)
             .padding(bottom = 24.dp),
         shape = RoundedCornerShape(
             bottomStart = 16.dp,
@@ -397,7 +387,3 @@ private fun categoryRowShape(
     )
     else -> RoundedCornerShape(0.dp)
 }
-
-private const val CATEGORIES_HEADER_SECTION_KEY = "analytics-categories-header"
-private const val CATEGORIES_EXPANDED_KEY = "analytics-categories-expand"
-private const val SPACER_KEY = "-spacer"

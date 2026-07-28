@@ -39,6 +39,7 @@ import androidx.glance.text.TextDefaults
 import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
 import ru.aleshin.timeplanner.core.ui.theme.material.ColorsUiType
+import ru.aleshin.timeplanner.core.ui.theme.material.ThemeUiType
 import ru.aleshin.timeplanner.core.ui.theme.tokens.LocalTimePlannerElevations
 import ru.aleshin.timeplanner.core.ui.theme.tokens.LocalTimePlannerIcons
 import ru.aleshin.timeplanner.core.ui.theme.tokens.LocalTimePlannerLanguage
@@ -52,6 +53,8 @@ import ru.aleshin.timeplanner.R
 import ru.aleshin.timeplanner.presentation.widgets.WidgetGlanceColorScheme.fetchColorScheme
 import ru.aleshin.timeplanner.presentation.widgets.main.MainWidgetReceiver.Companion.COLORS_TYPE_KEY
 import ru.aleshin.timeplanner.presentation.widgets.main.MainWidgetReceiver.Companion.DYNAMIC_COLOR
+import ru.aleshin.timeplanner.presentation.widgets.main.MainWidgetReceiver.Companion.LANGUAGE_KEY
+import ru.aleshin.timeplanner.presentation.widgets.main.MainWidgetReceiver.Companion.THEME_TYPE_KEY
 import kotlin.math.ln
 
 /**
@@ -63,14 +66,19 @@ fun WidgetTheme(
     content: @Composable () -> Unit,
 ) {
     val typography = GlanceTypography()
-    val appLanguage = fetchCoreLanguage(context.fetchLocale().language)
+    val appLanguage = fetchCoreLanguage(currentState(LANGUAGE_KEY) ?: context.fetchLocale().language)
     val coreStrings = fetchCoreStrings(appLanguage)
     val appElevations = fetchAppElevations()
-    val colorsType = currentState(COLORS_TYPE_KEY)?.let { ColorsUiType.valueOf(it) } ?: ColorsUiType.PINK
+    val colorsType = currentState(COLORS_TYPE_KEY)
+        ?.let { value -> ColorsUiType.entries.firstOrNull { it.name == value } }
+        ?: ColorsUiType.PINK
+    val themeType = currentState(THEME_TYPE_KEY)
+        ?.let { value -> ThemeUiType.entries.firstOrNull { it.name == value } }
+        ?: ThemeUiType.DEFAULT
     val dynamicColors = currentState(DYNAMIC_COLOR) ?: false
     val coreIcons = fetchCoreIcons()
 
-    GlanceTheme(colors = fetchColorScheme(colorsType, dynamicColors)) {
+    GlanceTheme(colors = fetchColorScheme(context, colorsType, themeType, dynamicColors)) {
         CompositionLocalProvider(
             LocalGlanceTypography provides typography,
             LocalTimePlannerLanguage provides appLanguage,

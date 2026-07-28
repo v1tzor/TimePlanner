@@ -92,39 +92,56 @@ internal fun TemplatesBottomSheet(
             sheetState = sheetState,
             onDismissRequest = onDismiss,
         ) {
-            Column(modifier = Modifier.heightIn(min = 350.dp)) {
-                TemplatesBottomSheetHeader(
-                    templateCount = templates?.size,
-                    onControlClick = onControlClick,
-                )
-                HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp))
-                LazyColumn(
-                    modifier = Modifier.padding(horizontal = 16.dp),
-                    verticalArrangement = Arrangement.spacedBy(10.dp),
-                ) {
-                    if (templates != null) {
-                        if (templates.isNotEmpty()) {
-                            items(items = templates, key = { it.templateId }) { template ->
-                                TemplateBottomSheetItem(
-                                    enable = template.templateId != currentTemplateId,
-                                    model = template,
-                                    onChoose = { onChooseTemplate(template) },
-                                )
-                            }
-                        } else {
-                            item {
-                                NoneItemsView(text = EditorThemeRes.strings.emptyTemplatesTitle)
-                            }
-                        }
-                    } else {
-                        item {
-                            Box(
-                                modifier = Modifier.fillMaxSize(),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                CircularProgressIndicator()
-                            }
-                        }
+            TemplatesChooserContent(
+                templates = templates,
+                currentTemplateId = currentTemplateId,
+                onControlClick = onControlClick,
+                onChooseTemplate = onChooseTemplate,
+            )
+        }
+    }
+}
+
+@Composable
+@ExperimentalMaterial3Api
+internal fun TemplatesChooserContent(
+    templates: List<TemplateUi>?,
+    currentTemplateId: Long?,
+    onControlClick: () -> Unit,
+    onChooseTemplate: (TemplateUi) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(modifier = modifier.heightIn(min = 350.dp)) {
+        TemplatesBottomSheetHeader(
+            templateCount = templates?.size,
+            onControlClick = onControlClick,
+        )
+        HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp))
+        LazyColumn(
+            modifier = Modifier.padding(horizontal = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp),
+        ) {
+            if (templates != null) {
+                if (templates.isNotEmpty()) {
+                    items(items = templates, key = { it.templateId }) { template ->
+                        TemplateBottomSheetItem(
+                            enable = template.templateId != currentTemplateId,
+                            model = template,
+                            onChoose = { onChooseTemplate(template) },
+                        )
+                    }
+                } else {
+                    item {
+                        NoneItemsView(text = EditorThemeRes.strings.emptyTemplatesTitle)
+                    }
+                }
+            } else {
+                item {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator()
                     }
                 }
             }

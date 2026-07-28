@@ -24,6 +24,7 @@ plugins {
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.serialization)
     alias(libs.plugins.parcelize)
+    alias(libs.plugins.screenshot)
 }
 
 val localProperties = gradleLocalProperties(rootDir, providers)
@@ -49,6 +50,7 @@ android {
     namespace = libs.versions.applicationId.get()
     compileSdk = libs.versions.compileSdkVersion.get().toIntOrNull()
     flavorDimensions += libs.versions.productionDimension.get()
+    experimentalProperties["android.experimental.enableScreenshotTest"] = true
 
     defaultConfig {
         applicationId = libs.versions.applicationId.get()
@@ -124,6 +126,10 @@ android {
         buildConfig = true
     }
 
+    testOptions {
+        unitTests.isIncludeAndroidResources = true
+    }
+
     packaging {
         resources {
             resources.pickFirsts.add("META-INF/INDEX.LIST")
@@ -163,8 +169,11 @@ dependencies {
     implementation(project(":features:settings:api"))
     implementation(project(":features:settings:impl"))
 
+    implementation(libs.compose.material3.adaptive.navigation.suite)
+
     implementation(libs.androidx.glance)
     implementation(libs.androidx.glance.compose)
+    implementation(libs.androidx.work)
 
     ksp(libs.dagger.ksp)
 
@@ -175,6 +184,8 @@ dependencies {
     androidTestImplementation(libs.jUnitExt)
     androidTestImplementation(libs.espresso)
     androidTestImplementation(libs.composeJUnit)
+    screenshotTestImplementation(libs.screenshot.validation.api)
+    screenshotTestImplementation(libs.compose.ui.tooling)
     debugImplementation(libs.compose.ui.tooling)
     debugImplementation(libs.compose.ui.testmanifest)
 

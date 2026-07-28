@@ -94,6 +94,10 @@ internal class TaskComposeStore @Inject constructor(
                     editorWorkProcessor.work(command).collectAndHandleWork()
                 }
             }
+            is TaskEvent.PressAddCategory -> {
+                val config = EditorConfig.Categories(null)
+                consumeOutput(TaskOutput.NavigateToCategories(config))
+            }
             is TaskEvent.AddSubCategory -> with(state) {
                 if (editModel != null) {
                     launchBackgroundWork(BackgroundKey.DATA_ACTION) {

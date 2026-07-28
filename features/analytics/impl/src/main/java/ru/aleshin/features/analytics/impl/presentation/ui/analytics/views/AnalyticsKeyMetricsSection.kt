@@ -18,6 +18,7 @@ package ru.aleshin.features.analytics.impl.presentation.ui.analytics.views
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -39,6 +40,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import ru.aleshin.features.analytics.impl.presentation.models.analytics.AnalyticsKeyMetricsUi
 import ru.aleshin.features.analytics.impl.presentation.theme.AnalyticsThemeRes
@@ -54,20 +56,29 @@ import ru.aleshin.timeplanner.core.ui.theme.TimePlannerRes
 internal fun AnalyticsKeyMetricsSection(
     modifier: Modifier = Modifier,
     metrics: AnalyticsKeyMetricsUi,
+    fillAvailableHeight: Boolean = false,
 ) {
-    val formatter = rememberAnalyticsValueFormatter()
-    val strings = AnalyticsThemeRes.strings
     val language = TimePlannerRes.language
     val locale = remember(language) { language.fetchAnalyticsLocale() }
 
     AnalyticsSection(
         title = AnalyticsThemeRes.strings.keyMetricsTitle,
         modifier = modifier,
+        fillAvailableHeight = fillAvailableHeight,
         contentPadding = PaddingValues(0.dp),
         verticalSpacing = 0.dp,
     ) {
-        Row(modifier = Modifier.fillMaxWidth().height(150.dp)) {
+        val formatter = rememberAnalyticsValueFormatter()
+        val strings = AnalyticsThemeRes.strings
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .then(if (fillAvailableHeight) Modifier.weight(1f) else Modifier.height(IntrinsicSize.Min))
+        ) {
             MainMetricCell(
+                modifier = Modifier.weight(1f),
+                fillAvailableHeight = fillAvailableHeight,
                 iconResource = TimePlannerRes.icons.plannedTask,
                 value = formatter.formatDuration(
                     durationMillis = metrics.importantDurationMillis,
@@ -80,13 +91,14 @@ internal fun AnalyticsKeyMetricsSection(
                         locale = locale,
                     )
                 }",
-                modifier = Modifier.weight(1f),
             )
             VerticalDivider(
                 modifier = Modifier.fillMaxHeight(),
                 color = MaterialTheme.colorScheme.outlineVariant,
             )
             MainMetricCell(
+                modifier = Modifier.weight(1f),
+                fillAvailableHeight = fillAvailableHeight,
                 iconResource = TimePlannerRes.icons.schedulerIcon,
                 value = formatter.formatDuration(
                     durationMillis = metrics.weekendDurationMillis,
@@ -99,12 +111,17 @@ internal fun AnalyticsKeyMetricsSection(
                         locale = locale,
                     )
                 }",
-                modifier = Modifier.weight(1f),
             )
         }
         HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-        Row(modifier = Modifier.fillMaxWidth().height(155.dp)) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .then(if (fillAvailableHeight) Modifier.weight(1f) else Modifier.height(IntrinsicSize.Min))
+        ) {
             MainMetricCell(
+                modifier = Modifier.weight(1f),
+                fillAvailableHeight = fillAvailableHeight,
                 iconResource = TimePlannerRes.icons.time,
                 value = metrics.longestBlock?.let { range ->
                     formatter.formatDuration(
@@ -114,14 +131,15 @@ internal fun AnalyticsKeyMetricsSection(
                     )
                 } ?: strings.unavailableValue,
                 label = strings.longestBlock,
-                modifier = Modifier.weight(1f),
             )
             VerticalDivider(
                 modifier = Modifier.fillMaxHeight(),
                 color = MaterialTheme.colorScheme.outlineVariant,
             )
             MainMetricCell(
+                modifier = Modifier.weight(1f),
                 iconResource = TimePlannerRes.icons.analyticsTab,
+                fillAvailableHeight = fillAvailableHeight,
                 value = metrics.busiestDay?.formatAnalyticsCivilDate(
                     pattern = BUSIEST_DAY_PATTERN,
                     locale = locale,
@@ -133,7 +151,6 @@ internal fun AnalyticsKeyMetricsSection(
                         minuteSymbol = strings.minuteShort,
                     )
                 }",
-                modifier = Modifier.weight(1f),
                 valueColor = MaterialTheme.colorScheme.onSurface,
             )
         }
@@ -142,14 +159,17 @@ internal fun AnalyticsKeyMetricsSection(
 
 @Composable
 private fun MainMetricCell(
+    modifier: Modifier = Modifier,
+    fillAvailableHeight: Boolean = false,
     iconResource: Int,
     value: String,
     label: String,
-    modifier: Modifier = Modifier,
     valueColor: Color = MaterialTheme.colorScheme.primary,
 ) {
     Column(
-        modifier = modifier.heightIn(min = 136.dp).padding(16.dp),
+        modifier = modifier
+            .heightIn(min = if (fillAvailableHeight) Dp.Unspecified else 160.dp)
+            .padding(16.dp),
     ) {
         Box(
             modifier = Modifier
@@ -180,6 +200,7 @@ private fun MainMetricCell(
             text = label,
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
+            maxLines = 2,
         )
     }
 }

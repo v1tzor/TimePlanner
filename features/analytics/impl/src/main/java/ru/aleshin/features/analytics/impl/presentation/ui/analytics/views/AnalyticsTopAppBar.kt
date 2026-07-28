@@ -19,11 +19,11 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import ru.aleshin.features.analytics.impl.presentation.theme.AnalyticsThemeRes
 
 /**
@@ -33,20 +33,40 @@ import ru.aleshin.features.analytics.impl.presentation.theme.AnalyticsThemeRes
 @OptIn(ExperimentalMaterial3Api::class)
 internal fun AnalyticsTopAppBar(
     modifier: Modifier = Modifier,
+    isCompact: Boolean,
 ) {
-    CenterAlignedTopAppBar(
+    if (isCompact) {
+        CenterAlignedTopAppBar(
+            modifier = modifier,
+            title = {
+                AnalyticsTopAppBarTitle()
+            },
+            colors = TopAppBarDefaults.topAppBarColors(
+                containerColor = MaterialTheme.colorScheme.background,
+            ),
+        )
+    } else {
+        TopAppBar(
+            modifier = modifier,
+            title = {
+                AnalyticsTopAppBarTitle()
+            },
+            colors = TopAppBarDefaults.topAppBarColors(
+                containerColor = MaterialTheme.colorScheme.background,
+            ),
+        )
+    }
+}
+
+@Composable
+private fun AnalyticsTopAppBarTitle(
+    modifier: Modifier = Modifier,
+) {
+    Text(
         modifier = modifier,
-        title = {
-            Text(
-                text = AnalyticsThemeRes.strings.topAppBarTitle,
-                textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface,
-            )
-        },
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.background,
-        ),
+        text = AnalyticsThemeRes.strings.topAppBarTitle,
+        color = MaterialTheme.colorScheme.onSurface,
+        fontWeight = FontWeight.Bold,
+        style = MaterialTheme.typography.titleLarge,
     )
 }

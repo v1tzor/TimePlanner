@@ -54,9 +54,10 @@ import kotlin.math.abs
  */
 @Composable
 internal fun AnalyticsRegularitySection(
+    modifier: Modifier = Modifier,
     range: AnalyticsRangeUi,
     regularity: AnalyticsRegularityUi,
-    modifier: Modifier = Modifier,
+    fillAvailableHeight: Boolean = false,
 ) {
     val formatter = rememberAnalyticsValueFormatter()
     val strings = AnalyticsThemeRes.strings
@@ -66,6 +67,7 @@ internal fun AnalyticsRegularitySection(
     AnalyticsSection(
         title = AnalyticsThemeRes.strings.regularityTitle,
         modifier = modifier,
+        fillAvailableHeight = fillAvailableHeight,
     ) {
         val fontScale = LocalDensity.current.fontScale
         BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
@@ -125,11 +127,11 @@ internal fun AnalyticsRegularitySection(
 
 @Composable
 private fun AnalyticsRegularityMetrics(
+    modifier: Modifier = Modifier,
     regularity: AnalyticsRegularityUi,
     locale: Locale,
     strings: AnalyticsStrings,
     formatter: AnalyticsValueFormatter,
-    modifier: Modifier = Modifier,
 ) {
     val activeDayCount = regularity.activeDayCount
     val totalDayCount = regularity.totalDayCount

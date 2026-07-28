@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -47,6 +48,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -113,10 +115,48 @@ internal fun MainCategoriesHorizontalList(
 }
 
 @Composable
+internal fun MainCategoriesVerticalList(
+    modifier: Modifier = Modifier,
+    mainCategories: List<MainCategoryUi>,
+    selectedCategory: MainCategoryUi?,
+    onSelectCategory: (MainCategoryUi) -> Unit,
+    onUpdateCategory: (MainCategoryUi) -> Unit,
+    onDeleteCategory: (MainCategoryUi) -> Unit,
+    onAddCategory: () -> Unit,
+) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        mainCategories.forEach { category ->
+            key(category.id) {
+                MainCategoryItem(
+                    modifier = Modifier.fillMaxWidth(),
+                    isSelected = category == selectedCategory,
+                    category = category,
+                    useVerticalLayout = true,
+                    onSelected = { onSelectCategory(category) },
+                    onDelete = { onDeleteCategory(category) },
+                    onUpdate = {
+                        onUpdateCategory(category.copy(customName = it))
+                    },
+                )
+            }
+        }
+        MainCategoryAddItem(
+            modifier = Modifier.fillMaxWidth(),
+            useVerticalLayout = true,
+            onClick = onAddCategory,
+        )
+    }
+}
+
+@Composable
 internal fun MainCategoryItem(
     modifier: Modifier = Modifier,
     isSelected: Boolean,
     category: MainCategoryUi,
+    useVerticalLayout: Boolean = false,
     onSelected: () -> Unit,
     onDelete: () -> Unit,
     onUpdate: (name: String) -> Unit,
@@ -127,58 +167,99 @@ internal fun MainCategoryItem(
 
     Surface(
         onClick = onSelected,
-        modifier = modifier.size(width = 180.dp, height = 80.dp),
+        modifier = if (useVerticalLayout) {
+            modifier.height(64.dp)
+        } else {
+            modifier.size(width = 180.dp, height = 80.dp)
+        },
         shape = MaterialTheme.shapes.small,
         color = when (isSelected) {
             true -> MaterialTheme.colorScheme.primaryContainer
             false -> MaterialTheme.colorScheme.surfaceContainerLow
         },
     ) {
-        Row(
-            modifier = Modifier
-                .padding(top = 12.dp, bottom = 12.dp, start = 12.dp, end = 4.dp)
-                .animateContentSize(),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Column(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
+        if (useVerticalLayout) {
+            Row(
+                modifier = Modifier.padding(start = 16.dp, end = 8.dp),
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 MainCategoryItemLeading(
                     icon = category.defaultType?.mapToIconPainter(),
                     name = category.fetchName() ?: "*",
                     isSelected = isSelected,
                 )
-                Spacer(modifier = Modifier.weight(1f))
-                Column {
-                    Text(
-                        text = EditorThemeRes.strings.nameCategoryTitle,
-                        color = when (isSelected) {
-                            true -> MaterialTheme.colorScheme.onPrimaryContainer
-                            false -> MaterialTheme.colorScheme.onSurfaceVariant
-                        },
-                        style = MaterialTheme.typography.labelMedium,
-                    )
-                    Text(
-                        text = category.fetchName() ?: "*",
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        color = when (isSelected) {
-                            true -> MaterialTheme.colorScheme.onPrimaryContainer
-                            false -> MaterialTheme.colorScheme.onSurface
-                        },
-                        style = MaterialTheme.typography.labelLarge,
-                    )
+                Text(
+                    modifier = Modifier.weight(1f).padding(horizontal = 12.dp),
+                    text = category.fetchName() ?: "*",
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    color = when (isSelected) {
+                        true -> MaterialTheme.colorScheme.onPrimaryContainer
+                        false -> MaterialTheme.colorScheme.onSurface
+                    },
+                    style = MaterialTheme.typography.titleMedium,
+                )
+                if (isSelected) {
+                    IconButton(
+                        modifier = Modifier.size(40.dp),
+                        onClick = { isExpanded = true },
+                    ) {
+                        Icon(
+                            modifier = Modifier.size(24.dp),
+                            imageVector = Icons.Default.MoreVert,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                        )
+                    }
                 }
             }
-            if (isSelected) {
-                IconButton(modifier = Modifier.size(36.dp), onClick = { isExpanded = true }) {
-                    Icon(
-                        modifier = modifier.size(24.dp),
-                        imageVector = Icons.Default.MoreVert,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onSurface,
+        } else {
+            Row(
+                modifier = Modifier
+                    .padding(top = 12.dp, bottom = 12.dp, start = 12.dp, end = 4.dp)
+                    .animateContentSize(),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Column(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                ) {
+                    MainCategoryItemLeading(
+                        icon = category.defaultType?.mapToIconPainter(),
+                        name = category.fetchName() ?: "*",
+                        isSelected = isSelected,
                     )
+                    Spacer(modifier = Modifier.weight(1f))
+                    Column {
+                        Text(
+                            text = EditorThemeRes.strings.nameCategoryTitle,
+                            color = when (isSelected) {
+                                true -> MaterialTheme.colorScheme.onPrimaryContainer
+                                false -> MaterialTheme.colorScheme.onSurfaceVariant
+                            },
+                            style = MaterialTheme.typography.labelMedium,
+                        )
+                        Text(
+                            text = category.fetchName() ?: "*",
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            color = when (isSelected) {
+                                true -> MaterialTheme.colorScheme.onPrimaryContainer
+                                false -> MaterialTheme.colorScheme.onSurface
+                            },
+                            style = MaterialTheme.typography.labelLarge,
+                        )
+                    }
+                }
+                if (isSelected) {
+                    IconButton(modifier = Modifier.size(36.dp), onClick = { isExpanded = true }) {
+                        Icon(
+                            modifier = Modifier.size(24.dp),
+                            imageVector = Icons.Default.MoreVert,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onSurface,
+                        )
+                    }
                 }
             }
         }
@@ -224,10 +305,15 @@ internal fun MainCategoryItem(
 @Composable
 internal fun MainCategoryAddItem(
     modifier: Modifier = Modifier,
+    useVerticalLayout: Boolean = false,
     onClick: () -> Unit,
 ) {
     Surface(
-        modifier = modifier.size(180.dp, 100.dp),
+        modifier = if (useVerticalLayout) {
+            modifier.height(56.dp)
+        } else {
+            modifier.size(180.dp, 100.dp)
+        },
         color = MaterialTheme.colorScheme.surfaceContainerLow,
         shape = MaterialTheme.shapes.small,
         onClick = onClick,
@@ -362,4 +448,3 @@ private fun MainCategoryList_Preview() {
         }
     }
 }*/
-

@@ -64,6 +64,7 @@ internal fun AnalyticsCreationSection(
     modifier: Modifier = Modifier,
     creationAnalytics: AnalyticsCreationDistributionUi,
     selectedBucketKey: Long?,
+    fillAvailableHeight: Boolean = false,
     onSelect: (Long?) -> Unit,
 ) {
     val formatter = rememberAnalyticsValueFormatter()
@@ -84,6 +85,7 @@ internal fun AnalyticsCreationSection(
     AnalyticsSection(
         title = strings.creationTitle,
         modifier = modifier,
+        fillAvailableHeight = fillAvailableHeight,
         verticalSpacing = 12.dp,
     ) {
         if (creationAnalytics.qualifyingTaskCount == 0) {

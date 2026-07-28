@@ -20,8 +20,9 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -38,7 +39,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -82,11 +85,12 @@ internal fun TimelineTaskCard(
     val timeTask = model.timeTask
     val isRunning = model.executionStatus == TimeTaskStatus.RUNNING
     val isCompleted = model.executionStatus == TimeTaskStatus.COMPLETED
+    val currentOnClick by rememberUpdatedState(onClick)
 
     Box(
         modifier = modifier
             .pointerInput(timeTask.key) {
-                detectTapGestures(onTap = { onClick() })
+                detectTapGestures(onTap = { currentOnClick() })
             },
     ) {
         Surface(
@@ -156,7 +160,8 @@ internal fun TimelineTaskCard(
                     }
                 }
                 TimelineTaskMoveButton(
-                    enabled = model.canMove,
+                    selectEnabled = model.canMove || model.canResizeStart || model.canResizeEnd,
+                    dragEnabled = model.canMove,
                     onClick = onMoveClick,
                     onDragStart = { onDragStart(TimelineTaskDragMode.MOVE) },
                     onDrag = onDrag,
@@ -303,32 +308,40 @@ private fun TimelineTaskContent(
 
 @Composable
 private fun TimelineTaskMoveButton(
-    enabled: Boolean,
+    selectEnabled: Boolean,
+    dragEnabled: Boolean,
     onClick: () -> Unit,
     onDragStart: () -> Boolean,
     onDrag: (Float) -> Unit,
     onDragEnd: () -> Unit,
     onDragCancel: () -> Unit,
 ) {
+    val currentOnDragStart by rememberUpdatedState(onDragStart)
+    val currentOnDrag by rememberUpdatedState(onDrag)
+    val currentOnDragEnd by rememberUpdatedState(onDragEnd)
+    val currentOnDragCancel by rememberUpdatedState(onDragCancel)
+
     IconButton(
-        modifier = Modifier.pointerInput(enabled) {
-            if (!enabled) return@pointerInput
+        modifier = Modifier.pointerInput(dragEnabled) {
+            if (!dragEnabled) return@pointerInput
 
             var isDragStarted = false
-            detectVerticalDragGestures(
-                onDragStart = { isDragStarted = onDragStart() },
-                onDragEnd = { if (isDragStarted) onDragEnd() },
-                onDragCancel = { if (isDragStarted) onDragCancel() },
-                onVerticalDrag = { change, dragAmount ->
+            detectDragGestures(
+                orientationLock = Orientation.Vertical,
+                onDragStart = { _, _, _ -> isDragStarted = currentOnDragStart() },
+                onDragEnd = { if (isDragStarted) currentOnDragEnd() },
+                onDragCancel = { if (isDragStarted) currentOnDragCancel() },
+                shouldAwaitTouchSlop = { false },
+                onDrag = { change, dragAmount ->
                     if (isDragStarted) {
                         change.consume()
-                        onDrag(dragAmount)
+                        currentOnDrag(dragAmount.y)
                     }
                 },
             )
         },
         onClick = onClick,
-        enabled = enabled,
+        enabled = selectEnabled,
     ) {
         Icon(
             painter = painterResource(HomeThemeRes.icons.dragIndicator),
@@ -346,23 +359,30 @@ private fun TimelineTaskEdgeHandle(
     onDragEnd: () -> Unit,
     onDragCancel: () -> Unit,
 ) {
+    val currentOnDragStart by rememberUpdatedState(onDragStart)
+    val currentOnDrag by rememberUpdatedState(onDrag)
+    val currentOnDragEnd by rememberUpdatedState(onDragEnd)
+    val currentOnDragCancel by rememberUpdatedState(onDragCancel)
+
     Box(
         modifier = Modifier
             .size(width = 48.dp, height = TASK_HANDLE_TOUCH_HEIGHT)
             .pointerInput(mode) {
                 var isDragStarted = false
                 val touchPadding = TASK_HANDLE_TOUCH_PADDING.toPx()
-                detectVerticalDragGestures(
-                    onDragStart = { offset ->
-                        isDragStarted = offset.y in -touchPadding..size.height + touchPadding &&
-                            onDragStart(mode)
+                detectDragGestures(
+                    orientationLock = Orientation.Vertical,
+                    onDragStart = { _, change, _ ->
+                        isDragStarted = change.position.y in -touchPadding..size.height + touchPadding &&
+                            currentOnDragStart(mode)
                     },
-                    onDragEnd = { if (isDragStarted) onDragEnd() },
-                    onDragCancel = { if (isDragStarted) onDragCancel() },
-                    onVerticalDrag = { change, dragAmount ->
+                    onDragEnd = { if (isDragStarted) currentOnDragEnd() },
+                    onDragCancel = { if (isDragStarted) currentOnDragCancel() },
+                    shouldAwaitTouchSlop = { false },
+                    onDrag = { change, dragAmount ->
                         if (isDragStarted) {
                             change.consume()
-                            onDrag(dragAmount)
+                            currentOnDrag(dragAmount.y)
                         }
                     },
                 )
@@ -381,4 +401,4 @@ private fun TimelineTaskEdgeHandle(
 
 private val TASK_HANDLE_VISIBLE_HEIGHT = 2.dp
 private val TASK_HANDLE_TOUCH_HEIGHT = 12.dp
-private val TASK_HANDLE_TOUCH_PADDING = 10.dp
+private val TASK_HANDLE_TOUCH_PADDING = 18.dp

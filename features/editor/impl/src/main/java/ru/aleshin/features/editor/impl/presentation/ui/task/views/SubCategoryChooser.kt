@@ -239,7 +239,7 @@ internal fun SubCategorySelectorBottomSheet(
                         SideEffect { focusRequester.requestFocus() }
                     } else {
                         SelectorAddItemView(
-                            text = EditorThemeRes.strings.subCategoryDialogAddedTitle,
+                            text = EditorThemeRes.strings.categoryDialogAddedTitle,
                             enabled = mainCategory?.id != 0L && mainCategory != null,
                             onClick = { isEdited = true },
                         )

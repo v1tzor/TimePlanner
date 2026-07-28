@@ -15,11 +15,15 @@
  */
 package ru.aleshin.timeplanner.presentation.widgets
 
-import androidx.compose.runtime.Composable
+import android.content.Context
+import android.content.res.Configuration
+import android.os.Build
+import androidx.compose.material3.dynamicDarkColorScheme
+import androidx.compose.material3.dynamicLightColorScheme
 import androidx.glance.color.ColorProviders
-import androidx.glance.color.DynamicThemeColorProviders
 import androidx.glance.material3.ColorProviders
 import ru.aleshin.timeplanner.core.ui.theme.material.ColorsUiType
+import ru.aleshin.timeplanner.core.ui.theme.material.ThemeUiType
 import ru.aleshin.timeplanner.core.ui.theme.material.blueDarkColorScheme
 import ru.aleshin.timeplanner.core.ui.theme.material.blueLightColorScheme
 import ru.aleshin.timeplanner.core.ui.theme.material.pinkDarkColorScheme
@@ -34,41 +38,29 @@ import ru.aleshin.timeplanner.core.ui.theme.material.redLightColorScheme
  */
 object WidgetGlanceColorScheme {
 
-    val pink = ColorProviders(
-        light = pinkLightColorScheme,
-        dark = pinkDarkColorScheme,
-    )
-
-    val red = ColorProviders(
-        light = redLightColorScheme,
-        dark = redDarkColorScheme,
-    )
-
-    val purple = ColorProviders(
-        light = purpleLightColorScheme,
-        dark = purpleDarkColorScheme,
-    )
-
-    val blue = ColorProviders(
-        light = blueLightColorScheme,
-        dark = blueDarkColorScheme,
-    )
-
-    @Composable
-    fun fetchColorSchemeByColorsType(colors: ColorsUiType?) = when (colors) {
-        ColorsUiType.RED -> red
-        ColorsUiType.PINK -> pink
-        ColorsUiType.PURPLE -> purple
-        ColorsUiType.BLUE -> blue
-        else -> pink
-    }
-
-    @Composable
-    fun fetchColorScheme(colors: ColorsUiType?, isDynamic: Boolean): ColorProviders {
-        return if (isDynamic) {
-            DynamicThemeColorProviders
-        } else {
-            fetchColorSchemeByColorsType(colors = colors)
+    fun fetchColorScheme(
+        context: Context,
+        colors: ColorsUiType,
+        theme: ThemeUiType,
+        isDynamic: Boolean,
+    ): ColorProviders {
+        val isSystemDark = context.resources.configuration.uiMode and
+            Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
+        val isDark = when (theme) {
+            ThemeUiType.DEFAULT -> isSystemDark
+            ThemeUiType.LIGHT -> false
+            ThemeUiType.DARK -> true
         }
+        val colorScheme = if (isDynamic && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            if (isDark) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+        } else {
+            when (colors) {
+                ColorsUiType.RED -> if (isDark) redDarkColorScheme else redLightColorScheme
+                ColorsUiType.PINK -> if (isDark) pinkDarkColorScheme else pinkLightColorScheme
+                ColorsUiType.PURPLE -> if (isDark) purpleDarkColorScheme else purpleLightColorScheme
+                ColorsUiType.BLUE -> if (isDark) blueDarkColorScheme else blueLightColorScheme
+            }
+        }
+        return ColorProviders(light = colorScheme, dark = colorScheme)
     }
 }

@@ -60,13 +60,13 @@ import kotlin.math.roundToLong
  */
 @Composable
 internal fun CategoryLoadSection(
+    modifier: Modifier = Modifier,
     categoryId: Long,
     categoryName: String,
     load: CategoryLoadDistributionUi,
     range: AnalyticsRangeUi,
     selectedBucketIndex: Int?,
     onSelect: (Int?) -> Unit,
-    modifier: Modifier = Modifier,
 ) {
     val strings = AnalyticsThemeRes.strings
     val language = TimePlannerRes.language

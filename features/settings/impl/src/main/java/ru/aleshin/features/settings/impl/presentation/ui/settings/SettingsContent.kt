@@ -84,16 +84,21 @@ import ru.aleshin.features.settings.impl.presentation.ui.settings.views.Settings
 import ru.aleshin.features.settings.impl.presentation.ui.settings.views.ThemeColorsChooser
 import ru.aleshin.timeplanner.core.ui.theme.material.ColorsUiType
 import ru.aleshin.timeplanner.core.ui.theme.material.ThemeUiType
+import ru.aleshin.timeplanner.core.ui.theme.tokens.AdaptiveLayoutDefaults
 import ru.aleshin.timeplanner.core.ui.theme.tokens.LanguageUiType
+import ru.aleshin.timeplanner.core.ui.views.AdaptiveLayoutInfo
+import ru.aleshin.timeplanner.core.ui.views.AdaptiveSupportingPaneScaffold
 import ru.aleshin.timeplanner.core.ui.views.WarningDeleteDialog
+import ru.aleshin.timeplanner.core.ui.views.rememberAdaptiveLayoutInfo
 
 /**
  * @author Stanislav Aleshin on 17.02.2023.
  */
 @Composable
 internal fun SettingsContent(
-    settingsComponent: SettingsComponent,
     modifier: Modifier = Modifier,
+    settingsComponent: SettingsComponent,
+    adaptiveLayoutInfo: AdaptiveLayoutInfo = rememberAdaptiveLayoutInfo(),
 ) {
     val store = settingsComponent.store
     val state by store.stateAsState()
@@ -106,6 +111,7 @@ internal fun SettingsContent(
             BaseSettingsContent(
                 state = state,
                 modifier = Modifier.padding(paddingValues),
+                adaptiveLayoutInfo = adaptiveLayoutInfo,
                 onBackupData = { store.dispatchEvent(SettingsEvent.PressSaveBackupData(it)) },
                 onRestoreData = { store.dispatchEvent(SettingsEvent.PressRestoreBackupData(it)) },
                 onClearData = { store.dispatchEvent(SettingsEvent.PressClearDataButton) },
@@ -120,8 +126,9 @@ internal fun SettingsContent(
         },
         topBar = {
             SettingsTopAppBar(
+                isCompact = adaptiveLayoutInfo.isCompactWidth,
                 onResetToDefaultClick = { store.dispatchEvent(SettingsEvent.PressResetButton) },
-                onBackIconClick = { store.dispatchEvent(SettingsEvent.PressBackIcon) }
+                onBackIconClick = { store.dispatchEvent(SettingsEvent.PressBackIcon) },
             )
         },
         snackbarHost = {
@@ -143,6 +150,7 @@ internal fun SettingsContent(
 private fun BaseSettingsContent(
     state: SettingsState,
     modifier: Modifier = Modifier,
+    adaptiveLayoutInfo: AdaptiveLayoutInfo,
     onClearData: () -> Unit,
     onRestoreData: (uri: Uri) -> Unit,
     onBackupData: (uri: Uri) -> Unit,
@@ -151,67 +159,190 @@ private fun BaseSettingsContent(
     onDonateButtonClick: () -> Unit,
 ) {
     val scrollState = rememberScrollState()
+    val primaryPaneScrollState = rememberScrollState()
+    val secondaryPaneScrollState = rememberScrollState()
     val context = LocalContext.current
 
-    Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
-        Column(
-            modifier = Modifier
-                .widthIn(max = 600.dp)
-                .fillMaxWidth()
-                .verticalScroll(scrollState)
-                .padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(24.dp),
-        ) {
-            if (state.themeSettings != null && state.tasksSettings != null) {
-                MainSettingsSection(
-                    modifier = Modifier.padding(top = 16.dp),
-                    languageType = state.themeSettings.language,
-                    themeColors = state.themeSettings.themeColors,
-                    colorsType = state.themeSettings.colorsType,
-                    dynamicColor = state.themeSettings.isDynamicColorEnable,
-                    onThemeColorUpdate = { colorsType ->
-                        onUpdateThemeSettings(state.themeSettings.copy(themeColors = colorsType))
-                    },
-                    onLanguageChange = { language ->
-                        onUpdateThemeSettings(state.themeSettings.copy(language = language))
-                    },
-                    onColorsTypeUpdate = { colorsType ->
-                        onUpdateThemeSettings(state.themeSettings.copy(colorsType = colorsType))
-                    },
-                    onDynamicColorsChange = {
-                        onUpdateThemeSettings(state.themeSettings.copy(isDynamicColorEnable = it))
-                    },
-                )
-                InterfaceSettingsSection(
-                    calendarButtonBehavior = state.tasksSettings.calendarButtonBehavior,
-                    onUpdateCalendarBehavior = {
-                        onUpdateTasksSettings(state.tasksSettings.copy(calendarButtonBehavior = it))
-                    },
-                )
-                SecureSettingsSection(
-                    secureMode = state.tasksSettings.secureMode,
-                    onUpdateSecureMode = {
-                        onUpdateTasksSettings(state.tasksSettings.copy(secureMode = it))
-                    },
-                )
-                DataSettingsSection(
-                    onClear = onClearData,
-                    isLoading = state.isBackupLoading,
-                    onBackupData = onBackupData,
-                    onRestoreData = onRestoreData,
-                )
-                AboutAppSection(
-                    onOpenGit = { context.openNetworkUri(Constants.App.GITHUB_URI) },
-                    onOpenIssues = { context.openNetworkUri(Constants.App.ISSUES_URI) },
-                )
-                DonateButton(
-                    modifier = Modifier.fillMaxWidth(),
-                    onClick = onDonateButtonClick,
-                )
+    if (adaptiveLayoutInfo.isBookPosture) {
+        AdaptiveSupportingPaneScaffold(
+            adaptiveLayoutInfo = adaptiveLayoutInfo,
+            modifier = modifier.fillMaxSize(),
+            mainPane = {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(primaryPaneScrollState)
+                        .padding(horizontal = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(24.dp),
+                ) {
+                    SettingsPrimarySections(
+                        state = state,
+                        onUpdateThemeSettings = onUpdateThemeSettings,
+                        onUpdateTasksSettings = onUpdateTasksSettings,
+                    )
+                    Spacer(modifier = Modifier.height(90.dp))
+                }
+            },
+            supportingPane = {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(secondaryPaneScrollState)
+                        .padding(horizontal = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(24.dp),
+                ) {
+                    SettingsSecondarySections(
+                        state = state,
+                        onClearData = onClearData,
+                        onRestoreData = onRestoreData,
+                        onBackupData = onBackupData,
+                        onDonateButtonClick = onDonateButtonClick,
+                        onOpenGit = { context.openNetworkUri(Constants.App.GITHUB_URI) },
+                        onOpenIssues = { context.openNetworkUri(Constants.App.ISSUES_URI) },
+                    )
+                    Spacer(modifier = Modifier.height(90.dp))
+                }
+            },
+        )
+    } else {
+        Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
+            Column(
+                modifier = Modifier
+                    .widthIn(
+                        max = when {
+                            adaptiveLayoutInfo.useExpandedLayout -> {
+                                AdaptiveLayoutDefaults.ExpandedContentMaxWidth
+                            }
+                            adaptiveLayoutInfo.isMediumWidth -> {
+                                AdaptiveLayoutDefaults.SettingsContentMaxWidth
+                            }
+                            else -> 600.dp
+                        },
+                    )
+                    .fillMaxWidth()
+                    .verticalScroll(scrollState)
+                    .padding(horizontal = if (adaptiveLayoutInfo.useExpandedLayout) 32.dp else 16.dp),
+            ) {
+                if (adaptiveLayoutInfo.useExpandedLayout) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(AdaptiveLayoutDefaults.PaneSpacing),
+                    ) {
+                        Column(
+                            modifier = Modifier.weight(1f),
+                            verticalArrangement = Arrangement.spacedBy(24.dp),
+                        ) {
+                            SettingsPrimarySections(
+                                state = state,
+                                onUpdateThemeSettings = onUpdateThemeSettings,
+                                onUpdateTasksSettings = onUpdateTasksSettings,
+                            )
+                        }
+                        Column(
+                            modifier = Modifier.weight(1f),
+                            verticalArrangement = Arrangement.spacedBy(24.dp),
+                        ) {
+                            SettingsSecondarySections(
+                                state = state,
+                                onClearData = onClearData,
+                                onRestoreData = onRestoreData,
+                                onBackupData = onBackupData,
+                                onDonateButtonClick = onDonateButtonClick,
+                                onOpenGit = { context.openNetworkUri(Constants.App.GITHUB_URI) },
+                                onOpenIssues = { context.openNetworkUri(Constants.App.ISSUES_URI) },
+                            )
+                        }
+                    }
+                } else {
+                    Column(verticalArrangement = Arrangement.spacedBy(24.dp)) {
+                        SettingsPrimarySections(
+                            state = state,
+                            onUpdateThemeSettings = onUpdateThemeSettings,
+                            onUpdateTasksSettings = onUpdateTasksSettings,
+                        )
+                        SettingsSecondarySections(
+                            state = state,
+                            onClearData = onClearData,
+                            onRestoreData = onRestoreData,
+                            onBackupData = onBackupData,
+                            onDonateButtonClick = onDonateButtonClick,
+                            onOpenGit = { context.openNetworkUri(Constants.App.GITHUB_URI) },
+                            onOpenIssues = { context.openNetworkUri(Constants.App.ISSUES_URI) },
+                        )
+                    }
+                }
+                Spacer(modifier = Modifier.height(90.dp))
             }
-            Spacer(modifier = Modifier.height(90.dp))
         }
     }
+}
+
+@Composable
+private fun SettingsPrimarySections(
+    state: SettingsState,
+    onUpdateThemeSettings: (ThemeSettingsUi) -> Unit,
+    onUpdateTasksSettings: (TasksSettingsUi) -> Unit,
+) {
+    val themeSettings = state.themeSettings ?: return
+    val tasksSettings = state.tasksSettings ?: return
+    MainSettingsSection(
+        modifier = Modifier.padding(top = 16.dp),
+        languageType = themeSettings.language,
+        themeColors = themeSettings.themeColors,
+        colorsType = themeSettings.colorsType,
+        dynamicColor = themeSettings.isDynamicColorEnable,
+        onThemeColorUpdate = { colorsType ->
+            onUpdateThemeSettings(themeSettings.copy(themeColors = colorsType))
+        },
+        onLanguageChange = { language ->
+            onUpdateThemeSettings(themeSettings.copy(language = language))
+        },
+        onColorsTypeUpdate = { colorsType ->
+            onUpdateThemeSettings(themeSettings.copy(colorsType = colorsType))
+        },
+        onDynamicColorsChange = {
+            onUpdateThemeSettings(themeSettings.copy(isDynamicColorEnable = it))
+        },
+    )
+    InterfaceSettingsSection(
+        calendarButtonBehavior = tasksSettings.calendarButtonBehavior,
+        onUpdateCalendarBehavior = {
+            onUpdateTasksSettings(tasksSettings.copy(calendarButtonBehavior = it))
+        },
+    )
+    SecureSettingsSection(
+        secureMode = tasksSettings.secureMode,
+        onUpdateSecureMode = {
+            onUpdateTasksSettings(tasksSettings.copy(secureMode = it))
+        },
+    )
+}
+
+@Composable
+private fun SettingsSecondarySections(
+    state: SettingsState,
+    onClearData: () -> Unit,
+    onRestoreData: (uri: Uri) -> Unit,
+    onBackupData: (uri: Uri) -> Unit,
+    onDonateButtonClick: () -> Unit,
+    onOpenGit: () -> Unit,
+    onOpenIssues: () -> Unit,
+) {
+    if (state.themeSettings == null || state.tasksSettings == null) return
+    DataSettingsSection(
+        onClear = onClearData,
+        isLoading = state.isBackupLoading,
+        onBackupData = onBackupData,
+        onRestoreData = onRestoreData,
+    )
+    AboutAppSection(
+        onOpenGit = onOpenGit,
+        onOpenIssues = onOpenIssues,
+    )
+    DonateButton(
+        modifier = Modifier.fillMaxWidth(),
+        onClick = onDonateButtonClick,
+    )
 }
 
 @Composable

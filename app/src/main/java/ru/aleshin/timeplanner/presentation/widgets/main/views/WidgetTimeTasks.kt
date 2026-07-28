@@ -22,6 +22,7 @@ import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
 import androidx.glance.Image
 import androidx.glance.ImageProvider
+import androidx.glance.LocalContext
 import androidx.glance.action.Action
 import androidx.glance.action.clickable
 import androidx.glance.background
@@ -57,6 +58,7 @@ internal fun CompletedWidgetTimeTask(
     categoryIcon: ImageProvider?,
     isCompleted: Boolean,
 ) {
+    val context = LocalContext.current
     Box(
         modifier = modifier
             .compatCornerBackground(GlanceTheme.colors.tertiaryContainer, 16)
@@ -92,14 +94,14 @@ internal fun CompletedWidgetTimeTask(
                 Image(
                     modifier = GlanceModifier.size(24.dp),
                     provider = ImageProvider(TimePlannerRes.icons.check),
-                    contentDescription = null,
+                    contentDescription = context.getString(R.string.widget_task_completed_content_description),
                     colorFilter = ColorFilter.tint(GlanceTheme.colors.onSurfaceVariant),
                 )
             } else {
                 Image(
                     modifier = GlanceModifier.size(24.dp),
                     provider = ImageProvider(TimePlannerRes.icons.cancel),
-                    contentDescription = null,
+                    contentDescription = context.getString(R.string.widget_task_not_completed_content_description),
                     colorFilter = ColorFilter.tint(GlanceTheme.colors.onSurface),
                 )
             }

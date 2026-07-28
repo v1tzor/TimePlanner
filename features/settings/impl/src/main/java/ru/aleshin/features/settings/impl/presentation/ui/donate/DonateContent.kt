@@ -22,11 +22,16 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items as gridItems
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -51,14 +56,18 @@ import ru.aleshin.features.settings.impl.presentation.ui.donate.contract.DonateE
 import ru.aleshin.features.settings.impl.presentation.ui.donate.contract.DonateState
 import ru.aleshin.features.settings.impl.presentation.ui.donate.store.DonateComponent
 import ru.aleshin.features.settings.impl.presentation.ui.donate.views.DonateTopAppBar
+import ru.aleshin.timeplanner.core.ui.theme.tokens.AdaptiveLayoutDefaults
+import ru.aleshin.timeplanner.core.ui.views.AdaptiveLayoutInfo
+import ru.aleshin.timeplanner.core.ui.views.rememberAdaptiveLayoutInfo
 
 /**
  * @author Stanislav Aleshin on 13.10.2023.
  */
 @Composable
 internal fun DonateContent(
-    donateComponent: DonateComponent,
     modifier: Modifier = Modifier,
+    donateComponent: DonateComponent,
+    adaptiveLayoutInfo: AdaptiveLayoutInfo = rememberAdaptiveLayoutInfo(),
 ) {
     val store = donateComponent.store
     val state by store.stateAsState()
@@ -69,10 +78,12 @@ internal fun DonateContent(
             BaseDonateContent(
                 state = state,
                 modifier = Modifier.padding(paddingValues),
+                adaptiveLayoutInfo = adaptiveLayoutInfo,
             )
         },
         topBar = {
             DonateTopAppBar(
+                isCompact = adaptiveLayoutInfo.isCompactWidth,
                 onNavButtonClick = { store.dispatchEvent(DonateEvent.PressBackButton) },
             )
         },
@@ -83,33 +94,96 @@ internal fun DonateContent(
 private fun BaseDonateContent(
     state: DonateState,
     modifier: Modifier = Modifier,
+    adaptiveLayoutInfo: AdaptiveLayoutInfo,
 ) {
-    val state = rememberLazyListState()
+    val listState = rememberLazyListState()
     val context = LocalContext.current
 
-    LazyColumn(
-        modifier = modifier,
-        state = state,
-        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-        verticalArrangement = Arrangement.spacedBy(24.dp),
-    ) {
-        items(CryptoAddress.entries.toTypedArray()) { address ->
-            Text(
-                modifier = Modifier.padding(start = 12.dp, end = 12.dp, bottom = 8.dp),
-                text = address.cryptoName,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                maxLines = 1,
-                style = MaterialTheme.typography.titleSmall,
-            )
-            CryptoAddressItem(
-                model = address,
-                onCopy = { setClipboard(context, it) },
-            )
+    if (adaptiveLayoutInfo.useExpandedLayout) {
+        Box(
+            modifier = modifier.fillMaxSize(),
+            contentAlignment = Alignment.TopCenter,
+        ) {
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(
+                    if (adaptiveLayoutInfo.isLargeWidth || adaptiveLayoutInfo.isExtraLargeWidth) {
+                        LARGE_COLUMN_COUNT
+                    } else {
+                        EXPANDED_COLUMN_COUNT
+                    },
+                ),
+                modifier = Modifier
+                    .widthIn(max = AdaptiveLayoutDefaults.ExpandedContentMaxWidth)
+                    .fillMaxSize(),
+                contentPadding = PaddingValues(
+                    horizontal = AdaptiveLayoutDefaults.ExpandedHorizontalPadding,
+                    vertical = 8.dp,
+                ),
+                horizontalArrangement = Arrangement.spacedBy(AdaptiveLayoutDefaults.GridSpacing),
+                verticalArrangement = Arrangement.spacedBy(24.dp),
+            ) {
+                gridItems(CryptoAddress.entries.toTypedArray()) { address ->
+                    CryptoAddressCard(
+                        address = address,
+                        onCopy = { setClipboard(context, it) },
+                    )
+                }
+                item {
+                    Spacer(modifier = Modifier.padding(48.dp))
+                }
+            }
         }
-        item {
-            Spacer(modifier = Modifier.padding(48.dp))
+    } else {
+        Box(
+            modifier = modifier.fillMaxSize(),
+            contentAlignment = Alignment.TopCenter,
+        ) {
+            LazyColumn(
+                modifier = Modifier
+                    .then(
+                        if (adaptiveLayoutInfo.isMediumWidth) {
+                            Modifier.widthIn(
+                                max = AdaptiveLayoutDefaults.SettingsContentMaxWidth,
+                            )
+                        } else {
+                            Modifier
+                        }
+                    )
+                    .fillMaxWidth(),
+                state = listState,
+                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+                verticalArrangement = Arrangement.spacedBy(24.dp),
+            ) {
+                items(CryptoAddress.entries.toTypedArray()) { address ->
+                    CryptoAddressCard(
+                        address = address,
+                        onCopy = { setClipboard(context, it) },
+                    )
+                }
+                item {
+                    Spacer(modifier = Modifier.padding(48.dp))
+                }
+            }
         }
     }
+}
+
+@Composable
+private fun CryptoAddressCard(
+    address: CryptoAddress,
+    onCopy: (String) -> Unit,
+) {
+    Text(
+        modifier = Modifier.padding(start = 12.dp, end = 12.dp, bottom = 8.dp),
+        text = address.cryptoName,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        maxLines = 1,
+        style = MaterialTheme.typography.titleSmall,
+    )
+    CryptoAddressItem(
+        model = address,
+        onCopy = onCopy,
+    )
 }
 
 @Composable
@@ -166,3 +240,6 @@ internal fun CryptoAddressItem(
         }
     }
 }
+
+private const val EXPANDED_COLUMN_COUNT = 2
+private const val LARGE_COLUMN_COUNT = 3

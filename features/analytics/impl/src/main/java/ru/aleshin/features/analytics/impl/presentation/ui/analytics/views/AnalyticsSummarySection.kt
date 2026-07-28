@@ -44,6 +44,7 @@ import ru.aleshin.features.analytics.impl.presentation.theme.AnalyticsThemeRes
 import ru.aleshin.features.analytics.impl.presentation.theme.tokens.AnalyticsStrings
 import ru.aleshin.features.analytics.impl.presentation.ui.common.views.AnalyticsComparisonLabel
 import ru.aleshin.features.analytics.impl.presentation.ui.common.views.AnalyticsMetricCell
+import ru.aleshin.features.analytics.impl.presentation.ui.common.views.AnalyticsSectionTitle
 import ru.aleshin.features.analytics.impl.presentation.ui.common.views.AnalyticsSurfaceCard
 import ru.aleshin.features.analytics.impl.presentation.utils.AnalyticsValueFormatter
 import ru.aleshin.features.analytics.impl.presentation.utils.fetchAnalyticsLocale
@@ -59,19 +60,54 @@ import kotlin.math.abs
 internal fun AnalyticsSummarySection(
     modifier: Modifier = Modifier,
     selectedPeriod: TimePeriod,
-    summary: AnalyticsSummaryUi
+    summary: AnalyticsSummaryUi,
+    showTitleInside: Boolean = true,
+    fillAvailableHeight: Boolean = false,
 ) {
     val formatter = rememberAnalyticsValueFormatter()
     val language = TimePlannerRes.language
     val strings = AnalyticsThemeRes.strings
     val locale = remember(language) { language.fetchAnalyticsLocale() }
 
-    AnalyticsSurfaceCard(modifier = modifier) {
-        Text(
-            text = selectedPeriod.toSummaryTitle(strings = strings),
-            style = MaterialTheme.typography.titleMedium,
-            color = MaterialTheme.colorScheme.onSurface
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        if (!showTitleInside) {
+            AnalyticsSectionTitle(title = selectedPeriod.toSummaryTitle(strings = strings))
+        }
+        AnalyticsSummaryCard(
+            modifier = Modifier,
+            selectedPeriod = selectedPeriod,
+            summary = summary,
+            showTitleInside = showTitleInside,
+            fillAvailableHeight = fillAvailableHeight,
+            formatter = formatter,
+            locale = locale,
+            strings = strings,
         )
+    }
+}
+
+@Composable
+private fun AnalyticsSummaryCard(
+    modifier: Modifier = Modifier,
+    selectedPeriod: TimePeriod,
+    summary: AnalyticsSummaryUi,
+    showTitleInside: Boolean,
+    fillAvailableHeight: Boolean,
+    formatter: AnalyticsValueFormatter,
+    locale: Locale,
+    strings: AnalyticsStrings,
+) {
+    AnalyticsSurfaceCard(modifier = modifier) {
+        if (showTitleInside) {
+            Text(
+                text = selectedPeriod.toSummaryTitle(strings = strings),
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurface,
+            )
+        }
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -92,6 +128,9 @@ internal fun AnalyticsSummarySection(
                     label = strings.completed,
                     horizontalAlignment = Alignment.End
                 )
+            }
+            if (fillAvailableHeight) {
+                Spacer(modifier = Modifier.weight(1f))
             }
             AnalyticsDurationTrack(
                 summary = summary

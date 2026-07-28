@@ -167,7 +167,10 @@ internal interface TimelineInteractor {
                 visibleTimeRange = visibleTimeRange,
                 minimumStartTime = previousTimeRange?.to ?: dayTimeRange.from,
                 maximumEndTime = nextTimeRange?.from ?: dayTimeRange.to,
-                canMove = startTime >= dayTimeRange.from && endTime <= dayTimeRange.to,
+                canMove = startTime >= dayTimeRange.from &&
+                    endTime <= dayTimeRange.to &&
+                    endTime.time - startTime.time <
+                    dayTimeRange.to.time - dayTimeRange.from.time,
                 canResizeStart = startTime >= dayTimeRange.from,
                 canResizeEnd = endTime <= dayTimeRange.to,
             )

@@ -24,6 +24,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import ru.aleshin.features.editor.impl.presentation.theme.EditorThemeRes
@@ -40,6 +41,8 @@ import ru.aleshin.timeplanner.core.ui.views.TopAppBarTitle
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 internal fun EditorTopAppBar(
+    modifier: Modifier = Modifier,
+    isCompact: Boolean,
     actionsEnabled: Boolean = true,
     countUndefinedTasks: Int,
     onBackIconClick: () -> Unit,
@@ -48,10 +51,11 @@ internal fun EditorTopAppBar(
     onTemplatesActionClick: () -> Unit,
 ) {
     TopAppBar(
+        modifier = modifier,
         title = {
             TopAppBarTitle(
                 text = EditorThemeRes.strings.topAppBarEditorTitle,
-                textAlign = TextAlign.Center,
+                textAlign = if (isCompact) TextAlign.Center else TextAlign.Start,
             )
         },
         navigationIcon = {
@@ -60,7 +64,9 @@ internal fun EditorTopAppBar(
                 imageDescription = EditorThemeRes.strings.topAppBarBackIconDesc,
                 onButtonClick = onBackIconClick,
             )
-            TopAppBarEmptyButton()
+            if (isCompact) {
+                TopAppBarEmptyButton()
+            }
         },
         actions = {
             if (actionsEnabled) {
@@ -68,9 +74,13 @@ internal fun EditorTopAppBar(
                     imagePainter = painterResource(id = TimePlannerRes.icons.plannedTask),
                     imageDescription = null,
                     onButtonClick = onOpenUndefinedTasks,
-                    badge = if (countUndefinedTasks > 0) {{
-                        Badge { Text(text = countUndefinedTasks.toString()) }
-                    }} else {
+                    badge = if (countUndefinedTasks > 0) {
+                        {
+                            Badge {
+                                Text(text = countUndefinedTasks.toString())
+                            }
+                        }
+                    } else {
                         null
                     },
                 )

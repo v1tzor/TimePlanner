@@ -49,6 +49,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import ru.aleshin.core.presentation.mappers.mapToIconPainter
 import ru.aleshin.core.presentation.models.tasks.TimeTaskUi
@@ -71,6 +72,8 @@ internal fun SelectedDaySection(
     isLoading: Boolean,
     selectedDate: Date?,
     schedules: List<WeekScheduleUi>,
+    horizontalPadding: Dp = 16.dp,
+    useParentScroll: Boolean = false,
     onOpenTimeTask: (TimeTaskUi) -> Unit,
 ) {
     val schedule = remember(selectedDate, schedules) {
@@ -89,7 +92,7 @@ internal fun SelectedDaySection(
         },
     ) { loading ->
         Column(
-            modifier = modifier.padding(horizontal = 16.dp),
+            modifier = Modifier.padding(horizontal = horizontalPadding),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             if (loading || selectedDate == null) {
@@ -118,29 +121,49 @@ internal fun SelectedDaySection(
                         )
                     }
                 } else {
-                    LazyColumn(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(MaterialTheme.shapes.large)
-                            .background(MaterialTheme.colorScheme.surfaceContainerLowest)
-                            .border(
-                                0.5.dp,
-                                MaterialTheme.colorScheme.outlineVariant,
-                                MaterialTheme.shapes.large
-                            )
-                            .animateContentSize(spring(stiffness = Spring.StiffnessHigh))
-                            .height(64.dp * timeTasks.size.coerceAtMost(3))
-                    ) {
-                        itemsIndexed(
-                            items = timeTasks,
-                            key = { _, task -> task.key },
-                        ) { index, task ->
-                            SelectedDayTaskItem(
-                                task = task,
-                                onClick = { onOpenTimeTask(task) },
-                            )
-                            if (index != timeTasks.lastIndex) {
-                                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+                    val taskListModifier = Modifier
+                        .fillMaxWidth()
+                        .clip(MaterialTheme.shapes.large)
+                        .background(MaterialTheme.colorScheme.surfaceContainerLowest)
+                        .border(
+                            0.5.dp,
+                            MaterialTheme.colorScheme.outlineVariant,
+                            MaterialTheme.shapes.large,
+                        )
+                        .animateContentSize(spring(stiffness = Spring.StiffnessHigh))
+                    if (useParentScroll) {
+                        Column(modifier = taskListModifier) {
+                            timeTasks.forEachIndexed { index, task ->
+                                SelectedDayTaskItem(
+                                    task = task,
+                                    onClick = { onOpenTimeTask(task) },
+                                )
+                                if (index != timeTasks.lastIndex) {
+                                    HorizontalDivider(
+                                        color = MaterialTheme.colorScheme.outlineVariant,
+                                    )
+                                }
+                            }
+                        }
+                    } else {
+                        LazyColumn(
+                            modifier = taskListModifier.height(
+                                64.dp * timeTasks.size.coerceAtMost(3),
+                            ),
+                        ) {
+                            itemsIndexed(
+                                items = timeTasks,
+                                key = { _, task -> task.key },
+                            ) { index, task ->
+                                SelectedDayTaskItem(
+                                    task = task,
+                                    onClick = { onOpenTimeTask(task) },
+                                )
+                                if (index != timeTasks.lastIndex) {
+                                    HorizontalDivider(
+                                        color = MaterialTheme.colorScheme.outlineVariant,
+                                    )
+                                }
                             }
                         }
                     }

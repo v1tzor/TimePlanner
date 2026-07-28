@@ -49,8 +49,8 @@ import androidx.compose.ui.unit.dp
  */
 @Composable
 internal fun AnalyticsSectionTitle(
-    title: String,
     modifier: Modifier = Modifier,
+    title: String,
 ) {
     Text(
         modifier = modifier,
@@ -64,6 +64,7 @@ internal fun AnalyticsSectionTitle(
 @Composable
 internal fun AnalyticsSurfaceCard(
     modifier: Modifier = Modifier,
+    contentModifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(16.dp),
     verticalSpacing: Dp = 16.dp,
     content: @Composable ColumnScope.() -> Unit,
@@ -76,7 +77,7 @@ internal fun AnalyticsSurfaceCard(
         shadowElevation = 0.dp,
     ) {
         Column(
-            modifier = Modifier.padding(contentPadding),
+            modifier = contentModifier.padding(contentPadding),
             verticalArrangement = Arrangement.spacedBy(verticalSpacing),
             content = content,
         )
@@ -85,9 +86,9 @@ internal fun AnalyticsSurfaceCard(
 
 @Composable
 internal fun AnalyticsMetricCell(
+    modifier: Modifier = Modifier,
     value: String,
     label: String,
-    modifier: Modifier = Modifier,
     isValueAccent: Boolean = false,
     horizontalAlignment: Alignment.Horizontal = Alignment.Start
 ) {
@@ -112,9 +113,9 @@ internal fun AnalyticsMetricCell(
 
 @Composable
 internal fun AnalyticsComparisonLabel(
+    modifier: Modifier = Modifier,
     value: String,
     label: String? = null,
-    modifier: Modifier = Modifier,
     isPositive: Boolean? = null,
     directionUp: Boolean? = isPositive,
 ) {
@@ -141,8 +142,8 @@ internal fun AnalyticsComparisonLabel(
 
 @Composable
 internal fun AnalyticsLoadingPlaceholder(
-    text: String,
     modifier: Modifier = Modifier,
+    text: String,
 ) {
     AnalyticsSurfaceCard(
         modifier = modifier.semantics { liveRegion = LiveRegionMode.Polite },
@@ -169,8 +170,8 @@ internal fun AnalyticsLoadingPlaceholder(
 
 @Composable
 internal fun AnalyticsEmptyCard(
-    text: String,
     modifier: Modifier = Modifier,
+    text: String,
     supportingText: String? = null,
     actionTitle: String? = null,
     onAction: (() -> Unit)? = null,
@@ -210,9 +211,9 @@ internal fun AnalyticsEmptyCard(
 
 @Composable
 internal fun AnalyticsErrorCard(
+    modifier: Modifier = Modifier,
     text: String,
     retryTitle: String,
-    modifier: Modifier = Modifier,
     onRetry: () -> Unit,
 ) {
     AnalyticsSurfaceCard(modifier) {

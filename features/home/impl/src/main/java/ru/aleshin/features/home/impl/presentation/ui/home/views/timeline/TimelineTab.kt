@@ -39,10 +39,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import ru.aleshin.core.presentation.models.tasks.TimeTaskUi
-import ru.aleshin.core.utils.functional.TimeRange
 import ru.aleshin.features.home.impl.presentation.models.TimelineScheduleUi
+import ru.aleshin.features.home.impl.presentation.models.TimelineTaskUpdateRequestUi
 import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
 import java.util.Date
 import kotlin.math.roundToInt
@@ -55,10 +56,13 @@ internal fun TimelineTab(
     modifier: Modifier = Modifier,
     schedule: TimelineScheduleUi,
     currentTime: Date?,
+    pendingTimeTaskUpdate: TimelineTaskUpdateRequestUi?,
+    failedTimeTaskUpdate: TimelineTaskUpdateRequestUi?,
+    taskMaxWidth: Dp? = null,
     onTimeTaskEdit: (Long) -> Unit,
     onTaskDoneChange: (TimeTaskUi) -> Unit,
     onTimeTaskAdd: (Date, Date) -> Unit,
-    onTimeTaskUpdate: (Long, TimeRange) -> Unit,
+    onTimeTaskUpdate: (TimelineTaskUpdateRequestUi) -> Unit,
     onAddClick: () -> Unit,
 ) {
     val scrollState: ScrollState = rememberScrollState()
@@ -87,6 +91,9 @@ internal fun TimelineTab(
             TimelineGrid(
                 schedule = schedule,
                 currentTime = currentTime,
+                pendingTimeTaskUpdate = pendingTimeTaskUpdate,
+                failedTimeTaskUpdate = failedTimeTaskUpdate,
+                taskMaxWidth = taskMaxWidth,
                 scrollState = scrollState,
                 viewportHeight = viewportHeight,
                 gestureState = gestureState,
@@ -99,16 +106,21 @@ internal fun TimelineTab(
                 },
             )
         }
-        FloatingActionButton(
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(end = 16.dp, bottom = 16.dp),
-            onClick = onAddClick,
+        if (
+            gestureState.selectedTimeTaskId == null &&
+            !gestureState.isTimeTaskUpdatePending(pendingTimeTaskUpdate)
         ) {
-            Icon(
-                imageVector = Icons.Default.Add,
-                contentDescription = HomeThemeRes.strings.addTaskTitle,
-            )
+            FloatingActionButton(
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(end = 16.dp, bottom = 16.dp),
+                onClick = onAddClick,
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = HomeThemeRes.strings.addTaskTitle,
+                )
+            }
         }
     }
 }

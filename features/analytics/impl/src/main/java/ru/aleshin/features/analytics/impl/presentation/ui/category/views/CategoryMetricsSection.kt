@@ -18,6 +18,12 @@ package ru.aleshin.features.analytics.impl.presentation.ui.category.views
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalFlexBoxApi
+import androidx.compose.foundation.layout.FlexAlignSelf
+import androidx.compose.foundation.layout.FlexBox
+import androidx.compose.foundation.layout.FlexDirection
+import androidx.compose.foundation.layout.FlexWrap
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -38,6 +44,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import ru.aleshin.features.analytics.impl.domain.entities.AnalyticsComparisonState
 import ru.aleshin.features.analytics.impl.presentation.models.category.CategoryKeyMetricsUi
@@ -56,8 +63,9 @@ import kotlin.math.abs
  */
 @Composable
 internal fun CategoryMetricsSection(
-    metrics: CategoryKeyMetricsUi,
     modifier: Modifier = Modifier,
+    metrics: CategoryKeyMetricsUi,
+    fillAvailableHeight: Boolean = false,
 ) {
     val strings = AnalyticsThemeRes.strings
     val language = TimePlannerRes.language
@@ -67,12 +75,18 @@ internal fun CategoryMetricsSection(
     CategorySection(
         title = strings.keyMetricsTitle,
         modifier = modifier,
+        fillAvailableHeight = fillAvailableHeight,
         contentPadding = PaddingValues(0.dp),
         verticalSpacing = 0.dp,
     ) {
-        Row(modifier = Modifier.fillMaxWidth().height(155.dp)) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .then(if (fillAvailableHeight) Modifier.weight(1f) else Modifier.height(IntrinsicSize.Min))
+        ) {
             CategoryMetricCell(
                 modifier = Modifier.weight(1f),
+                fillAvailableHeight = fillAvailableHeight,
                 iconResource = TimePlannerRes.icons.plannedTask,
                 value = metrics.taskCount.toString(),
                 label = strings.tasksMetric,
@@ -84,6 +98,7 @@ internal fun CategoryMetricsSection(
             )
             CategoryMetricCell(
                 modifier = Modifier.weight(1f),
+                fillAvailableHeight = fillAvailableHeight,
                 iconResource = TimePlannerRes.icons.time,
                 value = metrics.averageDurationMillis?.let {
                     formatter.formatDuration(
@@ -100,9 +115,14 @@ internal fun CategoryMetricsSection(
             )
         }
         HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-        Row(modifier = Modifier.fillMaxWidth().height(155.dp)) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .then(if (fillAvailableHeight) Modifier.weight(1f) else Modifier.height(IntrinsicSize.Min))
+        ) {
             CategoryMetricCell(
                 modifier = Modifier.weight(1f),
+                fillAvailableHeight = fillAvailableHeight,
                 iconResource = TimePlannerRes.icons.check,
                 value = strings.completedCountFormat.format(
                     metrics.completedTaskCount,
@@ -117,6 +137,7 @@ internal fun CategoryMetricsSection(
             )
             CategoryMetricCell(
                 modifier = Modifier.weight(1f),
+                fillAvailableHeight = fillAvailableHeight,
                 iconResource = TimePlannerRes.icons.analyticsTab,
                 value = formatter.formatPercent(
                     value = metrics.completionShare,
@@ -130,8 +151,7 @@ internal fun CategoryMetricsSection(
                 ),
                 isPositive = metrics.completionComparison.changePercent
                     ?.takeIf {
-                        metrics.completionComparison.state == AnalyticsComparisonState.VALUE &&
-                            it != 0.0
+                        metrics.completionComparison.state == AnalyticsComparisonState.VALUE && it != 0.0
                     }
                     ?.let { it > 0.0 },
             )
@@ -140,17 +160,19 @@ internal fun CategoryMetricsSection(
 }
 
 @Composable
+@OptIn(ExperimentalFlexBoxApi::class)
 private fun CategoryMetricCell(
+    modifier: Modifier = Modifier,
+    fillAvailableHeight: Boolean = false,
     iconResource: Int,
     value: String,
     label: String,
     comparison: String?,
-    modifier: Modifier = Modifier,
     isPositive: Boolean? = null,
 ) {
     Column(
         modifier = modifier
-            .heightIn(min = 136.dp)
+            .heightIn(min = if (fillAvailableHeight) Dp.Unspecified else 160.dp)
             .padding(16.dp),
     ) {
         Box(
@@ -177,17 +199,28 @@ private fun CategoryMetricCell(
             maxLines = 2,
         )
         Spacer(modifier = Modifier.height(4.dp))
-        Text(
-            text = label,
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-        comparison?.let {
-            Spacer(modifier = Modifier.height(8.dp))
-            AnalyticsComparisonLabel(
-                value = it,
-                isPositive = isPositive,
+        FlexBox(
+            config = {
+                direction(if (fillAvailableHeight) FlexDirection.Row else FlexDirection.Column)
+                gap(8.dp)
+                wrap(FlexWrap.Wrap)
+            }
+        ) {
+            Text(
+                text = label,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 2,
             )
+            comparison?.let {
+                AnalyticsComparisonLabel(
+                    modifier = Modifier.flex {
+                        if (fillAvailableHeight) alignSelf(FlexAlignSelf.Center)
+                    },
+                    value = it,
+                    isPositive = isPositive,
+                )
+            }
         }
     }
 }

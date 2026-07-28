@@ -17,29 +17,13 @@
 package ru.aleshin.core.utils.architecture.component
 
 import com.arkivanov.decompose.ComponentContext
-import com.arkivanov.essenty.instancekeeper.InstanceKeeper
-import com.arkivanov.essenty.instancekeeper.getOrCreate
 
 /**
  * @author Stanislav Aleshin on 20.08.2025.
  */
 abstract class BaseComponent(
     componentContext: ComponentContext
-) : ComponentContext by componentContext {
-
-    init {
-        instanceKeeper.getOrCreate(key = this.toString()) {
-            object : InstanceKeeper.Instance {
-                override fun onDestroy() {
-                    super.onDestroy()
-                    onDestroyInstance()
-                }
-            }
-        }
-    }
-
-    open fun onDestroyInstance() {}
-}
+) : ComponentContext by componentContext
 
 abstract class ChildComponent(
     componentContext: ComponentContext

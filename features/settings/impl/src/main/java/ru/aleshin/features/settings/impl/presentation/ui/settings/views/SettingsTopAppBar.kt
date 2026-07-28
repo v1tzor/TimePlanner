@@ -38,6 +38,7 @@ import ru.aleshin.timeplanner.core.ui.views.TopAppBarTitle
 @OptIn(ExperimentalMaterial3Api::class)
 internal fun SettingsTopAppBar(
     modifier: Modifier = Modifier,
+    isCompact: Boolean,
     onResetToDefaultClick: () -> Unit,
     onBackIconClick: () -> Unit,
 ) {
@@ -46,7 +47,7 @@ internal fun SettingsTopAppBar(
         title = {
             TopAppBarTitle(
                 text = SettingsThemeRes.strings.settingsTitle,
-                textAlign = TextAlign.Center,
+                textAlign = if (isCompact) TextAlign.Center else TextAlign.Start,
             )
         },
         navigationIcon = {

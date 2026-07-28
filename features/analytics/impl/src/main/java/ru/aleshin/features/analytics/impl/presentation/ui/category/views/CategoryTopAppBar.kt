@@ -31,10 +31,12 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -52,71 +54,123 @@ import ru.aleshin.timeplanner.core.ui.views.CategoryTextMonogram
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 internal fun CategoryTopAppBar(
+    modifier: Modifier = Modifier,
+    isCompact: Boolean,
     title: String,
     categoryId: Long?,
     defaultType: DefaultCategoryType?,
     isLoading: Boolean,
     onBack: () -> Unit,
 ) {
-    val strings = AnalyticsThemeRes.strings
     val categoryColor = categoryId
         ?.let(CategoryColorsDefaults::fetchColor)
         ?: MaterialTheme.colorScheme.primary
 
-    CenterAlignedTopAppBar(
-        title = {
-            if (isLoading && title.isEmpty()) {
-                Box(
-                    modifier = Modifier
-                        .width(120.dp)
-                        .height(20.dp)
-                        .background(
-                            color = MaterialTheme.colorScheme.surfaceContainerHighest,
-                            shape = RoundedCornerShape(8.dp),
-                        ),
+    if (isCompact) {
+        CenterAlignedTopAppBar(
+            modifier = modifier,
+            title = {
+                CategoryTopAppBarTitle(
+                    title = title,
+                    defaultType = defaultType,
+                    categoryColor = categoryColor,
+                    isLoading = isLoading,
                 )
-            } else {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    when {
-                        defaultType != null -> CategoryIconMonogram(
-                            modifier = Modifier.size(32.dp),
-                            icon = painterResource(
-                                id = defaultType.mapToIcon(icons = TimePlannerRes.icons),
-                            ),
-                            iconSize = 20.dp,
-                            iconDescription = null,
-                            iconColor = categoryColor,
-                            backgroundColor = categoryColor.copy(alpha = 0.16f),
-                        )
-                        title.isNotEmpty() -> CategoryTextMonogram(
-                            modifier = Modifier.size(32.dp),
-                            text = title.take(n = 1),
-                            textColor = categoryColor,
-                            backgroundColor = categoryColor.copy(alpha = 0.16f),
-                        )
-                    }
-                    if (title.isNotEmpty()) {
-                        Spacer(modifier = Modifier.width(8.dp))
-                    }
-                    Text(
-                        text = title,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        style = MaterialTheme.typography.titleMedium,
-                    )
-                }
-            }
-        },
-        navigationIcon = {
-            IconButton(onClick = onBack) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = strings.navigateBackDesc,
+            },
+            navigationIcon = {
+                CategoryTopAppBarBackButton(onBack = onBack)
+            },
+            colors = TopAppBarDefaults.topAppBarColors(
+                containerColor = MaterialTheme.colorScheme.background,
+            ),
+        )
+    } else {
+        TopAppBar(
+            modifier = modifier,
+            title = {
+                CategoryTopAppBarTitle(
+                    title = title,
+                    defaultType = defaultType,
+                    categoryColor = categoryColor,
+                    isLoading = isLoading,
+                )
+            },
+            navigationIcon = {
+                CategoryTopAppBarBackButton(onBack = onBack)
+            },
+            colors = TopAppBarDefaults.topAppBarColors(
+                containerColor = MaterialTheme.colorScheme.background,
+            ),
+        )
+    }
+}
+
+@Composable
+private fun CategoryTopAppBarTitle(
+    modifier: Modifier = Modifier,
+    title: String,
+    defaultType: DefaultCategoryType?,
+    categoryColor: Color,
+    isLoading: Boolean,
+) {
+    if (isLoading && title.isEmpty()) {
+        Box(
+            modifier = modifier
+                .width(120.dp)
+                .height(20.dp)
+                .background(
+                    color = MaterialTheme.colorScheme.surfaceContainerHighest,
+                    shape = RoundedCornerShape(8.dp),
+                ),
+        )
+    } else {
+        Row(
+            modifier = modifier,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            when {
+                defaultType != null -> CategoryIconMonogram(
+                    modifier = Modifier.size(32.dp),
+                    icon = painterResource(
+                        id = defaultType.mapToIcon(icons = TimePlannerRes.icons),
+                    ),
+                    iconSize = 20.dp,
+                    iconDescription = null,
+                    iconColor = categoryColor,
+                    backgroundColor = categoryColor.copy(alpha = 0.16f),
+                )
+                title.isNotEmpty() -> CategoryTextMonogram(
+                    modifier = Modifier.size(32.dp),
+                    text = title.take(n = 1),
+                    textColor = categoryColor,
+                    backgroundColor = categoryColor.copy(alpha = 0.16f),
                 )
             }
-        },
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.background,
-        ),
-    )
+            if (title.isNotEmpty()) {
+                Spacer(modifier = Modifier.width(8.dp))
+            }
+            Text(
+                text = title,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                style = MaterialTheme.typography.titleMedium,
+            )
+        }
+    }
+}
+
+@Composable
+private fun CategoryTopAppBarBackButton(
+    modifier: Modifier = Modifier,
+    onBack: () -> Unit,
+) {
+    IconButton(
+        modifier = modifier,
+        onClick = onBack,
+    ) {
+        Icon(
+            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+            contentDescription = AnalyticsThemeRes.strings.navigateBackDesc,
+        )
+    }
 }

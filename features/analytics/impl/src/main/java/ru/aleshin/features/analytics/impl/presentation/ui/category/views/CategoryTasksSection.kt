@@ -28,9 +28,6 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
@@ -68,7 +65,9 @@ import java.util.Locale
 /**
  * @author Stanislav Aleshin on 23.07.2026.
  */
-internal fun LazyListScope.CategoryTasksSection(
+@Composable
+internal fun CategoryTasksSection(
+    modifier: Modifier = Modifier,
     taskRows: List<CategoryTaskRowUi>,
     metrics: CategoryKeyMetricsUi,
     isExpanded: Boolean,
@@ -82,40 +81,30 @@ internal fun LazyListScope.CategoryTasksSection(
     }
     val hasExpandAction = taskRows.size > PREVIEW_TASK_COUNT
 
-    item(key = TASKS_HEADER_KEY) {
+    Column(modifier = modifier) {
         AnalyticsSectionTitle(
             title = AnalyticsThemeRes.strings.categoryTasksTitle,
             modifier = Modifier
                 .fillMaxWidth()
-                .widthInContent()
                 .padding(bottom = 8.dp),
         )
-    }
-    item(key = TASKS_SUMMARY_KEY) {
         CategoryTasksSummary(
             metrics = metrics,
         )
-    }
-    itemsIndexed(
-        items = visibleRows,
-        key = { _, row -> "category-task-${row.task.key}" },
-    ) { index, row ->
-        val isLast = index == visibleRows.lastIndex && !hasExpandAction
-        CategoryTaskItem(
-            row = row,
-            isLast = isLast,
-        )
-    }
-    if (hasExpandAction) {
-        item(key = TASKS_EXPAND_KEY) {
+        visibleRows.forEachIndexed { index, row ->
+            val isLast = index == visibleRows.lastIndex && !hasExpandAction
+            CategoryTaskItem(
+                row = row,
+                isLast = isLast,
+            )
+        }
+        if (hasExpandAction) {
             CategoryTasksExpandButton(
                 isExpanded = isExpanded,
                 hasFollowingSection = hasFollowingSection,
                 onClick = onToggle,
             )
-        }
-    } else if (hasFollowingSection) {
-        item(key = TASKS_SPACING_KEY) {
+        } else if (hasFollowingSection) {
             Spacer(modifier = Modifier.height(24.dp))
         }
     }
@@ -130,8 +119,7 @@ private fun CategoryTasksSummary(
 
     Surface(
         modifier = Modifier
-            .fillMaxWidth()
-            .widthInContent(),
+            .fillMaxWidth(),
         color = MaterialTheme.colorScheme.surfaceContainerLow,
         shape = RoundedCornerShape(
             topStart = 16.dp,
@@ -178,8 +166,7 @@ private fun CategoryTaskItem(
 ) {
     Surface(
         modifier = Modifier
-            .fillMaxWidth()
-            .widthInContent(),
+            .fillMaxWidth(),
         color = MaterialTheme.colorScheme.surfaceContainerLow,
         shape = if (isLast) {
             RoundedCornerShape(
@@ -220,7 +207,6 @@ private fun CategoryTasksExpandButton(
     Surface(
         modifier = Modifier
             .fillMaxWidth()
-            .widthInContent()
             .padding(bottom = if (hasFollowingSection) 24.dp else 0.dp),
         color = MaterialTheme.colorScheme.surfaceContainerLow,
         shape = RoundedCornerShape(
@@ -393,14 +379,5 @@ private fun AnalyticsTaskStatus.fetchTitle(
     AnalyticsTaskStatus.UNFINISHED -> strings.statusUnfinished
 }
 
-private fun Modifier.widthInContent() = this.then(
-    Modifier.widthIn(max = MAX_CONTENT_WIDTH),
-)
-
-private val MAX_CONTENT_WIDTH = 680.dp
 private const val PREVIEW_TASK_COUNT = 5
 private const val TASK_DATE_PATTERN = "d MMM"
-private const val TASKS_HEADER_KEY = "category-tasks-header"
-private const val TASKS_SUMMARY_KEY = "category-tasks-summary"
-private const val TASKS_EXPAND_KEY = "category-tasks-expand"
-private const val TASKS_SPACING_KEY = "category-tasks-spacing"

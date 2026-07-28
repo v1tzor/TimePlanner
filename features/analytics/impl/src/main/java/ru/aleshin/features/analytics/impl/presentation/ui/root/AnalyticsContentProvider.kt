@@ -46,10 +46,14 @@ internal class AnalyticsContentProvider(
             ) { child ->
                 when (val instance = child.instance) {
                     is InternalAnalyticsFeatureComponent.Child.AnalyticsChild -> {
-                        AnalyticsContent(instance.component)
+                        AnalyticsContent(
+                            component = instance.component,
+                        )
                     }
                     is InternalAnalyticsFeatureComponent.Child.CategoryChild -> {
-                        CategoryContent(instance.component)
+                        CategoryContent(
+                            component = instance.component,
+                        )
                     }
                 }
             }

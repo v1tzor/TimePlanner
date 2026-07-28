@@ -17,7 +17,14 @@ package ru.aleshin.timeplanner.core.ui.views
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.material3.*
+import androidx.compose.foundation.layout.ime
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.union
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FabPosition
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold as MaterialScaffold
+import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -37,20 +44,20 @@ fun Scaffold(
     floatingActionButtonPosition: FabPosition = FabPosition.End,
     containerColor: Color = MaterialTheme.colorScheme.background,
     contentColor: Color = contentColorFor(containerColor),
-    contentWindowInsets: WindowInsets = ScaffoldDefaults.contentWindowInsets,
+    contentWindowInsets: WindowInsets = WindowInsets.safeDrawing.union(WindowInsets.ime),
     content: @Composable (PaddingValues) -> Unit,
 ) {
-    Scaffold(
-        modifier,
-        topBar,
-        bottomBar,
-        snackbarHost,
-        floatingActionButton,
-        floatingActionButtonPosition,
-        containerColor,
-        contentColor,
-        contentWindowInsets,
-        content,
+    MaterialScaffold(
+        modifier = modifier,
+        topBar = topBar,
+        bottomBar = bottomBar,
+        snackbarHost = snackbarHost,
+        floatingActionButton = floatingActionButton,
+        floatingActionButtonPosition = floatingActionButtonPosition,
+        containerColor = containerColor,
+        contentColor = contentColor,
+        contentWindowInsets = contentWindowInsets,
+        content = content,
     )
     dialogHost()
 }

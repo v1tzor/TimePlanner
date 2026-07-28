@@ -82,8 +82,8 @@ import kotlin.math.roundToInt
  */
 @Composable
 internal fun AnalyticsDualAxisChart(
-    points: List<AnalyticsChartPointUi>,
     modifier: Modifier = Modifier,
+    points: List<AnalyticsChartPointUi>,
     tooltipFormatter: (AnalyticsChartPointUi) -> String,
     primaryAxisLabel: (Float) -> String,
     selectedKey: Long? = null,
@@ -347,9 +347,9 @@ internal fun AnalyticsBarChart(
 
 @Composable
 private fun BarValueLabels(
+    modifier: Modifier = Modifier,
     points: List<AnalyticsChartPointUi>,
     valueLabel: (AnalyticsChartPointUi) -> String,
-    modifier: Modifier = Modifier,
 ) {
     val labelColor = MaterialTheme.colorScheme.onSurface
     Layout(
@@ -398,9 +398,9 @@ private fun BarValueLabels(
 
 @Composable
 internal fun AnalyticsDonutChart(
+    modifier: Modifier = Modifier,
     slices: List<AnalyticsDonutSliceUi>,
     sliceDescription: (AnalyticsDonutSliceUi) -> String,
-    modifier: Modifier = Modifier,
     size: Dp = 180.dp,
     selectedKey: Long? = null,
     onSelect: (Long) -> Unit,
@@ -446,9 +446,9 @@ internal fun AnalyticsDonutChart(
 
 @Composable
 internal fun AnalyticsDonutCenterLabel(
+    modifier: Modifier = Modifier,
     value: String,
     label: String,
-    modifier: Modifier = Modifier,
 ) {
     Box(
         modifier = modifier.size(DONUT_CENTER_CONTENT_SIZE).clip(CircleShape),
@@ -469,13 +469,13 @@ internal fun filterAnalyticsDonutSlices(slices: List<AnalyticsDonutSliceUi>) = s
 
 @Composable
 internal fun AnalyticsLineChart(
+    modifier: Modifier = Modifier,
     series: List<AnalyticsLineSeriesUi>,
     labels: List<String>,
     colors: List<Color>,
     summary: String,
     pointDescription: (Int) -> String,
     axisValueLabel: (Float) -> String,
-    modifier: Modifier = Modifier,
     selectedIndex: Int? = null,
     onSelect: (Int) -> Unit,
 ) {
@@ -683,10 +683,10 @@ internal fun normalizeAnalyticsLineValues(
 
 @Composable
 private fun VerticalAxis(
+    modifier: Modifier = Modifier,
     maxValue: Float,
     valueLabel: (Float) -> String,
     textAlignment: TextAlign,
-    modifier: Modifier = Modifier,
 ) {
     val density = LocalDensity.current
     val plotPadding = with(density) { CHARTY_PLOT_PADDING_PX.toDp() }
@@ -709,9 +709,9 @@ private fun VerticalAxis(
 
 @Composable
 private fun HorizontalAxisLabels(
+    modifier: Modifier = Modifier,
     labels: List<String>,
     isCenteredInSlot: Boolean,
-    modifier: Modifier = Modifier,
 ) {
     val density = LocalDensity.current
     val labelGap = with(density) { AXIS_LABEL_GAP.toPx() }

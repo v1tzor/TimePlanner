@@ -15,78 +15,61 @@
  */
 package ru.aleshin.timeplanner.presentation.ui.tabs
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.ExperimentalMaterial3Api
+import android.view.KeyEvent as AndroidKeyEvent
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import com.arkivanov.decompose.ExperimentalDecomposeApi
-import com.arkivanov.decompose.extensions.compose.experimental.stack.ChildStack
+import androidx.compose.ui.input.key.KeyEvent
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.isAltPressed
+import androidx.compose.ui.input.key.onPreviewKeyEvent
+import androidx.compose.ui.input.key.type
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
-import ru.aleshin.timeplanner.core.ui.views.AdaptiveContent
+import ru.aleshin.timeplanner.core.ui.views.rememberAdaptiveLayoutInfo
 import ru.aleshin.timeplanner.presentation.ui.tabs.store.TabNavigationComponent
 import ru.aleshin.timeplanner.presentation.ui.tabs.views.TabsBottomBarItems
-import ru.aleshin.timeplanner.presentation.ui.tabs.views.TabsBottomNavigationBar
 import ru.aleshin.timeplanner.presentation.ui.tabs.views.mapToBottomItem
 
 /**
  * @author Stanislav Aleshin on 18.02.2023.
  */
 @Composable
-@OptIn(ExperimentalDecomposeApi::class, ExperimentalMaterial3Api::class)
 fun TabNavigationContent(
-    tabNavigationComponent: TabNavigationComponent,
     modifier: Modifier = Modifier,
+    component: TabNavigationComponent,
 ) {
-    AdaptiveContent(
-        modifier = modifier,
-        defaultContent = {
-            Column(modifier = Modifier.fillMaxSize()) {
-                val stack by tabNavigationComponent.stack.subscribeAsState()
-                ChildStack(
-                    modifier = Modifier.weight(1f),
-                    stack = stack
-                ) { child ->
-                    when (val instance = child.instance) {
-                        is TabNavigationComponent.TabNavigationChild.HomeChild -> {
-                            instance.contentProvider.invoke(Modifier)
-                        }
-                        is TabNavigationComponent.TabNavigationChild.OverviewChild -> {
-                            instance.contentProvider.invoke(Modifier)
-                        }
-                        is TabNavigationComponent.TabNavigationChild.TemplatesChild -> {
-                            instance.contentProvider.invoke(Modifier)
-                        }
-                        is TabNavigationComponent.TabNavigationChild.AnalyticsChild -> {
-                            instance.contentProvider.invoke(Modifier)
-                        }
+    val adaptiveLayoutInfo = rememberAdaptiveLayoutInfo()
+    val stack by component.stack.subscribeAsState()
+    val selectedItem = stack.active.instance.mapToBottomItem()
 
-                    }
-                }
-                TabsBottomNavigationBar(
-                    selectedItem = remember(stack.active) {
-                        stack.active.instance.mapToBottomItem()
-                    },
-                    onItemSelected = { tab ->
-                        when (tab) {
-                            TabsBottomBarItems.HOME -> {
-                                tabNavigationComponent.clickHomeTab()
-                            }
-                            TabsBottomBarItems.OVERVIEW -> {
-                                tabNavigationComponent.clickOverviewTab()
-                            }
-                            TabsBottomBarItems.TEMPLATES -> {
-                                tabNavigationComponent.clickTemplatesTab()
-                            }
-                            TabsBottomBarItems.ANALYTICS -> {
-                                tabNavigationComponent.clickAnalyticsTab()
-                            }
-                        }
-                    }
-                )
+    TabNavigationLayout(
+        modifier = modifier.onPreviewKeyEvent { event ->
+            handleTabShortcut(event, component)
+        },
+        stack = stack,
+        selectedItem = selectedItem,
+        useNavigationRail = adaptiveLayoutInfo.useNavigationRail,
+        onItemSelect = { item ->
+            when (item) {
+                TabsBottomBarItems.HOME -> component.clickHomeTab()
+                TabsBottomBarItems.OVERVIEW -> component.clickOverviewTab()
+                TabsBottomBarItems.TEMPLATES -> component.clickTemplatesTab()
+                TabsBottomBarItems.ANALYTICS -> component.clickAnalyticsTab()
             }
-        }
+        },
     )
+}
+
+private fun handleTabShortcut(
+    event: KeyEvent,
+    component: TabNavigationComponent,
+): Boolean {
+    if (event.type != KeyEventType.KeyUp || !event.isAltPressed) return false
+    return when (event.nativeKeyEvent.keyCode) {
+        AndroidKeyEvent.KEYCODE_1 -> true.also { component.clickHomeTab() }
+        AndroidKeyEvent.KEYCODE_2 -> true.also { component.clickOverviewTab() }
+        AndroidKeyEvent.KEYCODE_3 -> true.also { component.clickTemplatesTab() }
+        AndroidKeyEvent.KEYCODE_4 -> true.also { component.clickAnalyticsTab() }
+        else -> false
+    }
 }

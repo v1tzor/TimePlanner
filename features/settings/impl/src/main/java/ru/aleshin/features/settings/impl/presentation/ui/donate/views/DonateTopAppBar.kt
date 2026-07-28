@@ -36,6 +36,7 @@ import ru.aleshin.timeplanner.core.ui.views.TopAppBarTitle
 @OptIn(ExperimentalMaterial3Api::class)
 internal fun DonateTopAppBar(
     modifier: Modifier = Modifier,
+    isCompact: Boolean,
     onNavButtonClick: () -> Unit,
 ) {
     TopAppBar(
@@ -43,7 +44,7 @@ internal fun DonateTopAppBar(
         title = {
             TopAppBarTitle(
                 text = SettingsThemeRes.strings.donateHeader,
-                textAlign = TextAlign.Center,
+                textAlign = if (isCompact) TextAlign.Center else TextAlign.Start,
             )
         },
         navigationIcon = {
@@ -54,7 +55,9 @@ internal fun DonateTopAppBar(
             )
         },
         actions = {
-            TopAppBarEmptyButton()
+            if (isCompact) {
+                TopAppBarEmptyButton()
+            }
         },
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.background,

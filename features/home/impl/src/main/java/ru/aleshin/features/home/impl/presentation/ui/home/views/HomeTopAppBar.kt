@@ -15,18 +15,30 @@
  */
 package ru.aleshin.features.home.impl.presentation.ui.home.views
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import ru.aleshin.core.domain.entities.settings.CalendarButtonBehavior
 import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
 import ru.aleshin.timeplanner.core.ui.theme.TimePlannerRes
 import ru.aleshin.timeplanner.core.ui.views.TopAppBarButton
 import ru.aleshin.timeplanner.core.ui.views.TopAppBarTitle
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 /**
  * @author Stanislav Aleshin on 20.02.2023.
@@ -34,6 +46,8 @@ import ru.aleshin.timeplanner.core.ui.views.TopAppBarTitle
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 internal fun HomeTopAppBar(
+    modifier: Modifier = Modifier,
+    isCompact: Boolean,
     calendarIconBehavior: CalendarButtonBehavior,
     onSettingsIconClick: () -> Unit,
     onOpenCalendar: () -> Unit,
@@ -43,29 +57,120 @@ internal fun HomeTopAppBar(
         title = {
             TopAppBarTitle(
                 text = HomeThemeRes.strings.topAppBarHomeTitle,
-                textAlign = TextAlign.Center,
+                textAlign = if (isCompact) TextAlign.Center else TextAlign.Start,
             )
         },
         navigationIcon = {
-            TopAppBarButton(
-                imagePainter = painterResource(HomeThemeRes.icons.calendar),
-                imageDescription = HomeThemeRes.strings.topAppBarCalendarIconDesc,
-                onButtonClick = when (calendarIconBehavior) {
-                    CalendarButtonBehavior.OPEN_CALENDAR -> onOpenCalendar
-                    CalendarButtonBehavior.SET_CURRENT_DATE -> onGoToToday
-                },
-                onLongButtonClick = when (calendarIconBehavior) {
-                    CalendarButtonBehavior.OPEN_CALENDAR -> onGoToToday
-                    CalendarButtonBehavior.SET_CURRENT_DATE -> onOpenCalendar
-                },
-            )
+            if (isCompact) {
+                HomeCalendarTopAppBarButton(
+                    calendarIconBehavior = calendarIconBehavior,
+                    onOpenCalendar = onOpenCalendar,
+                    onGoToToday = onGoToToday,
+                )
+            }
         },
         actions = {
+            if (!isCompact) {
+                HomeCalendarTopAppBarButton(
+                    calendarIconBehavior = calendarIconBehavior,
+                    onOpenCalendar = onOpenCalendar,
+                    onGoToToday = onGoToToday,
+                )
+            }
             TopAppBarButton(
                 imagePainter = painterResource(TimePlannerRes.icons.enabledSettingsIcon),
                 imageDescription = HomeThemeRes.strings.topAppBarOverviewTitle,
                 onButtonClick = onSettingsIconClick,
             )
+        },
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = MaterialTheme.colorScheme.background,
+        ),
+    )
+}
+
+@Composable
+private fun HomeCalendarTopAppBarButton(
+    modifier: Modifier = Modifier,
+    calendarIconBehavior: CalendarButtonBehavior,
+    onOpenCalendar: () -> Unit,
+    onGoToToday: () -> Unit,
+) {
+    TopAppBarButton(
+        modifier = modifier,
+        imagePainter = painterResource(HomeThemeRes.icons.calendar),
+        imageDescription = HomeThemeRes.strings.topAppBarCalendarIconDesc,
+        onButtonClick = when (calendarIconBehavior) {
+            CalendarButtonBehavior.OPEN_CALENDAR -> onOpenCalendar
+            CalendarButtonBehavior.SET_CURRENT_DATE -> onGoToToday
+        },
+        onLongButtonClick = when (calendarIconBehavior) {
+            CalendarButtonBehavior.OPEN_CALENDAR -> onGoToToday
+            CalendarButtonBehavior.SET_CURRENT_DATE -> onOpenCalendar
+        },
+    )
+}
+
+/**
+ * @author Stanislav Aleshin on 27.07.2026.
+ */
+@Composable
+@OptIn(ExperimentalMaterial3Api::class)
+internal fun HomeExpandedTopAppBar(
+    modifier: Modifier = Modifier,
+    selectedDate: Date?,
+    calendarIconBehavior: CalendarButtonBehavior,
+    onSettingsIconClick: () -> Unit,
+    onOpenCalendar: () -> Unit,
+    onGoToToday: () -> Unit,
+) {
+    val dateFormat = remember {
+        SimpleDateFormat("EEEE, d MMMM", Locale.getDefault())
+    }
+    val selectedDateTitle = remember(selectedDate) {
+        selectedDate?.let(dateFormat::format).orEmpty()
+    }
+
+    TopAppBar(
+        modifier = modifier,
+        title = {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Column {
+                    Text(
+                        text = HomeThemeRes.strings.topAppBarHomeTitle,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.labelLarge,
+                    )
+                    Text(
+                        text = selectedDateTitle,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        style = MaterialTheme.typography.titleLarge,
+                    )
+                }
+                Spacer(modifier = Modifier.weight(1f))
+                TopAppBarButton(
+                    imagePainter = painterResource(HomeThemeRes.icons.calendar),
+                    imageDescription = HomeThemeRes.strings.topAppBarCalendarIconDesc,
+                    onButtonClick = when (calendarIconBehavior) {
+                        CalendarButtonBehavior.OPEN_CALENDAR -> onOpenCalendar
+                        CalendarButtonBehavior.SET_CURRENT_DATE -> onGoToToday
+                    },
+                    onLongButtonClick = when (calendarIconBehavior) {
+                        CalendarButtonBehavior.OPEN_CALENDAR -> onGoToToday
+                        CalendarButtonBehavior.SET_CURRENT_DATE -> onOpenCalendar
+                    },
+                )
+                TopAppBarButton(
+                    imagePainter = painterResource(TimePlannerRes.icons.enabledSettingsIcon),
+                    imageDescription = HomeThemeRes.strings.topAppBarOverviewTitle,
+                    onButtonClick = onSettingsIconClick,
+                )
+            }
         },
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.background,

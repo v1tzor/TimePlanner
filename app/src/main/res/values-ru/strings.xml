@@ -1,0 +1,28 @@
+<!--
+  ~ Copyright 2026 Stanislav Aleshin
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<resources>
+    <string name="shortcut_navigation">Навигация</string>
+    <string name="shortcut_home">Главная</string>
+    <string name="shortcut_overview">Обзор</string>
+    <string name="shortcut_templates">Шаблоны</string>
+    <string name="shortcut_analytics">Аналитика</string>
+    <string name="shortcut_editor">Редактор</string>
+    <string name="shortcut_save">Сохранить</string>
+    <string name="widget_refresh_content_description">Обновить расписание</string>
+    <string name="widget_add_task_content_description">Добавить задачу</string>
+    <string name="widget_task_completed_content_description">Задача выполнена</string>
+    <string name="widget_task_not_completed_content_description">Задача не выполнена</string>
+</resources>

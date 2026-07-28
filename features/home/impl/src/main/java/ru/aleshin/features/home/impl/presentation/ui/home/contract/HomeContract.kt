@@ -16,6 +16,7 @@
 package ru.aleshin.features.home.impl.presentation.ui.home.contract
 
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import ru.aleshin.core.domain.entities.settings.CalendarButtonBehavior
 import ru.aleshin.core.domain.entities.settings.HomeViewMode
 import ru.aleshin.core.domain.entities.settings.TasksSettings
@@ -30,10 +31,10 @@ import ru.aleshin.core.utils.architecture.store.contract.StoreEffect
 import ru.aleshin.core.utils.architecture.store.contract.StoreEvent
 import ru.aleshin.core.utils.architecture.store.contract.StoreState
 import ru.aleshin.core.utils.functional.DateSerializer
-import ru.aleshin.core.utils.functional.TimeRange
 import ru.aleshin.features.editor.api.EditorConfig
 import ru.aleshin.features.home.impl.domain.entities.HomeFailures
 import ru.aleshin.features.home.impl.presentation.models.TimelineScheduleUi
+import ru.aleshin.features.home.impl.presentation.models.TimelineTaskUpdateRequestUi
 import java.util.Date
 
 /**
@@ -50,6 +51,10 @@ internal data class HomeState(
     val homeViewMode: HomeViewMode = HomeViewMode.AGENDA,
     val taskViewStatus: ViewToggleStatus = ViewToggleStatus.COMPACT,
     val calendarButtonBehavior: CalendarButtonBehavior = CalendarButtonBehavior.SET_CURRENT_DATE,
+    @Transient
+    val pendingTimelineTaskUpdate: TimelineTaskUpdateRequestUi? = null,
+    @Transient
+    val failedTimelineTaskUpdate: TimelineTaskUpdateRequestUi? = null,
 ) : StoreState
 
 internal sealed class HomeEvent : StoreEvent {
@@ -68,7 +73,8 @@ internal sealed class HomeEvent : StoreEvent {
     data class TimeTaskShiftDown(val timeTask: TimeTaskDetailsUi) : HomeEvent()
     data class PressViewToggleButton(val status: ViewToggleStatus) : HomeEvent()
     data class ChangeHomeViewMode(val mode: HomeViewMode) : HomeEvent()
-    data class UpdateTimelineTimeTask(val timeTaskId: Long, val timeRange: TimeRange) : HomeEvent()
+    data class UpdateTimelineTimeTask(val request: TimelineTaskUpdateRequestUi) : HomeEvent()
+    data class ConfirmTimelineTimeTaskUpdate(val request: TimelineTaskUpdateRequestUi) : HomeEvent()
 }
 
 internal sealed class HomeEffect : StoreEffect {
@@ -82,6 +88,10 @@ internal sealed class HomeAction : StoreAction {
         val date: Date,
         val schedule: ScheduleDetailsUi?,
         val timelineSchedule: TimelineScheduleUi,
+    ) : HomeAction()
+    data class SetupTimelineTaskMutation(
+        val pendingRequest: TimelineTaskUpdateRequestUi?,
+        val failedRequest: TimelineTaskUpdateRequestUi?,
     ) : HomeAction()
 }
 

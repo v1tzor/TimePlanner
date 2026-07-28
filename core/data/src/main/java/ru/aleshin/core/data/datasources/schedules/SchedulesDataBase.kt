@@ -328,8 +328,7 @@ abstract class SchedulesDataBase : RoomDatabase() {
                 database.execSQL(
                     "UPDATE `timeTasks` SET `linked_template_id` = (" +
                             "SELECT `timeTaskTemplates`.`id` FROM `timeTaskTemplates` " +
-                            "WHERE `timeTaskTemplates`.`repeat_enabled` = 1 " +
-                            "AND `timeTaskTemplates`.`main_category_id` = `timeTasks`.`main_category_id` " +
+                            "WHERE `timeTaskTemplates`.`main_category_id` = `timeTasks`.`main_category_id` " +
                             "AND (`timeTaskTemplates`.`sub_category_id` IS `timeTasks`.`sub_category_id`) " +
                             "AND `timeTaskTemplates`.`priority` = `timeTasks`.`priority` " +
                             "AND `timeTaskTemplates`.`is_enable_notification` = `timeTasks`.`is_enable_notification` " +

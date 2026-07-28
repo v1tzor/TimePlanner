@@ -45,7 +45,7 @@ internal class HomeContentProvider(
             ) { child ->
                 when (val instance = child.instance) {
                     is InternalHomeFeatureComponent.Child.HomeChild -> {
-                        HomeContent(instance.component)
+                        HomeContent(component = instance.component)
                     }
                 }
             }

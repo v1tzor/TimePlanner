@@ -24,7 +24,7 @@ import androidx.glance.GlanceId
 import androidx.glance.action.actionStartActivity
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.SizeMode
-import androidx.glance.appwidget.action.actionSendBroadcast
+import androidx.glance.appwidget.action.actionRunCallback
 import androidx.glance.appwidget.action.actionStartActivity
 import androidx.glance.appwidget.provideContent
 import androidx.glance.currentState
@@ -52,23 +52,27 @@ class MainWidget : GlanceAppWidget() {
         WidgetTheme(context) {
             val currentTime = Date()
             val stateTimeTasks = currentState(TASKS_KEY) ?: ""
-            val timeTasks = remember(stateTimeTasks) {
-                if (stateTimeTasks.isNotEmpty()) {
-                    Json.decodeFromString<TimeTasks>(stateTimeTasks)
-                } else {
-                    TimeTasks()
-                }
-            }
+            val timeTasks = remember(stateTimeTasks) { decodeTimeTasks(stateTimeTasks) }
             MainWidgetContent(
                 currentTime = currentTime,
                 timeTasks = timeTasks.tasks,
                 onTimeTaskClickAction = { actionStartActivity<MainActivity>() },
-                onUpdateClickAction = { actionSendBroadcast<MainWidgetReceiver>() },
+                onUpdateClickAction = { actionRunCallback<MainWidgetRefreshAction>() },
                 onAddAction = {
-                    val mainActivityUri = Uri.parse(EDITOR_DEEP_LINK)
-                    actionStartActivity(Intent(ACTION_VIEW, mainActivityUri))
+                    actionStartActivity(
+                        Intent(context, MainActivity::class.java).apply {
+                            action = ACTION_VIEW
+                            data = Uri.parse(EDITOR_DEEP_LINK)
+                        }
+                    )
                 },
             )
         }
     }
+}
+
+internal fun decodeTimeTasks(state: String): TimeTasks {
+    return runCatching {
+        state.takeIf { it.isNotEmpty() }?.let { Json.decodeFromString<TimeTasks>(it) }
+    }.getOrNull() ?: TimeTasks()
 }

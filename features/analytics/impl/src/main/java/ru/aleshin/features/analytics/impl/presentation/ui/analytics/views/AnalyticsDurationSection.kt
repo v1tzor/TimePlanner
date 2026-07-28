@@ -51,6 +51,7 @@ import java.util.Locale
 internal fun AnalyticsDurationSection(
     modifier: Modifier = Modifier,
     durationsAnalytics: AnalyticsDurationDistributionUi,
+    fillAvailableHeight: Boolean = false,
 ) {
     val formatter = rememberAnalyticsValueFormatter()
     val colors = analyticsDurationColors()
@@ -71,6 +72,7 @@ internal fun AnalyticsDurationSection(
     AnalyticsSection(
         title = strings.durationStructureTitle,
         modifier = modifier,
+        fillAvailableHeight = fillAvailableHeight,
     ) {
         AnalyticsBarChart(
             points = points,
@@ -142,13 +144,13 @@ internal fun AnalyticsDurationSection(
 
 @Composable
 private fun AnalyticsDurationMetricCell(
+    modifier: Modifier = Modifier,
     value: String,
     label: String,
     comparison: AnalyticsComparison,
     formatter: AnalyticsValueFormatter,
     locale: Locale,
     strings: AnalyticsStrings,
-    modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier) {
         Text(

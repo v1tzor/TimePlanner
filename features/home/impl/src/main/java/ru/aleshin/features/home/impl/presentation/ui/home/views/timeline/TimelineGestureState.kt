@@ -19,7 +19,9 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import ru.aleshin.core.utils.extensions.generateUniqueKey
 import ru.aleshin.core.utils.functional.TimeRange
+import ru.aleshin.features.home.impl.presentation.models.TimelineTaskUpdateRequestUi
 import ru.aleshin.features.home.impl.presentation.models.TimelineTimeTaskUi
 import java.util.Date
 import kotlin.math.abs
@@ -41,46 +43,73 @@ internal class TimelineGestureState {
         private set
 
     private var selectedTimeRange by mutableStateOf<TimeRange?>(null)
-    private var hasPendingUpdate by mutableStateOf(false)
+    private var pendingUpdate by mutableStateOf<TimelineTaskUpdateRequestUi?>(null)
+    private var dragOffset = 0f
+    private var nextEditSessionId = 0L
 
-    fun startEditMode(timeTask: TimelineTimeTaskUi) {
+    fun startEditMode(
+        timeTask: TimelineTimeTaskUi,
+        externalPendingUpdate: TimelineTaskUpdateRequestUi? = null,
+    ) {
         if (selectedTimeTaskId != timeTask.timeTask.key) {
             selectedTimeTaskId = timeTask.timeTask.key
-            selectedTimeRange = timeTask.timeTask.timeRanges
-            hasPendingUpdate = false
+            selectedTimeRange = (externalPendingUpdate ?: pendingUpdate)
+                ?.takeIf { request -> request.timeTaskId == timeTask.timeTask.key }
+                ?.timeRange
+                ?: timeTask.timeTask.timeRanges
             lastDragMode = null
         }
     }
 
-    fun synchronize(timeTask: TimelineTimeTaskUi) {
+    fun synchronize(
+        timeTask: TimelineTimeTaskUi,
+        externalPendingUpdate: TimelineTaskUpdateRequestUi? = null,
+    ) {
+        val actualTimeRange = timeTask.timeTask.timeRanges
+        val currentPendingUpdate = pendingUpdate
+        if (
+            currentPendingUpdate?.timeTaskId == timeTask.timeTask.key &&
+            currentPendingUpdate.timeRange == actualTimeRange
+        ) {
+            pendingUpdate = null
+        }
         if (selectedTimeTaskId != timeTask.timeTask.key || taskEdit != null) return
 
-        val actualTimeRange = timeTask.timeTask.timeRanges
-        if (!hasPendingUpdate || selectedTimeRange == actualTimeRange) {
-            selectedTimeRange = actualTimeRange
-            hasPendingUpdate = false
-        }
+        selectedTimeRange = (externalPendingUpdate ?: pendingUpdate)
+            ?.takeIf { request -> request.timeTaskId == timeTask.timeTask.key }
+            ?.timeRange
+            ?: actualTimeRange
     }
 
     fun startTaskEdit(
         timeTask: TimelineTimeTaskUi,
         mode: TimelineTaskDragMode,
+        externalPendingUpdate: TimelineTaskUpdateRequestUi? = null,
     ): Boolean {
         val canStart = when (mode) {
             TimelineTaskDragMode.MOVE -> timeTask.canMove
             TimelineTaskDragMode.RESIZE_START -> timeTask.canResizeStart
             TimelineTaskDragMode.RESIZE_END -> timeTask.canResizeEnd
         }
-        if (!canStart || selectedTimeTaskId != timeTask.timeTask.key) return false
+        if (
+            !canStart ||
+            externalPendingUpdate != null ||
+            pendingUpdate != null ||
+            selectedTimeTaskId != timeTask.timeTask.key
+        ) {
+            return false
+        }
 
         val timeRange = fetchTimeRange(timeTask)
+        nextEditSessionId += 1L
+        dragOffset = 0f
         taskEdit = TimelineTaskEdit(
+            sessionId = nextEditSessionId,
             timeTaskId = timeTask.timeTask.key,
             mode = mode,
             previousDragMode = lastDragMode,
             originalTimeRange = timeRange,
             currentTimeRange = timeRange,
-            dragOffset = 0f,
         )
         lastDragMode = mode
         return true
@@ -97,48 +126,105 @@ internal class TimelineGestureState {
         val edit = taskEdit?.takeIf { taskEdit ->
             taskEdit.timeTaskId == timeTask.timeTask.key
         } ?: return false
-        val updatedOffset = edit.dragOffset + dragAmount
+        val rawOffset = dragOffset + dragAmount
+        var updatedOffset = rawOffset
         val updatedRange = when (edit.mode) {
-            TimelineTaskDragMode.MOVE -> moveTimeTask(
-                edit = edit,
-                dragOffset = updatedOffset,
-                timeTask = timeTask,
-                scale = scale,
-                freeTimeRanges = freeTimeRanges,
-                timeStep = timeStep,
-            )
-            TimelineTaskDragMode.RESIZE_START -> resizeTimeTaskStart(
-                edit = edit,
-                dragOffset = updatedOffset,
-                timeTask = timeTask,
-                scale = scale,
-                timeStep = timeStep,
-                minimumTaskDuration = minimumTaskDuration,
-            )
-            TimelineTaskDragMode.RESIZE_END -> resizeTimeTaskEnd(
-                edit = edit,
-                dragOffset = updatedOffset,
-                timeTask = timeTask,
-                scale = scale,
-                timeStep = timeStep,
-                minimumTaskDuration = minimumTaskDuration,
-            )
+            TimelineTaskDragMode.MOVE -> {
+                val moveStartRanges = fetchMoveStartRanges(
+                    edit = edit,
+                    timeTask = timeTask,
+                    freeTimeRanges = freeTimeRanges,
+                )
+                val minimumStartTime = moveStartRanges.minOfOrNull { timeRange ->
+                    timeRange.from
+                } ?: edit.originalTimeRange.from
+                val maximumStartTime = moveStartRanges.maxOfOrNull { timeRange ->
+                    timeRange.to
+                } ?: edit.originalTimeRange.from
+                updatedOffset = rawOffset.coerceToTimeRange(
+                    originalTime = edit.originalTimeRange.from,
+                    minimumTime = minimumStartTime,
+                    maximumTime = maximumStartTime,
+                    scale = scale,
+                )
+                moveTimeTask(
+                    edit = edit,
+                    dragOffset = updatedOffset,
+                    scale = scale,
+                    moveStartRanges = moveStartRanges,
+                    timeStep = timeStep,
+                )
+            }
+            TimelineTaskDragMode.RESIZE_START -> {
+                val maximumStartTime = Date(
+                    minOf(
+                        edit.originalTimeRange.to.time,
+                        timeTask.visibleTimeRange.to.time,
+                    ) - minimumTaskDuration,
+                )
+                updatedOffset = rawOffset.coerceToTimeRange(
+                    originalTime = edit.originalTimeRange.from,
+                    minimumTime = timeTask.minimumStartTime,
+                    maximumTime = maximumStartTime,
+                    scale = scale,
+                )
+                resizeTimeTaskStart(
+                    edit = edit,
+                    dragOffset = updatedOffset,
+                    timeTask = timeTask,
+                    scale = scale,
+                    timeStep = timeStep,
+                    minimumTaskDuration = minimumTaskDuration,
+                )
+            }
+            TimelineTaskDragMode.RESIZE_END -> {
+                val minimumEndTime = Date(
+                    maxOf(
+                        edit.originalTimeRange.from.time,
+                        timeTask.visibleTimeRange.from.time,
+                    ) + minimumTaskDuration,
+                )
+                updatedOffset = rawOffset.coerceToTimeRange(
+                    originalTime = edit.originalTimeRange.to,
+                    minimumTime = minimumEndTime,
+                    maximumTime = timeTask.maximumEndTime,
+                    scale = scale,
+                )
+                resizeTimeTaskEnd(
+                    edit = edit,
+                    dragOffset = updatedOffset,
+                    timeTask = timeTask,
+                    scale = scale,
+                    timeStep = timeStep,
+                    minimumTaskDuration = minimumTaskDuration,
+                )
+            }
         }
         val isTimeChanged = updatedRange != edit.currentTimeRange
-        taskEdit = edit.copy(
-            currentTimeRange = updatedRange,
-            dragOffset = updatedOffset,
-        )
+        dragOffset = updatedOffset
+        if (isTimeChanged) {
+            taskEdit = edit.copy(currentTimeRange = updatedRange)
+        }
         return isTimeChanged
     }
 
-    fun finishTaskEdit(): TimeRange? {
+    fun finishTaskEdit(): TimelineTaskUpdateRequestUi? {
         val edit = taskEdit ?: return null
         taskEdit = null
+        dragOffset = 0f
+        if (edit.currentTimeRange == edit.originalTimeRange) {
+            selectedTimeRange = edit.originalTimeRange
+            lastDragMode = edit.previousDragMode
+            return null
+        }
         selectedTimeRange = edit.currentTimeRange
-        return edit.currentTimeRange.takeIf { timeRange ->
-            timeRange != edit.originalTimeRange
-        }?.also { hasPendingUpdate = true }
+        return TimelineTaskUpdateRequestUi(
+            operationId = generateUniqueKey(),
+            timeTaskId = edit.timeTaskId,
+            timeRange = edit.currentTimeRange,
+        ).also { request ->
+            pendingUpdate = request
+        }
     }
 
     fun cancelTaskDrag() {
@@ -147,20 +233,59 @@ internal class TimelineGestureState {
             lastDragMode = edit.previousDragMode
         }
         taskEdit = null
+        dragOffset = 0f
     }
 
     fun exitEditMode() {
         selectedTimeTaskId = null
         selectedTimeRange = null
-        hasPendingUpdate = false
         lastDragMode = null
         taskEdit = null
+        dragOffset = 0f
     }
 
-    fun fetchTimeRange(timeTask: TimelineTimeTaskUi): TimeRange {
+    fun rejectTimeTaskUpdate(
+        request: TimelineTaskUpdateRequestUi,
+        timeTask: TimelineTimeTaskUi?,
+    ) {
+        val currentPendingUpdate = pendingUpdate
+        if (
+            currentPendingUpdate != null &&
+            currentPendingUpdate.operationId != request.operationId
+        ) {
+            return
+        }
+        if (
+            currentPendingUpdate == null &&
+            selectedTimeTaskId == request.timeTaskId &&
+            selectedTimeRange != request.timeRange
+        ) {
+            return
+        }
+
+        pendingUpdate = null
+        if (selectedTimeTaskId == request.timeTaskId && taskEdit == null) {
+            selectedTimeRange = timeTask?.timeTask?.timeRanges
+            lastDragMode = null
+        }
+    }
+
+    fun isTimeTaskUpdatePending(
+        externalPendingUpdate: TimelineTaskUpdateRequestUi? = null,
+    ): Boolean {
+        return externalPendingUpdate != null || pendingUpdate != null
+    }
+
+    fun fetchTimeRange(
+        timeTask: TimelineTimeTaskUi,
+        externalPendingUpdate: TimelineTaskUpdateRequestUi? = null,
+    ): TimeRange {
         return taskEdit
             ?.takeIf { edit -> edit.timeTaskId == timeTask.timeTask.key }
             ?.currentTimeRange
+            ?: (externalPendingUpdate ?: pendingUpdate)
+                ?.takeIf { request -> request.timeTaskId == timeTask.timeTask.key }
+                ?.timeRange
             ?: selectedTimeRange?.takeIf {
                 selectedTimeTaskId == timeTask.timeTask.key
             }
@@ -170,23 +295,13 @@ internal class TimelineGestureState {
     private fun moveTimeTask(
         edit: TimelineTaskEdit,
         dragOffset: Float,
-        timeTask: TimelineTimeTaskUi,
         scale: TimelineScale,
-        freeTimeRanges: List<TimeRange>,
+        moveStartRanges: List<TimeRange>,
         timeStep: Long,
     ): TimeRange {
         val startOffset = scale.fetchOffset(edit.originalTimeRange.from) + dragOffset
         val desiredStart = scale.fetchTime(startOffset).snap(scale.dayTimeRange.from, timeStep)
         val duration = edit.originalTimeRange.to.time - edit.originalTimeRange.from.time
-        val currentMoveRange = TimeRange(
-            from = timeTask.minimumStartTime,
-            to = Date(timeTask.maximumEndTime.time - duration),
-        )
-        val moveStartRanges = freeTimeRanges.mapNotNull { freeTimeRange ->
-            val latestStartTime = freeTimeRange.to.time - duration
-            if (latestStartTime < freeTimeRange.from.time) return@mapNotNull null
-            TimeRange(freeTimeRange.from, Date(latestStartTime))
-        } + currentMoveRange
         val startTime = moveStartRanges.fetchNearestTime(desiredStart)
             ?: edit.originalTimeRange.from
 
@@ -194,6 +309,23 @@ internal class TimelineGestureState {
             from = startTime,
             to = Date(startTime.time + duration),
         )
+    }
+
+    private fun fetchMoveStartRanges(
+        edit: TimelineTaskEdit,
+        timeTask: TimelineTimeTaskUi,
+        freeTimeRanges: List<TimeRange>,
+    ): List<TimeRange> {
+        val duration = edit.originalTimeRange.to.time - edit.originalTimeRange.from.time
+        val currentMoveRange = TimeRange(
+            from = timeTask.minimumStartTime,
+            to = Date(timeTask.maximumEndTime.time - duration),
+        )
+        return freeTimeRanges.mapNotNull { freeTimeRange ->
+            val latestStartTime = freeTimeRange.to.time - duration
+            if (latestStartTime < freeTimeRange.from.time) return@mapNotNull null
+            TimeRange(freeTimeRange.from, Date(latestStartTime))
+        } + currentMoveRange
     }
 
     private fun resizeTimeTaskStart(
@@ -238,6 +370,18 @@ internal class TimelineGestureState {
     ): Date {
         val steps = ((time - startTime.time) / timeStep.toDouble()).roundToLong()
         return Date(startTime.time + steps * timeStep)
+    }
+
+    private fun Float.coerceToTimeRange(
+        originalTime: Date,
+        minimumTime: Date,
+        maximumTime: Date,
+        scale: TimelineScale,
+    ): Float {
+        val originalOffset = scale.fetchOffset(originalTime)
+        val minimumOffset = scale.fetchOffset(minimumTime) - originalOffset
+        val maximumOffset = scale.fetchOffset(maximumTime) - originalOffset
+        return coerceIn(minimumOffset, maximumOffset)
     }
 
     private fun List<TimeRange>.fetchNearestTime(time: Date): Date? {

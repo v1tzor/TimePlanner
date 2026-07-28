@@ -64,12 +64,13 @@ import java.util.Locale
  */
 @Composable
 internal fun CategorySubCategoriesSection(
+    modifier: Modifier = Modifier,
     categoryId: Long,
     categoryDurationMillis: Long,
     distribution: SubCategoryDistributionUi,
     selectedBucketKey: Long?,
+    fillAvailableHeight: Boolean = false,
     onSelect: (Long?) -> Unit,
-    modifier: Modifier = Modifier,
 ) {
     val strings = AnalyticsThemeRes.strings
     val language = TimePlannerRes.language
@@ -83,6 +84,7 @@ internal fun CategorySubCategoriesSection(
     CategorySection(
         title = strings.subCategoriesTitle,
         modifier = modifier,
+        fillAvailableHeight = fillAvailableHeight,
     ) {
         if (distribution.isSingleUnassigned) {
             CategoryUnassignedSummary(

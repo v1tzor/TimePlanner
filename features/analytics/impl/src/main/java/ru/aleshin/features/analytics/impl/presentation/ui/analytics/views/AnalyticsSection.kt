@@ -36,8 +36,9 @@ import java.util.Locale
  */
 @Composable
 internal fun AnalyticsSection(
-    title: String,
     modifier: Modifier = Modifier,
+    title: String,
+    fillAvailableHeight: Boolean = false,
     contentPadding: PaddingValues = PaddingValues(16.dp),
     verticalSpacing: Dp = 16.dp,
     content: @Composable ColumnScope.() -> Unit,
@@ -48,6 +49,7 @@ internal fun AnalyticsSection(
     ) {
         AnalyticsSectionTitle(title = title)
         AnalyticsSurfaceCard(
+            modifier = if (fillAvailableHeight) Modifier.weight(1f) else Modifier,
             contentPadding = contentPadding,
             verticalSpacing = verticalSpacing,
             content = content,

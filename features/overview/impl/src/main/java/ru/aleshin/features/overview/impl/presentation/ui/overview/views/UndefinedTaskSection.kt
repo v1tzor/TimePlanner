@@ -54,6 +54,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import ru.aleshin.core.domain.entities.tasks.TaskPriority
 import ru.aleshin.core.presentation.mappers.mapToIconPainter
@@ -76,6 +77,7 @@ internal fun UndefinedTaskSection(
     isLoading: Boolean,
     categories: List<MainCategoryDetailsUi>,
     tasks: List<UndefinedTaskUi>,
+    horizontalPadding: Dp = 16.dp,
     onAddOrUpdateTask: (UndefinedTaskUi) -> Unit,
     onExecuteTask: (Date, UndefinedTaskUi) -> Unit,
 ) {
@@ -98,8 +100,8 @@ internal fun UndefinedTaskSection(
         },
     ) { loading ->
         Column(
-            modifier = modifier
-                .padding(horizontal = 16.dp)
+            modifier = Modifier
+                .padding(horizontal = horizontalPadding)
                 .animateContentSize(),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {

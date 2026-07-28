@@ -18,17 +18,17 @@ package ru.aleshin.features.editor.impl.presentation.ui.categories.views
 import androidx.compose.foundation.background
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material3.*
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
+import ru.aleshin.features.editor.impl.presentation.theme.EditorThemeRes
 import ru.aleshin.timeplanner.core.ui.views.TopAppBarButton
 import ru.aleshin.timeplanner.core.ui.views.TopAppBarEmptyButton
 import ru.aleshin.timeplanner.core.ui.views.TopAppBarTitle
-import ru.aleshin.features.editor.impl.presentation.theme.EditorTheme
-import ru.aleshin.features.editor.impl.presentation.theme.EditorThemeRes
 
 /**
  * @author Stanislav Aleshin on 08.04.2023.
@@ -37,6 +37,7 @@ import ru.aleshin.features.editor.impl.presentation.theme.EditorThemeRes
 @OptIn(ExperimentalMaterial3Api::class)
 internal fun CategoriesTopAppBar(
     modifier: Modifier = Modifier,
+    isCompact: Boolean,
     onBackIconClick: () -> Unit,
 ) {
     TopAppBar(
@@ -44,7 +45,7 @@ internal fun CategoriesTopAppBar(
         title = {
             TopAppBarTitle(
                 text = EditorThemeRes.strings.topAppBarCategoriesTitle,
-                textAlign = TextAlign.Center,
+                textAlign = if (isCompact) TextAlign.Center else TextAlign.Start,
             )
         },
         navigationIcon = {
@@ -55,7 +56,9 @@ internal fun CategoriesTopAppBar(
             )
         },
         actions = {
-            TopAppBarEmptyButton()
+            if (isCompact) {
+                TopAppBarEmptyButton()
+            }
         },
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.background,
@@ -104,4 +107,3 @@ internal fun CategoriesTopAppBar_Dark_Preview() {
     }
 }
 */
-

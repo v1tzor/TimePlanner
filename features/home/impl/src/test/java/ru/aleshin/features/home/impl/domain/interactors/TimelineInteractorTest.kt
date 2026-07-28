@@ -118,6 +118,28 @@ internal class TimelineInteractorTest {
     }
 
     @Test
+    fun fetchTimelineScheduleDisablesMoveForExactFullDayTask() {
+        val task = details(
+            key = 1L,
+            start = currentDate,
+            end = currentDate.shiftDay(1),
+        )
+
+        val timelineTask = interactor.fetchTimelineSchedule(
+            date = currentDate,
+            schedule = schedule(timeTasks = listOf(task)),
+        ).timeTasks.single()
+
+        assertEquals(
+            TimeRange(currentDate, currentDate.shiftDay(1)),
+            timelineTask.visibleTimeRange,
+        )
+        assertFalse(timelineTask.canMove)
+        assertTrue(timelineTask.canResizeStart)
+        assertTrue(timelineTask.canResizeEnd)
+    }
+
+    @Test
     fun updateTimeTaskDetachesTemplateAndPreservesOtherData() = runBlocking {
         val task = task(key = 1L, linkedTemplateId = 12L)
         timeTaskRepository.tasks.add(task)
@@ -220,6 +242,10 @@ private class FakeTimelineTimeTaskRepository : TimeTaskRepository {
 
     override suspend fun fetchAllTimeTasksByDate(date: Date): Flow<List<TimeTask>> {
         return flowOf(tasks.filter { task -> task.date == date })
+    }
+
+    override suspend fun fetchTimeTasksByScheduleDateRange(timeRange: TimeRange): Flow<List<TimeTask>> {
+        return flowOf(tasks.filter { task -> task.date.time in timeRange.from.time..timeRange.to.time })
     }
 
     override suspend fun fetchTimeTaskById(id: Long): TimeTask? {

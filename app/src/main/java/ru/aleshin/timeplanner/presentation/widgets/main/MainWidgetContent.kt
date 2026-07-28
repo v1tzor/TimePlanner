@@ -23,6 +23,7 @@ import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
 import androidx.glance.Image
 import androidx.glance.ImageProvider
+import androidx.glance.LocalContext
 import androidx.glance.action.Action
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.lazy.LazyColumn
@@ -43,12 +44,13 @@ import ru.aleshin.core.domain.entities.categories.MainCategory
 import ru.aleshin.core.domain.entities.categories.SubCategory
 import ru.aleshin.core.domain.entities.tasks.TaskPriority
 import ru.aleshin.core.domain.entities.tasks.TimeTask
+import ru.aleshin.core.domain.entities.tasks.TimeTaskStatus
 import ru.aleshin.core.presentation.mappers.mapToIcon
 import ru.aleshin.core.presentation.mappers.mapToName
+import ru.aleshin.timeplanner.R
 import ru.aleshin.timeplanner.core.ui.theme.TimePlannerRes
 import ru.aleshin.timeplanner.core.ui.views.toMinutesOrHoursTitle
 import ru.aleshin.core.utils.extensions.duration
-import ru.aleshin.core.utils.extensions.setZeroSecond
 import ru.aleshin.core.utils.functional.TimeRange
 import ru.aleshin.timeplanner.presentation.widgets.common.CompatScaffold
 import ru.aleshin.timeplanner.presentation.widgets.compatCornerBackground
@@ -91,10 +93,7 @@ fun MainWidgetContent(
                             modifier = GlanceModifier.defaultWeight(),
                             currentTime = currentTime,
                             onTimeTaskClickAction = { onTimeTaskClickAction(task) },
-                            timeRange = task.timeRange.copy(
-                                from = task.timeRange.from.setZeroSecond(),
-                                to = task.timeRange.to.setZeroSecond(),
-                            ),
+                            timeRange = task.timeRange,
                             category = task.category,
                             subCategory = task.subCategory,
                             priority = task.priority,
@@ -118,6 +117,7 @@ fun MainWidgetTitleBar(
     onUpdateAction: () -> Action,
     onAddAction: () -> Action,
 ) {
+    val context = LocalContext.current
     Row(
         modifier = modifier.fillMaxWidth().height(48.dp).padding(start = 4.dp, end = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -142,7 +142,7 @@ fun MainWidgetTitleBar(
         ) {
             Image(
                 provider = ImageProvider(TimePlannerRes.icons.reset),
-                contentDescription = null,
+                contentDescription = context.getString(R.string.widget_refresh_content_description),
                 modifier = GlanceModifier.size(24.dp),
                 colorFilter = ColorFilter.tint(GlanceTheme.colors.onBackground),
             )
@@ -156,7 +156,7 @@ fun MainWidgetTitleBar(
         ) {
             Image(
                 provider = ImageProvider(TimePlannerRes.icons.add),
-                contentDescription = null,
+                contentDescription = context.getString(R.string.widget_add_task_content_description),
                 modifier = GlanceModifier.size(24.dp),
                 colorFilter = ColorFilter.tint(GlanceTheme.colors.onBackground),
             )
@@ -205,37 +205,54 @@ fun WidgetTimeTask(
     isCompleted: Boolean,
 ) {
     val categoryIcon = category.default?.mapToIcon(TimePlannerRes.icons)
-    val taskTitle =  when (category.customName != null && category.customName != "null") {
-        true -> category.customName
-        false -> category.default?.mapToName()
+    val taskTitle = category.customName
+        ?.takeUnless { it == "null" }
+        ?.takeIf { it.isNotBlank() }
+        ?: category.default?.mapToName()
+        ?: TimePlannerRes.strings.categoryEmptyTitle
+
+    when (fetchWidgetTimeTaskStatus(currentTime, timeRange)) {
+        TimeTaskStatus.COMPLETED -> {
+            CompletedWidgetTimeTask(
+                modifier = modifier,
+                onViewClickedAction = onTimeTaskClickAction,
+                taskTitle = taskTitle,
+                taskSubTitle = subCategory?.name,
+                categoryIcon = categoryIcon?.let { ImageProvider(it) },
+                isCompleted = isCompleted,
+            )
+        }
+        TimeTaskStatus.RUNNING -> {
+            RunningWidgetTimeTask(
+                modifier = modifier,
+                onViewClickedAction = onTimeTaskClickAction,
+                taskTitle = taskTitle,
+                taskSubTitle = subCategory?.name,
+                categoryIcon = categoryIcon?.let { ImageProvider(it) },
+                priority = priority,
+            )
+        }
+        TimeTaskStatus.PLANNED -> {
+            PlannedWidgetTimeTask(
+                modifier = modifier,
+                onViewClickedAction = onTimeTaskClickAction,
+                taskTitle = taskTitle,
+                taskSubTitle = subCategory?.name,
+                categoryIcon = categoryIcon?.let { ImageProvider(it) },
+                taskDurationTitle = duration(timeRange).toMinutesOrHoursTitle(),
+                priority = priority,
+            )
+        }
     }
-    if (currentTime.time > timeRange.from.time && currentTime.time < timeRange.to.time) {
-        RunningWidgetTimeTask(
-            modifier = modifier,
-            onViewClickedAction = onTimeTaskClickAction,
-            taskTitle = taskTitle ?: "",
-            taskSubTitle = subCategory?.name,
-            categoryIcon = categoryIcon?.let { ImageProvider(it) },
-            priority = priority,
-        )
-    } else if (currentTime.time > timeRange.to.time) {
-        CompletedWidgetTimeTask(
-            modifier = modifier,
-            onViewClickedAction = onTimeTaskClickAction,
-            taskTitle = taskTitle ?: "",
-            taskSubTitle = subCategory?.name,
-            categoryIcon = categoryIcon?.let { ImageProvider(it) },
-            isCompleted = isCompleted,
-        )
-    } else {
-        PlannedWidgetTimeTask(
-            modifier = modifier,
-            onViewClickedAction = onTimeTaskClickAction,
-            taskTitle = taskTitle ?: "",
-            taskSubTitle = subCategory?.name,
-            categoryIcon = categoryIcon?.let { ImageProvider(it) },
-            taskDurationTitle = duration(timeRange).toMinutesOrHoursTitle(),
-            priority = priority,
-        )
+}
+
+internal fun fetchWidgetTimeTaskStatus(
+    currentTime: Date,
+    timeRange: TimeRange,
+): TimeTaskStatus {
+    return when {
+        currentTime.time >= timeRange.to.time -> TimeTaskStatus.COMPLETED
+        currentTime.time >= timeRange.from.time -> TimeTaskStatus.RUNNING
+        else -> TimeTaskStatus.PLANNED
     }
 }

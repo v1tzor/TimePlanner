@@ -31,8 +31,9 @@ import ru.aleshin.features.analytics.impl.presentation.ui.common.views.Analytics
  */
 @Composable
 internal fun CategorySection(
-    title: String,
     modifier: Modifier = Modifier,
+    title: String,
+    fillAvailableHeight: Boolean = false,
     contentPadding: PaddingValues = PaddingValues(16.dp),
     verticalSpacing: Dp = 16.dp,
     content: @Composable ColumnScope.() -> Unit,
@@ -43,6 +44,7 @@ internal fun CategorySection(
     ) {
         AnalyticsSectionTitle(title = title)
         AnalyticsSurfaceCard(
+            modifier = if (fillAvailableHeight) Modifier.weight(1f) else Modifier,
             contentPadding = contentPadding,
             verticalSpacing = verticalSpacing,
             content = content,

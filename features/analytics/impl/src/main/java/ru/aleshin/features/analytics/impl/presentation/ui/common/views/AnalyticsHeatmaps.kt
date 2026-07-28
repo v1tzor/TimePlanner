@@ -168,8 +168,8 @@ internal fun AnalyticsWeekdayHourHeatmap(
 
 @Composable
 private fun AnalyticsHeatmapHourLabels(
-    cells: List<AnalyticsWeekdayHourCellUi>,
     modifier: Modifier = Modifier,
+    cells: List<AnalyticsWeekdayHourCellUi>,
 ) {
     Layout(
         modifier = modifier,
@@ -226,12 +226,12 @@ private fun AnalyticsHeatmapHourLabels(
 
 @Composable
 internal fun CategoryDayPartHeatmap(
+    modifier: Modifier = Modifier,
     cells: List<CategoryDayPartCellUi>,
     summaries: List<CategoryDayPartSummaryUi>,
     categoryColor: Color,
     locale: Locale,
     strings: AnalyticsStrings,
-    modifier: Modifier = Modifier,
 ) {
     val levels = MaterialTheme.colorScheme.fetchCategoryHeatmapLevels(categoryColor)
     val weekdays = remember(locale) { localeWeekdays(locale) }
@@ -297,9 +297,9 @@ internal fun CategoryDayPartHeatmap(
 
 @Composable
 private fun CategoryDayPartWeekdayLabels(
+    modifier: Modifier = Modifier,
     weekdays: List<Int>,
     locale: Locale,
-    modifier: Modifier = Modifier,
 ) {
     val density = androidx.compose.ui.platform.LocalDensity.current
     val maxCellSize = with(density) { DAY_PART_CELL_MAX_SIZE.toPx() }
@@ -362,6 +362,7 @@ private fun CategoryDayPartWeekdayLabels(
 
 @Composable
 private fun HeatmapRow(
+    modifier: Modifier = Modifier,
     levels: List<Color>,
     itemCount: Int,
     itemLevels: List<Int>,
@@ -369,7 +370,6 @@ private fun HeatmapRow(
     cellHeight: androidx.compose.ui.unit.Dp,
     maxGap: androidx.compose.ui.unit.Dp,
     cornerRadius: androidx.compose.ui.unit.Dp,
-    modifier: Modifier = Modifier,
     onSelect: ((Int) -> Unit)? = null,
 ) {
     val density = androidx.compose.ui.platform.LocalDensity.current

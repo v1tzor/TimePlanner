@@ -48,9 +48,9 @@ import java.util.Locale
  */
 @Composable
 internal fun CategoryObservationSection(
+    modifier: Modifier = Modifier,
     observation: CategoryObservationUi,
     categoryColor: Color,
-    modifier: Modifier = Modifier,
 ) {
     val strings = AnalyticsThemeRes.strings
     val language = TimePlannerRes.language

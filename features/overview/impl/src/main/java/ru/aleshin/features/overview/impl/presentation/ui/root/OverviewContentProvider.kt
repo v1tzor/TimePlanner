@@ -45,7 +45,7 @@ internal class OverviewContentProvider(
             ) { child ->
                 when (val instance = child.instance) {
                     is InternalOverviewFeatureComponent.Child.OverviewChild -> {
-                        OverviewContent(instance.component)
+                        OverviewContent(component = instance.component)
                     }
                 }
             }

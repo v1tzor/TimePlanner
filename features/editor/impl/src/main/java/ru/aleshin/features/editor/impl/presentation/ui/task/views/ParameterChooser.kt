@@ -34,6 +34,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import ru.aleshin.features.editor.impl.presentation.theme.EditorThemeRes
 import ru.aleshin.timeplanner.core.ui.views.SegmentedButtonItem
@@ -76,11 +77,15 @@ internal fun ParameterChooser(
                     text = title,
                     color = MaterialTheme.colorScheme.onSurface,
                     style = MaterialTheme.typography.titleMedium,
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 1
                 )
                 Text(
                     text = description,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.bodyMedium,
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 3
                 )
             }
             Row(

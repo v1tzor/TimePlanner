@@ -20,7 +20,6 @@
     android:minResizeHeight="125dp"
     android:updatePeriodMillis="3600000"
     android:resizeMode="vertical|horizontal"
-    android:widgetFeatures="reconfigurable|configuration_optional"
     android:widgetCategory="home_screen"
     android:initialLayout="@layout/glance_default_loading_layout">
 </appwidget-provider>

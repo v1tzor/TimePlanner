@@ -30,24 +30,28 @@ import ru.aleshin.timeplanner.core.ui.views.TopAppBarTitle
 @OptIn(ExperimentalMaterial3Api::class)
 internal fun OverviewTopAppBar(
     modifier: Modifier = Modifier,
+    isCompact: Boolean,
 ) {
     TopAppBar(
         modifier = modifier,
         title = {
             TopAppBarTitle(
                 text = OverviewThemeRes.strings.topAppBarOverviewTitle,
-                textAlign = TextAlign.Center
+                textAlign = if (isCompact) TextAlign.Center else TextAlign.Start,
             )
         },
         navigationIcon = {
-            TopAppBarEmptyButton()
+            if (isCompact) {
+                TopAppBarEmptyButton()
+            }
         },
         actions = {
-            TopAppBarEmptyButton()
+            if (isCompact) {
+                TopAppBarEmptyButton()
+            }
         },
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.background,
-        )
+        ),
     )
 }
-

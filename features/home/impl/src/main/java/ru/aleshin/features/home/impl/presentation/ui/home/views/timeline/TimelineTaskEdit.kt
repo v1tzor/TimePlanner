@@ -21,10 +21,10 @@ import ru.aleshin.core.utils.functional.TimeRange
  * @author Stanislav Aleshin on 17.07.2026.
  */
 internal data class TimelineTaskEdit(
+    val sessionId: Long,
     val timeTaskId: Long,
     val mode: TimelineTaskDragMode,
     val previousDragMode: TimelineTaskDragMode?,
     val originalTimeRange: TimeRange,
     val currentTimeRange: TimeRange,
-    val dragOffset: Float,
 )

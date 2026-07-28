@@ -66,6 +66,14 @@ internal class HomeComposeStore @Inject constructor(
     override suspend fun WorkScope<HomeState, HomeAction, HomeEffect, HomeOutput>.handleEvent(
         event: HomeEvent,
     ) {
+        if (
+            state().pendingTimelineTaskUpdate != null &&
+            event !is HomeEvent.Init &&
+            event !is HomeEvent.ConfirmTimelineTimeTaskUpdate
+        ) {
+            return
+        }
+
         when (event) {
             is HomeEvent.Init -> with(event) {
                 launchBackgroundWork(BackgroundKey.CURRENT_TIME) {
@@ -132,12 +140,28 @@ internal class HomeComposeStore @Inject constructor(
                 val command = ChangeHomeViewMode(event.mode)
                 scheduleWorkProcessor.work(command).collectAndHandleWork()
             }
-            is HomeEvent.UpdateTimelineTimeTask -> launchBackgroundWork(BackgroundKey.DATA_ACTION) {
-                val command = TimelineWorkCommand.UpdateTimeTask(
-                    timeTaskId = event.timeTaskId,
-                    timeRange = event.timeRange,
+            is HomeEvent.UpdateTimelineTimeTask -> {
+                sendAction(
+                    HomeAction.SetupTimelineTaskMutation(
+                        pendingRequest = event.request,
+                        failedRequest = null,
+                    ),
                 )
-                timelineWorkProcessor.work(command).collectAndHandleWork()
+                launchBackgroundWork(BackgroundKey.TIMELINE_MUTATION) {
+                    val command = TimelineWorkCommand.UpdateTimeTask(event.request)
+                    timelineWorkProcessor.work(command).collectAndHandleWork()
+                }
+            }
+            is HomeEvent.ConfirmTimelineTimeTaskUpdate -> {
+                val pendingRequest = state().pendingTimelineTaskUpdate
+                if (pendingRequest?.operationId == event.request.operationId) {
+                    sendAction(
+                        HomeAction.SetupTimelineTaskMutation(
+                            pendingRequest = null,
+                            failedRequest = null,
+                        ),
+                    )
+                }
             }
             is HomeEvent.PressEditTimeTaskButton -> {
                 val navCommand = NavigateToEditor(timeTaskId = event.timeTask.key)
@@ -185,10 +209,20 @@ internal class HomeComposeStore @Inject constructor(
             timelineSchedule = action.timelineSchedule,
             selectedDate = action.date
         )
+        is HomeAction.SetupTimelineTaskMutation -> currentState.copy(
+            pendingTimelineTaskUpdate = action.pendingRequest,
+            failedTimelineTaskUpdate = action.failedRequest,
+        )
     }
 
     enum class BackgroundKey : BackgroundWorkKey {
-        LOAD_SCHEDULE, SETUP_SETTINGS, SETTINGS_ACTION, CREATE_SCHEDULE, DATA_ACTION, CURRENT_TIME
+        LOAD_SCHEDULE,
+        SETUP_SETTINGS,
+        SETTINGS_ACTION,
+        CREATE_SCHEDULE,
+        DATA_ACTION,
+        TIMELINE_MUTATION,
+        CURRENT_TIME,
     }
 
      class Factory @Inject constructor(

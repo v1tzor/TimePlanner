@@ -21,6 +21,7 @@ import ru.aleshin.features.home.impl.presentation.models.TimelineTimeTaskUi
 import java.util.Date
 import kotlin.math.abs
 import kotlin.math.max
+import kotlin.math.min
 
 /**
  * @author Stanislav Aleshin on 17.07.2026.
@@ -133,6 +134,108 @@ internal object TimelineLayout {
             (hasBoundarySpace && hasLabelSpace).also { isVisible ->
                 if (isVisible) visibleOffsets.add(hourOffset)
             }
+        }
+    }
+
+    fun calculateLabelTopPositions(
+        anchorOffsets: List<Float>,
+        labelHeights: List<Float>,
+        minimumGap: Float,
+        minimumTop: Float,
+        maximumBottom: Float,
+    ): List<Float> {
+        require(anchorOffsets.size == labelHeights.size)
+        if (anchorOffsets.isEmpty()) return emptyList()
+
+        val availableHeight = (maximumBottom - minimumTop).coerceAtLeast(0f)
+        val totalLabelHeight = labelHeights.sumOf { height ->
+            height.coerceAtLeast(0f).toDouble()
+        }.toFloat()
+        val effectiveGap = if (anchorOffsets.size > 1) {
+            min(
+                minimumGap.coerceAtLeast(0f),
+                ((availableHeight - totalLabelHeight) / (anchorOffsets.size - 1)).coerceAtLeast(0f),
+            )
+        } else {
+            0f
+        }
+        val sortedIndexes = anchorOffsets.indices.sortedWith(
+            compareBy<Int> { index -> anchorOffsets[index] }.thenBy { index -> index },
+        )
+        val result = MutableList(anchorOffsets.size) { minimumTop }
+        var nextTop = minimumTop
+
+        sortedIndexes.forEach { index ->
+            val height = labelHeights[index].coerceAtLeast(0f)
+            val maximumTop = (maximumBottom - height).coerceAtLeast(minimumTop)
+            val preferredTop = (anchorOffsets[index] - height / 2f).coerceIn(
+                minimumTop,
+                maximumTop,
+            )
+            val top = max(preferredTop, nextTop)
+            result[index] = top
+            nextTop = top + height + effectiveGap
+        }
+
+        val lastIndex = sortedIndexes.last()
+        if (result[lastIndex] + labelHeights[lastIndex] > maximumBottom) {
+            var nextBottom = maximumBottom
+            sortedIndexes.asReversed().forEach { index ->
+                val height = labelHeights[index].coerceAtLeast(0f)
+                val top = min(result[index], nextBottom - height)
+                result[index] = top
+                nextBottom = top - effectiveGap
+            }
+        }
+        if (result[sortedIndexes.first()] < minimumTop) {
+            var packedTop = minimumTop
+            sortedIndexes.forEach { index ->
+                result[index] = max(result[index], packedTop)
+                packedTop = result[index] +
+                    labelHeights[index].coerceAtLeast(0f) +
+                    effectiveGap
+            }
+        }
+        return result
+    }
+
+    fun calculateEditedTaskPosition(
+        basePosition: TimelineTaskPosition,
+        timeRange: TimeRange,
+        scale: TimelineScale,
+        minimumTaskHeight: Float,
+        dragMode: TimelineTaskDragMode?,
+        taskSpace: Float,
+        fixedMoveHeight: Float? = null,
+    ): TimelineTaskPosition {
+        val startOffset = scale.fetchOffset(timeRange.from)
+        val endOffset = scale.fetchOffset(timeRange.to)
+        val halfTaskSpace = taskSpace / 2f
+        val minimumCardHeight = (minimumTaskHeight - taskSpace).coerceAtLeast(0f)
+        val timeRangeHeight = (endOffset - startOffset - taskSpace).coerceAtLeast(0f)
+        val readableHeight = timeRangeHeight.coerceAtLeast(minimumCardHeight)
+
+        return when (dragMode) {
+            TimelineTaskDragMode.MOVE -> basePosition.copy(
+                top = startOffset + halfTaskSpace,
+                height = fixedMoveHeight ?: basePosition.height,
+            )
+            TimelineTaskDragMode.RESIZE_START -> basePosition.copy(
+                top = startOffset + halfTaskSpace,
+                height = readableHeight,
+            )
+            TimelineTaskDragMode.RESIZE_END -> {
+                val availableHeight = (endOffset - halfTaskSpace).coerceAtLeast(0f)
+                val height = readableHeight.coerceAtMost(availableHeight)
+                basePosition.copy(
+                    top = endOffset - halfTaskSpace - height,
+                    height = height,
+                )
+            }
+            null -> basePosition.copy(
+                top = startOffset + halfTaskSpace,
+                height = readableHeight,
+            )
         }
     }
 

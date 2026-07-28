@@ -45,7 +45,10 @@ internal class TemplatesContentProvider(
             ) { child ->
                 when (val instance = child.instance) {
                     is InternalTemplatesFeatureComponent.Child.TemplatesChild -> {
-                        TemplatesContent(instance.component)
+                        TemplatesContent(
+                            modifier = Modifier,
+                            templatesComponent = instance.component,
+                        )
                     }
                 }
             }

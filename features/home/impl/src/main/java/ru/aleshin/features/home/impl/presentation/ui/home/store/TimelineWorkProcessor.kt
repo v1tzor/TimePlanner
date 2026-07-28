@@ -28,10 +28,10 @@ import ru.aleshin.core.utils.architecture.store.work.EffectResult
 import ru.aleshin.core.utils.architecture.store.work.FlowWorkProcessor
 import ru.aleshin.core.utils.architecture.store.work.WorkCommand
 import ru.aleshin.core.utils.functional.Either
-import ru.aleshin.core.utils.functional.TimeRange
 import ru.aleshin.core.utils.functional.handle
 import ru.aleshin.core.utils.managers.DateManager
 import ru.aleshin.features.home.impl.domain.interactors.TimelineInteractor
+import ru.aleshin.features.home.impl.presentation.models.TimelineTaskUpdateRequestUi
 import ru.aleshin.features.home.impl.presentation.ui.home.contract.HomeAction
 import ru.aleshin.features.home.impl.presentation.ui.home.contract.HomeEffect
 import ru.aleshin.features.home.impl.presentation.ui.home.contract.HomeOutput
@@ -53,10 +53,7 @@ internal interface TimelineWorkProcessor :
 
         override suspend fun work(command: TimelineWorkCommand) = when (command) {
             is TimelineWorkCommand.ObserveCurrentTime -> observeCurrentTimeWork()
-            is TimelineWorkCommand.UpdateTimeTask -> updateTimeTaskWork(
-                timeTaskId = command.timeTaskId,
-                timeRange = command.timeRange,
-            )
+            is TimelineWorkCommand.UpdateTimeTask -> updateTimeTaskWork(command.request)
         }
 
         private fun observeCurrentTimeWork() = flow {
@@ -66,12 +63,14 @@ internal interface TimelineWorkProcessor :
         }
 
         private fun updateTimeTaskWork(
-            timeTaskId: Long,
-            timeRange: TimeRange,
+            request: TimelineTaskUpdateRequestUi,
         ) = flow {
             val result = withContext(NonCancellable) {
                 mutationMutex.withLock {
-                    timelineInteractor.updateTimeTask(timeTaskId, timeRange).also { result ->
+                    timelineInteractor.updateTimeTask(
+                        timeTaskId = request.timeTaskId,
+                        timeRange = request.timeRange,
+                    ).also { result ->
                         if (result is Either.Right) {
                             updateNotifications(
                                 previousTimeTask = result.data.previousTimeTask,
@@ -82,7 +81,17 @@ internal interface TimelineWorkProcessor :
                 }
             }
             result.handle(
-                onLeftAction = { emit(EffectResult(HomeEffect.ShowError(it))) },
+                onLeftAction = {
+                    emit(
+                        ActionResult(
+                            HomeAction.SetupTimelineTaskMutation(
+                                pendingRequest = null,
+                                failedRequest = request,
+                            ),
+                        ),
+                    )
+                    emit(EffectResult(HomeEffect.ShowError(it)))
+                },
             )
         }
 
@@ -100,5 +109,7 @@ internal interface TimelineWorkProcessor :
 
 internal sealed class TimelineWorkCommand : WorkCommand {
     data object ObserveCurrentTime : TimelineWorkCommand()
-    data class UpdateTimeTask(val timeTaskId: Long, val timeRange: TimeRange) : TimelineWorkCommand()
+    data class UpdateTimeTask(
+        val request: TimelineTaskUpdateRequestUi,
+    ) : TimelineWorkCommand()
 }
