@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright 2026 Stanislav Aleshin
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<resources>
+    <string name="widget_today_name">Hôm nay</string>
+    <string name="widget_today_description">Lịch hôm nay</string>
+    <string name="widget_deadlines_name">Hạn chót và việc sắp tới</string>
+    <string name="widget_deadlines_description">Việc chưa lên lịch, hạn chót sắp tới và việc quá hạn</string>
+    <string name="widget_week_name">Tổng quan tuần</string>
+    <string name="widget_week_description">Khối lượng công việc trong bảy ngày tới</string>
+    <string name="widget_summary_name">Tổng kết ngày</string>
+    <string name="widget_summary_description">Việc đã hoàn thành, bỏ qua và còn lại</string>
+    <string name="widget_refresh_content_description">Làm mới tiện ích</string>
+    <string name="widget_add_task_content_description">Thêm công việc</string>
+    <string name="widget_open_overview_content_description">Mở tổng quan</string>
+    <string name="widget_task_completed_content_description">Công việc đã hoàn thành</string>
+    <string name="widget_task_not_completed_content_description">Công việc chưa hoàn thành</string>
+    <string name="widget_private_task">Công việc</string>
+    <string name="widget_no_data">Không có dữ liệu</string>
+    <string name="widget_no_deadlines">Không có công việc có hạn chót</string>
+    <string name="widget_no_schedule">Chưa có công việc được lên lịch</string>
+    <string name="widget_deadlines_title">Hạn chót</string>
+    <string name="widget_week_title">7 ngày tới</string>
+    <string name="widget_summary_title">Hôm nay</string>
+    <string name="widget_overdue">Quá hạn</string>
+    <string name="widget_overdue_short">Trễ</string>
+    <string name="widget_today">Hôm nay</string>
+    <string name="widget_today_short">Nay</string>
+    <string name="widget_tomorrow">Ngày mai</string>
+    <string name="widget_no_deadline">Không có hạn</string>
+    <string name="widget_upcoming">Sắp tới</string>
+    <string name="widget_upcoming_short">Sắp</string>
+    <plurals name="widget_tasks_count">
+        <item quantity="other">%1$d công việc</item>
+    </plurals>
+    <string name="widget_completed">Hoàn thành</string>
+    <string name="widget_skipped">Bỏ qua</string>
+    <string name="widget_remaining">Còn lại</string>
+    <string name="widget_planned_time">Đã lên kế hoạch</string>
+    <string name="widget_hours_short">%1$.1f giờ</string>
+    <string name="widget_overdue_days">Quá hạn · %1$d ngày</string>
+</resources>

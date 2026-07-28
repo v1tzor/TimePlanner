@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright 2026 Stanislav Aleshin
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<resources>
+    <string name="widget_today_name">Aujourd’hui</string>
+    <string name="widget_today_description">Programme du jour</string>
+    <string name="widget_deadlines_name">Échéances et tâches à venir</string>
+    <string name="widget_deadlines_description">Tâches non planifiées, échéances à venir et éléments en retard</string>
+    <string name="widget_week_name">Vue de la semaine</string>
+    <string name="widget_week_description">Charge des sept prochains jours</string>
+    <string name="widget_summary_name">Bilan quotidien</string>
+    <string name="widget_summary_description">Tâches terminées, ignorées et restantes</string>
+    <string name="widget_refresh_content_description">Actualiser les widgets</string>
+    <string name="widget_add_task_content_description">Ajouter une tâche</string>
+    <string name="widget_open_overview_content_description">Ouvrir l’aperçu</string>
+    <string name="widget_task_completed_content_description">Tâche terminée</string>
+    <string name="widget_task_not_completed_content_description">Tâche non terminée</string>
+    <string name="widget_private_task">Tâche</string>
+    <string name="widget_no_data">Aucune donnée</string>
+    <string name="widget_no_deadlines">Aucune tâche avec échéance</string>
+    <string name="widget_no_schedule">Aucune tâche planifiée</string>
+    <string name="widget_deadlines_title">Échéances</string>
+    <string name="widget_week_title">7 prochains jours</string>
+    <string name="widget_summary_title">Aujourd’hui</string>
+    <string name="widget_overdue">En retard</string>
+    <string name="widget_overdue_short">Retard</string>
+    <string name="widget_today">Aujourd’hui</string>
+    <string name="widget_today_short">Auj.</string>
+    <string name="widget_tomorrow">Demain</string>
+    <string name="widget_no_deadline">Sans échéance</string>
+    <string name="widget_upcoming">À venir</string>
+    <string name="widget_upcoming_short">Suite</string>
+    <plurals name="widget_tasks_count">
+        <item quantity="one">%1$d tâche</item>
+        <item quantity="other">%1$d tâches</item>
+    </plurals>
+    <string name="widget_completed">Terminées</string>
+    <string name="widget_skipped">Ignorées</string>
+    <string name="widget_remaining">Restantes</string>
+    <string name="widget_planned_time">Planifié</string>
+    <string name="widget_hours_short">%1$.1f h</string>
+    <string name="widget_overdue_days">En retard · %1$d j</string>
+</resources>

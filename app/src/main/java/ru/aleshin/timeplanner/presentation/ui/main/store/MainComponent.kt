@@ -31,6 +31,8 @@ import ru.aleshin.core.utils.inject.FeatureContentProvider
 import ru.aleshin.features.editor.api.EditorConfig
 import ru.aleshin.features.editor.api.EditorDecomposeFeatureFactory
 import ru.aleshin.features.editor.api.EditorOutput
+import ru.aleshin.features.analytics.api.AnalyticsConfig
+import ru.aleshin.features.home.api.HomeConfig
 import ru.aleshin.features.overview.api.OverviewConfig
 import ru.aleshin.features.settings.api.SettingsConfig
 import ru.aleshin.features.settings.api.SettingsDecomposeFeatureFactory
@@ -43,12 +45,14 @@ import ru.aleshin.timeplanner.presentation.ui.main.contract.MainEvent
 import ru.aleshin.timeplanner.presentation.ui.main.contract.MainInput
 import ru.aleshin.timeplanner.presentation.ui.main.contract.MainOutput
 import ru.aleshin.timeplanner.presentation.ui.main.contract.MainState
+import ru.aleshin.timeplanner.presentation.ui.main.contract.MainTabTarget
 import ru.aleshin.timeplanner.presentation.ui.main.contract.ShareTarget
 import ru.aleshin.timeplanner.presentation.ui.main.store.MainComponent.Child.EditorChild
 import ru.aleshin.timeplanner.presentation.ui.tabs.store.TabNavigationComponent
 import ru.aleshin.timeplanner.presentation.ui.tabs.store.TabNavigationComponent.TabNavigationConfig
 import ru.aleshin.timeplanner.presentation.ui.tabs.store.TabNavigationComponent.TabNavigationOutput
 import ru.aleshin.timeplanner.presentation.ui.tabs.store.TabNavigationComponentFactory
+import java.util.Date
 
 /**
  * @author Stanislav Aleshin on 12.09.2025.
@@ -193,7 +197,19 @@ abstract class MainComponent(
                     stackNavigation.replaceAll(Config.TabNavigation(config))
                 }
                 is MainOutput.NavigateToTabNavigation -> {
-                    val config = TabNavigationConfig.Home()
+                    val config = when (val target = output.target) {
+                        is MainTabTarget.Home -> {
+                            TabNavigationConfig.Home(
+                                HomeConfig.Home(target.date?.let(::Date)),
+                            )
+                        }
+                        is MainTabTarget.Overview -> {
+                            TabNavigationConfig.Overview(OverviewConfig.Overview())
+                        }
+                        is MainTabTarget.Analytics -> {
+                            TabNavigationConfig.Analytics(AnalyticsConfig.Analytics)
+                        }
+                    }
                     stackNavigation.replaceAll(Config.TabNavigation(config))
                 }
             }

@@ -22,8 +22,4 @@
     <string name="shortcut_analytics">Analytics</string>
     <string name="shortcut_editor">Editor</string>
     <string name="shortcut_save">Save</string>
-    <string name="widget_refresh_content_description">Refresh schedule</string>
-    <string name="widget_add_task_content_description">Add task</string>
-    <string name="widget_task_completed_content_description">Task completed</string>
-    <string name="widget_task_not_completed_content_description">Task not completed</string>
 </resources>

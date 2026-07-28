@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright 2026 Stanislav Aleshin
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<resources>
+    <string name="widget_today_name">Hoje</string>
+    <string name="widget_today_description">Agenda de hoje</string>
+    <string name="widget_deadlines_name">Prazos e próximas tarefas</string>
+    <string name="widget_deadlines_description">Tarefas sem horário, próximos prazos e itens atrasados</string>
+    <string name="widget_week_name">Visão semanal</string>
+    <string name="widget_week_description">Carga dos próximos sete dias</string>
+    <string name="widget_summary_name">Resumo diário</string>
+    <string name="widget_summary_description">Tarefas concluídas, ignoradas e restantes</string>
+    <string name="widget_refresh_content_description">Atualizar widgets</string>
+    <string name="widget_add_task_content_description">Adicionar tarefa</string>
+    <string name="widget_open_overview_content_description">Abrir visão geral</string>
+    <string name="widget_task_completed_content_description">Tarefa concluída</string>
+    <string name="widget_task_not_completed_content_description">Tarefa não concluída</string>
+    <string name="widget_private_task">Tarefa</string>
+    <string name="widget_no_data">Sem dados</string>
+    <string name="widget_no_deadlines">Nenhuma tarefa com prazo</string>
+    <string name="widget_no_schedule">Nenhuma tarefa planejada</string>
+    <string name="widget_deadlines_title">Prazos</string>
+    <string name="widget_week_title">Próximos 7 dias</string>
+    <string name="widget_summary_title">Hoje</string>
+    <string name="widget_overdue">Atrasadas</string>
+    <string name="widget_overdue_short">Atraso</string>
+    <string name="widget_today">Hoje</string>
+    <string name="widget_today_short">Hoje</string>
+    <string name="widget_tomorrow">Amanhã</string>
+    <string name="widget_no_deadline">Sem prazo</string>
+    <string name="widget_upcoming">Próximas</string>
+    <string name="widget_upcoming_short">Próx.</string>
+    <plurals name="widget_tasks_count">
+        <item quantity="one">%1$d tarefa</item>
+        <item quantity="other">%1$d tarefas</item>
+    </plurals>
+    <string name="widget_completed">Concluídas</string>
+    <string name="widget_skipped">Ignoradas</string>
+    <string name="widget_remaining">Restantes</string>
+    <string name="widget_planned_time">Planejado</string>
+    <string name="widget_hours_short">%1$.1f h</string>
+    <string name="widget_overdue_days">Atrasada · %1$d d</string>
+</resources>

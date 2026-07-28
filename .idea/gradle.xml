@@ -36,6 +36,7 @@
             <option value="$PROJECT_DIR$/features/templates" />
             <option value="$PROJECT_DIR$/features/templates/api" />
             <option value="$PROJECT_DIR$/features/templates/impl" />
+            <option value="$PROJECT_DIR$/widgets" />
           </set>
         </option>
       </GradleProjectSettings>

@@ -21,8 +21,4 @@
     <string name="shortcut_analytics">Аналитика</string>
     <string name="shortcut_editor">Редактор</string>
     <string name="shortcut_save">Сохранить</string>
-    <string name="widget_refresh_content_description">Обновить расписание</string>
-    <string name="widget_add_task_content_description">Добавить задачу</string>
-    <string name="widget_task_completed_content_description">Задача выполнена</string>
-    <string name="widget_task_not_completed_content_description">Задача не выполнена</string>
 </resources>

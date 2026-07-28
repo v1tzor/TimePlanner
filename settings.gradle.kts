@@ -37,6 +37,7 @@ include(":core:ui")
 include(":core:presentation")
 include(":core:domain")
 include(":core:data")
+include(":widgets")
 
 include(":features:home:api")
 include(":features:home:impl")

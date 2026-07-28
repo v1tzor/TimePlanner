@@ -72,5 +72,5 @@ sealed class MainAction : StoreAction {
 sealed class MainOutput : BaseOutput {
     data class NavigateToEditor(val config: EditorConfig) : MainOutput()
     data class NavigateToOverview(val sharedText: String, val sharedKey: Long) : MainOutput()
-    data object NavigateToTabNavigation : MainOutput()
+    data class NavigateToTabNavigation(val target: MainTabTarget) : MainOutput()
 }

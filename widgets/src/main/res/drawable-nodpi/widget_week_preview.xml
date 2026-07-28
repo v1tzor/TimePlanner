@@ -1,0 +1,21 @@
+<!--
+  ~ Copyright 2026 Stanislav Aleshin
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="200dp"
+    android:height="100dp"
+    android:viewportWidth="320"
+    android:viewportHeight="160">
+    <path android:fillColor="#FFF7FA" android:pathData="M24,0H296A24,24 0,0 1,320 24V136A24,24 0,0 1,296 160H24A24,24 0,0 1,0 136V24A24,24 0,0 1,24 0Z" />
+    <path android:fillColor="#FFD9E2" android:pathData="M12,50H50V146H12Z" />
+    <path android:fillColor="#E5E1E3" android:pathData="M55,50H93V146H55Z" />
+    <path android:fillColor="#E5E1E3" android:pathData="M98,50H136V146H98Z" />
+    <path android:fillColor="#E5E1E3" android:pathData="M141,50H179V146H141Z" />
+    <path android:fillColor="#E5E1E3" android:pathData="M184,50H222V146H184Z" />
+    <path android:fillColor="#E5E1E3" android:pathData="M227,50H265V146H227Z" />
+    <path android:fillColor="#E5E1E3" android:pathData="M270,50H308V146H270Z" />
+    <path android:fillColor="#A73B59" android:pathData="M20,112H42V136H20ZM63,92H85V136H63ZM106,72H128V136H106ZM149,102H171V136H149ZM192,82H214V136H192ZM235,118H257V136H235ZM278,96H300V136H278Z" />
+</vector>

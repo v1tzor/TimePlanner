@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright 2026 Stanislav Aleshin
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<resources>
+    <string name="widget_today_name">Oggi</string>
+    <string name="widget_today_description">Programma di oggi</string>
+    <string name="widget_deadlines_name">Scadenze e attività future</string>
+    <string name="widget_deadlines_description">Attività non pianificate, scadenze future ed elementi in ritardo</string>
+    <string name="widget_week_name">Panoramica settimanale</string>
+    <string name="widget_week_description">Carico dei prossimi sette giorni</string>
+    <string name="widget_summary_name">Riepilogo giornaliero</string>
+    <string name="widget_summary_description">Attività completate, saltate e rimanenti</string>
+    <string name="widget_refresh_content_description">Aggiorna widget</string>
+    <string name="widget_add_task_content_description">Aggiungi attività</string>
+    <string name="widget_open_overview_content_description">Apri panoramica</string>
+    <string name="widget_task_completed_content_description">Attività completata</string>
+    <string name="widget_task_not_completed_content_description">Attività non completata</string>
+    <string name="widget_private_task">Attività</string>
+    <string name="widget_no_data">Nessun dato</string>
+    <string name="widget_no_deadlines">Nessuna attività con scadenza</string>
+    <string name="widget_no_schedule">Nessuna attività pianificata</string>
+    <string name="widget_deadlines_title">Scadenze</string>
+    <string name="widget_week_title">Prossimi 7 giorni</string>
+    <string name="widget_summary_title">Oggi</string>
+    <string name="widget_overdue">In ritardo</string>
+    <string name="widget_overdue_short">Ritardo</string>
+    <string name="widget_today">Oggi</string>
+    <string name="widget_today_short">Oggi</string>
+    <string name="widget_tomorrow">Domani</string>
+    <string name="widget_no_deadline">Nessuna scadenza</string>
+    <string name="widget_upcoming">In arrivo</string>
+    <string name="widget_upcoming_short">Pross.</string>
+    <plurals name="widget_tasks_count">
+        <item quantity="one">%1$d attività</item>
+        <item quantity="other">%1$d attività</item>
+    </plurals>
+    <string name="widget_completed">Completate</string>
+    <string name="widget_skipped">Saltate</string>
+    <string name="widget_remaining">Rimanenti</string>
+    <string name="widget_planned_time">Pianificato</string>
+    <string name="widget_hours_short">%1$.1f h</string>
+    <string name="widget_overdue_days">In ritardo · %1$d g</string>
+</resources>

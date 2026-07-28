@@ -155,6 +155,7 @@ dependencies {
     implementation(project(":core:domain"))
     implementation(project(":core:presentation"))
     implementation(project(":core:ui"))
+    implementation(project(":widgets"))
 
     implementation(project(":features:home:api"))
     implementation(project(":features:home:impl"))
@@ -170,10 +171,6 @@ dependencies {
     implementation(project(":features:settings:impl"))
 
     implementation(libs.compose.material3.adaptive.navigation.suite)
-
-    implementation(libs.androidx.glance)
-    implementation(libs.androidx.glance.compose)
-    implementation(libs.androidx.work)
 
     ksp(libs.dagger.ksp)
 

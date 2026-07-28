@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright 2026 Stanislav Aleshin
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<resources>
+    <string name="widget_today_name">Сегодня</string>
+    <string name="widget_today_description">Расписание на сегодня</string>
+    <string name="widget_deadlines_name">Дедлайны и будущие задачи</string>
+    <string name="widget_deadlines_description">Неопределённые задачи, дедлайны и просроченные дела</string>
+    <string name="widget_week_name">Обзор недели</string>
+    <string name="widget_week_description">Загрузка на следующие семь дней</string>
+    <string name="widget_summary_name">Итоги дня</string>
+    <string name="widget_summary_description">Выполненные, пропущенные и оставшиеся задачи</string>
+    <string name="widget_refresh_content_description">Обновить виджеты</string>
+    <string name="widget_add_task_content_description">Добавить задачу</string>
+    <string name="widget_open_overview_content_description">Открыть обзор</string>
+    <string name="widget_task_completed_content_description">Задача выполнена</string>
+    <string name="widget_task_not_completed_content_description">Задача не выполнена</string>
+    <string name="widget_private_task">Задача</string>
+    <string name="widget_no_data">Нет данных</string>
+    <string name="widget_no_deadlines">Нет задач с дедлайнами</string>
+    <string name="widget_no_schedule">Задачи не запланированы</string>
+    <string name="widget_deadlines_title">Дедлайны</string>
+    <string name="widget_week_title">Следующие 7 дней</string>
+    <string name="widget_summary_title">Сегодня</string>
+    <string name="widget_overdue">Просрочено</string>
+    <string name="widget_overdue_short">Проср.</string>
+    <string name="widget_today">Сегодня</string>
+    <string name="widget_today_short">Сег.</string>
+    <string name="widget_tomorrow">Завтра</string>
+    <string name="widget_no_deadline">Без срока</string>
+    <string name="widget_upcoming">Будущие</string>
+    <string name="widget_upcoming_short">Буд.</string>
+    <plurals name="widget_tasks_count">
+        <item quantity="one">%1$d задача</item>
+        <item quantity="few">%1$d задачи</item>
+        <item quantity="many">%1$d задач</item>
+        <item quantity="other">%1$d задачи</item>
+    </plurals>
+    <string name="widget_completed">Выполнено</string>
+    <string name="widget_skipped">Пропущено</string>
+    <string name="widget_remaining">Осталось</string>
+    <string name="widget_planned_time">Запланировано</string>
+    <string name="widget_hours_short">%1$.1f ч</string>
+    <string name="widget_overdue_days">Просрочено на %1$d дн.</string>
+</resources>

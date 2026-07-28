@@ -16,7 +16,6 @@
 package ru.aleshin.timeplanner.presentation.ui.main.store
 
 import kotlinx.coroutines.delay
-import ru.aleshin.core.utils.architecture.store.work.ActionResult
 import ru.aleshin.core.utils.architecture.store.work.OutputResult
 import ru.aleshin.core.utils.architecture.store.work.WorkCommand
 import ru.aleshin.core.utils.architecture.store.work.WorkProcessor
@@ -30,7 +29,9 @@ import ru.aleshin.timeplanner.presentation.ui.main.contract.DeepLinkTarget
 import ru.aleshin.timeplanner.presentation.ui.main.contract.MainAction
 import ru.aleshin.timeplanner.presentation.ui.main.contract.MainEffect
 import ru.aleshin.timeplanner.presentation.ui.main.contract.MainOutput
+import ru.aleshin.timeplanner.presentation.ui.main.contract.MainTabTarget
 import ru.aleshin.timeplanner.presentation.ui.main.contract.ShareTarget
+import java.util.Date
 import javax.inject.Inject
 
 /**
@@ -50,19 +51,56 @@ interface NavigationWorkProcessor : WorkProcessor<NavWorkCommand, MainAction, Ma
 
         private suspend fun initialNavigationWork(): NavWorkResult {
             delay(Constants.Delay.SPLASH_NAV)
-            return OutputResult(MainOutput.NavigateToTabNavigation)
+            return OutputResult(MainOutput.NavigateToTabNavigation(MainTabTarget.Home()))
         }
 
         private fun processDeepLink(deepLinkTarget: DeepLinkTarget): NavWorkResult {
-            return if (deepLinkTarget == DeepLinkTarget.EDITOR) {
-                val currentTime = dateManager.fetchCurrentDate()
-                val currentDate = dateManager.fetchBeginningCurrentDay()
-                val timeRange = TimeRange(currentTime, currentTime)
-
-                val config = EditorConfig.Task(date = currentDate, timeRange = timeRange)
-                OutputResult(MainOutput.NavigateToEditor(config))
-            } else {
-                ActionResult(MainAction.Navigate)
+            return when (deepLinkTarget) {
+                is DeepLinkTarget.Editor -> {
+                    val isEmptyTarget = deepLinkTarget.timeTaskId == null &&
+                        deepLinkTarget.undefinedTaskId == null &&
+                        deepLinkTarget.date == null &&
+                        deepLinkTarget.from == null &&
+                        deepLinkTarget.to == null
+                    val currentTime = dateManager.fetchCurrentDate()
+                    val date = deepLinkTarget.date?.let(::Date) ?: if (isEmptyTarget) {
+                        dateManager.fetchBeginningCurrentDay()
+                    } else {
+                        null
+                    }
+                    val from = deepLinkTarget.from
+                    val to = deepLinkTarget.to
+                    val timeRange = if (from != null && to != null) {
+                        TimeRange(Date(from), Date(to))
+                    } else if (isEmptyTarget) {
+                        TimeRange(currentTime, currentTime)
+                    } else {
+                        null
+                    }
+                    OutputResult(
+                        MainOutput.NavigateToEditor(
+                            EditorConfig.Task(
+                                timeTaskId = deepLinkTarget.timeTaskId,
+                                undefinedTaskId = deepLinkTarget.undefinedTaskId,
+                                date = date,
+                                timeRange = timeRange,
+                            ),
+                        ),
+                    )
+                }
+                is DeepLinkTarget.Home -> {
+                    OutputResult(
+                        MainOutput.NavigateToTabNavigation(
+                            MainTabTarget.Home(deepLinkTarget.date),
+                        ),
+                    )
+                }
+                is DeepLinkTarget.Overview -> {
+                    OutputResult(MainOutput.NavigateToTabNavigation(MainTabTarget.Overview))
+                }
+                is DeepLinkTarget.Analytics -> {
+                    OutputResult(MainOutput.NavigateToTabNavigation(MainTabTarget.Analytics))
+                }
             }
         }
 

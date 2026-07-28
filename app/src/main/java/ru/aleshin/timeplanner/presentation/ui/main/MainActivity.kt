@@ -47,7 +47,7 @@ import ru.aleshin.timeplanner.presentation.ui.main.store.MainComponent
 import ru.aleshin.timeplanner.presentation.ui.main.store.MainComponentFactory
 import ru.aleshin.timeplanner.presentation.ui.splash.SplashContent
 import ru.aleshin.timeplanner.presentation.ui.tabs.TabNavigationContent
-import ru.aleshin.timeplanner.presentation.widgets.main.MainWidgetUpdateWorker
+import ru.aleshin.timeplanner.widgets.presentation.work.WidgetsUpdateScheduler
 import javax.inject.Inject
 
 /**
@@ -57,6 +57,9 @@ class MainActivity : AppCompatActivity() {
 
     @Inject
     lateinit var componentFactory: MainComponentFactory
+
+    @Inject
+    lateinit var widgetsUpdateScheduler: WidgetsUpdateScheduler
 
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions(),
@@ -145,7 +148,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-        MainWidgetUpdateWorker.enqueue(this)
+        widgetsUpdateScheduler.enqueueImmediate()
     }
 
     override fun onKeyUp(keyCode: Int, event: KeyEvent?): Boolean {

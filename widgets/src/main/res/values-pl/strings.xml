@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright 2026 Stanislav Aleshin
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<resources>
+    <string name="widget_today_name">Dzisiaj</string>
+    <string name="widget_today_description">Dzisiejszy plan</string>
+    <string name="widget_deadlines_name">Terminy i nadchodzące zadania</string>
+    <string name="widget_deadlines_description">Niezaplanowane zadania, nadchodzące terminy i zaległe pozycje</string>
+    <string name="widget_week_name">Przegląd tygodnia</string>
+    <string name="widget_week_description">Obciążenie w ciągu następnych siedmiu dni</string>
+    <string name="widget_summary_name">Podsumowanie dnia</string>
+    <string name="widget_summary_description">Ukończone, pominięte i pozostałe zadania</string>
+    <string name="widget_refresh_content_description">Odśwież widżety</string>
+    <string name="widget_add_task_content_description">Dodaj zadanie</string>
+    <string name="widget_open_overview_content_description">Otwórz przegląd</string>
+    <string name="widget_task_completed_content_description">Zadanie ukończone</string>
+    <string name="widget_task_not_completed_content_description">Zadanie nieukończone</string>
+    <string name="widget_private_task">Zadanie</string>
+    <string name="widget_no_data">Brak danych</string>
+    <string name="widget_no_deadlines">Brak zadań z terminem</string>
+    <string name="widget_no_schedule">Brak zaplanowanych zadań</string>
+    <string name="widget_deadlines_title">Terminy</string>
+    <string name="widget_week_title">Następne 7 dni</string>
+    <string name="widget_summary_title">Dzisiaj</string>
+    <string name="widget_overdue">Zaległe</string>
+    <string name="widget_overdue_short">Po term.</string>
+    <string name="widget_today">Dzisiaj</string>
+    <string name="widget_today_short">Dziś</string>
+    <string name="widget_tomorrow">Jutro</string>
+    <string name="widget_no_deadline">Bez terminu</string>
+    <string name="widget_upcoming">Nadchodzące</string>
+    <string name="widget_upcoming_short">Nast.</string>
+    <plurals name="widget_tasks_count">
+        <item quantity="one">%1$d zadanie</item>
+        <item quantity="few">%1$d zadania</item>
+        <item quantity="many">%1$d zadań</item>
+        <item quantity="other">%1$d zadania</item>
+    </plurals>
+    <string name="widget_completed">Ukończone</string>
+    <string name="widget_skipped">Pominięte</string>
+    <string name="widget_remaining">Pozostałe</string>
+    <string name="widget_planned_time">Zaplanowano</string>
+    <string name="widget_hours_short">%1$.1f godz.</string>
+    <string name="widget_overdue_days">Zaległe · %1$d dni</string>
+</resources>

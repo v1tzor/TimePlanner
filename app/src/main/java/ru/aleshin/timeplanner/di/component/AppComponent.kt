@@ -36,9 +36,10 @@ import ru.aleshin.timeplanner.di.modules.DomainModules
 import ru.aleshin.timeplanner.di.modules.FeatureModule
 import ru.aleshin.timeplanner.di.modules.PresentationModule
 import ru.aleshin.timeplanner.domain.interactors.SettingsInteractor
-import ru.aleshin.timeplanner.domain.interactors.TimeTaskInteractor
 import ru.aleshin.timeplanner.presentation.notifications.NotificationAlarmHandler
 import ru.aleshin.timeplanner.presentation.ui.main.MainActivity
+import ru.aleshin.timeplanner.widgets.di.WidgetsModule
+import ru.aleshin.timeplanner.widgets.presentation.work.WidgetsWorkerFactory
 import javax.inject.Singleton
 
 /**
@@ -57,6 +58,7 @@ import javax.inject.Singleton
         DomainModules::class,
         DependenciesModule::class,
         FeatureModule::class,
+        WidgetsModule::class,
     ],
 )
 interface AppComponent :
@@ -67,9 +69,9 @@ interface AppComponent :
     OverviewFeatureDependencies,
     TemplatesFeatureDependencies {
 
-    fun fetchTimeTaskInteractor(): TimeTaskInteractor
     fun fetchSettingsInteractor(): SettingsInteractor
     fun fetchNotificationAlarmHandler(): NotificationAlarmHandler
+    fun fetchWidgetsWorkerFactory(): WidgetsWorkerFactory
     fun inject(activity: MainActivity)
     fun inject(application: TimePlannerApp)
 

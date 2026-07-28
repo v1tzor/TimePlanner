@@ -11,6 +11,7 @@
 .DS_Store
 .kotlin
 /build
+/widgets/build
 /captures
 .externalNativeBuild
 .cxx
@@ -165,3 +166,4 @@ local.properties
 /features/overview/api/build/tmp/kotlin-classes/debug/ru/aleshin/features/overview/api/OverviewOutput$NavigateToHome.class
 /features/overview/api/build/tmp/kotlin-classes/debug/ru/aleshin/features/overview/api/OverviewOutput$NavigateToTaskEditor.class
 /features/overview/api/build/tmp/kotlin-classes/debug/ru/aleshin/features/overview/api/OverviewOutput.class
+/output/

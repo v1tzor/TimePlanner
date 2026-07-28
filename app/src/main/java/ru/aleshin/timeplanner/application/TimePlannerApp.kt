@@ -20,6 +20,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
+import androidx.work.Configuration
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -41,7 +42,7 @@ import kotlin.coroutines.CoroutineContext
 /**
  * @author Stanislav Aleshin on 14.02.2023.
  */
-class TimePlannerApp : BaseFlavorApplication(), CoroutineScope {
+class TimePlannerApp : BaseFlavorApplication(), CoroutineScope, Configuration.Provider {
 
     val appComponent by lazy {
         AppComponent.create(applicationContext)
@@ -54,6 +55,11 @@ class TimePlannerApp : BaseFlavorApplication(), CoroutineScope {
     lateinit var notificationAlarmHandler: NotificationAlarmHandler
 
     override val coroutineContext: CoroutineContext = SupervisorJob() + Dispatchers.IO
+
+    override val workManagerConfiguration: Configuration
+        get() = Configuration.Builder()
+            .setWorkerFactory(appComponent.fetchWidgetsWorkerFactory())
+            .build()
 
     private val coreStrings: TimePlannerStrings
         get() = fetchCoreStrings(fetchCoreLanguage(fetchLocale().language))

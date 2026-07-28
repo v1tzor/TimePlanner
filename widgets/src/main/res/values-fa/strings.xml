@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright 2026 Stanislav Aleshin
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<resources>
+    <string name="widget_today_name">امروز</string>
+    <string name="widget_today_description">برنامه امروز</string>
+    <string name="widget_deadlines_name">مهلت‌ها و کارهای آینده</string>
+    <string name="widget_deadlines_description">کارهای زمان‌بندی‌نشده، مهلت‌های آینده و موارد عقب‌افتاده</string>
+    <string name="widget_week_name">نمای هفتگی</string>
+    <string name="widget_week_description">حجم کار هفت روز آینده</string>
+    <string name="widget_summary_name">خلاصه روزانه</string>
+    <string name="widget_summary_description">کارهای انجام‌شده، ردشده و باقی‌مانده</string>
+    <string name="widget_refresh_content_description">به‌روزرسانی ویجت‌ها</string>
+    <string name="widget_add_task_content_description">افزودن کار</string>
+    <string name="widget_open_overview_content_description">باز کردن نمای کلی</string>
+    <string name="widget_task_completed_content_description">کار انجام شد</string>
+    <string name="widget_task_not_completed_content_description">کار انجام نشد</string>
+    <string name="widget_private_task">کار</string>
+    <string name="widget_no_data">داده‌ای نیست</string>
+    <string name="widget_no_deadlines">کاری با مهلت وجود ندارد</string>
+    <string name="widget_no_schedule">کاری برنامه‌ریزی نشده</string>
+    <string name="widget_deadlines_title">مهلت‌ها</string>
+    <string name="widget_week_title">۷ روز آینده</string>
+    <string name="widget_summary_title">امروز</string>
+    <string name="widget_overdue">عقب‌افتاده</string>
+    <string name="widget_overdue_short">دیر</string>
+    <string name="widget_today">امروز</string>
+    <string name="widget_today_short">امروز</string>
+    <string name="widget_tomorrow">فردا</string>
+    <string name="widget_no_deadline">بدون مهلت</string>
+    <string name="widget_upcoming">آینده</string>
+    <string name="widget_upcoming_short">بعدی</string>
+    <plurals name="widget_tasks_count">
+        <item quantity="one">%1$d کار</item>
+        <item quantity="other">%1$d کار</item>
+    </plurals>
+    <string name="widget_completed">انجام‌شده</string>
+    <string name="widget_skipped">ردشده</string>
+    <string name="widget_remaining">باقی‌مانده</string>
+    <string name="widget_planned_time">برنامه‌ریزی‌شده</string>
+    <string name="widget_hours_short">%1$.1f س</string>
+    <string name="widget_overdue_days">%1$d روز عقب‌افتاده</string>
+</resources>

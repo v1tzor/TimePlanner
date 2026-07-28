@@ -21,16 +21,14 @@ import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
+import ru.aleshin.core.domain.common.RecurringScheduleManager
 import ru.aleshin.core.domain.common.ScheduleStatusChecker
-import ru.aleshin.core.domain.common.TimeOverlayManager
 import ru.aleshin.core.domain.common.TimeTaskStatusChecker
 import ru.aleshin.core.domain.entities.categories.MainCategory
 import ru.aleshin.core.domain.entities.schedules.BaseDailySchedule
 import ru.aleshin.core.domain.entities.schedules.Schedule
 import ru.aleshin.core.domain.entities.tasks.TimeTask
-import ru.aleshin.core.domain.entities.template.Template
 import ru.aleshin.core.domain.repository.ScheduleRepository
-import ru.aleshin.core.domain.repository.TemplatesRepository
 import ru.aleshin.core.domain.repository.TimeTaskRepository
 import ru.aleshin.core.utils.extensions.hoursToMillis
 import ru.aleshin.core.utils.extensions.setHoursAndMinutes
@@ -78,11 +76,10 @@ internal class ScheduleInteractorTest {
                 ),
             ),
             timeTaskRepository = FakeTimeTaskRepository(),
-            templatesRepository = FakeTemplatesRepository(),
+            recurringScheduleManager = FakeRecurringScheduleManager(),
             scheduleStatusChecker = ScheduleStatusChecker.Base(dateManager),
             timeTaskStatusChecker = TimeTaskStatusChecker.Base(dateManager),
             dateManager = dateManager,
-            overlayManager = TimeOverlayManager.Base(),
             eitherWrapper = OverviewEitherWrapper.Base(OverviewErrorHandler.Base()),
         )
     }
@@ -176,29 +173,10 @@ private class FakeTimeTaskRepository : TimeTaskRepository {
 }
 
 /**
- * @author Stanislav Aleshin on 16.07.2026.
+ * @author Stanislav Aleshin on 28.07.2026.
  */
-private class FakeTemplatesRepository : TemplatesRepository {
-
-    override suspend fun addOrUpdateTemplate(template: Template): Long {
-        return template.templateId.toLong()
-    }
-
-    override suspend fun addOrUpdateTemplates(templates: List<Template>) = Unit
-
-    override suspend fun fetchTemplatesByIdOnce(templateId: Long): Template? {
-        return null
-    }
-
-    override suspend fun fetchAllTemplates(): Flow<List<Template>> {
-        return flowOf(emptyList())
-    }
-
-    override suspend fun deleteTemplateById(id: Long) = Unit
-
-    override suspend fun deleteAllTemplates(): List<Template> {
-        return emptyList()
-    }
+private class FakeRecurringScheduleManager : RecurringScheduleManager {
+    override suspend fun createMissingSchedules(targetDates: List<Date>) = Unit
 }
 
 /**

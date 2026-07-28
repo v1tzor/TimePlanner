@@ -15,9 +15,12 @@
  */
 package ru.aleshin.core.domain.entities.tasks
 
+import kotlinx.serialization.Serializable
+
 /**
  * @author Stanislav Aleshin on 21.02.2023.
  */
+@Serializable
 enum class TimeTaskStatus {
     PLANNED, RUNNING, COMPLETED
 }

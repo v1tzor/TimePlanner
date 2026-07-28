@@ -15,9 +15,12 @@
  */
 package ru.aleshin.core.domain.entities.categories
 
+import kotlinx.serialization.Serializable
+
 /**
  * @author Stanislav Aleshin on 15.04.2023.
  */
+@Serializable
 enum class DefaultCategoryType {
     WORK,
     REST,

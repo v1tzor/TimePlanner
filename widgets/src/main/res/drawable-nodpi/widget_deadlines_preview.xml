@@ -1,0 +1,18 @@
+<!--
+  ~ Copyright 2026 Stanislav Aleshin
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="180dp"
+    android:height="180dp"
+    android:viewportWidth="180"
+    android:viewportHeight="180">
+    <path android:fillColor="#FFF7FA" android:pathData="M24,0H156A24,24 0,0 1,180 24V156A24,24 0,0 1,156 180H24A24,24 0,0 1,0 156V24A24,24 0,0 1,24 0Z" />
+    <path android:fillColor="#FFDAD6" android:pathData="M12,50H58V88H12Z" />
+    <path android:fillColor="#FFD9E2" android:pathData="M67,50H113V88H67Z" />
+    <path android:fillColor="#E5E1E3" android:pathData="M122,50H168V88H122Z" />
+    <path android:fillColor="#FFDAD6" android:pathData="M12,100H168V154H12Z" />
+    <path android:fillColor="#BA1A1A" android:pathData="M28,112H132V122H28ZM28,132H102V140H28Z" />
+</vector>

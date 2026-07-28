@@ -17,6 +17,7 @@ package ru.aleshin.core.domain.di
 
 import dagger.Binds
 import dagger.Module
+import ru.aleshin.core.domain.common.RecurringScheduleManager
 import ru.aleshin.core.domain.common.ScheduleStatusChecker
 import ru.aleshin.core.domain.common.TimeOverlayManager
 import ru.aleshin.core.domain.common.TimeTaskProgressManager
@@ -28,6 +29,10 @@ import javax.inject.Singleton
  */
 @Module
 interface CoreDomainModule {
+
+    @Binds
+    @Singleton
+    fun bindRecurringScheduleManager(manager: RecurringScheduleManager.Base): RecurringScheduleManager
 
     @Binds
     @Singleton

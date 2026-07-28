@@ -5,12 +5,11 @@ import dagger.internal.DoubleCheck;
 import dagger.internal.Preconditions;
 import dagger.internal.Provider;
 import javax.annotation.processing.Generated;
+import ru.aleshin.core.domain.common.RecurringScheduleManager;
 import ru.aleshin.core.domain.common.ScheduleStatusChecker;
-import ru.aleshin.core.domain.common.TimeOverlayManager;
 import ru.aleshin.core.domain.common.TimeTaskStatusChecker;
 import ru.aleshin.core.domain.repository.MainCategoryRepository;
 import ru.aleshin.core.domain.repository.ScheduleRepository;
-import ru.aleshin.core.domain.repository.TemplatesRepository;
 import ru.aleshin.core.domain.repository.TimeTaskRepository;
 import ru.aleshin.core.domain.repository.UndefinedTaskRepository;
 import ru.aleshin.core.utils.managers.CoroutineManager;
@@ -80,15 +79,13 @@ public final class DaggerOverviewComponent {
 
     Provider<TimeTaskRepository> getTimeTaskRepositoryProvider;
 
-    Provider<TemplatesRepository> getTemplatesRepositoryProvider;
+    Provider<RecurringScheduleManager> getRecurringScheduleManagerProvider;
 
     Provider<ScheduleStatusChecker> getScheduleStatusCheckerProvider;
 
     Provider<TimeTaskStatusChecker> getTaskStatusManagerProvider;
 
     Provider<DateManager> getDateMangerProvider;
-
-    Provider<TimeOverlayManager> getTimeOverlayManagerProvider;
 
     Provider<OverviewEitherWrapper.Base> baseProvider;
 
@@ -126,13 +123,12 @@ public final class DaggerOverviewComponent {
     private void initialize(final OverviewFeatureDependencies overviewFeatureDependenciesParam) {
       this.getSchedulesRepositoryProvider = new GetSchedulesRepositoryProvider(overviewFeatureDependenciesParam);
       this.getTimeTaskRepositoryProvider = new GetTimeTaskRepositoryProvider(overviewFeatureDependenciesParam);
-      this.getTemplatesRepositoryProvider = new GetTemplatesRepositoryProvider(overviewFeatureDependenciesParam);
+      this.getRecurringScheduleManagerProvider = new GetRecurringScheduleManagerProvider(overviewFeatureDependenciesParam);
       this.getScheduleStatusCheckerProvider = new GetScheduleStatusCheckerProvider(overviewFeatureDependenciesParam);
       this.getTaskStatusManagerProvider = new GetTaskStatusManagerProvider(overviewFeatureDependenciesParam);
       this.getDateMangerProvider = new GetDateMangerProvider(overviewFeatureDependenciesParam);
-      this.getTimeOverlayManagerProvider = new GetTimeOverlayManagerProvider(overviewFeatureDependenciesParam);
       this.baseProvider = OverviewEitherWrapper_Base_Factory.create(((Provider) (OverviewErrorHandler_Base_Factory.create())));
-      this.baseProvider2 = ScheduleInteractor_Base_Factory.create(getSchedulesRepositoryProvider, getTimeTaskRepositoryProvider, getTemplatesRepositoryProvider, getScheduleStatusCheckerProvider, getTaskStatusManagerProvider, getDateMangerProvider, getTimeOverlayManagerProvider, ((Provider) (baseProvider)));
+      this.baseProvider2 = ScheduleInteractor_Base_Factory.create(getSchedulesRepositoryProvider, getTimeTaskRepositoryProvider, getRecurringScheduleManagerProvider, getScheduleStatusCheckerProvider, getTaskStatusManagerProvider, getDateMangerProvider, ((Provider) (baseProvider)));
       this.getMainCategoryRepositoryProvider = new GetMainCategoryRepositoryProvider(overviewFeatureDependenciesParam);
       this.baseProvider3 = MainCategoriesInteractor_Base_Factory.create(getMainCategoryRepositoryProvider, ((Provider) (baseProvider)));
       this.getUndefinedTaskRepositoryProvider = new GetUndefinedTaskRepositoryProvider(overviewFeatureDependenciesParam);
@@ -177,16 +173,16 @@ public final class DaggerOverviewComponent {
       }
     }
 
-    private static final class GetTemplatesRepositoryProvider implements Provider<TemplatesRepository> {
+    private static final class GetRecurringScheduleManagerProvider implements Provider<RecurringScheduleManager> {
       private final OverviewFeatureDependencies overviewFeatureDependencies;
 
-      GetTemplatesRepositoryProvider(OverviewFeatureDependencies overviewFeatureDependencies) {
+      GetRecurringScheduleManagerProvider(OverviewFeatureDependencies overviewFeatureDependencies) {
         this.overviewFeatureDependencies = overviewFeatureDependencies;
       }
 
       @Override
-      public TemplatesRepository get() {
-        return Preconditions.checkNotNullFromComponent(overviewFeatureDependencies.getTemplatesRepository());
+      public RecurringScheduleManager get() {
+        return Preconditions.checkNotNullFromComponent(overviewFeatureDependencies.getRecurringScheduleManager());
       }
     }
 
@@ -226,19 +222,6 @@ public final class DaggerOverviewComponent {
       @Override
       public DateManager get() {
         return Preconditions.checkNotNullFromComponent(overviewFeatureDependencies.getDateManger());
-      }
-    }
-
-    private static final class GetTimeOverlayManagerProvider implements Provider<TimeOverlayManager> {
-      private final OverviewFeatureDependencies overviewFeatureDependencies;
-
-      GetTimeOverlayManagerProvider(OverviewFeatureDependencies overviewFeatureDependencies) {
-        this.overviewFeatureDependencies = overviewFeatureDependencies;
-      }
-
-      @Override
-      public TimeOverlayManager get() {
-        return Preconditions.checkNotNullFromComponent(overviewFeatureDependencies.getTimeOverlayManager());
       }
     }
 

@@ -17,31 +17,24 @@ package ru.aleshin.features.home.impl.domain.interactors
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.transformWhile
+import ru.aleshin.core.domain.common.RecurringScheduleManager
 import ru.aleshin.core.domain.common.ScheduleStatusChecker
-import ru.aleshin.core.domain.common.TimeOverlayManager
 import ru.aleshin.core.domain.common.TimeTaskStatusChecker
 import ru.aleshin.core.domain.entities.schedules.BaseDailySchedule
 import ru.aleshin.core.domain.entities.schedules.ScheduleDetails
 import ru.aleshin.core.domain.entities.schedules.convertToDetails
-import ru.aleshin.core.domain.entities.schedules.fetchAllTimeTasks
 import ru.aleshin.core.domain.entities.tasks.TimeTask
 import ru.aleshin.core.domain.entities.tasks.TimeTaskStatus
 import ru.aleshin.core.domain.entities.tasks.mapToDetails
-import ru.aleshin.core.domain.entities.template.Template
-import ru.aleshin.core.domain.entities.template.convertToTimeTask
 import ru.aleshin.core.domain.repository.ScheduleRepository
-import ru.aleshin.core.domain.repository.TemplatesRepository
 import ru.aleshin.core.domain.repository.TimeTaskRepository
 import ru.aleshin.core.utils.extensions.daysToMillis
 import ru.aleshin.core.utils.extensions.mapToDate
-import ru.aleshin.core.utils.extensions.shiftDay
-import ru.aleshin.core.utils.extensions.startThisDay
 import ru.aleshin.core.utils.functional.Constants.Date.NEXT_REPEAT_LIMIT_DAYS
 import ru.aleshin.core.utils.functional.DomainResult
 import ru.aleshin.core.utils.functional.FlowDomainResult
@@ -64,11 +57,10 @@ internal interface ScheduleInteractor {
     class Base @Inject constructor(
         private val scheduleRepository: ScheduleRepository,
         private val timeTaskRepository: TimeTaskRepository,
-        private val templatesRepository: TemplatesRepository,
+        private val recurringScheduleManager: RecurringScheduleManager,
         private val scheduleStatusChecker: ScheduleStatusChecker,
         private val timeTaskStatusChecker: TimeTaskStatusChecker,
         private val dateManager: DateManager,
-        private val overlayManager: TimeOverlayManager,
         private val eitherWrapper: HomeEitherWrapper,
     ) : ScheduleInteractor {
 
@@ -90,10 +82,7 @@ internal interface ScheduleInteractor {
             scheduleRepository.fetchScheduleByDate(requiredDate).onStart {
                 if (!shouldCreateRepeat) return@onStart
 
-                createMissingRecurringSchedules(
-                    targetDates = listOf(requiredDate),
-                    templates = fetchRepeatTemplates(),
-                )
+                recurringScheduleManager.createMissingSchedules(listOf(requiredDate))
             }.flatMapLatest { schedule ->
                 if (schedule == null) return@flatMapLatest flowOf(null)
 
@@ -128,66 +117,5 @@ internal interface ScheduleInteractor {
             }
         }
 
-        private suspend fun fetchRepeatTemplates(): List<Template> {
-            return templatesRepository.fetchAllTemplates().first().filter { template -> template.repeatEnabled }
-        }
-
-        private suspend fun createMissingRecurringSchedules(
-            targetDates: List<Date>,
-            templates: List<Template>,
-        ) {
-            if (templates.isEmpty()) return
-
-            val currentDate = dateManager.fetchBeginningCurrentDay()
-            val plannedDates = targetDates
-                .asSequence()
-                .map { date -> date.startThisDay() }
-                .filter { date -> date >= currentDate }
-                .filter { date ->
-                    templates.any { template ->
-                        template.repeatTimes.any { repeatTime -> repeatTime.checkDateIsRepeat(date) }
-                    }
-                }
-                .distinctBy { date -> date.time }
-                .sortedBy { date -> date.time }
-                .toList()
-            if (plannedDates.isEmpty()) return
-
-            val plannedTimeRange = TimeRange(
-                from = plannedDates.first().shiftDay(-1),
-                to = plannedDates.last().shiftDay(1),
-            )
-            val schedules = scheduleRepository.fetchSchedulesByRange(plannedTimeRange).first()
-            val existingScheduleDates = schedules.map { schedule -> schedule.date.startThisDay().time }.toSet()
-            val missingDates = plannedDates.filter { date -> date.time !in existingScheduleDates }
-            if (missingDates.isEmpty()) return
-
-            val timeRanges = schedules.fetchAllTimeTasks()
-                .distinctBy { timeTask -> timeTask.key }
-                .map { timeTask -> timeTask.timeRange }.toMutableList()
-            val generatedTasks = mutableListOf<TimeTask>()
-
-            missingDates.forEach { date ->
-                templates
-                    .filter { template ->
-                        template.repeatTimes.any { repeatTime -> repeatTime.checkDateIsRepeat(date) }
-                    }
-                    .map { template -> template.convertToTimeTask(date = date, createdAt = date) }
-                    .sortedBy { timeTask -> timeTask.timeRange.from }
-                    .forEach { timeTask ->
-                        if (!overlayManager.isOverlay(timeTask.timeRange, timeRanges).isOverlay) {
-                            generatedTasks.add(timeTask)
-                            timeRanges.add(timeTask.timeRange)
-                        }
-                    }
-            }
-
-            scheduleRepository.addOrUpdateSchedules(
-                schedules = missingDates.map { date -> BaseDailySchedule(date = date) },
-            )
-            if (generatedTasks.isNotEmpty()) {
-                timeTaskRepository.addOrUpdateTimeTasks(generatedTasks)
-            }
-        }
     }
 }
