@@ -22,18 +22,24 @@
     <string name="widget_week_description">Workload for the next seven days</string>
     <string name="widget_summary_name">Daily summary</string>
     <string name="widget_summary_description">Completed, skipped and remaining tasks</string>
+    <string name="widget_goals_name">Goals</string>
+    <string name="widget_goals_description">Goal progress and deadlines</string>
     <string name="widget_refresh_content_description">Refresh widgets</string>
     <string name="widget_add_task_content_description">Add task</string>
+    <string name="widget_add_goal_content_description">Add goal</string>
     <string name="widget_open_overview_content_description">Open overview</string>
     <string name="widget_task_completed_content_description">Task completed</string>
     <string name="widget_task_not_completed_content_description">Task not completed</string>
     <string name="widget_private_task">Task</string>
+    <string name="widget_private_goal">Goal</string>
     <string name="widget_no_data">No data</string>
     <string name="widget_no_deadlines">No deadline tasks</string>
     <string name="widget_no_schedule">No tasks planned</string>
+    <string name="widget_no_goals">No active goals</string>
     <string name="widget_deadlines_title">Deadlines</string>
     <string name="widget_week_title">Next 7 days</string>
     <string name="widget_summary_title">Today</string>
+    <string name="widget_goals_title">Goals</string>
     <string name="widget_overdue">Overdue</string>
     <string name="widget_overdue_short">Late</string>
     <string name="widget_today">Today</string>
@@ -45,6 +51,10 @@
     <plurals name="widget_tasks_count">
         <item quantity="one">%1$d task</item>
         <item quantity="other">%1$d tasks</item>
+    </plurals>
+    <plurals name="widget_goal_tasks_value">
+        <item quantity="one">%1$d / %2$d task</item>
+        <item quantity="other">%1$d / %2$d tasks</item>
     </plurals>
     <string name="widget_completed">Completed</string>
     <string name="widget_skipped">Skipped</string>

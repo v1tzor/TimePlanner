@@ -25,6 +25,9 @@ import ru.aleshin.core.utils.functional.Constants.App.DEEP_LINK_HOST
 import ru.aleshin.core.utils.functional.Constants.App.DEEP_LINK_SCHEME
 import ru.aleshin.core.utils.functional.Constants.App.EDITOR_DEEP_LINK_PATH
 import ru.aleshin.core.utils.functional.Constants.App.FROM_QUERY
+import ru.aleshin.core.utils.functional.Constants.App.GOAL_DETAILS_DEEP_LINK_PATH
+import ru.aleshin.core.utils.functional.Constants.App.GOAL_EDITOR_DEEP_LINK_PATH
+import ru.aleshin.core.utils.functional.Constants.App.GOAL_ID_QUERY
 import ru.aleshin.core.utils.functional.Constants.App.HOME_DEEP_LINK_PATH
 import ru.aleshin.core.utils.functional.Constants.App.OVERVIEW_DEEP_LINK_PATH
 import ru.aleshin.core.utils.functional.Constants.App.TIME_TASK_ID_QUERY
@@ -49,6 +52,12 @@ sealed interface DeepLinkTarget {
 
     @Serializable
     data class Home(val date: Long? = null) : DeepLinkTarget
+
+    @Serializable
+    data class GoalEditor(val goalId: Long? = null) : DeepLinkTarget
+
+    @Serializable
+    data class GoalDetails(val goalId: Long) : DeepLinkTarget
 
     @Serializable
     data object Overview : DeepLinkTarget
@@ -80,6 +89,8 @@ sealed interface DeepLinkTarget {
                         !(target.timeTaskId != null && target.undefinedTaskId != null)
                 }
                 HOME_DEEP_LINK_PATH -> Home(date = uri.fetchLong(DATE_QUERY))
+                GOAL_EDITOR_DEEP_LINK_PATH -> GoalEditor(goalId = uri.fetchLong(GOAL_ID_QUERY))
+                GOAL_DETAILS_DEEP_LINK_PATH -> uri.fetchLong(GOAL_ID_QUERY)?.let(::GoalDetails)
                 OVERVIEW_DEEP_LINK_PATH -> Overview
                 ANALYTICS_DEEP_LINK_PATH -> Analytics
                 else -> null
@@ -100,6 +111,7 @@ sealed interface DeepLinkTarget {
         private val LONG_PARAMETERS = listOf(
             TIME_TASK_ID_QUERY,
             UNDEFINED_TASK_ID_QUERY,
+            GOAL_ID_QUERY,
             DATE_QUERY,
             FROM_QUERY,
             TO_QUERY,

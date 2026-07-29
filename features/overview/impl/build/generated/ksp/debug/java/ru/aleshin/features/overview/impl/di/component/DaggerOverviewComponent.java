@@ -5,9 +5,12 @@ import dagger.internal.DoubleCheck;
 import dagger.internal.Preconditions;
 import dagger.internal.Provider;
 import javax.annotation.processing.Generated;
+import ru.aleshin.core.domain.common.GoalProgressManager;
 import ru.aleshin.core.domain.common.RecurringScheduleManager;
 import ru.aleshin.core.domain.common.ScheduleStatusChecker;
 import ru.aleshin.core.domain.common.TimeTaskStatusChecker;
+import ru.aleshin.core.domain.repository.GoalHistoryRepository;
+import ru.aleshin.core.domain.repository.GoalRepository;
 import ru.aleshin.core.domain.repository.MainCategoryRepository;
 import ru.aleshin.core.domain.repository.ScheduleRepository;
 import ru.aleshin.core.domain.repository.TimeTaskRepository;
@@ -19,6 +22,10 @@ import ru.aleshin.features.overview.impl.di.OverviewFeatureDependencies;
 import ru.aleshin.features.overview.impl.domain.common.OverviewEitherWrapper;
 import ru.aleshin.features.overview.impl.domain.common.OverviewEitherWrapper_Base_Factory;
 import ru.aleshin.features.overview.impl.domain.common.OverviewErrorHandler_Base_Factory;
+import ru.aleshin.features.overview.impl.domain.interactors.GoalsHistoryInteractor;
+import ru.aleshin.features.overview.impl.domain.interactors.GoalsHistoryInteractor_Base_Factory;
+import ru.aleshin.features.overview.impl.domain.interactors.GoalsInteractor;
+import ru.aleshin.features.overview.impl.domain.interactors.GoalsInteractor_Base_Factory;
 import ru.aleshin.features.overview.impl.domain.interactors.MainCategoriesInteractor;
 import ru.aleshin.features.overview.impl.domain.interactors.MainCategoriesInteractor_Base_Factory;
 import ru.aleshin.features.overview.impl.domain.interactors.ScheduleInteractor;
@@ -29,6 +36,14 @@ import ru.aleshin.features.overview.impl.domain.interactors.UndefinedTasksIntera
 import ru.aleshin.features.overview.impl.domain.interactors.UndefinedTasksInteractor_Base_Factory;
 import ru.aleshin.features.overview.impl.navigation.DefaultOverviewContentProviderFactory;
 import ru.aleshin.features.overview.impl.navigation.DefaultOverviewContentProviderFactory_Factory;
+import ru.aleshin.features.overview.impl.presentation.ui.goal.details.store.GoalDetailsComposeStore;
+import ru.aleshin.features.overview.impl.presentation.ui.goal.details.store.GoalDetailsComposeStore_Factory_Factory;
+import ru.aleshin.features.overview.impl.presentation.ui.goal.details.store.GoalDetailsWorkProcessor;
+import ru.aleshin.features.overview.impl.presentation.ui.goal.details.store.GoalDetailsWorkProcessor_Base_Factory;
+import ru.aleshin.features.overview.impl.presentation.ui.goal.history.store.GoalsHistoryComposeStore;
+import ru.aleshin.features.overview.impl.presentation.ui.goal.history.store.GoalsHistoryComposeStore_Factory_Factory;
+import ru.aleshin.features.overview.impl.presentation.ui.goal.history.store.GoalsHistoryWorkProcessor;
+import ru.aleshin.features.overview.impl.presentation.ui.goal.history.store.GoalsHistoryWorkProcessor_Base_Factory;
 import ru.aleshin.features.overview.impl.presentation.ui.overview.store.OverviewComposeStore;
 import ru.aleshin.features.overview.impl.presentation.ui.overview.store.OverviewComposeStore_Factory_Factory;
 import ru.aleshin.features.overview.impl.presentation.ui.overview.store.OverviewWorkProcessor;
@@ -91,23 +106,45 @@ public final class DaggerOverviewComponent {
 
     Provider<ScheduleInteractor.Base> baseProvider2;
 
+    Provider<GoalRepository> getGoalRepositoryProvider;
+
+    Provider<GoalProgressManager> getGoalProgressManagerProvider;
+
+    Provider<GoalsInteractor.Base> baseProvider3;
+
+    Provider<GoalHistoryRepository> getGoalHistoryRepositoryProvider;
+
+    Provider<GoalsHistoryInteractor.Base> baseProvider4;
+
     Provider<MainCategoryRepository> getMainCategoryRepositoryProvider;
 
-    Provider<MainCategoriesInteractor.Base> baseProvider3;
+    Provider<MainCategoriesInteractor.Base> baseProvider5;
 
     Provider<UndefinedTaskRepository> getUndefinedTaskRepositoryProvider;
 
-    Provider<UndefinedTasksInteractor.Base> baseProvider4;
+    Provider<UndefinedTasksInteractor.Base> baseProvider6;
 
-    Provider<ShareTextInteractor.Base> baseProvider5;
+    Provider<ShareTextInteractor.Base> baseProvider7;
 
-    Provider<OverviewWorkProcessor.Base> baseProvider6;
+    Provider<OverviewWorkProcessor.Base> baseProvider8;
 
     Provider<OverviewWorkProcessor> bindOverviewProcessorProvider;
 
     Provider<CoroutineManager> getCoroutineManagerProvider;
 
     Provider<OverviewComposeStore.Factory> factoryProvider;
+
+    Provider<GoalDetailsWorkProcessor.Base> baseProvider9;
+
+    Provider<GoalDetailsWorkProcessor> bindGoalDetailsProcessorProvider;
+
+    Provider<GoalDetailsComposeStore.Factory> factoryProvider2;
+
+    Provider<GoalsHistoryWorkProcessor.Base> baseProvider10;
+
+    Provider<GoalsHistoryWorkProcessor> bindGoalsHistoryProcessorProvider;
+
+    Provider<GoalsHistoryComposeStore.Factory> factoryProvider3;
 
     Provider<DefaultOverviewContentProviderFactory> defaultOverviewContentProviderFactoryProvider;
 
@@ -116,6 +153,7 @@ public final class DaggerOverviewComponent {
     OverviewComponentImpl(OverviewFeatureDependencies overviewFeatureDependenciesParam) {
 
       initialize(overviewFeatureDependenciesParam);
+      initialize2(overviewFeatureDependenciesParam);
 
     }
 
@@ -129,16 +167,31 @@ public final class DaggerOverviewComponent {
       this.getDateMangerProvider = new GetDateMangerProvider(overviewFeatureDependenciesParam);
       this.baseProvider = OverviewEitherWrapper_Base_Factory.create(((Provider) (OverviewErrorHandler_Base_Factory.create())));
       this.baseProvider2 = ScheduleInteractor_Base_Factory.create(getSchedulesRepositoryProvider, getTimeTaskRepositoryProvider, getRecurringScheduleManagerProvider, getScheduleStatusCheckerProvider, getTaskStatusManagerProvider, getDateMangerProvider, ((Provider) (baseProvider)));
+      this.getGoalRepositoryProvider = new GetGoalRepositoryProvider(overviewFeatureDependenciesParam);
+      this.getGoalProgressManagerProvider = new GetGoalProgressManagerProvider(overviewFeatureDependenciesParam);
+      this.baseProvider3 = GoalsInteractor_Base_Factory.create(getGoalRepositoryProvider, getTimeTaskRepositoryProvider, getGoalProgressManagerProvider, getDateMangerProvider, ((Provider) (baseProvider)));
+      this.getGoalHistoryRepositoryProvider = new GetGoalHistoryRepositoryProvider(overviewFeatureDependenciesParam);
+      this.baseProvider4 = GoalsHistoryInteractor_Base_Factory.create(getGoalRepositoryProvider, getGoalHistoryRepositoryProvider, getTimeTaskRepositoryProvider, getGoalProgressManagerProvider, getDateMangerProvider, ((Provider) (baseProvider)));
       this.getMainCategoryRepositoryProvider = new GetMainCategoryRepositoryProvider(overviewFeatureDependenciesParam);
-      this.baseProvider3 = MainCategoriesInteractor_Base_Factory.create(getMainCategoryRepositoryProvider, ((Provider) (baseProvider)));
+      this.baseProvider5 = MainCategoriesInteractor_Base_Factory.create(getMainCategoryRepositoryProvider, ((Provider) (baseProvider)));
       this.getUndefinedTaskRepositoryProvider = new GetUndefinedTaskRepositoryProvider(overviewFeatureDependenciesParam);
-      this.baseProvider4 = UndefinedTasksInteractor_Base_Factory.create(getUndefinedTaskRepositoryProvider, ((Provider) (baseProvider)));
-      this.baseProvider5 = ShareTextInteractor_Base_Factory.create(getMainCategoryRepositoryProvider, getDateMangerProvider, ((Provider) (baseProvider)));
-      this.baseProvider6 = OverviewWorkProcessor_Base_Factory.create(((Provider) (baseProvider2)), ((Provider) (baseProvider3)), ((Provider) (baseProvider4)), ((Provider) (baseProvider5)), getDateMangerProvider);
-      this.bindOverviewProcessorProvider = DoubleCheck.provider((Provider) (baseProvider6));
+      this.baseProvider6 = UndefinedTasksInteractor_Base_Factory.create(getUndefinedTaskRepositoryProvider, ((Provider) (baseProvider)));
+      this.baseProvider7 = ShareTextInteractor_Base_Factory.create(getMainCategoryRepositoryProvider, getDateMangerProvider, ((Provider) (baseProvider)));
+      this.baseProvider8 = OverviewWorkProcessor_Base_Factory.create(((Provider) (baseProvider2)), ((Provider) (baseProvider3)), ((Provider) (baseProvider4)), ((Provider) (baseProvider5)), ((Provider) (baseProvider6)), ((Provider) (baseProvider7)), getDateMangerProvider);
+      this.bindOverviewProcessorProvider = DoubleCheck.provider((Provider) (baseProvider8));
       this.getCoroutineManagerProvider = new GetCoroutineManagerProvider(overviewFeatureDependenciesParam);
       this.factoryProvider = OverviewComposeStore_Factory_Factory.create(bindOverviewProcessorProvider, getCoroutineManagerProvider);
-      this.defaultOverviewContentProviderFactoryProvider = DefaultOverviewContentProviderFactory_Factory.create(factoryProvider);
+      this.baseProvider9 = GoalDetailsWorkProcessor_Base_Factory.create(((Provider) (baseProvider3)));
+      this.bindGoalDetailsProcessorProvider = DoubleCheck.provider((Provider) (baseProvider9));
+      this.factoryProvider2 = GoalDetailsComposeStore_Factory_Factory.create(bindGoalDetailsProcessorProvider, getCoroutineManagerProvider);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void initialize2(final OverviewFeatureDependencies overviewFeatureDependenciesParam) {
+      this.baseProvider10 = GoalsHistoryWorkProcessor_Base_Factory.create(((Provider) (baseProvider4)));
+      this.bindGoalsHistoryProcessorProvider = DoubleCheck.provider((Provider) (baseProvider10));
+      this.factoryProvider3 = GoalsHistoryComposeStore_Factory_Factory.create(bindGoalsHistoryProcessorProvider, getCoroutineManagerProvider);
+      this.defaultOverviewContentProviderFactoryProvider = DefaultOverviewContentProviderFactory_Factory.create(factoryProvider, factoryProvider2, factoryProvider3);
       this.bindContentProviderFactoryProvider = DoubleCheck.provider((Provider) (defaultOverviewContentProviderFactoryProvider));
     }
 
@@ -222,6 +275,45 @@ public final class DaggerOverviewComponent {
       @Override
       public DateManager get() {
         return Preconditions.checkNotNullFromComponent(overviewFeatureDependencies.getDateManger());
+      }
+    }
+
+    private static final class GetGoalRepositoryProvider implements Provider<GoalRepository> {
+      private final OverviewFeatureDependencies overviewFeatureDependencies;
+
+      GetGoalRepositoryProvider(OverviewFeatureDependencies overviewFeatureDependencies) {
+        this.overviewFeatureDependencies = overviewFeatureDependencies;
+      }
+
+      @Override
+      public GoalRepository get() {
+        return Preconditions.checkNotNullFromComponent(overviewFeatureDependencies.getGoalRepository());
+      }
+    }
+
+    private static final class GetGoalProgressManagerProvider implements Provider<GoalProgressManager> {
+      private final OverviewFeatureDependencies overviewFeatureDependencies;
+
+      GetGoalProgressManagerProvider(OverviewFeatureDependencies overviewFeatureDependencies) {
+        this.overviewFeatureDependencies = overviewFeatureDependencies;
+      }
+
+      @Override
+      public GoalProgressManager get() {
+        return Preconditions.checkNotNullFromComponent(overviewFeatureDependencies.getGoalProgressManager());
+      }
+    }
+
+    private static final class GetGoalHistoryRepositoryProvider implements Provider<GoalHistoryRepository> {
+      private final OverviewFeatureDependencies overviewFeatureDependencies;
+
+      GetGoalHistoryRepositoryProvider(OverviewFeatureDependencies overviewFeatureDependencies) {
+        this.overviewFeatureDependencies = overviewFeatureDependencies;
+      }
+
+      @Override
+      public GoalHistoryRepository get() {
+        return Preconditions.checkNotNullFromComponent(overviewFeatureDependencies.getGoalHistoryRepository());
       }
     }
 

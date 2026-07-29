@@ -20,6 +20,7 @@ package ru.aleshin.timeplanner.presentation.ui.main.contract
  */
 sealed interface MainTabTarget {
     data class Home(val date: Long? = null) : MainTabTarget
+    data class GoalDetails(val goalId: Long) : MainTabTarget
     data object Overview : MainTabTarget
     data object Analytics : MainTabTarget
 }

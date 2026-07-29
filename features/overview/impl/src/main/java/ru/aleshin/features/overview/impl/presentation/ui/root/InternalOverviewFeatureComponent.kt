@@ -20,11 +20,19 @@ import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.router.stack.pop
+import com.arkivanov.decompose.router.stack.pushToFront
 import com.arkivanov.decompose.value.Value
 import ru.aleshin.core.utils.architecture.component.FeatureComponent
 import ru.aleshin.core.utils.architecture.component.OutputConsumer
 import ru.aleshin.features.overview.api.OverviewConfig
 import ru.aleshin.features.overview.api.OverviewOutput
+import ru.aleshin.features.overview.impl.presentation.ui.goal.details.contract.GoalDetailsInput
+import ru.aleshin.features.overview.impl.presentation.ui.goal.details.contract.GoalDetailsOutput
+import ru.aleshin.features.overview.impl.presentation.ui.goal.details.store.GoalDetailsComponent
+import ru.aleshin.features.overview.impl.presentation.ui.goal.details.store.GoalDetailsComposeStore
+import ru.aleshin.features.overview.impl.presentation.ui.goal.history.contract.GoalsHistoryOutput
+import ru.aleshin.features.overview.impl.presentation.ui.goal.history.store.GoalsHistoryComponent
+import ru.aleshin.features.overview.impl.presentation.ui.goal.history.store.GoalsHistoryComposeStore
 import ru.aleshin.features.overview.impl.presentation.ui.overview.contract.OverviewInput
 import ru.aleshin.features.overview.impl.presentation.ui.overview.store.OverviewComponent
 import ru.aleshin.features.overview.impl.presentation.ui.overview.store.OverviewComposeStore
@@ -43,6 +51,8 @@ internal abstract class InternalOverviewFeatureComponent(
 
     sealed class Child {
         data class OverviewChild(val component: OverviewComponent) : Child()
+        data class GoalDetailsChild(val component: GoalDetailsComponent) : Child()
+        data class GoalsHistoryChild(val component: GoalsHistoryComponent) : Child()
     }
 
     class Default(
@@ -50,6 +60,8 @@ internal abstract class InternalOverviewFeatureComponent(
         componentContext: ComponentContext,
         private val outputConsumer: OutputConsumer<OverviewOutput>,
         private val overviewStoreFactory: OverviewComposeStore.Factory,
+        private val goalDetailsStoreFactory: GoalDetailsComposeStore.Factory,
+        private val goalsHistoryStoreFactory: GoalsHistoryComposeStore.Factory,
     ) : InternalOverviewFeatureComponent(
         componentContext = componentContext
     ) {
@@ -90,6 +102,21 @@ internal abstract class InternalOverviewFeatureComponent(
                         outputConsumer = overviewOutputConsumer(),
                     )
                 )
+                is OverviewConfig.GoalDetails -> Child.GoalDetailsChild(
+                    component = GoalDetailsComponent.Default(
+                        storeFactory = goalDetailsStoreFactory,
+                        inputData = GoalDetailsInput(config.goalId),
+                        componentContext = componentContext,
+                        outputConsumer = OutputConsumer(::handleGoalDetailsOutput),
+                    )
+                )
+                is OverviewConfig.GoalsHistory -> Child.GoalsHistoryChild(
+                    component = GoalsHistoryComponent.Default(
+                        storeFactory = goalsHistoryStoreFactory,
+                        componentContext = componentContext,
+                        outputConsumer = OutputConsumer(::handleGoalsHistoryOutput),
+                    )
+                )
             }
         }
 
@@ -107,6 +134,35 @@ internal abstract class InternalOverviewFeatureComponent(
                     )
                     outputConsumer.consume(data)
                 }
+                is OverviewScreenOutput.NavigateToGoalDetails -> {
+                    stackNavigation.pushToFront(OverviewConfig.GoalDetails(output.goalId))
+                }
+                is OverviewScreenOutput.NavigateToGoalsHistory -> {
+                    stackNavigation.pushToFront(OverviewConfig.GoalsHistory)
+                }
+                is OverviewScreenOutput.NavigateToGoalEditor -> {
+                    outputConsumer.consume(OverviewOutput.NavigateToGoalEditor(output.goalId))
+                }
+            }
+        }
+
+        private fun handleGoalDetailsOutput(output: GoalDetailsOutput) {
+            when (output) {
+                is GoalDetailsOutput.NavigateBack -> navigateToBack()
+                is GoalDetailsOutput.NavigateToGoalEditor -> {
+                    outputConsumer.consume(OverviewOutput.NavigateToGoalEditor(output.goalId))
+                }
+                is GoalDetailsOutput.NavigateToTaskEditor -> {
+                    outputConsumer.consume(
+                        OverviewOutput.NavigateToTaskEditor(timeTaskId = output.taskId)
+                    )
+                }
+            }
+        }
+
+        private fun handleGoalsHistoryOutput(output: GoalsHistoryOutput) {
+            when (output) {
+                is GoalsHistoryOutput.NavigateBack -> navigateToBack()
             }
         }
     }

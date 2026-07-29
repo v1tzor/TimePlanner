@@ -15,7 +15,9 @@
  */
 package ru.aleshin.core.utils.wrappers
 
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flow
 import ru.aleshin.core.utils.functional.DomainFailures
 import ru.aleshin.core.utils.functional.Either
 import ru.aleshin.core.utils.handlers.ErrorHandler
@@ -27,6 +29,8 @@ interface EitherWrapper<F : DomainFailures> {
 
     suspend fun <O> wrap(block: suspend () -> O): Either<F, O>
 
+    suspend fun wrapUnit(block: suspend () -> Unit): Either<F, Unit>
+
     abstract class Abstract<F : DomainFailures>(
         private val errorHandler: ErrorHandler<F>,
     ) : EitherWrapper<F> {
@@ -35,6 +39,10 @@ interface EitherWrapper<F : DomainFailures> {
             Either.Right(data = block.invoke())
         } catch (error: Throwable) {
             Either.Left(data = errorHandler.handle(error))
+        }
+
+        override suspend fun wrapUnit(block: suspend () -> Unit): Either<F, Unit> {
+            return wrap(block)
         }
     }
 }

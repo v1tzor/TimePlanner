@@ -22,18 +22,24 @@
     <string name="widget_week_description">Charge des sept prochains jours</string>
     <string name="widget_summary_name">Bilan quotidien</string>
     <string name="widget_summary_description">Tâches terminées, ignorées et restantes</string>
+    <string name="widget_goals_name">Objectifs</string>
+    <string name="widget_goals_description">Progression et échéances des objectifs</string>
     <string name="widget_refresh_content_description">Actualiser les widgets</string>
     <string name="widget_add_task_content_description">Ajouter une tâche</string>
+    <string name="widget_add_goal_content_description">Ajouter un objectif</string>
     <string name="widget_open_overview_content_description">Ouvrir l’aperçu</string>
     <string name="widget_task_completed_content_description">Tâche terminée</string>
     <string name="widget_task_not_completed_content_description">Tâche non terminée</string>
     <string name="widget_private_task">Tâche</string>
+    <string name="widget_private_goal">Objectif</string>
     <string name="widget_no_data">Aucune donnée</string>
     <string name="widget_no_deadlines">Aucune tâche avec échéance</string>
     <string name="widget_no_schedule">Aucune tâche planifiée</string>
+    <string name="widget_no_goals">Aucun objectif actif</string>
     <string name="widget_deadlines_title">Échéances</string>
     <string name="widget_week_title">7 prochains jours</string>
     <string name="widget_summary_title">Aujourd’hui</string>
+    <string name="widget_goals_title">Objectifs</string>
     <string name="widget_overdue">En retard</string>
     <string name="widget_overdue_short">Retard</string>
     <string name="widget_today">Aujourd’hui</string>
@@ -45,6 +51,10 @@
     <plurals name="widget_tasks_count">
         <item quantity="one">%1$d tâche</item>
         <item quantity="other">%1$d tâches</item>
+    </plurals>
+    <plurals name="widget_goal_tasks_value">
+        <item quantity="one">%1$d / %2$d tâche</item>
+        <item quantity="other">%1$d / %2$d tâches</item>
     </plurals>
     <string name="widget_completed">Terminées</string>
     <string name="widget_skipped">Ignorées</string>

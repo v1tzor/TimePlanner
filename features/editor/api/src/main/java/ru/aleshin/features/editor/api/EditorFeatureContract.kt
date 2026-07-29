@@ -31,6 +31,9 @@ public sealed interface EditorConfig {
     public data class Categories(val mainCategoryId: Long?) : EditorConfig
 
     @Serializable
+    public data class Goal(val goalId: Long? = null) : EditorConfig
+
+    @Serializable
     public data class Task(
         val timeTaskId: Long? = null,
         val timeRange: TimeRange? = null,

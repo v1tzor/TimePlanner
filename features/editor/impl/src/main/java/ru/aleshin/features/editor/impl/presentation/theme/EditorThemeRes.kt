@@ -17,14 +17,19 @@ package ru.aleshin.features.editor.impl.presentation.theme
 
 import androidx.compose.runtime.Composable
 import ru.aleshin.features.editor.impl.presentation.theme.tokens.EditorIcons
+import ru.aleshin.features.editor.impl.presentation.theme.tokens.EditorGoalStrings
 import ru.aleshin.features.editor.impl.presentation.theme.tokens.EditorStrings
 import ru.aleshin.features.editor.impl.presentation.theme.tokens.LocalEditorIcons
+import ru.aleshin.features.editor.impl.presentation.theme.tokens.LocalEditorGoalStrings
 import ru.aleshin.features.editor.impl.presentation.theme.tokens.LocalEditorStrings
 
 /**
  * @author Stanislav Aleshin on 18.02.2023.
  */
 internal object EditorThemeRes {
+
+    val goalStrings: EditorGoalStrings
+        @Composable get() = LocalEditorGoalStrings.current
 
     val strings: EditorStrings
         @Composable get() = LocalEditorStrings.current

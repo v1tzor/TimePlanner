@@ -77,6 +77,92 @@ class SchedulesDataBaseMigrationTest {
         database.close()
     }
 
+    @Test
+    fun migrate16To17CreatesGoalsAndPreservesHistoryAfterGoalDeletion() {
+        helper.createDatabase(GOALS_TEST_DB, 16).close()
+
+        val database = helper.runMigrationsAndValidate(
+            GOALS_TEST_DB,
+            17,
+            true,
+            SchedulesDataBase.MIGRATE_16_17,
+        )
+        database.execSQL("PRAGMA foreign_keys=ON")
+        database.execSQL(
+            "INSERT INTO `goals` (" +
+                "`id`, `title`, `scope_type`, `main_category_id`, `sub_category_id`, " +
+                "`metric`, `direction`, `target_value`, `period`, `start_date`, `created_at`) " +
+                "VALUES (1, 'Study', 'ALL', NULL, NULL, 'DURATION', 'AT_LEAST', " +
+                "3600000, 'WEEK', 1000, 1000)",
+        )
+        database.execSQL(
+            "INSERT INTO `goalPeriods` (" +
+                "`id`, `goal_id`, `goal_title`, `metric`, `direction`, `target_value`, " +
+                "`actual_value`, `period`, `period_start`, `period_end`, `is_achieved`, " +
+                "`created_at`) VALUES (" +
+                "1, 1, 'Study', 'DURATION', 'AT_LEAST', 3600000, 3600000, " +
+                "'WEEK', 1000, 2000, 1, 2000)",
+        )
+        database.execSQL("DELETE FROM `goals` WHERE `id` = 1")
+
+        database.query(
+            "SELECT `goal_id`, `goal_title`, `actual_value` FROM `goalPeriods` WHERE `id` = 1",
+        ).use { cursor ->
+            cursor.moveToFirst()
+            assertEquals(1L, cursor.getLong(0))
+            assertEquals("Study", cursor.getString(1))
+            assertEquals(3_600_000L, cursor.getLong(2))
+        }
+        database.close()
+    }
+
+    @Test
+    fun migrate17To18ConvertsPeriodToDeadlineAndPreservesHistory() {
+        helper.createDatabase(GOAL_DEADLINE_TEST_DB, 17).apply {
+            execSQL(
+                "INSERT INTO `goals` (" +
+                    "`id`, `title`, `scope_type`, `main_category_id`, `sub_category_id`, " +
+                    "`metric`, `direction`, `target_value`, `period`, `start_date`, " +
+                    "`created_at`) VALUES (" +
+                    "1, 'Study', 'ALL', NULL, NULL, 'DURATION', 'AT_LEAST', " +
+                    "3600000, 'WEEK', 1000, 2000)",
+            )
+            execSQL(
+                "INSERT INTO `goalPeriods` (" +
+                    "`id`, `goal_id`, `goal_title`, `metric`, `direction`, `target_value`, " +
+                    "`actual_value`, `period`, `period_start`, `period_end`, `is_achieved`, " +
+                    "`created_at`) VALUES (" +
+                    "1, 1, 'Study', 'DURATION', 'AT_LEAST', 3600000, 3600000, " +
+                    "'WEEK', 1000, 2000, 1, 2000)",
+            )
+            close()
+        }
+
+        val database = helper.runMigrationsAndValidate(
+            GOAL_DEADLINE_TEST_DB,
+            18,
+            true,
+            SchedulesDataBase.MIGRATE_17_18,
+        )
+
+        database.query(
+            "SELECT `created_at`, `deadline` FROM `goals` WHERE `id` = 1",
+        ).use { cursor ->
+            cursor.moveToFirst()
+            assertEquals(2_000L, cursor.getLong(0))
+            assertEquals(518_401_000L, cursor.getLong(1))
+        }
+        database.query(
+            "SELECT `goal_id`, `goal_title`, `actual_value` FROM `goalHistory` WHERE `id` = 1",
+        ).use { cursor ->
+            cursor.moveToFirst()
+            assertEquals(1L, cursor.getLong(0))
+            assertEquals("Study", cursor.getString(1))
+            assertEquals(3_600_000L, cursor.getLong(2))
+        }
+        database.close()
+    }
+
     private fun SupportSQLiteDatabase.insertBaseScheduleData(
         scheduleDate: Long,
         startTime: Long,
@@ -138,6 +224,8 @@ class SchedulesDataBaseMigrationTest {
 
     companion object {
         private const val TEST_DB = "schedules-migration-test"
+        private const val GOALS_TEST_DB = "goals-migration-test"
+        private const val GOAL_DEADLINE_TEST_DB = "goal-deadline-migration-test"
         private const val HOURS_9 = 9L * 60L * 60L * 1000L
         private const val HOURS_10 = 10L * 60L * 60L * 1000L
     }

@@ -17,6 +17,8 @@ package ru.aleshin.features.settings.impl.presentation.models
 
 import kotlinx.serialization.Serializable
 import ru.aleshin.core.domain.entities.categories.MainCategoryDetails
+import ru.aleshin.core.domain.entities.goals.Goal
+import ru.aleshin.core.domain.entities.goals.GoalHistory
 import ru.aleshin.core.domain.entities.schedules.Schedule
 import ru.aleshin.core.domain.entities.tasks.UndefinedTask
 import ru.aleshin.core.domain.entities.template.Template
@@ -30,4 +32,6 @@ internal data class BackupModel(
     val templates: List<Template>,
     val categories: List<MainCategoryDetails>,
     val undefinedTasks: List<UndefinedTask>,
+    val goals: List<Goal> = emptyList(),
+    val goalsHistory: List<GoalHistory> = emptyList(),
 )

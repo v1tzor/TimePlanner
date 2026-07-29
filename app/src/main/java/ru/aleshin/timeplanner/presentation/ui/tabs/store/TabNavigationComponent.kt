@@ -218,6 +218,10 @@ abstract class TabNavigationComponent(
                     )
                     outputConsumer.consume(TabNavigationOutput.NavigateToEditor(config))
                 }
+                is OverviewOutput.NavigateToGoalEditor -> {
+                    val config = EditorConfig.Goal(goalId = output.goalId)
+                    outputConsumer.consume(TabNavigationOutput.NavigateToEditor(config))
+                }
             }
         }
 

@@ -33,10 +33,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -221,21 +221,12 @@ private fun UndefinedTasksHeader(
             }
         }
         Spacer(modifier = Modifier.weight(1f))
-        Surface(
-            modifier = Modifier
-                .width(56.dp)
-                .height(40.dp),
-            onClick = onAddTask,
-            shape = CircleShape,
-            color = MaterialTheme.colorScheme.primaryContainer,
-        ) {
-            Box(contentAlignment = Alignment.Center) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = OverviewThemeRes.strings.addTaskTitle,
-                    tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                )
-            }
+        FilledIconButton(onClick = onAddTask) {
+            Icon(
+                modifier = Modifier.size(24.dp),
+                imageVector = Icons.Default.Add,
+                contentDescription = OverviewThemeRes.strings.addTaskTitle
+            )
         }
     }
 }

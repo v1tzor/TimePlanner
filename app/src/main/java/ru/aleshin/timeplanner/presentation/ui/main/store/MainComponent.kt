@@ -203,6 +203,11 @@ abstract class MainComponent(
                                 HomeConfig.Home(target.date?.let(::Date)),
                             )
                         }
+                        is MainTabTarget.GoalDetails -> {
+                            TabNavigationConfig.Overview(
+                                OverviewConfig.GoalDetails(target.goalId),
+                            )
+                        }
                         is MainTabTarget.Overview -> {
                             TabNavigationConfig.Overview(OverviewConfig.Overview())
                         }

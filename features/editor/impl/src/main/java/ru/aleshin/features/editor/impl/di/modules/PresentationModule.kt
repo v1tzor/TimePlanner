@@ -25,6 +25,10 @@ import ru.aleshin.features.editor.impl.navigation.DefaultEditorContentProviderFa
 import ru.aleshin.features.editor.impl.presentation.ui.categories.contract.CategoriesState
 import ru.aleshin.features.editor.impl.presentation.ui.categories.store.CategoriesComposeStore
 import ru.aleshin.features.editor.impl.presentation.ui.categories.store.CategoriesWorkProcessor
+import ru.aleshin.features.editor.impl.presentation.ui.goal.contract.GoalState
+import ru.aleshin.features.editor.impl.presentation.ui.goal.store.GoalComposeStore
+import ru.aleshin.features.editor.impl.presentation.ui.goal.store.GoalWorkProcessor
+import ru.aleshin.features.editor.impl.presentation.ui.goal.validators.GoalValidator
 import ru.aleshin.features.editor.impl.presentation.ui.task.contract.TaskState
 import ru.aleshin.features.editor.impl.presentation.ui.task.store.EditorWorkProcessor
 import ru.aleshin.features.editor.impl.presentation.ui.task.store.TaskComposeStore
@@ -37,6 +41,20 @@ import ru.aleshin.features.editor.impl.presentation.ui.task.validators.TimeRange
  */
 @Module
 internal interface PresentationModule {
+
+    @Binds
+    @FeatureScope
+    fun bindGoalStoreFactory(
+        factory: GoalComposeStore.Factory,
+    ): BaseComposeStore.Factory<GoalComposeStore, GoalState>
+
+    @Binds
+    @FeatureScope
+    fun bindGoalWorkProcessor(processor: GoalWorkProcessor.Base): GoalWorkProcessor
+
+    @Binds
+    @FeatureScope
+    fun bindGoalValidator(validator: GoalValidator.Base): GoalValidator
 
     @Binds
     @FeatureScope

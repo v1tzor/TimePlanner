@@ -20,6 +20,8 @@ import dagger.Module
 import ru.aleshin.features.settings.impl.domain.common.SettingsEitherWrapper
 import ru.aleshin.features.settings.impl.domain.common.SettingsErrorHandler
 import ru.aleshin.features.settings.impl.domain.interactors.CategoriesInteractor
+import ru.aleshin.features.settings.impl.domain.interactors.GoalsHistoryInteractor
+import ru.aleshin.features.settings.impl.domain.interactors.GoalsInteractor
 import ru.aleshin.features.settings.impl.domain.interactors.ScheduleInteractor
 import ru.aleshin.features.settings.impl.domain.interactors.SettingsInteractor
 import ru.aleshin.features.settings.impl.domain.interactors.TemplatesInteractor
@@ -30,6 +32,14 @@ import ru.aleshin.features.settings.impl.domain.interactors.UndefinedTasksIntera
  */
 @Module
 internal interface DomainModule {
+
+    @Binds
+    fun bindGoalsInteractor(interactor: GoalsInteractor.Base): GoalsInteractor
+
+    @Binds
+    fun bindGoalsHistoryInteractor(
+        interactor: GoalsHistoryInteractor.Base,
+    ): GoalsHistoryInteractor
 
     @Binds
     fun bindSettingsInteractor(interactor: SettingsInteractor.Base): SettingsInteractor

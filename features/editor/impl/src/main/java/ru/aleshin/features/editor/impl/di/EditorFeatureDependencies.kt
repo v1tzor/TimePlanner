@@ -18,6 +18,7 @@ package ru.aleshin.features.editor.impl.di
 import ru.aleshin.core.data.datasources.schedules.ScheduleLocalDataSource
 import ru.aleshin.core.domain.common.ScheduleStatusChecker
 import ru.aleshin.core.domain.common.TimeOverlayManager
+import ru.aleshin.core.domain.repository.GoalRepository
 import ru.aleshin.core.domain.repository.MainCategoryRepository
 import ru.aleshin.core.domain.repository.ScheduleRepository
 import ru.aleshin.core.domain.repository.SubCategoryRepository
@@ -34,6 +35,7 @@ import ru.aleshin.core.utils.managers.DateManager
  * @author Stanislav Aleshin on 08.03.2023.
  */
 public interface EditorFeatureDependencies : BaseFeatureDependencies {
+    public val goalRepository: GoalRepository
     public val mainCategoryRepository: MainCategoryRepository
     public val timeTaskRepository: TimeTaskRepository
     public val scheduleRepository: ScheduleRepository

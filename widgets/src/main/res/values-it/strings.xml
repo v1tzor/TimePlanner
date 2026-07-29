@@ -22,18 +22,24 @@
     <string name="widget_week_description">Carico dei prossimi sette giorni</string>
     <string name="widget_summary_name">Riepilogo giornaliero</string>
     <string name="widget_summary_description">Attività completate, saltate e rimanenti</string>
+    <string name="widget_goals_name">Obiettivi</string>
+    <string name="widget_goals_description">Progressi e scadenze degli obiettivi</string>
     <string name="widget_refresh_content_description">Aggiorna widget</string>
     <string name="widget_add_task_content_description">Aggiungi attività</string>
+    <string name="widget_add_goal_content_description">Aggiungi obiettivo</string>
     <string name="widget_open_overview_content_description">Apri panoramica</string>
     <string name="widget_task_completed_content_description">Attività completata</string>
     <string name="widget_task_not_completed_content_description">Attività non completata</string>
     <string name="widget_private_task">Attività</string>
+    <string name="widget_private_goal">Obiettivo</string>
     <string name="widget_no_data">Nessun dato</string>
     <string name="widget_no_deadlines">Nessuna attività con scadenza</string>
     <string name="widget_no_schedule">Nessuna attività pianificata</string>
+    <string name="widget_no_goals">Nessun obiettivo attivo</string>
     <string name="widget_deadlines_title">Scadenze</string>
     <string name="widget_week_title">Prossimi 7 giorni</string>
     <string name="widget_summary_title">Oggi</string>
+    <string name="widget_goals_title">Obiettivi</string>
     <string name="widget_overdue">In ritardo</string>
     <string name="widget_overdue_short">Ritardo</string>
     <string name="widget_today">Oggi</string>
@@ -45,6 +51,10 @@
     <plurals name="widget_tasks_count">
         <item quantity="one">%1$d attività</item>
         <item quantity="other">%1$d attività</item>
+    </plurals>
+    <plurals name="widget_goal_tasks_value">
+        <item quantity="one">%1$d / %2$d attività</item>
+        <item quantity="other">%1$d / %2$d attività</item>
     </plurals>
     <string name="widget_completed">Completate</string>
     <string name="widget_skipped">Saltate</string>

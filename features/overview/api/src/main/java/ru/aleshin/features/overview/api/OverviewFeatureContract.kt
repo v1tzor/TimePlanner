@@ -21,6 +21,12 @@ public sealed class OverviewConfig {
         val sharedText: String? = null,
         val sharedKey: Long = 0L
     ) : OverviewConfig()
+
+    @Serializable
+    public data class GoalDetails(val goalId: Long) : OverviewConfig()
+
+    @Serializable
+    public data object GoalsHistory : OverviewConfig()
 }
 
 public sealed class OverviewOutput : BaseOutput {
@@ -33,4 +39,6 @@ public sealed class OverviewOutput : BaseOutput {
         val date: Date? = null,
         val undefinedTaskId: Long? = null,
     ) : OverviewOutput()
+
+    public data class NavigateToGoalEditor(val goalId: Long?) : OverviewOutput()
 }

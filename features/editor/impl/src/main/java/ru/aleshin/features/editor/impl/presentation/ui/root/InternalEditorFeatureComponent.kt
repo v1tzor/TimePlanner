@@ -30,6 +30,10 @@ import ru.aleshin.features.editor.impl.presentation.ui.categories.contract.Categ
 import ru.aleshin.features.editor.impl.presentation.ui.categories.contract.CategoriesOutput
 import ru.aleshin.features.editor.impl.presentation.ui.categories.store.CategoriesComponent
 import ru.aleshin.features.editor.impl.presentation.ui.categories.store.CategoriesComposeStore
+import ru.aleshin.features.editor.impl.presentation.ui.goal.contract.GoalInput
+import ru.aleshin.features.editor.impl.presentation.ui.goal.contract.GoalOutput
+import ru.aleshin.features.editor.impl.presentation.ui.goal.store.GoalComponent
+import ru.aleshin.features.editor.impl.presentation.ui.goal.store.GoalComposeStore
 import ru.aleshin.features.editor.impl.presentation.ui.task.contract.TaskInput
 import ru.aleshin.features.editor.impl.presentation.ui.task.contract.TaskOutput
 import ru.aleshin.features.editor.impl.presentation.ui.task.store.TaskComponent
@@ -49,6 +53,7 @@ internal abstract class InternalEditorFeatureComponent(
     sealed class Child {
         data class TaskChild(val component: TaskComponent) : Child()
         data class CategoriesChild(val component: CategoriesComponent) : Child()
+        data class GoalChild(val component: GoalComponent) : Child()
     }
 
     class Default(
@@ -57,6 +62,7 @@ internal abstract class InternalEditorFeatureComponent(
         private val outputConsumer: OutputConsumer<EditorOutput>,
         private val taskStoreFactory: TaskComposeStore.Factory,
         private val categoriesStoreFactory: CategoriesComposeStore.Factory,
+        private val goalStoreFactory: GoalComposeStore.Factory,
     ) : InternalEditorFeatureComponent(
         componentContext = componentContext
     ) {
@@ -108,6 +114,14 @@ internal abstract class InternalEditorFeatureComponent(
                         outputConsumer = categoriesOutputConsumer(),
                     )
                 )
+                is EditorConfig.Goal -> Child.GoalChild(
+                    component = GoalComponent.Default(
+                        storeFactory = goalStoreFactory,
+                        inputData = GoalInput(config.goalId),
+                        componentContext = componentContext,
+                        outputConsumer = OutputConsumer(::handleGoalOutput),
+                    )
+                )
             }
         }
 
@@ -126,6 +140,12 @@ internal abstract class InternalEditorFeatureComponent(
         private fun categoriesOutputConsumer() = OutputConsumer<CategoriesOutput> { output ->
             when (output) {
                 is CategoriesOutput.NavigateToBack -> navigateToBack()
+            }
+        }
+
+        private fun handleGoalOutput(output: GoalOutput) {
+            when (output) {
+                is GoalOutput.NavigateBack -> navigateToBack()
             }
         }
     }

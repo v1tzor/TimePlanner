@@ -1,0 +1,72 @@
+<!--
+  ~ Copyright 2026 Stanislav Aleshin
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="200dp"
+    android:height="150dp"
+    android:viewportWidth="320"
+    android:viewportHeight="240">
+    <path
+        android:fillColor="#FFF7FA"
+        android:pathData="M24,0H296A24,24 0,0 1,320 24V216A24,24 0,0 1,296 240H24A24,24 0,0 1,0 216V24A24,24 0,0 1,24 0Z" />
+    <path
+        android:fillColor="#FFD9E2"
+        android:pathData="M18,16H50A16,16 0,0 1,66 32A16,16 0,0 1,50 48H18A16,16 0,0 1,2 32A16,16 0,0 1,18 16Z" />
+    <path
+        android:fillColor="#A73B59"
+        android:pathData="M78,24H146V40H78Z" />
+    <path
+        android:fillColor="#FFF0F5"
+        android:pathData="M16,60H304A12,12 0,0 1,316 72V218A12,12 0,0 1,304 230H16A12,12 0,0 1,4 218V72A12,12 0,0 1,16 60Z" />
+    <path
+        android:fillColor="#FFD9E2"
+        android:pathData="M22,75H50A14,14 0,0 1,64 89A14,14 0,0 1,50 103H22A14,14 0,0 1,8 89A14,14 0,0 1,22 75Z" />
+    <path
+        android:fillColor="#4D4447"
+        android:pathData="M76,72H174V84H76ZM76,91H142V99H76Z" />
+    <path
+        android:fillColor="#A73B59"
+        android:pathData="M264,76H304V98H264Z" />
+    <path
+        android:fillColor="#E5E1E3"
+        android:pathData="M76,108H304V116H76Z" />
+    <path
+        android:fillColor="#A73B59"
+        android:pathData="M76,108H236V116H76Z" />
+    <path
+        android:fillColor="#FFD9E2"
+        android:pathData="M22,129H50A14,14 0,0 1,64 143A14,14 0,0 1,50 157H22A14,14 0,0 1,8 143A14,14 0,0 1,22 129Z" />
+    <path
+        android:fillColor="#4D4447"
+        android:pathData="M76,126H190V138H76ZM76,145H154V153H76Z" />
+    <path
+        android:fillColor="#A73B59"
+        android:pathData="M264,130H304V152H264Z" />
+    <path
+        android:fillColor="#E5E1E3"
+        android:pathData="M76,162H304V170H76Z" />
+    <path
+        android:fillColor="#A73B59"
+        android:pathData="M76,162H202V170H76Z" />
+    <path
+        android:fillColor="#FFD9E2"
+        android:pathData="M22,183H50A14,14 0,0 1,64 197A14,14 0,0 1,50 211H22A14,14 0,0 1,8 197A14,14 0,0 1,22 183Z" />
+    <path
+        android:fillColor="#4D4447"
+        android:pathData="M76,180H166V192H76ZM76,199H132V207H76Z" />
+    <path
+        android:fillColor="#A73B59"
+        android:pathData="M264,184H304V206H264Z" />
+    <path
+        android:fillColor="#E5E1E3"
+        android:pathData="M76,216H304V224H76Z" />
+    <path
+        android:fillColor="#A73B59"
+        android:pathData="M76,216H178V224H76Z" />
+</vector>

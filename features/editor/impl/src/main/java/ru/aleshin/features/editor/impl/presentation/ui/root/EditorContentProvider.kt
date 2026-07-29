@@ -23,6 +23,7 @@ import ru.aleshin.core.utils.inject.FeatureContentProvider
 import ru.aleshin.core.utils.navigation.backAnimation
 import ru.aleshin.features.editor.impl.presentation.theme.EditorTheme
 import ru.aleshin.features.editor.impl.presentation.ui.categories.CategoriesContent
+import ru.aleshin.features.editor.impl.presentation.ui.goal.GoalContent
 import ru.aleshin.features.editor.impl.presentation.ui.root.InternalEditorFeatureComponent.Child
 import ru.aleshin.features.editor.impl.presentation.ui.task.TaskContent
 
@@ -51,6 +52,9 @@ internal class EditorContentProvider(
                     }
                     is Child.CategoriesChild -> {
                         CategoriesContent(categoriesComponent = instance.component)
+                    }
+                    is Child.GoalChild -> {
+                        GoalContent(component = instance.component)
                     }
                 }
             }

@@ -17,6 +17,8 @@ package ru.aleshin.core.data.di
 
 import dagger.Binds
 import dagger.Module
+import ru.aleshin.core.data.repository.GoalHistoryRepositoryImpl
+import ru.aleshin.core.data.repository.GoalRepositoryImpl
 import ru.aleshin.core.data.repository.MainCategoryRepositoryImpl
 import ru.aleshin.core.data.repository.ScheduleRepositoryImpl
 import ru.aleshin.core.data.repository.SubCategoriesRepositoryImpl
@@ -26,6 +28,8 @@ import ru.aleshin.core.data.repository.ThemeSettingsRepositoryImpl
 import ru.aleshin.core.data.repository.TimeTaskRepositoryImpl
 import ru.aleshin.core.data.repository.UndefinedTaskRepositoryImpl
 import ru.aleshin.core.domain.repository.MainCategoryRepository
+import ru.aleshin.core.domain.repository.GoalHistoryRepository
+import ru.aleshin.core.domain.repository.GoalRepository
 import ru.aleshin.core.domain.repository.ScheduleRepository
 import ru.aleshin.core.domain.repository.SubCategoryRepository
 import ru.aleshin.core.domain.repository.TasksSettingsRepository
@@ -40,6 +44,16 @@ import javax.inject.Singleton
  */
 @Module
 interface CoreDataModule {
+
+    @Singleton
+    @Binds
+    fun bindGoalRepository(repository: GoalRepositoryImpl): GoalRepository
+
+    @Singleton
+    @Binds
+    fun bindGoalHistoryRepository(
+        repository: GoalHistoryRepositoryImpl,
+    ): GoalHistoryRepository
 
     @Singleton
     @Binds

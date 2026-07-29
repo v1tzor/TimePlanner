@@ -22,6 +22,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Arrangement
@@ -78,21 +79,31 @@ import ru.aleshin.timeplanner.core.ui.views.SwipeToDismissBackground
 internal fun SubCategoryChooser(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
+    isError: Boolean = false,
     mainCategory: MainCategoryUi?,
     allSubCategories: List<SubCategoryUi>,
     currentSubCategory: SubCategoryUi?,
     onChangeSubCategory: (SubCategoryUi?) -> Unit,
-    onEditSubCategory: (SubCategoryUi) -> Unit,
-    onAddSubCategory: (String) -> Unit,
+    onEditSubCategory: ((SubCategoryUi) -> Unit)? = null,
+    onAddSubCategory: ((String) -> Unit)? = null,
 ) {
     var openSubCategorySelectorSheet by rememberSaveable { mutableStateOf(false) }
 
     Surface(
-        enabled = enabled,
+        enabled = enabled && mainCategory != null,
         onClick = { openSubCategorySelectorSheet = true },
         modifier = modifier.sizeIn(minHeight = 68.dp),
         shape = MaterialTheme.shapes.medium,
-        color = MaterialTheme.colorScheme.surfaceContainerLow,
+        color = if (isError) {
+            MaterialTheme.colorScheme.errorContainer
+        } else {
+            MaterialTheme.colorScheme.surfaceContainerLow
+        },
+        border = if (isError) {
+            BorderStroke(1.5.dp, MaterialTheme.colorScheme.error)
+        } else {
+            null
+        },
     ) {
         Row(
             modifier = Modifier.padding(top = 8.dp, bottom = 8.dp, start = 16.dp, end = 16.dp),
@@ -158,8 +169,8 @@ internal fun SubCategorySelectorBottomSheet(
     allSubCategories: List<SubCategoryUi>,
     onDismiss: () -> Unit,
     onChooseSubCategory: (SubCategoryUi?) -> Unit,
-    onEditSubCategory: (SubCategoryUi) -> Unit,
-    onAddCategory: (String) -> Unit,
+    onEditSubCategory: ((SubCategoryUi) -> Unit)? = null,
+    onAddCategory: ((String) -> Unit)? = null,
 ) {
     var selectedSubCategory by remember { mutableStateOf(initCategory) }
     var searchQuery by rememberSaveable { mutableStateOf<String?>(null) }
@@ -185,7 +196,7 @@ internal fun SubCategorySelectorBottomSheet(
                 confirmValueChange = { dismissBoxValue ->
                     when (dismissBoxValue) {
                         SwipeToDismissBoxValue.StartToEnd -> Unit
-                        SwipeToDismissBoxValue.EndToStart -> onEditSubCategory(subCategory)
+                        SwipeToDismissBoxValue.EndToStart -> onEditSubCategory?.invoke(subCategory)
                         SwipeToDismissBoxValue.Settled -> Unit
                     }
                     return@rememberSwipeToDismissBoxState false
@@ -199,21 +210,24 @@ internal fun SubCategorySelectorBottomSheet(
                 title = subCategory.name ?: TimePlannerRes.strings.categoryEmptyTitle,
                 label = subCategory.description,
                 enableDismissFromStartToEnd = false,
+                enableDismissFromEndToStart = onEditSubCategory != null,
                 backgroundContent = {
-                    SwipeToDismissBackground(
-                        dismissState = dismissState,
-                        endToStartContent = {
-                            Icon(
-                                imageVector = Icons.Default.Edit,
-                                contentDescription = null,
-                            )
-                        },
-                        endToStartColor = MaterialTheme.colorScheme.tertiaryContainer,
-                    )
+                    if (onEditSubCategory != null) {
+                        SwipeToDismissBackground(
+                            dismissState = dismissState,
+                            endToStartContent = {
+                                Icon(
+                                    imageVector = Icons.Default.Edit,
+                                    contentDescription = null,
+                                )
+                            },
+                            endToStartColor = MaterialTheme.colorScheme.tertiaryContainer,
+                        )
+                    }
                 },
             )
         },
-        addItemView = if (searchQuery == null) {
+        addItemView = if (searchQuery == null && onAddCategory != null) {
             {
                 AnimatedContent(targetState = isEdited, label = "subCategory") { edit ->
                     if (edit) {
@@ -231,7 +245,7 @@ internal fun SubCategorySelectorBottomSheet(
                             },
                             maxLines = 1,
                             onConfirm = {
-                                onAddCategory(editableSubCategory)
+                                onAddCategory.invoke(editableSubCategory)
                                 editableSubCategory = ""
                                 isEdited = false
                             }

@@ -32,6 +32,7 @@ import ru.aleshin.timeplanner.widgets.presentation.models.WidgetThemeUi
 import ru.aleshin.timeplanner.widgets.presentation.state.WidgetStateCodec
 import ru.aleshin.timeplanner.widgets.presentation.state.WidgetStateKeys
 import ru.aleshin.timeplanner.widgets.presentation.ui.deadlines.DeadlinesWidget
+import ru.aleshin.timeplanner.widgets.presentation.ui.goals.GoalsWidget
 import ru.aleshin.timeplanner.widgets.presentation.ui.summary.DailySummaryWidget
 import ru.aleshin.timeplanner.widgets.presentation.ui.today.TodayWidget
 import ru.aleshin.timeplanner.widgets.presentation.ui.week.WeekOverviewWidget
@@ -62,6 +63,7 @@ class WidgetsUpdateWorker(
                 val payload = when (target.widget) {
                     is TodayWidget -> WidgetStateCodec.encode(stateMapper.mapToday(snapshot))
                     is DeadlinesWidget -> WidgetStateCodec.encode(stateMapper.mapDeadlines(snapshot))
+                    is GoalsWidget -> WidgetStateCodec.encode(stateMapper.mapGoals(snapshot))
                     is WeekOverviewWidget -> WidgetStateCodec.encode(stateMapper.mapWeek(snapshot))
                     is DailySummaryWidget -> WidgetStateCodec.encode(stateMapper.mapSummary(snapshot))
                     else -> return@forEach
@@ -83,6 +85,7 @@ class WidgetsUpdateWorker(
         return buildList {
             addTargets(manager, TodayWidget())
             addTargets(manager, DeadlinesWidget())
+            addTargets(manager, GoalsWidget())
             addTargets(manager, WeekOverviewWidget())
             addTargets(manager, DailySummaryWidget())
         }

@@ -18,12 +18,18 @@ package ru.aleshin.timeplanner.widgets.presentation.state
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import ru.aleshin.core.domain.entities.categories.DefaultCategoryType
+import ru.aleshin.core.domain.entities.goals.GoalDirection
+import ru.aleshin.core.domain.entities.goals.GoalMetric
+import ru.aleshin.core.domain.entities.goals.GoalProgressStatus
+import ru.aleshin.core.domain.entities.goals.GoalScopeType
 import ru.aleshin.core.domain.entities.tasks.TaskPriority
 import ru.aleshin.core.domain.entities.tasks.TimeTaskStatus
 import ru.aleshin.timeplanner.widgets.domain.entities.deadlines.WidgetDeadlineType
+import ru.aleshin.timeplanner.widgets.presentation.models.WidgetGoalUi
 import ru.aleshin.timeplanner.widgets.presentation.models.WidgetTaskUi
 import ru.aleshin.timeplanner.widgets.presentation.models.WidgetUndefinedTaskUi
 import ru.aleshin.timeplanner.widgets.presentation.ui.deadlines.state.DeadlinesWidgetStateUi
+import ru.aleshin.timeplanner.widgets.presentation.ui.goals.state.GoalsWidgetStateUi
 import ru.aleshin.timeplanner.widgets.presentation.ui.today.state.TodayWidgetStateUi
 
 /**
@@ -99,6 +105,39 @@ class WidgetStateCodecTest {
         val actual = WidgetStateCodec.decodeOrDefault(
             value = WidgetStateCodec.encode(expected),
             defaultValue = ::DeadlinesWidgetStateUi,
+        )
+
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun `round trips typed goal values`() {
+        val expected = GoalsWidgetStateUi(
+            goals = listOf(
+                WidgetGoalUi(
+                    id = 1L,
+                    title = "Deep work",
+                    categoryType = DefaultCategoryType.WORK,
+                    scopeType = GoalScopeType.MAIN_CATEGORY,
+                    metric = GoalMetric.DURATION,
+                    direction = GoalDirection.AT_LEAST,
+                    actualValue = 7_200_000L,
+                    plannedValue = 10_800_000L,
+                    targetValue = 14_400_000L,
+                    remainingValue = 7_200_000L,
+                    progressFraction = 0.5f,
+                    progressTitle = "50%",
+                    valueTitle = "2h / 4h",
+                    deadline = 1_800_000_000_000L,
+                    deadlineTitle = "3 Aug",
+                    status = GoalProgressStatus.IN_PROGRESS,
+                ),
+            ),
+        )
+
+        val actual = WidgetStateCodec.decodeOrDefault(
+            value = WidgetStateCodec.encode(expected),
+            defaultValue = ::GoalsWidgetStateUi,
         )
 
         assertEquals(expected, actual)

@@ -55,8 +55,16 @@ internal class OverviewComposeStore @Inject constructor(
         when (event) {
             is OverviewEvent.Init -> {
                 launchBackgroundWork(BackgroundKey.LOAD_SCHEDULES) {
-                    val schedulesCommand = OverviewWorkCommand.LoadSchedules
+                    val schedulesCommand = OverviewWorkCommand.LoadSchedules(state().selectedDate)
                     workProcessor.work(schedulesCommand).collectAndHandleWork()
+                }
+                launchBackgroundWork(BackgroundKey.LOAD_GOALS) {
+                    val goalsCommand = OverviewWorkCommand.LoadGoals
+                    workProcessor.work(goalsCommand).collectAndHandleWork()
+                }
+                launchBackgroundWork(BackgroundKey.SYNC_GOAL_HISTORY) {
+                    val historyCommand = OverviewWorkCommand.SyncGoalHistory
+                    workProcessor.work(historyCommand).collectAndHandleWork()
                 }
                 launchBackgroundWork(BackgroundKey.LOAD_UNDEFINED_TASKS) {
                     val tasksCommand = OverviewWorkCommand.LoadUndefinedTasks
@@ -75,8 +83,16 @@ internal class OverviewComposeStore @Inject constructor(
             }
             is OverviewEvent.Refresh -> {
                 launchBackgroundWork(BackgroundKey.LOAD_SCHEDULES) {
-                    val schedulesCommand = OverviewWorkCommand.LoadSchedules
+                    val schedulesCommand = OverviewWorkCommand.LoadSchedules(state().selectedDate)
                     workProcessor.work(schedulesCommand).collectAndHandleWork()
+                }
+                launchBackgroundWork(BackgroundKey.LOAD_GOALS) {
+                    val goalsCommand = OverviewWorkCommand.LoadGoals
+                    workProcessor.work(goalsCommand).collectAndHandleWork()
+                }
+                launchBackgroundWork(BackgroundKey.SYNC_GOAL_HISTORY) {
+                    val historyCommand = OverviewWorkCommand.SyncGoalHistory
+                    workProcessor.work(historyCommand).collectAndHandleWork()
                 }
                 launchBackgroundWork(BackgroundKey.LOAD_UNDEFINED_TASKS) {
                     val tasksCommand = OverviewWorkCommand.LoadUndefinedTasks
@@ -116,6 +132,15 @@ internal class OverviewComposeStore @Inject constructor(
                 )
                 consumeOutput(OverviewOutput.NavigateToEditor(config))
             }
+            is OverviewEvent.OpenGoal -> {
+                consumeOutput(OverviewOutput.NavigateToGoalDetails(event.goalId))
+            }
+            is OverviewEvent.CreateGoal -> {
+                consumeOutput(OverviewOutput.NavigateToGoalEditor(null))
+            }
+            is OverviewEvent.OpenGoalsHistory -> {
+                consumeOutput(OverviewOutput.NavigateToGoalsHistory)
+            }
         }
     }
 
@@ -127,8 +152,15 @@ internal class OverviewComposeStore @Inject constructor(
             isLoading = action.isLoading,
         )
         is OverviewAction.UpdateWeekOverview -> currentState.copy(
-            selectedDate = currentState.selectedDate ?: action.weekOverview.schedules.first().date,
+            selectedDate = action.selectedDate,
             weekOverview = action.weekOverview,
+        )
+        is OverviewAction.UpdateGoals -> currentState.copy(
+            goals = action.goals,
+            isGoalsLoading = action.isLoading,
+        )
+        is OverviewAction.UpdateGoalsLoading -> currentState.copy(
+            isGoalsLoading = action.isLoading,
         )
         is OverviewAction.UpdateSelectedDate -> currentState.copy(
             selectedDate = action.date,
@@ -148,7 +180,13 @@ internal class OverviewComposeStore @Inject constructor(
     }
 
     enum class BackgroundKey : BackgroundWorkKey {
-        LOAD_SCHEDULES, LOAD_UNDEFINED_TASKS, LOAD_CATEGORIES, TASK_ACTION, SHARE_IMPORT
+        LOAD_SCHEDULES,
+        LOAD_GOALS,
+        LOAD_UNDEFINED_TASKS,
+        LOAD_CATEGORIES,
+        SYNC_GOAL_HISTORY,
+        TASK_ACTION,
+        SHARE_IMPORT,
     }
 
     class Factory @Inject constructor(

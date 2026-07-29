@@ -17,6 +17,7 @@ package ru.aleshin.core.domain.di
 
 import dagger.Binds
 import dagger.Module
+import ru.aleshin.core.domain.common.GoalProgressManager
 import ru.aleshin.core.domain.common.RecurringScheduleManager
 import ru.aleshin.core.domain.common.ScheduleStatusChecker
 import ru.aleshin.core.domain.common.TimeOverlayManager
@@ -29,6 +30,10 @@ import javax.inject.Singleton
  */
 @Module
 interface CoreDomainModule {
+
+    @Binds
+    @Singleton
+    fun bindGoalProgressManager(manager: GoalProgressManager.Base): GoalProgressManager
 
     @Binds
     @Singleton

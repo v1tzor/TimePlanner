@@ -22,18 +22,24 @@
     <string name="widget_week_description">حجم کار هفت روز آینده</string>
     <string name="widget_summary_name">خلاصه روزانه</string>
     <string name="widget_summary_description">کارهای انجام‌شده، ردشده و باقی‌مانده</string>
+    <string name="widget_goals_name">هدف‌ها</string>
+    <string name="widget_goals_description">پیشرفت و مهلت هدف‌ها</string>
     <string name="widget_refresh_content_description">به‌روزرسانی ویجت‌ها</string>
     <string name="widget_add_task_content_description">افزودن کار</string>
+    <string name="widget_add_goal_content_description">افزودن هدف</string>
     <string name="widget_open_overview_content_description">باز کردن نمای کلی</string>
     <string name="widget_task_completed_content_description">کار انجام شد</string>
     <string name="widget_task_not_completed_content_description">کار انجام نشد</string>
     <string name="widget_private_task">کار</string>
+    <string name="widget_private_goal">هدف</string>
     <string name="widget_no_data">داده‌ای نیست</string>
     <string name="widget_no_deadlines">کاری با مهلت وجود ندارد</string>
     <string name="widget_no_schedule">کاری برنامه‌ریزی نشده</string>
+    <string name="widget_no_goals">هدف فعالی وجود ندارد</string>
     <string name="widget_deadlines_title">مهلت‌ها</string>
     <string name="widget_week_title">۷ روز آینده</string>
     <string name="widget_summary_title">امروز</string>
+    <string name="widget_goals_title">هدف‌ها</string>
     <string name="widget_overdue">عقب‌افتاده</string>
     <string name="widget_overdue_short">دیر</string>
     <string name="widget_today">امروز</string>
@@ -45,6 +51,10 @@
     <plurals name="widget_tasks_count">
         <item quantity="one">%1$d کار</item>
         <item quantity="other">%1$d کار</item>
+    </plurals>
+    <plurals name="widget_goal_tasks_value">
+        <item quantity="one">%1$d / %2$d کار</item>
+        <item quantity="other">%1$d / %2$d کار</item>
     </plurals>
     <string name="widget_completed">انجام‌شده</string>
     <string name="widget_skipped">ردشده</string>

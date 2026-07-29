@@ -95,6 +95,20 @@ interface NavigationWorkProcessor : WorkProcessor<NavWorkCommand, MainAction, Ma
                         ),
                     )
                 }
+                is DeepLinkTarget.GoalEditor -> {
+                    OutputResult(
+                        MainOutput.NavigateToEditor(
+                            EditorConfig.Goal(goalId = deepLinkTarget.goalId),
+                        ),
+                    )
+                }
+                is DeepLinkTarget.GoalDetails -> {
+                    OutputResult(
+                        MainOutput.NavigateToTabNavigation(
+                            MainTabTarget.GoalDetails(deepLinkTarget.goalId),
+                        ),
+                    )
+                }
                 is DeepLinkTarget.Overview -> {
                     OutputResult(MainOutput.NavigateToTabNavigation(MainTabTarget.Overview))
                 }

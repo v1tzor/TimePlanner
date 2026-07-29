@@ -20,6 +20,7 @@ import dagger.Module
 import ru.aleshin.features.editor.impl.domain.common.EditorEitherWrapper
 import ru.aleshin.features.editor.impl.domain.common.EditorErrorHandler
 import ru.aleshin.features.editor.impl.domain.interactors.CategoriesInteractor
+import ru.aleshin.features.editor.impl.domain.interactors.GoalInteractor
 import ru.aleshin.features.editor.impl.domain.interactors.MainCategoriesInteractor
 import ru.aleshin.features.editor.impl.domain.interactors.SettingsInteractor
 import ru.aleshin.features.editor.impl.domain.interactors.SubCategoriesInteractor
@@ -32,6 +33,9 @@ import ru.aleshin.features.editor.impl.domain.interactors.UndefinedTasksInteract
  */
 @Module
 internal interface DomainModule {
+
+    @Binds
+    fun bindGoalInteractor(interactor: GoalInteractor.Base): GoalInteractor
 
     @Binds
     fun bindMainCategoriesInteractor(interactor: MainCategoriesInteractor.Base): MainCategoriesInteractor

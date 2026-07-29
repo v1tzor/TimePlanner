@@ -47,6 +47,7 @@ object WidgetDimensions {
     val taskRowHeight = 60.dp
     val timeColumnWidthCompact = 48.dp
     val timeColumnWidth = 64.dp
+    val goalDeadlineWidth = 64.dp
     val monogramCompact = 28.dp
     val monogram = 32.dp
     val weekDaySpacing = 4.dp

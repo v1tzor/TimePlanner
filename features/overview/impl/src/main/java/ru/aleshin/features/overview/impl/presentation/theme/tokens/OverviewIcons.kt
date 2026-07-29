@@ -33,6 +33,11 @@ internal data class OverviewIcons(
     val schedule: Int,
     val completedTask: Int,
     val unexecutedTask: Int,
+    val goalAdd: Int,
+    val goalHistory: Int,
+    val goalTarget: Int,
+    val goalEdit: Int,
+    val goalDelete: Int,
 )
 
 internal val baseOverviewIcons = OverviewIcons(
@@ -47,6 +52,11 @@ internal val baseOverviewIcons = OverviewIcons(
     schedule = R.drawable.ic_schedule,
     completedTask = R.drawable.ic_complete_task,
     unexecutedTask = R.drawable.ic_not_complete_task,
+    goalAdd = R.drawable.ic_goal_add,
+    goalHistory = R.drawable.ic_goal_history,
+    goalTarget = R.drawable.ic_goal_target,
+    goalEdit = R.drawable.ic_goal_edit,
+    goalDelete = R.drawable.ic_goal_delete,
 )
 
 internal val LocalOverviewIcons = staticCompositionLocalOf<OverviewIcons> {

@@ -138,6 +138,7 @@ fun CustomSmallTextField(
 fun CustomLargeTextField(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
+    isError: Boolean = false,
     text: String,
     onTextChange: (String) -> Unit,
     label: @Composable () -> Unit,
@@ -161,10 +162,11 @@ fun CustomLargeTextField(
     Surface(
         modifier = modifier.fillMaxWidth().defaultMinSize(minHeight = 64.dp),
         shape = MaterialTheme.shapes.medium,
-        color = background,
-        border = when (isFocused) {
-            true -> BorderStroke(1.5.dp, MaterialTheme.colorScheme.outlineVariant)
-            false -> null
+        color = if (isError) MaterialTheme.colorScheme.errorContainer else background,
+        border = when {
+            isError -> BorderStroke(1.5.dp, MaterialTheme.colorScheme.error)
+            isFocused -> BorderStroke(1.5.dp, MaterialTheme.colorScheme.outlineVariant)
+            else -> null
         },
     ) {
         BasicTextField(

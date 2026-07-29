@@ -15,11 +15,12 @@
  */
 package ru.aleshin.timeplanner.widgets.domain.entities.snapshot
 
+import ru.aleshin.core.domain.entities.goals.GoalProgress
 import ru.aleshin.core.domain.entities.settings.ThemeSettings
 import ru.aleshin.timeplanner.widgets.domain.entities.analytics.WidgetDailySummary
+import ru.aleshin.timeplanner.widgets.domain.entities.analytics.WidgetWeekOverview
 import ru.aleshin.timeplanner.widgets.domain.entities.deadlines.WidgetDeadlinesSummary
 import ru.aleshin.timeplanner.widgets.domain.entities.tasks.WidgetTimeTask
-import ru.aleshin.timeplanner.widgets.domain.entities.analytics.WidgetWeekOverview
 import java.util.Date
 
 /**
@@ -31,6 +32,7 @@ data class WidgetsSnapshot(
     val secureMode: Boolean,
     val todayTasks: List<WidgetTimeTask>,
     val deadlines: WidgetDeadlinesSummary,
+    val goals: List<GoalProgress>,
     val weekOverview: WidgetWeekOverview,
     val dailySummary: WidgetDailySummary,
     val nextUpdateAt: Date,

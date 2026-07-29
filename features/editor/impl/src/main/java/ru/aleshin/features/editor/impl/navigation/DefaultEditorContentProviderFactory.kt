@@ -22,6 +22,7 @@ import ru.aleshin.features.editor.api.EditorConfig
 import ru.aleshin.features.editor.api.EditorContentProviderFactory
 import ru.aleshin.features.editor.api.EditorOutput
 import ru.aleshin.features.editor.impl.presentation.ui.categories.store.CategoriesComposeStore
+import ru.aleshin.features.editor.impl.presentation.ui.goal.store.GoalComposeStore
 import ru.aleshin.features.editor.impl.presentation.ui.root.EditorContentProvider
 import ru.aleshin.features.editor.impl.presentation.ui.root.InternalEditorFeatureComponent
 import ru.aleshin.features.editor.impl.presentation.ui.task.store.TaskComposeStore
@@ -33,6 +34,7 @@ import javax.inject.Inject
 internal class DefaultEditorContentProviderFactory @Inject constructor(
     private val taskStoreFactory: TaskComposeStore.Factory,
     private val categoriesStoreFactory: CategoriesComposeStore.Factory,
+    private val goalStoreFactory: GoalComposeStore.Factory,
 ) : EditorContentProviderFactory {
 
     override fun createProvider(
@@ -46,6 +48,7 @@ internal class DefaultEditorContentProviderFactory @Inject constructor(
             outputConsumer = outputConsumer,
             taskStoreFactory = taskStoreFactory,
             categoriesStoreFactory = categoriesStoreFactory,
+            goalStoreFactory = goalStoreFactory,
         )
 
         return EditorContentProvider(component = component)

@@ -34,6 +34,8 @@ import ru.aleshin.core.utils.functional.collectAndHandle
 import ru.aleshin.core.utils.functional.handle
 import ru.aleshin.core.utils.managers.DateManager
 import ru.aleshin.features.editor.api.EditorConfig
+import ru.aleshin.features.overview.impl.domain.interactors.GoalsHistoryInteractor
+import ru.aleshin.features.overview.impl.domain.interactors.GoalsInteractor
 import ru.aleshin.features.overview.impl.domain.interactors.MainCategoriesInteractor
 import ru.aleshin.features.overview.impl.domain.interactors.ScheduleInteractor
 import ru.aleshin.features.overview.impl.domain.interactors.ShareTextInteractor
@@ -53,6 +55,8 @@ internal interface OverviewWorkProcessor :
 
     class Base @Inject constructor(
         private val scheduleInteractor: ScheduleInteractor,
+        private val goalsInteractor: GoalsInteractor,
+        private val goalsHistoryInteractor: GoalsHistoryInteractor,
         private val categoriesInteractor: MainCategoriesInteractor,
         private val undefinedTasksInteractor: UndefinedTasksInteractor,
         private val shareTextInteractor: ShareTextInteractor,
@@ -60,7 +64,9 @@ internal interface OverviewWorkProcessor :
     ) : OverviewWorkProcessor {
 
         override suspend fun work(command: OverviewWorkCommand) = when (command) {
-            is OverviewWorkCommand.LoadSchedules -> loadSchedulesWork()
+            is OverviewWorkCommand.LoadSchedules -> loadSchedulesWork(command.selectedDate)
+            is OverviewWorkCommand.LoadGoals -> loadGoalsWork()
+            is OverviewWorkCommand.SyncGoalHistory -> syncGoalHistoryWork()
             is OverviewWorkCommand.LoadUndefinedTasks -> loadUndefinedTasks()
             is OverviewWorkCommand.LoadCategories -> loadCategoriesWork()
             is OverviewWorkCommand.CreateOrUpdateUndefinedTasks -> createOrUpdateTasksWork(command.tasks)
@@ -68,17 +74,37 @@ internal interface OverviewWorkProcessor :
             is OverviewWorkCommand.ExecuteUndefinedTask -> executeUndefinedTaskWork(command.data, command.task)
         }
 
-        private fun loadSchedulesWork() = flow<OverviewWorkResult> {
+        private fun loadSchedulesWork(selectedDate: Date?) = flow<OverviewWorkResult> {
             scheduleInteractor.fetchWeekOverview().collectAndHandle(
                 onLeftAction = { emit(EffectResult(OverviewEffect.ShowError(it))) },
                 onRightAction = { weekOverview ->
-                    emit(ActionResult(OverviewAction.UpdateWeekOverview(weekOverview.mapToUi())))
+                    val weekOverviewUi = weekOverview.mapToUi()
+                    val actualSelectedDate = selectedDate ?: weekOverviewUi.schedules.first().date
+                    emit(ActionResult(OverviewAction.UpdateWeekOverview(weekOverviewUi, actualSelectedDate)))
                     delay(Constants.Delay.OVERVIEW)
                     emit(ActionResult(OverviewAction.UpdateLoading(false)))
                 }
             )
         }.onStart {
             emit(ActionResult(OverviewAction.UpdateLoading(true)))
+        }
+
+        private fun loadGoalsWork() = flow<OverviewWorkResult> {
+            goalsInteractor.fetchGoalsProgress().collectAndHandle(
+                onLeftAction = { emit(EffectResult(OverviewEffect.ShowError(it))) },
+                onRightAction = { goals ->
+                    val goals = goals.map { goal -> goal.mapToUi() }
+                    emit(ActionResult(OverviewAction.UpdateGoals(goals = goals, isLoading = false)))
+                }
+            )
+        }.onStart {
+            emit(ActionResult(OverviewAction.UpdateGoalsLoading(true)))
+        }
+
+        private fun syncGoalHistoryWork() = flow<OverviewWorkResult> {
+            goalsHistoryInteractor.syncCompletedGoals().handle(
+                onLeftAction = { emit(EffectResult(OverviewEffect.ShowError(it))) },
+            )
         }
 
         private fun loadUndefinedTasks() = flow {
@@ -129,7 +155,9 @@ internal interface OverviewWorkProcessor :
 }
 
 internal sealed class OverviewWorkCommand : WorkCommand {
-    data object LoadSchedules : OverviewWorkCommand()
+    data class LoadSchedules(val selectedDate: Date?) : OverviewWorkCommand()
+    data object LoadGoals : OverviewWorkCommand()
+    data object SyncGoalHistory : OverviewWorkCommand()
     data object LoadUndefinedTasks : OverviewWorkCommand()
     data object LoadCategories : OverviewWorkCommand()
     data class CreateOrUpdateUndefinedTasks(val tasks: List<UndefinedTaskUi>) : OverviewWorkCommand()

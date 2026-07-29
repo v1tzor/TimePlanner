@@ -33,6 +33,8 @@ import ru.aleshin.core.utils.functional.handle
 import ru.aleshin.core.utils.managers.DateManager
 import ru.aleshin.features.settings.impl.domain.common.SettingsFailures
 import ru.aleshin.features.settings.impl.domain.interactors.CategoriesInteractor
+import ru.aleshin.features.settings.impl.domain.interactors.GoalsHistoryInteractor
+import ru.aleshin.features.settings.impl.domain.interactors.GoalsInteractor
 import ru.aleshin.features.settings.impl.domain.interactors.ScheduleInteractor
 import ru.aleshin.features.settings.impl.domain.interactors.SettingsInteractor
 import ru.aleshin.features.settings.impl.domain.interactors.TemplatesInteractor
@@ -55,6 +57,8 @@ internal interface DataWorkProcessor :
         private val settingsInteractor: SettingsInteractor,
         private val scheduleInteractor: ScheduleInteractor,
         private val categoriesInteractor: CategoriesInteractor,
+        private val goalsInteractor: GoalsInteractor,
+        private val goalsHistoryInteractor: GoalsHistoryInteractor,
         private val templatesInteractor: TemplatesInteractor,
         private val timeTaskAlarmManager: TimeTaskAlarmManager,
         private val templatesAlarmManager: TemplatesAlarmManager,
@@ -78,6 +82,8 @@ internal interface DataWorkProcessor :
                     val deletedTemplates = templatesInteractor.deleteAllTemplates().dataOrError(this@flow) ?: return@handle
                     val deletableSchedules = scheduleInteractor.deleteAllSchedules().dataOrError(this@flow) ?: return@handle
                     val deletableTimeTasks = deletableSchedules.map { it.timeTasks }.extractAllItem()
+                    goalsHistoryInteractor.deleteAllGoalsHistory().dataOrError(this@flow) ?: return@handle
+                    goalsInteractor.deleteAllGoals().dataOrError(this@flow) ?: return@handle
                     categoriesInteractor.deleteAllCategories().dataOrError(this@flow) ?: return@handle
                     undefinedTasksInteractor.removeAllUndefinedTask().dataOrError(this@flow) ?: return@handle
 
@@ -93,6 +99,8 @@ internal interface DataWorkProcessor :
                         }
                         val restoreTemplates = templates.map { it.copy(repeatEnabled = false) }
                         categoriesInteractor.addOrUpdateCategories(categories).dataOrError(this@flow)
+                        goalsInteractor.addOrUpdateGoals(goals).dataOrError(this@flow)
+                        goalsHistoryInteractor.addGoalsHistory(goalsHistory).dataOrError(this@flow)
                         templatesInteractor.addOrUpdateTemplates(restoreTemplates).dataOrError(this@flow)
                         undefinedTasksInteractor.addUndefinedTasks(undefinedTasks).dataOrError(this@flow)
                         scheduleInteractor.addOrUpdateSchedules(restoredSchedules).dataOrError(this@flow).apply {
@@ -111,7 +119,16 @@ internal interface DataWorkProcessor :
                 val categories = categoriesInteractor.fetchAllCategories().dataOrError(this) ?: return@run
                 val templates = templatesInteractor.fetchAllTemplates().dataOrError(this) ?: return@run
                 val undefinedTasks = undefinedTasksInteractor.fetchAllUndefinedTasks().dataOrError(this) ?: return@run
-                val backupModel = BackupModel(schedules, templates, categories, undefinedTasks)
+                val goals = goalsInteractor.fetchAllGoals().dataOrError(this) ?: return@run
+                val goalsHistory = goalsHistoryInteractor.fetchAllGoalsHistory().dataOrError(this) ?: return@run
+                val backupModel = BackupModel(
+                    schedules = schedules,
+                    templates = templates,
+                    categories = categories,
+                    undefinedTasks = undefinedTasks,
+                    goals = goals,
+                    goalsHistory = goalsHistory,
+                )
 
                 backupManager.saveBackup(uri, backupModel)
             }
@@ -122,6 +139,8 @@ internal interface DataWorkProcessor :
             val deletedTemplates = templatesInteractor.deleteAllTemplates().dataOrError(this) ?: return@flow
             val deletedSchedules = scheduleInteractor.deleteAllSchedules().dataOrError(this) ?: return@flow
             val deletedTimeTasks = deletedSchedules.map { it.timeTasks }.extractAllItem()
+            goalsHistoryInteractor.deleteAllGoalsHistory().dataOrError(this) ?: return@flow
+            goalsInteractor.deleteAllGoals().dataOrError(this) ?: return@flow
             categoriesInteractor.deleteAllCategories().dataOrError(this)
             undefinedTasksInteractor.removeAllUndefinedTask().dataOrError(this)
 

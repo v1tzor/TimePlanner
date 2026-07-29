@@ -25,12 +25,16 @@ import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import ru.aleshin.core.data.datasources.categories.MainCategoryDao
+import ru.aleshin.core.data.datasources.goals.GoalDao
+import ru.aleshin.core.data.datasources.goals.GoalHistoryDao
 import ru.aleshin.core.data.datasources.subcategories.SubCategoryDao
 import ru.aleshin.core.data.datasources.tasks.TimeTaskDao
 import ru.aleshin.core.data.datasources.tasks.UndefinedTaskDao
 import ru.aleshin.core.data.datasources.templates.TemplateDao
 import ru.aleshin.core.data.models.categories.MainCategoryEntity
 import ru.aleshin.core.data.models.categories.SubCategoryEntity
+import ru.aleshin.core.data.models.goals.GoalEntity
+import ru.aleshin.core.data.models.goals.GoalHistoryEntity
 import ru.aleshin.core.data.models.schedules.DailyScheduleEntity
 import ru.aleshin.core.data.models.tasks.TimeTaskEntity
 import ru.aleshin.core.data.models.tasks.UndefinedTaskEntity
@@ -41,8 +45,10 @@ import ru.aleshin.core.data.models.template.TemplateEntity
  * @author Stanislav Aleshin on 25.02.2023.
  */
 @Database(
-    version = 16,
+    version = 18,
     entities = [
+        GoalEntity::class,
+        GoalHistoryEntity::class,
         TemplateEntity::class,
         RepeatTimeEntity::class,
         DailyScheduleEntity::class,
@@ -73,6 +79,8 @@ abstract class SchedulesDataBase : RoomDatabase() {
     abstract fun fetchSubCategoryDao(): SubCategoryDao
     abstract fun fetchTemplateDao(): TemplateDao
     abstract fun fetchUndefinedTaskDao(): UndefinedTaskDao
+    abstract fun fetchGoalDao(): GoalDao
+    abstract fun fetchGoalHistoryDao(): GoalHistoryDao
 
     companion object {
 
@@ -386,6 +394,170 @@ abstract class SchedulesDataBase : RoomDatabase() {
                 )
             }
         }
+        val MIGRATE_16_17 = object : Migration(16, 17) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.beginTransaction()
+                try {
+                    database.execSQL(
+                        "CREATE TABLE IF NOT EXISTS `goals` (" +
+                            "`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                            "`title` TEXT NOT NULL, " +
+                            "`scope_type` TEXT NOT NULL, " +
+                            "`main_category_id` INTEGER, " +
+                            "`sub_category_id` INTEGER, " +
+                            "`metric` TEXT NOT NULL, " +
+                            "`direction` TEXT NOT NULL, " +
+                            "`target_value` INTEGER NOT NULL, " +
+                            "`period` TEXT NOT NULL, " +
+                            "`start_date` INTEGER NOT NULL, " +
+                            "`created_at` INTEGER NOT NULL, " +
+                            "FOREIGN KEY(`main_category_id`) REFERENCES `mainCategories`(`id`) " +
+                            "ON UPDATE NO ACTION ON DELETE SET NULL, " +
+                            "FOREIGN KEY(`sub_category_id`) REFERENCES `subCategories`(`id`) " +
+                            "ON UPDATE NO ACTION ON DELETE SET NULL)",
+                    )
+                    database.execSQL(
+                        "CREATE INDEX IF NOT EXISTS `index_goals_main_category_id` " +
+                            "ON `goals` (`main_category_id`)",
+                    )
+                    database.execSQL(
+                        "CREATE INDEX IF NOT EXISTS `index_goals_sub_category_id` " +
+                            "ON `goals` (`sub_category_id`)",
+                    )
+                    database.execSQL(
+                        "CREATE INDEX IF NOT EXISTS `index_goals_created_at` " +
+                            "ON `goals` (`created_at`)",
+                    )
+                    database.execSQL(
+                        "CREATE TABLE IF NOT EXISTS `goalPeriods` (" +
+                            "`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                            "`goal_id` INTEGER NOT NULL, " +
+                            "`goal_title` TEXT NOT NULL, " +
+                            "`metric` TEXT NOT NULL, " +
+                            "`direction` TEXT NOT NULL, " +
+                            "`target_value` INTEGER NOT NULL, " +
+                            "`actual_value` INTEGER NOT NULL, " +
+                            "`period` TEXT NOT NULL, " +
+                            "`period_start` INTEGER NOT NULL, " +
+                            "`period_end` INTEGER NOT NULL, " +
+                            "`is_achieved` INTEGER NOT NULL, " +
+                            "`created_at` INTEGER NOT NULL)",
+                    )
+                    database.execSQL(
+                        "CREATE INDEX IF NOT EXISTS `index_goalPeriods_goal_id` " +
+                            "ON `goalPeriods` (`goal_id`)",
+                    )
+                    database.execSQL(
+                        "CREATE UNIQUE INDEX IF NOT EXISTS " +
+                            "`index_goalPeriods_goal_id_period_start_period_end` " +
+                            "ON `goalPeriods` (`goal_id`, `period_start`, `period_end`)",
+                    )
+                    database.execSQL(
+                        "CREATE INDEX IF NOT EXISTS `index_goalPeriods_period_end` " +
+                            "ON `goalPeriods` (`period_end`)",
+                    )
+                    database.execSQL(
+                        "CREATE INDEX IF NOT EXISTS `index_goalPeriods_is_achieved_period_end` " +
+                            "ON `goalPeriods` (`is_achieved`, `period_end`)",
+                    )
+                    database.setTransactionSuccessful()
+                } finally {
+                    database.endTransaction()
+                }
+            }
+        }
+        val MIGRATE_17_18 = object : Migration(17, 18) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.beginTransaction()
+                try {
+                    database.execSQL(
+                        "CREATE TABLE IF NOT EXISTS `goals_new` (" +
+                            "`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                            "`title` TEXT NOT NULL, " +
+                            "`scope_type` TEXT NOT NULL, " +
+                            "`main_category_id` INTEGER, " +
+                            "`sub_category_id` INTEGER, " +
+                            "`metric` TEXT NOT NULL, " +
+                            "`direction` TEXT NOT NULL, " +
+                            "`target_value` INTEGER NOT NULL, " +
+                            "`created_at` INTEGER NOT NULL, " +
+                            "`deadline` INTEGER NOT NULL, " +
+                            "FOREIGN KEY(`main_category_id`) REFERENCES `mainCategories`(`id`) " +
+                            "ON UPDATE NO ACTION ON DELETE SET NULL, " +
+                            "FOREIGN KEY(`sub_category_id`) REFERENCES `subCategories`(`id`) " +
+                            "ON UPDATE NO ACTION ON DELETE SET NULL)",
+                    )
+                    database.execSQL(
+                        "INSERT INTO `goals_new` (" +
+                            "`id`, `title`, `scope_type`, `main_category_id`, `sub_category_id`, " +
+                            "`metric`, `direction`, `target_value`, `created_at`, `deadline`) " +
+                            "SELECT `id`, `title`, `scope_type`, `main_category_id`, " +
+                            "`sub_category_id`, `metric`, `direction`, `target_value`, " +
+                            "`created_at`, `start_date` + CASE `period` " +
+                            "WHEN 'MONTH' THEN 2505600000 ELSE 518400000 END " +
+                            "FROM `goals`",
+                    )
+                    database.execSQL("DROP TABLE `goals`")
+                    database.execSQL("ALTER TABLE `goals_new` RENAME TO `goals`")
+                    database.execSQL(
+                        "CREATE INDEX IF NOT EXISTS `index_goals_main_category_id` " +
+                            "ON `goals` (`main_category_id`)",
+                    )
+                    database.execSQL(
+                        "CREATE INDEX IF NOT EXISTS `index_goals_sub_category_id` " +
+                            "ON `goals` (`sub_category_id`)",
+                    )
+                    database.execSQL(
+                        "CREATE INDEX IF NOT EXISTS `index_goals_created_at` " +
+                            "ON `goals` (`created_at`)",
+                    )
+                    database.execSQL(
+                        "CREATE TABLE IF NOT EXISTS `goalHistory` (" +
+                            "`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                            "`goal_id` INTEGER NOT NULL, " +
+                            "`goal_title` TEXT NOT NULL, " +
+                            "`metric` TEXT NOT NULL, " +
+                            "`direction` TEXT NOT NULL, " +
+                            "`target_value` INTEGER NOT NULL, " +
+                            "`actual_value` INTEGER NOT NULL, " +
+                            "`period_start` INTEGER NOT NULL, " +
+                            "`period_end` INTEGER NOT NULL, " +
+                            "`is_achieved` INTEGER NOT NULL, " +
+                            "`created_at` INTEGER NOT NULL)",
+                    )
+                    database.execSQL(
+                        "INSERT INTO `goalHistory` (" +
+                            "`id`, `goal_id`, `goal_title`, `metric`, `direction`, " +
+                            "`target_value`, `actual_value`, `period_start`, `period_end`, " +
+                            "`is_achieved`, `created_at`) " +
+                            "SELECT `id`, `goal_id`, `goal_title`, `metric`, `direction`, " +
+                            "`target_value`, `actual_value`, `period_start`, `period_end`, " +
+                            "`is_achieved`, `created_at` FROM `goalPeriods`",
+                    )
+                    database.execSQL("DROP TABLE `goalPeriods`")
+                    database.execSQL(
+                        "CREATE INDEX IF NOT EXISTS `index_goalHistory_goal_id` " +
+                            "ON `goalHistory` (`goal_id`)",
+                    )
+                    database.execSQL(
+                        "CREATE UNIQUE INDEX IF NOT EXISTS " +
+                            "`index_goalHistory_goal_id_period_start_period_end` " +
+                            "ON `goalHistory` (`goal_id`, `period_start`, `period_end`)",
+                    )
+                    database.execSQL(
+                        "CREATE INDEX IF NOT EXISTS `index_goalHistory_period_end` " +
+                            "ON `goalHistory` (`period_end`)",
+                    )
+                    database.execSQL(
+                        "CREATE INDEX IF NOT EXISTS `index_goalHistory_is_achieved_period_end` " +
+                            "ON `goalHistory` (`is_achieved`, `period_end`)",
+                    )
+                    database.setTransactionSuccessful()
+                } finally {
+                    database.endTransaction()
+                }
+            }
+        }
 
         fun create(context: Context) = Room.databaseBuilder(
             context = context,
@@ -397,6 +569,8 @@ abstract class SchedulesDataBase : RoomDatabase() {
             .addMigrations(MIGRATE_5_6)
             .addMigrations(MIGRATE_7_8)
             .addMigrations(MIGRATE_15_16)
+            .addMigrations(MIGRATE_16_17)
+            .addMigrations(MIGRATE_17_18)
             .build()
     }
 }

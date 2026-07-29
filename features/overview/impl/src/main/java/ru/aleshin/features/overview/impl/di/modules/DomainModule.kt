@@ -9,6 +9,8 @@ import dagger.Binds
 import dagger.Module
 import ru.aleshin.features.overview.impl.domain.common.OverviewEitherWrapper
 import ru.aleshin.features.overview.impl.domain.common.OverviewErrorHandler
+import ru.aleshin.features.overview.impl.domain.interactors.GoalsHistoryInteractor
+import ru.aleshin.features.overview.impl.domain.interactors.GoalsInteractor
 import ru.aleshin.features.overview.impl.domain.interactors.MainCategoriesInteractor
 import ru.aleshin.features.overview.impl.domain.interactors.ScheduleInteractor
 import ru.aleshin.features.overview.impl.domain.interactors.ShareTextInteractor
@@ -17,6 +19,12 @@ import ru.aleshin.features.overview.impl.domain.interactors.UndefinedTasksIntera
 /** @author Stanislav Aleshin on 11.07.2026. */
 @Module
 internal interface DomainModule {
+
+    @Binds
+    fun bindGoalsInteractor(value: GoalsInteractor.Base): GoalsInteractor
+
+    @Binds
+    fun bindGoalsHistoryInteractor(value: GoalsHistoryInteractor.Base): GoalsHistoryInteractor
 
     @Binds
     fun bindScheduleInteractor(value: ScheduleInteractor.Base): ScheduleInteractor

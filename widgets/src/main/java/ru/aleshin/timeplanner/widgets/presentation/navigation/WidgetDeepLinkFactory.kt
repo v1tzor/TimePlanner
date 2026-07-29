@@ -24,6 +24,9 @@ import ru.aleshin.core.utils.functional.Constants.App.DEEP_LINK_HOST
 import ru.aleshin.core.utils.functional.Constants.App.DEEP_LINK_SCHEME
 import ru.aleshin.core.utils.functional.Constants.App.EDITOR_DEEP_LINK_PATH
 import ru.aleshin.core.utils.functional.Constants.App.FROM_QUERY
+import ru.aleshin.core.utils.functional.Constants.App.GOAL_DETAILS_DEEP_LINK_PATH
+import ru.aleshin.core.utils.functional.Constants.App.GOAL_EDITOR_DEEP_LINK_PATH
+import ru.aleshin.core.utils.functional.Constants.App.GOAL_ID_QUERY
 import ru.aleshin.core.utils.functional.Constants.App.HOME_DEEP_LINK_PATH
 import ru.aleshin.core.utils.functional.Constants.App.OVERVIEW_DEEP_LINK_PATH
 import ru.aleshin.core.utils.functional.Constants.App.TIME_TASK_ID_QUERY
@@ -87,6 +90,19 @@ object WidgetDeepLinkFactory {
 
     fun createAnalyticsIntent(context: Context): Intent {
         return createIntent(context, ANALYTICS_DEEP_LINK_PATH)
+    }
+
+    fun createGoalDetailsIntent(
+        context: Context,
+        goalId: Long,
+    ): Intent = createIntent(
+        context = context,
+        path = GOAL_DETAILS_DEEP_LINK_PATH,
+        parameters = mapOf(GOAL_ID_QUERY to goalId),
+    )
+
+    fun createGoalCreatorIntent(context: Context): Intent {
+        return createIntent(context, GOAL_EDITOR_DEEP_LINK_PATH)
     }
 
     private fun createIntent(

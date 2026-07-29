@@ -20,6 +20,10 @@ import dagger.Module
 import dagger.Provides
 import ru.aleshin.core.data.datasources.categories.MainCategoryDao
 import ru.aleshin.core.data.datasources.categories.MainCategoryLocalDataSource
+import ru.aleshin.core.data.datasources.goals.GoalDao
+import ru.aleshin.core.data.datasources.goals.GoalHistoryDao
+import ru.aleshin.core.data.datasources.goals.GoalHistoryLocalDataSource
+import ru.aleshin.core.data.datasources.goals.GoalLocalDataSource
 import ru.aleshin.core.data.datasources.schedules.ScheduleDao
 import ru.aleshin.core.data.datasources.schedules.ScheduleLocalDataSource
 import ru.aleshin.core.data.datasources.schedules.SchedulesDataBase
@@ -45,6 +49,18 @@ import javax.inject.Singleton
 class CoreDataBaseModule {
 
     // LocalDataSources
+
+    @Provides
+    @Singleton
+    fun provideGoalLocalDataSource(
+        goalDao: GoalDao,
+    ): GoalLocalDataSource = GoalLocalDataSource.Base(goalDao)
+
+    @Provides
+    @Singleton
+    fun provideGoalHistoryLocalDataSource(
+        goalHistoryDao: GoalHistoryDao,
+    ): GoalHistoryLocalDataSource = GoalHistoryLocalDataSource.Base(goalHistoryDao)
 
     @Provides
     @Singleton
@@ -95,6 +111,16 @@ class CoreDataBaseModule {
     ): TimeTaskLocalDataSource = TimeTaskLocalDataSource.Base(timeTaskDao)
 
     // Dao
+
+    @Provides
+    @Singleton
+    fun provideGoalDao(dataBase: SchedulesDataBase): GoalDao =
+        dataBase.fetchGoalDao()
+
+    @Provides
+    @Singleton
+    fun provideGoalHistoryDao(dataBase: SchedulesDataBase): GoalHistoryDao =
+        dataBase.fetchGoalHistoryDao()
 
     @Provides
     @Singleton

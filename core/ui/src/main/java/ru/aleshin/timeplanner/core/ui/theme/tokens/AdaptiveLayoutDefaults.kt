@@ -52,6 +52,8 @@ object AdaptiveLayoutDefaults {
     val AnalyticsContentMaxWidth = 1200.dp
     val EditorContentMaxWidth = 1120.dp
     val CategoriesContentMaxWidth = 1200.dp
+    val GoalDetailsMainPaneMinWidth = 350.dp
+    val GoalDetailsSupportingPaneMinWidth = 350.dp
 
     val SupportingPanePreferredWidth = 360.dp
     val ListPanePreferredWidth = 344.dp

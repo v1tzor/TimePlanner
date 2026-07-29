@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
 
 plugins {
     alias(libs.plugins.androidLibrary)
-    alias(libs.plugins.kotlinAndroid)
     alias(libs.plugins.serialization)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.ksp)
@@ -42,10 +41,6 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
-    }
-
-    kotlinOptions {
-        jvmTarget = libs.versions.jvmTarget.get()
     }
 
     buildFeatures {
@@ -78,6 +73,7 @@ dependencies {
     ksp(libs.dagger.ksp)
 
     testImplementation(libs.jUnit)
+    testImplementation(libs.coroutinesTest)
     androidTestImplementation(libs.jUnitExt)
     androidTestImplementation(libs.espresso)
     androidTestImplementation(libs.composeJUnit)

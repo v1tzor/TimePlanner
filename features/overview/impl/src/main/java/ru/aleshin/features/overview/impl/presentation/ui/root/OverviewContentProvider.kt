@@ -22,6 +22,8 @@ import com.arkivanov.decompose.extensions.compose.experimental.stack.ChildStack
 import ru.aleshin.core.utils.inject.FeatureContentProvider
 import ru.aleshin.core.utils.navigation.backAnimation
 import ru.aleshin.features.overview.impl.presentation.theme.OverviewTheme
+import ru.aleshin.features.overview.impl.presentation.ui.goal.details.GoalDetailsContent
+import ru.aleshin.features.overview.impl.presentation.ui.goal.history.GoalsHistoryContent
 import ru.aleshin.features.overview.impl.presentation.ui.overview.OverviewContent
 
 /**
@@ -46,6 +48,12 @@ internal class OverviewContentProvider(
                 when (val instance = child.instance) {
                     is InternalOverviewFeatureComponent.Child.OverviewChild -> {
                         OverviewContent(component = instance.component)
+                    }
+                    is InternalOverviewFeatureComponent.Child.GoalDetailsChild -> {
+                        GoalDetailsContent(component = instance.component)
+                    }
+                    is InternalOverviewFeatureComponent.Child.GoalsHistoryChild -> {
+                        GoalsHistoryContent(component = instance.component)
                     }
                 }
             }

@@ -16,12 +16,15 @@
 package ru.aleshin.timeplanner.widgets.domain.interactors
 
 import kotlinx.coroutines.flow.first
+import ru.aleshin.core.domain.common.GoalProgressManager
 import ru.aleshin.core.domain.common.RecurringScheduleManager
 import ru.aleshin.core.domain.common.TimeTaskStatusChecker
 import ru.aleshin.core.domain.entities.tasks.TimeTask
+import ru.aleshin.core.domain.repository.GoalRepository
 import ru.aleshin.core.domain.repository.ScheduleRepository
 import ru.aleshin.core.domain.repository.TasksSettingsRepository
 import ru.aleshin.core.domain.repository.ThemeSettingsRepository
+import ru.aleshin.core.domain.repository.TimeTaskRepository
 import ru.aleshin.core.domain.repository.UndefinedTaskRepository
 import ru.aleshin.core.utils.extensions.shiftDay
 import ru.aleshin.core.utils.extensions.startThisDay
@@ -47,7 +50,9 @@ interface WidgetsInteractor {
 
     class Base @Inject constructor(
         private val scheduleRepository: ScheduleRepository,
+        private val timeTaskRepository: TimeTaskRepository,
         private val undefinedTaskRepository: UndefinedTaskRepository,
+        private val goalRepository: GoalRepository,
         private val themeSettingsRepository: ThemeSettingsRepository,
         private val tasksSettingsRepository: TasksSettingsRepository,
         private val recurringScheduleManager: RecurringScheduleManager,
@@ -55,6 +60,7 @@ interface WidgetsInteractor {
         private val weekOverviewCalculator: WeekOverviewCalculator,
         private val dailySummaryCalculator: DailySummaryCalculator,
         private val deadlineTasksCalculator: DeadlineTasksCalculator,
+        private val goalProgressManager: GoalProgressManager,
         private val dateManager: DateManager,
         private val eitherWrapper: WidgetEitherWrapper,
     ) : WidgetsInteractor {
@@ -70,6 +76,11 @@ interface WidgetsInteractor {
 
             val schedules = scheduleRepository.fetchSchedulesByRange(targetTimeRange).first()
             val undefinedTasks = undefinedTaskRepository.fetchUndefinedTasks().first()
+            val goals = goalRepository.fetchAllGoals().first()
+            val goalTaskSourceRange = goalProgressManager.fetchTaskSourceRange(goals, currentTime)
+            val goalTasks = goalTaskSourceRange?.let { sourceRange ->
+                timeTaskRepository.fetchTimeTasksByScheduleDateRange(sourceRange).first()
+            }.orEmpty()
             val themeSettings = themeSettingsRepository.fetchSettingsOnce()
             val tasksSettings = tasksSettingsRepository.fetchSettings().first()
             val weekOverview = weekOverviewCalculator.calculate(targetDates, schedules)
@@ -78,6 +89,7 @@ interface WidgetsInteractor {
                 WidgetTimeTask(task, timeTaskStatusChecker.fetchStatus(task.timeRange))
             }
             val deadlines = deadlineTasksCalculator.calculate(undefinedTasks, currentTime)
+            val goalsProgress = goalProgressManager.calculate(goals, goalTasks, currentTime)
             val dailySummary = dailySummaryCalculator.calculate(sourceTodayTasks, currentTime)
 
             WidgetsSnapshot(
@@ -86,6 +98,7 @@ interface WidgetsInteractor {
                 secureMode = tasksSettings.secureMode,
                 todayTasks = todayTasks,
                 deadlines = deadlines,
+                goals = goalsProgress,
                 weekOverview = weekOverview,
                 dailySummary = dailySummary,
                 nextUpdateAt = fetchNextUpdateAt(

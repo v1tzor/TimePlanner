@@ -7,6 +7,8 @@ import dagger.internal.QualifierMetadata;
 import dagger.internal.ScopeMetadata;
 import javax.annotation.processing.Generated;
 import ru.aleshin.core.utils.managers.DateManager;
+import ru.aleshin.features.overview.impl.domain.interactors.GoalsHistoryInteractor;
+import ru.aleshin.features.overview.impl.domain.interactors.GoalsInteractor;
 import ru.aleshin.features.overview.impl.domain.interactors.MainCategoriesInteractor;
 import ru.aleshin.features.overview.impl.domain.interactors.ScheduleInteractor;
 import ru.aleshin.features.overview.impl.domain.interactors.ShareTextInteractor;
@@ -31,6 +33,10 @@ import ru.aleshin.features.overview.impl.domain.interactors.UndefinedTasksIntera
 public final class OverviewWorkProcessor_Base_Factory implements Factory<OverviewWorkProcessor.Base> {
   private final Provider<ScheduleInteractor> scheduleInteractorProvider;
 
+  private final Provider<GoalsInteractor> goalsInteractorProvider;
+
+  private final Provider<GoalsHistoryInteractor> goalsHistoryInteractorProvider;
+
   private final Provider<MainCategoriesInteractor> categoriesInteractorProvider;
 
   private final Provider<UndefinedTasksInteractor> undefinedTasksInteractorProvider;
@@ -41,11 +47,15 @@ public final class OverviewWorkProcessor_Base_Factory implements Factory<Overvie
 
   private OverviewWorkProcessor_Base_Factory(
       Provider<ScheduleInteractor> scheduleInteractorProvider,
+      Provider<GoalsInteractor> goalsInteractorProvider,
+      Provider<GoalsHistoryInteractor> goalsHistoryInteractorProvider,
       Provider<MainCategoriesInteractor> categoriesInteractorProvider,
       Provider<UndefinedTasksInteractor> undefinedTasksInteractorProvider,
       Provider<ShareTextInteractor> shareTextInteractorProvider,
       Provider<DateManager> dateManagerProvider) {
     this.scheduleInteractorProvider = scheduleInteractorProvider;
+    this.goalsInteractorProvider = goalsInteractorProvider;
+    this.goalsHistoryInteractorProvider = goalsHistoryInteractorProvider;
     this.categoriesInteractorProvider = categoriesInteractorProvider;
     this.undefinedTasksInteractorProvider = undefinedTasksInteractorProvider;
     this.shareTextInteractorProvider = shareTextInteractorProvider;
@@ -54,22 +64,25 @@ public final class OverviewWorkProcessor_Base_Factory implements Factory<Overvie
 
   @Override
   public OverviewWorkProcessor.Base get() {
-    return newInstance(scheduleInteractorProvider.get(), categoriesInteractorProvider.get(), undefinedTasksInteractorProvider.get(), shareTextInteractorProvider.get(), dateManagerProvider.get());
+    return newInstance(scheduleInteractorProvider.get(), goalsInteractorProvider.get(), goalsHistoryInteractorProvider.get(), categoriesInteractorProvider.get(), undefinedTasksInteractorProvider.get(), shareTextInteractorProvider.get(), dateManagerProvider.get());
   }
 
   public static OverviewWorkProcessor_Base_Factory create(
       Provider<ScheduleInteractor> scheduleInteractorProvider,
+      Provider<GoalsInteractor> goalsInteractorProvider,
+      Provider<GoalsHistoryInteractor> goalsHistoryInteractorProvider,
       Provider<MainCategoriesInteractor> categoriesInteractorProvider,
       Provider<UndefinedTasksInteractor> undefinedTasksInteractorProvider,
       Provider<ShareTextInteractor> shareTextInteractorProvider,
       Provider<DateManager> dateManagerProvider) {
-    return new OverviewWorkProcessor_Base_Factory(scheduleInteractorProvider, categoriesInteractorProvider, undefinedTasksInteractorProvider, shareTextInteractorProvider, dateManagerProvider);
+    return new OverviewWorkProcessor_Base_Factory(scheduleInteractorProvider, goalsInteractorProvider, goalsHistoryInteractorProvider, categoriesInteractorProvider, undefinedTasksInteractorProvider, shareTextInteractorProvider, dateManagerProvider);
   }
 
   public static OverviewWorkProcessor.Base newInstance(ScheduleInteractor scheduleInteractor,
+      GoalsInteractor goalsInteractor, GoalsHistoryInteractor goalsHistoryInteractor,
       MainCategoriesInteractor categoriesInteractor,
       UndefinedTasksInteractor undefinedTasksInteractor, ShareTextInteractor shareTextInteractor,
       DateManager dateManager) {
-    return new OverviewWorkProcessor.Base(scheduleInteractor, categoriesInteractor, undefinedTasksInteractor, shareTextInteractor, dateManager);
+    return new OverviewWorkProcessor.Base(scheduleInteractor, goalsInteractor, goalsHistoryInteractor, categoriesInteractor, undefinedTasksInteractor, shareTextInteractor, dateManager);
   }
 }

@@ -17,12 +17,15 @@ package ru.aleshin.timeplanner.widgets.presentation.mappers
 
 import android.content.Context
 import ru.aleshin.core.domain.entities.categories.MainCategory
+import ru.aleshin.core.domain.entities.goals.GoalMetric
+import ru.aleshin.core.domain.entities.goals.GoalProgress
 import ru.aleshin.core.domain.entities.tasks.UndefinedTask
 import ru.aleshin.core.presentation.mappers.mapToString
 import ru.aleshin.core.presentation.mappers.mapToUi
 import ru.aleshin.core.utils.extensions.fetchLocale
 import ru.aleshin.core.utils.extensions.shiftDay
 import ru.aleshin.core.utils.extensions.startThisDay
+import ru.aleshin.core.utils.extensions.toMinutesOrHoursString
 import ru.aleshin.timeplanner.core.ui.theme.tokens.fetchCoreLanguage
 import ru.aleshin.timeplanner.core.ui.theme.tokens.fetchCoreStrings
 import ru.aleshin.timeplanner.widgets.R
@@ -31,14 +34,17 @@ import ru.aleshin.timeplanner.widgets.domain.entities.deadlines.WidgetDeadlineTa
 import ru.aleshin.timeplanner.widgets.domain.entities.deadlines.WidgetDeadlineType
 import ru.aleshin.timeplanner.widgets.domain.entities.snapshot.WidgetsSnapshot
 import ru.aleshin.timeplanner.widgets.domain.entities.tasks.WidgetTimeTask
+import ru.aleshin.timeplanner.widgets.presentation.models.WidgetGoalUi
 import ru.aleshin.timeplanner.widgets.presentation.models.WidgetTaskUi
 import ru.aleshin.timeplanner.widgets.presentation.models.WidgetThemeUi
 import ru.aleshin.timeplanner.widgets.presentation.models.WidgetUndefinedTaskUi
 import ru.aleshin.timeplanner.widgets.presentation.models.WidgetWeekDayUi
 import ru.aleshin.timeplanner.widgets.presentation.theme.fetchWidgetLanguage
 import ru.aleshin.timeplanner.widgets.presentation.theme.fetchWidgetLocale
+import ru.aleshin.timeplanner.widgets.presentation.theme.fetchWidgetQuantityString
 import ru.aleshin.timeplanner.widgets.presentation.theme.fetchWidgetString
 import ru.aleshin.timeplanner.widgets.presentation.ui.deadlines.state.DeadlinesWidgetStateUi
+import ru.aleshin.timeplanner.widgets.presentation.ui.goals.state.GoalsWidgetStateUi
 import ru.aleshin.timeplanner.widgets.presentation.ui.summary.state.DailySummaryWidgetStateUi
 import ru.aleshin.timeplanner.widgets.presentation.ui.today.state.TodayWidgetStateUi
 import ru.aleshin.timeplanner.widgets.presentation.ui.week.state.WeekOverviewWidgetStateUi
@@ -48,6 +54,7 @@ import java.util.Date
 import java.util.Locale
 import javax.inject.Inject
 import kotlin.math.max
+import kotlin.math.roundToInt
 
 /**
  * @author Stanislav Aleshin on 28.07.2026.
@@ -84,6 +91,16 @@ class WidgetsStateUiMapper @Inject constructor(
             overdueCount = snapshot.deadlines.overdueCount,
             todayCount = snapshot.deadlines.todayCount,
             upcomingCount = snapshot.deadlines.upcomingCount,
+        )
+    }
+
+    fun mapGoals(snapshot: WidgetsSnapshot): GoalsWidgetStateUi {
+        val language = snapshot.themeSettings.language.code ?: context.fetchLocale().language
+        return GoalsWidgetStateUi(
+            updatedAt = snapshot.generatedAt.time,
+            goals = snapshot.goals.map { progress ->
+                progress.mapToUi(language, snapshot.secureMode)
+            },
         )
     }
 
@@ -165,6 +182,51 @@ class WidgetsStateUiMapper @Inject constructor(
         )
     }
 
+    private fun GoalProgress.mapToUi(
+        language: String,
+        secureMode: Boolean,
+    ): WidgetGoalUi {
+        val strings = fetchCoreStrings(fetchCoreLanguage(language))
+        val actualTitle = actualValue.fetchGoalValueTitle(goal.metric, strings.minutesSymbol, strings.hoursSymbol)
+        val targetTitle = goal.targetValue.fetchGoalValueTitle(
+            goal.metric,
+            strings.minutesSymbol,
+            strings.hoursSymbol,
+        )
+        val valueTitle = when (goal.metric) {
+            GoalMetric.DURATION -> "$actualTitle / $targetTitle"
+            GoalMetric.TASK_COUNT -> context.fetchWidgetQuantityString(
+                language = language,
+                resource = R.plurals.widget_goal_tasks_value,
+                quantity = goal.targetValue.toInt(),
+                actualValue,
+                goal.targetValue,
+            )
+        }
+        return WidgetGoalUi(
+            id = goal.id,
+            title = if (secureMode) {
+                context.fetchWidgetString(language, R.string.widget_private_goal)
+            } else {
+                goal.title
+            },
+            categoryType = if (secureMode) null else goal.mainCategory?.default,
+            scopeType = goal.scopeType,
+            metric = goal.metric,
+            direction = goal.direction,
+            actualValue = actualValue,
+            plannedValue = plannedValue,
+            targetValue = goal.targetValue,
+            remainingValue = remainingValue,
+            progressFraction = progressFraction,
+            progressTitle = "${(progressFraction * PERCENT_MULTIPLIER).roundToInt().coerceAtLeast(0)}%",
+            valueTitle = valueTitle,
+            deadline = goal.deadline.time,
+            deadlineTitle = SimpleDateFormat("d MMM", fetchWidgetLocale(language)).format(goal.deadline),
+            status = status,
+        )
+    }
+
     private fun WidgetWeekDay.mapToUi(
         currentTime: Date,
         locale: Locale,
@@ -233,4 +295,20 @@ class WidgetsStateUiMapper @Inject constructor(
     }
 }
 
+private fun Long.fetchGoalValueTitle(
+    metric: GoalMetric,
+    minutesSymbol: String,
+    hoursSymbol: String,
+): String {
+    return when (metric) {
+        GoalMetric.DURATION -> if (this == 0L) {
+            "0$minutesSymbol"
+        } else {
+            toMinutesOrHoursString(minutesSymbol, hoursSymbol)
+        }
+        GoalMetric.TASK_COUNT -> toString()
+    }
+}
+
+private const val PERCENT_MULTIPLIER = 100f
 private const val MILLIS_IN_DAY = 86_400_000L

@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import ru.aleshin.features.overview.impl.presentation.ui.overview.contract.OverviewEvent
 import ru.aleshin.features.overview.impl.presentation.ui.overview.contract.OverviewState
 import ru.aleshin.features.overview.impl.presentation.ui.overview.views.SelectedDaySection
+import ru.aleshin.features.overview.impl.presentation.ui.overview.views.GoalsSection
 import ru.aleshin.features.overview.impl.presentation.ui.overview.views.UndefinedTaskSection
 import ru.aleshin.features.overview.impl.presentation.ui.overview.views.WeekTimelineSection
 import ru.aleshin.timeplanner.core.ui.theme.tokens.AdaptiveLayoutDefaults
@@ -229,6 +230,21 @@ private fun OverviewSupportingLayout(
                         AdaptiveLayoutDefaults.SpaceExtraLarge,
                     ),
                 ) {
+                    GoalsSection(
+                        modifier = Modifier.fillMaxWidth(),
+                        isLoading = state.isGoalsLoading,
+                        goals = state.goals,
+                        horizontalPadding = AdaptiveLayoutDefaults.SpaceLarge,
+                        onGoalClick = { goalId ->
+                            onEvent(OverviewEvent.OpenGoal(goalId))
+                        },
+                        onHistoryClick = {
+                            onEvent(OverviewEvent.OpenGoalsHistory)
+                        },
+                        onAddClick = {
+                            onEvent(OverviewEvent.CreateGoal)
+                        },
+                    )
                     WeekTimelineSection(
                         modifier = Modifier.fillMaxWidth(),
                         isLoading = state.isLoading,
@@ -311,6 +327,19 @@ private fun OverviewSingleColumn(
             .padding(top = 16.dp),
         verticalArrangement = Arrangement.spacedBy(24.dp),
     ) {
+        GoalsSection(
+            isLoading = state.isGoalsLoading,
+            goals = state.goals,
+            onGoalClick = { goalId ->
+                onEvent(OverviewEvent.OpenGoal(goalId))
+            },
+            onHistoryClick = {
+                onEvent(OverviewEvent.OpenGoalsHistory)
+            },
+            onAddClick = {
+                onEvent(OverviewEvent.CreateGoal)
+            },
+        )
         WeekTimelineSection(
             isLoading = state.isLoading,
             selectedDate = state.selectedDate,

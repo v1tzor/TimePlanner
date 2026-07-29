@@ -30,6 +30,7 @@ import ru.aleshin.features.editor.api.EditorConfig
 import ru.aleshin.features.home.api.HomeConfig
 import ru.aleshin.features.overview.impl.domain.entities.OverviewFailures
 import ru.aleshin.features.overview.impl.presentation.models.overview.WeekOverviewUi
+import ru.aleshin.features.overview.impl.presentation.models.GoalProgressUi
 import java.util.Date
 
 /**
@@ -38,12 +39,14 @@ import java.util.Date
 @Serializable
 internal data class OverviewState(
     val isLoading: Boolean = true,
+    val isGoalsLoading: Boolean = true,
     @Serializable(DateSerializer::class)
     val selectedDate: Date? = null,
     val weekOverview: WeekOverviewUi = WeekOverviewUi(),
     val categories: List<MainCategoryDetailsUi> = emptyList(),
     val undefinedTasks: List<UndefinedTaskUi> = emptyList(),
     val sharedTextTasks: List<UndefinedTaskUi>? = null,
+    val goals: List<GoalProgressUi> = emptyList(),
 ) : StoreState
 
 internal sealed class OverviewEvent : StoreEvent {
@@ -52,6 +55,9 @@ internal sealed class OverviewEvent : StoreEvent {
     data class OpenSchedule(val scheduleDate: Date?) : OverviewEvent()
     data class SelectSchedule(val scheduleDate: Date) : OverviewEvent()
     data class OpenTimeTask(val timeTask: TimeTaskUi) : OverviewEvent()
+    data class OpenGoal(val goalId: Long) : OverviewEvent()
+    data object CreateGoal : OverviewEvent()
+    data object OpenGoalsHistory : OverviewEvent()
     data class CreateOrUpdateUndefinedTask(val task: UndefinedTaskUi) : OverviewEvent()
     data class ConfirmBatchUndefinedTasks(val tasks: List<UndefinedTaskUi>) : OverviewEvent()
     data object DismissBatchUndefinedTasks : OverviewEvent()
@@ -64,7 +70,15 @@ internal sealed class OverviewEffect : StoreEffect {
 
 internal sealed class OverviewAction : StoreAction {
     data class UpdateLoading(val isLoading: Boolean) : OverviewAction()
-    data class UpdateWeekOverview(val weekOverview: WeekOverviewUi) : OverviewAction()
+    data class UpdateWeekOverview(
+        val weekOverview: WeekOverviewUi,
+        val selectedDate: Date,
+    ) : OverviewAction()
+    data class UpdateGoals(
+        val goals: List<GoalProgressUi>,
+        val isLoading: Boolean,
+    ) : OverviewAction()
+    data class UpdateGoalsLoading(val isLoading: Boolean) : OverviewAction()
     data class UpdateSelectedDate(val date: Date) : OverviewAction()
     data class UpdateUndefinedTasks(val tasks: List<UndefinedTaskUi>) : OverviewAction()
     data class UpdateCategories(val categories: List<MainCategoryDetailsUi>) : OverviewAction()
@@ -76,6 +90,9 @@ internal sealed class OverviewAction : StoreAction {
 internal sealed class OverviewOutput : BaseOutput {
     data class NavigateToHome(val config: HomeConfig.Home) : OverviewOutput()
     data class NavigateToEditor(val config: EditorConfig.Task) : OverviewOutput()
+    data class NavigateToGoalDetails(val goalId: Long) : OverviewOutput()
+    data object NavigateToGoalsHistory : OverviewOutput()
+    data class NavigateToGoalEditor(val goalId: Long?) : OverviewOutput()
 }
 
 

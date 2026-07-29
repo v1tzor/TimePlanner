@@ -79,8 +79,8 @@ internal fun MainCategoryChooser(
     isError: Boolean = false,
     allCategories: List<MainCategoryUi>,
     currentCategory: MainCategoryUi?,
-    onEditCategory: (MainCategoryUi) -> Unit,
-    onAddCategory: () -> Unit,
+    onEditCategory: ((MainCategoryUi) -> Unit)? = null,
+    onAddCategory: (() -> Unit)? = null,
     onChangeCategory: (MainCategoryUi) -> Unit,
 ) {
     var openSubCategorySelectorSheet by rememberSaveable { mutableStateOf(false) }
@@ -90,7 +90,7 @@ internal fun MainCategoryChooser(
     Surface(
         onClick = { openSubCategorySelectorSheet = true },
         modifier = modifier.height(68.dp),
-        enabled = currentCategory != null && enabled,
+        enabled = allCategories.isNotEmpty() && enabled,
         shape = MaterialTheme.shapes.medium,
         color = when (isError) {
             true -> MaterialTheme.colorScheme.errorContainer
@@ -151,7 +151,7 @@ internal fun MainCategoryChooser(
             }
         }
     }
-    if (openSubCategorySelectorSheet && currentCategory != null) {
+    if (openSubCategorySelectorSheet && allCategories.isNotEmpty()) {
         MainCategorySelectorBottomSheet(
             initCategory = currentCategory,
             allCategories = allCategories,
@@ -171,14 +171,16 @@ internal fun MainCategoryChooser(
 internal fun MainCategorySelectorBottomSheet(
     modifier: Modifier = Modifier,
     allCategories: List<MainCategoryUi>,
-    initCategory: MainCategoryUi,
+    initCategory: MainCategoryUi?,
     onDismiss: () -> Unit,
-    onEditCategory: (MainCategoryUi) -> Unit,
+    onEditCategory: ((MainCategoryUi) -> Unit)? = null,
     onChooseCategory: (MainCategoryUi) -> Unit,
-    onAddCategory: () -> Unit,
+    onAddCategory: (() -> Unit)? = null,
 ) {
     val coreStrings = TimePlannerRes.strings
-    var selectedCategory by remember { mutableStateOf(initCategory) }
+    var selectedCategory by remember {
+        mutableStateOf(initCategory ?: allCategories.firstOrNull())
+    }
     var searchQuery by rememberSaveable { mutableStateOf<String?>(null) }
     val searchedCategory = remember(searchQuery, allCategories) {
         allCategories.filter { category ->
@@ -193,7 +195,7 @@ internal fun MainCategorySelectorBottomSheet(
         header = EditorThemeRes.strings.mainCategoryChooserTitle,
         title = null,
         itemView = { category ->
-            val isSelected = category.id == selectedCategory.id
+            val isSelected = category.id == selectedCategory?.id
             val density = LocalDensity.current
             val dismissState = remember(category) {
                 SwipeToDismissBoxState(
@@ -202,7 +204,7 @@ internal fun MainCategorySelectorBottomSheet(
                     confirmValueChange = { dismissBoxValue ->
                         when (dismissBoxValue) {
                             SwipeToDismissBoxValue.StartToEnd -> Unit
-                            SwipeToDismissBoxValue.EndToStart -> onEditCategory(category)
+                            SwipeToDismissBoxValue.EndToStart -> onEditCategory?.invoke(category)
                             SwipeToDismissBoxValue.Settled -> Unit
                         }
                         false
@@ -217,17 +219,20 @@ internal fun MainCategorySelectorBottomSheet(
                 title = category.fetchName() ?: "*",
                 label = null,
                 enableDismissFromStartToEnd = false,
+                enableDismissFromEndToStart = onEditCategory != null,
                 backgroundContent = {
-                    SwipeToDismissBackground(
-                        dismissState = dismissState,
-                        endToStartContent = {
-                            Icon(
-                                imageVector = Icons.Default.Edit,
-                                contentDescription = null,
-                            )
-                        },
-                        endToStartColor = MaterialTheme.colorScheme.tertiaryContainer,
-                    )
+                    if (onEditCategory != null) {
+                        SwipeToDismissBackground(
+                            dismissState = dismissState,
+                            endToStartContent = {
+                                Icon(
+                                    imageVector = Icons.Default.Edit,
+                                    contentDescription = null,
+                                )
+                            },
+                            endToStartColor = MaterialTheme.colorScheme.tertiaryContainer,
+                        )
+                    }
                 },
                 leadingIcon = {
                     val title = category.fetchName() ?: "*"
@@ -249,11 +254,13 @@ internal fun MainCategorySelectorBottomSheet(
                 }
             )
         },
-        addItemView = {
-            SelectorAddItemView(
-                text = EditorThemeRes.strings.categoryDialogAddedTitle,
-                onClick = onAddCategory,
-            )
+        addItemView = onAddCategory?.let { addCategory ->
+            {
+                SelectorAddItemView(
+                    text = EditorThemeRes.strings.categoryDialogAddedTitle,
+                    onClick = addCategory,
+                )
+            }
         },
         searchBar = {
             SearchBar(

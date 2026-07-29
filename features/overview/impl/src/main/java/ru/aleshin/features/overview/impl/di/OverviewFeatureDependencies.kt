@@ -5,13 +5,17 @@
  */
 package ru.aleshin.features.overview.impl.di
 
+import ru.aleshin.core.domain.common.GoalProgressManager
 import ru.aleshin.core.domain.common.ScheduleStatusChecker
 import ru.aleshin.core.domain.common.RecurringScheduleManager
 import ru.aleshin.core.domain.common.TimeTaskProgressManager
 import ru.aleshin.core.domain.common.TimeOverlayManager
 import ru.aleshin.core.domain.common.TimeTaskStatusChecker
+import ru.aleshin.core.domain.repository.GoalHistoryRepository
+import ru.aleshin.core.domain.repository.GoalRepository
 import ru.aleshin.core.domain.repository.MainCategoryRepository
 import ru.aleshin.core.domain.repository.ScheduleRepository
+import ru.aleshin.core.domain.repository.ThemeSettingsRepository
 import ru.aleshin.core.domain.repository.TimeTaskRepository
 import ru.aleshin.core.domain.repository.TemplatesRepository
 import ru.aleshin.core.domain.repository.UndefinedTaskRepository
@@ -21,12 +25,16 @@ import ru.aleshin.core.utils.managers.DateManager
 
 /** @author Stanislav Aleshin on 11.07.2026. */
 public interface OverviewFeatureDependencies : BaseFeatureDependencies {
+    public val goalRepository: GoalRepository
+    public val goalHistoryRepository: GoalHistoryRepository
+    public val goalProgressManager: GoalProgressManager
     public val recurringScheduleManager: RecurringScheduleManager
     public val schedulesRepository: ScheduleRepository
     public val timeTaskRepository: TimeTaskRepository
     public val templatesRepository: TemplatesRepository
     public val undefinedTaskRepository: UndefinedTaskRepository
     public val mainCategoryRepository: MainCategoryRepository
+    public val themeSettingsRepository: ThemeSettingsRepository
     public val coroutineManager: CoroutineManager
     public val scheduleStatusChecker: ScheduleStatusChecker
     public val timeTaskProgressManager: TimeTaskProgressManager

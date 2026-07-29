@@ -22,18 +22,24 @@
     <string name="widget_week_description">未来七天工作量</string>
     <string name="widget_summary_name">每日总结</string>
     <string name="widget_summary_description">已完成、已跳过和剩余任务</string>
+    <string name="widget_goals_name">目标</string>
+    <string name="widget_goals_description">目标进度与截止日期</string>
     <string name="widget_refresh_content_description">刷新小组件</string>
     <string name="widget_add_task_content_description">添加任务</string>
+    <string name="widget_add_goal_content_description">添加目标</string>
     <string name="widget_open_overview_content_description">打开概览</string>
     <string name="widget_task_completed_content_description">任务已完成</string>
     <string name="widget_task_not_completed_content_description">任务未完成</string>
     <string name="widget_private_task">任务</string>
+    <string name="widget_private_goal">目标</string>
     <string name="widget_no_data">无数据</string>
     <string name="widget_no_deadlines">没有带截止日期的任务</string>
     <string name="widget_no_schedule">没有已计划任务</string>
+    <string name="widget_no_goals">没有进行中的目标</string>
     <string name="widget_deadlines_title">截止日期</string>
     <string name="widget_week_title">未来 7 天</string>
     <string name="widget_summary_title">今天</string>
+    <string name="widget_goals_title">目标</string>
     <string name="widget_overdue">已逾期</string>
     <string name="widget_overdue_short">逾期</string>
     <string name="widget_today">今天</string>
@@ -44,6 +50,9 @@
     <string name="widget_upcoming_short">未来</string>
     <plurals name="widget_tasks_count">
         <item quantity="other">%1$d 个任务</item>
+    </plurals>
+    <plurals name="widget_goal_tasks_value">
+        <item quantity="other">%1$d / %2$d 个任务</item>
     </plurals>
     <string name="widget_completed">已完成</string>
     <string name="widget_skipped">已跳过</string>

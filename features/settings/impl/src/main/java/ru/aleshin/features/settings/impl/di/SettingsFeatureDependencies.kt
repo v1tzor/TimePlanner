@@ -16,6 +16,8 @@
 package ru.aleshin.features.settings.impl.di
 
 import android.content.Context
+import ru.aleshin.core.domain.repository.GoalHistoryRepository
+import ru.aleshin.core.domain.repository.GoalRepository
 import ru.aleshin.core.domain.repository.MainCategoryRepository
 import ru.aleshin.core.domain.repository.ScheduleRepository
 import ru.aleshin.core.domain.repository.SubCategoryRepository
@@ -34,6 +36,8 @@ import ru.aleshin.core.utils.managers.DateManager
  * @author Stanislav Aleshin on 17.02.2023.
  */
 public interface SettingsFeatureDependencies : BaseFeatureDependencies {
+    public val goalRepository: GoalRepository
+    public val goalHistoryRepository: GoalHistoryRepository
     public val themeSettingsRepository: ThemeSettingsRepository
     public val tasksSettingsRepository: TasksSettingsRepository
     public val mainCategoryRepository: MainCategoryRepository

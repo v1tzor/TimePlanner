@@ -15,7 +15,6 @@
  */
 plugins {
     alias(libs.plugins.androidLibrary)
-    alias(libs.plugins.kotlinAndroid)
     alias(libs.plugins.parcelize)
     alias(libs.plugins.serialization)
     alias(libs.plugins.ksp)
@@ -43,10 +42,6 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
-    }
-
-    kotlinOptions {
-        jvmTarget = libs.versions.jvmTarget.get()
     }
 
     buildFeatures {

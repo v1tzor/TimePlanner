@@ -22,18 +22,24 @@
     <string name="widget_week_description">Carga dos próximos sete dias</string>
     <string name="widget_summary_name">Resumo diário</string>
     <string name="widget_summary_description">Tarefas concluídas, ignoradas e restantes</string>
+    <string name="widget_goals_name">Metas</string>
+    <string name="widget_goals_description">Progresso e prazos das metas</string>
     <string name="widget_refresh_content_description">Atualizar widgets</string>
     <string name="widget_add_task_content_description">Adicionar tarefa</string>
+    <string name="widget_add_goal_content_description">Adicionar meta</string>
     <string name="widget_open_overview_content_description">Abrir visão geral</string>
     <string name="widget_task_completed_content_description">Tarefa concluída</string>
     <string name="widget_task_not_completed_content_description">Tarefa não concluída</string>
     <string name="widget_private_task">Tarefa</string>
+    <string name="widget_private_goal">Meta</string>
     <string name="widget_no_data">Sem dados</string>
     <string name="widget_no_deadlines">Nenhuma tarefa com prazo</string>
     <string name="widget_no_schedule">Nenhuma tarefa planejada</string>
+    <string name="widget_no_goals">Nenhuma meta ativa</string>
     <string name="widget_deadlines_title">Prazos</string>
     <string name="widget_week_title">Próximos 7 dias</string>
     <string name="widget_summary_title">Hoje</string>
+    <string name="widget_goals_title">Metas</string>
     <string name="widget_overdue">Atrasadas</string>
     <string name="widget_overdue_short">Atraso</string>
     <string name="widget_today">Hoje</string>
@@ -45,6 +51,10 @@
     <plurals name="widget_tasks_count">
         <item quantity="one">%1$d tarefa</item>
         <item quantity="other">%1$d tarefas</item>
+    </plurals>
+    <plurals name="widget_goal_tasks_value">
+        <item quantity="one">%1$d / %2$d tarefa</item>
+        <item quantity="other">%1$d / %2$d tarefas</item>
     </plurals>
     <string name="widget_completed">Concluídas</string>
     <string name="widget_skipped">Ignoradas</string>
