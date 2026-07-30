@@ -7,9 +7,9 @@
   />
 
   <h1>TimePlanner</h1>
-  
+
   <p>
-    <img alt="Kotlin" src="https://img.shields.io/badge/Kotlin-2.1.21-7F52FF?logo=kotlin&logoColor=white&style=for-the-badge" />
+    <img alt="Kotlin" src="https://img.shields.io/badge/Kotlin-2.3.21-7F52FF?logo=kotlin&logoColor=white&style=for-the-badge" />
     <img alt="Android API" src="https://img.shields.io/badge/Android-API%2024%2B-3DDC84?logo=android&logoColor=black&style=for-the-badge" />
     <img alt="Jetpack Compose" src="https://img.shields.io/badge/Jetpack%20Compose-Material%203-4285F4?logo=jetpackcompose&logoColor=white&style=for-the-badge" />
     <img alt="License" src="https://img.shields.io/github/license/v1tzor/TimePlanner?style=for-the-badge" />
@@ -99,11 +99,13 @@ You can also download APK files from [GitHub Releases](https://github.com/v1tzor
 ### Timeline-based daily planning 🗓️
 
 - Create a separate schedule for every date.
+- Switch between agenda and timeline views.
 - Add tasks with exact start and end times.
 - Prevent overlapping tasks before they are saved.
 - Keep tasks without a fixed time in a dedicated inbox.
 - Convert an unscheduled task into a scheduled one when the time is known.
-- Move, edit, complete, and reorganize tasks throughout the day.
+- Move, resize, edit, complete, and reorganize tasks throughout the day.
+- Organize tasks with main categories, subcategories, priorities, notes, and statistics settings.
 
 ### Templates and recurring tasks 🔁
 
@@ -124,11 +126,11 @@ You can also download APK files from [GitHub Releases](https://github.com/v1tzor
 
 ### Analytics 📊
 
-- Workload by week, month, half-year, or year.
-- Time distribution by category and subcategory.
-- Hourly workload.
-- Total task count and planned time.
-- Average daily load and average task duration.
+- Explore a week, month, half-year, year, or custom calendar range.
+- Review planned and completed time, task counts, workload trends, and key metrics.
+- Compare time by category and drill down into subcategory analytics.
+- Inspect task creation timing, planning regularity, duration structure, template usage, and busiest hours.
+- Open category-specific trends, time-of-day distribution, contributing tasks, and observations.
 - Optional exclusion of individual tasks from statistics.
 
 ### Goals 🎯
@@ -136,22 +138,31 @@ You can also download APK files from [GitHub Releases](https://github.com/v1tzor
 - Create duration or task-count goals with a concrete calendar deadline.
 - Track all statistical tasks, a category, or a subcategory without manual check-ins.
 - Use minimum targets or maximum limits.
-- Review compact live progress and the deadline above the Overview week plan.
-- Open goal details with icon-based metrics, status, contributing tasks, and a clear empty state.
+- Review live progress in Overview and open detailed goal statistics.
 - Keep immutable completed-goal history even after an active goal is deleted.
-- Include the whole selected deadline day in the device timezone, including daylight-saving changes.
-- Continue counting completed tasks through the current local day after a missed deadline, so a goal can still be achieved later.
+- Continue tracking an expired minimum goal through the current local day so it can still be achieved later.
 
 ### Personalization and accessibility 🎨
 
 - Material 3 interface built with Jetpack Compose.
 - Light, dark, and system theme modes.
 - Dynamic Color on supported devices.
-- Multiple built-in color schemes.
+- Pink, purple, red, and blue built-in color schemes.
 - Compact and expanded task presentation.
+- Persistent agenda or timeline home mode.
 - Configurable duration presets.
+- Configurable analytics range and calendar-button behavior.
 - Secure mode for sensitive content.
 - Home-screen widget powered by Jetpack Glance.
+
+### Adaptive interface 📐
+
+- Bottom navigation on compact windows and a navigation rail when more space is available.
+- Window-size-aware grids, supporting panes, and list-detail layouts.
+- Dedicated layouts for medium, expanded, large, and extra-large windows.
+- Fold-aware book and tabletop arrangements that keep controls away from separating hinges.
+- Resizable layouts suitable for tablets, split-screen, ChromeOS, and desktop-style Android windows.
+- The compact phone interface keeps its original navigation and content structure.
 
 ### Backup and portability 💾
 
@@ -198,8 +209,10 @@ TimePlanner follows a multi-module Clean Architecture approach with feature-leve
 ├── root navigation
 ├── dependency graph
 ├── Android receivers
-├── notification runtime
-└── Glance widgets
+└── notification runtime
+
+:widgets
+└── Jetpack Glance application widgets
 
 :core
 ├── :utils          architecture primitives, MVI contracts, date/time and notification helpers
@@ -224,39 +237,50 @@ feature:api   public contracts, configuration and navigation API
 feature:impl  UI, presentation, interactors, DI and internal navigation
 ```
 
-The application uses a single `MainActivity`, Decompose for navigation, Dagger for dependency injection, and an MVI-based presentation layer built around state, events, actions, effects, inputs, and outputs.
+The application uses a single `MainActivity`, Decompose for navigation, Dagger for dependency injection, and an MVI presentation layer built around `ComposeStore`, `FlowWorkProcessor`, state, events, actions, effects, inputs, and outputs.
+
+Repository-backed data follows one flow in both directions:
+
+```text
+Read:  Repository Flow -> Interactor -> WorkProcessor -> ComposeStore -> Compose UI
+Write: UI Event -> ComposeStore -> WorkProcessor -> Interactor -> Repository
+```
+
+Adaptive window and fold posture information remains in the Compose layout layer and does not enter domain models or navigation state.
 
 ## Technology stack 🚀
 
 | Area | Technology |
 |---|---|
-| Language | Kotlin |
-| UI | Jetpack Compose, Material 3 |
+| Language | Kotlin 2.3.21 |
+| UI | Jetpack Compose 1.11.4, Material 3 1.4.0 |
+| Adaptive UI | Material 3 Adaptive 1.2.0, Material 3 Adaptive Navigation Suite |
 | Architecture | Clean Architecture, MVI, multi-module feature isolation |
-| Navigation | Decompose, Essenty |
-| Dependency injection | Dagger 2 with KSP |
-| Asynchronous work | Kotlin Coroutines and Flow |
-| Persistence | Room with KSP |
+| Navigation | Decompose 3.5.0, Essenty 2.5.0 |
+| Dependency injection | Dagger 2.60.1 with KSP |
+| Asynchronous work | Kotlin Coroutines 1.11.0 and Flow |
+| Persistence | Room 2.8.4 with KSP |
 | Serialization | Kotlin Serialization |
 | Widgets | Jetpack Glance |
-| Charts | Charty, Compose Charts |
-| Debugging | LeakCanary |
+| Charts | Charty |
+| Diagnostics | LeakCanary in debug builds, OK Tracer in store builds |
 
-Current project baseline:
+Current project baseline for version `2.0.0`:
 
 - Minimum Android version: API 24.
-- Compile and target SDK: 36.
+- Compile and target SDK: 37.
 - JVM target: 17.
-- Gradle: 8.13.
-- Android Gradle Plugin: 8.12.1.
+- Gradle: 9.5.0.
+- Android Gradle Plugin: 9.3.0.
+- KSP: 2.3.10.
 
 ## Build variants 🧱
 
 | Flavor | Purpose |
 |---|---|
-| `fdroid` | Clean open-source build without store analytics |
-| `rustore` | RuStore distribution build |
-| `huawei` | AppGallery distribution build |
+| `fdroid` | Open-source distribution without store diagnostics |
+| `rustore` | RuStore distribution with OK Tracer diagnostics |
+| `huawei` | AppGallery distribution with OK Tracer diagnostics |
 
 The release build enables code shrinking, resource shrinking, ProGuard/R8 rules, and signing configuration.
 
@@ -264,13 +288,13 @@ The release build enables code shrinking, resource shrinking, ProGuard/R8 rules,
 
 ### Requirements ✅
 
-- Android Studio with support for the project's Android Gradle Plugin.
+- A current Android Studio version with Android Gradle Plugin 9.3 support.
 - JDK 17.
-- Android SDK 36.
+- Android SDK 37.
 
 ### Local properties 🔐
 
-The application module uses an explicit signing configuration for both debug and release builds. Add the following values to your local `local.properties` file:
+The application module uses an explicit signing configuration for both debug and release builds. Add these values to `local.properties`:
 
 ```properties
 storeFile=/absolute/path/to/your.keystore
@@ -279,14 +303,21 @@ keyAlias=your_key_alias
 keyPassword=your_key_password
 ```
 
-The `rustore` and `huawei` variants additionally expect exceptions tracing credentials. The `fdroid` variant does not include those store integrations.
+The `rustore` and `huawei` variants additionally require OK Tracer credentials:
+
+```properties
+tracerPluginToken=your_plugin_token
+tracerAppToken=your_application_token
+```
+
+The `fdroid` variant does not use the store diagnostics dependencies.
 
 ### Steps ▶️
 
 ```bash
 git clone https://github.com/v1tzor/TimePlanner.git
 cd TimePlanner
-./gradlew assembleFdroidDebug
+./gradlew :app:assembleFdroidDebug
 ```
 
 Alternatively, open the project in Android Studio, select the desired flavor and build type, then run the `app` configuration.
@@ -308,6 +339,14 @@ Alternatively, open the project in Android Studio, select the desired flavor and
 <p>
   <img src="https://github.com/v1tzor/TimePlanner/assets/116388544/3f3d0e30-92ec-40eb-b966-0031ae60f72a" alt="TimePlanner MVI architecture" />
 </p>
+
+Useful verification commands:
+
+```bash
+./gradlew :app:assembleFdroidDebug
+./gradlew :features:home:impl:testDebugUnitTest
+./gradlew :features:analytics:impl:testDebugUnitTest
+```
 
 ## Support development ❤️
 
