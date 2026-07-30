@@ -47,6 +47,11 @@ internal interface GoalInteractor {
         private val eitherWrapper: EditorEitherWrapper,
     ) : GoalInteractor {
 
+        private companion object {
+            const val DEFAULT_DURATION_TARGET = 5L * 60L * 60L * 1000L
+            const val DEFAULT_DEADLINE_DAYS = 7
+        }
+
         override suspend fun fetchGoalEditorData(goalId: Long?) = eitherWrapper.wrapFlow {
             val goalFlow = if (goalId != null) {
                 goalRepository.fetchGoalById(goalId)
@@ -64,9 +69,8 @@ internal interface GoalInteractor {
             }
         }
 
-        override suspend fun saveGoal(goal: Goal) = eitherWrapper.wrap {
+        override suspend fun saveGoal(goal: Goal) = eitherWrapper.wrapUnit {
             goalRepository.addOrUpdateGoal(goal)
-            Unit
         }
 
         private fun createDefaultGoal(): Goal {
@@ -78,12 +82,8 @@ internal interface GoalInteractor {
                 direction = GoalDirection.AT_LEAST,
                 targetValue = DEFAULT_DURATION_TARGET,
                 createdAt = createdAt,
-                deadline = dateManager.fetchBeginningCurrentDay()
-                    .shiftDay(DEFAULT_DEADLINE_DAYS - 1),
+                deadline = dateManager.fetchBeginningCurrentDay().shiftDay(DEFAULT_DEADLINE_DAYS - 1),
             )
         }
     }
 }
-
-private const val DEFAULT_DURATION_TARGET = 5L * 60L * 60L * 1000L
-private const val DEFAULT_DEADLINE_DAYS = 7

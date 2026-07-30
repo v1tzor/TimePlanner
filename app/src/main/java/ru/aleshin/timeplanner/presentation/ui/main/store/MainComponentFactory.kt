@@ -22,7 +22,7 @@ import ru.aleshin.features.settings.api.SettingsDecomposeFeatureFactory
 import ru.aleshin.features.templates.api.TemplatesDecomposeFeatureFactory
 import ru.aleshin.timeplanner.presentation.ui.main.contract.DeepLinkTarget
 import ru.aleshin.timeplanner.presentation.ui.main.contract.ShareTarget
-import ru.aleshin.timeplanner.presentation.ui.tabs.store.TabNavigationComponentFactory
+import ru.aleshin.timeplanner.presentation.ui.tabs.component.TabNavigationComponentFactory
 import javax.inject.Inject
 
 /**

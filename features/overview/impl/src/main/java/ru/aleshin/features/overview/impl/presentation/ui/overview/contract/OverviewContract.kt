@@ -28,9 +28,11 @@ import ru.aleshin.core.utils.architecture.store.contract.StoreState
 import ru.aleshin.core.utils.functional.DateSerializer
 import ru.aleshin.features.editor.api.EditorConfig
 import ru.aleshin.features.home.api.HomeConfig
+import ru.aleshin.features.overview.api.OverviewConfig
+import ru.aleshin.features.overview.api.OverviewConfig.GoalsHistory
 import ru.aleshin.features.overview.impl.domain.entities.OverviewFailures
-import ru.aleshin.features.overview.impl.presentation.models.overview.WeekOverviewUi
 import ru.aleshin.features.overview.impl.presentation.models.GoalProgressUi
+import ru.aleshin.features.overview.impl.presentation.models.overview.WeekOverviewUi
 import java.util.Date
 
 /**
@@ -39,7 +41,6 @@ import java.util.Date
 @Serializable
 internal data class OverviewState(
     val isLoading: Boolean = true,
-    val isGoalsLoading: Boolean = true,
     @Serializable(DateSerializer::class)
     val selectedDate: Date? = null,
     val weekOverview: WeekOverviewUi = WeekOverviewUi(),
@@ -74,11 +75,7 @@ internal sealed class OverviewAction : StoreAction {
         val weekOverview: WeekOverviewUi,
         val selectedDate: Date,
     ) : OverviewAction()
-    data class UpdateGoals(
-        val goals: List<GoalProgressUi>,
-        val isLoading: Boolean,
-    ) : OverviewAction()
-    data class UpdateGoalsLoading(val isLoading: Boolean) : OverviewAction()
+    data class UpdateGoals(val goals: List<GoalProgressUi>) : OverviewAction()
     data class UpdateSelectedDate(val date: Date) : OverviewAction()
     data class UpdateUndefinedTasks(val tasks: List<UndefinedTaskUi>) : OverviewAction()
     data class UpdateCategories(val categories: List<MainCategoryDetailsUi>) : OverviewAction()
@@ -89,10 +86,10 @@ internal sealed class OverviewAction : StoreAction {
 
 internal sealed class OverviewOutput : BaseOutput {
     data class NavigateToHome(val config: HomeConfig.Home) : OverviewOutput()
-    data class NavigateToEditor(val config: EditorConfig.Task) : OverviewOutput()
-    data class NavigateToGoalDetails(val goalId: Long) : OverviewOutput()
-    data object NavigateToGoalsHistory : OverviewOutput()
-    data class NavigateToGoalEditor(val goalId: Long?) : OverviewOutput()
+    data class NavigateToTaskEditor(val config: EditorConfig.Task) : OverviewOutput()
+    data class NavigateToGoalEditor(val config: EditorConfig.Goal) : OverviewOutput()
+    data class NavigateToGoalDetails(val config: OverviewConfig.GoalDetails) : OverviewOutput()
+    data class NavigateToGoalsHistory(val config: GoalsHistory = GoalsHistory) : OverviewOutput()
 }
 
 

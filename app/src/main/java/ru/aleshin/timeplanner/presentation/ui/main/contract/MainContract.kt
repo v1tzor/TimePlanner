@@ -24,9 +24,11 @@ import ru.aleshin.core.utils.architecture.store.contract.StoreEffect
 import ru.aleshin.core.utils.architecture.store.contract.StoreEvent
 import ru.aleshin.core.utils.architecture.store.contract.StoreState
 import ru.aleshin.features.editor.api.EditorConfig
+import ru.aleshin.features.overview.api.OverviewConfig
 import ru.aleshin.timeplanner.core.ui.theme.material.ColorsUiType
 import ru.aleshin.timeplanner.core.ui.theme.material.ThemeUiType
 import ru.aleshin.timeplanner.core.ui.theme.tokens.LanguageUiType
+import ru.aleshin.timeplanner.presentation.ui.tabs.component.TabNavigationComponent.TabNavigationConfig
 
 /**
  * @author Stanislav Aleshin on 14.02.2023.
@@ -41,17 +43,8 @@ data class MainState(
     val secureMode: Boolean = false,
 ) : StoreState
 
-data class MainInput(
-    val initialDeepLinkTarget: DeepLinkTarget?,
-    val initialShareTarget: ShareTarget?,
-) : BaseInput
-
 sealed class MainEvent : StoreEvent {
-    data class Init(
-        val isRestore: Boolean,
-        val initialDeepLinkTarget: DeepLinkTarget?,
-        val initialShareTarget: ShareTarget?,
-    ) : MainEvent()
+    data class Init(val input: MainInput, val isRestore: Boolean) : MainEvent()
     data class ProcessDeepLink(val screenTarget: DeepLinkTarget) : MainEvent()
     data class ProcessShare(val shareTarget: ShareTarget) : MainEvent()
 }
@@ -59,7 +52,6 @@ sealed class MainEvent : StoreEvent {
 sealed class MainEffect : StoreEffect
 
 sealed class MainAction : StoreAction {
-    object Navigate : MainAction()
     data class ChangeSettings(
         val language: LanguageUiType,
         val theme: ThemeUiType,
@@ -69,8 +61,13 @@ sealed class MainAction : StoreAction {
     ) : MainAction()
 }
 
+data class MainInput(
+    val initialDeepLinkTarget: DeepLinkTarget?,
+    val initialShareTarget: ShareTarget?,
+) : BaseInput
+
 sealed class MainOutput : BaseOutput {
     data class NavigateToEditor(val config: EditorConfig) : MainOutput()
-    data class NavigateToOverview(val sharedText: String, val sharedKey: Long) : MainOutput()
-    data class NavigateToTabNavigation(val target: MainTabTarget) : MainOutput()
+    data class NavigateToOverview(val config: OverviewConfig) : MainOutput()
+    data class NavigateToTabNavigation(val config: TabNavigationConfig) : MainOutput()
 }

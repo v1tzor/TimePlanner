@@ -21,7 +21,6 @@ import ru.aleshin.core.utils.architecture.store.communicators.StateCommunicator
 import ru.aleshin.core.utils.architecture.store.work.BackgroundWorkKey
 import ru.aleshin.core.utils.architecture.store.work.WorkScope
 import ru.aleshin.core.utils.managers.CoroutineManager
-import ru.aleshin.timeplanner.presentation.ui.main.contract.DeepLinkTarget
 import ru.aleshin.timeplanner.presentation.ui.main.contract.MainAction
 import ru.aleshin.timeplanner.presentation.ui.main.contract.MainEffect
 import ru.aleshin.timeplanner.presentation.ui.main.contract.MainEvent
@@ -46,7 +45,7 @@ class MainComposeStore(
 ) {
 
     override fun initialize(input: MainInput, isRestore: Boolean) {
-        dispatchEvent(MainEvent.Init(isRestore, input.initialDeepLinkTarget, input.initialShareTarget))
+        dispatchEvent(MainEvent.Init(input, isRestore))
     }
 
     override suspend fun WorkScope<MainState, MainAction, MainEffect, MainOutput>.handleEvent(
@@ -63,12 +62,12 @@ class MainComposeStore(
                         val navigationCommand = NavWorkCommand.InitialNavigation
                         navigationWorkProcessor.work(navigationCommand).handleWork()
 
-                        if (initialDeepLinkTarget != null) {
-                            val deepLinkCommand = NavWorkCommand.ProcessDeepLink(initialDeepLinkTarget)
+                        if (input.initialDeepLinkTarget != null) {
+                            val deepLinkCommand = NavWorkCommand.ProcessDeepLink(input.initialDeepLinkTarget)
                             navigationWorkProcessor.work(deepLinkCommand).handleWork()
                         }
-                        if (initialShareTarget != null) {
-                            val shareCommand = NavWorkCommand.ProcessShare(initialShareTarget)
+                        if (input.initialShareTarget != null) {
+                            val shareCommand = NavWorkCommand.ProcessShare(input.initialShareTarget)
                             navigationWorkProcessor.work(shareCommand).handleWork()
                         }
                     }
@@ -89,7 +88,6 @@ class MainComposeStore(
         action: MainAction,
         currentState: MainState,
     ) = when (action) {
-        is MainAction.Navigate -> currentState
         is MainAction.ChangeSettings -> currentState.copy(
             language = action.language,
             theme = action.theme,

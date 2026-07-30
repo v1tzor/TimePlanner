@@ -16,6 +16,7 @@
 package ru.aleshin.timeplanner.domain.common
 
 import ru.aleshin.core.utils.handlers.ErrorHandler
+import ru.aleshin.timeplanner.domain.entities.MainFailures
 import javax.inject.Inject
 
 /**

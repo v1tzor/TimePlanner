@@ -17,11 +17,9 @@ package ru.aleshin.features.overview.impl.presentation.theme
 
 import androidx.compose.runtime.Composable
 import ru.aleshin.features.overview.impl.presentation.theme.tokens.LocalOverviewIcons
-import ru.aleshin.features.overview.impl.presentation.theme.tokens.LocalOverviewGoalStrings
 import ru.aleshin.features.overview.impl.presentation.theme.tokens.LocalOverviewStrings
 import ru.aleshin.features.overview.impl.presentation.theme.tokens.OverviewIcons
 import ru.aleshin.features.overview.impl.presentation.theme.tokens.OverviewStrings
-import ru.aleshin.features.overview.impl.presentation.theme.tokens.OverviewGoalStrings
 
 /**
  * @author Stanislav Aleshin on 18.02.2023.
@@ -33,7 +31,4 @@ internal object OverviewThemeRes {
 
     val icons: OverviewIcons
         @Composable get() = LocalOverviewIcons.current
-
-    val goalStrings: OverviewGoalStrings
-        @Composable get() = LocalOverviewGoalStrings.current
 }

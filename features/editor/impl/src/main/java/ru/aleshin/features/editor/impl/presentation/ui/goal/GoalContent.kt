@@ -63,7 +63,7 @@ internal fun GoalContent(
         },
         snackbarHost = {
             SnackbarHost(hostState = snackbarHostState) { snackbarData ->
-                ErrorSnackbar(snackbarData)
+                ErrorSnackbar(snackbarData = snackbarData)
             }
         },
     ) { contentPadding ->

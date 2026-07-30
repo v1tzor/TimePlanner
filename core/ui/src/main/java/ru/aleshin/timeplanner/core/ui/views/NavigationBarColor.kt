@@ -21,6 +21,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
+/**
+ * @author Stanislav Aleshin on 27.02.2023.
+ */
 @Composable
 internal fun NavigationBarColor(isDarkTheme: Boolean) {
     val view = LocalView.current

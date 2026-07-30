@@ -23,27 +23,9 @@ internal object AnalyticsGridSpec {
 
     const val MEDIUM_COLUMN_COUNT = 8
     const val EXPANDED_COLUMN_COUNT = 12
+    const val EXPANDED_SOURCE_SPAN = 5
 
     fun fetchColumnCount(isExpanded: Boolean): Int {
         return if (isExpanded) EXPANDED_COLUMN_COUNT else MEDIUM_COLUMN_COUNT
-    }
-
-    fun fetchSpan(
-        section: AnalyticsGridSection,
-        isExpanded: Boolean,
-    ): Int {
-        val columnCount = fetchColumnCount(isExpanded)
-        if (!isExpanded) return columnCount
-        return when (section) {
-            AnalyticsGridSection.SUMMARY -> 5
-            AnalyticsGridSection.KEY_METRICS -> 5
-            AnalyticsGridSection.CATEGORIES -> columnCount
-            AnalyticsGridSection.LOAD -> columnCount
-            AnalyticsGridSection.CREATION -> 5
-            AnalyticsGridSection.REGULARITY -> 5
-            AnalyticsGridSection.HOURS -> 5
-            AnalyticsGridSection.DURATION -> 7
-            AnalyticsGridSection.SOURCE -> 5
-        }
     }
 }

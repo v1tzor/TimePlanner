@@ -37,9 +37,6 @@ internal fun HomeViewTabs(
     selectedMode: HomeViewMode,
     onModeChange: (HomeViewMode) -> Unit,
 ) {
-    val strings = HomeThemeRes.strings
-    val icons = HomeThemeRes.icons
-
     PrimaryTabRow(
         modifier = modifier,
         selectedTabIndex = selectedMode.ordinal,
@@ -47,12 +44,12 @@ internal fun HomeViewTabs(
     ) {
         HomeViewMode.entries.forEach { mode ->
             val title = when (mode) {
-                HomeViewMode.AGENDA -> strings.agendaTabTitle
-                HomeViewMode.TIMELINE -> strings.timelineTabTitle
+                HomeViewMode.AGENDA -> HomeThemeRes.strings.agendaTabTitle
+                HomeViewMode.TIMELINE -> HomeThemeRes.strings.timelineTabTitle
             }
             val icon = when (mode) {
-                HomeViewMode.AGENDA -> icons.agenda
-                HomeViewMode.TIMELINE -> icons.timeline
+                HomeViewMode.AGENDA -> HomeThemeRes.icons.agenda
+                HomeViewMode.TIMELINE -> HomeThemeRes.icons.timeline
             }
 
             Tab(
@@ -61,7 +58,7 @@ internal fun HomeViewTabs(
                 text = { Text(text = title) },
                 icon = { Icon(painter = painterResource(icon), contentDescription = title) },
                 selectedContentColor = MaterialTheme.colorScheme.primary,
-                unselectedContentColor = MaterialTheme.colorScheme.onSurfaceVariant
+                unselectedContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
     }

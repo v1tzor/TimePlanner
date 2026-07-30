@@ -15,15 +15,12 @@
  */
 package ru.aleshin.features.overview.impl.presentation.ui.overview
 
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.pulltorefresh.PullToRefreshBox
-import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -45,7 +42,6 @@ import ru.aleshin.timeplanner.core.ui.views.rememberAdaptiveLayoutInfo
  * @author Stanislav Aleshin on 02.11.2023.
  */
 @Composable
-@OptIn(ExperimentalMaterial3Api::class)
 internal fun OverviewContent(
     modifier: Modifier = Modifier,
     component: OverviewComponent,
@@ -54,11 +50,7 @@ internal fun OverviewContent(
     val store = component.store
     val state by store.stateAsState()
     val snackbarHostState = remember { SnackbarHostState() }
-    val mainScrollState = rememberScrollState()
-    val supportingScrollState = rememberScrollState()
-    val pullToRefreshState = rememberPullToRefreshState()
     val strings = OverviewThemeRes.strings
-    val layoutMode = OverviewLayoutMode.from(adaptiveLayoutInfo)
 
     Scaffold(
         modifier = modifier,
@@ -73,25 +65,17 @@ internal fun OverviewContent(
                 snackbar = { snackbarData -> ErrorSnackbar(snackbarData) },
             )
         },
+        contentWindowInsets = WindowInsets(),
     ) { contentPadding ->
-        PullToRefreshBox(
+        OverviewLayout(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(contentPadding),
-            state = pullToRefreshState,
+            state = state,
+            adaptiveLayoutInfo = adaptiveLayoutInfo,
             onRefresh = { store.dispatchEvent(OverviewEvent.Refresh) },
-            isRefreshing = state.isLoading,
-        ) {
-            OverviewLayout(
-                modifier = Modifier.fillMaxSize(),
-                state = state,
-                adaptiveLayoutInfo = adaptiveLayoutInfo,
-                layoutMode = layoutMode,
-                mainScrollState = mainScrollState,
-                supportingScrollState = supportingScrollState,
-                onEvent = store::dispatchEvent,
-            )
-        }
+            onEvent = store::dispatchEvent,
+        )
     }
 
     val sharedTextTasks = state.sharedTextTasks

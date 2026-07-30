@@ -15,6 +15,7 @@
  */
 package ru.aleshin.features.overview.impl.presentation.ui.goal.details
 
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -57,8 +58,7 @@ internal fun GoalDetailsContent(
     val state by store.stateAsState()
     val snackbarHostState = remember { SnackbarHostState() }
     var isDeleteDialogOpen by rememberSaveable { mutableStateOf(false) }
-    val strings = OverviewThemeRes.goalStrings
-    val overviewStrings = OverviewThemeRes.strings
+    val strings = OverviewThemeRes.strings
 
     Scaffold(
         modifier = modifier,
@@ -75,6 +75,7 @@ internal fun GoalDetailsContent(
                 snackbar = { snackbarData -> ErrorSnackbar(snackbarData) },
             )
         },
+        contentWindowInsets = WindowInsets(),
     ) { contentPadding ->
         GoalDetailsLayout(
             modifier = Modifier.padding(contentPadding),
@@ -87,8 +88,12 @@ internal fun GoalDetailsContent(
     if (isDeleteDialogOpen) {
         AlertDialog(
             onDismissRequest = { isDeleteDialogOpen = false },
-            title = { Text(strings.deleteGoalTitle) },
-            text = { Text(strings.deleteGoalConfirmation) },
+            title = {
+                Text(text = OverviewThemeRes.strings.deleteGoalTitle)
+            },
+            text = {
+                Text(text = OverviewThemeRes.strings.deleteGoalConfirmation)
+            },
             confirmButton = {
                 TextButton(
                     onClick = {
@@ -96,12 +101,12 @@ internal fun GoalDetailsContent(
                         store.dispatchEvent(GoalDetailsEvent.DeleteGoal)
                     },
                 ) {
-                    Text(strings.deleteGoalTitle)
+                    Text(text = OverviewThemeRes.strings.deleteGoalTitle)
                 }
             },
             dismissButton = {
                 TextButton(onClick = { isDeleteDialogOpen = false }) {
-                    Text(overviewStrings.navToBackTitle)
+                    Text(text = OverviewThemeRes.strings.navToBackTitle)
                 }
             },
         )
@@ -110,7 +115,7 @@ internal fun GoalDetailsContent(
     store.handleEffects { effect ->
         when (effect) {
             is GoalDetailsEffect.ShowError -> snackbarHostState.showSnackbar(
-                message = effect.failure.mapToMessage(overviewStrings),
+                message = effect.failure.mapToMessage(strings),
                 withDismissAction = true,
             )
             is GoalDetailsEffect.ShowGoalDeleted -> {

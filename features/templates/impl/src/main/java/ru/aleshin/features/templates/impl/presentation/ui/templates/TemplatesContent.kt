@@ -15,11 +15,15 @@
  */
 package ru.aleshin.features.templates.impl.presentation.ui.templates
 
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -35,7 +39,6 @@ import ru.aleshin.features.templates.impl.presentation.ui.templates.contract.Tem
 import ru.aleshin.features.templates.impl.presentation.ui.templates.contract.TemplatesEvent
 import ru.aleshin.features.templates.impl.presentation.ui.templates.store.TemplatesComponent
 import ru.aleshin.features.templates.impl.presentation.ui.templates.views.TemplateEditorDialog
-import ru.aleshin.features.templates.impl.presentation.ui.templates.views.TemplatesCreateFab
 import ru.aleshin.features.templates.impl.presentation.ui.templates.views.TemplatesTopAppBar
 import ru.aleshin.timeplanner.core.ui.views.AdaptiveLayoutInfo
 import ru.aleshin.timeplanner.core.ui.views.ErrorSnackbar
@@ -49,14 +52,13 @@ import ru.aleshin.timeplanner.core.ui.views.rememberAdaptiveLayoutInfo
 @OptIn(ExperimentalMaterial3Api::class)
 internal fun TemplatesContent(
     modifier: Modifier = Modifier,
-    templatesComponent: TemplatesComponent,
+    component: TemplatesComponent,
     adaptiveLayoutInfo: AdaptiveLayoutInfo = rememberAdaptiveLayoutInfo(),
 ) {
-    val store = templatesComponent.store
+    val store = component.store
     val state by store.stateAsState()
     val snackbarHostState = remember { SnackbarHostState() }
     var isTemplateCreatorOpen by rememberSaveable { mutableStateOf(false) }
-    val layoutMode = TemplatesLayoutMode.from(adaptiveLayoutInfo)
     val strings = TemplatesThemeRes.strings
 
     Scaffold(
@@ -72,23 +74,26 @@ internal fun TemplatesContent(
             }
         },
         floatingActionButton = {
-            if (layoutMode == TemplatesLayoutMode.COMPACT) {
-                TemplatesCreateFab(
+            if (!adaptiveLayoutInfo.useTemplatesSupportingPaneLayout) {
+                FloatingActionButton(
                     onClick = { isTemplateCreatorOpen = true },
-                )
+                    modifier = modifier,
+                ) {
+                    Text(
+                        text = TemplatesThemeRes.strings.addTemplatesFabTitle,
+                        style = MaterialTheme.typography.titleLarge,
+                    )
+                }
             }
         },
+        contentWindowInsets = WindowInsets(),
     ) { contentPadding ->
         TemplatesLayout(
-            modifier = when (layoutMode) {
-                TemplatesLayoutMode.COMPACT -> Modifier.padding(contentPadding)
-                TemplatesLayoutMode.SUPPORTING -> Modifier.padding(
-                    top = contentPadding.calculateTopPadding(),
-                )
-            },
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(contentPadding),
             state = state,
             adaptiveLayoutInfo = adaptiveLayoutInfo,
-            layoutMode = layoutMode,
             onCreateTemplate = { isTemplateCreatorOpen = true },
             onEvent = store::dispatchEvent,
         )

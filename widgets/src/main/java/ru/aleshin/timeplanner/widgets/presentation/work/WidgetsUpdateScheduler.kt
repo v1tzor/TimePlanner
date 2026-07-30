@@ -32,9 +32,7 @@ interface WidgetsUpdateScheduler {
 
     fun enqueueImmediate()
 
-    class Base @Inject constructor(
-        private val context: Context
-    ) : WidgetsUpdateScheduler {
+    class Base @Inject constructor(private val context: Context) : WidgetsUpdateScheduler {
         override fun enqueueImmediate() = enqueueImmediate(context)
     }
 

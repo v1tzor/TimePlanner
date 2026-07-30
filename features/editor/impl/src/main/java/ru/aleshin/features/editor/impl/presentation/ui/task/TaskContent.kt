@@ -15,7 +15,6 @@
  */
 package ru.aleshin.features.editor.impl.presentation.ui.task
 
-import android.view.KeyEvent as AndroidKeyEvent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -49,6 +48,7 @@ import ru.aleshin.features.editor.impl.presentation.ui.task.views.UndefinedTasks
 import ru.aleshin.timeplanner.core.ui.views.AdaptiveLayoutInfo
 import ru.aleshin.timeplanner.core.ui.views.ErrorSnackbar
 import ru.aleshin.timeplanner.core.ui.views.rememberAdaptiveLayoutInfo
+import android.view.KeyEvent as AndroidKeyEvent
 
 /**
  * @author Stanislav Aleshin on 25.02.2023.
@@ -57,18 +57,15 @@ import ru.aleshin.timeplanner.core.ui.views.rememberAdaptiveLayoutInfo
 @OptIn(ExperimentalMaterial3Api::class)
 internal fun TaskContent(
     modifier: Modifier = Modifier,
-    taskComponent: TaskComponent,
+    component: TaskComponent,
     adaptiveLayoutInfo: AdaptiveLayoutInfo = rememberAdaptiveLayoutInfo(),
 ) {
-    val store = taskComponent.store
+    val store = component.store
     val state by store.stateAsState()
     val snackbarHostState = remember { SnackbarHostState() }
     var isTemplatesChooserOpen by rememberSaveable { mutableStateOf(false) }
     var isUndefinedTasksChooserOpen by rememberSaveable { mutableStateOf(false) }
     val strings = EditorThemeRes.strings
-    val usePaneChooser = adaptiveLayoutInfo.useExpandedLayout ||
-        adaptiveLayoutInfo.isBookPosture ||
-        adaptiveLayoutInfo.isTabletopPosture
 
     Scaffold(
         modifier = modifier.onPreviewKeyEvent { event ->
@@ -107,7 +104,9 @@ internal fun TaskContent(
         },
     ) { contentPadding ->
         TaskLayout(
-            modifier = Modifier.fillMaxSize().padding(contentPadding),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(contentPadding),
             state = state,
             adaptiveLayoutInfo = adaptiveLayoutInfo,
             isTemplatesChooserOpen = isTemplatesChooserOpen,
@@ -124,7 +123,7 @@ internal fun TaskContent(
         )
     }
 
-    if (!usePaneChooser) {
+    if (!adaptiveLayoutInfo.useTaskPaneChooser) {
         TemplatesBottomSheet(
             isShow = isTemplatesChooserOpen,
             templates = state.templates,

@@ -18,7 +18,7 @@ package ru.aleshin.features.settings.impl.domain.interactors
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
-import ru.aleshin.core.domain.entities.settings.Settings
+import ru.aleshin.core.domain.entities.settings.SettingsDetails
 import ru.aleshin.core.domain.entities.settings.TasksSettings
 import ru.aleshin.core.domain.entities.settings.ThemeSettings
 import ru.aleshin.core.domain.repository.TasksSettingsRepository
@@ -27,7 +27,7 @@ import ru.aleshin.core.utils.functional.DomainResult
 import ru.aleshin.core.utils.functional.FlowDomainResult
 import ru.aleshin.core.utils.functional.UnitDomainResult
 import ru.aleshin.features.settings.impl.domain.common.SettingsEitherWrapper
-import ru.aleshin.features.settings.impl.domain.common.SettingsFailures
+import ru.aleshin.features.settings.impl.domain.entities.SettingsFailures
 import javax.inject.Inject
 
 /**
@@ -37,8 +37,8 @@ internal interface SettingsInteractor {
 
     suspend fun updateThemeSettings(settings: ThemeSettings): UnitDomainResult<SettingsFailures>
     suspend fun updateTasksSettings(settings: TasksSettings): UnitDomainResult<SettingsFailures>
-    suspend fun fetchAllSettings(): FlowDomainResult<SettingsFailures, Settings>
-    suspend fun resetAllSettings(): DomainResult<SettingsFailures, Settings>
+    suspend fun fetchAllSettings(): FlowDomainResult<SettingsFailures, SettingsDetails>
+    suspend fun resetAllSettings(): DomainResult<SettingsFailures, SettingsDetails>
 
     class Base @Inject constructor(
         private val themeSettingsRepository: ThemeSettingsRepository,
@@ -58,7 +58,7 @@ internal interface SettingsInteractor {
         override suspend fun fetchAllSettings() = eitherWrapper.wrapFlow {
             themeSettingsRepository.fetchSettings().flatMapLatest { themeSettings ->
                 tasksSettingsRepository.fetchSettings().map { tasksSettings ->
-                    return@map Settings(
+                    return@map SettingsDetails(
                         themeSettings = themeSettings,
                         tasksSettings = tasksSettings,
                     )
@@ -70,7 +70,7 @@ internal interface SettingsInteractor {
             val themeSettings = ThemeSettings().apply { themeSettingsRepository.updateSettings(this) }
             val tasksSettings = TasksSettings().apply { tasksSettingsRepository.updateSettings(this) }
 
-            return@wrap Settings(themeSettings, tasksSettings)
+            return@wrap SettingsDetails(themeSettings, tasksSettings)
         }
     }
 }

@@ -21,7 +21,7 @@ import ru.aleshin.core.domain.repository.TemplatesRepository
 import ru.aleshin.core.utils.functional.DomainResult
 import ru.aleshin.core.utils.functional.UnitDomainResult
 import ru.aleshin.features.settings.impl.domain.common.SettingsEitherWrapper
-import ru.aleshin.features.settings.impl.domain.common.SettingsFailures
+import ru.aleshin.features.settings.impl.domain.entities.SettingsFailures
 import javax.inject.Inject
 
 /**

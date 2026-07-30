@@ -40,7 +40,7 @@ internal fun GoalsHistoryTopAppBar(
     CenterAlignedTopAppBar(
         modifier = modifier,
         title = {
-            Text(text = OverviewThemeRes.goalStrings.goalsHistoryTitle)
+            Text(text = OverviewThemeRes.strings.goalsHistoryTitle)
         },
         navigationIcon = {
             IconButton(onClick = onBackClick) {
@@ -51,7 +51,7 @@ internal fun GoalsHistoryTopAppBar(
             }
         },
         colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.background
-        )
+            containerColor = MaterialTheme.colorScheme.background,
+        ),
     )
 }

@@ -25,18 +25,21 @@ import ru.aleshin.timeplanner.core.ui.views.AdaptiveLayoutInfo
 internal enum class HomeLayoutMode {
     COMPACT,
     MEDIUM,
-    EXPANDED,
+    SUPPORTING_PANE,
     BOOK,
     TABLETOP;
 
-    companion object {
+    val showScreenTopAppBar: Boolean
+        get() = this != SUPPORTING_PANE && this != BOOK
 
-        fun from(adaptiveLayoutInfo: AdaptiveLayoutInfo): HomeLayoutMode = when {
-            adaptiveLayoutInfo.isTabletopPosture -> TABLETOP
-            adaptiveLayoutInfo.isBookPosture -> BOOK
-            adaptiveLayoutInfo.isCompactWidth -> COMPACT
-            adaptiveLayoutInfo.isMediumWidth -> MEDIUM
-            else -> EXPANDED
-        }
-    }
+    val showDateBottomBar: Boolean
+        get() = this == COMPACT || this == MEDIUM
+}
+
+internal fun AdaptiveLayoutInfo.fetchHomeLayoutMode(): HomeLayoutMode = when {
+    isTabletopPosture -> HomeLayoutMode.TABLETOP
+    isBookPosture -> HomeLayoutMode.BOOK
+    isCompactWidth -> HomeLayoutMode.COMPACT
+    isMediumWidth -> HomeLayoutMode.MEDIUM
+    else -> HomeLayoutMode.SUPPORTING_PANE
 }

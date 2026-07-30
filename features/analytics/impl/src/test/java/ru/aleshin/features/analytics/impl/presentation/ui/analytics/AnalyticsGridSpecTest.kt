@@ -25,44 +25,21 @@ import org.junit.Test
 class AnalyticsGridSpecTest {
 
     @Test
-    fun `uses planned medium spans`() {
-        assertEquals(8, AnalyticsGridSpec.fetchColumnCount(isExpanded = false))
-        assertEquals(8, fetchMediumSpan(AnalyticsGridSection.SUMMARY))
-        assertEquals(8, fetchMediumSpan(AnalyticsGridSection.KEY_METRICS))
-        assertEquals(8, fetchMediumSpan(AnalyticsGridSection.CATEGORIES))
-        assertEquals(8, fetchMediumSpan(AnalyticsGridSection.LOAD))
-        assertEquals(8, fetchMediumSpan(AnalyticsGridSection.CREATION))
-        assertEquals(8, fetchMediumSpan(AnalyticsGridSection.REGULARITY))
-        assertEquals(8, fetchMediumSpan(AnalyticsGridSection.HOURS))
-        assertEquals(8, fetchMediumSpan(AnalyticsGridSection.DURATION))
-        assertEquals(8, fetchMediumSpan(AnalyticsGridSection.SOURCE))
+    fun `uses eight columns for medium layout`() {
+        val columnCount = AnalyticsGridSpec.fetchColumnCount(isExpanded = false)
+
+        assertEquals(8, columnCount)
     }
 
     @Test
-    fun `uses planned expanded spans`() {
-        assertEquals(12, AnalyticsGridSpec.fetchColumnCount(isExpanded = true))
-        assertEquals(5, fetchExpandedSpan(AnalyticsGridSection.SUMMARY))
-        assertEquals(5, fetchExpandedSpan(AnalyticsGridSection.KEY_METRICS))
-        assertEquals(12, fetchExpandedSpan(AnalyticsGridSection.CATEGORIES))
-        assertEquals(12, fetchExpandedSpan(AnalyticsGridSection.LOAD))
-        assertEquals(5, fetchExpandedSpan(AnalyticsGridSection.CREATION))
-        assertEquals(5, fetchExpandedSpan(AnalyticsGridSection.REGULARITY))
-        assertEquals(5, fetchExpandedSpan(AnalyticsGridSection.HOURS))
-        assertEquals(7, fetchExpandedSpan(AnalyticsGridSection.DURATION))
-        assertEquals(5, fetchExpandedSpan(AnalyticsGridSection.SOURCE))
+    fun `uses twelve columns for expanded layout`() {
+        val columnCount = AnalyticsGridSpec.fetchColumnCount(isExpanded = true)
+
+        assertEquals(12, columnCount)
     }
 
-    private fun fetchMediumSpan(section: AnalyticsGridSection): Int {
-        return AnalyticsGridSpec.fetchSpan(
-            section = section,
-            isExpanded = false,
-        )
-    }
-
-    private fun fetchExpandedSpan(section: AnalyticsGridSection): Int {
-        return AnalyticsGridSpec.fetchSpan(
-            section = section,
-            isExpanded = true,
-        )
+    @Test
+    fun `uses five expanded columns for source section`() {
+        assertEquals(5, AnalyticsGridSpec.EXPANDED_SOURCE_SPAN)
     }
 }

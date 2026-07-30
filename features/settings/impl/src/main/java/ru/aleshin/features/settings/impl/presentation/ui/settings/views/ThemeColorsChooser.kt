@@ -27,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import ru.aleshin.features.settings.impl.presentation.theme.SettingsThemeRes
+import ru.aleshin.features.settings.impl.presentation.ui.common.SettingsItemIcon
 import ru.aleshin.timeplanner.core.ui.theme.material.ThemeUiType
 import ru.aleshin.timeplanner.core.ui.views.SegmentedButtonItem
 import ru.aleshin.timeplanner.core.ui.views.SegmentedButtons

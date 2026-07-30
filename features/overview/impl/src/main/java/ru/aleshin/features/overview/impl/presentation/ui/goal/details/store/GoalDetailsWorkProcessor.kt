@@ -35,21 +35,17 @@ import javax.inject.Inject
 /**
  * @author Stanislav Aleshin on 28.07.2026.
  */
-internal interface GoalDetailsWorkProcessor : FlowWorkProcessor<
-    GoalDetailsWorkCommand,
-    GoalDetailsAction,
-    GoalDetailsEffect,
-    GoalDetailsOutput,
-    > {
+internal interface GoalDetailsWorkProcessor :
+    FlowWorkProcessor<GoalDetailsWorkCommand, GoalDetailsAction, GoalDetailsEffect, GoalDetailsOutput> {
 
     class Base @Inject constructor(
         private val goalsInteractor: GoalsInteractor,
     ) : GoalDetailsWorkProcessor {
 
         override suspend fun work(command: GoalDetailsWorkCommand) = when (command) {
-            is GoalDetailsWorkCommand.Load -> loadWork(command.goalId)
-            is GoalDetailsWorkCommand.Delete -> deleteWork(command.goal)
-            is GoalDetailsWorkCommand.Restore -> restoreWork(command.goal)
+            is GoalDetailsWorkCommand.LoadGoal -> loadWork(command.goalId)
+            is GoalDetailsWorkCommand.DeleteGoal -> deleteWork(command.goal)
+            is GoalDetailsWorkCommand.RestoreGoal -> restoreWork(command.goal)
         }
 
         private fun loadWork(goalId: Long) = flow {
@@ -58,14 +54,7 @@ internal interface GoalDetailsWorkProcessor : FlowWorkProcessor<
                     emit(EffectResult(GoalDetailsEffect.ShowError(failure)))
                 },
                 onRightAction = { details ->
-                    emit(
-                        ActionResult(
-                            GoalDetailsAction.UpdateDetails(
-                                details = details?.mapToUi(),
-                                isLoading = false,
-                            )
-                        )
-                    )
+                    emit(ActionResult(GoalDetailsAction.UpdateDetails(details = details?.mapToUi(), isLoading = false)))
                 },
             )
         }.onStart {
@@ -94,7 +83,7 @@ internal interface GoalDetailsWorkProcessor : FlowWorkProcessor<
 }
 
 internal sealed interface GoalDetailsWorkCommand : WorkCommand {
-    data class Load(val goalId: Long) : GoalDetailsWorkCommand
-    data class Delete(val goal: GoalUi) : GoalDetailsWorkCommand
-    data class Restore(val goal: GoalUi) : GoalDetailsWorkCommand
+    data class LoadGoal(val goalId: Long) : GoalDetailsWorkCommand
+    data class DeleteGoal(val goal: GoalUi) : GoalDetailsWorkCommand
+    data class RestoreGoal(val goal: GoalUi) : GoalDetailsWorkCommand
 }

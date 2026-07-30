@@ -42,7 +42,6 @@ import ru.aleshin.features.overview.impl.presentation.ui.goal.history.contract.G
 import ru.aleshin.features.overview.impl.presentation.ui.goal.history.contract.GoalsHistoryState
 import ru.aleshin.features.overview.impl.presentation.ui.goal.history.views.GoalHistoryItem
 import ru.aleshin.timeplanner.core.ui.theme.tokens.AdaptiveLayoutDefaults
-import ru.aleshin.timeplanner.core.ui.views.AdaptiveLayoutInfo
 import ru.aleshin.timeplanner.core.ui.views.PlaceholderBox
 
 /**
@@ -50,27 +49,6 @@ import ru.aleshin.timeplanner.core.ui.views.PlaceholderBox
  */
 @Composable
 internal fun GoalsHistoryLayout(
-    modifier: Modifier = Modifier,
-    state: GoalsHistoryState,
-    adaptiveLayoutInfo: AdaptiveLayoutInfo,
-    onEvent: (GoalsHistoryEvent) -> Unit,
-) {
-    Box(
-        modifier = modifier.fillMaxSize(),
-        contentAlignment = Alignment.TopCenter,
-    ) {
-        GoalsHistoryList(
-            modifier = Modifier
-                .widthIn(max = AdaptiveLayoutDefaults.MediumContentMaxWidth)
-                .fillMaxWidth(),
-            state = state,
-            onEvent = onEvent,
-        )
-    }
-}
-
-@Composable
-private fun GoalsHistoryList(
     modifier: Modifier = Modifier,
     state: GoalsHistoryState,
     onEvent: (GoalsHistoryEvent) -> Unit,
@@ -84,52 +62,69 @@ private fun GoalsHistoryList(
     }
 
     LaunchedEffect(shouldLoadMore) {
-        if (shouldLoadMore) onEvent(GoalsHistoryEvent.LoadMore)
+        if (shouldLoadMore) {
+            onEvent(GoalsHistoryEvent.LoadMore)
+        }
     }
 
-    LazyColumn(
+    Box(
         modifier = modifier.fillMaxSize(),
-        state = listState,
-        contentPadding = PaddingValues(16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
+        contentAlignment = Alignment.TopCenter,
     ) {
-        if (state.isLoading) {
-            items(5) {
-                PlaceholderBox(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(116.dp),
-                    shape = MaterialTheme.shapes.extraLarge,
-                )
-            }
-        } else if (state.history.isEmpty()) {
-            item {
-                Text(
-                    modifier = Modifier.padding(vertical = 40.dp),
-                    text = OverviewThemeRes.goalStrings.emptyHistoryTitle,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodyLarge,
-                )
-            }
-        } else {
-            items(
-                items = state.history,
-                key = { history -> history.id },
-            ) { history ->
-                GoalHistoryItem(history = history)
-            }
-            if (state.isLoadingMore) {
-                item {
-                    Box(
+        LazyColumn(
+            modifier = Modifier
+                .widthIn(max = AdaptiveLayoutDefaults.MediumContentMaxWidth)
+                .fillMaxWidth()
+                .fillMaxSize(),
+            state = listState,
+            contentPadding = PaddingValues(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            if (state.isLoading) {
+                items(
+                    count = 5,
+                    key = { index -> "$PLACEHOLDER_KEY_PREFIX$index" },
+                ) {
+                    PlaceholderBox(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(16.dp),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        CircularProgressIndicator()
+                            .height(116.dp),
+                        shape = MaterialTheme.shapes.extraLarge,
+                    )
+                }
+            } else if (state.history.isEmpty()) {
+                item(key = EMPTY_STATE_KEY) {
+                    Text(
+                        modifier = Modifier.padding(vertical = 40.dp),
+                        text = OverviewThemeRes.strings.emptyHistoryTitle,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.bodyLarge,
+                    )
+                }
+            } else {
+                items(
+                    items = state.history,
+                    key = { history -> history.id },
+                ) { history ->
+                    GoalHistoryItem(history = history)
+                }
+                if (state.isLoadingMore) {
+                    item(key = LOAD_MORE_INDICATOR_KEY) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            CircularProgressIndicator()
+                        }
                     }
                 }
             }
         }
     }
 }
+
+private const val PLACEHOLDER_KEY_PREFIX = "history_placeholder_"
+private const val EMPTY_STATE_KEY = "history_empty_state"
+private const val LOAD_MORE_INDICATOR_KEY = "history_load_more_indicator"

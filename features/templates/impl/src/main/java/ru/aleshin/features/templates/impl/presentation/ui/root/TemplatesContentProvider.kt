@@ -47,7 +47,7 @@ internal class TemplatesContentProvider(
                     is InternalTemplatesFeatureComponent.Child.TemplatesChild -> {
                         TemplatesContent(
                             modifier = Modifier,
-                            templatesComponent = instance.component,
+                            component = instance.component,
                         )
                     }
                 }

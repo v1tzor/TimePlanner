@@ -35,52 +35,53 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import ru.aleshin.features.analytics.impl.presentation.theme.tokens.AnalyticsLayoutDefaults
 import ru.aleshin.timeplanner.core.ui.views.PlaceholderBox
 
 /**
  * @author Stanislav Aleshin on 23.07.2026.
  */
 internal fun LazyListScope.AnalyticsContentPlaceholder() {
-    item(key = "analytics-placeholder-range") {
+    item(key = RANGE_PLACEHOLDER_KEY) {
         PlaceholderBox(
             modifier = Modifier
                 .fillMaxWidth()
-                .widthIn(max = 680.dp)
+                .widthIn(max = AnalyticsLayoutDefaults.ContentMaxWidth)
                 .padding(bottom = 16.dp)
                 .height(40.dp),
             shape = MaterialTheme.shapes.large,
             color = MaterialTheme.colorScheme.surfaceContainer,
         )
     }
-    item(key = "analytics-placeholder-summary") {
+    item(key = SUMMARY_PLACEHOLDER_KEY) {
         AnalyticsSummaryPlaceholder(
             modifier = Modifier
                 .fillMaxWidth()
-                .widthIn(max = 680.dp)
+                .widthIn(max = AnalyticsLayoutDefaults.ContentMaxWidth)
                 .padding(bottom = 24.dp),
         )
     }
-    item(key = "analytics-placeholder-categories") {
+    item(key = CATEGORIES_PLACEHOLDER_KEY) {
         AnalyticsCategoriesPlaceholder(
             modifier = Modifier
                 .fillMaxWidth()
-                .widthIn(max = 680.dp)
+                .widthIn(max = AnalyticsLayoutDefaults.ContentMaxWidth)
                 .padding(bottom = 24.dp),
         )
     }
-    item(key = "analytics-placeholder-load") {
+    item(key = LOAD_PLACEHOLDER_KEY) {
         AnalyticsChartPlaceholder(
             modifier = Modifier
                 .fillMaxWidth()
-                .widthIn(max = 680.dp)
+                .widthIn(max = AnalyticsLayoutDefaults.ContentMaxWidth)
                 .padding(bottom = 24.dp),
         )
     }
-    item(key = "analytics-placeholder-metrics") {
+    item(key = METRICS_PLACEHOLDER_KEY) {
         AnalyticsMetricsPlaceholder(
             modifier = Modifier
                 .fillMaxWidth()
-                .widthIn(max = 680.dp),
+                .widthIn(max = AnalyticsLayoutDefaults.ContentMaxWidth),
         )
     }
 }
@@ -350,3 +351,9 @@ private fun PlaceholderSurface(
         )
     }
 }
+
+private const val RANGE_PLACEHOLDER_KEY = "analytics-placeholder-range"
+private const val SUMMARY_PLACEHOLDER_KEY = "analytics-placeholder-summary"
+private const val CATEGORIES_PLACEHOLDER_KEY = "analytics-placeholder-categories"
+private const val LOAD_PLACEHOLDER_KEY = "analytics-placeholder-load"
+private const val METRICS_PLACEHOLDER_KEY = "analytics-placeholder-metrics"

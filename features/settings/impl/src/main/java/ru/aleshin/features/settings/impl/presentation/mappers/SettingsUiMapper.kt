@@ -15,18 +15,18 @@
  */
 package ru.aleshin.features.settings.impl.presentation.mappers
 
-import ru.aleshin.core.domain.entities.settings.Settings
-import ru.aleshin.features.settings.impl.presentation.models.SettingsUi
+import ru.aleshin.core.domain.entities.settings.SettingsDetails
+import ru.aleshin.features.settings.impl.presentation.models.SettingsDetailsUi
 
 /**
  * @author Stanislav Aleshin on 30.07.2023.
  */
-internal fun Settings.mapToUi() = SettingsUi(
+internal fun SettingsDetails.mapToUi() = SettingsDetailsUi(
     themeSettings = themeSettings.mapToUi(),
     tasksSettings = tasksSettings.mapToUi(),
 )
 
-internal fun SettingsUi.mapToDomain() = Settings(
+internal fun SettingsDetailsUi.mapToDomain() = SettingsDetails(
     themeSettings = themeSettings.mapToDomain(),
     tasksSettings = tasksSettings.mapToDomain(),
 )

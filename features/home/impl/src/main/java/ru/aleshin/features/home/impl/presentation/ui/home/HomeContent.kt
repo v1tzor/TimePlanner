@@ -16,6 +16,7 @@
 package ru.aleshin.features.home.impl.presentation.ui.home
 
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -28,6 +29,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import ru.aleshin.core.domain.entities.settings.HomeViewMode
 import ru.aleshin.core.utils.architecture.store.compose.handleEffects
 import ru.aleshin.core.utils.architecture.store.compose.stateAsState
 import ru.aleshin.features.home.impl.presentation.mapppers.mapToMessage
@@ -35,9 +37,9 @@ import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
 import ru.aleshin.features.home.impl.presentation.ui.home.contract.HomeEffect
 import ru.aleshin.features.home.impl.presentation.ui.home.contract.HomeEvent
 import ru.aleshin.features.home.impl.presentation.ui.home.store.HomeComponent
-import ru.aleshin.features.home.impl.presentation.ui.home.views.HomeBottomBar
 import ru.aleshin.features.home.impl.presentation.ui.home.views.HomeDatePicker
 import ru.aleshin.features.home.impl.presentation.ui.home.views.HomeTopAppBar
+import ru.aleshin.features.home.impl.presentation.ui.home.views.sections.HomeDateControlsSection
 import ru.aleshin.timeplanner.core.ui.views.AdaptiveLayoutInfo
 import ru.aleshin.timeplanner.core.ui.views.ErrorSnackbar
 import ru.aleshin.timeplanner.core.ui.views.rememberAdaptiveLayoutInfo
@@ -54,9 +56,9 @@ internal fun HomeContent(
     val store = component.store
     val state by store.stateAsState()
     val snackbarHostState = remember { SnackbarHostState() }
-    var isDateDialogOpen by rememberSaveable { mutableStateOf(false) }
+    var isDatePickerOpen by rememberSaveable { mutableStateOf(false) }
     val strings = HomeThemeRes.strings
-    val layoutMode = HomeLayoutMode.from(adaptiveLayoutInfo)
+    val layoutMode = adaptiveLayoutInfo.fetchHomeLayoutMode()
     val pendingTimelineTaskUpdate = state.pendingTimelineTaskUpdate
 
     LaunchedEffect(state.timelineSchedule, pendingTimelineTaskUpdate) {
@@ -72,62 +74,61 @@ internal fun HomeContent(
     }
 
     Scaffold(
-        modifier = modifier,
+        modifier = modifier.fillMaxSize(),
         topBar = {
-            if (layoutMode != HomeLayoutMode.EXPANDED && layoutMode != HomeLayoutMode.BOOK) {
+            if (layoutMode.showScreenTopAppBar) {
                 HomeTopAppBar(
                     isCompact = adaptiveLayoutInfo.isCompactWidth,
                     calendarIconBehavior = state.calendarButtonBehavior,
                     onSettingsIconClick = { store.dispatchEvent(HomeEvent.PressSettingsButton) },
-                    onOpenCalendar = { isDateDialogOpen = true },
+                    onOpenCalendar = { isDatePickerOpen = true },
                     onGoToToday = { store.dispatchEvent(HomeEvent.SelectedCurrentDate) },
                 )
             }
         },
         bottomBar = {
-            HomeBottomBar(
-                layoutMode = layoutMode,
-                selectedDate = state.selectedDate,
-                toggleState = state.taskViewStatus,
-                viewMode = state.homeViewMode,
-                onChangeDate = { store.dispatchEvent(HomeEvent.LoadSchedule(it)) },
-                onViewToggleChange = { store.dispatchEvent(HomeEvent.PressViewToggleButton(it)) },
-            )
+            if (layoutMode.showDateBottomBar) {
+                HomeDateControlsSection(
+                    selectedDate = state.selectedDate,
+                    toggleState = state.taskViewStatus,
+                    isToggleVisible = state.homeViewMode == HomeViewMode.AGENDA,
+                    onDateChange = { date ->
+                        store.dispatchEvent(HomeEvent.LoadSchedule(date))
+                    },
+                    onOpenCalendar = { isDatePickerOpen = true },
+                    onViewToggleChange = { status ->
+                        store.dispatchEvent(HomeEvent.PressViewToggleButton(status))
+                    },
+                )
+            }
         },
         snackbarHost = {
             SnackbarHost(hostState = snackbarHostState) { snackbarData ->
-                ErrorSnackbar(snackbarData)
+                ErrorSnackbar(snackbarData = snackbarData)
             }
         },
-        contentWindowInsets = WindowInsets()
+        contentWindowInsets = WindowInsets(),
     ) { contentPadding ->
         HomeLayout(
-            modifier = if (
-                layoutMode == HomeLayoutMode.EXPANDED ||
-                layoutMode == HomeLayoutMode.BOOK
-            ) {
-                Modifier
-            } else {
-                Modifier.padding(contentPadding)
-            },
+            modifier = Modifier.padding(contentPadding),
             state = state,
             adaptiveLayoutInfo = adaptiveLayoutInfo,
             layoutMode = layoutMode,
-            calendarIconBehavior = state.calendarButtonBehavior,
-            onOpenCalendar = { isDateDialogOpen = true },
+            onOpenCalendar = { isDatePickerOpen = true },
             onSettingsClick = { store.dispatchEvent(HomeEvent.PressSettingsButton) },
             onEvent = store::dispatchEvent,
         )
     }
 
-    HomeDatePicker(
-        isOpenDialog = isDateDialogOpen,
-        onDismiss = { isDateDialogOpen = false },
-        onSelectedDate = {
-            isDateDialogOpen = false
-            store.dispatchEvent(HomeEvent.LoadSchedule(it))
-        },
-    )
+    if (isDatePickerOpen) {
+        HomeDatePicker(
+            onDismiss = { isDatePickerOpen = false },
+            onDateSelect = { date ->
+                isDatePickerOpen = false
+                store.dispatchEvent(HomeEvent.LoadSchedule(date))
+            },
+        )
+    }
 
     store.handleEffects { effect ->
         when (effect) {

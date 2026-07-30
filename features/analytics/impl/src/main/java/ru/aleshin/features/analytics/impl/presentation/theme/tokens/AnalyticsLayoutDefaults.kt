@@ -15,7 +15,6 @@
  */
 package ru.aleshin.features.analytics.impl.presentation.theme.tokens
 
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.ui.unit.dp
 
 /**
@@ -23,14 +22,9 @@ import androidx.compose.ui.unit.dp
  */
 internal object AnalyticsLayoutDefaults {
 
-    val CompactContentPadding = PaddingValues(start = 16.dp, top = 8.dp, end = 16.dp)
-    val AdaptiveContentPadding = PaddingValues(start = 24.dp, top = 8.dp, end = 24.dp)
     val ContentMaxWidth = 680.dp
-    val SectionSpacing = 24.dp
-    val RangeSpacing = 16.dp
     val SummaryRowHeight = 320.dp
     val CreationRegularityRowHeight = 320.dp
-    val HoursDurationRowHeight = 320.dp
     val CategorySummaryRowHeight = 304.dp
     val CategoryDistributionRowHeight = 280.dp
 }

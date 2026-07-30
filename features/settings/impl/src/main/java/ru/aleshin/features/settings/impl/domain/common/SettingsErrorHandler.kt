@@ -16,6 +16,7 @@
 package ru.aleshin.features.settings.impl.domain.common
 
 import ru.aleshin.core.utils.handlers.ErrorHandler
+import ru.aleshin.features.settings.impl.domain.entities.SettingsFailures
 import java.io.IOException
 import javax.inject.Inject
 

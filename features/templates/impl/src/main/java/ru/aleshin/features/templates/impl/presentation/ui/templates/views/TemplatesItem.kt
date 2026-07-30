@@ -15,6 +15,7 @@
  */
 package ru.aleshin.features.templates.impl.presentation.ui.templates.views
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -29,6 +30,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -78,8 +80,8 @@ import java.text.SimpleDateFormat
 @Composable
 internal fun TemplatesItem(
     modifier: Modifier = Modifier,
-    categories: List<MainCategoryDetailsUi>,
     model: TemplateUi,
+    categories: List<MainCategoryDetailsUi>,
     onAddRepeat: (RepeatTime) -> Unit,
     onUpdate: (TemplateUi) -> Unit,
     onRestartRepeat: () -> Unit,
@@ -98,7 +100,10 @@ internal fun TemplatesItem(
 
     Surface(
         onClick = { isShowTemplateEditor = true },
-        modifier = modifier.fillMaxWidth().height(TEMPLATE_CARD_HEIGHT),
+        modifier = modifier
+            .widthIn(max = 240.dp)
+            .fillMaxWidth()
+            .height(TEMPLATE_CARD_HEIGHT),
         shape = MaterialTheme.shapes.large,
         color = when (model.repeatEnabled) {
             true -> MaterialTheme.colorScheme.surfaceContainerLow
@@ -146,7 +151,7 @@ internal fun TemplatesItem(
                     Spacer(modifier = Modifier.height(2.dp))
                 }
                 Text(
-                    modifier = modifier.padding(top = 2.dp),
+                    modifier = Modifier.padding(top = 2.dp),
                     text = "${timeFormat.format(model.startTime)}–${timeFormat.format(model.endTime)} • $durationTitle",
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     maxLines = 1,
@@ -156,7 +161,7 @@ internal fun TemplatesItem(
             }
             Spacer(modifier = Modifier.weight(1f))
             HorizontalDivider(color = MaterialTheme.colorScheme.surfaceContainerHighest)
-            RepeatLabels(
+            TemplateRepeatLabels(
                 repeatTimes = model.repeatTimes,
                 categoryColors = categoryColors,
                 onAddRepeat = onAddRepeat,
@@ -265,14 +270,13 @@ private fun TemplateActionsMenu(
     onStopRepeat: () -> Unit,
     onDeleteTemplate: () -> Unit,
 ) {
-    var isExpanded by rememberSaveable { mutableStateOf(false) }
+    var isActionsMenuExpanded by rememberSaveable { mutableStateOf(false) }
     var isRepeatMenuExpanded by rememberSaveable { mutableStateOf(false) }
-    val strings = TemplatesThemeRes.strings
 
     Box(modifier = modifier) {
         IconButton(
             modifier = Modifier.size(32.dp),
-            onClick = { isExpanded = true },
+            onClick = { isActionsMenuExpanded = true },
         ) {
             Icon(
                 modifier = Modifier.size(24.dp),
@@ -282,14 +286,14 @@ private fun TemplateActionsMenu(
             )
         }
         DropdownMenu(
-            expanded = isExpanded,
-            onDismissRequest = { isExpanded = false },
+            expanded = isActionsMenuExpanded,
+            onDismissRequest = { isActionsMenuExpanded = false },
             shape = MaterialTheme.shapes.large,
             offset = DpOffset(0.dp, 4.dp),
         ) {
             DropdownMenuItem(
                 onClick = {
-                    isExpanded = false
+                    isActionsMenuExpanded = false
                     isRepeatMenuExpanded = true
                 },
                 leadingIcon = {
@@ -298,12 +302,14 @@ private fun TemplateActionsMenu(
                         contentDescription = null,
                     )
                 },
-                text = { Text(text = strings.repeatSettingsTitle) },
+                text = {
+                    Text(text = TemplatesThemeRes.strings.repeatSettingsTitle)
+                },
             )
             if (repeatTimes.isNotEmpty()) {
                 DropdownMenuItem(
                     onClick = {
-                        isExpanded = false
+                        isActionsMenuExpanded = false
                         if (repeatEnabled) onStopRepeat() else onRestartRepeat()
                     },
                     leadingIcon = {
@@ -320,8 +326,8 @@ private fun TemplateActionsMenu(
                     text = {
                         Text(
                             text = when (repeatEnabled) {
-                                true -> strings.stopRepeatTitle
-                                false -> strings.restartRepeatTitle
+                                true -> TemplatesThemeRes.strings.stopRepeatTitle
+                                false -> TemplatesThemeRes.strings.restartRepeatTitle
                             },
                         )
                     },
@@ -329,7 +335,7 @@ private fun TemplateActionsMenu(
             }
             DropdownMenuItem(
                 onClick = {
-                    isExpanded = false
+                    isActionsMenuExpanded = false
                     onDeleteTemplate()
                 },
                 leadingIcon = {
@@ -338,7 +344,9 @@ private fun TemplateActionsMenu(
                         contentDescription = null,
                     )
                 },
-                text = { Text(text = strings.deleteTitle) },
+                text = {
+                    Text(text = TemplatesThemeRes.strings.deleteTitle)
+                },
             )
         }
         RepeatTimeMenu(
@@ -352,7 +360,7 @@ private fun TemplateActionsMenu(
 }
 
 @Composable
-private fun RepeatLabels(
+private fun TemplateRepeatLabels(
     modifier: Modifier = Modifier,
     repeatTimes: List<RepeatTime>,
     categoryColors: TemplatesCategoryColors,
@@ -362,79 +370,85 @@ private fun RepeatLabels(
     Box(modifier = modifier.padding(start = 12.dp, end = 12.dp, top = 8.dp, bottom = 12.dp)) {
         var isRepeatMenuExpanded by rememberSaveable { mutableStateOf(false) }
 
-        if (repeatTimes.isEmpty()) {
-            Box(
-                modifier = Modifier
-                    .clip(MaterialTheme.shapes.small)
-                    .clickable(
-                        onClick = { isRepeatMenuExpanded = true },
-                        interactionSource = remember { MutableInteractionSource() },
-                        role = Role.Button,
-                        indication = ripple()
-                    )
-                    .background(
-                        color = MaterialTheme.colorScheme.primaryContainer,
-                        shape = MaterialTheme.shapes.small
-                    )
-            ) {
-                Row(
+        AnimatedContent(
+            targetState = repeatTimes.isEmpty(),
+            label = "TemplateRepeatLabels",
+        ) { isEmpty ->
+            if (isEmpty) {
+                Box(
                     modifier = Modifier
-                        .height(28.dp)
-                        .padding(horizontal = 8.dp),
-                    horizontalArrangement = Arrangement.spacedBy(6.dp),
-                    verticalAlignment = Alignment.CenterVertically,
+                        .clip(MaterialTheme.shapes.small)
+                        .clickable(
+                            onClick = { isRepeatMenuExpanded = true },
+                            interactionSource = remember { MutableInteractionSource() },
+                            role = Role.Button,
+                            indication = ripple(),
+                        )
+                        .background(
+                            color = MaterialTheme.colorScheme.primaryContainer,
+                            shape = MaterialTheme.shapes.small,
+                        ),
                 ) {
-                    Icon(
-                        modifier = Modifier.size(15.dp),
-                        painter = painterResource(TemplatesThemeRes.icons.updateRepeat),
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary,
-                    )
-                    Text(
-                        text = TemplatesThemeRes.strings.addRepeatTitle,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer,
-                        maxLines = 1,
-                        style = MaterialTheme.typography.labelSmall,
-                    )
-                }
-            }
-        } else {
-            LazyRow(
-                modifier = modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(6.dp),
-            ) {
-                items(
-                    items = repeatTimes,
-                    key = { repeatTime -> repeatTime.toAlarmKey() },
-                ) { repeatTime ->
-                    Box(
+                    Row(
                         modifier = Modifier
-                            .clip(MaterialTheme.shapes.small)
-                            .clickable(
-                                onClick = { isRepeatMenuExpanded = true },
-                                interactionSource = remember { MutableInteractionSource() },
-                                role = Role.Button,
-                                indication = ripple()
-                            )
-                            .border(
-                                border = BorderStroke(1.dp, categoryColors.accent),
-                                shape = MaterialTheme.shapes.small
-                            )
-                            .background(
-                                color = MaterialTheme.colorScheme.surface,
-                                shape = MaterialTheme.shapes.small
-                            )
+                            .height(28.dp)
+                            .padding(horizontal = 8.dp),
+                        horizontalArrangement = Arrangement.spacedBy(6.dp),
+                        verticalAlignment = Alignment.CenterVertically,
                     ) {
+                        Icon(
+                            modifier = Modifier.size(15.dp),
+                            painter = painterResource(TemplatesThemeRes.icons.updateRepeat),
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary,
+                        )
+                        Text(
+                            text = TemplatesThemeRes.strings.addRepeatTitle,
+                            color = MaterialTheme.colorScheme.onPrimaryContainer,
+                            maxLines = 1,
+                            style = MaterialTheme.typography.labelSmall,
+                        )
+                    }
+                }
+            } else {
+                LazyRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                ) {
+                    items(
+                        items = repeatTimes,
+                        key = { repeatTime -> repeatTime.toAlarmKey() },
+                    ) { repeatTime ->
                         Box(
-                            modifier = Modifier.size(28.dp),
-                            contentAlignment = Alignment.Center,
+                            modifier = Modifier
+                                .animateItem()
+                                .clip(MaterialTheme.shapes.small)
+                                .clickable(
+                                    onClick = { isRepeatMenuExpanded = true },
+                                    interactionSource = remember { MutableInteractionSource() },
+                                    role = Role.Button,
+                                    indication = ripple(),
+                                )
+                                .border(
+                                    border = BorderStroke(1.dp, categoryColors.accent),
+                                    shape = MaterialTheme.shapes.small,
+                                )
+                                .background(
+                                    color = MaterialTheme.colorScheme.surface,
+                                    shape = MaterialTheme.shapes.small,
+                                ),
                         ) {
-                            Text(
-                                text = repeatTime.fetchShortLabel(),
-                                color = categoryColors.accent,
-                                maxLines = 1,
-                                style = MaterialTheme.typography.labelMedium,
-                            )
+                            Box(
+                                modifier = Modifier.size(28.dp),
+                                contentAlignment = Alignment.Center,
+                            ) {
+                                Text(
+                                    text = repeatTime.fetchShortLabel(),
+                                    color = categoryColors.accent,
+                                    maxLines = 1,
+                                    style = MaterialTheme.typography.labelMedium,
+                                )
+                            }
                         }
                     }
                 }

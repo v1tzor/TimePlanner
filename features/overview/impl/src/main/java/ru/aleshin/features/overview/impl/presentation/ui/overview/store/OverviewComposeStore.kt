@@ -23,6 +23,7 @@ import ru.aleshin.core.utils.architecture.store.work.WorkScope
 import ru.aleshin.core.utils.managers.CoroutineManager
 import ru.aleshin.features.editor.api.EditorConfig
 import ru.aleshin.features.home.api.HomeConfig
+import ru.aleshin.features.overview.api.OverviewConfig
 import ru.aleshin.features.overview.impl.presentation.ui.overview.contract.OverviewAction
 import ru.aleshin.features.overview.impl.presentation.ui.overview.contract.OverviewEffect
 import ru.aleshin.features.overview.impl.presentation.ui.overview.contract.OverviewEvent
@@ -130,16 +131,18 @@ internal class OverviewComposeStore @Inject constructor(
                 val config = EditorConfig.Task(
                     timeTaskId = event.timeTask.key,
                 )
-                consumeOutput(OverviewOutput.NavigateToEditor(config))
+                consumeOutput(OverviewOutput.NavigateToTaskEditor(config))
             }
             is OverviewEvent.OpenGoal -> {
-                consumeOutput(OverviewOutput.NavigateToGoalDetails(event.goalId))
+                val config = OverviewConfig.GoalDetails(goalId = event.goalId)
+                consumeOutput(OverviewOutput.NavigateToGoalDetails(config))
             }
             is OverviewEvent.CreateGoal -> {
-                consumeOutput(OverviewOutput.NavigateToGoalEditor(null))
+                val config = EditorConfig.Goal(goalId = null)
+                consumeOutput(OverviewOutput.NavigateToGoalEditor(config))
             }
             is OverviewEvent.OpenGoalsHistory -> {
-                consumeOutput(OverviewOutput.NavigateToGoalsHistory)
+                consumeOutput(OverviewOutput.NavigateToGoalsHistory())
             }
         }
     }
@@ -157,10 +160,6 @@ internal class OverviewComposeStore @Inject constructor(
         )
         is OverviewAction.UpdateGoals -> currentState.copy(
             goals = action.goals,
-            isGoalsLoading = action.isLoading,
-        )
-        is OverviewAction.UpdateGoalsLoading -> currentState.copy(
-            isGoalsLoading = action.isLoading,
         )
         is OverviewAction.UpdateSelectedDate -> currentState.copy(
             selectedDate = action.date,

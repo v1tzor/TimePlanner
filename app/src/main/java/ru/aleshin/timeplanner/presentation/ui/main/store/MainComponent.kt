@@ -31,9 +31,6 @@ import ru.aleshin.core.utils.inject.FeatureContentProvider
 import ru.aleshin.features.editor.api.EditorConfig
 import ru.aleshin.features.editor.api.EditorDecomposeFeatureFactory
 import ru.aleshin.features.editor.api.EditorOutput
-import ru.aleshin.features.analytics.api.AnalyticsConfig
-import ru.aleshin.features.home.api.HomeConfig
-import ru.aleshin.features.overview.api.OverviewConfig
 import ru.aleshin.features.settings.api.SettingsConfig
 import ru.aleshin.features.settings.api.SettingsDecomposeFeatureFactory
 import ru.aleshin.features.settings.api.SettingsOutput
@@ -45,14 +42,12 @@ import ru.aleshin.timeplanner.presentation.ui.main.contract.MainEvent
 import ru.aleshin.timeplanner.presentation.ui.main.contract.MainInput
 import ru.aleshin.timeplanner.presentation.ui.main.contract.MainOutput
 import ru.aleshin.timeplanner.presentation.ui.main.contract.MainState
-import ru.aleshin.timeplanner.presentation.ui.main.contract.MainTabTarget
 import ru.aleshin.timeplanner.presentation.ui.main.contract.ShareTarget
 import ru.aleshin.timeplanner.presentation.ui.main.store.MainComponent.Child.EditorChild
-import ru.aleshin.timeplanner.presentation.ui.tabs.store.TabNavigationComponent
-import ru.aleshin.timeplanner.presentation.ui.tabs.store.TabNavigationComponent.TabNavigationConfig
-import ru.aleshin.timeplanner.presentation.ui.tabs.store.TabNavigationComponent.TabNavigationOutput
-import ru.aleshin.timeplanner.presentation.ui.tabs.store.TabNavigationComponentFactory
-import java.util.Date
+import ru.aleshin.timeplanner.presentation.ui.tabs.component.TabNavigationComponent
+import ru.aleshin.timeplanner.presentation.ui.tabs.component.TabNavigationComponent.TabNavigationConfig
+import ru.aleshin.timeplanner.presentation.ui.tabs.component.TabNavigationComponent.TabNavigationOutput
+import ru.aleshin.timeplanner.presentation.ui.tabs.component.TabNavigationComponentFactory
 
 /**
  * @author Stanislav Aleshin on 12.09.2025.
@@ -193,29 +188,11 @@ abstract class MainComponent(
                     stackNavigation.pushToFront(Config.Editor(output.config))
                 }
                 is MainOutput.NavigateToOverview -> {
-                    val config = TabNavigationConfig.Overview(OverviewConfig.Overview(output.sharedText, output.sharedKey))
+                    val config = TabNavigationConfig.Overview(output.config)
                     stackNavigation.replaceAll(Config.TabNavigation(config))
                 }
                 is MainOutput.NavigateToTabNavigation -> {
-                    val config = when (val target = output.target) {
-                        is MainTabTarget.Home -> {
-                            TabNavigationConfig.Home(
-                                HomeConfig.Home(target.date?.let(::Date)),
-                            )
-                        }
-                        is MainTabTarget.GoalDetails -> {
-                            TabNavigationConfig.Overview(
-                                OverviewConfig.GoalDetails(target.goalId),
-                            )
-                        }
-                        is MainTabTarget.Overview -> {
-                            TabNavigationConfig.Overview(OverviewConfig.Overview())
-                        }
-                        is MainTabTarget.Analytics -> {
-                            TabNavigationConfig.Analytics(AnalyticsConfig.Analytics)
-                        }
-                    }
-                    stackNavigation.replaceAll(Config.TabNavigation(config))
+                    stackNavigation.replaceAll(Config.TabNavigation(output.config))
                 }
             }
         }
@@ -228,9 +205,7 @@ abstract class MainComponent(
                 is TabNavigationOutput.NavigateToSettings -> {
                     stackNavigation.pushToFront(Config.Settings(SettingsConfig.Settings))
                 }
-                is TabNavigationOutput.NavigateToBack -> {
-                    navigateToBack()
-                }
+                is TabNavigationOutput.NavigateToBack -> navigateToBack()
             }
         }
 
@@ -239,9 +214,7 @@ abstract class MainComponent(
                 is EditorOutput.NavigateToTemplates -> {
                     stackNavigation.pushToFront(Config.Templates(TemplatesConfig.Templates))
                 }
-                is EditorOutput.NavigateToBack -> {
-                    navigateToBack()
-                }
+                is EditorOutput.NavigateToBack -> navigateToBack()
             }
         }
 

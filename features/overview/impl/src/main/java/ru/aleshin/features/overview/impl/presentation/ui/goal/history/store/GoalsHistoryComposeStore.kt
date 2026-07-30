@@ -47,7 +47,9 @@ internal class GoalsHistoryComposeStore @Inject constructor(
         dispatchEvent(GoalsHistoryEvent.Init)
     }
 
-    override suspend fun WorkScope<GoalsHistoryState, GoalsHistoryAction, GoalsHistoryEffect, GoalsHistoryOutput>.handleEvent(event: GoalsHistoryEvent) {
+    override suspend fun WorkScope<GoalsHistoryState, GoalsHistoryAction, GoalsHistoryEffect, GoalsHistoryOutput>.handleEvent(
+        event: GoalsHistoryEvent
+    ) {
         when (event) {
             is GoalsHistoryEvent.Init -> {
                 launchBackgroundWork(BackgroundKey.LOAD) {

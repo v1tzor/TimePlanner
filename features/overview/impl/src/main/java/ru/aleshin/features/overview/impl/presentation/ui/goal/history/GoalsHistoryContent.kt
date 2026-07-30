@@ -15,10 +15,11 @@
  */
 package ru.aleshin.features.overview.impl.presentation.ui.goal.history
 
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -31,10 +32,8 @@ import ru.aleshin.features.overview.impl.presentation.ui.goal.history.contract.G
 import ru.aleshin.features.overview.impl.presentation.ui.goal.history.contract.GoalsHistoryEvent
 import ru.aleshin.features.overview.impl.presentation.ui.goal.history.store.GoalsHistoryComponent
 import ru.aleshin.features.overview.impl.presentation.ui.goal.history.views.GoalsHistoryTopAppBar
-import ru.aleshin.timeplanner.core.ui.views.AdaptiveLayoutInfo
 import ru.aleshin.timeplanner.core.ui.views.ErrorSnackbar
 import ru.aleshin.timeplanner.core.ui.views.Scaffold
-import ru.aleshin.timeplanner.core.ui.views.rememberAdaptiveLayoutInfo
 
 /**
  * @author Stanislav Aleshin on 28.07.2026.
@@ -44,7 +43,6 @@ import ru.aleshin.timeplanner.core.ui.views.rememberAdaptiveLayoutInfo
 internal fun GoalsHistoryContent(
     modifier: Modifier = Modifier,
     component: GoalsHistoryComponent,
-    adaptiveLayoutInfo: AdaptiveLayoutInfo = rememberAdaptiveLayoutInfo(),
 ) {
     val store = component.store
     val state by store.stateAsState()
@@ -64,11 +62,11 @@ internal fun GoalsHistoryContent(
                 snackbar = { snackbarData -> ErrorSnackbar(snackbarData) },
             )
         },
+        contentWindowInsets = WindowInsets(),
     ) { contentPadding ->
         GoalsHistoryLayout(
             modifier = Modifier.padding(contentPadding),
             state = state,
-            adaptiveLayoutInfo = adaptiveLayoutInfo,
             onEvent = store::dispatchEvent,
         )
     }

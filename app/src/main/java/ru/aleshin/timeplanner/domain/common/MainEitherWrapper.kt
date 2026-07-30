@@ -16,6 +16,7 @@
 package ru.aleshin.timeplanner.domain.common
 
 import ru.aleshin.core.utils.wrappers.FlowEitherWrapper
+import ru.aleshin.timeplanner.domain.entities.MainFailures
 import javax.inject.Inject
 
 /**

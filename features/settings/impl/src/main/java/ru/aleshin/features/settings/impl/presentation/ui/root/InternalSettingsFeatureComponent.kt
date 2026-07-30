@@ -22,7 +22,6 @@ import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.pushToFront
 import com.arkivanov.decompose.value.Value
-import com.arkivanov.essenty.backhandler.BackCallback
 import ru.aleshin.core.utils.architecture.component.FeatureComponent
 import ru.aleshin.core.utils.architecture.component.OutputConsumer
 import ru.aleshin.features.settings.api.SettingsConfig
@@ -30,8 +29,8 @@ import ru.aleshin.features.settings.api.SettingsOutput
 import ru.aleshin.features.settings.impl.presentation.ui.donate.contract.DonateOutput
 import ru.aleshin.features.settings.impl.presentation.ui.donate.store.DonateComponent
 import ru.aleshin.features.settings.impl.presentation.ui.donate.store.DonateComposeStore
-import ru.aleshin.features.settings.impl.presentation.ui.settings.screensmodel.SettingsComponent
-import ru.aleshin.features.settings.impl.presentation.ui.settings.screensmodel.SettingsComposeStore
+import ru.aleshin.features.settings.impl.presentation.ui.settings.store.SettingsComponent
+import ru.aleshin.features.settings.impl.presentation.ui.settings.store.SettingsComposeStore
 import ru.aleshin.features.settings.impl.presentation.ui.settings.contract.SettingsOutput as SettingsScreenOutput
 
 /**
@@ -59,8 +58,6 @@ internal abstract class InternalSettingsFeatureComponent(
     ) : InternalSettingsFeatureComponent(
         componentContext = componentContext
     ) {
-        private val backCallback = BackCallback { navigateToBack() }
-
         private val stackNavigation = StackNavigation<SettingsConfig>()
 
         override val stack: Value<ChildStack<*, Child>> = childStack(

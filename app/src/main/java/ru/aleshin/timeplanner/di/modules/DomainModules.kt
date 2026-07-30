@@ -37,5 +37,4 @@ interface DomainModules {
 
     @Binds
     fun bindMainErrorHandler(handler: MainErrorHandler.Base): MainErrorHandler
-
 }

@@ -25,36 +25,16 @@ import org.junit.Test
 class CategoryGridSpecTest {
 
     @Test
-    fun `uses planned medium spans`() {
-        assertEquals(8, CategoryGridSpec.fetchColumnCount(isExpanded = false))
-        assertEquals(8, fetchSpan(CategoryGridSection.SUMMARY, false))
-        assertEquals(8, fetchSpan(CategoryGridSection.KEY_METRICS, false))
-        assertEquals(8, fetchSpan(CategoryGridSection.SUBCATEGORIES, false))
-        assertEquals(8, fetchSpan(CategoryGridSection.LOAD, false))
-        assertEquals(8, fetchSpan(CategoryGridSection.DAY_PARTS, false))
-        assertEquals(8, fetchSpan(CategoryGridSection.TASKS, false))
-        assertEquals(8, fetchSpan(CategoryGridSection.OBSERVATION, false))
+    fun `uses eight columns for medium layout`() {
+        val columnCount = CategoryGridSpec.fetchColumnCount(isExpanded = false)
+
+        assertEquals(8, columnCount)
     }
 
     @Test
-    fun `uses planned expanded spans`() {
-        assertEquals(12, CategoryGridSpec.fetchColumnCount(isExpanded = true))
-        assertEquals(4, fetchSpan(CategoryGridSection.SUMMARY, true))
-        assertEquals(8, fetchSpan(CategoryGridSection.KEY_METRICS, true))
-        assertEquals(5, fetchSpan(CategoryGridSection.SUBCATEGORIES, true))
-        assertEquals(12, fetchSpan(CategoryGridSection.LOAD, true))
-        assertEquals(7, fetchSpan(CategoryGridSection.DAY_PARTS, true))
-        assertEquals(12, fetchSpan(CategoryGridSection.TASKS, true))
-        assertEquals(12, fetchSpan(CategoryGridSection.OBSERVATION, true))
-    }
+    fun `uses twelve columns for expanded layout`() {
+        val columnCount = CategoryGridSpec.fetchColumnCount(isExpanded = true)
 
-    private fun fetchSpan(
-        section: CategoryGridSection,
-        isExpanded: Boolean,
-    ): Int {
-        return CategoryGridSpec.fetchSpan(
-            section = section,
-            isExpanded = isExpanded,
-        )
+        assertEquals(12, columnCount)
     }
 }

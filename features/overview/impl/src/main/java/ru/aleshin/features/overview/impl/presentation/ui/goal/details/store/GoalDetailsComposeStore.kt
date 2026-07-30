@@ -21,6 +21,7 @@ import ru.aleshin.core.utils.architecture.store.communicators.StateCommunicator
 import ru.aleshin.core.utils.architecture.store.work.BackgroundWorkKey
 import ru.aleshin.core.utils.architecture.store.work.WorkScope
 import ru.aleshin.core.utils.managers.CoroutineManager
+import ru.aleshin.features.editor.api.EditorConfig
 import ru.aleshin.features.overview.impl.presentation.ui.goal.details.contract.GoalDetailsAction
 import ru.aleshin.features.overview.impl.presentation.ui.goal.details.contract.GoalDetailsEffect
 import ru.aleshin.features.overview.impl.presentation.ui.goal.details.contract.GoalDetailsEvent
@@ -51,7 +52,7 @@ internal class GoalDetailsComposeStore @Inject constructor(
         when (event) {
             is GoalDetailsEvent.Init -> with(event) {
                 launchBackgroundWork(BackgroundKey.LOAD) {
-                    val command = GoalDetailsWorkCommand.Load(input.goalId)
+                    val command = GoalDetailsWorkCommand.LoadGoal(input.goalId)
                     workProcessor.work(command).collectAndHandleWork()
                 }
             }
@@ -59,23 +60,27 @@ internal class GoalDetailsComposeStore @Inject constructor(
                 val goal = details?.progress?.goal
                 if (goal != null) {
                     launchBackgroundWork(BackgroundKey.MUTATION) {
-                        val command = GoalDetailsWorkCommand.Delete(goal)
+                        val command = GoalDetailsWorkCommand.DeleteGoal(goal)
                         workProcessor.work(command).collectAndHandleWork()
                     }
                 }
             }
             is GoalDetailsEvent.RestoreGoal -> with(event) {
                 launchBackgroundWork(BackgroundKey.MUTATION) {
-                    val command = GoalDetailsWorkCommand.Restore(goal)
+                    val command = GoalDetailsWorkCommand.RestoreGoal(goal)
                     workProcessor.work(command).collectAndHandleWork()
                 }
             }
             is GoalDetailsEvent.PressEdit -> with(state) {
                 val goalId = details?.progress?.goal?.id
-                if (goalId != null) consumeOutput(GoalDetailsOutput.NavigateToGoalEditor(goalId))
+                if (goalId != null) {
+                    val config = EditorConfig.Goal(goalId = goalId)
+                    consumeOutput(GoalDetailsOutput.NavigateToGoalEditor(config))
+                }
             }
             is GoalDetailsEvent.PressTask -> with(event) {
-                consumeOutput(GoalDetailsOutput.NavigateToTaskEditor(task.key))
+                val config = EditorConfig.Task(timeTaskId = task.key)
+                consumeOutput(GoalDetailsOutput.NavigateToTaskEditor(config))
             }
             is GoalDetailsEvent.PressBack -> {
                 consumeOutput(GoalDetailsOutput.NavigateBack)

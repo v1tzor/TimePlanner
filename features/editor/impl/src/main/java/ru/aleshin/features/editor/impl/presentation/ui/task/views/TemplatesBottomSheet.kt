@@ -15,6 +15,8 @@
  */
 package ru.aleshin.features.editor.impl.presentation.ui.task.views
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -58,6 +60,8 @@ import ru.aleshin.core.presentation.mappers.mapToIconPainter
 import ru.aleshin.core.presentation.models.categories.MainCategoryUi
 import ru.aleshin.core.presentation.models.categories.SubCategoryUi
 import ru.aleshin.core.presentation.models.templates.TemplateUi
+import ru.aleshin.core.utils.extensions.duration
+import ru.aleshin.features.editor.impl.presentation.theme.EditorThemeRes
 import ru.aleshin.timeplanner.core.ui.mappers.mapToString
 import ru.aleshin.timeplanner.core.ui.theme.TimePlannerRes
 import ru.aleshin.timeplanner.core.ui.views.CategoryIconMonogram
@@ -65,8 +69,6 @@ import ru.aleshin.timeplanner.core.ui.views.CategoryTextMonogram
 import ru.aleshin.timeplanner.core.ui.views.ExpandedIcon
 import ru.aleshin.timeplanner.core.ui.views.NoneItemsView
 import ru.aleshin.timeplanner.core.ui.views.toMinutesOrHoursTitle
-import ru.aleshin.core.utils.extensions.duration
-import ru.aleshin.features.editor.impl.presentation.theme.EditorThemeRes
 import java.text.SimpleDateFormat
 import java.util.Date
 
@@ -93,8 +95,10 @@ internal fun TemplatesBottomSheet(
             onDismissRequest = onDismiss,
         ) {
             TemplatesChooserContent(
+                modifier = Modifier,
                 templates = templates,
                 currentTemplateId = currentTemplateId,
+                isBottomSheet = true,
                 onControlClick = onControlClick,
                 onChooseTemplate = onChooseTemplate,
             )
@@ -105,43 +109,67 @@ internal fun TemplatesBottomSheet(
 @Composable
 @ExperimentalMaterial3Api
 internal fun TemplatesChooserContent(
+    modifier: Modifier = Modifier,
+    isBottomSheet: Boolean = false,
     templates: List<TemplateUi>?,
     currentTemplateId: Long?,
     onControlClick: () -> Unit,
     onChooseTemplate: (TemplateUi) -> Unit,
-    modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier.heightIn(min = 350.dp)) {
-        TemplatesBottomSheetHeader(
+        TemplatesChooserHeader(
             templateCount = templates?.size,
             onControlClick = onControlClick,
         )
-        HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp))
-        LazyColumn(
-            modifier = Modifier.padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp),
-        ) {
-            if (templates != null) {
-                if (templates.isNotEmpty()) {
-                    items(items = templates, key = { it.templateId }) { template ->
-                        TemplateBottomSheetItem(
-                            enable = template.templateId != currentTemplateId,
-                            model = template,
-                            onChoose = { onChooseTemplate(template) },
-                        )
+        if (isBottomSheet) {
+            HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp))
+        } else {
+            Spacer(modifier = Modifier.height(12.dp))
+        }
+        val contentState = when {
+            templates == null -> TemplatesChooserContentState.LOADING
+            templates.isEmpty() -> TemplatesChooserContentState.EMPTY
+            else -> TemplatesChooserContentState.DATA
+        }
+        AnimatedContent(
+            targetState = contentState,
+            contentKey = { targetState -> targetState },
+            label = "TemplatesChooser",
+        ) { currentContentState ->
+            LazyColumn(
+                modifier = Modifier.padding(horizontal = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp),
+            ) {
+                when (currentContentState) {
+                    TemplatesChooserContentState.LOADING -> {
+                        item(key = TEMPLATES_LOADING_KEY) {
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center,
+                            ) {
+                                CircularProgressIndicator()
+                            }
+                        }
                     }
-                } else {
-                    item {
-                        NoneItemsView(text = EditorThemeRes.strings.emptyTemplatesTitle)
+                    TemplatesChooserContentState.EMPTY -> {
+                        item(key = EMPTY_TEMPLATES_KEY) {
+                            NoneItemsView(
+                                text = EditorThemeRes.strings.emptyTemplatesTitle,
+                            )
+                        }
                     }
-                }
-            } else {
-                item {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        CircularProgressIndicator()
+                    TemplatesChooserContentState.DATA -> {
+                        items(
+                            items = templates.orEmpty(),
+                            key = { template -> template.templateId },
+                        ) { template ->
+                            TemplatesChooserItem(
+                                modifier = Modifier.animateItem(),
+                                enabled = template.templateId != currentTemplateId,
+                                model = template,
+                                onChoose = { onChooseTemplate(template) },
+                            )
+                        }
                     }
                 }
             }
@@ -151,7 +179,7 @@ internal fun TemplatesChooserContent(
 
 @Composable
 @ExperimentalMaterial3Api
-internal fun TemplatesBottomSheetHeader(
+private fun TemplatesChooserHeader(
     modifier: Modifier = Modifier,
     templateCount: Int?,
     onControlClick: () -> Unit,
@@ -177,9 +205,9 @@ internal fun TemplatesBottomSheetHeader(
 }
 
 @Composable
-internal fun TemplateBottomSheetItem(
+private fun TemplatesChooserItem(
     modifier: Modifier = Modifier,
-    enable: Boolean = true,
+    enabled: Boolean = true,
     model: TemplateUi,
     onChoose: () -> Unit,
 ) {
@@ -227,8 +255,12 @@ internal fun TemplateBottomSheetItem(
                     isExpanded = isExpanded,
                 )
             }
-            if (isExpanded && enable) {
-                Row(Modifier.fillMaxWidth().padding(end = 16.dp, bottom = 4.dp)) {
+            AnimatedVisibility(visible = isExpanded && enabled) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(end = 16.dp, bottom = 4.dp),
+                ) {
                     Spacer(modifier = Modifier.weight(1f))
                     TextButton(onClick = onChoose) {
                         Icon(
@@ -248,7 +280,7 @@ internal fun TemplateBottomSheetItem(
 }
 
 @Composable
-internal fun TemplateBottomSheetItemInfo(
+private fun TemplateBottomSheetItemInfo(
     modifier: Modifier = Modifier,
     isFullInfo: Boolean,
     mainCategory: MainCategoryUi,
@@ -304,3 +336,12 @@ internal fun TemplateBottomSheetItemInfo(
         )
     }
 }
+
+private enum class TemplatesChooserContentState {
+    LOADING,
+    EMPTY,
+    DATA,
+}
+
+private const val TEMPLATES_LOADING_KEY = "templates_loading"
+private const val EMPTY_TEMPLATES_KEY = "empty_templates"

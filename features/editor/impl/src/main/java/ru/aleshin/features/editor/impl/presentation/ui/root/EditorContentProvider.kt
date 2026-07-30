@@ -43,19 +43,13 @@ internal class EditorContentProvider(
                 stack = component.stack,
                 animation = backAnimation(
                     backHandler = component.backHandler,
-                    onBack = component::navigateToBack
-                )
+                    onBack = component::navigateToBack,
+                ),
             ) { child ->
                 when (val instance = child.instance) {
-                    is Child.TaskChild -> {
-                        TaskContent(taskComponent = instance.component)
-                    }
-                    is Child.CategoriesChild -> {
-                        CategoriesContent(categoriesComponent = instance.component)
-                    }
-                    is Child.GoalChild -> {
-                        GoalContent(component = instance.component)
-                    }
+                    is Child.TaskChild -> TaskContent(component = instance.component)
+                    is Child.CategoriesChild -> CategoriesContent(component = instance.component)
+                    is Child.GoalChild -> GoalContent(component = instance.component)
                 }
             }
         }

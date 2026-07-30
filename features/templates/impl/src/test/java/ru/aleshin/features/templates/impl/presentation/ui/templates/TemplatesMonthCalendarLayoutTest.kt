@@ -20,7 +20,7 @@ import org.junit.Assert.assertNull
 import org.junit.Test
 import ru.aleshin.core.utils.functional.WeekDay
 import ru.aleshin.features.templates.impl.presentation.models.TemplatePatternDayUi
-import ru.aleshin.features.templates.impl.presentation.ui.templates.views.buildTemplatesMonthCalendarDays
+import ru.aleshin.features.templates.impl.presentation.ui.templates.views.sections.buildTemplatesMonthCalendarDays
 import java.util.Calendar
 import java.util.Date
 

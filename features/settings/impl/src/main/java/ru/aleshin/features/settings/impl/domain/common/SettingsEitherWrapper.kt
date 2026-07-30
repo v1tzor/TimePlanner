@@ -16,6 +16,7 @@
 package ru.aleshin.features.settings.impl.domain.common
 
 import ru.aleshin.core.utils.wrappers.FlowEitherWrapper
+import ru.aleshin.features.settings.impl.domain.entities.SettingsFailures
 import javax.inject.Inject
 
 /**

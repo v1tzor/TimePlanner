@@ -15,6 +15,7 @@
  */
 package ru.aleshin.features.editor.impl.presentation.ui.categories.views
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -60,18 +61,22 @@ internal fun SubCategoriesList(
     onCategoryDelete: (SubCategoryUi) -> Unit,
     onAddSubCategory: () -> Unit,
 ) {
-    if (mainCategory != null) {
+    AnimatedVisibility(
+        modifier = modifier,
+        visible = mainCategory != null,
+    ) {
+        val selectedMainCategory = mainCategory
         Column(
-            modifier = modifier
+            modifier = Modifier
                 .padding(start = 16.dp, end = 16.dp, top = 8.dp)
                 .animateContentSize(),
             verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
-            if (subCategories.isNotEmpty()) {
+            if (selectedMainCategory != null && subCategories.isNotEmpty()) {
                 subCategories.forEach { subCategory ->
-                    key(subCategory) {
+                    key(subCategory.id) {
                         SubCategoryViewItem(
-                            mainCategory = mainCategory,
+                            mainCategory = selectedMainCategory,
                             subCategory = subCategory,
                             onChange = onCategoryUpdate,
                             onDelete = onCategoryDelete,
@@ -80,7 +85,8 @@ internal fun SubCategoriesList(
                 }
             }
             SubCategoryAddItem(
-                enabled = mainCategory.defaultType != DefaultCategoryType.EMPTY,
+                enabled = selectedMainCategory != null &&
+                    selectedMainCategory.defaultType != DefaultCategoryType.EMPTY,
                 onClick = onAddSubCategory,
             )
             Spacer(modifier = Modifier.height(50.dp))
@@ -187,4 +193,3 @@ internal fun SubCategoryAddItem(
         }
     }
 }
-

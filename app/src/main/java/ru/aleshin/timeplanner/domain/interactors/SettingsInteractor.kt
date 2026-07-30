@@ -17,14 +17,13 @@ package ru.aleshin.timeplanner.domain.interactors
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.map
-import ru.aleshin.core.domain.entities.settings.Settings
+import kotlinx.coroutines.flow.combine
+import ru.aleshin.core.domain.entities.settings.SettingsDetails
 import ru.aleshin.core.domain.repository.TasksSettingsRepository
 import ru.aleshin.core.domain.repository.ThemeSettingsRepository
 import ru.aleshin.core.utils.functional.Either
 import ru.aleshin.timeplanner.domain.common.MainEitherWrapper
-import ru.aleshin.timeplanner.domain.common.MainFailures
+import ru.aleshin.timeplanner.domain.entities.MainFailures
 import javax.inject.Inject
 
 /**
@@ -32,7 +31,7 @@ import javax.inject.Inject
  */
 interface SettingsInteractor {
 
-    suspend fun fetchSettings(): Flow<Either<MainFailures, Settings>>
+    suspend fun fetchSettings(): Flow<Either<MainFailures, SettingsDetails>>
 
     class Base @Inject constructor(
         private val themeRepository: ThemeSettingsRepository,
@@ -42,10 +41,10 @@ interface SettingsInteractor {
 
         @OptIn(ExperimentalCoroutinesApi::class)
         override suspend fun fetchSettings() = eitherWrapper.wrapFlow {
-            themeRepository.fetchSettings().flatMapLatest { themeSettings ->
-                tasksRepository.fetchSettings().map { tasksSettings ->
-                    Settings(themeSettings, tasksSettings)
-                }
+            themeRepository.fetchSettings().combine(
+                flow = tasksRepository.fetchSettings()
+            ) { themeSettings, tasksSettings ->
+                SettingsDetails(themeSettings, tasksSettings)
             }
         }
     }

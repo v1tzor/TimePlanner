@@ -22,20 +22,12 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.DatePicker
-import androidx.compose.material3.DatePickerDialog
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -44,12 +36,8 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import ru.aleshin.core.utils.extensions.mapToDate
-import ru.aleshin.core.utils.extensions.startThisDay
 import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
-import ru.aleshin.timeplanner.core.ui.theme.TimePlannerRes
-import ru.aleshin.timeplanner.core.ui.theme.full
-import java.util.Date
+import ru.aleshin.timeplanner.core.ui.theme.material.full
 
 /**
  * @author Stanislav Aleshin on 22.02.2023.
@@ -57,8 +45,8 @@ import java.util.Date
 @Composable
 internal fun DateChooser(
     modifier: Modifier = Modifier,
-    enabled: Boolean = true,
     dateTitle: String,
+    enabled: Boolean = true,
     onNext: () -> Unit,
     onPrevious: () -> Unit,
     onChooseDate: () -> Unit,
@@ -68,23 +56,26 @@ internal fun DateChooser(
         shape = MaterialTheme.shapes.full,
         color = MaterialTheme.colorScheme.surfaceContainerHigh,
     ) {
-        Row(modifier = Modifier.fillMaxHeight(), verticalAlignment = Alignment.CenterVertically) {
+        Row(
+            modifier = Modifier.fillMaxHeight(),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
             DateChooserIcon(
-                enabled = enabled,
                 icon = painterResource(HomeThemeRes.icons.previousDate),
                 description = HomeThemeRes.strings.previousDateIconDesc,
+                enabled = enabled,
                 onClick = onPrevious,
             )
             DateChooserContent(
                 modifier = Modifier.weight(1f),
-                enabled = enabled,
                 dateTitle = dateTitle,
+                enabled = enabled,
                 onClick = onChooseDate,
             )
             DateChooserIcon(
-                enabled = enabled,
                 icon = painterResource(HomeThemeRes.icons.nextDate),
                 description = HomeThemeRes.strings.nextDateIconDesc,
+                enabled = enabled,
                 onClick = onNext,
             )
         }
@@ -92,17 +83,17 @@ internal fun DateChooser(
 }
 
 @Composable
-internal fun DateChooserIcon(
+private fun DateChooserIcon(
     modifier: Modifier = Modifier,
-    enabled: Boolean,
     icon: Painter,
     description: String?,
+    enabled: Boolean,
     onClick: () -> Unit,
 ) {
     IconButton(
-        onClick = onClick,
         modifier = modifier.size(38.dp),
         enabled = enabled,
+        onClick = onClick,
     ) {
         Icon(
             modifier = Modifier
@@ -116,10 +107,10 @@ internal fun DateChooserIcon(
 }
 
 @Composable
-internal fun DateChooserContent(
+private fun DateChooserContent(
     modifier: Modifier = Modifier,
-    enabled: Boolean,
     dateTitle: String,
+    enabled: Boolean,
     onClick: () -> Unit,
 ) {
     Box(
@@ -135,9 +126,7 @@ internal fun DateChooserContent(
         Text(
             modifier = Modifier
                 .padding(horizontal = 12.dp)
-                .graphicsLayer(
-                    alpha = if (enabled) 1f else 0.5f,
-                ),
+                .graphicsLayer(alpha = if (enabled) 1f else 0.5f),
             text = dateTitle,
             textAlign = TextAlign.Center,
             maxLines = 1,
@@ -146,73 +135,3 @@ internal fun DateChooserContent(
         )
     }
 }
-
-@Composable
-@OptIn(ExperimentalMaterial3Api::class)
-internal fun HomeDatePicker(
-    modifier: Modifier = Modifier,
-    isOpenDialog: Boolean,
-    onDismiss: () -> Unit,
-    onSelectedDate: (Date) -> Unit,
-) {
-    if (isOpenDialog) {
-        val datePickerState = rememberDatePickerState()
-        val confirmEnabled by remember {
-            derivedStateOf { datePickerState.selectedDateMillis != null }
-        }
-        DatePickerDialog(
-            modifier = modifier,
-            onDismissRequest = onDismiss,
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        val dateMillis = datePickerState.selectedDateMillis
-                        val date = dateMillis?.mapToDate() ?: return@TextButton
-                        onSelectedDate.invoke(date.startThisDay())
-                    },
-                    enabled = confirmEnabled,
-                ) {
-                    Text(text = TimePlannerRes.strings.confirmTitle)
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = onDismiss) {
-                    Text(text = TimePlannerRes.strings.cancelTitle)
-                }
-            },
-        ) {
-            DatePicker(
-                state = datePickerState,
-                title = {
-                    Text(
-                        modifier = Modifier.padding(start = 24.dp, top = 24.dp),
-                        text = HomeThemeRes.strings.dateDialogPickerTitle,
-                    )
-                },
-                headline = {
-                    Text(
-                        modifier = Modifier.padding(start = 24.dp),
-                        text = HomeThemeRes.strings.dateDialogPickerHeadline,
-                    )
-                },
-            )
-        }
-    }
-}
-
-/* ----------------------- Release Preview -----------------------
-@Composable
-@Preview(showBackground = true)
-internal fun DateChooser_Preview() {
-    TimePlannerTheme(dynamicColor = false, themeColorsType = ThemeColorsUiType.LIGHT) {
-        HomeTheme {
-            DateChooser(
-                modifier = Modifier.sizeIn(minWidth = 200.dp).width(150.dp),
-                dateTitle = "Feb 23, 2023",
-                onChooseDate = {},
-                onNextDate = {},
-                onPreviousDate = {},
-            )
-        }
-    }
-}*/

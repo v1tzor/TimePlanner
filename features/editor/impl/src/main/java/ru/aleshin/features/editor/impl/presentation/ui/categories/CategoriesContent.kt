@@ -33,6 +33,7 @@ import ru.aleshin.features.editor.impl.presentation.ui.categories.contract.Categ
 import ru.aleshin.features.editor.impl.presentation.ui.categories.contract.CategoriesEvent
 import ru.aleshin.features.editor.impl.presentation.ui.categories.store.CategoriesComponent
 import ru.aleshin.features.editor.impl.presentation.ui.categories.views.CategoriesTopAppBar
+import ru.aleshin.features.editor.impl.presentation.ui.categories.views.MainCategoryEditorDialog
 import ru.aleshin.features.editor.impl.presentation.ui.categories.views.SubCategoryEditorDialog
 import ru.aleshin.timeplanner.core.ui.views.AdaptiveLayoutInfo
 import ru.aleshin.timeplanner.core.ui.views.Scaffold
@@ -45,12 +46,13 @@ import ru.aleshin.timeplanner.core.ui.views.rememberAdaptiveLayoutInfo
 @OptIn(ExperimentalMaterial3Api::class)
 internal fun CategoriesContent(
     modifier: Modifier = Modifier,
-    categoriesComponent: CategoriesComponent,
+    component: CategoriesComponent,
     adaptiveLayoutInfo: AdaptiveLayoutInfo = rememberAdaptiveLayoutInfo(),
 ) {
-    val store = categoriesComponent.store
+    val store = component.store
     val state by store.stateAsState()
     val snackbarHostState = remember { SnackbarHostState() }
+    var isMainCategoryDialogOpen by rememberSaveable { mutableStateOf(false) }
     var isSubCategoryDialogOpen by rememberSaveable { mutableStateOf(false) }
 
     Scaffold(
@@ -68,11 +70,24 @@ internal fun CategoriesContent(
         },
     ) { contentPadding ->
         CategoriesLayout(
-            modifier = Modifier.fillMaxSize().padding(contentPadding),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(contentPadding),
             state = state,
             adaptiveLayoutInfo = adaptiveLayoutInfo,
-            onEvent = store::dispatchEvent,
+            onAddMainCategory = { isMainCategoryDialogOpen = true },
             onAddSubCategory = { isSubCategoryDialogOpen = true },
+            onEvent = store::dispatchEvent,
+        )
+    }
+
+    if (isMainCategoryDialogOpen) {
+        MainCategoryEditorDialog(
+            onDismiss = { isMainCategoryDialogOpen = false },
+            onConfirm = { name ->
+                store.dispatchEvent(CategoriesEvent.AddMainCategory(name))
+                isMainCategoryDialogOpen = false
+            },
         )
     }
 

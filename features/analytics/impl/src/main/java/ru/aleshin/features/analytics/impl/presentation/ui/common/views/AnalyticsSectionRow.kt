@@ -24,29 +24,35 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
-import ru.aleshin.timeplanner.core.ui.theme.tokens.AdaptiveLayoutDefaults
+import androidx.compose.ui.unit.dp
 
 /**
  * @author Stanislav Aleshin on 27.07.2026.
  */
 @Composable
-internal fun AnalyticsSectionRow(
+internal fun AnalyticsFixedHeightSectionRow(
     modifier: Modifier = Modifier,
-    height: Dp? = null,
+    height: Dp,
     content: @Composable RowScope.() -> Unit,
 ) {
     val fontScale = LocalDensity.current.fontScale
     val accessibilityScale = 1f + (fontScale - 1f).coerceAtLeast(0f) * 0.5f
 
     Row(
-        modifier = modifier.then(
-            other = if (height != null && height != Dp.Unspecified) {
-                Modifier.height(height * accessibilityScale)
-            } else {
-                Modifier.height(IntrinsicSize.Min)
-            }
-        ),
-        horizontalArrangement = Arrangement.spacedBy(AdaptiveLayoutDefaults.GridSpacing),
+        modifier = modifier.height(height * accessibilityScale),
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        content = content,
+    )
+}
+
+@Composable
+internal fun AnalyticsIntrinsicHeightSectionRow(
+    modifier: Modifier = Modifier,
+    content: @Composable RowScope.() -> Unit,
+) {
+    Row(
+        modifier = modifier.height(IntrinsicSize.Min),
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
         content = content,
     )
 }

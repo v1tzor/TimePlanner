@@ -48,7 +48,10 @@ sealed interface DeepLinkTarget {
         val date: Long? = null,
         val from: Long? = null,
         val to: Long? = null,
-    ) : DeepLinkTarget
+    ) : DeepLinkTarget {
+        val isEmpty: Boolean
+            get() = timeTaskId == null && undefinedTaskId == null && date == null && from == null && to == null
+    }
 
     @Serializable
     data class Home(val date: Long? = null) : DeepLinkTarget
@@ -85,8 +88,7 @@ sealed interface DeepLinkTarget {
                     from = uri.fetchLong(FROM_QUERY),
                     to = uri.fetchLong(TO_QUERY),
                 ).takeIf { target ->
-                    (target.from == null) == (target.to == null) &&
-                        !(target.timeTaskId != null && target.undefinedTaskId != null)
+                    (target.from == null) == (target.to == null) && !(target.timeTaskId != null && target.undefinedTaskId != null)
                 }
                 HOME_DEEP_LINK_PATH -> Home(date = uri.fetchLong(DATE_QUERY))
                 GOAL_EDITOR_DEEP_LINK_PATH -> GoalEditor(goalId = uri.fetchLong(GOAL_ID_QUERY))
@@ -99,8 +101,7 @@ sealed interface DeepLinkTarget {
 
         private fun Uri.hasInvalidLongParameters(): Boolean {
             return LONG_PARAMETERS.any { parameter ->
-                getQueryParameter(parameter)?.toLongOrNull() == null &&
-                    getQueryParameter(parameter) != null
+                getQueryParameter(parameter)?.toLongOrNull() == null && getQueryParameter(parameter) != null
             }
         }
 

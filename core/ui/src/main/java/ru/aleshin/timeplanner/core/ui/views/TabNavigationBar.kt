@@ -83,7 +83,7 @@ fun BottomBarIcon(
         painter = if (selected) enabledIcon else disabledIcon,
         contentDescription = description,
         tint = when (selected) {
-            true -> MaterialTheme.colorScheme.onSecondaryContainer
+            true -> MaterialTheme.colorScheme.onPrimaryContainer
             false -> MaterialTheme.colorScheme.onSurfaceVariant
         },
     )

@@ -43,9 +43,6 @@ object AdaptiveLayoutDefaults {
     val MediumContentMaxWidth = 720.dp
     val SettingsContentMaxWidth = 680.dp
     val ExpandedContentMaxWidth = 1200.dp
-    val HomeAgendaMaxWidth = 760.dp
-    val HomeTimelineMaxWidth = 1040.dp
-    val HomeTimelineTaskMaxWidth = 480.dp
     val OverviewMainPaneMinWidth = 350.dp
     val OverviewSupportingPaneMinWidth = 350.dp
     val OverviewContentMaxWidth = 1200.dp

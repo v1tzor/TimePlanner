@@ -23,6 +23,7 @@ import ru.aleshin.core.utils.architecture.store.contract.StoreAction
 import ru.aleshin.core.utils.architecture.store.contract.StoreEffect
 import ru.aleshin.core.utils.architecture.store.contract.StoreEvent
 import ru.aleshin.core.utils.architecture.store.contract.StoreState
+import ru.aleshin.features.editor.api.EditorConfig
 import ru.aleshin.features.overview.impl.domain.entities.OverviewFailures
 import ru.aleshin.features.overview.impl.presentation.models.GoalDetailsUi
 import ru.aleshin.features.overview.impl.presentation.models.GoalUi
@@ -38,11 +39,11 @@ internal data class GoalDetailsState(
 
 internal sealed interface GoalDetailsEvent : StoreEvent {
     data class Init(val input: GoalDetailsInput, val isRestore: Boolean) : GoalDetailsEvent
-    data object PressBack : GoalDetailsEvent
-    data object PressEdit : GoalDetailsEvent
     data class PressTask(val task: TimeTaskUi) : GoalDetailsEvent
-    data object DeleteGoal : GoalDetailsEvent
     data class RestoreGoal(val goal: GoalUi) : GoalDetailsEvent
+    data object PressEdit : GoalDetailsEvent
+    data object DeleteGoal : GoalDetailsEvent
+    data object PressBack : GoalDetailsEvent
 }
 
 internal sealed interface GoalDetailsAction : StoreAction {
@@ -56,8 +57,8 @@ internal sealed interface GoalDetailsEffect : StoreEffect {
 
 internal sealed interface GoalDetailsOutput : BaseOutput {
     data object NavigateBack : GoalDetailsOutput
-    data class NavigateToGoalEditor(val goalId: Long) : GoalDetailsOutput
-    data class NavigateToTaskEditor(val taskId: Long) : GoalDetailsOutput
+    data class NavigateToGoalEditor(val config: EditorConfig.Goal) : GoalDetailsOutput
+    data class NavigateToTaskEditor(val config: EditorConfig.Task) : GoalDetailsOutput
 }
 
 internal data class GoalDetailsInput(

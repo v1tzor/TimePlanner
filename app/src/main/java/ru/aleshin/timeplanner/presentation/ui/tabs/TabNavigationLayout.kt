@@ -15,10 +15,10 @@
  */
 package ru.aleshin.timeplanner.presentation.ui.tabs
 
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.NavigationRailItemDefaults
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteDefaults
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
@@ -28,12 +28,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import com.arkivanov.decompose.ExperimentalDecomposeApi
 import com.arkivanov.decompose.extensions.compose.experimental.stack.ChildStack
-import com.arkivanov.decompose.router.stack.ChildStack as DecomposeChildStack
 import ru.aleshin.timeplanner.core.ui.views.BottomBarIcon
 import ru.aleshin.timeplanner.core.ui.views.BottomBarLabel
-import ru.aleshin.timeplanner.presentation.ui.tabs.store.TabNavigationComponent
+import ru.aleshin.timeplanner.presentation.ui.tabs.component.TabNavigationComponent.TabNavigationChild
 import ru.aleshin.timeplanner.presentation.ui.tabs.views.TabsBottomBarItems
-import ru.aleshin.timeplanner.presentation.ui.tabs.views.TabsBottomNavigationBar
+import com.arkivanov.decompose.router.stack.ChildStack as DecomposeChildStack
 
 /**
  * @author Stanislav Aleshin on 26.07.2026.
@@ -42,27 +41,28 @@ import ru.aleshin.timeplanner.presentation.ui.tabs.views.TabsBottomNavigationBar
 @OptIn(ExperimentalDecomposeApi::class, ExperimentalMaterial3Api::class)
 internal fun TabNavigationLayout(
     modifier: Modifier = Modifier,
-    stack: DecomposeChildStack<*, TabNavigationComponent.TabNavigationChild>,
+    stack: DecomposeChildStack<*, TabNavigationChild>,
     selectedItem: TabsBottomBarItems,
     useNavigationRail: Boolean,
     onItemSelect: (TabsBottomBarItems) -> Unit,
 ) {
-    val layoutType = if (useNavigationRail) {
-        NavigationSuiteType.NavigationRail
-    } else {
-        NavigationSuiteType.None
-    }
     val navigationItemColors = NavigationSuiteDefaults.itemColors(
-        navigationRailItemColors = NavigationRailItemDefaults.colors(
-            indicatorColor = MaterialTheme.colorScheme.primaryContainer,
+        navigationBarItemColors = NavigationBarItemDefaults.colors(
+            indicatorColor = MaterialTheme.colorScheme.primaryContainer
         ),
+        navigationRailItemColors = NavigationRailItemDefaults.colors(
+            indicatorColor = MaterialTheme.colorScheme.primaryContainer
+        )
     )
 
     NavigationSuiteScaffold(
         modifier = modifier,
-        layoutType = layoutType,
+        layoutType = when (useNavigationRail) {
+            true -> NavigationSuiteType.NavigationRail
+            false -> NavigationSuiteType.NavigationBar
+        },
         navigationSuiteColors = NavigationSuiteDefaults.colors(
-            navigationRailContainerColor = selectedItem.containerColor,
+            navigationBarContainerColor = selectedItem.containerColor
         ),
         navigationSuiteItems = {
             TabsBottomBarItems.entries.forEach { destination ->
@@ -74,46 +74,45 @@ internal fun TabNavigationLayout(
                             selected = selectedItem == destination,
                             enabledIcon = painterResource(destination.enabledIcon),
                             disabledIcon = painterResource(destination.disabledIcon),
-                            description = destination.label,
+                            description = destination.label
                         )
                     },
                     label = {
                         BottomBarLabel(
                             selected = selectedItem == destination,
-                            title = destination.label,
+                            title = destination.label
                         )
                     },
-                    colors = navigationItemColors,
-                )
-            }
-        },
-    ) {
-        Column(modifier = Modifier.fillMaxSize()) {
-            ChildStack(
-                modifier = Modifier.weight(1f),
-                stack = stack,
-            ) { child ->
-                when (val instance = child.instance) {
-                    is TabNavigationComponent.TabNavigationChild.HomeChild -> {
-                        instance.contentProvider.invoke(Modifier)
-                    }
-                    is TabNavigationComponent.TabNavigationChild.OverviewChild -> {
-                        instance.contentProvider.invoke(Modifier)
-                    }
-                    is TabNavigationComponent.TabNavigationChild.TemplatesChild -> {
-                        instance.contentProvider.invoke(Modifier)
-                    }
-                    is TabNavigationComponent.TabNavigationChild.AnalyticsChild -> {
-                        instance.contentProvider.invoke(Modifier)
-                    }
-                }
-            }
-            if (!useNavigationRail) {
-                TabsBottomNavigationBar(
-                    selectedItem = selectedItem,
-                    onItemSelected = onItemSelect,
+                    colors = navigationItemColors
                 )
             }
         }
+    ) {
+        ChildStack(
+            modifier = Modifier.fillMaxSize(),
+            stack = stack,
+        ) { child ->
+            when (val instance = child.instance) {
+                is TabNavigationChild.HomeChild -> {
+                    instance.contentProvider.invoke(Modifier)
+                }
+                is TabNavigationChild.OverviewChild -> {
+                    instance.contentProvider.invoke(Modifier)
+                }
+                is TabNavigationChild.TemplatesChild -> {
+                    instance.contentProvider.invoke(Modifier)
+                }
+                is TabNavigationChild.AnalyticsChild -> {
+                    instance.contentProvider.invoke(Modifier)
+                }
+            }
+        }
     }
+}
+
+fun TabNavigationChild.mapToBottomItem() = when (this) {
+    is TabNavigationChild.AnalyticsChild -> TabsBottomBarItems.ANALYTICS
+    is TabNavigationChild.HomeChild -> TabsBottomBarItems.HOME
+    is TabNavigationChild.OverviewChild -> TabsBottomBarItems.OVERVIEW
+    is TabNavigationChild.TemplatesChild -> TabsBottomBarItems.TEMPLATES
 }

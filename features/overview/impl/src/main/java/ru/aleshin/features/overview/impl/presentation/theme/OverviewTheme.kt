@@ -18,10 +18,8 @@ package ru.aleshin.features.overview.impl.presentation.theme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import ru.aleshin.features.overview.impl.presentation.theme.tokens.LocalOverviewIcons
-import ru.aleshin.features.overview.impl.presentation.theme.tokens.LocalOverviewGoalStrings
 import ru.aleshin.features.overview.impl.presentation.theme.tokens.LocalOverviewStrings
 import ru.aleshin.features.overview.impl.presentation.theme.tokens.fetchOverviewIcons
-import ru.aleshin.features.overview.impl.presentation.theme.tokens.fetchOverviewGoalStrings
 import ru.aleshin.features.overview.impl.presentation.theme.tokens.fetchOverviewStrings
 import ru.aleshin.timeplanner.core.ui.theme.TimePlannerRes
 
@@ -32,11 +30,9 @@ import ru.aleshin.timeplanner.core.ui.theme.TimePlannerRes
 internal fun OverviewTheme(content: @Composable () -> Unit) {
     val strings = fetchOverviewStrings(TimePlannerRes.language)
     val icons = fetchOverviewIcons()
-    val goalStrings = fetchOverviewGoalStrings(TimePlannerRes.language)
 
     CompositionLocalProvider(
         LocalOverviewStrings provides strings,
-        LocalOverviewGoalStrings provides goalStrings,
         LocalOverviewIcons provides icons,
         content = content,
     )

@@ -168,7 +168,7 @@ internal fun MainCategoryChooser(
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-internal fun MainCategorySelectorBottomSheet(
+private fun MainCategorySelectorBottomSheet(
     modifier: Modifier = Modifier,
     allCategories: List<MainCategoryUi>,
     initCategory: MainCategoryUi?,
@@ -323,62 +323,3 @@ internal fun MainCategorySelectorBottomSheet(
         onConfirm = { category -> if (category != null) onChooseCategory(category) },
     )
 }
-
-/* ----------------------- Release Preview -----------------------
-@Composable
-@Preview(showBackground = true)
-private fun MainCategoryChooser_Preview() {
-    TimePlannerTheme(
-        dynamicColor = false,
-        themeColorsType = ThemeColorsUiType.DARK,
-        language = LanguageUiType.RU,
-    ) {
-        EditorTheme {
-            val category = rememberSaveable { mutableStateOf<MainCategory?>(null) }
-            MainCategoryChooser(
-                currentCategory = category.value,
-                allMainCategories = listOf(),
-                onCategoryChoose = { category.value = it },
-            )
-        }
-    }
-}
-
-@Composable
-@Preview(showBackground = true)
-private fun MainCategoryChooser_Enabled_Preview() {
-    TimePlannerTheme(
-        dynamicColor = false,
-        themeColorsType = ThemeColorsUiType.DARK,
-        language = LanguageUiType.RU,
-    ) {
-        EditorTheme {
-            val category = rememberSaveable { mutableStateOf(MainCategory(name = "Работа")) }
-            MainCategoryChooser(
-                currentCategory = category.value,
-                allMainCategories = listOf(category.value),
-                onCategoryChoose = { category.value = it },
-            )
-        }
-    }
-}
-
-@Composable
-@Preview(showBackground = true)
-private fun MainCategoryDialogChooser_Preview() {
-    TimePlannerTheme(
-        dynamicColor = false,
-        themeColorsType = ThemeColorsUiType.DARK,
-    ) {
-        EditorTheme {
-            val category = MainCategory(name = "Работа")
-            MainCategoryDialogChooser(
-                onCloseDialog = {},
-                allMainCategories = listOf(category),
-                initCategory = category,
-                onChooseCategory = {},
-            )
-        }
-    }
-}
-*/

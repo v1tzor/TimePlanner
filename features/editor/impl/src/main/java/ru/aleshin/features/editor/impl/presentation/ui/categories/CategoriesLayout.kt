@@ -15,46 +15,31 @@
  */
 package ru.aleshin.features.editor.impl.presentation.ui.categories
 
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.DpOffset
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import ru.aleshin.core.presentation.models.categories.MainCategoryUi
 import ru.aleshin.core.presentation.models.categories.SubCategoryUi
-import ru.aleshin.features.editor.impl.presentation.theme.EditorThemeRes
+import ru.aleshin.features.editor.impl.presentation.theme.tokens.EditorLayoutDefaults
 import ru.aleshin.features.editor.impl.presentation.ui.categories.contract.CategoriesEvent
 import ru.aleshin.features.editor.impl.presentation.ui.categories.contract.CategoriesState
 import ru.aleshin.features.editor.impl.presentation.ui.categories.views.MainCategoriesHorizontalList
+import ru.aleshin.features.editor.impl.presentation.ui.categories.views.MainCategoriesPaneHeader
 import ru.aleshin.features.editor.impl.presentation.ui.categories.views.MainCategoriesVerticalList
-import ru.aleshin.features.editor.impl.presentation.ui.categories.views.MainCategoryEditorDialog
 import ru.aleshin.features.editor.impl.presentation.ui.categories.views.SubCategoriesList
-import ru.aleshin.timeplanner.core.ui.theme.tokens.AdaptiveLayoutDefaults
+import ru.aleshin.features.editor.impl.presentation.ui.categories.views.SubCategoriesPaneHeader
 import ru.aleshin.timeplanner.core.ui.views.AdaptiveLayoutInfo
 import ru.aleshin.timeplanner.core.ui.views.AdaptiveListDetailPaneScaffold
 
@@ -66,282 +51,242 @@ internal fun CategoriesLayout(
     modifier: Modifier = Modifier,
     state: CategoriesState,
     adaptiveLayoutInfo: AdaptiveLayoutInfo,
-    onEvent: (CategoriesEvent) -> Unit,
+    onAddMainCategory: () -> Unit,
     onAddSubCategory: () -> Unit,
+    onEvent: (CategoriesEvent) -> Unit,
 ) {
-    var isMainCategoryCreatorOpen by rememberSaveable { mutableStateOf(false) }
     val mainPaneScrollState = rememberScrollState()
     val detailPaneScrollState = rememberScrollState()
-    val categories = remember(state.categories, state.selectedMainCategory) {
-        state.categories.find { it.mainCategory == state.selectedMainCategory }
+    val selectedCategoryDetails = remember(state.categories, state.selectedMainCategory) {
+        state.categories.find { details ->
+            details.mainCategory == state.selectedMainCategory
+        }
     }
-    val subCategories = remember(categories) {
-        categories?.subCategories ?: emptyList()
+    val subCategories = remember(selectedCategoryDetails) {
+        selectedCategoryDetails?.subCategories.orEmpty()
     }
     val mainCategories = remember(state.categories) {
-        state.categories.map { it.mainCategory }
+        state.categories.map { details -> details.mainCategory }
     }
-    val useListDetailPane = adaptiveLayoutInfo.useExpandedLayout ||
-        adaptiveLayoutInfo.isBookPosture
 
-    if (useListDetailPane) {
-        AdaptiveListDetailPaneScaffold(
+    when {
+        adaptiveLayoutInfo.useCategoriesListDetailLayout -> CategoriesListDetailLayout(
+            modifier = modifier,
             adaptiveLayoutInfo = adaptiveLayoutInfo,
-            modifier = modifier.fillMaxSize(),
-            listPane = {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .verticalScroll(mainPaneScrollState),
-                ) {
-                    MainCategoriesPane(
-                        useVerticalLayout = true,
-                        mainCategories = mainCategories,
-                        selectedCategory = state.selectedMainCategory,
-                        onRestoreDefaultCategories = {
-                            onEvent(CategoriesEvent.RestoreDefaultCategories)
-                        },
-                        onChangeMainCategory = { category ->
-                            onEvent(CategoriesEvent.ChangeMainCategory(category))
-                        },
-                        onMainCategoryUpdate = { category ->
-                            onEvent(CategoriesEvent.UpdateMainCategory(category))
-                        },
-                        onMainCategoryDelete = { category ->
-                            onEvent(CategoriesEvent.DeleteMainCategory(category))
-                        },
-                        onAddCategory = { isMainCategoryCreatorOpen = true },
-                    )
-                }
-            },
-            detailPane = {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .verticalScroll(detailPaneScrollState),
-                ) {
-                    SubCategoriesPane(
-                        selectedMainCategory = state.selectedMainCategory,
-                        subCategories = subCategories,
-                        onSubCategoryUpdate = { category ->
-                            onEvent(CategoriesEvent.UpdateSubCategory(category))
-                        },
-                        onSubCategoryDelete = { category ->
-                            onEvent(CategoriesEvent.DeleteSubCategory(category))
-                        },
-                        onAddSubCategory = onAddSubCategory,
-                    )
-                }
-            },
+            mainCategories = mainCategories,
+            selectedMainCategory = state.selectedMainCategory,
+            subCategories = subCategories,
+            mainPaneScrollState = mainPaneScrollState,
+            detailPaneScrollState = detailPaneScrollState,
+            onAddMainCategory = onAddMainCategory,
+            onAddSubCategory = onAddSubCategory,
+            onEvent = onEvent,
         )
-    } else {
-        Box(
-            modifier = modifier.fillMaxSize(),
-            contentAlignment = Alignment.TopCenter,
-        ) {
-            Column(
-                modifier = Modifier
-                    .then(
-                        if (adaptiveLayoutInfo.isMediumWidth) {
-                            Modifier.widthIn(max = AdaptiveLayoutDefaults.MediumContentMaxWidth)
-                        } else {
-                            Modifier
-                        }
-                    )
-                    .fillMaxSize()
-                    .verticalScroll(mainPaneScrollState),
-            ) {
-                MainCategoriesPane(
-                    useVerticalLayout = false,
-                    mainCategories = mainCategories,
-                    selectedCategory = state.selectedMainCategory,
-                    onRestoreDefaultCategories = {
-                        onEvent(CategoriesEvent.RestoreDefaultCategories)
-                    },
-                    onChangeMainCategory = { category ->
-                        onEvent(CategoriesEvent.ChangeMainCategory(category))
-                    },
-                    onMainCategoryUpdate = { category ->
-                        onEvent(CategoriesEvent.UpdateMainCategory(category))
-                    },
-                    onMainCategoryDelete = { category ->
-                        onEvent(CategoriesEvent.DeleteMainCategory(category))
-                    },
-                    onAddCategory = { isMainCategoryCreatorOpen = true },
-                )
-                SubCategoriesPane(
-                    selectedMainCategory = state.selectedMainCategory,
-                    subCategories = subCategories,
-                    onSubCategoryUpdate = { category ->
-                        onEvent(CategoriesEvent.UpdateSubCategory(category))
-                    },
-                    onSubCategoryDelete = { category ->
-                        onEvent(CategoriesEvent.DeleteSubCategory(category))
-                    },
-                    onAddSubCategory = onAddSubCategory,
-                )
-            }
-        }
-    }
-    if (isMainCategoryCreatorOpen) {
-        MainCategoryEditorDialog(
-            onDismiss = { isMainCategoryCreatorOpen = false },
-            onConfirm = { name ->
-                onEvent(CategoriesEvent.AddMainCategory(name))
-                isMainCategoryCreatorOpen = false
+        else -> CategoriesSinglePaneLayout(
+            modifier = modifier,
+            mainCategories = mainCategories,
+            selectedMainCategory = state.selectedMainCategory,
+            subCategories = subCategories,
+            scrollState = mainPaneScrollState,
+            maxContentWidth = if (adaptiveLayoutInfo.isMediumWidth) {
+                EditorLayoutDefaults.MediumContentMaxWidth
+            } else {
+                null
             },
+            onAddMainCategory = onAddMainCategory,
+            onAddSubCategory = onAddSubCategory,
+            onEvent = onEvent,
         )
     }
 }
 
 @Composable
-private fun MainCategoriesPane(
-    useVerticalLayout: Boolean,
+private fun CategoriesSinglePaneLayout(
+    modifier: Modifier = Modifier,
     mainCategories: List<MainCategoryUi>,
-    selectedCategory: MainCategoryUi?,
-    onRestoreDefaultCategories: () -> Unit,
-    onChangeMainCategory: (MainCategoryUi) -> Unit,
-    onMainCategoryUpdate: (MainCategoryUi) -> Unit,
-    onMainCategoryDelete: (MainCategoryUi) -> Unit,
-    onAddCategory: () -> Unit,
-) {
-    MainCategoriesHeader(
-        modifier = Modifier.padding(top = 8.dp, bottom = 4.dp).fillMaxWidth(),
-        onRestoreDefaultCategories = onRestoreDefaultCategories,
-    )
-    if (useVerticalLayout) {
-        MainCategoriesVerticalList(
-            modifier = Modifier.fillMaxWidth().padding(
-                start = 16.dp,
-                top = 8.dp,
-                end = 16.dp,
-                bottom = 24.dp,
-            ),
-            mainCategories = mainCategories,
-            selectedCategory = selectedCategory,
-            onSelectCategory = onChangeMainCategory,
-            onUpdateCategory = onMainCategoryUpdate,
-            onDeleteCategory = onMainCategoryDelete,
-            onAddCategory = onAddCategory,
-        )
-    } else {
-        MainCategoriesHorizontalList(
-            modifier = Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 12.dp),
-            mainCategories = mainCategories,
-            selectedCategory = selectedCategory,
-            onSelectCategory = onChangeMainCategory,
-            onUpdateCategory = onMainCategoryUpdate,
-            onDeleteCategory = onMainCategoryDelete,
-            onAddCategory = onAddCategory,
-        )
-    }
-}
-
-@Composable
-private fun SubCategoriesPane(
     selectedMainCategory: MainCategoryUi?,
     subCategories: List<SubCategoryUi>,
-    onSubCategoryUpdate: (SubCategoryUi) -> Unit,
-    onSubCategoryDelete: (SubCategoryUi) -> Unit,
+    maxContentWidth: Dp?,
+    scrollState: ScrollState,
+    onAddMainCategory: () -> Unit,
     onAddSubCategory: () -> Unit,
+    onEvent: (CategoriesEvent) -> Unit,
 ) {
-    SubCategoriesHeader(
-        modifier = Modifier.padding(top = 12.dp, bottom = 8.dp).fillMaxWidth(),
-    )
-    SubCategoriesList(
-        mainCategory = selectedMainCategory,
-        subCategories = subCategories,
-        onCategoryUpdate = onSubCategoryUpdate,
-        onCategoryDelete = onSubCategoryDelete,
-        onAddSubCategory = onAddSubCategory,
-    )
-}
-
-@Composable
-internal fun MainCategoriesHeader(
-    modifier: Modifier = Modifier,
-    onRestoreDefaultCategories: () -> Unit,
-) {
-    var isOpenParametersMenu by rememberSaveable { mutableStateOf(false) }
-
-    Row(
-        modifier = modifier.padding(start = 16.dp, end = 8.dp),
-        verticalAlignment = Alignment.CenterVertically,
+    Box(
+        modifier = modifier.fillMaxSize(),
+        contentAlignment = Alignment.TopCenter,
     ) {
-        Text(
-            modifier = Modifier.padding(end = 8.dp),
-            text = EditorThemeRes.strings.mainCategoryTitle,
-            color = MaterialTheme.colorScheme.onBackground,
-            style = MaterialTheme.typography.titleMedium,
-        )
-        Spacer(modifier = Modifier.weight(1f))
-        IconButton(
-            modifier = Modifier.size(24.dp),
-            onClick = { isOpenParametersMenu = true },
+        Column(
+            modifier = if (maxContentWidth != null) {
+                Modifier
+                    .widthIn(max = maxContentWidth)
+                    .fillMaxSize()
+                    .verticalScroll(scrollState)
+            } else {
+                Modifier
+                    .fillMaxSize()
+                    .verticalScroll(scrollState)
+            },
         ) {
-            Icon(
-                modifier = Modifier.size(18.dp),
-                imageVector = Icons.Default.MoreVert,
-                contentDescription = null,
-            )
-            CategoriesParametersMenu(
-                expanded = isOpenParametersMenu,
-                onDismiss = { isOpenParametersMenu = false },
+            MainCategoriesPaneHeader(
+                modifier = Modifier
+                    .padding(top = 8.dp, bottom = 4.dp)
+                    .fillMaxWidth(),
                 onRestoreDefaultCategories = {
-                    onRestoreDefaultCategories()
-                    isOpenParametersMenu = false
+                    onEvent(CategoriesEvent.RestoreDefaultCategories)
                 },
+            )
+            MainCategoriesHorizontalList(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp, bottom = 12.dp),
+                mainCategories = mainCategories,
+                selectedCategory = selectedMainCategory,
+                onSelectCategory = { category ->
+                    onEvent(CategoriesEvent.ChangeMainCategory(category))
+                },
+                onUpdateCategory = { category ->
+                    onEvent(CategoriesEvent.UpdateMainCategory(category))
+                },
+                onDeleteCategory = { category ->
+                    onEvent(CategoriesEvent.DeleteMainCategory(category))
+                },
+                onAddCategory = onAddMainCategory,
+            )
+            SubCategoriesPaneHeader(
+                modifier = Modifier
+                    .padding(top = 12.dp, bottom = 8.dp)
+                    .fillMaxWidth(),
+            )
+            SubCategoriesList(
+                mainCategory = selectedMainCategory,
+                subCategories = subCategories,
+                onCategoryUpdate = { category ->
+                    onEvent(CategoriesEvent.UpdateSubCategory(category))
+                },
+                onCategoryDelete = { category ->
+                    onEvent(CategoriesEvent.DeleteSubCategory(category))
+                },
+                onAddSubCategory = onAddSubCategory,
             )
         }
     }
 }
 
 @Composable
-internal fun CategoriesParametersMenu(
+private fun CategoriesListDetailLayout(
     modifier: Modifier = Modifier,
-    expanded: Boolean,
-    onDismiss: () -> Unit,
-    onRestoreDefaultCategories: () -> Unit,
+    adaptiveLayoutInfo: AdaptiveLayoutInfo,
+    mainCategories: List<MainCategoryUi>,
+    selectedMainCategory: MainCategoryUi?,
+    subCategories: List<SubCategoryUi>,
+    mainPaneScrollState: ScrollState,
+    detailPaneScrollState: ScrollState,
+    onAddMainCategory: () -> Unit,
+    onAddSubCategory: () -> Unit,
+    onEvent: (CategoriesEvent) -> Unit,
 ) {
-    DropdownMenu(
-        expanded = expanded,
-        onDismissRequest = onDismiss,
-        modifier = modifier,
-        shape = MaterialTheme.shapes.large,
-        offset = DpOffset(0.dp, 4.dp),
+    AdaptiveListDetailPaneScaffold(
+        modifier = modifier.fillMaxSize(),
+        adaptiveLayoutInfo = adaptiveLayoutInfo,
+        listPane = {
+            CategoriesListPane(
+                modifier = Modifier.fillMaxSize(),
+                mainCategories = mainCategories,
+                selectedMainCategory = selectedMainCategory,
+                scrollState = mainPaneScrollState,
+                onAddMainCategory = onAddMainCategory,
+                onEvent = onEvent,
+            )
+        },
+        detailPane = {
+            CategoriesDetailPane(
+                modifier = Modifier.fillMaxSize(),
+                selectedMainCategory = selectedMainCategory,
+                subCategories = subCategories,
+                scrollState = detailPaneScrollState,
+                onAddSubCategory = onAddSubCategory,
+                onEvent = onEvent,
+            )
+        },
+    )
+}
+
+@Composable
+private fun CategoriesListPane(
+    modifier: Modifier = Modifier,
+    mainCategories: List<MainCategoryUi>,
+    selectedMainCategory: MainCategoryUi?,
+    scrollState: ScrollState,
+    onAddMainCategory: () -> Unit,
+    onEvent: (CategoriesEvent) -> Unit,
+) {
+    Column(
+        modifier = modifier.verticalScroll(scrollState),
     ) {
-        DropdownMenuItem(
-            onClick = onRestoreDefaultCategories,
-            text = {
-                Text(
-                    text = EditorThemeRes.strings.restoreDefaultCategories,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    style = MaterialTheme.typography.titleMedium,
-                )
+        MainCategoriesPaneHeader(
+            modifier = Modifier
+                .padding(top = 8.dp, bottom = 4.dp)
+                .fillMaxWidth(),
+            onRestoreDefaultCategories = {
+                onEvent(CategoriesEvent.RestoreDefaultCategories)
             },
-            leadingIcon = {
-                Icon(
-                    imageVector = Icons.Default.Refresh,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurface,
-                )
+        )
+        MainCategoriesVerticalList(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(
+                    start = 16.dp,
+                    top = 8.dp,
+                    end = 16.dp,
+                    bottom = 24.dp,
+                ),
+            mainCategories = mainCategories,
+            selectedCategory = selectedMainCategory,
+            onSelectCategory = { category ->
+                onEvent(CategoriesEvent.ChangeMainCategory(category))
             },
+            onUpdateCategory = { category ->
+                onEvent(CategoriesEvent.UpdateMainCategory(category))
+            },
+            onDeleteCategory = { category ->
+                onEvent(CategoriesEvent.DeleteMainCategory(category))
+            },
+            onAddCategory = onAddMainCategory,
         )
     }
 }
 
 @Composable
-internal fun SubCategoriesHeader(
+private fun CategoriesDetailPane(
     modifier: Modifier = Modifier,
+    selectedMainCategory: MainCategoryUi?,
+    subCategories: List<SubCategoryUi>,
+    scrollState: ScrollState,
+    onAddSubCategory: () -> Unit,
+    onEvent: (CategoriesEvent) -> Unit,
 ) {
-    Row(
-        modifier = modifier.padding(horizontal = 16.dp),
-        verticalAlignment = Alignment.CenterVertically,
+    Column(
+        modifier = modifier.verticalScroll(scrollState),
     ) {
-        Text(
-            text = EditorThemeRes.strings.subCategoryTitle,
-            color = MaterialTheme.colorScheme.onBackground,
-            style = MaterialTheme.typography.titleMedium,
+        SubCategoriesPaneHeader(
+            modifier = Modifier
+                .padding(top = 12.dp, bottom = 8.dp)
+                .fillMaxWidth(),
+        )
+        SubCategoriesList(
+            mainCategory = selectedMainCategory,
+            subCategories = subCategories,
+            onCategoryUpdate = { category ->
+                onEvent(CategoriesEvent.UpdateSubCategory(category))
+            },
+            onCategoryDelete = { category ->
+                onEvent(CategoriesEvent.DeleteSubCategory(category))
+            },
+            onAddSubCategory = onAddSubCategory,
         )
     }
 }
+
+private val AdaptiveLayoutInfo.useCategoriesListDetailLayout: Boolean
+    get() = useExpandedLayout || isBookPosture

@@ -23,7 +23,6 @@ plugins {
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.serialization)
     alias(libs.plugins.parcelize)
-    alias(libs.plugins.screenshot)
 }
 
 val localProperties = gradleLocalProperties(rootDir, providers)
@@ -49,7 +48,6 @@ android {
     namespace = libs.versions.applicationId.get()
     compileSdk = libs.versions.compileSdkVersion.get().toIntOrNull()
     flavorDimensions += libs.versions.productionDimension.get()
-    experimentalProperties["android.experimental.enableScreenshotTest"] = true
 
     defaultConfig {
         applicationId = libs.versions.applicationId.get()
@@ -180,8 +178,6 @@ dependencies {
     androidTestImplementation(libs.jUnitExt)
     androidTestImplementation(libs.espresso)
     androidTestImplementation(libs.composeJUnit)
-    screenshotTestImplementation(libs.screenshot.validation.api)
-    screenshotTestImplementation(libs.compose.ui.tooling)
     debugImplementation(libs.compose.ui.tooling)
     debugImplementation(libs.compose.ui.testmanifest)
 

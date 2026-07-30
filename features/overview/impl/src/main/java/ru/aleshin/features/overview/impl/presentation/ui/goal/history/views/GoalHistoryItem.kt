@@ -45,7 +45,6 @@ internal fun GoalHistoryItem(
     modifier: Modifier = Modifier,
     history: GoalHistoryUi,
 ) {
-    val strings = OverviewThemeRes.goalStrings
     val dateFormat = remember { DateFormat.getDateInstance(DateFormat.MEDIUM) }
     val progress = if (history.targetValue == 0L) {
         0f
@@ -83,9 +82,9 @@ internal fun GoalHistoryItem(
                 }
                 Text(
                     text = if (history.isAchieved) {
-                        strings.achievedTitle
+                        OverviewThemeRes.strings.achievedTitle
                     } else {
-                        strings.notAchievedTitle
+                        OverviewThemeRes.strings.notAchievedTitle
                     },
                     color = if (history.isAchieved) {
                         MaterialTheme.colorScheme.primary
@@ -116,6 +115,6 @@ internal fun GoalHistoryItem(
 private fun GoalHistoryUi.formatValue(value: Long): String {
     return when (metric) {
         GoalMetric.DURATION -> value.toGoalDurationTitle()
-        GoalMetric.TASK_COUNT -> "$value ${OverviewThemeRes.goalStrings.tasksUnit}"
+        GoalMetric.TASK_COUNT -> "$value ${OverviewThemeRes.strings.tasksUnit}"
     }
 }

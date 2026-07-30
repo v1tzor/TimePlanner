@@ -35,43 +35,44 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import ru.aleshin.features.analytics.impl.presentation.theme.tokens.AnalyticsLayoutDefaults
 import ru.aleshin.timeplanner.core.ui.views.PlaceholderBox
 
 /**
  * @author Stanislav Aleshin on 23.07.2026.
  */
 internal fun LazyListScope.CategoryContentPlaceholder() {
-    item(key = "category-placeholder-range") {
+    item(key = RANGE_PLACEHOLDER_KEY) {
         PlaceholderBox(
             modifier = Modifier
                 .fillMaxWidth()
-                .widthIn(max = MAX_CONTENT_WIDTH)
+                .widthIn(max = AnalyticsLayoutDefaults.ContentMaxWidth)
                 .padding(bottom = 16.dp)
                 .height(40.dp),
             shape = MaterialTheme.shapes.large,
             color = MaterialTheme.colorScheme.surfaceContainer,
         )
     }
-    item(key = "category-placeholder-summary") {
+    item(key = SUMMARY_PLACEHOLDER_KEY) {
         CategorySummaryPlaceholder(
             modifier = Modifier.placeholderSectionItem(),
         )
     }
-    item(key = "category-placeholder-metrics") {
+    item(key = METRICS_PLACEHOLDER_KEY) {
         CategoryMetricsPlaceholder(
             modifier = Modifier.placeholderSectionItem(),
         )
     }
-    item(key = "category-placeholder-chart") {
+    item(key = CHART_PLACEHOLDER_KEY) {
         CategoryChartPlaceholder(
             modifier = Modifier.placeholderSectionItem(),
         )
     }
-    item(key = "category-placeholder-tasks") {
+    item(key = TASKS_PLACEHOLDER_KEY) {
         CategoryTasksPlaceholder(
             modifier = Modifier
                 .fillMaxWidth()
-                .widthIn(max = MAX_CONTENT_WIDTH),
+                .widthIn(max = AnalyticsLayoutDefaults.ContentMaxWidth),
         )
     }
 }
@@ -316,7 +317,11 @@ private fun CategoryPlaceholderSurface(
 }
 
 private fun Modifier.placeholderSectionItem() = fillMaxWidth()
-    .widthIn(max = MAX_CONTENT_WIDTH)
+    .widthIn(max = AnalyticsLayoutDefaults.ContentMaxWidth)
     .padding(bottom = 24.dp)
 
-private val MAX_CONTENT_WIDTH = 680.dp
+private const val RANGE_PLACEHOLDER_KEY = "category-placeholder-range"
+private const val SUMMARY_PLACEHOLDER_KEY = "category-placeholder-summary"
+private const val METRICS_PLACEHOLDER_KEY = "category-placeholder-metrics"
+private const val CHART_PLACEHOLDER_KEY = "category-placeholder-chart"
+private const val TASKS_PLACEHOLDER_KEY = "category-placeholder-tasks"

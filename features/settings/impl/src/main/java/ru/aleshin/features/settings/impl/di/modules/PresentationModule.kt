@@ -24,10 +24,10 @@ import ru.aleshin.features.settings.impl.navigation.DefaultSettingsContentProvid
 import ru.aleshin.features.settings.impl.presentation.ui.donate.contract.DonateState
 import ru.aleshin.features.settings.impl.presentation.ui.donate.store.DonateComposeStore
 import ru.aleshin.features.settings.impl.presentation.ui.settings.contract.SettingsState
-import ru.aleshin.features.settings.impl.presentation.ui.settings.managers.BackupManager
-import ru.aleshin.features.settings.impl.presentation.ui.settings.screensmodel.DataWorkProcessor
-import ru.aleshin.features.settings.impl.presentation.ui.settings.screensmodel.SettingsComposeStore
-import ru.aleshin.features.settings.impl.presentation.ui.settings.screensmodel.SettingsWorkProcessor
+import ru.aleshin.features.settings.impl.presentation.managers.BackupManager
+import ru.aleshin.features.settings.impl.presentation.ui.settings.store.DataWorkProcessor
+import ru.aleshin.features.settings.impl.presentation.ui.settings.store.SettingsComposeStore
+import ru.aleshin.features.settings.impl.presentation.ui.settings.store.SettingsWorkProcessor
 
 /**
  * @author Stanislav Aleshin on 17.02.2023.
@@ -40,26 +40,21 @@ internal interface PresentationModule {
     fun bindSettingsContentProviderFactory(factory: DefaultSettingsContentProviderFactory): SettingsContentProviderFactory
 
     @Binds
-    @FeatureScope
     fun bindBackupManager(manager: BackupManager.Base): BackupManager
 
     // Settings
 
     @Binds
-    @FeatureScope
     fun bindSettingsStoreFactory(factory: SettingsComposeStore.Factory): BaseOnlyOutComposeStore.Factory<SettingsComposeStore, SettingsState>
 
     @Binds
-    @FeatureScope
     fun bindSettingsWorkProcessor(processor: SettingsWorkProcessor.Base): SettingsWorkProcessor
 
     @Binds
-    @FeatureScope
     fun bindDataWorkProcessor(processor: DataWorkProcessor.Base): DataWorkProcessor
 
     // Donate
 
     @Binds
-    @FeatureScope
     fun bindDonateStoreFactory(factory: DonateComposeStore.Factory): BaseOnlyOutComposeStore.Factory<DonateComposeStore, DonateState>
 }

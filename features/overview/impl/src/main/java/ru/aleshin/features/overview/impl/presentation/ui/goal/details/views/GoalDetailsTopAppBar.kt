@@ -43,7 +43,7 @@ internal fun GoalDetailsTopAppBar(
     CenterAlignedTopAppBar(
         modifier = modifier,
         title = {
-            Text(text = OverviewThemeRes.goalStrings.goalDetailsTitle)
+            Text(text = OverviewThemeRes.strings.goalDetailsTitle)
         },
         navigationIcon = {
             IconButton(onClick = onBackClick) {
@@ -57,18 +57,18 @@ internal fun GoalDetailsTopAppBar(
             IconButton(onClick = onEditClick) {
                 Icon(
                     painter = painterResource(OverviewThemeRes.icons.goalEdit),
-                    contentDescription = OverviewThemeRes.goalStrings.editGoalIconDesc,
+                    contentDescription = OverviewThemeRes.strings.editGoalIconDesc,
                 )
             }
             IconButton(onClick = onDeleteClick) {
                 Icon(
                     painter = painterResource(OverviewThemeRes.icons.goalDelete),
-                    contentDescription = OverviewThemeRes.goalStrings.deleteGoalTitle,
+                    contentDescription = OverviewThemeRes.strings.deleteGoalTitle,
                 )
             }
         },
         colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.background
-        )
+            containerColor = MaterialTheme.colorScheme.background,
+        ),
     )
 }

@@ -33,13 +33,12 @@ import androidx.compose.ui.unit.dp
 import ru.aleshin.features.overview.impl.presentation.theme.OverviewThemeRes
 import ru.aleshin.features.overview.impl.presentation.ui.goal.details.contract.GoalDetailsEvent
 import ru.aleshin.features.overview.impl.presentation.ui.goal.details.contract.GoalDetailsState
-import ru.aleshin.features.overview.impl.presentation.ui.goal.details.views.GoalMetricsSection
-import ru.aleshin.features.overview.impl.presentation.ui.goal.details.views.GoalSummarySection
 import ru.aleshin.features.overview.impl.presentation.ui.goal.details.views.GoalTaskItem
-import ru.aleshin.features.overview.impl.presentation.ui.goal.details.views.GoalTasksEmptyCard
+import ru.aleshin.features.overview.impl.presentation.ui.goal.details.views.sections.GoalMetricsSection
+import ru.aleshin.features.overview.impl.presentation.ui.goal.details.views.sections.GoalSummarySection
+import ru.aleshin.features.overview.impl.presentation.ui.goal.details.views.sections.GoalTasksEmptyCard
 import ru.aleshin.timeplanner.core.ui.theme.tokens.AdaptiveLayoutDefaults
 import ru.aleshin.timeplanner.core.ui.views.AdaptiveLayoutInfo
-import ru.aleshin.timeplanner.core.ui.views.AdaptiveSupportingPaneScaffold
 import ru.aleshin.timeplanner.core.ui.views.PlaceholderBox
 
 /**
@@ -53,7 +52,7 @@ internal fun GoalDetailsLayout(
     onEvent: (GoalDetailsEvent) -> Unit,
 ) {
     when {
-        adaptiveLayoutInfo.isCompactWidth -> GoalDetailsCompactLayout(
+        adaptiveLayoutInfo.isCompactWidth -> GoalDetailsSinglePaneLayout(
             modifier = modifier,
             state = state,
             onEvent = onEvent,
@@ -85,19 +84,6 @@ internal fun GoalDetailsLayout(
 }
 
 @Composable
-private fun GoalDetailsCompactLayout(
-    modifier: Modifier = Modifier,
-    state: GoalDetailsState,
-    onEvent: (GoalDetailsEvent) -> Unit,
-) {
-    GoalDetailsList(
-        modifier = modifier,
-        state = state,
-        onEvent = onEvent,
-    )
-}
-
-@Composable
 private fun GoalDetailsMediumLayout(
     modifier: Modifier = Modifier,
     state: GoalDetailsState,
@@ -107,7 +93,7 @@ private fun GoalDetailsMediumLayout(
         modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.TopCenter,
     ) {
-        GoalDetailsList(
+        GoalDetailsSinglePaneLayout(
             modifier = Modifier
                 .widthIn(max = AdaptiveLayoutDefaults.MediumContentMaxWidth)
                 .fillMaxWidth(),
@@ -128,7 +114,7 @@ private fun GoalDetailsExpandedLayout(
         modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.TopCenter,
     ) {
-        GoalDetailsExpandedContent(
+        GoalDetailsSupportingPaneLayout(
             modifier = Modifier
                 .widthIn(max = AdaptiveLayoutDefaults.OverviewContentMaxWidth)
                 .fillMaxSize(),
@@ -151,7 +137,7 @@ private fun GoalDetailsBookLayout(
         modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.TopCenter,
     ) {
-        GoalDetailsExpandedContent(
+        GoalDetailsSupportingPaneLayout(
             state = state,
             adaptiveLayoutInfo = adaptiveLayoutInfo,
             useTwoPanesOnMediumWidth = true,
@@ -171,7 +157,7 @@ private fun GoalDetailsTabletopLayout(
         modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.TopCenter,
     ) {
-        GoalDetailsExpandedContent(
+        GoalDetailsSupportingPaneLayout(
             state = state,
             adaptiveLayoutInfo = adaptiveLayoutInfo,
             onEvent = onEvent,
@@ -180,118 +166,38 @@ private fun GoalDetailsTabletopLayout(
 }
 
 @Composable
-private fun GoalDetailsExpandedContent(
-    modifier: Modifier = Modifier,
-    state: GoalDetailsState,
-    adaptiveLayoutInfo: AdaptiveLayoutInfo,
-    useTwoPanesOnMediumWidth: Boolean = false,
-    showPaneExpansionDragHandle: Boolean = false,
-    onEvent: (GoalDetailsEvent) -> Unit,
-) {
-    val details = state.details
-
-    AdaptiveSupportingPaneScaffold(
-        modifier = modifier,
-        adaptiveLayoutInfo = adaptiveLayoutInfo,
-        mainPaneMinWidth = AdaptiveLayoutDefaults.GoalDetailsMainPaneMinWidth,
-        supportingPaneMinWidth = AdaptiveLayoutDefaults.GoalDetailsSupportingPaneMinWidth,
-        supportingPanePreferredWidth = AdaptiveLayoutDefaults.SupportingPanePreferredWidth,
-        useTwoPanesOnMediumWidth = useTwoPanesOnMediumWidth,
-        showPaneExpansionDragHandle = showPaneExpansionDragHandle,
-        mainPane = {
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(start = 16.dp, top = 16.dp, bottom = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-            ) {
-                if (state.isLoading) {
-                    items(2) {
-                        PlaceholderBox(
-                            modifier = Modifier.fillMaxWidth().height(112.dp),
-                            shape = MaterialTheme.shapes.extraLarge,
-                        )
-                    }
-                } else if (details != null) {
-                    item(key = "summary") {
-                        GoalSummarySection(details = details)
-                    }
-                    item(key = "metrics") {
-                        GoalMetricsSection(details = details)
-                    }
-                }
-            }
-        },
-        supportingPane = {
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(top = 16.dp, end = 16.dp, bottom = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-            ) {
-                if (state.isLoading) {
-                    items(3) {
-                        PlaceholderBox(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(88.dp),
-                            shape = MaterialTheme.shapes.extraLarge,
-                        )
-                    }
-                } else if (details != null) {
-                    item(key = "tasks_title") {
-                        Text(
-                            text = OverviewThemeRes.strings.schedulesHeader,
-                            color = MaterialTheme.colorScheme.onSurface,
-                            style = MaterialTheme.typography.titleLarge,
-                        )
-                    }
-                    if (details.contributingTasks.isEmpty()) {
-                        item(key = "tasks_empty") {
-                            GoalTasksEmptyCard()
-                        }
-                    } else {
-                        items(
-                            items = details.contributingTasks,
-                            key = { task -> task.key },
-                        ) { task ->
-                            GoalTaskItem(
-                                task = task,
-                                onClick = { onEvent(GoalDetailsEvent.PressTask(task)) },
-                            )
-                        }
-                    }
-                }
-            }
-        }
-    )
-}
-
-@Composable
-private fun GoalDetailsList(
+private fun GoalDetailsSinglePaneLayout(
     modifier: Modifier = Modifier,
     state: GoalDetailsState,
     onEvent: (GoalDetailsEvent) -> Unit,
 ) {
     val details = state.details
+
     LazyColumn(
         modifier = modifier.fillMaxSize(),
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         if (state.isLoading) {
-            items(4) {
+            items(
+                count = 4,
+                key = { index -> "$SINGLE_PANE_PLACEHOLDER_KEY_PREFIX$index" },
+            ) {
                 PlaceholderBox(
-                    modifier = Modifier.fillMaxWidth().height(96.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(96.dp),
                     shape = MaterialTheme.shapes.extraLarge,
                 )
             }
         } else if (details != null) {
-            item(key = "summary") {
+            item(key = SUMMARY_SECTION_KEY) {
                 GoalSummarySection(details = details)
             }
-            item(key = "metrics") {
+            item(key = METRICS_SECTION_KEY) {
                 GoalMetricsSection(details = details)
             }
-            item(key = "tasks_title") {
+            item(key = TASKS_HEADER_KEY) {
                 Text(
                     text = OverviewThemeRes.strings.schedulesHeader,
                     color = MaterialTheme.colorScheme.onSurface,
@@ -299,7 +205,7 @@ private fun GoalDetailsList(
                 )
             }
             if (details.contributingTasks.isEmpty()) {
-                item(key = "tasks_empty") {
+                item(key = TASKS_EMPTY_STATE_KEY) {
                     GoalTasksEmptyCard()
                 }
             } else {
@@ -316,3 +222,9 @@ private fun GoalDetailsList(
         }
     }
 }
+
+private const val SINGLE_PANE_PLACEHOLDER_KEY_PREFIX = "single_pane_placeholder_"
+private const val SUMMARY_SECTION_KEY = "summary_section"
+private const val METRICS_SECTION_KEY = "metrics_section"
+private const val TASKS_HEADER_KEY = "tasks_header"
+private const val TASKS_EMPTY_STATE_KEY = "tasks_empty_state"

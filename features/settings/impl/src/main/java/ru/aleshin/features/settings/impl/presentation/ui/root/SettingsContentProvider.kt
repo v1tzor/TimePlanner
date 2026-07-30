@@ -45,16 +45,10 @@ internal class SettingsContentProvider(
             ) { child ->
                 when (val instance = child.instance) {
                     is InternalSettingsFeatureComponent.Child.SettingsChild -> {
-                        SettingsContent(
-                            modifier = Modifier,
-                            settingsComponent = instance.component,
-                        )
+                        SettingsContent(settingsComponent = instance.component)
                     }
                     is InternalSettingsFeatureComponent.Child.DonateChild -> {
-                        DonateContent(
-                            modifier = Modifier,
-                            donateComponent = instance.component,
-                        )
+                        DonateContent(donateComponent = instance.component)
                     }
                 }
             }

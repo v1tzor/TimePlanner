@@ -162,7 +162,7 @@ internal fun SubCategoryChooser(
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-internal fun SubCategorySelectorBottomSheet(
+private fun SubCategorySelectorBottomSheet(
     modifier: Modifier = Modifier,
     initCategory: SubCategoryUi?,
     mainCategory: MainCategoryUi?,
@@ -335,43 +335,3 @@ internal fun SubCategorySelectorBottomSheet(
         onConfirm = onChooseSubCategory,
     )
 }
-
-/* ----------------------- Release Preview -----------------------
-@Composable
-@Preview(showBackground = true)
-private fun SubCategoryDialogChooser_Preview() {
-    TimePlannerTheme(
-        dynamicColor = false,
-        themeColorsType = ThemeColorsUiType.DARK,
-    ) {
-        EditorTheme {
-            SubCategoryDialogChooser(
-                onCloseDialog = { },
-                mainCategory = MainCategory(englishName = "Work", name = "Работа"),
-                allSubCategories = emptyList(),
-                initCategory = null,
-                onChooseSubCategory = {},
-                onAddSubCategory = {},
-            )
-        }
-    }
-}
-
-@Composable
-@Preview(showBackground = true)
-private fun SubCategoryChooser_Preview() {
-    TimePlannerTheme(dynamicColor = false, themeColorsType = ThemeColorsUiType.DARK) {
-        EditorTheme {
-            val category = rememberSaveable { mutableStateOf<SubCategory?>(null) }
-            SubCategoryChooser(
-                modifier = Modifier.fillMaxWidth(),
-                mainCategory = MainCategory(englishName = "Work", name = "Работа"),
-                allSubCategories = emptyList(),
-                currentSubCategory = category.value,
-                onSubCategoryChoose = {},
-                onAddSubCategory = {},
-            )
-        }
-    }
-}
-*/

@@ -24,6 +24,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -53,18 +54,18 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import ru.aleshin.core.presentation.mappers.mapToIconPainter
 import ru.aleshin.core.presentation.models.tasks.UndefinedTaskUi
+import ru.aleshin.core.utils.extensions.alphaByEnabled
+import ru.aleshin.features.editor.impl.presentation.theme.EditorThemeRes
 import ru.aleshin.timeplanner.core.ui.mappers.mapToMonogram
 import ru.aleshin.timeplanner.core.ui.views.CategoryIconMonogram
 import ru.aleshin.timeplanner.core.ui.views.CategoryTextMonogram
 import ru.aleshin.timeplanner.core.ui.views.NoneItemsView
 import ru.aleshin.timeplanner.core.ui.views.toDaysTitle
-import ru.aleshin.core.utils.extensions.alphaByEnabled
-import ru.aleshin.features.editor.impl.presentation.theme.EditorThemeRes
 import java.util.Date
 
 /**
-* @author Stanislav Aleshin on 04.11.2023.
-*/
+ * @author Stanislav Aleshin on 04.11.2023.
+ */
 @Composable
 @ExperimentalMaterial3Api
 internal fun UndefinedTasksBottomSheet(
@@ -84,8 +85,10 @@ internal fun UndefinedTasksBottomSheet(
             onDismissRequest = onDismiss,
         ) {
             UndefinedTasksChooserContent(
+                modifier = Modifier,
                 undefinedTasks = undefinedTasks,
                 currentUndefinedTaskId = currentUndefinedTaskId,
+                isBottomSheet = true,
                 onChooseUndefinedTask = onChooseUndefinedTask,
             )
         }
@@ -95,30 +98,56 @@ internal fun UndefinedTasksBottomSheet(
 @Composable
 @ExperimentalMaterial3Api
 internal fun UndefinedTasksChooserContent(
+    modifier: Modifier = Modifier,
     undefinedTasks: List<UndefinedTaskUi>?,
     currentUndefinedTaskId: Long?,
+    isBottomSheet: Boolean = false,
     onChooseUndefinedTask: (UndefinedTaskUi) -> Unit,
-    modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier.heightIn(min = 350.dp)) {
-        UndefinedTasksBottomSheetHeader(tasksCount = undefinedTasks?.size)
-        HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp))
-        LazyColumn(
-            modifier = Modifier.padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp),
-        ) {
-            if (undefinedTasks != null) {
-                if (undefinedTasks.isNotEmpty()) {
-                    items(items = undefinedTasks, key = { it.id }) { task ->
-                        UndefinedTaskBottomSheetItem(
-                            enable = task.id != currentUndefinedTaskId,
-                            model = task,
-                            onChoose = { onChooseUndefinedTask(task) },
-                        )
+        UndefinedTasksChooserHeader(
+            tasksCount = undefinedTasks?.size
+        )
+        if (isBottomSheet) {
+            HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp))
+        } else {
+            Spacer(modifier = Modifier.height(12.dp))
+        }
+        val contentState = when {
+            undefinedTasks == null -> UndefinedTasksChooserContentState.LOADING
+            undefinedTasks.isEmpty() -> UndefinedTasksChooserContentState.EMPTY
+            else -> UndefinedTasksChooserContentState.DATA
+        }
+        AnimatedContent(
+            targetState = contentState,
+            contentKey = { targetState -> targetState },
+            label = "UndefinedTasksChooser",
+        ) { currentContentState ->
+            LazyColumn(
+                modifier = Modifier.padding(horizontal = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp),
+            ) {
+                when (currentContentState) {
+                    UndefinedTasksChooserContentState.LOADING -> Unit
+                    UndefinedTasksChooserContentState.EMPTY -> {
+                        item(key = EMPTY_UNDEFINED_TASKS_KEY) {
+                            NoneItemsView(
+                                text = EditorThemeRes.strings.emptyTemplatesTitle,
+                            )
+                        }
                     }
-                } else {
-                    item {
-                        NoneItemsView(text = EditorThemeRes.strings.emptyTemplatesTitle)
+                    UndefinedTasksChooserContentState.DATA -> {
+                        items(
+                            items = undefinedTasks.orEmpty(),
+                            key = { task -> task.id },
+                        ) { task ->
+                            UndefinedTasksChooserItem(
+                                modifier = Modifier.animateItem(),
+                                enabled = task.id != currentUndefinedTaskId,
+                                model = task,
+                                onChoose = { onChooseUndefinedTask(task) },
+                            )
+                        }
                     }
                 }
             }
@@ -128,7 +157,7 @@ internal fun UndefinedTasksChooserContent(
 
 @Composable
 @ExperimentalMaterial3Api
-internal fun UndefinedTasksBottomSheetHeader(
+private fun UndefinedTasksChooserHeader(
     modifier: Modifier = Modifier,
     tasksCount: Int?,
 ) {
@@ -149,9 +178,9 @@ internal fun UndefinedTasksBottomSheetHeader(
 }
 
 @Composable
-internal fun UndefinedTaskBottomSheetItem(
+private fun UndefinedTasksChooserItem(
     modifier: Modifier = Modifier,
-    enable: Boolean = true,
+    enabled: Boolean = true,
     model: UndefinedTaskUi,
     onChoose: () -> Unit,
 ) {
@@ -159,8 +188,8 @@ internal fun UndefinedTaskBottomSheetItem(
 
     Surface(
         onClick = onChoose,
-        modifier = modifier.alphaByEnabled(enable),
-        enabled = enable,
+        modifier = modifier.alphaByEnabled(enabled),
+        enabled = enabled,
         shape = MaterialTheme.shapes.medium,
         color = MaterialTheme.colorScheme.surfaceContainer,
     ) {
@@ -226,7 +255,7 @@ internal fun UndefinedTaskBottomSheetItem(
 }
 
 @Composable
-internal fun DeadlineView(
+private fun DeadlineView(
     modifier: Modifier = Modifier,
     deadline: Date,
 ) {
@@ -304,3 +333,11 @@ private fun UndefinedTaskNoteView(
         }
     }
 }
+
+private enum class UndefinedTasksChooserContentState {
+    LOADING,
+    EMPTY,
+    DATA,
+}
+
+private const val EMPTY_UNDEFINED_TASKS_KEY = "empty_undefined_tasks"

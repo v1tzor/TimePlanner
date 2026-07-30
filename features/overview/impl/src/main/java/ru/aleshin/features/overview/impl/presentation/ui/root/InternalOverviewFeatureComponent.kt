@@ -107,7 +107,7 @@ internal abstract class InternalOverviewFeatureComponent(
                         storeFactory = goalDetailsStoreFactory,
                         inputData = GoalDetailsInput(config.goalId),
                         componentContext = componentContext,
-                        outputConsumer = OutputConsumer(::handleGoalDetailsOutput),
+                        outputConsumer = OutputConsumer(::goalDetailsOutputConsumer),
                     )
                 )
                 is OverviewConfig.GoalsHistory -> Child.GoalsHistoryChild(
@@ -125,7 +125,7 @@ internal abstract class InternalOverviewFeatureComponent(
                 is OverviewScreenOutput.NavigateToHome -> {
                     outputConsumer.consume(OverviewOutput.NavigateToHome(output.config.scheduleDate))
                 }
-                is OverviewScreenOutput.NavigateToEditor -> {
+                is OverviewScreenOutput.NavigateToTaskEditor -> {
                     val data = OverviewOutput.NavigateToTaskEditor(
                         timeTaskId = output.config.timeTaskId,
                         timeRange = output.config.timeRange,
@@ -135,27 +135,31 @@ internal abstract class InternalOverviewFeatureComponent(
                     outputConsumer.consume(data)
                 }
                 is OverviewScreenOutput.NavigateToGoalDetails -> {
-                    stackNavigation.pushToFront(OverviewConfig.GoalDetails(output.goalId))
+                    stackNavigation.pushToFront(output.config)
                 }
                 is OverviewScreenOutput.NavigateToGoalsHistory -> {
-                    stackNavigation.pushToFront(OverviewConfig.GoalsHistory)
+                    stackNavigation.pushToFront(output.config)
                 }
                 is OverviewScreenOutput.NavigateToGoalEditor -> {
-                    outputConsumer.consume(OverviewOutput.NavigateToGoalEditor(output.goalId))
+                    outputConsumer.consume(OverviewOutput.NavigateToGoalEditor(goalId = output.config.goalId))
                 }
             }
         }
 
-        private fun handleGoalDetailsOutput(output: GoalDetailsOutput) {
+        private fun goalDetailsOutputConsumer(output: GoalDetailsOutput) {
             when (output) {
                 is GoalDetailsOutput.NavigateBack -> navigateToBack()
                 is GoalDetailsOutput.NavigateToGoalEditor -> {
-                    outputConsumer.consume(OverviewOutput.NavigateToGoalEditor(output.goalId))
+                    outputConsumer.consume(OverviewOutput.NavigateToGoalEditor(goalId = output.config.goalId))
                 }
                 is GoalDetailsOutput.NavigateToTaskEditor -> {
-                    outputConsumer.consume(
-                        OverviewOutput.NavigateToTaskEditor(timeTaskId = output.taskId)
+                    val data = OverviewOutput.NavigateToTaskEditor(
+                        timeTaskId = output.config.timeTaskId,
+                        timeRange = output.config.timeRange,
+                        date = output.config.date,
+                        undefinedTaskId = output.config.undefinedTaskId,
                     )
+                    outputConsumer.consume(data)
                 }
             }
         }

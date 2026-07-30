@@ -54,7 +54,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import ru.aleshin.timeplanner.core.ui.theme.TimePlannerRes
-import ru.aleshin.timeplanner.core.ui.theme.full
+import ru.aleshin.timeplanner.core.ui.theme.material.full
 
 /**
  * @author Stanislav Aleshin on 04.09.2024.

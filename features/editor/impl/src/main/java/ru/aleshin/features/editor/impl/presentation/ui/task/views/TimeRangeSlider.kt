@@ -15,7 +15,6 @@
  */
 package ru.aleshin.features.editor.impl.presentation.ui.task.views
 
-import android.view.KeyEvent as AndroidKeyEvent
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
@@ -43,10 +42,10 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.type
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.semantics.ProgressBarRangeInfo
@@ -69,6 +68,7 @@ import java.util.Calendar
 import java.util.Date
 import kotlin.math.abs
 import kotlin.math.roundToInt
+import android.view.KeyEvent as AndroidKeyEvent
 
 /**
  * @author Stanislav Aleshin on 18.07.2026.
@@ -533,7 +533,7 @@ private fun TimeRangeSliderThumb(
     }
 }
 
-internal fun TimeRange.updateTimeSliderRange(
+private fun TimeRange.updateTimeSliderRange(
     scheduleDate: Date,
     handle: TimeRangeSliderHandle,
     minute: Int,
@@ -569,7 +569,7 @@ internal fun TimeRange.updateTimeSliderRange(
     }
 }
 
-internal fun fetchTimeSliderMinute(
+private fun fetchTimeSliderMinute(
     scheduleDate: Date,
     time: Date,
     isEndTime: Boolean,
@@ -606,7 +606,7 @@ private fun fetchTimeSliderHandle(
     }
 }
 
-internal fun fetchTimeSliderMinute(
+private fun fetchTimeSliderMinute(
     offset: Float,
     trackStart: Float,
     trackEnd: Float,
@@ -619,7 +619,7 @@ internal fun fetchTimeSliderMinute(
     )
 }
 
-internal fun snapTimeSliderMinute(
+private fun snapTimeSliderMinute(
     minute: Int,
     maximum: Int,
 ): Int {

@@ -79,7 +79,7 @@ internal fun GoalTaskItem(
                     )
                     Text(
                         text = "${timeFormat.format(task.timeRanges.from)} — " +
-                                timeFormat.format(task.timeRanges.to),
+                            timeFormat.format(task.timeRanges.to),
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,

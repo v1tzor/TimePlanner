@@ -44,12 +44,16 @@ import javax.inject.Provider
 class FeatureModule {
 
     @Provides
-    fun provideOverviewFeatureFactory(dependencies: Provider<OverviewFeatureDependencies>): OverviewDecomposeFeatureFactory {
+    fun provideOverviewFeatureFactory(
+        dependencies: Provider<OverviewFeatureDependencies>
+    ): OverviewDecomposeFeatureFactory {
         return DefaultOverviewFeatureFactory { dependencies.get() }
     }
 
     @Provides
-    fun provideTemplatesFeatureFactory(dependencies: Provider<TemplatesFeatureDependencies>): TemplatesDecomposeFeatureFactory {
+    fun provideTemplatesFeatureFactory(
+        dependencies: Provider<TemplatesFeatureDependencies>
+    ): TemplatesDecomposeFeatureFactory {
         return DefaultTemplatesFeatureFactory { dependencies.get() }
     }
 

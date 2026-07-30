@@ -29,10 +29,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import ru.aleshin.features.editor.impl.presentation.theme.EditorThemeRes
 import ru.aleshin.timeplanner.core.ui.theme.TimePlannerRes
-import ru.aleshin.timeplanner.core.ui.views.TopAppBarAction
 import ru.aleshin.timeplanner.core.ui.views.TopAppBarButton
 import ru.aleshin.timeplanner.core.ui.views.TopAppBarEmptyButton
-import ru.aleshin.timeplanner.core.ui.views.TopAppBarMoreActions
 import ru.aleshin.timeplanner.core.ui.views.TopAppBarTitle
 
 /**
@@ -89,14 +87,10 @@ internal fun EditorTopAppBar(
                     imageDescription = EditorThemeRes.strings.topAppBarTemplatesTitle,
                     onButtonClick = onTemplatesActionClick,
                 )
-                TopAppBarMoreActions(
-                    items = EditorTopAppBarActions.entries.toTypedArray(),
-                    onItemClick = {
-                        when (it) {
-                            EditorTopAppBarActions.DELETE -> onDeleteActionClick()
-                        }
-                    },
-                    moreIconDescription = null,
+                TopAppBarButton(
+                    imagePainter = painterResource(id = EditorThemeRes.icons.delete),
+                    imageDescription = EditorThemeRes.strings.topAppBarDeleteTitle,
+                    onButtonClick = onDeleteActionClick,
                 )
             } else {
                 TopAppBarEmptyButton()
@@ -107,61 +101,3 @@ internal fun EditorTopAppBar(
         ),
     )
 }
-
-internal enum class EditorTopAppBarActions : TopAppBarAction {
-    DELETE {
-        override val icon @Composable get() = EditorThemeRes.icons.delete
-        override val title @Composable get() = EditorThemeRes.strings.topAppBarDeleteTitle
-        override val isAlwaysShow get() = false
-    },
-}
-
-/* ----------------------- Release Preview -----------------------
-@Preview
-@Composable
-internal fun EditorTopAppBar_Light_Preview() {
-    TimePlannerTheme(
-        dynamicColor = false,
-        themeColorsType = ThemeColorsUiType.LIGHT,
-        language = LanguageUiType.RU,
-    ) {
-        EditorTheme {
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                content = { Box(modifier = Modifier.padding(it)) {} },
-                topBar = {
-                    EditorTopAppBar(
-                        onBackIconClick = {},
-                        onTemplatesActionClick = {},
-                        onDeleteActionClick = {},
-                    )
-                },
-            )
-        }
-    }
-}
-
-@Preview
-@Composable
-internal fun EditorTopAppBar_Dark_Preview() {
-    TimePlannerTheme(
-        dynamicColor = false,
-        themeColorsType = ThemeColorsUiType.DARK,
-        language = LanguageUiType.RU,
-    ) {
-        EditorTheme {
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                content = { Box(modifier = Modifier.padding(it)) {} },
-                topBar = {
-                    EditorTopAppBar(
-                        onBackIconClick = {},
-                        onTemplatesActionClick = {},
-                        onDeleteActionClick = {},
-                    )
-                },
-            )
-        }
-    }
-}
-*/

@@ -27,15 +27,14 @@ import ru.aleshin.features.analytics.impl.di.AnalyticsFeatureDependencies
 import ru.aleshin.features.editor.impl.di.EditorFeatureDependencies
 import ru.aleshin.features.home.impl.di.HomeFeatureDependencies
 import ru.aleshin.features.overview.impl.di.OverviewFeatureDependencies
-import ru.aleshin.features.templates.impl.di.TemplatesFeatureDependencies
 import ru.aleshin.features.settings.impl.di.SettingsFeatureDependencies
+import ru.aleshin.features.templates.impl.di.TemplatesFeatureDependencies
 import ru.aleshin.timeplanner.application.TimePlannerApp
 import ru.aleshin.timeplanner.di.PlatformServicesModule
 import ru.aleshin.timeplanner.di.modules.DependenciesModule
 import ru.aleshin.timeplanner.di.modules.DomainModules
 import ru.aleshin.timeplanner.di.modules.FeatureModule
 import ru.aleshin.timeplanner.di.modules.PresentationModule
-import ru.aleshin.timeplanner.domain.interactors.SettingsInteractor
 import ru.aleshin.timeplanner.presentation.notifications.NotificationAlarmHandler
 import ru.aleshin.timeplanner.presentation.ui.main.MainActivity
 import ru.aleshin.timeplanner.widgets.di.WidgetsModule
@@ -69,11 +68,10 @@ interface AppComponent :
     OverviewFeatureDependencies,
     TemplatesFeatureDependencies {
 
-    fun fetchSettingsInteractor(): SettingsInteractor
-    fun fetchNotificationAlarmHandler(): NotificationAlarmHandler
-    fun fetchWidgetsWorkerFactory(): WidgetsWorkerFactory
-    fun inject(activity: MainActivity)
     fun inject(application: TimePlannerApp)
+    fun inject(activity: MainActivity)
+    fun fetchWidgetsWorkerFactory(): WidgetsWorkerFactory
+    fun fetchNotificationAlarmHandler(): NotificationAlarmHandler
 
     @Component.Builder
     interface Builder {

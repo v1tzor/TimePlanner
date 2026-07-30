@@ -37,65 +37,45 @@ import javax.inject.Inject
 /**
  * @author Stanislav Aleshin on 28.07.2026.
  */
-internal interface GoalWorkProcessor : FlowWorkProcessor<
-    GoalWorkCommand,
-    GoalAction,
-    GoalEffect,
-    GoalOutput,
-    > {
+internal interface GoalWorkProcessor : FlowWorkProcessor<GoalWorkCommand, GoalAction, GoalEffect, GoalOutput> {
 
     class Base @Inject constructor(
         private val goalInteractor: GoalInteractor,
     ) : GoalWorkProcessor {
 
         override suspend fun work(command: GoalWorkCommand) = when (command) {
-            is GoalWorkCommand.Load -> loadWork(command.goalId)
-            is GoalWorkCommand.Save -> saveWork(command.goal)
+            is GoalWorkCommand.SetupEditModel -> setupEditModelWork(command.goalId)
+            is GoalWorkCommand.SaveGoal -> saveGoalWork(command.goal)
         }
 
-        private fun loadWork(goalId: Long?) = flow {
+        private fun setupEditModelWork(goalId: Long?) = flow {
             goalInteractor.fetchGoalEditorData(goalId).collectAndHandle(
                 onLeftAction = { failure ->
                     emit(EffectResult(GoalEffect.ShowError(failure)))
                 },
                 onRightAction = { data ->
-                    emit(
-                        ActionResult(
-                            GoalAction.SetupEditor(
-                                editModel = data.goal.mapToEditUi(),
-                                categories = data.categories.map { details -> details.mapToUi() },
-                                isLoading = false,
-                            )
-                        )
+                    val action = GoalAction.SetupEditor(
+                        editModel = data.goal.mapToEditUi(),
+                        categories = data.categories.map { details -> details.mapToUi() },
+                        isLoading = false,
                     )
+                    emit(ActionResult(action))
                 },
             )
         }.onStart {
-            emit(
-                ActionResult(
-                    GoalAction.SetupEditor(
-                        editModel = null,
-                        categories = emptyList(),
-                        isLoading = true,
-                    )
-                )
-            )
+            emit(ActionResult(GoalAction.SetupEditor(editModel = null, categories = emptyList(), isLoading = true)))
         }
 
-        private fun saveWork(goal: GoalEditUi) = flow {
+        private fun saveGoalWork(goal: GoalEditUi) = flow {
             goalInteractor.saveGoal(goal.mapToDomain()).handle(
-                onLeftAction = { failure ->
-                    emit(EffectResult(GoalEffect.ShowError(failure)))
-                },
-                onRightAction = {
-                    emit(OutputResult(GoalOutput.NavigateBack))
-                },
+                onLeftAction = { emit(EffectResult(GoalEffect.ShowError(it))) },
+                onRightAction = { emit(OutputResult(GoalOutput.NavigateBack)) },
             )
         }
     }
 }
 
 internal sealed interface GoalWorkCommand : WorkCommand {
-    data class Load(val goalId: Long?) : GoalWorkCommand
-    data class Save(val goal: GoalEditUi) : GoalWorkCommand
+    data class SetupEditModel(val goalId: Long?) : GoalWorkCommand
+    data class SaveGoal(val goal: GoalEditUi) : GoalWorkCommand
 }

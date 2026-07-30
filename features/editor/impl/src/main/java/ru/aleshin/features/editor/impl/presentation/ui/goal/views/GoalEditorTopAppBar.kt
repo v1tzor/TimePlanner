@@ -45,9 +45,9 @@ internal fun GoalEditorTopAppBar(
         title = {
             TopAppBarTitle(
                 text = if (isEditing) {
-                    EditorThemeRes.goalStrings.editGoalTitle
+                    EditorThemeRes.strings.editGoalTitle
                 } else {
-                    EditorThemeRes.goalStrings.createGoalTitle
+                    EditorThemeRes.strings.createGoalTitle
                 },
                 textAlign = if (isCompact) TextAlign.Center else TextAlign.Start,
             )

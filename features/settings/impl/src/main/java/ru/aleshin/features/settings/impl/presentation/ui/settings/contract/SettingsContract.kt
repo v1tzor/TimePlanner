@@ -22,8 +22,8 @@ import ru.aleshin.core.utils.architecture.store.contract.StoreAction
 import ru.aleshin.core.utils.architecture.store.contract.StoreEffect
 import ru.aleshin.core.utils.architecture.store.contract.StoreEvent
 import ru.aleshin.core.utils.architecture.store.contract.StoreState
-import ru.aleshin.features.settings.impl.domain.common.SettingsFailures
-import ru.aleshin.features.settings.impl.presentation.models.SettingsUi
+import ru.aleshin.features.settings.impl.domain.entities.SettingsFailures
+import ru.aleshin.features.settings.impl.presentation.models.SettingsDetailsUi
 import ru.aleshin.features.settings.impl.presentation.models.TasksSettingsUi
 import ru.aleshin.features.settings.impl.presentation.models.ThemeSettingsUi
 
@@ -55,7 +55,7 @@ internal sealed class SettingsEffect : StoreEffect {
 
 internal sealed class SettingsAction : StoreAction {
     data class ShowLoadingBackup(val isLoading: Boolean) : SettingsAction()
-    data class ChangeAllSettings(val settings: SettingsUi) : SettingsAction()
+    data class ChangeAllSettings(val settings: SettingsDetailsUi) : SettingsAction()
 }
 
 internal sealed class SettingsOutput : BaseOutput {

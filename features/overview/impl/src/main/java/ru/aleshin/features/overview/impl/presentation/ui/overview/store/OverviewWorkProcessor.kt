@@ -94,11 +94,9 @@ internal interface OverviewWorkProcessor :
                 onLeftAction = { emit(EffectResult(OverviewEffect.ShowError(it))) },
                 onRightAction = { goals ->
                     val goals = goals.map { goal -> goal.mapToUi() }
-                    emit(ActionResult(OverviewAction.UpdateGoals(goals = goals, isLoading = false)))
+                    emit(ActionResult(OverviewAction.UpdateGoals(goals = goals)))
                 }
             )
-        }.onStart {
-            emit(ActionResult(OverviewAction.UpdateGoalsLoading(true)))
         }
 
         private fun syncGoalHistoryWork() = flow<OverviewWorkResult> {
@@ -148,7 +146,7 @@ internal interface OverviewWorkProcessor :
                 timeRange = TimeRange(targetTime, targetTime),
                 undefinedTaskId = task.id,
             )
-            emit(OutputResult(OverviewOutput.NavigateToEditor(config)))
+            emit(OutputResult(OverviewOutput.NavigateToTaskEditor(config)))
         }
 
     }

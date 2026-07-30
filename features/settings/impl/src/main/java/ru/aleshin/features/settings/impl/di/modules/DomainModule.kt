@@ -37,9 +37,7 @@ internal interface DomainModule {
     fun bindGoalsInteractor(interactor: GoalsInteractor.Base): GoalsInteractor
 
     @Binds
-    fun bindGoalsHistoryInteractor(
-        interactor: GoalsHistoryInteractor.Base,
-    ): GoalsHistoryInteractor
+    fun bindGoalsHistoryInteractor(interactor: GoalsHistoryInteractor.Base): GoalsHistoryInteractor
 
     @Binds
     fun bindSettingsInteractor(interactor: SettingsInteractor.Base): SettingsInteractor

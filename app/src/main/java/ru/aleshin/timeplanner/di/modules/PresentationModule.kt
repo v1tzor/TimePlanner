@@ -29,7 +29,7 @@ import ru.aleshin.timeplanner.presentation.ui.main.store.MainComponentFactory
 import ru.aleshin.timeplanner.presentation.ui.main.store.MainComposeStore
 import ru.aleshin.timeplanner.presentation.ui.main.store.NavigationWorkProcessor
 import ru.aleshin.timeplanner.presentation.ui.main.store.SettingsWorkProcessor
-import ru.aleshin.timeplanner.presentation.ui.tabs.store.TabNavigationComponentFactory
+import ru.aleshin.timeplanner.presentation.ui.tabs.component.TabNavigationComponentFactory
 import javax.inject.Singleton
 
 /**

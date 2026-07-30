@@ -21,24 +21,23 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import ru.aleshin.features.analytics.impl.presentation.theme.tokens.AnalyticsLayoutDefaults
 
 /**
  * @author Stanislav Aleshin on 28.07.2026.
  */
 internal fun Modifier.analyticsListSection(
-    bottomPadding: Dp = AnalyticsLayoutDefaults.SectionSpacing,
+    bottomPadding: Dp = 24.dp,
 ): Modifier {
     return fillMaxWidth()
         .widthIn(max = AnalyticsLayoutDefaults.ContentMaxWidth)
         .padding(bottom = bottomPadding)
 }
 
-/**
- * @author Stanislav Aleshin on 28.07.2026.
- */
 internal fun Modifier.analyticsGridSection(
-    bottomPadding: Dp = AnalyticsLayoutDefaults.SectionSpacing,
+    bottomPadding: Dp = 24.dp,
 ): Modifier {
-    return fillMaxWidth().padding(bottom = bottomPadding)
+    return fillMaxWidth()
+        .padding(bottom = bottomPadding)
 }

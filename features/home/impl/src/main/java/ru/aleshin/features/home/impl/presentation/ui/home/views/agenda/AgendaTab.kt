@@ -18,7 +18,7 @@ package ru.aleshin.features.home.impl.presentation.ui.home.views.agenda
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import ru.aleshin.core.presentation.models.tasks.TimeTaskDetailsUi
-import ru.aleshin.features.home.impl.presentation.ui.home.TimeTasksSection
+import ru.aleshin.features.home.impl.presentation.ui.home.views.sections.TimeTasksSection
 import ru.aleshin.features.home.impl.presentation.ui.home.contract.HomeState
 import java.util.Date
 

@@ -28,7 +28,6 @@ import ru.aleshin.core.utils.architecture.store.contract.StoreAction
 import ru.aleshin.core.utils.architecture.store.contract.StoreEffect
 import ru.aleshin.core.utils.architecture.store.contract.StoreEvent
 import ru.aleshin.core.utils.architecture.store.contract.StoreState
-import ru.aleshin.core.utils.functional.DateSerializer
 import ru.aleshin.features.editor.impl.domain.entites.EditorFailures
 import ru.aleshin.features.editor.impl.presentation.models.goals.GoalEditUi
 import ru.aleshin.features.editor.impl.presentation.ui.goal.validators.GoalValidationError
@@ -54,9 +53,7 @@ internal sealed interface GoalEvent : StoreEvent {
     data class ChangeMetric(val metric: GoalMetric) : GoalEvent
     data class ChangeDirection(val direction: GoalDirection) : GoalEvent
     data class ChangeTargetValue(val targetValue: String) : GoalEvent
-    data class ChangeDeadline(
-        @Serializable(DateSerializer::class) val deadline: Date,
-    ) : GoalEvent
+    data class ChangeDeadline(val deadline: Date) : GoalEvent
     data object PressSave : GoalEvent
     data object PressBack : GoalEvent
 }

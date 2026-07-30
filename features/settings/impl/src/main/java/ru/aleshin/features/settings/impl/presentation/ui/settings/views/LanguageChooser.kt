@@ -51,6 +51,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import ru.aleshin.features.settings.impl.presentation.mappers.toLanguageName
 import ru.aleshin.features.settings.impl.presentation.theme.SettingsThemeRes
+import ru.aleshin.features.settings.impl.presentation.ui.common.SettingsItemIcon
 import ru.aleshin.timeplanner.core.ui.theme.tokens.LanguageUiType
 import ru.aleshin.timeplanner.core.ui.views.DialogButtons
 
@@ -64,6 +65,7 @@ internal fun LanguageChooser(
     onLanguageChanged: (LanguageUiType) -> Unit,
 ) {
     var isOpenDialog by rememberSaveable { mutableStateOf(false) }
+
     Surface(
         onClick = { isOpenDialog = true },
         modifier = modifier.fillMaxWidth(),
@@ -129,12 +131,7 @@ internal fun LanguageDialogChooser(
             ) {
                 Column {
                     Box(
-                        modifier = Modifier.padding(
-                            start = 24.dp,
-                            end = 24.dp,
-                            top = 24.dp,
-                            bottom = 12.dp
-                        ),
+                        modifier = Modifier.padding(start = 24.dp, end = 24.dp, top = 24.dp, bottom = 12.dp),
                     ) {
                         Text(
                             text = SettingsThemeRes.strings.mainSettingsLanguageTitle,

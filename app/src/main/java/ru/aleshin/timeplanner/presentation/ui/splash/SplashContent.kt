@@ -41,10 +41,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
+import ru.aleshin.core.utils.functional.Constants
 import ru.aleshin.timeplanner.core.ui.theme.TimePlannerRes
 import ru.aleshin.timeplanner.core.ui.theme.material.onSplashGradient
 import ru.aleshin.timeplanner.core.ui.theme.material.splashGradientColors
-import ru.aleshin.core.utils.functional.Constants
+import kotlin.time.Duration.Companion.milliseconds
 
 /**
  * @author Stanislav Aleshin on 14.02.2023.
@@ -88,18 +89,10 @@ fun SplashContent(
     }
 
     LaunchedEffect(Unit) {
-        delay(Constants.Delay.SPLASH_LOGO)
+        delay(Constants.Delay.SPLASH_LOGO.milliseconds)
         isVisibleLogo = true
-        delay(Constants.Delay.SPLASH_TEXT)
+
+        delay(Constants.Delay.SPLASH_TEXT.milliseconds)
         isVisibleText = true
     }
 }
-
-/* ----------------------- Release Preview -----------------------
-@Composable
-@Preview(showBackground = true, showSystemUi = true)
-fun SplashContent_Preview() {
-    TimePlannerTheme {
-        SplashContent(onSplashExit = {})
-    }
-}*/

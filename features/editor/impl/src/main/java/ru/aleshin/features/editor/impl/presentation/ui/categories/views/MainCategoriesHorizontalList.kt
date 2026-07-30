@@ -95,6 +95,7 @@ internal fun MainCategoriesHorizontalList(
             key = { category -> category.id },
         ) { category ->
             MainCategoryItem(
+                modifier = Modifier.animateItem(),
                 isSelected = category == selectedCategory,
                 category = category,
                 onSelected = { onSelectCategory(category) },
@@ -104,8 +105,11 @@ internal fun MainCategoriesHorizontalList(
                 },
             )
         }
-        item(key = "AddItem") {
-            MainCategoryAddItem(onClick = onAddCategory)
+        item(key = ADD_CATEGORY_ITEM_KEY) {
+            MainCategoryAddItem(
+                modifier = Modifier.animateItem(),
+                onClick = onAddCategory,
+            )
         }
     }
     LaunchedEffect(key1 = selectedCategory) {
@@ -445,6 +449,8 @@ private fun MainCategoryList_Preview() {
                 onUpdateCategory = {},
                 onDeleteCategory = {},
             )
-        }
+}
     }
 }*/
+
+private const val ADD_CATEGORY_ITEM_KEY = "add_category_item"

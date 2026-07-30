@@ -26,6 +26,9 @@ import ru.aleshin.features.overview.impl.presentation.theme.OverviewThemeRes
 import ru.aleshin.timeplanner.core.ui.views.TopAppBarEmptyButton
 import ru.aleshin.timeplanner.core.ui.views.TopAppBarTitle
 
+/**
+ * @author Stanislav Aleshin on 30.07.2026.
+ */
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 internal fun OverviewTopAppBar(

@@ -27,21 +27,4 @@ internal object CategoryGridSpec {
     fun fetchColumnCount(isExpanded: Boolean): Int {
         return if (isExpanded) EXPANDED_COLUMN_COUNT else MEDIUM_COLUMN_COUNT
     }
-
-    fun fetchSpan(
-        section: CategoryGridSection,
-        isExpanded: Boolean,
-    ): Int {
-        val columnCount = fetchColumnCount(isExpanded)
-        if (!isExpanded) return columnCount
-        return when (section) {
-            CategoryGridSection.SUMMARY -> 4
-            CategoryGridSection.KEY_METRICS -> 8
-            CategoryGridSection.LOAD -> columnCount
-            CategoryGridSection.SUBCATEGORIES -> 5
-            CategoryGridSection.DAY_PARTS -> 5
-            CategoryGridSection.TASKS -> columnCount
-            CategoryGridSection.OBSERVATION -> 5
-        }
-    }
 }

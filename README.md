@@ -131,6 +131,17 @@ You can also download APK files from [GitHub Releases](https://github.com/v1tzor
 - Average daily load and average task duration.
 - Optional exclusion of individual tasks from statistics.
 
+### Goals 🎯
+
+- Create duration or task-count goals with a concrete calendar deadline.
+- Track all statistical tasks, a category, or a subcategory without manual check-ins.
+- Use minimum targets or maximum limits.
+- Review compact live progress and the deadline above the Overview week plan.
+- Open goal details with icon-based metrics, status, contributing tasks, and a clear empty state.
+- Keep immutable completed-goal history even after an active goal is deleted.
+- Include the whole selected deadline day in the device timezone, including daylight-saving changes.
+- Continue counting completed tasks through the current local day after a missed deadline, so a goal can still be achieved later.
+
 ### Personalization and accessibility 🎨
 
 - Material 3 interface built with Jetpack Compose.
@@ -144,7 +155,7 @@ You can also download APK files from [GitHub Releases](https://github.com/v1tzor
 
 ### Backup and portability 💾
 
-- Export schedules, templates, categories, and unscheduled tasks.
+- Export schedules, templates, categories, unscheduled tasks, goals, and goal history.
 - Restore data from a backup file.
 - Clear application data or reset only settings.
 

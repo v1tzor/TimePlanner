@@ -15,15 +15,10 @@
  */
 package ru.aleshin.timeplanner.core.ui.theme
 
-import androidx.compose.foundation.shape.CornerBasedShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.shape.ZeroCornerSize
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Shapes
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
-import androidx.compose.ui.unit.dp
 import ru.aleshin.timeplanner.core.ui.theme.material.ColorsUiType
 import ru.aleshin.timeplanner.core.ui.theme.material.ThemeUiType
 import ru.aleshin.timeplanner.core.ui.theme.material.baseShapes
@@ -53,60 +48,28 @@ fun TimePlannerTheme(
     dynamicColor: Boolean = false,
     content: @Composable () -> Unit,
 ) {
+    val colorsType = fetchAppColorsType(themeType, colors)
     val appLanguage = remember(languageType) { fetchAppLanguage(languageType) }
     val coreStrings = remember(appLanguage) { fetchCoreStrings(appLanguage) }
-    val colorsType = fetchAppColorsType(themeType, colors)
     val appElevations = remember { fetchAppElevations() }
     val coreIcons = remember { fetchCoreIcons() }
 
+    val shapes = remember { baseShapes }
+    val typography = remember { baseTypography }
+
     MaterialTheme(
         colorScheme = themeType.toColorScheme(dynamicColor, colors),
-        shapes = baseShapes,
-        typography = baseTypography,
+        shapes = shapes,
+        typography = typography,
     ) {
         CompositionLocalProvider(
             LocalTimePlannerColorsType provides colorsType,
             LocalTimePlannerLanguage provides appLanguage,
-            LocalTimePlannerElevations provides appElevations,
             LocalTimePlannerStrings provides coreStrings,
+            LocalTimePlannerElevations provides appElevations,
             LocalTimePlannerIcons provides coreIcons,
             content = content,
         )
     }
     NavigationBarColor(themeType.isDarkTheme())
 }
-
-val Shapes.full: RoundedCornerShape
-    get() = RoundedCornerShape(100.dp)
-
-val CornerBasedShape.topSide
-    get() = RoundedCornerShape(
-        topStart = topStart,
-        bottomStart = ZeroCornerSize,
-        topEnd = topEnd,
-        bottomEnd = ZeroCornerSize
-    )
-
-val CornerBasedShape.bottomSide
-    get() = RoundedCornerShape(
-        topStart = ZeroCornerSize,
-        bottomStart = bottomStart,
-        topEnd = ZeroCornerSize,
-        bottomEnd = bottomEnd
-    )
-
-val CornerBasedShape.startSide
-    get() = RoundedCornerShape(
-        topStart = topStart,
-        bottomStart = bottomStart,
-        topEnd = ZeroCornerSize,
-        bottomEnd = ZeroCornerSize
-    )
-
-val CornerBasedShape.endSide
-    get() = RoundedCornerShape(
-        topStart = ZeroCornerSize,
-        bottomStart = ZeroCornerSize,
-        topEnd = topEnd,
-        bottomEnd = bottomEnd
-    )

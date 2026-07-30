@@ -40,14 +40,7 @@ internal class GoalComposeStore @Inject constructor(
     stateCommunicator: StateCommunicator<GoalState>,
     effectCommunicator: EffectCommunicator<GoalEffect>,
     coroutineManager: CoroutineManager,
-) : BaseComposeStore<
-    GoalState,
-    GoalEvent,
-    GoalAction,
-    GoalEffect,
-    GoalInput,
-    GoalOutput,
-    >(
+) : BaseComposeStore<GoalState, GoalEvent, GoalAction, GoalEffect, GoalInput, GoalOutput>(
     stateCommunicator = stateCommunicator,
     effectCommunicator = effectCommunicator,
     coroutineManager = coroutineManager,
@@ -57,121 +50,92 @@ internal class GoalComposeStore @Inject constructor(
         dispatchEvent(GoalEvent.Init(input, isRestore))
     }
 
-    override suspend fun WorkScope<
-        GoalState,
-        GoalAction,
-        GoalEffect,
-        GoalOutput,
-        >.handleEvent(event: GoalEvent) {
+    override suspend fun WorkScope<GoalState, GoalAction, GoalEffect, GoalOutput>.handleEvent(event: GoalEvent) {
         when (event) {
-            is GoalEvent.Init -> {
-                if (!event.isRestore || state().editModel == null) {
+            is GoalEvent.Init -> with(state) {
+                if (!event.isRestore || editModel == null) {
                     launchBackgroundWork(BackgroundKey.LOAD) {
-                        val command = GoalWorkCommand.Load(event.input.goalId)
+                        val command = GoalWorkCommand.SetupEditModel(event.input.goalId)
                         workProcessor.work(command).collectAndHandleWork()
                     }
                 }
             }
-            is GoalEvent.ChangeTitle -> {
-                val editModel = state().editModel
+            is GoalEvent.ChangeTitle -> with(state) {
                 if (editModel != null) {
                     sendAction(GoalAction.UpdateEditModel(editModel.copy(title = event.title)))
                 }
             }
-            is GoalEvent.ChangeScope -> {
-                val editModel = state().editModel
+            is GoalEvent.ChangeScope -> with(state) {
                 if (editModel != null) {
-                    sendAction(
-                        GoalAction.UpdateEditModel(
-                            editModel.copy(
-                                scopeType = event.scopeType,
-                                mainCategory = null,
-                                subCategory = null,
-                            )
-                        )
+                    val updatedEditModel = editModel.copy(
+                        scopeType = event.scopeType,
+                        mainCategory = null,
+                        subCategory = null,
                     )
+                    sendAction(GoalAction.UpdateEditModel(updatedEditModel))
                 }
             }
-            is GoalEvent.ChangeMainCategory -> {
-                val editModel = state().editModel
+            is GoalEvent.ChangeMainCategory -> with(state) {
                 if (editModel != null) {
-                    sendAction(
-                        GoalAction.UpdateEditModel(
-                            editModel.copy(
-                                mainCategory = event.category,
-                                subCategory = null,
-                            )
-                        )
+                    val updatedEditModel = editModel.copy(
+                        mainCategory = event.category,
+                        subCategory = null,
                     )
+                    sendAction(GoalAction.UpdateEditModel(updatedEditModel))
                 }
             }
-            is GoalEvent.ChangeSubCategory -> {
-                val editModel = state().editModel
+            is GoalEvent.ChangeSubCategory -> with(state) {
                 if (editModel != null) {
-                    sendAction(
-                        GoalAction.UpdateEditModel(
-                            editModel.copy(subCategory = event.subCategory)
-                        )
-                    )
+                    sendAction(GoalAction.UpdateEditModel(editModel.copy(subCategory = event.subCategory)))
                 }
             }
-            is GoalEvent.ChangeMetric -> {
-                val editModel = state().editModel
+            is GoalEvent.ChangeMetric -> with(state) {
                 if (editModel != null) {
                     val targetValue = when (event.metric) {
                         GoalMetric.DURATION -> DEFAULT_DURATION_MINUTES
                         GoalMetric.TASK_COUNT -> DEFAULT_TASK_COUNT
                     }
-                    sendAction(
-                        GoalAction.UpdateEditModel(
-                            editModel.copy(
-                                metric = event.metric,
-                                targetValue = targetValue,
-                            )
-                        )
+                    val updatedEditModel = editModel.copy(
+                        metric = event.metric,
+                        targetValue = targetValue,
                     )
+                    sendAction(GoalAction.UpdateEditModel(updatedEditModel))
                 }
             }
-            is GoalEvent.ChangeDirection -> {
-                val editModel = state().editModel
+            is GoalEvent.ChangeDirection -> with(state) {
                 if (editModel != null) {
-                    sendAction(
-                        GoalAction.UpdateEditModel(editModel.copy(direction = event.direction))
-                    )
+                    val updatedEditModel = editModel.copy(direction = event.direction)
+                    sendAction(GoalAction.UpdateEditModel(updatedEditModel))
                 }
             }
-            is GoalEvent.ChangeTargetValue -> {
-                val editModel = state().editModel
+            is GoalEvent.ChangeTargetValue -> with(state) {
                 if (editModel != null && event.targetValue.all { char -> char.isDigit() }) {
-                    sendAction(
-                        GoalAction.UpdateEditModel(
-                            editModel.copy(targetValue = event.targetValue.take(MAX_TARGET_LENGTH))
-                        )
-                    )
+                    val updatedEditModel = editModel.copy(targetValue = event.targetValue.take(MAX_TARGET_LENGTH))
+                    sendAction(GoalAction.UpdateEditModel(updatedEditModel))
                 }
             }
-            is GoalEvent.ChangeDeadline -> {
-                val editModel = state().editModel
+            is GoalEvent.ChangeDeadline -> with(state) {
                 if (editModel != null) {
-                    sendAction(
-                        GoalAction.UpdateEditModel(editModel.copy(deadline = event.deadline))
-                    )
+                    val updatedEditModel = editModel.copy(deadline = event.deadline)
+                    sendAction(GoalAction.UpdateEditModel(updatedEditModel))
                 }
             }
-            is GoalEvent.PressSave -> {
-                val editModel = state().editModel
+            is GoalEvent.PressSave -> with(state) {
                 if (editModel != null) {
                     val validationErrors = validator.validate(editModel)
                     sendAction(GoalAction.UpdateValidation(validationErrors))
+
                     if (validationErrors.isEmpty()) {
                         launchBackgroundWork(BackgroundKey.SAVE) {
-                            val command = GoalWorkCommand.Save(editModel)
+                            val command = GoalWorkCommand.SaveGoal(editModel)
                             workProcessor.work(command).collectAndHandleWork()
                         }
                     }
                 }
             }
-            is GoalEvent.PressBack -> consumeOutput(GoalOutput.NavigateBack)
+            is GoalEvent.PressBack -> {
+                consumeOutput(GoalOutput.NavigateBack)
+            }
         }
     }
 
@@ -184,13 +148,23 @@ internal class GoalComposeStore @Inject constructor(
             categories = action.categories,
             isLoading = action.isLoading,
         )
-        is GoalAction.UpdateEditModel -> currentState.copy(editModel = action.editModel)
-        is GoalAction.UpdateValidation -> currentState.copy(validationErrors = action.errors)
+        is GoalAction.UpdateEditModel -> currentState.copy(
+            editModel = action.editModel
+        )
+        is GoalAction.UpdateValidation -> currentState.copy(
+            validationErrors = action.errors
+        )
     }
 
     enum class BackgroundKey : BackgroundWorkKey {
         LOAD,
         SAVE,
+    }
+
+    companion object {
+        private const val DEFAULT_DURATION_MINUTES = "300"
+        private const val DEFAULT_TASK_COUNT = "5"
+        private const val MAX_TARGET_LENGTH = 8
     }
 
     class Factory @Inject constructor(
@@ -210,7 +184,3 @@ internal class GoalComposeStore @Inject constructor(
         }
     }
 }
-
-private const val DEFAULT_DURATION_MINUTES = "300"
-private const val DEFAULT_TASK_COUNT = "5"
-private const val MAX_TARGET_LENGTH = 8

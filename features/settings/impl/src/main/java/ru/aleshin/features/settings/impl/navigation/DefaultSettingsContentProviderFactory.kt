@@ -18,14 +18,13 @@ package ru.aleshin.features.settings.impl.navigation
 import com.arkivanov.decompose.ComponentContext
 import ru.aleshin.core.utils.architecture.component.OutputConsumer
 import ru.aleshin.core.utils.inject.FeatureContentProvider
-import ru.aleshin.core.utils.inject.StartFeatureConfig
 import ru.aleshin.features.settings.api.SettingsConfig
 import ru.aleshin.features.settings.api.SettingsContentProviderFactory
 import ru.aleshin.features.settings.api.SettingsOutput
 import ru.aleshin.features.settings.impl.presentation.ui.donate.store.DonateComposeStore
 import ru.aleshin.features.settings.impl.presentation.ui.root.InternalSettingsFeatureComponent
 import ru.aleshin.features.settings.impl.presentation.ui.root.SettingsContentProvider
-import ru.aleshin.features.settings.impl.presentation.ui.settings.screensmodel.SettingsComposeStore
+import ru.aleshin.features.settings.impl.presentation.ui.settings.store.SettingsComposeStore
 import javax.inject.Inject
 
 /**
