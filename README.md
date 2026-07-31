@@ -185,6 +185,9 @@ You can also download APK files from [GitHub Releases](https://github.com/v1tzor
   </tr>
 </table>
 
+<img width="1920" height="1200" alt="00-all-widgets" src="https://github.com/user-attachments/assets/55ca3d4b-2161-471c-a57e-84afb6e39131" />
+
+
 ## Supported languages 🌍
 
 - English 🇬🇧
