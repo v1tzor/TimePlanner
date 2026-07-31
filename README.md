@@ -73,7 +73,7 @@
 
 <div align="center">
   <img
-    src="https://github.com/v1tzor/TimePlanner/assets/116388544/8eeb4545-a52e-4705-9a6e-f4e603845255"
+    src="https://github.com/user-attachments/assets/9eb03f66-e9ea-4f0f-9e62-786d29a24ac8"
     alt="TimePlanner application preview"
   />
 </div>
@@ -170,18 +170,18 @@ You can also download APK files from [GitHub Releases](https://github.com/v1tzor
 - Restore data from a backup file.
 - Clear application data or reset only settings.
 
-## Screenshots 📸
+## Screenshots (сoming in v2.0.0) 📸
 
 <table>
   <tr>
-    <td valign="top"><img src="https://github.com/v1tzor/TimePlanner/assets/116388544/64c6c55f-e3b4-42ab-bf80-5307414c06d4" width="350" alt="TimePlanner screenshot 1" /></td>
-    <td valign="top"><img src="https://github.com/v1tzor/TimePlanner/assets/116388544/0c7fd186-6735-4023-9260-2d6ea47765c7" width="350" alt="TimePlanner screenshot 2" /></td>
-    <td valign="top"><img src="https://github.com/v1tzor/TimePlanner/assets/116388544/59859427-f44f-4be3-ad44-a93f614b27d5" width="350" alt="TimePlanner screenshot 3" /></td>
+    <td valign="top"><img src="https://github.com/user-attachments/assets/5373cc5e-7f40-4c2f-a54e-2101d6bbdd39" width="350" alt="TimePlanner screenshot 1" /></td>
+    <td valign="top"><img src="https://github.com/user-attachments/assets/3190b6bc-a45c-4ca5-995f-9ef115ea4a0f" width="350" alt="TimePlanner screenshot 2" /></td>
+    <td valign="top"><img src="https://github.com/user-attachments/assets/663a23b6-2bc5-41d8-a6e6-4207814178e1" width="350" alt="TimePlanner screenshot 3" /></td>
   </tr>
   <tr>
-    <td valign="top"><img src="https://github.com/v1tzor/TimePlanner/assets/116388544/a7e301d0-6898-4f21-9ab1-2f40c9b52f86" width="350" alt="TimePlanner screenshot 4" /></td>
-    <td valign="top"><img src="https://github.com/v1tzor/TimePlanner/assets/116388544/f5cd2201-36e1-422e-8a33-69ce0076b3a7" width="350" alt="TimePlanner screenshot 5" /></td>
-    <td valign="top"><img src="https://github.com/v1tzor/TimePlanner/assets/116388544/b074abc2-47d0-472c-b655-b08c49c41a5a" width="350" alt="TimePlanner screenshot 6" /></td>
+    <td valign="top"><img src="https://github.com/user-attachments/assets/40ad7bb1-eae8-4d3d-a555-d501e7617029" width="350" alt="TimePlanner screenshot 4" /></td>
+    <td valign="top"><img src="https://github.com/user-attachments/assets/333ad034-a5e0-4915-9843-740fd90f72d7" width="350" alt="TimePlanner screenshot 5" /></td>
+    <td valign="top"><img src="https://github.com/user-attachments/assets/7ce06be0-e400-4235-9a7b-f0404fa03a33" width="350" alt="TimePlanner screenshot 6" /></td>
   </tr>
 </table>
 
