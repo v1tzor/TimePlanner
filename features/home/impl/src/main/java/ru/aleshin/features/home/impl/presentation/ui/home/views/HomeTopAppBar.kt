@@ -38,7 +38,6 @@ import ru.aleshin.timeplanner.core.ui.views.TopAppBarButton
 import ru.aleshin.timeplanner.core.ui.views.TopAppBarTitle
 import java.text.SimpleDateFormat
 import java.util.Date
-import java.util.Locale
 
 /**
  * @author Stanislav Aleshin on 20.02.2023.
@@ -100,11 +99,16 @@ internal fun HomeMainPaneTopAppBar(
     onOpenCalendar: () -> Unit,
     onGoToToday: () -> Unit,
 ) {
-    val dateFormat = remember {
-        SimpleDateFormat("EEEE, d MMMM", Locale.getDefault())
+    val language = TimePlannerRes.language
+    val locale = remember(language) { language.fetchLocale() }
+
+    val dateFormat = remember(locale) {
+        SimpleDateFormat("EEEE, d MMMM", locale)
     }
-    val selectedDateTitle = remember(selectedDate) {
-        selectedDate?.let(dateFormat::format).orEmpty()
+    val selectedDateTitle = remember(selectedDate, locale) {
+        selectedDate?.let(dateFormat::format)?.replaceFirstChar { char ->
+            if (char.isLowerCase()) char.titlecase(locale) else char.toString()
+        }.orEmpty()
     }
 
     TopAppBar(

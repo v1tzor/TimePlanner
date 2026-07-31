@@ -283,34 +283,36 @@ private fun AnalyticsCategoryRow(
                         ?.takeIf { row.comparison.state != AnalyticsComparisonState.PREVIOUS_ZERO && it != 0.0 }
                         ?.let { it > 0 },
                 )
+                Spacer(modifier = Modifier.weight(1f))
+                Text(
+                    text = formatter.formatDuration(
+                        durationMillis = row.durationMillis,
+                        hourSymbol = strings.hourShort,
+                        minuteSymbol = strings.minuteShort,
+                    ),
+                    maxLines = 1,
+                    style = MaterialTheme.typography.titleMedium,
+                )
             }
-            Spacer(modifier = Modifier.height(8.dp))
-            LinearProgressIndicator(
-                progress = {
-                    (row.durationMillis.toDouble() / maximumDuration).toFloat().coerceIn(0f, 1f)
-                },
-                modifier = Modifier.fillMaxWidth().height(4.dp).clip(CircleShape),
-                color = categoryColor,
-                trackColor = MaterialTheme.colorScheme.surfaceContainerHighest,
-            )
-        }
-        Column(horizontalAlignment = Alignment.End) {
-            Text(
-                text = formatter.formatDuration(
-                    durationMillis = row.durationMillis,
-                    hourSymbol = strings.hourShort,
-                    minuteSymbol = strings.minuteShort,
-                ),
-                style = MaterialTheme.typography.titleMedium,
-            )
-            Text(
-                text = formatter.formatPercent(
-                    value = row.share,
-                    locale = locale,
-                ),
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                LinearProgressIndicator(
+                    progress = {
+                        (row.durationMillis.toDouble() / maximumDuration).toFloat().coerceIn(0f, 1f)
+                    },
+                    modifier = Modifier.weight(1f).height(4.dp).clip(CircleShape),
+                    color = categoryColor,
+                    trackColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+                )
+                Text(
+                    text = formatter.formatPercent(value = row.share, locale = locale),
+                    maxLines = 1,
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
         }
     }
 }

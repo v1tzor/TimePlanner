@@ -61,7 +61,7 @@ internal fun OverviewSupportingPaneLayout(
         adaptiveLayoutInfo = adaptiveLayoutInfo,
         mainPaneMinWidth = AdaptiveLayoutDefaults.OverviewMainPaneMinWidth,
         supportingPaneMinWidth = AdaptiveLayoutDefaults.OverviewSupportingPaneMinWidth,
-        supportingPanePreferredWidth = AdaptiveLayoutDefaults.SupportingPanePreferredWidth,
+        supportingPanePreferredWidth = AdaptiveLayoutDefaults.OverviewSupportingPanePreferredWidth,
         useTwoPanesOnMediumWidth = useTwoPanesOnMediumWidth,
         showPaneExpansionDragHandle = showPaneExpansionDragHandle,
         mainPane = {

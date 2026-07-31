@@ -339,7 +339,7 @@ internal fun LazyGridScope.AnalyticsExpandedGridSections(
             )
             AnalyticsExpandedKeyMetricsSection(
                 modifier = Modifier
-                    .weight(1f)
+                    .weight(1.2f)
                     .fillMaxHeight(),
                 metrics = overview.keyMetrics,
             )

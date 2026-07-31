@@ -136,10 +136,8 @@ internal fun Date.formatAnalyticsCivilDate(pattern: String, locale: Locale): Str
     }.format(this).replace(".", "")
 }
 
-internal fun TimePlannerLanguage.fetchAnalyticsLocale(): Locale = when (this) {
-    TimePlannerLanguage.PT_BR -> Locale.forLanguageTag("pt-BR")
-    TimePlannerLanguage.VN -> Locale.forLanguageTag("vi")
-    else -> Locale.forLanguageTag(code)
+internal fun TimePlannerLanguage.fetchAnalyticsLocale(): Locale {
+    return this.fetchLocale()
 }
 
 internal fun fetchAnalyticsBucketDatePattern(dates: List<Date>): String {

@@ -16,6 +16,8 @@
 package ru.aleshin.features.templates.impl.presentation.ui.templates.views
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TopAppBar
@@ -24,7 +26,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import ru.aleshin.features.templates.impl.presentation.theme.TemplatesThemeRes
-import ru.aleshin.timeplanner.core.ui.views.TopAppBarEmptyButton
 import ru.aleshin.timeplanner.core.ui.views.TopAppBarTitle
 
 /**
@@ -36,26 +37,20 @@ internal fun TemplatesTopAppBar(
     modifier: Modifier = Modifier,
     isCompact: Boolean,
 ) {
-    TopAppBar(
-        modifier = modifier.background(MaterialTheme.colorScheme.background),
-        title = {
-            TopAppBarTitle(
-                text = TemplatesThemeRes.strings.topAppBarTemplatesTitle,
-                textAlign = if (isCompact) TextAlign.Center else TextAlign.Start,
-            )
-        },
-        navigationIcon = {
-            if (isCompact) {
-                TopAppBarEmptyButton()
-            }
-        },
-        actions = {
-            if (isCompact) {
-                TopAppBarEmptyButton()
-            }
-        },
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.background,
-        ),
-    )
+    if (isCompact) {
+        TopAppBar(
+            modifier = modifier.background(MaterialTheme.colorScheme.background),
+            title = {
+                TopAppBarTitle(
+                    text = TemplatesThemeRes.strings.topAppBarTemplatesTitle,
+                    textAlign = TextAlign.Center
+                )
+            },
+            colors = TopAppBarDefaults.topAppBarColors(
+                containerColor = MaterialTheme.colorScheme.background,
+            ),
+        )
+    } else {
+        Spacer(modifier = Modifier.statusBarsPadding())
+    }
 }

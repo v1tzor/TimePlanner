@@ -211,9 +211,9 @@ private fun TemplatesMonthCalendarCard(
         )
     }
     val monthTitle = remember(pattern.days, locale) {
-        pattern.days.firstOrNull()?.date?.let { date ->
-            SimpleDateFormat(MONTH_TITLE_PATTERN, locale).format(date)
-        }.orEmpty()
+        pattern.days.firstOrNull()?.date
+            ?.let { date -> SimpleDateFormat(MONTH_TITLE_PATTERN, locale).format(date) }
+            ?.replaceFirstChar { char -> if (char.isLowerCase()) char.titlecase(locale) else char.toString() }.orEmpty()
     }
 
     Surface(

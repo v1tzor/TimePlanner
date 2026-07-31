@@ -165,7 +165,7 @@ internal fun UndefinedTaskItem(
             modifier = Modifier.size(40.dp),
             onClick = onExecuteButtonClick,
             shape = MaterialTheme.shapes.large,
-            color = MaterialTheme.colorScheme.surfaceContainerLow,
+            color = MaterialTheme.colorScheme.surfaceContainer,
         ) {
             Box(contentAlignment = Alignment.Center) {
                 Icon(

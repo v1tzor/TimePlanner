@@ -76,7 +76,7 @@ internal fun GoalCard(
     }
 
     Surface(
-        modifier = modifier.widthIn(min = 180.dp),
+        modifier = modifier.widthIn(min = 180.dp, max = 240.dp),
         onClick = onClick,
         shape = MaterialTheme.shapes.large,
         color = MaterialTheme.colorScheme.surfaceContainerLow,
@@ -84,7 +84,7 @@ internal fun GoalCard(
         Column(
             modifier = Modifier
                 .padding(12.dp)
-                .width(IntrinsicSize.Min),
+                .width(IntrinsicSize.Max),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             Row(

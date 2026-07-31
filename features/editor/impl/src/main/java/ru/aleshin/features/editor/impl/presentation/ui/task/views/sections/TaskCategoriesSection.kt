@@ -136,7 +136,7 @@ internal fun TaskNoteField(
 ) {
     val focusManager = LocalFocusManager.current
     val interactionSource = remember { MutableInteractionSource() }
-    var editableNote by remember(note) {
+    var editableNote by remember {
         mutableStateOf(TextFieldValue(text = note.orEmpty()))
     }
 

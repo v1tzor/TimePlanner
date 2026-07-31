@@ -50,20 +50,23 @@ internal fun GoalScopeSection(
     onMainCategoryChange: (MainCategoryUi) -> Unit,
     onSubCategoryChange: (SubCategoryUi?) -> Unit,
 ) {
-    val scopeItems = arrayOf(
-        GoalSegmentedItemUi(
-            value = GoalScopeType.ALL,
-            text = EditorThemeRes.strings.goalAllTasksTitle,
-        ),
-        GoalSegmentedItemUi(
-            value = GoalScopeType.MAIN_CATEGORY,
-            text = EditorThemeRes.strings.goalCategoryScopeTitle,
-        ),
-        GoalSegmentedItemUi(
-            value = GoalScopeType.SUB_CATEGORY,
-            text = EditorThemeRes.strings.goalSubCategoryScopeTitle,
-        ),
-    )
+    val strings = EditorThemeRes.strings
+    val scopeItems = remember(strings) {
+        arrayOf(
+            GoalSegmentedItemUi(
+                value = GoalScopeType.ALL,
+                text = strings.goalAllTasksTitle,
+            ),
+            GoalSegmentedItemUi(
+                value = GoalScopeType.MAIN_CATEGORY,
+                text = strings.goalCategoryScopeTitle,
+            ),
+            GoalSegmentedItemUi(
+                value = GoalScopeType.SUB_CATEGORY,
+                text = strings.goalSubCategoryScopeTitle,
+            )
+        )
+    }
     val isScopeError = GoalValidationError.SCOPE in errors
     Column(
         modifier = modifier,
@@ -91,12 +94,11 @@ internal fun GoalScopeSection(
         ) {
             val mainCategory = goal.mainCategory
             if (mainCategory != null) {
-                val subCategories = categories
-                    .firstOrNull { details ->
+                val subCategories = remember(categories) {
+                    categories.firstOrNull { details ->
                         details.mainCategory.id == mainCategory.id
-                    }
-                    ?.subCategories
-                    .orEmpty()
+                    }?.subCategories.orEmpty()
+                }
                 SubCategoryChooser(
                     modifier = Modifier.fillMaxWidth(),
                     isError = isScopeError && goal.subCategory == null,

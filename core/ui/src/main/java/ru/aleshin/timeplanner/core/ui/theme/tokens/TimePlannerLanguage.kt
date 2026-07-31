@@ -19,6 +19,7 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.text.intl.Locale
 import kotlinx.serialization.Serializable
+import java.util.Locale.forLanguageTag
 
 /**
  * @author Stanislav Aleshin on 14.02.2023.
@@ -37,7 +38,13 @@ enum class TimePlannerLanguage(val code: String) {
     VN("vn"),
     PL("pl"),
     IT("it"),
-    ZH("zh"),
+    ZH("zh");
+
+    fun fetchLocale() = when (this) {
+        PT_BR -> forLanguageTag("pt-BR")
+        VN -> forLanguageTag("vi")
+        else -> forLanguageTag(code)
+    }
 }
 
 @Immutable

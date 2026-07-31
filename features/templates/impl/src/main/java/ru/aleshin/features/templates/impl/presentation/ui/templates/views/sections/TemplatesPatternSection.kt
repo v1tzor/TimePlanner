@@ -187,7 +187,7 @@ private fun TemplatesPatternFilterToggle(
 ) {
     Row(
         modifier = modifier
-            .size(width = 128.dp, height = 40.dp)
+            .size(width = 130.dp, height = 40.dp)
             .clip(CircleShape)
             .background(MaterialTheme.colorScheme.surface)
             .border(
@@ -387,6 +387,8 @@ private fun TemplatesPatternTitle(
             modifier = Modifier.weight(1f),
             text = title,
             color = MaterialTheme.colorScheme.primary,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
             style = MaterialTheme.typography.titleMedium,
         )
         Text(
