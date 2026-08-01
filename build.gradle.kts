@@ -21,5 +21,4 @@ plugins {
     alias(libs.plugins.parcelize) apply false
     alias(libs.plugins.ksp) apply false
     alias(libs.plugins.room) apply false
-//    alias(libs.plugins.tracer) apply false
 }

@@ -59,8 +59,6 @@ import ru.aleshin.features.home.impl.presentation.theme.tokens.HomeCategoryColor
 import ru.aleshin.timeplanner.core.ui.mappers.mapToMonogram
 import ru.aleshin.timeplanner.core.ui.views.CategoryIconMonogram
 import ru.aleshin.timeplanner.core.ui.views.CategoryTextMonogram
-import java.text.SimpleDateFormat
-import java.util.Locale
 
 /**
  * @author Stanislav Aleshin on 17.07.2026.
@@ -251,7 +249,7 @@ private fun TimelineTaskContent(
     val title = timeTask.subCategory?.name ?: mainCategory
     val categorySubtitle = mainCategory.takeIf { timeTask.subCategory != null }
     val note = timeTask.note?.takeIf { value -> value.isNotBlank() }
-    val timeFormat = remember { SimpleDateFormat("HH:mm", Locale.getDefault()) }
+    val timeFormat = rememberTimelineTimeFormatter()
 
     BoxWithConstraints(modifier = modifier.fillMaxSize()) {
         val taskMaxHeight = maxHeight

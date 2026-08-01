@@ -21,10 +21,10 @@ import kotlinx.serialization.Serializable
  * @author Stanislav Aleshin on 29.07.2026.
  */
 @Serializable
-enum class GoalProgressStatus {
-    IN_PROGRESS,
-    ACHIEVED,
-    EXCEEDED,
-    EXPIRED,
-    UNAVAILABLE,
+enum class GoalProgressStatus(val priority: Int) {
+    EXPIRED(0),
+    IN_PROGRESS(1),
+    EXCEEDED(2),
+    ACHIEVED(3),
+    UNAVAILABLE(4),
 }

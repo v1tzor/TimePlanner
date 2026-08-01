@@ -63,6 +63,7 @@ internal sealed class OverviewEvent : StoreEvent {
     data class ConfirmBatchUndefinedTasks(val tasks: List<UndefinedTaskUi>) : OverviewEvent()
     data object DismissBatchUndefinedTasks : OverviewEvent()
     data class ExecuteUndefinedTask(val scheduleDate: Date, val task: UndefinedTaskUi) : OverviewEvent()
+    data class DeleteUndefinedTask(val taskId: Long) : OverviewEvent()
 }
 
 internal sealed class OverviewEffect : StoreEffect {

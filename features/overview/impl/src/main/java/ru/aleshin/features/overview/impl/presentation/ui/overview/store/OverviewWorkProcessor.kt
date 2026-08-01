@@ -72,6 +72,7 @@ internal interface OverviewWorkProcessor :
             is OverviewWorkCommand.CreateOrUpdateUndefinedTasks -> createOrUpdateTasksWork(command.tasks)
             is OverviewWorkCommand.PrepareSharedTextImport -> prepareSharedTextImportWork(command.text)
             is OverviewWorkCommand.ExecuteUndefinedTask -> executeUndefinedTaskWork(command.data, command.task)
+            is OverviewWorkCommand.DeleteUndefinedTask -> deleteUndefinedTaskWork(command.taskId)
         }
 
         private fun loadSchedulesWork(selectedDate: Date?) = flow<OverviewWorkResult> {
@@ -149,6 +150,12 @@ internal interface OverviewWorkProcessor :
             emit(OutputResult(OverviewOutput.NavigateToTaskEditor(config)))
         }
 
+        private fun deleteUndefinedTaskWork(taskId: Long) = flow<OverviewWorkResult> {
+            undefinedTasksInteractor.deleteUndefinedTaskById(taskId).handle(
+                onLeftAction = { emit(EffectResult(OverviewEffect.ShowError(it))) },
+            )
+        }
+
     }
 }
 
@@ -161,6 +168,7 @@ internal sealed class OverviewWorkCommand : WorkCommand {
     data class CreateOrUpdateUndefinedTasks(val tasks: List<UndefinedTaskUi>) : OverviewWorkCommand()
     data class PrepareSharedTextImport(val text: String) : OverviewWorkCommand()
     data class ExecuteUndefinedTask(val data: Date, val task: UndefinedTaskUi) : OverviewWorkCommand()
+    data class DeleteUndefinedTask(val taskId: Long) : OverviewWorkCommand()
 }
 
 internal typealias OverviewWorkResult = WorkResult<OverviewAction, OverviewEffect, OverviewOutput>

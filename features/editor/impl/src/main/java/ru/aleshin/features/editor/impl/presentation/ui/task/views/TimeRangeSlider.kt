@@ -533,7 +533,7 @@ private fun TimeRangeSliderThumb(
     }
 }
 
-private fun TimeRange.updateTimeSliderRange(
+internal fun TimeRange.updateTimeSliderRange(
     scheduleDate: Date,
     handle: TimeRangeSliderHandle,
     minute: Int,
@@ -569,7 +569,7 @@ private fun TimeRange.updateTimeSliderRange(
     }
 }
 
-private fun fetchTimeSliderMinute(
+internal fun fetchTimeSliderMinute(
     scheduleDate: Date,
     time: Date,
     isEndTime: Boolean,
@@ -584,7 +584,7 @@ private fun fetchTimeSliderMinute(
     }
 }
 
-private fun fetchTimeSliderHandle(
+internal fun fetchTimeSliderHandle(
     position: Float,
     trackStart: Float,
     trackWidth: Float,
@@ -606,7 +606,7 @@ private fun fetchTimeSliderHandle(
     }
 }
 
-private fun fetchTimeSliderMinute(
+internal fun fetchTimeSliderMinute(
     offset: Float,
     trackStart: Float,
     trackEnd: Float,
@@ -619,7 +619,7 @@ private fun fetchTimeSliderMinute(
     )
 }
 
-private fun snapTimeSliderMinute(
+internal fun snapTimeSliderMinute(
     minute: Int,
     maximum: Int,
 ): Int {
@@ -667,7 +667,7 @@ internal fun fetchTimeSliderLabelOffsets(
     }
 }
 
-private fun Date.fetchTimeSliderDate(minute: Int): Date {
+internal fun Date.fetchTimeSliderDate(minute: Int): Date {
     return Calendar.getInstance().apply {
         time = this@fetchTimeSliderDate.startThisDay()
         add(Calendar.MINUTE, minute)

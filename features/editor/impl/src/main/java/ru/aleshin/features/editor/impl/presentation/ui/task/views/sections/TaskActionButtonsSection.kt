@@ -107,7 +107,7 @@ private fun TaskTemplateActions(
             ) {
                 Icon(
                     painter = painterResource(EditorThemeRes.icons.unlink),
-                    contentDescription = null,
+                    contentDescription = EditorThemeRes.strings.unlinkTemplateIconDesc,
                     tint = MaterialTheme.colorScheme.onSecondaryContainer,
                 )
             }

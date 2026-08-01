@@ -42,6 +42,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -69,8 +70,10 @@ internal fun UndefinedTaskSection(
     categories: List<MainCategoryDetailsUi>,
     tasks: List<UndefinedTaskUi>,
     horizontalPadding: Dp = 16.dp,
+    isPaneSection: Boolean,
     onAddOrUpdateTask: (UndefinedTaskUi) -> Unit,
     onExecuteTask: (Date, UndefinedTaskUi) -> Unit,
+    onDeleteTask: (Long) -> Unit,
 ) {
     var isExpanded by remember { mutableStateOf(false) }
     var openTaskDateChooserDialog by remember { mutableStateOf(false) }
@@ -139,21 +142,29 @@ internal fun UndefinedTaskSection(
                         verticalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
                         visibleTasks.forEachIndexed { index, task ->
-                            UndefinedTaskItem(
-                                model = task,
-                                onClick = {
-                                    editableTask = task
-                                    openTaskEditorDialog = true
-                                },
-                                onExecuteButtonClick = {
-                                    editableTask = task
-                                    openTaskDateChooserDialog = true
-                                },
-                            )
-                            if (index != visibleTasks.lastIndex) {
-                                HorizontalDivider(
-                                    color = MaterialTheme.colorScheme.outlineVariant,
+                            key(task.id) {
+                                UndefinedTaskItem(
+                                    model = task,
+                                    onClick = {
+                                        editableTask = task
+                                        openTaskEditorDialog = true
+                                    },
+                                    onExecuteButtonClick = {
+                                        editableTask = task
+                                        openTaskDateChooserDialog = true
+                                    },
+                                    onDelete = { onDeleteTask(task.id) },
+                                    containerColor = if (isPaneSection) {
+                                        MaterialTheme.colorScheme.surfaceContainerLow
+                                    } else {
+                                        MaterialTheme.colorScheme.background
+                                    }
                                 )
+                                if (index != visibleTasks.lastIndex) {
+                                    HorizontalDivider(
+                                        color = MaterialTheme.colorScheme.outlineVariant,
+                                    )
+                                }
                             }
                         }
                         if (tasks.size > VISIBLE_TASKS_COUNT) {

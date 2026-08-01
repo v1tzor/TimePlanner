@@ -70,7 +70,7 @@ internal fun EditorTopAppBar(
             if (actionsEnabled) {
                 TopAppBarButton(
                     imagePainter = painterResource(id = TimePlannerRes.icons.plannedTask),
-                    imageDescription = null,
+                    imageDescription = EditorThemeRes.strings.topAppBarUndefinedTasksIconDesc,
                     onButtonClick = onOpenUndefinedTasks,
                     badge = if (countUndefinedTasks > 0) {
                         {

@@ -31,6 +31,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -138,6 +139,13 @@ internal fun TaskNoteField(
     val interactionSource = remember { MutableInteractionSource() }
     var editableNote by remember {
         mutableStateOf(TextFieldValue(text = note.orEmpty()))
+    }
+
+    LaunchedEffect(note) {
+        val updatedNote = note.orEmpty()
+        if (editableNote.text != updatedNote) {
+            editableNote = TextFieldValue(text = updatedNote)
+        }
     }
 
     CustomLargeTextField(

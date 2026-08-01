@@ -39,6 +39,18 @@ class HomeLayoutModeTest {
     }
 
     @Test
+    fun `avoids supporting pane when window height is compact`() {
+        assertEquals(
+            HomeLayoutMode.COMPACT,
+            createAdaptiveLayoutInfo(width = 599, height = 479).fetchHomeLayoutMode(),
+        )
+        assertEquals(
+            HomeLayoutMode.MEDIUM,
+            createAdaptiveLayoutInfo(width = 840, height = 479).fetchHomeLayoutMode(),
+        )
+    }
+
+    @Test
     fun `coordinates screen app bars with layout mode`() {
         assertTrue(HomeLayoutMode.COMPACT.showScreenTopAppBar)
         assertTrue(HomeLayoutMode.MEDIUM.showScreenTopAppBar)
@@ -56,10 +68,13 @@ class HomeLayoutModeTest {
         assertFalse(HomeLayoutMode.TABLETOP.showDateBottomBar)
     }
 
-    private fun createAdaptiveLayoutInfo(width: Int): AdaptiveLayoutInfo {
+    private fun createAdaptiveLayoutInfo(
+        width: Int,
+        height: Int = WINDOW_HEIGHT,
+    ): AdaptiveLayoutInfo {
         return AdaptiveLayoutInfo(
-            windowSizeClass = WindowSizeClass(width, WINDOW_HEIGHT),
-            windowSize = DpSize(width.dp, WINDOW_HEIGHT.dp),
+            windowSizeClass = WindowSizeClass(width, height),
+            windowSize = DpSize(width.dp, height.dp),
             posture = Posture(),
         )
     }

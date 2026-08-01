@@ -173,11 +173,15 @@ private fun OverviewSinglePaneLayout(
             isLoading = state.isLoading,
             categories = state.categories,
             tasks = state.undefinedTasks,
+            isPaneSection = false,
             onAddOrUpdateTask = { task ->
                 onEvent(OverviewEvent.CreateOrUpdateUndefinedTask(task))
             },
             onExecuteTask = { date, task ->
                 onEvent(OverviewEvent.ExecuteUndefinedTask(date, task))
+            },
+            onDeleteTask = { taskId ->
+                onEvent(OverviewEvent.DeleteUndefinedTask(taskId))
             },
         )
         Spacer(modifier = Modifier.height(60.dp))

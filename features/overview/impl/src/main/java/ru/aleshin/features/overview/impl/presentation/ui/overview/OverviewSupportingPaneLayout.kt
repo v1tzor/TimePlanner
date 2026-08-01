@@ -170,11 +170,15 @@ private fun OverviewSupportingPane(
                 categories = state.categories,
                 tasks = state.undefinedTasks,
                 horizontalPadding = 16.dp,
+                isPaneSection = true,
                 onAddOrUpdateTask = { task ->
                     onEvent(OverviewEvent.CreateOrUpdateUndefinedTask(task))
                 },
                 onExecuteTask = { date, task ->
                     onEvent(OverviewEvent.ExecuteUndefinedTask(date, task))
+                },
+                onDeleteTask = { taskId ->
+                    onEvent(OverviewEvent.DeleteUndefinedTask(taskId))
                 },
             )
             Spacer(modifier = Modifier.height(48.dp))

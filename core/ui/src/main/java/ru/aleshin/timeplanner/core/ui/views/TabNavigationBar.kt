@@ -26,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextOverflow
 import ru.aleshin.timeplanner.core.ui.theme.TimePlannerRes
 
 /**
@@ -100,6 +101,9 @@ fun BottomBarLabel(
             true -> MaterialTheme.colorScheme.onSurface
             false -> MaterialTheme.colorScheme.onSurfaceVariant
         },
+        maxLines = 1,
+        softWrap = false,
+        overflow = TextOverflow.Ellipsis,
         style = MaterialTheme.typography.labelMedium,
     )
 }

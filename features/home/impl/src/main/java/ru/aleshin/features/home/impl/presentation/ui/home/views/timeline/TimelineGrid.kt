@@ -59,10 +59,9 @@ import ru.aleshin.features.home.impl.presentation.models.TimelineScheduleUi
 import ru.aleshin.features.home.impl.presentation.models.TimelineTaskUpdateRequestUi
 import ru.aleshin.features.home.impl.presentation.theme.HomeThemeRes
 import ru.aleshin.features.home.impl.presentation.theme.tokens.fetchHomeCategoryColors
-import java.text.SimpleDateFormat
+import java.text.DateFormat
 import java.util.Calendar
 import java.util.Date
-import java.util.Locale
 import java.util.TimeZone
 import kotlin.math.abs
 import kotlin.math.roundToInt
@@ -89,6 +88,10 @@ internal fun TimelineGrid(
     onInitialTimePositioned: (Float) -> Unit,
 ) {
     val density = LocalDensity.current
+    val axisWidth = when (rememberTimelineUses24HourFormat()) {
+        true -> TIMELINE_24_HOUR_AXIS_WIDTH
+        false -> TIMELINE_12_HOUR_AXIS_WIDTH
+    }
     val hapticFeedback = LocalHapticFeedback.current
     val surfaceColor = MaterialTheme.colorScheme.surface
     val gridColor = MaterialTheme.colorScheme.outlineVariant
@@ -338,7 +341,7 @@ internal fun TimelineGrid(
     }
 
     val drawModifier = Modifier.drawWithCache {
-        val axisOffset = TIMELINE_AXIS_WIDTH.toPx()
+        val axisOffset = axisWidth.toPx()
         val lineStart = axisOffset + TIMELINE_LINE_START_GAP.toPx()
         val dottedEffect = PathEffect.dashPathEffect(floatArrayOf(5.dp.toPx(), 5.dp.toPx()))
         val halfHourDistance = HALF_HOUR_MIN_DISTANCE.toPx()
@@ -412,7 +415,7 @@ internal fun TimelineGrid(
                                 if (currentIsTimeTaskUpdatePending) {
                                     return@detectTapGestures
                                 }
-                                if (offset.x < TIMELINE_AXIS_WIDTH.toPx()) {
+                                if (offset.x < axisWidth.toPx()) {
                                     return@detectTapGestures
                                 }
 
@@ -554,6 +557,7 @@ internal fun TimelineGrid(
                 TimelineNowLine(
                     modifier = Modifier.zIndex(1.5f),
                     color = nowColor,
+                    axisWidth = axisWidth,
                 )
                 TimelineNowLabel(
                     modifier = Modifier.zIndex(2f),
@@ -562,7 +566,7 @@ internal fun TimelineGrid(
             }
         },
     ) { measurables, constraints ->
-        val axisWidth = TIMELINE_AXIS_WIDTH.roundToPx()
+        val axisWidthPx = axisWidth.roundToPx()
         val backgroundIndex = 0
         val taskStart = backgroundIndex + 1
         val hourStart = taskStart + schedule.timeTasks.size
@@ -572,7 +576,7 @@ internal fun TimelineGrid(
         val nowLabelIndex = nowLineIndex + if (visibleCurrentTime != null) 1 else 0
         val taskStartPadding = TIMELINE_TASK_START_PADDING.roundToPx()
         val availableTaskWidth = (
-            constraints.maxWidth - axisWidth - taskStartPadding -
+            constraints.maxWidth - axisWidthPx - taskStartPadding -
                 TIMELINE_TASK_END_PADDING.roundToPx()
             ).coerceAtLeast(0)
         val taskWidth = taskMaxWidthPx?.let { maximumWidth ->
@@ -593,7 +597,9 @@ internal fun TimelineGrid(
                 ),
             )
         }
-        val labelConstraints = Constraints(maxWidth = axisWidth - TIMELINE_LABEL_END_PADDING.roundToPx())
+        val labelConstraints = Constraints(
+            maxWidth = axisWidthPx - TIMELINE_LABEL_END_PADDING.roundToPx(),
+        )
         val hourPlaceables = visibleHourTimes.indices.map { index ->
             measurables[hourStart + index].measure(labelConstraints)
         }
@@ -632,7 +638,7 @@ internal fun TimelineGrid(
         }
         val nowPlaceable = visibleCurrentTime?.let {
             measurables[nowLabelIndex].measure(
-                Constraints(maxWidth = constraints.maxWidth - axisWidth),
+                Constraints(maxWidth = constraints.maxWidth - axisWidthPx),
             )
         }
 
@@ -641,7 +647,7 @@ internal fun TimelineGrid(
             schedule.timeTasks.forEachIndexed { index, timeTask ->
                 val position = checkNotNull(taskPositionById[timeTask.timeTask.key])
                 taskPlaceables[index].placeRelative(
-                    axisWidth + taskStartPadding,
+                    axisWidthPx + taskStartPadding,
                     position.top.roundToInt(),
                 )
             }
@@ -667,7 +673,7 @@ internal fun TimelineGrid(
                     0,
                     (nowOffset - nowLinePlaceable.height / 2f).roundToInt(),
                 )
-                nowPlaceable.placeRelative(axisWidth, (nowOffset - nowPlaceable.height / 2f).roundToInt())
+                nowPlaceable.placeRelative(axisWidthPx, (nowOffset - nowPlaceable.height / 2f).roundToInt())
             }
         }
     }
@@ -677,9 +683,10 @@ internal fun TimelineGrid(
 private fun TimelineNowLine(
     modifier: Modifier,
     color: Color,
+    axisWidth: Dp,
 ) {
     Canvas(modifier = modifier) {
-        val axisOffset = TIMELINE_AXIS_WIDTH.toPx()
+        val axisOffset = axisWidth.toPx()
         val centerOffset = size.height / 2f
 
         drawLine(
@@ -736,8 +743,8 @@ private fun TimelineNowLabel(
 
 @Composable
 private fun rememberTimeTitle(time: Date): String {
-    val timeFormat = remember { SimpleDateFormat("HH:mm", Locale.getDefault()) }
-    return remember(time) { timeFormat.format(time) }
+    val timeFormat: DateFormat = rememberTimelineTimeFormatter()
+    return remember(time, timeFormat) { timeFormat.format(time) }
 }
 
 private fun fetchDragContentAnchor(
@@ -878,7 +885,8 @@ private val TIMELINE_TASK_MAX_HEIGHT = 720.dp
 private val TIMELINE_FREE_TIME_MIN_HEIGHT = 10.dp
 private val TIMELINE_TASK_SPACE = 2.dp
 private val TIMELINE_VERTICAL_PADDING = TIMELINE_TASK_MIN_HEIGHT
-private val TIMELINE_AXIS_WIDTH = 68.dp
+private val TIMELINE_24_HOUR_AXIS_WIDTH = 68.dp
+private val TIMELINE_12_HOUR_AXIS_WIDTH = 84.dp
 private val TIMELINE_LINE_START_GAP = 7.dp
 private val TIMELINE_TASK_START_PADDING = 8.dp
 private val TIMELINE_TASK_END_PADDING = 12.dp

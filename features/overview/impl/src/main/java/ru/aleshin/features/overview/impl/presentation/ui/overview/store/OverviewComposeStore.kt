@@ -120,6 +120,10 @@ internal class OverviewComposeStore @Inject constructor(
                 val command = OverviewWorkCommand.ExecuteUndefinedTask(event.scheduleDate, event.task)
                 workProcessor.work(command).collectAndHandleWork()
             }
+            is OverviewEvent.DeleteUndefinedTask -> launchBackgroundWork(BackgroundKey.TASK_ACTION) {
+                val command = OverviewWorkCommand.DeleteUndefinedTask(event.taskId)
+                workProcessor.work(command).collectAndHandleWork()
+            }
             is OverviewEvent.OpenSchedule -> {
                 val config = HomeConfig.Home(event.scheduleDate)
                 consumeOutput(OverviewOutput.NavigateToHome(config))

@@ -45,7 +45,7 @@ internal object RestoreBackupContract : ActivityResultContract<Unit, Uri?>() {
 internal object SaveBackupContract : ActivityResultContract<Unit, Uri?>() {
 
     override fun createIntent(context: Context, input: Unit) = Intent().apply {
-        val dateFormat = SimpleDateFormat("MM/dd/yyyy", Locale.getDefault())
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.ROOT)
         val time = dateFormat.format(Calendar.getInstance().time)
         val fileName = Constants.Backup.BACKUP_ZIP_NAME.format(time)
         action = Intent.ACTION_CREATE_DOCUMENT

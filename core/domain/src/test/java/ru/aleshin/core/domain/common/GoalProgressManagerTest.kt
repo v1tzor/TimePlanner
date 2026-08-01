@@ -257,9 +257,10 @@ class GoalProgressManagerTest {
     }
 
     @Test
-    fun calculateSortsGoalsByDeadlineAndId() {
+    fun calculateSortsGoalsByStatusDeadlineAndId() {
         val goals = listOf(
-            createGoal(id = 3L, deadline = createDate(2026, Calendar.AUGUST, 2, 0)),
+            createGoal(id = 4L, deadline = createDate(2026, Calendar.AUGUST, 2, 0)),
+            createGoal(id = 3L, deadline = createDate(2026, Calendar.JULY, 27, 0)),
             createGoal(id = 2L, deadline = createDate(2026, Calendar.AUGUST, 1, 0)),
             createGoal(id = 1L, deadline = createDate(2026, Calendar.AUGUST, 1, 0)),
         )
@@ -271,7 +272,7 @@ class GoalProgressManagerTest {
             timeZone = timeZone,
         )
 
-        assertEquals(listOf(1L, 2L, 3L), progress.map { item -> item.goal.id })
+        assertEquals(listOf(3L, 1L, 2L, 4L), progress.map { item -> item.goal.id })
     }
 
     @Test

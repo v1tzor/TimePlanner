@@ -169,7 +169,13 @@ interface GoalProgressManager {
                         timeZone = timeZone,
                     )
                 }
-                .sortedWith(compareBy({ progress -> progress.goal.deadline.time }, { it.goal.id }))
+                .sortedWith(
+                    compareBy(
+                        { progress -> progress.status.priority },
+                        { progress -> progress.goal.deadline.time },
+                        { progress -> progress.goal.id },
+                    ),
+                )
         }
 
         override fun calculateDetails(

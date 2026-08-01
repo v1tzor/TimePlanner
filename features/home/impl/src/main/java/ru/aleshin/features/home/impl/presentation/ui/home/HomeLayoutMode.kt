@@ -39,6 +39,7 @@ internal enum class HomeLayoutMode {
 internal fun AdaptiveLayoutInfo.fetchHomeLayoutMode(): HomeLayoutMode = when {
     isTabletopPosture -> HomeLayoutMode.TABLETOP
     isBookPosture -> HomeLayoutMode.BOOK
+    isCompactHeight -> if (isCompactWidth) HomeLayoutMode.COMPACT else HomeLayoutMode.MEDIUM
     isCompactWidth -> HomeLayoutMode.COMPACT
     isMediumWidth -> HomeLayoutMode.MEDIUM
     else -> HomeLayoutMode.SUPPORTING_PANE
