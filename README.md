@@ -170,7 +170,7 @@ You can also download APK files from [GitHub Releases](https://github.com/v1tzor
 - Restore data from a backup file.
 - Clear application data or reset only settings.
 
-## Screenshots (сoming in v2.0.0) 📸
+## Screenshots 📸
 
 <table>
   <tr>
