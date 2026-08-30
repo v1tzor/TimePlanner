@@ -96,6 +96,40 @@ internal class TimelineInteractorTest {
     }
 
     @Test
+    fun fetchTimelineScheduleKeepsRangesAlignedForZeroDurationTask() {
+        val schedule = schedule(
+            timeTasks = listOf(
+                details(key = 1L, start = currentDate.at(9, 0), end = currentDate.at(9, 0)),
+                details(key = 2L, start = currentDate.at(10, 0), end = currentDate.at(11, 0)),
+            ),
+        )
+
+        val timeline = interactor.fetchTimelineSchedule(currentDate, schedule)
+
+        assertEquals(
+            TimeRange(currentDate.at(10, 0), currentDate.at(11, 0)),
+            timeline.timeTasks.single { it.timeTask.key == 2L }.visibleTimeRange,
+        )
+    }
+
+    @Test
+    fun fetchTimelineScheduleKeepsRangesAlignedForTaskEndingAtMidnight() {
+        val schedule = schedule(
+            timeTasks = listOf(
+                details(key = 1L, start = currentDate.at(8, 0), end = currentDate.at(9, 0)),
+                details(key = 2L, start = currentDate.at(23, 0), end = currentDate.shiftDay(1)),
+            ),
+        )
+
+        val timeline = interactor.fetchTimelineSchedule(currentDate, schedule)
+
+        assertEquals(
+            TimeRange(currentDate.at(23, 0), currentDate.shiftDay(1)),
+            timeline.timeTasks.single { it.timeTask.key == 2L }.visibleTimeRange,
+        )
+    }
+
+    @Test
     fun fetchTimelineScheduleClipsOvernightTaskAndLimitsEditing() {
         val previousDate = currentDate.shiftDay(-1)
         val task = details(

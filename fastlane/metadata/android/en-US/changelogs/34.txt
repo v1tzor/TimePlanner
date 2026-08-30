@@ -1,0 +1,7 @@
+Bug fixes:
+
+• Fixed a crash that could permanently block the app from opening. A task with a degenerate time range broke the timeline and made every launch fail (#154).
+• A task ending exactly at midnight is no longer treated as an overnight task and no longer appears as a 0-minute entry on the next day.
+• Existing schedules are repaired automatically on update — no data loss and no reinstall needed.
+• Task progress can no longer become invalid for very short tasks.
+• The editor now rejects reversed and zero-length time ranges.

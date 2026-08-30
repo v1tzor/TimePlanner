@@ -20,7 +20,6 @@ import ru.aleshin.core.data.models.tasks.TimeTaskDetailsEntity
 import ru.aleshin.core.data.models.tasks.TimeTaskEntity
 import ru.aleshin.core.domain.entities.tasks.TaskNotifications
 import ru.aleshin.core.domain.entities.tasks.TimeTask
-import ru.aleshin.core.utils.extensions.isCurrentDay
 import ru.aleshin.core.utils.extensions.mapToDate
 import ru.aleshin.core.utils.extensions.shiftDay
 import ru.aleshin.core.utils.functional.TimeRange
@@ -54,7 +53,7 @@ fun TimeTaskDetailsEntity.mapToDomain() = TimeTask(
 fun TimeTask.mapToData() = TimeTaskEntity(
     key = key,
     dailyScheduleDate = date.time,
-    nextScheduleDate = if (timeRange.to.isCurrentDay(date)) null else date.shiftDay(1).time,
+    nextScheduleDate = date.shiftDay(1).time.takeIf { nextDate -> timeRange.to.time > nextDate },
     startTime = timeRange.from.time,
     endTime = timeRange.to.time,
     createdAt = createdAt?.time,

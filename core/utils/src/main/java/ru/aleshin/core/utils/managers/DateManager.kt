@@ -89,11 +89,11 @@ interface DateManager {
 
         override fun calculateProgress(startTime: Date, endTime: Date): Float {
             val currentTime = fetchCurrentDate().time
-            val pastTime = ((currentTime - startTime.time).toMinutes()).toFloat()
-            val duration = ((endTime.time - startTime.time).toMinutes()).toFloat()
-            val progress = pastTime / duration
+            val pastTime = (currentTime - startTime.time).toFloat()
+            val duration = (endTime.time - startTime.time).toFloat()
+            if (duration <= 0f) return if (currentTime < startTime.time) 0f else 1f
 
-            return if (progress < 0f) 0f else if (progress > 1f) 1f else progress
+            return (pastTime / duration).coerceIn(0f, 1f)
         }
 
         override fun setCurrentHMS(date: Date): Date {

@@ -16,7 +16,6 @@
 package ru.aleshin.features.editor.impl.presentation.ui.task.validators
 
 import kotlinx.serialization.Serializable
-import ru.aleshin.core.utils.extensions.duration
 import ru.aleshin.core.utils.functional.Constants.Date.HOURS_IN_DAY
 import ru.aleshin.core.utils.functional.Constants.Date.MILLIS_IN_HOUR
 import ru.aleshin.core.utils.functional.TimeRange
@@ -32,7 +31,8 @@ internal interface TimeRangeValidator : Validator<TimeRange, TimeRangeError> {
 
     class Base @Inject constructor() : TimeRangeValidator {
         override fun validate(data: TimeRange): ValidateResult<TimeRangeError> {
-            return if (duration(data) == 0L || duration(data) > MILLIS_IN_HOUR * HOURS_IN_DAY) {
+            val duration = data.to.time - data.from.time
+            return if (duration <= 0L || duration > MILLIS_IN_HOUR * HOURS_IN_DAY) {
                 ValidateResult(false, TimeRangeError.DurationError)
             } else {
                 ValidateResult(true, null)

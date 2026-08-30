@@ -21,6 +21,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -163,6 +164,75 @@ class SchedulesDataBaseMigrationTest {
         database.close()
     }
 
+    @Test
+    fun migrate18To19ClearsNextScheduleDateOnlyForTasksEndingAtMidnight() {
+        val scheduleDate = Calendar.getInstance().apply {
+            set(2100, Calendar.JANUARY, 1, 0, 0, 0)
+            set(Calendar.MILLISECOND, 0)
+        }.timeInMillis
+        val nextScheduleDate = scheduleDate + DAY
+
+        helper.createDatabase(OVERNIGHT_TEST_DB, 18).apply {
+            execSQL(
+                "INSERT INTO `mainCategories` (`id`, `custom_name`, `default_category_type`) " +
+                    "VALUES (1, 'Work', NULL)",
+            )
+            execSQL("INSERT INTO `dailySchedules` (`date`) VALUES ($scheduleDate)")
+            insertOvernightTimeTask(
+                key = 200,
+                scheduleDate = scheduleDate,
+                nextScheduleDate = nextScheduleDate,
+                startTime = scheduleDate + HOURS_23,
+                endTime = nextScheduleDate,
+            )
+            insertOvernightTimeTask(
+                key = 201,
+                scheduleDate = scheduleDate,
+                nextScheduleDate = nextScheduleDate,
+                startTime = scheduleDate + HOURS_23,
+                endTime = nextScheduleDate + HOURS_1,
+            )
+            close()
+        }
+
+        val database = helper.runMigrationsAndValidate(
+            OVERNIGHT_TEST_DB,
+            19,
+            true,
+            SchedulesDataBase.MIGRATE_18_19,
+        )
+
+        database.query("SELECT `next_schedule_date` FROM `timeTasks` WHERE `key` = 200").use { cursor ->
+            cursor.moveToFirst()
+            assertTrue(cursor.isNull(0))
+        }
+        database.query("SELECT `next_schedule_date` FROM `timeTasks` WHERE `key` = 201").use { cursor ->
+            cursor.moveToFirst()
+            assertEquals(nextScheduleDate, cursor.getLong(0))
+        }
+        database.close()
+    }
+
+    private fun SupportSQLiteDatabase.insertOvernightTimeTask(
+        key: Long,
+        scheduleDate: Long,
+        nextScheduleDate: Long,
+        startTime: Long,
+        endTime: Long,
+    ) {
+        execSQL(
+            "INSERT INTO `timeTasks` (" +
+                "`key`, `daily_schedule_date`, `next_schedule_date`, `start_time`, `end_time`, " +
+                "`created_at`, `main_category_id`, `sub_category_id`, `linked_template_id`, " +
+                "`is_completed`, `priority`, `is_enable_notification`, " +
+                "`fifteen_minutes_before_notify`, `one_hour_before_notify`, " +
+                "`three_hour_before_notify`, `one_day_before_notify`, `one_week_before_notify`, " +
+                "`before_end_notify`, `is_consider_in_statistics`, `note`) VALUES (" +
+                "$key, $scheduleDate, $nextScheduleDate, $startTime, $endTime, $scheduleDate, " +
+                "1, NULL, NULL, 1, 'STANDARD', 1, 0, 0, 0, 0, 0, 0, 1, NULL)",
+        )
+    }
+
     private fun SupportSQLiteDatabase.insertBaseScheduleData(
         scheduleDate: Long,
         startTime: Long,
@@ -226,7 +296,11 @@ class SchedulesDataBaseMigrationTest {
         private const val TEST_DB = "schedules-migration-test"
         private const val GOALS_TEST_DB = "goals-migration-test"
         private const val GOAL_DEADLINE_TEST_DB = "goal-deadline-migration-test"
+        private const val OVERNIGHT_TEST_DB = "overnight-migration-test"
         private const val HOURS_9 = 9L * 60L * 60L * 1000L
         private const val HOURS_10 = 10L * 60L * 60L * 1000L
+        private const val HOURS_1 = 60L * 60L * 1000L
+        private const val HOURS_23 = 23L * 60L * 60L * 1000L
+        private const val DAY = 24L * 60L * 60L * 1000L
     }
 }

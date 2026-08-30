@@ -71,8 +71,12 @@ internal interface TimelineInteractor {
             val timeTasks = schedule?.timeTasks.orEmpty()
                 .filter { timeTask -> timeTask.startTime < dayEnd && timeTask.endTime > dayStart }
                 .sortedBy { timeTask -> timeTask.startTime }
-            val visibleTimeRanges = timeTasks.mapNotNull { timeTask ->
-                timeTask.timeRange.intersect(dayTimeRange)
+            val visibleTimeTasks = timeTasks.mapNotNull { timeTask ->
+                val visibleTimeRange = timeTask.timeRange.intersect(dayTimeRange)
+                if (visibleTimeRange != null) timeTask to visibleTimeRange else null
+            }
+            val visibleTimeRanges = visibleTimeTasks.map { (_, visibleTimeRange) ->
+                visibleTimeRange
             }
 
             return TimelineSchedule(
@@ -81,9 +85,9 @@ internal interface TimelineInteractor {
                 initialTime = fetchInitialTime(date, dayTimeRange, timeTasks),
                 timeStep = TIME_STEP,
                 minimumTaskDuration = MINIMUM_TASK_DURATION,
-                timeTasks = timeTasks.mapIndexed { index, timeTask ->
+                timeTasks = visibleTimeTasks.mapIndexed { index, (timeTask, visibleTimeRange) ->
                     timeTask.fetchTimelineTimeTask(
-                        visibleTimeRange = checkNotNull(visibleTimeRanges.getOrNull(index)),
+                        visibleTimeRange = visibleTimeRange,
                         previousTimeRange = visibleTimeRanges.getOrNull(index - 1),
                         nextTimeRange = visibleTimeRanges.getOrNull(index + 1),
                         dayTimeRange = dayTimeRange,
